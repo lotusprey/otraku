@@ -1,0 +1,6 @@
+Note locations:
+android/app/build.gradle
+android/app/src/main/AndroidManifest.xml
+
+Additional file locations:
+android/app/src/main/res/xml

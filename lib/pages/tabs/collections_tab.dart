@@ -44,29 +44,47 @@ class _CollectionsTabState extends State<CollectionsTab> {
 
   //Load data
   void _load() async {
-    setState(() => _isLoading = true);
-
     if (!_collection.isLoaded) {
+      setState(() => _isLoading = true);
       await _collection.fetchMediaListCollection();
     }
 
-    final tuple = _collection.getData(-1, null);
-    _listNames = tuple.item1;
-    _listEntries = tuple.item2;
+    _setData();
 
     _segmentedControlPairs = {'All': -1};
     for (int i = 0; i < _listNames.length; i++) {
       _segmentedControlPairs[_listNames[i]] = i;
     }
 
-    if (mounted) {
+    if (mounted && _isLoading == true) {
       setState(() => _isLoading = false);
     }
   }
 
+  //Fill lists
+  void _setData() {
+    print('index: $_listIndex');
+    print('search: $_searchValue');
+    final tuple = _collection.getData(_listIndex, _searchValue);
+
+    if (tuple == null) {
+      _listNames = [];
+      _listEntries = [];
+      return;
+    }
+
+    _listNames = tuple.item1;
+    _listEntries = tuple.item2;
+  }
+
   //Clear output settings
-  void _clear() {
-    setState(() => _searchValue = null);
+  void _clear({bool seach = false, bool index = false}) {
+    if (seach) {
+      _searchValue = null;
+    }
+    if (index) {
+      _listIndex = -1;
+    }
   }
 
   @override
@@ -95,26 +113,31 @@ class _CollectionsTabState extends State<CollectionsTab> {
                       context: context,
                       updateSegmentedControl: (value) => setState(() {
                         _listIndex = value;
-                        //TODO
+                        _setData();
                       }),
                       segmentedControlPairs: _segmentedControlPairs,
                       searchActivate: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => SearchPage(
-                            search: (value) =>
-                                setState(() => _searchValue = value),
+                            search: (value) => setState(() {
+                              _searchValue = value;
+                              _setData();
+                            }),
                             text: _searchValue,
                           ),
                         ),
                       ),
-                      searchDeactivate: _clear,
+                      searchDeactivate: () => setState(() {
+                        _clear(seach: true);
+                        _setData();
+                      }),
                       isSearchActive: _searchValue != null,
                       filterActivate: () {},
                       filterDeactivate: () {},
                       isFilterActive: false,
                       sort: () {},
                       refresh: () {
-                        _clear();
+                        _clear(seach: true, index: true);
                         _collection.unload();
                         _load();
                       },

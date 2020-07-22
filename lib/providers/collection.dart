@@ -21,10 +21,10 @@ abstract class Collection {
 
       List<List<ListEntry>> currentEntries = [];
       List<String> currentNames = [];
-      for (int i = 0; i < currentNames.length; i++) {
+      for (int i = 0; i < names.length; i++) {
         List<ListEntry> sublist = [];
         for (ListEntry entry in entries[i]) {
-          if (entry.title.contains(search)) {
+          if (entry.title.toLowerCase().contains(search)) {
             sublist.add(entry);
           }
         }
@@ -48,7 +48,7 @@ abstract class Collection {
 
     List<ListEntry> currentEntries = [];
     for (ListEntry entry in entries[listIndex]) {
-      if (entry.title.contains(search)) {
+      if (entry.title.toLowerCase().contains(search)) {
         currentEntries.add(entry);
       }
     }

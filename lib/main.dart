@@ -64,7 +64,9 @@ class MyApp extends StatelessWidget {
         ),
         home: Consumer<Theming>(
           builder: (_, theming, childTheme) => FutureBuilder(
-            future: theming.init(),
+            future: theming.palette == null
+                ? theming.init()
+                : Future.delayed(const Duration(seconds: 0)),
             builder: (_, snapshotTheme) {
               if (snapshotTheme.connectionState == ConnectionState.waiting) {
                 return childTheme;
@@ -72,7 +74,9 @@ class MyApp extends StatelessWidget {
 
               return Consumer<Auth>(
                 builder: (_, auth, childAuth) => FutureBuilder(
-                  future: null,
+                  future: auth.status == null
+                      ? auth.validateAccessToken()
+                      : Future.delayed(const Duration(seconds: 0)),
                   builder: (_, snapshotAuth) {
                     if (snapshotAuth.connectionState ==
                         ConnectionState.waiting) {
@@ -97,37 +101,6 @@ class MyApp extends StatelessWidget {
             backgroundColor: Colors.black,
           ),
         ),
-        // home: Consumer<Auth>(
-        //   builder: (_, auth, child) => FutureBuilder(
-        //     future: auth.status != null
-        //         ? Future<void>.delayed(const Duration(seconds: 0))
-        //         : auth.validateAccessToken(),
-        //     builder: (___, snapshot) {
-        //       if (snapshot.connectionState == ConnectionState.waiting) {
-        //         return child;
-        //       }
-
-        //       return Consumer<Theming>(
-        //         builder: (_, theming, __) => FutureBuilder(
-        //           future: theming.init(),
-        //           builder: (ctx, snapshot2) {
-        //             if (snapshot2.connectionState == ConnectionState.waiting) {
-        //               return child;
-        //             }
-
-        //             if (auth.status == AuthStatus.authorised) {
-        //               return TabManager();
-        //             }
-        //             return AuthPage();
-        //           },
-        //         ),
-        //       );
-        //     },
-        //   ),
-        //   child: const Scaffold(
-        //     backgroundColor: Colors.black,
-        //   ),
-        // ),
       ),
     );
   }

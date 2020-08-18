@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/providers/theming.dart';
@@ -15,7 +16,7 @@ class ProfileTab extends StatelessWidget {
         iconSize: Palette.ICON_MEDIUM,
         onPressed: () => Navigator.push(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (ctx) => SettingsPage(),
             )),
       ),

@@ -92,7 +92,7 @@ class _FilterPageState extends State<FilterPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: _palette.primary,
         actionsForegroundColor: _palette.accent,
-        middle: Text('Filters', style: _palette.titleInactive),
+        middle: Text('Filters', style: _palette.titleContrasted),
         leading: IconButton(
           icon: Icon(
             Icons.close,

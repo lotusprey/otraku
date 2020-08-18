@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/single_media.dart';
 import 'package:provider/provider.dart';
+import 'package:otraku/providers/single_media.dart';
+import 'package:otraku/enums/media_list_status_enum.dart';
 
 class MediaObject {
   int id;
@@ -12,11 +11,14 @@ class MediaObject {
   String title;
   int nextEpisode;
   String timeUntilAiring;
+  int popularity;
+  int favourites;
   Image cover;
   Image banner;
   bool isFavourite;
   MediaListStatus mediaListStatus;
-  _OverviewData overview;
+  String description;
+  List<Tuple> info = [];
 
   MediaObject({
     @required BuildContext context,
@@ -25,7 +27,7 @@ class MediaObject {
   }) {
     id = mediaId;
 
-    Provider.of<SingleMedia>(context, listen: false).fetchMain(id).then((data) {
+    Provider.of<SingleMedia>(context, listen: false).fetchData(id).then((data) {
       //General
       title = data['title']['english'] ?? data['title']['romaji'];
       type = data['type'];
@@ -41,6 +43,9 @@ class MediaObject {
 
         timeUntilAiring = '${days}d ${hours}h ${minutes}m';
       }
+
+      popularity = data['popularity'];
+      favourites = data['favourites'];
 
       //User Data
       isFavourite = data['isFavourite'];
@@ -66,40 +71,22 @@ class MediaObject {
       );
       precacheImage(cover.image, context);
 
-      setState();
-    });
-  }
-
-  Future<void> initOverview(BuildContext context, Function setState) async {
-    overview = _OverviewData(context, id, setState);
-  }
-
-  Future<void> toggleFavourite(BuildContext context) async {
-    final didToggle = await Provider.of<SingleMedia>(context, listen: false)
-        .toggleFavourite(id, type);
-    if (didToggle) {
-      isFavourite = !isFavourite;
-    }
-  }
-}
-
-class _OverviewData {
-  String description;
-  List<Tuple> info = [];
-
-  _OverviewData(BuildContext context, int id, Function setState) {
-    Provider.of<SingleMedia>(context, listen: false)
-        .fetchOverview(id)
-        .then((data) {
       //Description
       final String desc = data['description'];
       if (desc != null) {
         description = desc.replaceAll(RegExp(r'<[^>]*>'), '');
       }
 
+      //Info
+
       //Format
       if (data['format'] != null) {
-        info.add(Tuple('Format', _clarifyEnum(data['format'])));
+        info.add(Tuple('Format', clarifyEnum(data['format'])));
+      }
+
+      //Status
+      if (data['status'] != null) {
+        info.add(Tuple('Status', clarifyEnum(data['status'])));
       }
 
       //Episodes
@@ -125,11 +112,6 @@ class _OverviewData {
       //Volumes
       if (data['volumes'] != null) {
         info.add(Tuple('Volumes', data['volumes'].toString()));
-      }
-
-      //Status
-      if (data['status'] != null) {
-        info.add(Tuple('Status', _clarifyEnum(data['status'])));
       }
 
       //Average Score
@@ -180,11 +162,29 @@ class _OverviewData {
         }
 
         if (studios.length > 0) {
-          info.add(Tuple('Studios', studios.join('\n')));
+          if (studios.length > 2) {
+            int middleOfStudioList = (studios.length / 2).floor();
+            var studioString =
+                studios.sublist(0, middleOfStudioList).join(', ') +
+                    '\n' +
+                    studios.sublist(middleOfStudioList).join(', ');
+            info.add(Tuple('Studios', studioString));
+          } else {
+            info.add(Tuple('Studios', studios.join('\n')));
+          }
         }
 
         if (producers.length > 0) {
-          info.add(Tuple('Producers', producers.join('\n')));
+          if (producers.length > 2) {
+            int middleOfProducerList = (producers.length / 2).floor();
+            var producerString =
+                producers.sublist(0, middleOfProducerList).join(', ') +
+                    '\n' +
+                    producers.sublist(middleOfProducerList).join(', ');
+            info.add(Tuple('Producers', producerString));
+          } else {
+            info.add(Tuple('Producers', producers.join('\n')));
+          }
         }
       }
 
@@ -197,12 +197,12 @@ class _OverviewData {
     });
   }
 
-  String _clarifyEnum(String text) {
-    return text.splitMapJoin(
-      '_',
-      onMatch: (_) => ' ',
-      onNonMatch: (s) => s[0] + s.substring(1).toLowerCase(),
-    );
+  Future<void> toggleFavourite(BuildContext context) async {
+    final didToggle = await Provider.of<SingleMedia>(context, listen: false)
+        .toggleFavourite(id, type);
+    if (didToggle) {
+      isFavourite = !isFavourite;
+    }
   }
 
   String _date(Map<String, dynamic> data) {
@@ -210,48 +210,22 @@ class _OverviewData {
       return null;
     }
 
-    String month = '';
-    switch (data['month'] as int) {
-      case 1:
-        month = 'Jan';
-        break;
-      case 2:
-        month = 'Feb';
-        break;
-      case 3:
-        month = 'Mar';
-        break;
-      case 4:
-        month = 'Apr';
-        break;
-      case 5:
-        month = 'May';
-        break;
-      case 6:
-        month = 'Jun';
-        break;
-      case 7:
-        month = 'Jul';
-        break;
-      case 8:
-        month = 'Aug';
-        break;
-      case 9:
-        month = 'Sep';
-        break;
-      case 10:
-        month = 'Oct';
-        break;
-      case 11:
-        month = 'Nov';
-        break;
-      case 12:
-        month = 'Dec';
-        break;
-      default:
-        break;
-    }
+    const months = {
+      1: 'Jan',
+      2: 'Feb',
+      3: 'Mar',
+      4: 'Apr',
+      5: 'May',
+      6: 'Jun',
+      7: 'Jul',
+      8: 'Aug',
+      9: 'Sep',
+      10: 'Oct',
+      11: 'Nov',
+      12: 'Dec',
+    };
 
+    String month = months[data['month'] as int];
     var day = data['day'] ?? '';
 
     return '$month $day, ${data['year']}';

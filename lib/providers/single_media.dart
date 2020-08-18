@@ -16,27 +16,10 @@ class SingleMedia with ChangeNotifier {
     };
   }
 
-  Future<Map<String, dynamic>> _fetch(int id, String query) async {
-    final Map<String, int> variables = {
-      'id': id,
-    };
-
-    final request = json.encode({
-      'query': query,
-      'variables': variables,
-    });
-
-    final response = await post(_url, body: request, headers: _headers);
-
-    return (json.decode(response.body) as Map<String, dynamic>)['data']['Media']
-        as Map<String, dynamic>;
-  }
-
-  Future<Map<String, dynamic>> fetchMain(int id) async {
+  Future<Map<String, dynamic>> fetchData(int id) async {
     const query = r'''
       query Main($id: Int) {
         Media(id: $id) {
-          id
           type
           title {
             english
@@ -51,6 +34,8 @@ class SingleMedia with ChangeNotifier {
           }
           bannerImage
           isFavourite
+          popularity
+          favourites
           nextAiringEpisode {
             episode
             timeUntilAiring
@@ -58,22 +43,9 @@ class SingleMedia with ChangeNotifier {
           mediaListEntry {
             status
           }
-        }
-      }
-    ''';
-
-    return await _fetch(id, query);
-  }
-
-  Future<Map<String, dynamic>> fetchOverview(int id) async {
-    const query = r'''
-      query Overview($id: Int) {
-        Media(id: $id) {
-          id
-          type
+          description
           format
           status
-          description
           episodes
           duration
           chapters
@@ -105,7 +77,19 @@ class SingleMedia with ChangeNotifier {
       }
     ''';
 
-    return await _fetch(id, query);
+    final Map<String, int> variables = {
+      'id': id,
+    };
+
+    final request = json.encode({
+      'query': query,
+      'variables': variables,
+    });
+
+    final response = await post(_url, body: request, headers: _headers);
+
+    return (json.decode(response.body) as Map<String, dynamic>)['data']['Media']
+        as Map<String, dynamic>;
   }
 
   Future<bool> toggleFavourite(int id, String entryType) async {

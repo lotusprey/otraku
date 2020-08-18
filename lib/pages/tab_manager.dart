@@ -7,7 +7,6 @@ import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/navigation/floating_navigation.dart';
 import 'package:otraku/tools/navigation/custom_tab_bar.dart';
-import 'package:otraku/tools/navigation/media_action_controls.dart';
 import 'package:provider/provider.dart';
 
 class TabManager extends StatefulWidget {

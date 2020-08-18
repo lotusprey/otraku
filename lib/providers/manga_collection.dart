@@ -45,10 +45,10 @@ class MangaCollection extends Collection with ChangeNotifier {
 
   //Fetch manga media list collection
   @override
-  Future<void> fetchMediaListCollection() async {
-    final query = '''
-      query Collection {
-        MediaListCollection(userId: $userId, type: MANGA, sort: SCORE_DESC) {
+  Future<void> fetchMediaListCollection(Map<String, dynamic> filters) async {
+    final query = r'''
+      query Collection($userId: Int, $sort: [MediaListSort], $scoreFormat: ScoreFormat) {
+        MediaListCollection(userId: $userId, type: MANGA, sort: $sort) {
           lists {
             entries {
               mediaId
@@ -74,6 +74,11 @@ class MangaCollection extends Collection with ChangeNotifier {
 
     final request = json.encode({
       'query': query,
+      'variables': {
+        ...filters,
+        'userId': userId,
+        'scoreFormat': scoreFormat,
+      },
     });
 
     final response = await post(_url, body: request, headers: _headers);

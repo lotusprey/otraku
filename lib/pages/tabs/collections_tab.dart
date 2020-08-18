@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/models/list_entry.dart';
 import 'package:otraku/pages/pushable/search_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
@@ -6,8 +8,9 @@ import 'package:otraku/providers/collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
-import 'package:otraku/tools/navigation/custom_header_delegate.dart';
+import 'package:otraku/tools/navigation/media_control_header.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
+import 'package:otraku/tools/overlays/collection_sort_modal_sheet.dart';
 import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +32,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
   //Query settings
   Collection _collection;
   String _scoreFormat;
+  Map<String, dynamic> _filters = {'sort': 'SCORE_DESC'};
 
   //Data
   List<String> _listNames = [];
@@ -46,7 +50,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
   void _load() async {
     if (!_collection.isLoaded) {
       setState(() => _isLoading = true);
-      await _collection.fetchMediaListCollection();
+      await _collection.fetchMediaListCollection(_filters);
     }
 
     _setData();
@@ -63,8 +67,6 @@ class _CollectionsTabState extends State<CollectionsTab> {
 
   //Fill lists
   void _setData() {
-    print('index: $_listIndex');
-    print('search: $_searchValue');
     final tuple = _collection.getData(_listIndex, _searchValue);
 
     if (tuple == null) {
@@ -87,11 +89,18 @@ class _CollectionsTabState extends State<CollectionsTab> {
     }
   }
 
+  //Refresh data
+  void _refresh() {
+    _clear(seach: true, index: true);
+    _collection.unload();
+    _load();
+  }
+
   @override
   Widget build(BuildContext context) {
     return _isLoading
         ? const WaveBarLoader()
-        : _listNames.length > 0
+        : _collection.names.length > 0
             ? CustomScrollView(
                 controller: widget.scrollCtrl,
                 physics: const BouncingScrollPhysics(
@@ -109,7 +118,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
                   SliverPersistentHeader(
                     pinned: false,
                     floating: true,
-                    delegate: CustomHeaderDelegate(
+                    delegate: MediaControlHeader(
                       context: context,
                       updateSegmentedControl: (value) => setState(() {
                         _listIndex = value;
@@ -117,7 +126,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
                       }),
                       segmentedControlPairs: _segmentedControlPairs,
                       searchActivate: () => Navigator.of(context).push(
-                        MaterialPageRoute(
+                        CupertinoPageRoute(
                           builder: (ctx) => SearchPage(
                             search: (value) => setState(() {
                               _searchValue = value;
@@ -135,12 +144,12 @@ class _CollectionsTabState extends State<CollectionsTab> {
                       filterActivate: () {},
                       filterDeactivate: () {},
                       isFilterActive: false,
-                      sort: () {},
-                      refresh: () {
-                        _clear(seach: true, index: true);
-                        _collection.unload();
-                        _load();
-                      },
+                      sort: () => showModalBottomSheet(
+                        context: context,
+                        builder: (ctx) => CollectionSortModalSheet(_filters),
+                        backgroundColor: Colors.transparent,
+                      ),
+                      refresh: _refresh,
                     ),
                   ),
                   SliverToBoxAdapter(
@@ -150,9 +159,20 @@ class _CollectionsTabState extends State<CollectionsTab> {
                 ],
               )
             : Center(
-                child: Text(
-                  'No ${_collection.name} results',
-                  style: _palette.titleSmall,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'No ${_collection.name} results',
+                      style: _palette.titleSmall,
+                    ),
+                    IconButton(
+                      icon: const Icon(LineAwesomeIcons.retweet),
+                      color: _palette.faded,
+                      iconSize: Palette.ICON_MEDIUM,
+                      onPressed: _refresh,
+                    ),
+                  ],
                 ),
               );
   }
@@ -168,7 +188,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 _listNames[i],
-                style: _palette.titleInactive,
+                style: _palette.titleContrasted,
               ),
             ),
           ),
@@ -185,111 +205,6 @@ class _CollectionsTabState extends State<CollectionsTab> {
         );
     }
     return widgets;
-
-    // for (int i = 0; i < _listNames.length; i++) {}
-    // if (_listIndex != -1) {
-    //   List<ListEntry> entries;
-
-    //   if (_searchValue == null) {
-    //     entries = _listEntries[_listIndex];
-    //   } else {
-    //     entries = [];
-    //     for (ListEntry entry in _listEntries[_listIndex]) {
-    //       if (entry.title.toLowerCase().contains(_searchValue)) {
-    //         entries.add(entry);
-    //       }
-    //     }
-    //   }
-
-    //   if (entries.length != 0) {
-    //     return [
-    //       SliverToBoxAdapter(
-    //         child: Padding(
-    //           padding: padding,
-    //           child: Text(
-    //             _listNames[_listIndex],
-    //             style: _palette.titleInactive,
-    //           ),
-    //         ),
-    //       ),
-    //       SliverPadding(
-    //         padding: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
-    //         sliver: MediaList(
-    //           entries: entries,
-    //           scoreFormat: _scoreFormat,
-    //           name: _listNames[_listIndex],
-    //         ),
-    //       ),
-    //     ];
-    //   }
-
-    //   return [
-    //     SliverFillRemaining(
-    //       child: Center(
-    //         child: Text(
-    //           'No compatible entries',
-    //           style: _palette.titleSmall,
-    //         ),
-    //       ),
-    //     ),
-    //   ];
-    // }
-
-    // List<Widget> lists = [];
-    // for (int i = 0; i < _listNames.length; i++) {
-    //   List<ListEntry> entries;
-
-    //   if (_searchValue == null) {
-    //     entries = _listEntries[i];
-    //   } else {
-    //     entries = [];
-    //     for (ListEntry entry in _listEntries[i]) {
-    //       if (entry.title.toLowerCase().contains(_searchValue)) {
-    //         entries.add(entry);
-    //       }
-    //     }
-    //   }
-
-    //   if (entries.length != 0) {
-    //     lists
-    //       ..add(
-    //         SliverToBoxAdapter(
-    //           child: Padding(
-    //             padding: padding,
-    //             child: Text(
-    //               _listNames[i],
-    //               style: _palette.titleInactive,
-    //             ),
-    //           ),
-    //         ),
-    //       )
-    //       ..add(
-    //         SliverPadding(
-    //           padding: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
-    //           sliver: MediaList(
-    //             entries: entries,
-    //             scoreFormat: _scoreFormat,
-    //             name: _listNames[i],
-    //           ),
-    //         ),
-    //       );
-    //   }
-    // }
-
-    // if (lists.length == 0) {
-    //   return [
-    //     SliverFillRemaining(
-    //       child: Center(
-    //         child: Text(
-    //           'No compatible entries',
-    //           style: _palette.titleSmall,
-    //         ),
-    //       ),
-    //     ),
-    //   ];
-    // }
-
-    // return lists;
   }
 
   @override

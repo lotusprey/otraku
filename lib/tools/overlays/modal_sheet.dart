@@ -1,27 +1,28 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
-class SortModalSheet extends StatelessWidget {
-  final Map<String, dynamic> _filters;
-  final Function _loadMedia;
+class ModalSheet extends StatelessWidget {
+  final List<String> options;
+  final int index;
+  final bool desc;
+  final Function(int) onTap;
 
-  SortModalSheet(this._filters, this._loadMedia);
+  ModalSheet({
+    @required this.options,
+    @required this.index,
+    @required this.desc,
+    @required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final palette = Provider.of<Theming>(context, listen: false).palette;
-    MediaSort mediaSort;
-
-    try {
-      mediaSort = getMediaSortFromString(_filters['sort']);
-    } catch (e) {}
 
     return Container(
-      height: 380,
+      height: 400,
       color: Colors.transparent,
       child: Container(
         margin: const EdgeInsets.all(20),
@@ -36,49 +37,27 @@ class SortModalSheet extends StatelessWidget {
               'Sort',
               style: palette.titleSmall,
             ),
-            ..._options(palette, context, mediaSort),
+            ..._options(palette, context),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _options(
-    Palette palette,
-    BuildContext context,
-    MediaSort mediaSort,
-  ) {
-    List<Widget> options = [];
-    for (int i = 0; i < MediaSort.values.length; i += 2) {
-      if (mediaSort == MediaSort.values[i]) {
-        options.add(_ModalOption(
-          text: mediaSort.tuple.item1,
-          palette: palette,
-          onTap: () => _changeSort(context, MediaSort.values[i + 1]),
-          desc: false,
-        ));
-      } else if (mediaSort == MediaSort.values[i + 1]) {
-        options.add(_ModalOption(
-          text: mediaSort.tuple.item1,
-          palette: palette,
-          onTap: () => _changeSort(context, MediaSort.values[i]),
-          desc: true,
-        ));
-      } else {
-        options.add(_ModalOption(
-          text: MediaSort.values[i].tuple.item1,
-          palette: palette,
-          onTap: () => _changeSort(context, MediaSort.values[i + 1]),
-        ));
-      }
+  List<Widget> _options(Palette palette, BuildContext context) {
+    List<Widget> list = [];
+    for (int i = 0; i < options.length; i++) {
+      list.add(_ModalOption(
+        text: options[i],
+        palette: palette,
+        desc: index == i ? desc : null,
+        onTap: () {
+          onTap(i);
+          Navigator.of(context).pop();
+        },
+      ));
     }
-    return options;
-  }
-
-  void _changeSort(BuildContext context, MediaSort mediaSort) {
-    _filters['sort'] = describeEnum(mediaSort);
-    Navigator.of(context).pop();
-    _loadMedia();
+    return list;
   }
 }
 
@@ -106,7 +85,9 @@ class _ModalOption extends StatelessWidget {
           children: <Widget>[
             Text(
               text,
-              style: desc == null ? palette.titleInactive : palette.titleActive,
+              style: desc == null
+                  ? palette.titleContrasted
+                  : palette.titleAccented,
             ),
             desc != null
                 ? Icon(

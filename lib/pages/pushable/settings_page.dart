@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: _palette.primary,
         actionsForegroundColor: _palette.accent,
-        middle: Text('Settings', style: _palette.titleInactive),
+        middle: Text('Settings', style: _palette.titleContrasted),
         leading: IconButton(
           icon: Icon(
             Icons.close,

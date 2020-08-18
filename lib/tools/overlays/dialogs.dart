@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:otraku/providers/theming.dart';
+import 'package:provider/provider.dart';
 
 class PopUpAnimation extends StatefulWidget {
   final Widget child;
@@ -54,31 +56,37 @@ class TextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Provider.of<Theming>(context, listen: false).palette;
+
     return Dialog(
       elevation: 0,
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: palette.background,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+        children: [
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              color: Theme.of(context).backgroundColor,
+              color: palette.primary,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(title, style: Theme.of(context).textTheme.headline4),
+            child: Text(title, style: palette.headlineMain),
           ),
           Flexible(
             child: Container(
               width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(5)),
+                color: palette.background,
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                child: Text(text, style: Theme.of(context).textTheme.bodyText1),
+                child: Text(text, style: palette.paragraph),
               ),
             ),
           ),
@@ -112,17 +120,16 @@ class ImageDialog extends StatelessWidget {
 
 class ImageTextDialog extends StatelessWidget {
   final String text;
-  final TextStyle style;
   final Image image;
 
   const ImageTextDialog({
     @required this.text,
-    this.style,
     this.image,
   });
 
   @override
   Widget build(BuildContext context) {
+    final palette = Provider.of<Theming>(context, listen: false).palette;
     final borderRadius = BorderRadius.circular(5);
 
     return Dialog(
@@ -130,7 +137,7 @@ class ImageTextDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: palette.primary,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -142,7 +149,7 @@ class ImageTextDialog extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               text,
-              style: style,
+              style: palette.titleContrasted,
               textAlign: TextAlign.center,
             ),
           ),

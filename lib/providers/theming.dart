@@ -129,9 +129,8 @@ class Palette {
   final Color faded;
   final Color error;
   final TextStyle headlineMain;
-  final TextStyle titleActive;
-  final TextStyle titleInactive;
-  final TextStyle titleClear;
+  final TextStyle titleAccented;
+  final TextStyle titleContrasted;
   final TextStyle titleSmall;
   final TextStyle detail;
   final TextStyle paragraph;
@@ -149,19 +148,14 @@ class Palette {
             color: Color(0xff4a4a4a),
             fontWeight: FontWeight.bold,
           ),
-          titleActive: TextStyle(
+          titleAccented: TextStyle(
             fontSize: FONT_MEDIUM,
             color: accents.swatch.item1,
             fontWeight: FontWeight.bold,
           ),
-          titleInactive: TextStyle(
+          titleContrasted: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-          titleClear: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           titleSmall: TextStyle(
@@ -192,17 +186,12 @@ class Palette {
             color: Color(0xff999999),
             fontWeight: FontWeight.bold,
           ),
-          titleActive: TextStyle(
+          titleAccented: TextStyle(
             fontSize: FONT_MEDIUM,
             color: accents.swatch.item1,
             fontWeight: FontWeight.bold,
           ),
-          titleInactive: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          titleClear: TextStyle(
+          titleContrasted: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -230,9 +219,8 @@ class Palette {
     @required this.faded,
     @required this.error,
     @required this.headlineMain,
-    @required this.titleActive,
-    @required this.titleInactive,
-    @required this.titleClear,
+    @required this.titleAccented,
+    @required this.titleContrasted,
     @required this.titleSmall,
     @required this.detail,
     @required this.paragraph,

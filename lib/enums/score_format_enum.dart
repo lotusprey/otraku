@@ -23,23 +23,6 @@ extension ScoreFormatExtension on ScoreFormat {
   }
 }
 
-// ScoreFormat getScoreFormatFromString(String format) {
-//   switch (format) {
-//     case 'POINT_100':
-//       return ScoreFormat.POINT_100;
-//     case 'POINT_10_DECIMAL':
-//       return ScoreFormat.POINT_10_DECIMAL;
-//     case 'POINT_10':
-//       return ScoreFormat.POINT_10;
-//     case 'POINT_5':
-//       return ScoreFormat.POINT_5;
-//     case 'POINT_3':
-//       return ScoreFormat.POINT_3;
-//     default:
-//       throw 'Could not formulate score format from string';
-//   }
-// }
-
 Widget getWidgetFormScoreFormat(
   Palette palette,
   String format,

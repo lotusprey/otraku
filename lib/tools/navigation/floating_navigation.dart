@@ -70,3 +70,22 @@ class _FloatingNavigationState extends State<FloatingNavigation>
     );
   }
 }
+
+class DisableAnimationAnimator extends FloatingActionButtonAnimator {
+  const DisableAnimationAnimator();
+
+  @override
+  Offset getOffset({Offset begin, Offset end, double progress}) {
+    return end;
+  }
+
+  @override
+  Animation<double> getRotationAnimation({Animation<double> parent}) {
+    return Tween<double>(begin: 1.0, end: 1.0).animate(parent);
+  }
+
+  @override
+  Animation<double> getScaleAnimation({Animation<double> parent}) {
+    return Tween<double>(begin: 1.0, end: 1.0).animate(parent);
+  }
+}

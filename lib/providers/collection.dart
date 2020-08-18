@@ -62,5 +62,5 @@ abstract class Collection {
 
   void unload();
 
-  Future<void> fetchMediaListCollection();
+  Future<void> fetchMediaListCollection(Map<String, dynamic> filters);
 }

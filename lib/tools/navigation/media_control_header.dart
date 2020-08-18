@@ -7,7 +7,7 @@ import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/navigation/title_segmented_control.dart';
 import 'package:provider/provider.dart';
 
-class CustomHeaderDelegate implements SliverPersistentHeaderDelegate {
+class MediaControlHeader implements SliverPersistentHeaderDelegate {
   static const double _height = 100;
 
   final Function(Object value) updateSegmentedControl;
@@ -22,7 +22,7 @@ class CustomHeaderDelegate implements SliverPersistentHeaderDelegate {
   final Function sort;
   Palette _palette;
 
-  CustomHeaderDelegate({
+  MediaControlHeader({
     @required this.updateSegmentedControl,
     @required this.segmentedControlPairs,
     @required this.searchActivate,
@@ -80,13 +80,13 @@ class CustomHeaderDelegate implements SliverPersistentHeaderDelegate {
                   Row(
                     children: [
                       IconButton(
-                        icon: Icon(LineAwesomeIcons.retweet),
+                        icon: const Icon(LineAwesomeIcons.retweet),
                         color: _palette.faded,
                         iconSize: Palette.ICON_MEDIUM,
                         onPressed: () => refresh(),
                       ),
                       IconButton(
-                        icon: Icon(LineAwesomeIcons.sort),
+                        icon: const Icon(LineAwesomeIcons.sort),
                         color: _palette.faded,
                         iconSize: Palette.ICON_MEDIUM,
                         onPressed: () => sort(),

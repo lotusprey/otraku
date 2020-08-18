@@ -44,10 +44,10 @@ class AnimeCollection extends Collection with ChangeNotifier {
   void unload() => _isLoaded = false;
 
   //Fetch anime media list collection
-  Future<void> fetchMediaListCollection() async {
-    final query = '''
-      query Collection {
-        MediaListCollection(userId: $userId, type: ANIME, sort: SCORE_DESC) {
+  Future<void> fetchMediaListCollection(Map<String, dynamic> filters) async {
+    final query = r'''
+      query Collection($userId: Int, $sort: [MediaListSort], $scoreFormat: ScoreFormat) {
+        MediaListCollection(userId: $userId, type: ANIME, sort: $sort) {
           lists {
             entries {
               mediaId
@@ -73,6 +73,11 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
     final request = json.encode({
       'query': query,
+      'variables': {
+        ...filters,
+        'userId': userId,
+        'scoreFormat': scoreFormat,
+      },
     });
 
     final response = await post(_url, body: request, headers: _headers);

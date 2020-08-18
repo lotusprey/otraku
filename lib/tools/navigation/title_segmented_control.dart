@@ -25,8 +25,9 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   Widget _button(String title, T value, int index) => GestureDetector(
         child: Text(
           title,
-          style:
-              index != _current ? _palette.titleInactive : _palette.titleActive,
+          style: index != _current
+              ? _palette.titleContrasted
+              : _palette.titleAccented,
         ),
         onTap: () {
           setState(() => _current = index);

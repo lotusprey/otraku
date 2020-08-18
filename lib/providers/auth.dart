@@ -10,6 +10,7 @@ class Auth with ChangeNotifier {
   static String _accessToken;
 
   static int _userId;
+  static String _titleFormat;
   static String _scoreFormat;
 
   AuthStatus get status {
@@ -18,6 +19,10 @@ class Auth with ChangeNotifier {
 
   String get accessToken {
     return _accessToken;
+  }
+
+  String get titleFormat {
+    return _titleFormat;
   }
 
   String get scoreFormat {
@@ -77,6 +82,9 @@ class Auth with ChangeNotifier {
       query MyId {
         Viewer {
           id
+          options {
+            titleLanguage
+          }
           mediaListOptions {
             scoreFormat
           }
@@ -109,8 +117,11 @@ class Auth with ChangeNotifier {
       return;
     }
 
-    _userId = body['data']['Viewer']['id'];
-    _scoreFormat = body['data']['Viewer']['mediaListOptions']['scoreFormat'];
+    final viewer = body['data']['Viewer'];
+
+    _userId = viewer['id'];
+    _titleFormat = viewer['options']['titleLanguage'];
+    _scoreFormat = viewer['mediaListOptions']['scoreFormat'];
 
     _status = AuthStatus.authorised;
     notifyListeners();

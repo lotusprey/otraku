@@ -7,9 +7,9 @@ import 'package:otraku/pages/pushable/search_page.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
-import 'package:otraku/tools/navigation/custom_header_delegate.dart';
+import 'package:otraku/tools/navigation/media_control_header.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
-import 'package:otraku/tools/overlays/sort_modal_sheet.dart';
+import 'package:otraku/tools/overlays/explore_sort_modal_sheet.dart';
 import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:otraku/providers/all_media.dart';
@@ -137,7 +137,7 @@ class _ExploreTabState extends State<ExploreTab> {
         SliverPersistentHeader(
           pinned: false,
           floating: true,
-          delegate: CustomHeaderDelegate(
+          delegate: MediaControlHeader(
             context: context,
             updateSegmentedControl: (value) {
               _filters['type'] = value as String;
@@ -148,7 +148,7 @@ class _ExploreTabState extends State<ExploreTab> {
               'Manga': 'MANGA',
             },
             searchActivate: () => Navigator.of(context).push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (ctx) => SearchPage(
                   search: _search,
                   text: _filters['search'],
@@ -158,7 +158,7 @@ class _ExploreTabState extends State<ExploreTab> {
             searchDeactivate: () => _clear(search: true),
             isSearchActive: _filters.containsKey('search'),
             filterActivate: () => Navigator.of(context).push(
-              MaterialPageRoute(
+              CupertinoPageRoute(
                 builder: (ctx) => FilterPage(
                   loadMedia: _load,
                   filters: _filters,
@@ -173,7 +173,7 @@ class _ExploreTabState extends State<ExploreTab> {
             refresh: () => _clear(search: true, filters: true),
             sort: () => showModalBottomSheet(
               context: context,
-              builder: (ctx) => SortModalSheet(_filters, _load),
+              builder: (ctx) => ExploreSortModalSheet(_filters, _load),
               backgroundColor: Colors.transparent,
             ),
           ),

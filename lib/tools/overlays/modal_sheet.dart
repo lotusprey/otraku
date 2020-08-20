@@ -22,24 +22,21 @@ class ModalSheet extends StatelessWidget {
     final palette = Provider.of<Theming>(context, listen: false).palette;
 
     return Container(
-      height: 400,
-      color: Colors.transparent,
-      child: Container(
-        margin: const EdgeInsets.all(20),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: palette.primary,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Column(
-          children: <Widget>[
-            Text(
-              'Sort',
-              style: palette.titleSmall,
-            ),
-            ..._options(palette, context),
-          ],
-        ),
+      height: options.length * 40 + 65.0,
+      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: palette.primary,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            'Sort',
+            style: palette.titleSmall,
+          ),
+          ..._options(palette, context),
+        ],
       ),
     );
   }
@@ -86,8 +83,8 @@ class _ModalOption extends StatelessWidget {
             Text(
               text,
               style: desc == null
-                  ? palette.titleContrasted
-                  : palette.titleAccented,
+                  ? palette.titleContrasted.copyWith(height: 1)
+                  : palette.titleAccented.copyWith(height: 1),
             ),
             desc != null
                 ? Icon(

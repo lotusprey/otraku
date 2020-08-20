@@ -175,6 +175,7 @@ class _ExploreTabState extends State<ExploreTab> {
               context: context,
               builder: (ctx) => ExploreSortModalSheet(_filters, _load),
               backgroundColor: Colors.transparent,
+              isScrollControlled: true,
             ),
           ),
         ),

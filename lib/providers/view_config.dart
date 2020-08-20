@@ -12,7 +12,7 @@ class ViewConfig with ChangeNotifier {
 
     double tileWHRatio = 0.5;
     double tileWidth = (MediaQuery.of(context).size.width - 40) / 3;
-    double tileHeight = tileWidth / tileWHRatio;
+    double tileHeight = tileWidth * 2;
     double tileImgHeight = 0.75 * tileHeight;
 
     _largeTileConfiguration = LargeTileConfiguration(

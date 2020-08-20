@@ -26,6 +26,7 @@ dependencies:
 
   http: ^0.12.1
   url_launcher: ^5.5.0
+  uni_links: ^0.4.0
   provider: ^4.3.1
   shared_preferences: ^0.5.8
   flutter_secure_storage: ^3.3.3

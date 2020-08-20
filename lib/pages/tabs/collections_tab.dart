@@ -47,7 +47,9 @@ class _CollectionsTabState extends State<CollectionsTab> {
   Palette _palette;
 
   //Load data
-  void _load() async {
+  void _load({bool forceLoad = false}) async {
+    if (forceLoad) _collection.unload();
+
     if (!_collection.isLoaded) {
       setState(() => _isLoading = true);
       await _collection.fetchMediaListCollection(_filters);
@@ -146,8 +148,12 @@ class _CollectionsTabState extends State<CollectionsTab> {
                       isFilterActive: false,
                       sort: () => showModalBottomSheet(
                         context: context,
-                        builder: (ctx) => CollectionSortModalSheet(_filters),
+                        builder: (ctx) => CollectionSortModalSheet(
+                          _filters,
+                          _load,
+                        ),
                         backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
                       ),
                       refresh: _refresh,
                     ),

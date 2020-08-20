@@ -41,6 +41,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
   @override
   List<List<ListEntry>> get entries => _entries;
 
+  //Set isLoaded property to false in order to reload
   void unload() => _isLoaded = false;
 
   //Fetch anime media list collection

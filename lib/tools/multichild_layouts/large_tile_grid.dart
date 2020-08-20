@@ -79,11 +79,12 @@ class _SimpleGridTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.fade,
-            style: palette.titleSmall,
+          Flexible(
+            child: Text(
+              title,
+              overflow: TextOverflow.fade,
+              style: palette.titleSmall,
+            ),
           ),
         ],
       ),

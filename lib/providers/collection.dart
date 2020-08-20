@@ -60,6 +60,7 @@ abstract class Collection {
     return Tuple([names[listIndex]], [currentEntries]);
   }
 
+  //Set isLoaded property to false in order to reload
   void unload();
 
   Future<void> fetchMediaListCollection(Map<String, dynamic> filters);

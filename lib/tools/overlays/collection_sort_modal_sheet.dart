@@ -6,8 +6,9 @@ import 'package:otraku/tools/overlays/modal_sheet.dart';
 
 class CollectionSortModalSheet extends StatelessWidget {
   final Map<String, dynamic> filters;
+  final Function load;
 
-  CollectionSortModalSheet(this.filters);
+  CollectionSortModalSheet(this.filters, this.load);
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +42,16 @@ class CollectionSortModalSheet extends StatelessWidget {
       index: currentIndex,
       desc: currentlyDesc,
       onTap: (int index) {
-        // if (index != currentIndex) {
-        //   filters['sort'] = describeEnum(MediaSort.values[index * 2 + 1]);
-        // } else {
-        //   if (currentlyDesc) {
-        //     filters['sort'] = describeEnum(MediaSort.values[index * 2]);
-        //   } else {
-        //     filters['sort'] = describeEnum(MediaSort.values[index * 2 + 1]);
-        //   }
-        // }
-        // load();
+        if (index != currentIndex) {
+          filters['sort'] = describeEnum(MediaListSort.values[index * 2 + 1]);
+        } else {
+          if (currentlyDesc) {
+            filters['sort'] = describeEnum(MediaListSort.values[index * 2]);
+          } else {
+            filters['sort'] = describeEnum(MediaListSort.values[index * 2 + 1]);
+          }
+        }
+        load(forceLoad: true);
       },
     );
   }

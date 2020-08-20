@@ -26,6 +26,21 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<!--Set up of 'Custom Url Scheme' for uni_links-->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>otraku</string> <!--Url Name-->
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>otrakuscheme</string> <!--Scheme Name-->
+			</array>
+		</dict>
+	</array>
+	<!--End of scheme-->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

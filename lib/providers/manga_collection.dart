@@ -70,6 +70,13 @@ class MangaCollection extends Collection with ChangeNotifier {
             status
           }
         }
+        User(id: $userId) {
+          mediaListOptions {
+            mangaList {
+              sectionOrder
+            }
+          }
+        }
       }
     ''';
 
@@ -83,25 +90,36 @@ class MangaCollection extends Collection with ChangeNotifier {
     });
 
     final response = await post(_url, body: request, headers: _headers);
+    final result = json.decode(response.body)['data'];
 
-    final result = json.decode(response.body)['data']['MediaListCollection']
-        ['lists'] as List<dynamic>;
+    final mediaListCollection =
+        result['MediaListCollection']['lists'] as List<dynamic>;
+    final sectionOrder = result['User']['mediaListOptions']['mangaList']
+        ['sectionOrder'] as List<dynamic>;
 
     _names = [];
     _entries = [];
 
-    for (int i = 0; i < result.length; i++) {
-      _names.add(result[i]['name']);
+    for (final section in sectionOrder) {
+      for (int i = 0; i < mediaListCollection.length; i++) {
+        if (section == mediaListCollection[i]['name']) {
+          final currentMediaList = mediaListCollection.removeAt(i);
 
-      _entries.add((result[i]['entries'] as List<dynamic>)
-          .map((e) => ListEntry(
-                id: e['mediaId'],
-                title: e['media']['title']['userPreferred'],
-                cover: e['media']['coverImage']['medium'],
-                format: e['media']['format'],
-                score: e['score'].toDouble(),
-              ))
-          .toList());
+          _names.add(currentMediaList['name']);
+
+          _entries.add((currentMediaList['entries'] as List<dynamic>)
+              .map((e) => ListEntry(
+                    id: e['mediaId'],
+                    title: e['media']['title']['userPreferred'],
+                    cover: e['media']['coverImage']['medium'],
+                    format: e['media']['format'],
+                    score: e['score'].toDouble(),
+                  ))
+              .toList());
+
+          break;
+        }
+      }
     }
 
     _isLoaded = true;

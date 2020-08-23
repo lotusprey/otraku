@@ -34,7 +34,9 @@ class CollectionSortModalSheet extends StatelessWidget {
 
     List<String> options = [];
     for (int i = 0; i < MediaListSort.values.length; i += 2) {
-      options.add(clarifyEnum(describeEnum(MediaListSort.values[i])));
+      options.add(
+        _removeMediaKeyword(clarifyEnum(describeEnum(MediaListSort.values[i]))),
+      );
     }
 
     return ModalSheet(
@@ -54,5 +56,13 @@ class CollectionSortModalSheet extends StatelessWidget {
         load(forceLoad: true);
       },
     );
+  }
+
+  String _removeMediaKeyword(String str) {
+    if (str[0] == 'M') {
+      return str.substring(6);
+    }
+
+    return str;
   }
 }

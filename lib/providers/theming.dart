@@ -26,23 +26,21 @@ class Theming with ChangeNotifier {
       _accents = Accents.values[index];
     }
 
+    Brightness brightness;
     if (_isDark) {
       _palette = Palette.dark(_accents);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: _palette.primary,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: _palette.primary,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ));
+      brightness = Brightness.light;
     } else {
       _palette = Palette.light(_accents);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: _palette.primary,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: _palette.primary,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ));
+      brightness = Brightness.dark;
     }
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: _palette.primary,
+      statusBarIconBrightness: brightness,
+      systemNavigationBarColor: _palette.primary,
+      systemNavigationBarIconBrightness: brightness,
+    ));
   }
 
   void _saveConfig({bool isDarkValue, Accents accentsValue}) async {

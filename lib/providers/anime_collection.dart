@@ -93,6 +93,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
     final mediaListCollection =
         result['MediaListCollection']['lists'] as List<dynamic>;
+
     final sectionOrder = result['User']['mediaListOptions']['animeList']
         ['sectionOrder'] as List<dynamic>;
 

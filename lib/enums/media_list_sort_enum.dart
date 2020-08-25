@@ -1,3 +1,4 @@
+//The TITLE values must be at the end
 enum MediaListSort {
   SCORE,
   SCORE_DESC,

@@ -63,5 +63,6 @@ abstract class Collection {
   //Set isLoaded property to false in order to reload
   void unload();
 
+  //Fetch media list collection
   Future<void> fetchMediaListCollection(Map<String, dynamic> filters);
 }

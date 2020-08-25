@@ -1,3 +1,4 @@
+//The TITLE values must be at the end
 enum MediaSort {
   TRENDING,
   TRENDING_DESC,

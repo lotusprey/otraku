@@ -78,7 +78,7 @@ class Auth with ChangeNotifier {
       'Content-type': 'application/json',
     };
 
-    final query = '''
+    const query = '''
       query MyId {
         Viewer {
           id

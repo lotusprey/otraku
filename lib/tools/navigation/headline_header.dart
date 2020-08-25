@@ -28,7 +28,7 @@ class HeadlineHeader implements SliverPersistentHeaderDelegate {
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-          color: _palette.primary.withAlpha(210),
+          color: _palette.background.withAlpha(210),
           child: Text(
             headline,
             style: _palette.headlineMain.copyWith(height: 1),

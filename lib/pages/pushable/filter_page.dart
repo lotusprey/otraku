@@ -90,7 +90,7 @@ class _FilterPageState extends State<FilterPage> {
     return Scaffold(
       backgroundColor: _palette.background,
       appBar: CupertinoNavigationBar(
-        backgroundColor: _palette.primary,
+        backgroundColor: _palette.background,
         actionsForegroundColor: _palette.accent,
         middle: Text('Filters', style: _palette.titleContrasted),
         leading: IconButton(

@@ -37,43 +37,54 @@ class _CustomTabBarState extends State<CustomTabBar> {
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(7);
 
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: 255,
-          height: 51,
-          decoration: BoxDecoration(
-            color: _palette.primary.withAlpha(210),
-            borderRadius: radius,
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 5,
           ),
-          child: Stack(
-            children: [
-              AnimatedPositioned(
-                duration: const Duration(milliseconds: 400),
-                left: _pageIndex * 51.0,
-                curve: Curves.decelerate,
-                child: Container(
-                  height: 51,
-                  width: 51,
-                  decoration: BoxDecoration(
-                    borderRadius: radius,
-                    color: _palette.accent,
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 255,
+            height: 51,
+            decoration: BoxDecoration(
+              color: _palette.background.withAlpha(210),
+              borderRadius: radius,
+            ),
+            child: Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 400),
+                  left: _pageIndex * 51.0,
+                  curve: Curves.decelerate,
+                  child: Container(
+                    height: 51,
+                    width: 51,
+                    decoration: BoxDecoration(
+                      borderRadius: radius,
+                      color: _palette.accent,
+                    ),
                   ),
                 ),
-              ),
-              Row(
-                children: <Widget>[
-                  _tabButton(const Icon(Icons.inbox), TabManager.INBOX),
-                  _tabButton(
-                      const Icon(Icons.play_arrow), TabManager.ANIME_LIST),
-                  _tabButton(const Icon(Icons.bookmark), TabManager.MANGA_LIST),
-                  _tabButton(const Icon(Icons.explore), TabManager.EXPLORE),
-                  _tabButton(const Icon(Icons.person), TabManager.PROFILE),
-                ],
-              ),
-            ],
+                Row(
+                  children: <Widget>[
+                    _tabButton(const Icon(Icons.inbox), TabManager.INBOX),
+                    _tabButton(
+                        const Icon(Icons.play_arrow), TabManager.ANIME_LIST),
+                    _tabButton(
+                        const Icon(Icons.bookmark), TabManager.MANGA_LIST),
+                    _tabButton(const Icon(Icons.explore), TabManager.EXPLORE),
+                    _tabButton(const Icon(Icons.person), TabManager.PROFILE),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

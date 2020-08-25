@@ -44,7 +44,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       backgroundColor: _palette.background,
       appBar: CupertinoNavigationBar(
-        backgroundColor: _palette.primary,
+        backgroundColor: _palette.background,
         actionsForegroundColor: _palette.accent,
         middle: Text('Search', style: _palette.titleContrasted),
         leading: IconButton(

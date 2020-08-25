@@ -26,21 +26,11 @@ class Theming with ChangeNotifier {
       _accents = Accents.values[index];
     }
 
-    Brightness brightness;
     if (_isDark) {
       _palette = Palette.dark(_accents);
-      brightness = Brightness.light;
     } else {
       _palette = Palette.light(_accents);
-      brightness = Brightness.dark;
     }
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: _palette.primary,
-      statusBarIconBrightness: brightness,
-      systemNavigationBarColor: _palette.primary,
-      systemNavigationBarIconBrightness: brightness,
-    ));
   }
 
   void _saveConfig({bool isDarkValue, Accents accentsValue}) async {
@@ -64,21 +54,9 @@ class Theming with ChangeNotifier {
 
     if (toDark) {
       _palette = Palette.dark(_accents);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: _palette.primary,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: _palette.primary,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ));
       _saveConfig(isDarkValue: true);
     } else {
       _palette = Palette.light(_accents);
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: _palette.primary,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: _palette.primary,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ));
       _saveConfig(isDarkValue: false);
     }
     notifyListeners();
@@ -169,6 +147,7 @@ class Palette {
             fontSize: FONT_SMALL,
             color: Colors.black,
           ),
+          brightness: Brightness.dark,
         );
 
   Palette.dark(Accents accents)
@@ -207,6 +186,7 @@ class Palette {
             fontSize: FONT_SMALL,
             color: Colors.white,
           ),
+          brightness: Brightness.light,
         );
 
   Palette._({
@@ -222,7 +202,15 @@ class Palette {
     @required this.titleSmall,
     @required this.detail,
     @required this.paragraph,
-  });
+    @required Brightness brightness,
+  }) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: background,
+      statusBarIconBrightness: brightness,
+      systemNavigationBarColor: background,
+      systemNavigationBarIconBrightness: brightness,
+    ));
+  }
 }
 
 enum Accents {

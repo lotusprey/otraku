@@ -6,6 +6,8 @@ class ListEntry {
   final String cover;
   final String format;
   final double score;
+  final int progress;
+  final int totalEpCount;
 
   ListEntry({
     @required this.id,
@@ -13,5 +15,7 @@ class ListEntry {
     @required this.cover,
     @required this.format,
     @required this.score,
+    @required this.progress,
+    @required this.totalEpCount,
   });
 }

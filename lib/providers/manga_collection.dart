@@ -53,16 +53,18 @@ class MangaCollection extends Collection with ChangeNotifier {
           lists {
             entries {
               mediaId
+              progress
+              score(format: $scoreFormat)
               media {
                 format
+                chapters
                 title {
                   userPreferred
                 }
                 coverImage {
                   medium
-                }
-              }
-              score(format: $scoreFormat)
+                }                
+              }              
             }
             name
             isCustomList
@@ -114,6 +116,8 @@ class MangaCollection extends Collection with ChangeNotifier {
                     cover: e['media']['coverImage']['medium'],
                     format: e['media']['format'],
                     score: e['score'].toDouble(),
+                    progress: e['progress'],
+                    totalEpCount: e['media']['chapters'],
                   ))
               .toList());
 

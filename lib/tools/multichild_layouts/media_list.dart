@@ -40,10 +40,13 @@ class MediaList extends StatelessWidget {
               entry.title,
               style: palette.titleSmall,
             ),
-            trailing: Row(
+            trailing: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 getWidgetFormScoreFormat(palette, scoreFormat, entry.score),
+                Text('${entry.progress}/${entry.totalEpCount ?? '?'}',
+                    style: palette.detail),
               ],
             ),
             contentPadding: const EdgeInsets.symmetric(vertical: 2),

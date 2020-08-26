@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:provider/provider.dart';
-import 'package:otraku/providers/single_media.dart';
+import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 
-class MediaObject {
+class MediaItemData {
   int id;
   String type;
   String title;
@@ -20,14 +20,14 @@ class MediaObject {
   String description;
   List<Tuple> info = [];
 
-  MediaObject({
+  MediaItemData({
     @required BuildContext context,
     @required Function setState,
     @required int mediaId,
   }) {
     id = mediaId;
 
-    Provider.of<SingleMedia>(context, listen: false).fetchData(id).then((data) {
+    Provider.of<MediaItem>(context, listen: false).fetchData(id).then((data) {
       //General
       title = data['title']['english'] ?? data['title']['romaji'];
       type = data['type'];
@@ -198,7 +198,7 @@ class MediaObject {
   }
 
   Future<void> toggleFavourite(BuildContext context) async {
-    final didToggle = await Provider.of<SingleMedia>(context, listen: false)
+    final didToggle = await Provider.of<MediaItem>(context, listen: false)
         .toggleFavourite(id, type);
     if (didToggle) {
       isFavourite = !isFavourite;

@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
-class AllMedia with ChangeNotifier {
+class ExplorableMedia with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
 
   Map<String, String> _headers;
 
-  AllMedia(String accessToken) {
+  ExplorableMedia(String accessToken) {
     _headers = {
       'Authorization': 'Bearer $accessToken',
       'Accept': 'application/json',

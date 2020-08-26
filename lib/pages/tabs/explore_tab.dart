@@ -9,10 +9,10 @@ import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/tools/navigation/media_control_header.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
-import 'package:otraku/tools/overlays/explore_sort_modal_sheet.dart';
+import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
 import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
-import 'package:otraku/providers/all_media.dart';
+import 'package:otraku/providers/explorable_media.dart';
 
 class ExploreTab extends StatefulWidget {
   final ScrollController scrollCtrl;
@@ -55,7 +55,7 @@ class _ExploreTabState extends State<ExploreTab> {
       _data = [];
     }
 
-    final data = await Provider.of<AllMedia>(context, listen: false)
+    final data = await Provider.of<ExplorableMedia>(context, listen: false)
         .fetchMedia(_filters);
 
     if (data.length > 0) {
@@ -173,7 +173,7 @@ class _ExploreTabState extends State<ExploreTab> {
             refresh: () => _clear(search: true, filters: true),
             sort: () => showModalBottomSheet(
               context: context,
-              builder: (ctx) => ExploreSortModalSheet(_filters, _load),
+              builder: (ctx) => ExploreSortSheet(_filters, _load),
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
             ),

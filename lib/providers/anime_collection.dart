@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
-import 'package:otraku/models/list_entry.dart';
+import 'package:otraku/models/list_entry_tile_data.dart';
 import 'package:otraku/providers/collection.dart';
 
 class AnimeCollection extends Collection with ChangeNotifier {
@@ -15,7 +15,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
   //Data
   bool _isLoaded = false;
   List<String> _names;
-  List<List<ListEntry>> _entries;
+  List<List<ListEntryTileData>> _entries;
 
   AnimeCollection({
     @required accessToken,
@@ -39,7 +39,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
   List<String> get names => _names;
 
   @override
-  List<List<ListEntry>> get entries => _entries;
+  List<List<ListEntryTileData>> get entries => _entries;
 
   //Set isLoaded property to false in order to reload
   void unload() => _isLoaded = false;
@@ -110,7 +110,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
           _names.add(currentMediaList['name']);
 
           _entries.add((currentMediaList['entries'] as List<dynamic>)
-              .map((e) => ListEntry(
+              .map((e) => ListEntryTileData(
                     id: e['mediaId'],
                     title: e['media']['title']['userPreferred'],
                     cover: e['media']['coverImage']['medium'],

@@ -1,4 +1,4 @@
-import 'package:otraku/models/list_entry.dart';
+import 'package:otraku/models/list_entry_tile_data.dart';
 import 'package:otraku/models/tuple.dart';
 
 abstract class Collection {
@@ -8,9 +8,9 @@ abstract class Collection {
 
   List<String> get names;
 
-  List<List<ListEntry>> get entries;
+  List<List<ListEntryTileData>> get entries;
 
-  Tuple<List<String>, List<List<ListEntry>>> getData(
+  Tuple<List<String>, List<List<ListEntryTileData>>> getData(
     int listIndex,
     String search,
   ) {
@@ -19,11 +19,11 @@ abstract class Collection {
         return Tuple(names, entries);
       }
 
-      List<List<ListEntry>> currentEntries = [];
+      List<List<ListEntryTileData>> currentEntries = [];
       List<String> currentNames = [];
       for (int i = 0; i < names.length; i++) {
-        List<ListEntry> sublist = [];
-        for (ListEntry entry in entries[i]) {
+        List<ListEntryTileData> sublist = [];
+        for (ListEntryTileData entry in entries[i]) {
           if (entry.title.toLowerCase().contains(search)) {
             sublist.add(entry);
           }
@@ -46,8 +46,8 @@ abstract class Collection {
       return Tuple([names[listIndex]], [entries[listIndex]]);
     }
 
-    List<ListEntry> currentEntries = [];
-    for (ListEntry entry in entries[listIndex]) {
+    List<ListEntryTileData> currentEntries = [];
+    for (ListEntryTileData entry in entries[listIndex]) {
       if (entry.title.toLowerCase().contains(search)) {
         currentEntries.add(entry);
       }

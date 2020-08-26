@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/all_media.dart';
+import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/multichild_layouts/text_grid.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +40,7 @@ class _FilterPageState extends State<FilterPage> {
     _genreIn = widget.filters['genre_in'] ?? [];
     _genreNotIn = widget.filters['genre_not_in'] ?? [];
 
-    Provider.of<AllMedia>(context, listen: false)
+    Provider.of<ExplorableMedia>(context, listen: false)
         .fetchGenres()
         .then((data) => setState(() {
               _genreGrid = TextGrid(
@@ -53,7 +53,7 @@ class _FilterPageState extends State<FilterPage> {
     _tagIn = widget.filters['tag_in'] ?? [];
     _tagNotIn = widget.filters['tag_not_in'] ?? [];
 
-    Provider.of<AllMedia>(context, listen: false)
+    Provider.of<ExplorableMedia>(context, listen: false)
         .fetchTags()
         .then((data) => setState(() {
               List<Tuple<String, String>> tags = [];

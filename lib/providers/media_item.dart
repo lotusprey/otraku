@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-class SingleMedia with ChangeNotifier {
+class MediaItem with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
 
   Map<String, String> _headers;
 
-  SingleMedia(accessToken) {
+  MediaItem(accessToken) {
     _headers = {
       'Authorization': 'Bearer $accessToken',
       'Accept': 'application/json',

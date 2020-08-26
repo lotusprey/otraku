@@ -2,13 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/media_object.dart';
+import 'package:otraku/models/media_item_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:otraku/tools/overlays/edit_media_sheet.dart';
 
 class MediaHeader implements SliverPersistentHeaderDelegate {
   //Data
-  final MediaObject mediaObj;
+  final MediaItemData mediaObj;
 
   //Output settings
   final Palette palette;
@@ -206,7 +207,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                _FavoriteButton(mediaObj, palette),
+                _FavoriteButton(palette, mediaObj),
               ],
             ),
           ),
@@ -214,31 +215,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
             left: buttonInset,
             right: buttonInset,
             bottom: 0,
-            child: RaisedButton(
-              color: palette.accent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    mediaObj.mediaListStatus == MediaListStatus.None
-                        ? Icons.add
-                        : Icons.edit,
-                    size: Palette.ICON_SMALL,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                      mediaObj.mediaListStatus == MediaListStatus.None
-                          ? 'Add'
-                          : describeEnum(mediaObj.mediaListStatus),
-                      style: palette.buttonText),
-                ],
-              ),
-              onPressed: () {},
-            ),
+            child: _StatusButton(palette, mediaObj),
           ),
         ],
       ),
@@ -262,10 +239,10 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  final MediaObject mediaObj;
   final Palette palette;
+  final MediaItemData mediaObj;
 
-  _FavoriteButton(this.mediaObj, this.palette);
+  _FavoriteButton(this.palette, this.mediaObj);
 
   @override
   __FavoriteButtonState createState() => __FavoriteButtonState();
@@ -283,6 +260,52 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
       onPressed: () => widget.mediaObj
           .toggleFavourite(context)
           .then((value) => setState(() {})),
+    );
+  }
+}
+
+class _StatusButton extends StatefulWidget {
+  final Palette palette;
+  final MediaItemData mediaObj;
+
+  _StatusButton(this.palette, this.mediaObj);
+
+  @override
+  __StatusButtonState createState() => __StatusButtonState();
+}
+
+class __StatusButtonState extends State<_StatusButton> {
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      color: widget.palette.accent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            widget.mediaObj.mediaListStatus == MediaListStatus.None
+                ? Icons.add
+                : Icons.edit,
+            size: Palette.ICON_SMALL,
+            color: Colors.white,
+          ),
+          const SizedBox(width: 10),
+          Text(
+              widget.mediaObj.mediaListStatus == MediaListStatus.None
+                  ? 'Add'
+                  : describeEnum(widget.mediaObj.mediaListStatus),
+              style: widget.palette.buttonText),
+        ],
+      ),
+      onPressed: () => showModalBottomSheet(
+        context: context,
+        builder: (ctx) => EditMediaSheet(),
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/models/media_object.dart';
+import 'package:otraku/models/media_item_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_page_widgets/media_header.dart';
@@ -21,7 +21,7 @@ class MediaPage extends StatefulWidget {
 
 class _MediaPageState extends State<MediaPage> {
   //Data
-  MediaObject _mediaObj;
+  MediaItemData _mediaObj;
 
   //Output settings
   bool _isLoading = true;
@@ -136,7 +136,7 @@ class _MediaPageState extends State<MediaPage> {
   @override
   void initState() {
     super.initState();
-    _mediaObj = MediaObject(
+    _mediaObj = MediaItemData(
       context: context,
       mediaId: widget.id,
       setState: () => setState(() => _isLoading = false),

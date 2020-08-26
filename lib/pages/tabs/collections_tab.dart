@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:otraku/models/list_entry.dart';
+import 'package:otraku/models/list_entry_tile_data.dart';
 import 'package:otraku/pages/pushable/search_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection.dart';
@@ -10,7 +10,7 @@ import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/navigation/media_control_header.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
-import 'package:otraku/tools/overlays/collection_sort_modal_sheet.dart';
+import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
 import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +36,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
 
   //Data
   List<String> _listNames = [];
-  List<List<ListEntry>> _listEntries = [];
+  List<List<ListEntryTileData>> _listEntries = [];
   Map<String, Object> _segmentedControlPairs;
 
   //Output settings
@@ -148,7 +148,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
                       isFilterActive: false,
                       sort: () => showModalBottomSheet(
                         context: context,
-                        builder: (ctx) => CollectionSortModalSheet(
+                        builder: (ctx) => CollectionSortSheet(
                           _filters,
                           _load,
                         ),

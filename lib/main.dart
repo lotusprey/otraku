@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/all_media.dart';
+import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'enums/auth_enum.dart';
 import 'pages/auth_page.dart';
 import 'pages/tab_manager.dart';
-import 'providers/single_media.dart';
+import 'providers/media_item.dart';
 import 'providers/auth.dart';
 import 'providers/anime_collection.dart';
 
@@ -26,8 +26,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<Auth>(
           create: (_) => Auth(),
         ),
-        ProxyProvider<Auth, SingleMedia>(
-          update: (_, auth, __) => SingleMedia(auth.accessToken),
+        ProxyProvider<Auth, MediaItem>(
+          update: (_, auth, __) => MediaItem(auth.accessToken),
         ),
         ProxyProvider<Auth, AnimeCollection>(
           update: (_, auth, __) => AnimeCollection(
@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
             scoreFormat: auth.scoreFormat,
           ),
         ),
-        ProxyProvider<Auth, AllMedia>(
-          update: (_, auth, __) => AllMedia(auth.accessToken),
+        ProxyProvider<Auth, ExplorableMedia>(
+          update: (_, auth, __) => ExplorableMedia(auth.accessToken),
         ),
         ChangeNotifierProvider<ViewConfig>(
           create: (_) => ViewConfig(),

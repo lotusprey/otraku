@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class ListEntry {
+class ListEntryTileData {
   final int id;
   final String title;
   final String cover;
@@ -9,7 +9,7 @@ class ListEntry {
   final int progress;
   final String totalEpCount;
 
-  ListEntry({
+  ListEntryTileData({
     @required this.id,
     @required this.title,
     @required this.cover,

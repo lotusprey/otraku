@@ -6,11 +6,11 @@ import 'package:otraku/providers/auth.dart';
 import 'package:otraku/tools/overlays/modal_sheet.dart';
 import 'package:provider/provider.dart';
 
-class ExploreSortModalSheet extends StatelessWidget {
+class ExploreSortSheet extends StatelessWidget {
   final Map<String, dynamic> filters;
   final Function load;
 
-  ExploreSortModalSheet(this.filters, this.load);
+  ExploreSortSheet(this.filters, this.load);
 
   @override
   Widget build(BuildContext context) {

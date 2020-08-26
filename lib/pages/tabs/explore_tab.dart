@@ -186,7 +186,7 @@ class _ExploreTabState extends State<ExploreTab> {
               )
             : _isLoading
                 ? const SliverFillRemaining(
-                    child: WaveBarLoader(),
+                    child: Center(child: WaveBarLoader()),
                   )
                 : SliverFillRemaining(
                     child: Center(
@@ -199,7 +199,7 @@ class _ExploreTabState extends State<ExploreTab> {
         if (_data.length > 0)
           _isLoading
               ? const SliverFillRemaining(
-                  child: WaveBarLoader(),
+                  child: Center(child: WaveBarLoader()),
                 )
               : const SliverToBoxAdapter(
                   child: SizedBox(height: 80),

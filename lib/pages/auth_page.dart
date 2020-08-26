@@ -72,7 +72,7 @@ class _AuthPageState extends State<AuthPage> {
                 ),
                 onPressed: _authenticate,
               )
-            : const WaveBarLoader(),
+            : const Center(child: WaveBarLoader()),
       ),
     );
   }

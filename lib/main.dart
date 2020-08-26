@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
                 ),
                 child: Scaffold(
                   backgroundColor: theming.palette.background,
-                  body: const WaveBarLoader(),
+                  body: const Center(child: WaveBarLoader()),
                 ),
               );
             },

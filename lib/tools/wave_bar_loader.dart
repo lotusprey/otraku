@@ -3,9 +3,9 @@ import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
 class WaveBarLoader extends StatefulWidget {
-  final double sizeVariable;
+  final double barWidth;
 
-  const WaveBarLoader({this.sizeVariable = 1});
+  const WaveBarLoader({this.barWidth = 15});
 
   @override
   _WaveBarLoaderState createState() => _WaveBarLoaderState();
@@ -16,18 +16,22 @@ class _WaveBarLoaderState extends State<WaveBarLoader>
   Palette _palette;
   AnimationController _controller;
   List<_Bar> _bars;
+  double _barSpacing;
+  double _barHeightMax;
+  double _barHeightMin;
 
   _initBar(double begin, double end) {
     return _Bar(
+      width: widget.barWidth,
       color: _palette.accent,
       animation: TweenSequence(
         [
           TweenSequenceItem<double>(
-            tween: Tween(begin: 40.0, end: 60.0),
+            tween: Tween(begin: _barHeightMin, end: _barHeightMax),
             weight: 50.0,
           ),
           TweenSequenceItem<double>(
-            tween: Tween(begin: 60.0, end: 40.0),
+            tween: Tween(begin: _barHeightMax, end: _barHeightMin),
             weight: 50.0,
           ),
         ],
@@ -48,6 +52,10 @@ class _WaveBarLoaderState extends State<WaveBarLoader>
       vsync: this,
     );
 
+    _barSpacing = widget.barWidth / 4;
+    _barHeightMax = widget.barWidth * 4;
+    _barHeightMin = _barHeightMax * 2 / 3;
+
     _bars = [_initBar(0.1, 0.5), _initBar(0.3, 0.7), _initBar(0.5, 0.9)];
 
     _controller.repeat();
@@ -61,24 +69,24 @@ class _WaveBarLoaderState extends State<WaveBarLoader>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        height: 60,
-        width: 55,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: _bars,
-        ),
+    return SizedBox(
+      height: _barHeightMax,
+      width: widget.barWidth * 3 + _barSpacing * 2,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: _bars,
       ),
     );
   }
 }
 
 class _Bar extends AnimatedWidget {
+  final double width;
   final Color color;
 
   _Bar({
     @required Animation<double> animation,
+    @required this.width,
     @required this.color,
     Key key,
   }) : super(key: key, listenable: animation);
@@ -86,7 +94,7 @@ class _Bar extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 15,
+      width: width,
       height: (listenable as Animation<double>).value,
       decoration: BoxDecoration(
         color: color,

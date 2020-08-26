@@ -101,7 +101,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const WaveBarLoader()
+        ? const Center(child: WaveBarLoader())
         : _collection.names.length > 0
             ? CustomScrollView(
                 controller: widget.scrollCtrl,

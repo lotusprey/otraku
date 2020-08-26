@@ -45,7 +45,7 @@ class MediaList extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 getWidgetFormScoreFormat(palette, scoreFormat, entry.score),
-                Text('${entry.progress}/${entry.totalEpCount ?? '?'}',
+                Text('${entry.progress}/${entry.totalEpCount}',
                     style: palette.detail),
               ],
             ),

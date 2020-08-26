@@ -7,7 +7,7 @@ class ListEntry {
   final String format;
   final double score;
   final int progress;
-  final int totalEpCount;
+  final String totalEpCount;
 
   ListEntry({
     @required this.id,

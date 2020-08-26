@@ -117,7 +117,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
                     format: e['media']['format'],
                     score: e['score'].toDouble(),
                     progress: e['progress'],
-                    totalEpCount: e['media']['episodes'],
+                    totalEpCount: (e['media']['episodes'] ?? '?').toString(),
                   ))
               .toList());
 

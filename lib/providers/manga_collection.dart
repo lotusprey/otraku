@@ -117,7 +117,7 @@ class MangaCollection extends Collection with ChangeNotifier {
                     format: e['media']['format'],
                     score: e['score'].toDouble(),
                     progress: e['progress'],
-                    totalEpCount: e['media']['chapters'],
+                    totalEpCount: (e['media']['chapters'] ?? '?').toString(),
                   ))
               .toList());
 

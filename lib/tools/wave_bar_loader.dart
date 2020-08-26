@@ -3,7 +3,9 @@ import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
 class WaveBarLoader extends StatefulWidget {
-  const WaveBarLoader();
+  final double sizeVariable;
+
+  const WaveBarLoader({this.sizeVariable = 1});
 
   @override
   _WaveBarLoaderState createState() => _WaveBarLoaderState();

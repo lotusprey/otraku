@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/pages/pushable/media_page.dart';
+import 'package:otraku/pages/pushable/media_item_page.dart';
 
 class MediaIndexer extends StatelessWidget {
   final int mediaId;
@@ -10,7 +10,7 @@ class MediaIndexer extends StatelessWidget {
   static void pushMedia(BuildContext context, int mediaId, {Object tag}) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => MediaPage(id: mediaId, tag: tag),
+        builder: (ctx) => MediaItemPage(id: mediaId, tag: tag),
       ),
     );
   }

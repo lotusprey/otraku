@@ -9,17 +9,17 @@ import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
-class MediaPage extends StatefulWidget {
+class MediaItemPage extends StatefulWidget {
   final int id;
   final Object tag;
 
-  MediaPage({@required this.id, this.tag});
+  MediaItemPage({@required this.id, this.tag});
 
   @override
-  _MediaPageState createState() => _MediaPageState();
+  _MediaItemPageState createState() => _MediaItemPageState();
 }
 
-class _MediaPageState extends State<MediaPage> {
+class _MediaItemPageState extends State<MediaItemPage> {
   //Data
   MediaItemData _mediaObj;
 

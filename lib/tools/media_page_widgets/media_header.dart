@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/models/list_entry_user_data.dart';
 import 'package:otraku/models/media_item_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -215,7 +216,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
             left: buttonInset,
             right: buttonInset,
             bottom: 0,
-            child: _StatusButton(palette, mediaObj),
+            child: _StatusButton(palette, mediaObj.mediaListStatus),
           ),
         ],
       ),
@@ -266,15 +267,20 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
 class _StatusButton extends StatefulWidget {
   final Palette palette;
-  final MediaItemData mediaObj;
+  final MediaListStatus mediaListStatus;
 
-  _StatusButton(this.palette, this.mediaObj);
+  _StatusButton(this.palette, this.mediaListStatus);
 
   @override
   __StatusButtonState createState() => __StatusButtonState();
 }
 
 class __StatusButtonState extends State<_StatusButton> {
+  MediaListStatus status;
+
+  void _update(ListEntryUserData data) =>
+      setState(() => status = data.mediaListStatus);
+
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
@@ -286,26 +292,27 @@ class __StatusButtonState extends State<_StatusButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(
-            widget.mediaObj.mediaListStatus == MediaListStatus.None
-                ? Icons.add
-                : Icons.edit,
+            status == MediaListStatus.None ? Icons.add : Icons.edit,
             size: Palette.ICON_SMALL,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
-          Text(
-              widget.mediaObj.mediaListStatus == MediaListStatus.None
-                  ? 'Add'
-                  : describeEnum(widget.mediaObj.mediaListStatus),
+          Text(status == MediaListStatus.None ? 'Add' : describeEnum(status),
               style: widget.palette.buttonText),
         ],
       ),
       onPressed: () => showModalBottomSheet(
         context: context,
-        builder: (ctx) => EditMediaSheet(),
+        builder: (ctx) => EditMediaSheet(_update),
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    status = widget.mediaListStatus;
   }
 }

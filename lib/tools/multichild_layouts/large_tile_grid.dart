@@ -83,7 +83,7 @@ class _SimpleGridTile extends StatelessWidget {
             child: Text(
               title,
               overflow: TextOverflow.fade,
-              style: palette.titleSmall,
+              style: palette.smallTitle,
             ),
           ),
         ],

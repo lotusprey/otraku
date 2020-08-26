@@ -20,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: _palette.background,
         actionsForegroundColor: _palette.accent,
-        middle: Text('Settings', style: _palette.titleContrasted),
+        middle: Text('Settings', style: _palette.contrastedTitle),
         leading: IconButton(
           icon: Icon(
             Icons.close,
@@ -36,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text('Theme', style: _palette.titleSmall),
+            Text('Theme', style: _palette.smallTitle),
             const SizedBox(height: 5),
             TitleSegmentedControl(
               pairs: {'Light': false, 'Dark': true},

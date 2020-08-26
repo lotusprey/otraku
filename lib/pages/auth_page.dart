@@ -67,7 +67,7 @@ class _AuthPageState extends State<AuthPage> {
                       color: _palette.contrast,
                     ),
                     const SizedBox(width: 5),
-                    Text('Connect', style: _palette.titleContrasted),
+                    Text('Connect', style: _palette.contrastedTitle),
                   ],
                 ),
                 onPressed: _authenticate,

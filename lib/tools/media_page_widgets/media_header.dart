@@ -97,7 +97,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                         Flexible(
                           child: Text(
                             mediaObj.title,
-                            style: palette.titleContrasted,
+                            style: palette.contrastedTitle,
                             overflow: TextOverflow.fade,
                           ),
                         ),
@@ -105,7 +105,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                           Flexible(
                             child: Text(
                               'Ep ${mediaObj.nextEpisode} in ${mediaObj.timeUntilAiring}',
-                              style: palette.titleSmall,
+                              style: palette.smallTitle,
                             ),
                           ),
                         Row(
@@ -138,7 +138,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                                     const SizedBox(width: 5),
                                     Text(
                                       mediaObj.popularity.toString(),
-                                      style: palette.titleSmall,
+                                      style: palette.smallTitle,
                                     ),
                                   ],
                                 ),
@@ -171,7 +171,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                                     const SizedBox(width: 5),
                                     Text(
                                       mediaObj.favourites.toString(),
-                                      style: palette.titleSmall,
+                                      style: palette.smallTitle,
                                     ),
                                   ],
                                 ),
@@ -234,7 +234,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                       mediaObj.mediaListStatus == MediaListStatus.None
                           ? 'Add'
                           : describeEnum(mediaObj.mediaListStatus),
-                      style: palette.titleContrasted),
+                      style: palette.contrastedTitle),
                 ],
               ),
               onPressed: () {},

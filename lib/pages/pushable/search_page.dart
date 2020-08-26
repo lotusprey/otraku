@@ -46,7 +46,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: _palette.background,
         actionsForegroundColor: _palette.accent,
-        middle: Text('Search', style: _palette.titleContrasted),
+        middle: Text('Search', style: _palette.contrastedTitle),
         leading: IconButton(
           icon: Icon(
             Icons.close,
@@ -69,7 +69,7 @@ class _SearchPageState extends State<SearchPage> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: TextField(
             textAlign: TextAlign.center,
-            style: _palette.titleContrasted,
+            style: _palette.contrastedTitle,
             cursorColor: _palette.accent,
             decoration: const InputDecoration(
               border: InputBorder.none,

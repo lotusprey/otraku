@@ -70,7 +70,7 @@ class _MediaPageState extends State<MediaPage> {
                           [
                             Text(
                               'Description',
-                              style: _palette.titleSmall,
+                              style: _palette.smallTitle,
                             ),
                             const SizedBox(height: 10),
                             GestureDetector(

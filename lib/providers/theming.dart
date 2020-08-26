@@ -104,10 +104,11 @@ class Palette {
   final Color contrast;
   final Color faded;
   final Color error;
-  final TextStyle headlineMain;
-  final TextStyle titleAccented;
-  final TextStyle titleContrasted;
-  final TextStyle titleSmall;
+  final TextStyle headline;
+  final TextStyle accentedTitle;
+  final TextStyle contrastedTitle;
+  final TextStyle smallTitle;
+  final TextStyle buttonText;
   final TextStyle detail;
   final TextStyle paragraph;
 
@@ -119,24 +120,29 @@ class Palette {
           contrast: Colors.black,
           faded: Color(0xff4a4a4a),
           error: accents.swatch.item2,
-          headlineMain: TextStyle(
+          headline: TextStyle(
             fontSize: FONT_BIG,
             color: Color(0xff4a4a4a),
             fontWeight: FontWeight.bold,
           ),
-          titleAccented: TextStyle(
+          accentedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: accents.swatch.item1,
             fontWeight: FontWeight.bold,
           ),
-          titleContrasted: TextStyle(
+          contrastedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
-          titleSmall: TextStyle(
+          smallTitle: TextStyle(
             fontSize: FONT_SMALL,
             color: Color(0xff4a4a4a),
+            fontWeight: FontWeight.bold,
+          ),
+          buttonText: TextStyle(
+            fontSize: FONT_MEDIUM,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           detail: TextStyle(
@@ -158,24 +164,29 @@ class Palette {
           contrast: Colors.white,
           faded: Color(0xff999999),
           error: accents.swatch.item2,
-          headlineMain: TextStyle(
+          headline: TextStyle(
             fontSize: FONT_BIG,
             color: Color(0xff999999),
             fontWeight: FontWeight.bold,
           ),
-          titleAccented: TextStyle(
+          accentedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: accents.swatch.item1,
             fontWeight: FontWeight.bold,
           ),
-          titleContrasted: TextStyle(
+          contrastedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          titleSmall: TextStyle(
+          smallTitle: TextStyle(
             fontSize: FONT_SMALL,
             color: Color(0xff999999),
+            fontWeight: FontWeight.bold,
+          ),
+          buttonText: TextStyle(
+            fontSize: FONT_MEDIUM,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
           detail: TextStyle(
@@ -196,10 +207,11 @@ class Palette {
     @required this.contrast,
     @required this.faded,
     @required this.error,
-    @required this.headlineMain,
-    @required this.titleAccented,
-    @required this.titleContrasted,
-    @required this.titleSmall,
+    @required this.headline,
+    @required this.accentedTitle,
+    @required this.contrastedTitle,
+    @required this.smallTitle,
+    @required this.buttonText,
     @required this.detail,
     @required this.paragraph,
     @required Brightness brightness,

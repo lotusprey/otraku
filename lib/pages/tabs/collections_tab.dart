@@ -170,7 +170,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
                   children: [
                     Text(
                       'No ${_collection.name} results',
-                      style: _palette.titleSmall,
+                      style: _palette.smallTitle,
                     ),
                     IconButton(
                       icon: const Icon(LineAwesomeIcons.retweet),
@@ -194,7 +194,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Text(
                 _listNames[i],
-                style: _palette.titleContrasted,
+                style: _palette.contrastedTitle,
               ),
             ),
           ),

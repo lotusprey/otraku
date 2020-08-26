@@ -26,8 +26,8 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
         child: Text(
           title,
           style: index != _current
-              ? _palette.titleContrasted
-              : _palette.titleAccented,
+              ? _palette.contrastedTitle
+              : _palette.accentedTitle,
         ),
         onTap: () {
           setState(() => _current = index);

@@ -74,7 +74,7 @@ class TextDialog extends StatelessWidget {
               color: palette.primary,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(title, style: palette.headlineMain),
+            child: Text(title, style: palette.headline),
           ),
           Flexible(
             child: Container(
@@ -149,7 +149,7 @@ class ImageTextDialog extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               text,
-              style: palette.titleContrasted,
+              style: palette.contrastedTitle,
               textAlign: TextAlign.center,
             ),
           ),

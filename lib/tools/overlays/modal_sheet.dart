@@ -33,7 +33,7 @@ class ModalSheet extends StatelessWidget {
         children: <Widget>[
           Text(
             'Sort',
-            style: palette.titleSmall,
+            style: palette.smallTitle,
           ),
           ..._options(palette, context),
         ],
@@ -83,8 +83,8 @@ class _ModalOption extends StatelessWidget {
             Text(
               text,
               style: desc == null
-                  ? palette.titleContrasted.copyWith(height: 1)
-                  : palette.titleAccented.copyWith(height: 1),
+                  ? palette.contrastedTitle.copyWith(height: 1)
+                  : palette.accentedTitle.copyWith(height: 1),
             ),
             desc != null
                 ? Icon(

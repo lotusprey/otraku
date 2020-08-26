@@ -77,7 +77,7 @@ class _FilterPageState extends State<FilterPage> {
 
     final result = [
       widget._sizedBox,
-      Text(name, style: _palette.titleSmall),
+      Text(name, style: _palette.smallTitle),
       widget._sizedBox,
       grid,
     ];
@@ -92,7 +92,7 @@ class _FilterPageState extends State<FilterPage> {
       appBar: CupertinoNavigationBar(
         backgroundColor: _palette.background,
         actionsForegroundColor: _palette.accent,
-        middle: Text('Filters', style: _palette.titleContrasted),
+        middle: Text('Filters', style: _palette.contrastedTitle),
         leading: IconButton(
           icon: Icon(
             Icons.close,

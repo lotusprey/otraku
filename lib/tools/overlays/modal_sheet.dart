@@ -22,11 +22,11 @@ class ModalSheet extends StatelessWidget {
     final palette = Provider.of<Theming>(context, listen: false).palette;
 
     return Container(
-      height: options.length * 40 + 65.0,
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      height: options.length * 40 + 55.0,
+      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: palette.primary,
+        color: palette.background,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
@@ -96,7 +96,7 @@ class _ModalOption extends StatelessWidget {
                   )
                 : Icon(
                     LineAwesomeIcons.angle_down,
-                    color: palette.primary,
+                    color: palette.background,
                     size: Palette.ICON_MEDIUM,
                   ),
           ],

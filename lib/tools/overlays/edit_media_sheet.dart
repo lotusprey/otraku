@@ -16,7 +16,7 @@ class EditMediaSheet extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.only(
-        top: Provider.of<ViewConfig>(context, listen: false).topInset + 10,
+        top: Provider.of<ViewConfig>(context, listen: false).topInset + 20,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -40,7 +40,6 @@ class EditMediaSheet extends StatelessWidget {
               _UpdateButton(palette),
             ],
           ),
-          WaveBarLoader(),
         ],
       ),
     );
@@ -64,6 +63,11 @@ class __UpdateButtonState extends State<_UpdateButton> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (_isLoading)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: WaveBarLoader(barWidth: 12),
+          ),
         RaisedButton(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           color: widget._palette.accent,

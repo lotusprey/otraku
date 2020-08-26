@@ -61,13 +61,13 @@ class _AuthPageState extends State<AuthPage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.account_circle,
                       size: Palette.ICON_MEDIUM,
-                      color: _palette.contrast,
+                      color: Colors.white,
                     ),
                     const SizedBox(width: 5),
-                    Text('Connect', style: _palette.contrastedTitle),
+                    Text('Connect', style: _palette.buttonText),
                   ],
                 ),
                 onPressed: _authenticate,

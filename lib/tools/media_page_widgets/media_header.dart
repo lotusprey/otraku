@@ -227,14 +227,14 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                         ? Icons.add
                         : Icons.edit,
                     size: Palette.ICON_SMALL,
-                    color: palette.contrast,
+                    color: Colors.white,
                   ),
                   const SizedBox(width: 10),
                   Text(
                       mediaObj.mediaListStatus == MediaListStatus.None
                           ? 'Add'
                           : describeEnum(mediaObj.mediaListStatus),
-                      style: palette.contrastedTitle),
+                      style: palette.buttonText),
                 ],
               ),
               onPressed: () {},

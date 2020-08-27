@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/models/tuple.dart';
@@ -27,7 +28,9 @@ class MediaItemData {
   }) {
     id = mediaId;
 
-    Provider.of<MediaItem>(context, listen: false).fetchData(id).then((data) {
+    Provider.of<MediaItem>(context, listen: false)
+        .fetchItemData(id)
+        .then((data) {
       //General
       title = data['title']['english'] ?? data['title']['romaji'];
       type = data['type'];
@@ -51,10 +54,13 @@ class MediaItemData {
       isFavourite = data['isFavourite'];
 
       if (data['mediaListEntry'] != null) {
-        mediaListStatus = getMediaListStatusFromString(
-            data['mediaListEntry']['status'], data['type']);
-      } else {
-        mediaListStatus = MediaListStatus.None;
+        mediaListStatus = stringToEnum(
+            data['mediaListEntry'],
+            Map.fromIterable(
+              MediaListStatus.values,
+              key: (element) => describeEnum(element),
+              value: (element) => element,
+            ));
       }
 
       //Images
@@ -195,14 +201,6 @@ class MediaItemData {
 
       setState();
     });
-  }
-
-  Future<void> toggleFavourite(BuildContext context) async {
-    final didToggle = await Provider.of<MediaItem>(context, listen: false)
-        .toggleFavourite(id, type);
-    if (didToggle) {
-      isFavourite = !isFavourite;
-    }
   }
 
   String _date(Map<String, dynamic> data) {

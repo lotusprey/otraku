@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/models/list_entry_user_data.dart';
 
 class MediaItem with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
@@ -16,9 +19,9 @@ class MediaItem with ChangeNotifier {
     };
   }
 
-  Future<Map<String, dynamic>> fetchData(int id) async {
+  Future<Map<String, dynamic>> fetchItemData(int id) async {
     const query = r'''
-      query Main($id: Int) {
+      query ItemData($id: Int) {
         Media(id: $id) {
           type
           title {
@@ -92,13 +95,50 @@ class MediaItem with ChangeNotifier {
         as Map<String, dynamic>;
   }
 
+  Future<ListEntryUserData> fetchUserData(int id) async {
+    final query = r'''
+      query ItemUserData($id: Int) {
+        Media(id: $id) {
+          mediaListEntry {
+            status
+            progress
+          }
+        }
+      }
+    ''';
+
+    final Map<String, Object> variables = {
+      'id': id,
+    };
+
+    final request = json.encode({
+      'query': query,
+      'variables': variables,
+    });
+
+    final result = await post(_url, body: request, headers: _headers);
+
+    final Map<String, dynamic> body = (json.decode(result.body)
+        as Map<String, dynamic>)['data']['Media']['mediaListEntry'];
+
+    final status = stringToEnum(
+        body['status'],
+        Map.fromIterable(
+          MediaListStatus.values,
+          key: (element) => describeEnum(element),
+          value: (element) => element,
+        ));
+
+    return ListEntryUserData(mediaListStatus: status);
+  }
+
   Future<bool> toggleFavourite(int id, String entryType) async {
-    final String type = entryType == 'ANIME' ? 'anime' : 'manga';
+    entryType = entryType.toLowerCase();
 
     final query = '''
       mutation(\$id: Int) {
-        ToggleFavourite(${type}Id: \$id) {
-          $type(page: 1, perPage: 1) {
+        ToggleFavourite(${entryType}Id: \$id) {
+          $entryType(page: 1, perPage: 1) {
             pageInfo {
               currentPage
             }

@@ -1,59 +1,48 @@
+import 'package:flutter/foundation.dart';
+
 enum MediaListStatus {
-  None,
-  Watching,
-  Reading,
-  Planning,
-  Completed,
-  Dropped,
-  Paused,
-  Rewatching,
-  Rereading,
+  CURRENT,
+  PLANNING,
+  COMPLETED,
+  DROPPED,
+  PAUSED,
+  REPEATING,
 }
 
-extension MediaListStatusExtension on MediaListStatus {
-  static const _fromEnum = {
-    MediaListStatus.None: '',
-    MediaListStatus.Watching: 'CURRENT',
-    MediaListStatus.Reading: 'CURRENT',
-    MediaListStatus.Planning: 'PLANNING',
-    MediaListStatus.Completed: 'COMPLETED',
-    MediaListStatus.Dropped: 'DROPPED',
-    MediaListStatus.Paused: 'PAUSED',
-    MediaListStatus.Rewatching: 'REPEATING',
-    MediaListStatus.Rereading: 'REPEATING',
-  };
-
-  String get string => _fromEnum[this];
+enum AnimeListStatus {
+  WATCHING,
+  PLANNING,
+  COMPLETED,
+  DROPPED,
+  PAUSED,
+  REWATCHING,
 }
 
-MediaListStatus getMediaListStatusFromString(String status, String mediaType) {
-  switch (status) {
-    case '':
-      return MediaListStatus.None;
-      break;
-    case 'CURRENT':
-      return mediaType == 'ANIME'
-          ? MediaListStatus.Watching
-          : MediaListStatus.Reading;
-      break;
-    case 'PLANNING':
-      return MediaListStatus.Planning;
-      break;
-    case 'COMPLETED':
-      return MediaListStatus.Completed;
-      break;
-    case 'DROPPED':
-      return MediaListStatus.Dropped;
-      break;
-    case 'PAUSED':
-      return MediaListStatus.Paused;
-      break;
-    case 'REPEATING':
-      return mediaType == 'ANIME'
-          ? MediaListStatus.Rewatching
-          : MediaListStatus.Rereading;
-      break;
-    default:
-      throw 'Invalid media status when converting from string';
+enum MangaListStatus {
+  READING,
+  PLANNING,
+  COMPLETED,
+  DROPPED,
+  PAUSED,
+  REREADING,
+}
+
+//An enum clarification function
+String listStatusSpecification(MediaListStatus status, bool isAnime) {
+  if (status == MediaListStatus.CURRENT) {
+    if (isAnime) {
+      return 'Watching';
+    }
+    return 'Reading';
   }
+
+  if (status == MediaListStatus.REPEATING) {
+    if (isAnime) {
+      return 'Rewatching';
+    }
+    return 'Rereading';
+  }
+
+  String str = describeEnum(status);
+  return str[0] + str.substring(1).toLowerCase();
 }

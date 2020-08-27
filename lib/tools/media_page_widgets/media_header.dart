@@ -299,13 +299,13 @@ class __StatusButtonState extends State<_StatusButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(
-            status != null ? Icons.add : Icons.edit,
+            status == null ? Icons.add : Icons.edit,
             size: Palette.ICON_SMALL,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
           Text(
-              status != null
+              status == null
                   ? 'Add'
                   : listStatusSpecification(
                       status,

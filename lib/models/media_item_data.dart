@@ -55,7 +55,7 @@ class MediaItemData {
 
       if (data['mediaListEntry'] != null) {
         mediaListStatus = stringToEnum(
-            data['mediaListEntry'],
+            data['mediaListEntry']['status'].toString(),
             Map.fromIterable(
               MediaListStatus.values,
               key: (element) => describeEnum(element),

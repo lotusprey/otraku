@@ -121,7 +121,11 @@ class MediaItem with ChangeNotifier {
     final Map<String, dynamic> body = (json.decode(result.body)
         as Map<String, dynamic>)['data']['Media']['mediaListEntry'];
 
-    final status = stringToEnum(
+    if (body == null) {
+      return ListEntryUserData();
+    }
+
+    MediaListStatus status = stringToEnum(
         body['status'],
         Map.fromIterable(
           MediaListStatus.values,
@@ -129,7 +133,10 @@ class MediaItem with ChangeNotifier {
           value: (element) => element,
         ));
 
-    return ListEntryUserData(mediaListStatus: status);
+    return ListEntryUserData(
+      mediaListStatus: status,
+      progress: body['progress'],
+    );
   }
 
   Future<bool> toggleFavourite(int id, String entryType) async {

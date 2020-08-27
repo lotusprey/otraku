@@ -1,19 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/list_entry_user_data.dart';
+import 'package:otraku/models/media_item_data.dart';
+import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
 
-class EditMediaSheet extends StatelessWidget {
+class EditMediaSheet extends StatefulWidget {
   final Function(ListEntryUserData) update;
+  final MediaItemData mediaObj;
 
-  EditMediaSheet(this.update);
+  EditMediaSheet(this.update, this.mediaObj);
+
+  @override
+  _EditMediaSheetState createState() => _EditMediaSheetState();
+}
+
+class _EditMediaSheetState extends State<EditMediaSheet> {
+  bool _isLoading = true;
+
+  ListEntryUserData _data;
+  Palette _palette;
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
-
     return Container(
       margin: EdgeInsets.only(
         top: Provider.of<ViewConfig>(context, listen: false).topInset + 20,
@@ -24,7 +35,7 @@ class EditMediaSheet extends StatelessWidget {
           topLeft: Radius.circular(5),
           topRight: Radius.circular(5),
         ),
-        color: palette.background,
+        color: _palette.background,
       ),
       child: Column(
         children: [
@@ -34,22 +45,46 @@ class EditMediaSheet extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.close),
                 iconSize: Palette.ICON_MEDIUM,
-                color: palette.contrast,
+                color: _palette.contrast,
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              _UpdateButton(palette),
+              if (!_isLoading)
+                _UpdateButton(
+                  palette: _palette,
+                  data: _data,
+                  update: widget.update,
+                ),
             ],
           ),
         ],
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<MediaItem>(context, listen: false)
+        .fetchUserData(widget.mediaObj.id);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _palette = Provider.of<Theming>(context).palette;
+  }
 }
 
 class _UpdateButton extends StatefulWidget {
-  final Palette _palette;
+  final Palette palette;
+  final ListEntryUserData data;
+  final Function(ListEntryUserData) update;
 
-  _UpdateButton(this._palette);
+  _UpdateButton({
+    @required this.palette,
+    @required this.data,
+    @required this.update,
+  });
 
   @override
   __UpdateButtonState createState() => __UpdateButtonState();
@@ -70,9 +105,11 @@ class __UpdateButtonState extends State<_UpdateButton> {
           ),
         RaisedButton(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          color: widget._palette.accent,
-          child: Text('Save', style: widget._palette.buttonText),
-          onPressed: () => setState(() => _isLoading = true),
+          color: widget.palette.accent,
+          child: Text('Save', style: widget.palette.buttonText),
+          onPressed: () {
+            //TODO
+          },
         ),
       ],
     );
@@ -80,17 +117,24 @@ class __UpdateButtonState extends State<_UpdateButton> {
 }
 
 class _Content extends StatefulWidget {
-  final Function(ListEntryUserData) update;
+  final Palette palette;
 
-  _Content(this.update);
+  _Content(this.palette);
 
   @override
   __ContentState createState() => __ContentState();
 }
 
 class __ContentState extends State<_Content> {
+  bool _isLoading = true;
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return _isLoading ? Container() : Container();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 }

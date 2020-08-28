@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class CustomDropDown extends StatefulWidget {
   final String substituteText;
   final List<String> options;
   final int startIndex;
+  final double additionalOffsetY;
 
   CustomDropDown({
     @required this.options,
     this.substituteText,
     this.startIndex,
+    this.additionalOffsetY = 0,
   });
 
   @override
@@ -24,8 +27,8 @@ class _CustomDropDownState extends State<CustomDropDown>
   Palette _palette;
   bool _active = false;
   AnimationController _controller;
+  OverlayState _overlay;
   OverlayEntry _overlayEntry;
-  Offset _overlayPos;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +63,7 @@ class _CustomDropDownState extends State<CustomDropDown>
           _overlayEntry.remove();
           _controller.reverse();
         } else {
-          Overlay.of(context).insert(_overlayEntry);
+          _overlay.insert(_overlayEntry);
           _controller.forward();
         }
         _active = !_active;
@@ -78,28 +81,34 @@ class _CustomDropDownState extends State<CustomDropDown>
       vsync: this,
     );
 
+    _overlay = Overlay.of(context);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final RenderBox renderBox = _key.currentContext.findRenderObject();
-      final size = renderBox.size;
       final offset = renderBox.localToGlobal(Offset.zero);
-      _overlayPos = Offset(offset.dx, offset.dy - size.height - 500);
-      print(offset);
-      print(_overlayPos);
+      final offsetY =
+          offset.dy + widget.additionalOffsetY + renderBox.size.height + 10;
+
       _overlayEntry = OverlayEntry(
         builder: (context) => Positioned(
-          top: _overlayPos.dy,
-          left: _overlayPos.dx,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            decoration: BoxDecoration(
-              color: Colors.black, //_palette.primary,
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: widget.options
-                  .map((o) => Text(o, style: _palette.paragraph))
-                  .toList(),
+          top: offsetY,
+          left: offset.dx,
+          child: Material(
+            color: _palette.primary,
+            borderRadius: BorderRadius.circular(5),
+            child: Container(
+              width: renderBox.size.width,
+              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.options
+                    .map((o) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Text(o, style: _palette.smallTitle),
+                        ))
+                    .toList(),
+              ),
             ),
           ),
         ),
@@ -111,5 +120,13 @@ class _CustomDropDownState extends State<CustomDropDown>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _palette = Provider.of<Theming>(context).palette;
+  }
+
+  @override
+  void dispose() {
+    if (_active) {
+      _overlayEntry.remove();
+    }
+    super.dispose();
   }
 }

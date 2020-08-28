@@ -65,6 +65,10 @@ class _EditMediaSheetState extends State<EditMediaSheet> {
                   children: [
                     Text('Status', style: _palette.smallTitle),
                     CustomDropDown(
+                      additionalOffsetY: -Provider.of<ViewConfig>(
+                        context,
+                        listen: false,
+                      ).height,
                       substituteText: 'Add',
                       options: widget.mediaObj.type == 'ANIME'
                           ? MediaListStatus.values

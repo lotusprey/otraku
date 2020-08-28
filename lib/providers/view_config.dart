@@ -4,11 +4,13 @@ import 'package:otraku/pages/tab_manager.dart';
 
 class ViewConfig with ChangeNotifier {
   static int _pageIndex = TabManager.ANIME_LIST;
-  static LargeTileConfiguration _largeTileConfiguration;
   static double _topInset;
+  static double _height;
+  static LargeTileConfiguration _largeTileConfiguration;
 
   void init(BuildContext context) {
     _topInset = MediaQuery.of(context).padding.top;
+    _height = MediaQuery.of(context).size.height;
 
     double tileWHRatio = 0.5;
     double tileWidth = (MediaQuery.of(context).size.width - 40) / 3;
@@ -33,6 +35,10 @@ class ViewConfig with ChangeNotifier {
 
   double get topInset {
     return _topInset;
+  }
+
+  double get height {
+    return _height;
   }
 
   void switchPage(int index) {

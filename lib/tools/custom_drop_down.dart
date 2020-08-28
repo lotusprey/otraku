@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
-import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class CustomDropDown extends StatefulWidget {
-  final String substituteText;
   final List<String> options;
   final int startIndex;
+  final String substituteText;
   final double additionalOffsetY;
 
   CustomDropDown({
     @required this.options,
-    this.substituteText,
     this.startIndex,
+    this.substituteText = 'Select',
     this.additionalOffsetY = 0,
   });
 
@@ -23,15 +22,64 @@ class CustomDropDown extends StatefulWidget {
 class _CustomDropDownState extends State<CustomDropDown>
     with SingleTickerProviderStateMixin {
   final GlobalKey _key = GlobalKey();
+
   int _index;
   Palette _palette;
-  bool _active = false;
   AnimationController _controller;
-  OverlayState _overlay;
-  OverlayEntry _overlayEntry;
+  Animation<double> _opacity;
+
+  bool _showOverlay = false;
+  OverlayEntry _entry;
+  Offset _overlayOffset;
+  double _overlayWidth;
 
   @override
   Widget build(BuildContext context) {
+    if (_showOverlay) {
+      _entry = OverlayEntry(
+        builder: (ctx) => Positioned(
+          top: _overlayOffset.dy,
+          left: _overlayOffset.dx,
+          child: FadeTransition(
+            opacity: _opacity,
+            child: Material(
+              color: _palette.primary,
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                width: _overlayWidth,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: widget.options
+                      .map((o) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Text(o, style: _palette.smallTitle),
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Overlay.of(context).insert(_entry);
+        _controller.forward();
+      });
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _controller.reverse().then((__) {
+          if (_entry != null) {
+            _entry.remove();
+          }
+          _entry = null;
+        });
+      });
+    }
+
     return GestureDetector(
       key: _key,
       child: Container(
@@ -58,16 +106,7 @@ class _CustomDropDownState extends State<CustomDropDown>
           ],
         ),
       ),
-      onTap: () {
-        if (_active) {
-          _overlayEntry.remove();
-          _controller.reverse();
-        } else {
-          _overlay.insert(_overlayEntry);
-          _controller.forward();
-        }
-        _active = !_active;
-      },
+      onTap: () => setState(() => _showOverlay = !_showOverlay),
     );
   }
 
@@ -75,43 +114,20 @@ class _CustomDropDownState extends State<CustomDropDown>
   void initState() {
     super.initState();
     _index = widget.startIndex;
-
     _controller = AnimationController(
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-
-    _overlay = Overlay.of(context);
+    _opacity = Tween<double>(begin: 0, end: 1).animate(_controller);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final RenderBox renderBox = _key.currentContext.findRenderObject();
       final offset = renderBox.localToGlobal(Offset.zero);
-      final offsetY =
-          offset.dy + widget.additionalOffsetY + renderBox.size.height + 10;
 
-      _overlayEntry = OverlayEntry(
-        builder: (context) => Positioned(
-          top: offsetY,
-          left: offset.dx,
-          child: Material(
-            color: _palette.primary,
-            borderRadius: BorderRadius.circular(5),
-            child: Container(
-              width: renderBox.size.width,
-              padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widget.options
-                    .map((o) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: Text(o, style: _palette.smallTitle),
-                        ))
-                    .toList(),
-              ),
-            ),
-          ),
-        ),
+      _overlayWidth = renderBox.size.width;
+      _overlayOffset = Offset(
+        offset.dx,
+        offset.dy + widget.additionalOffsetY + renderBox.size.height + 10,
       );
     });
   }
@@ -124,9 +140,10 @@ class _CustomDropDownState extends State<CustomDropDown>
 
   @override
   void dispose() {
-    if (_active) {
-      _overlayEntry.remove();
+    if (_showOverlay) {
+      _entry.remove();
     }
+    _controller.dispose();
     super.dispose();
   }
 }

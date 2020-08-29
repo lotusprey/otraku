@@ -56,33 +56,33 @@ class _EditMediaSheetState extends State<EditMediaSheet> {
                 ),
             ],
           ),
-          Expanded(
-            child: ListView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text('Status', style: _palette.smallTitle),
-                    CustomDropDown(
-                      options: widget.mediaObj.type == 'ANIME'
-                          ? MediaListStatus.values
-                              .map((v) => listStatusSpecification(v, true))
-                              .toList()
-                          : MediaListStatus.values
-                              .map((v) => listStatusSpecification(v, false))
-                              .toList(),
-                      substituteText: 'Add',
-                      additionalOffsetY: -Provider.of<ViewConfig>(
-                        context,
-                        listen: false,
-                      ).height,
-                    ),
-                  ],
-                ),
-              ],
+          if (_data != null)
+            Expanded(
+              child: ListView(
+                physics: const BouncingScrollPhysics(),
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Status', style: _palette.smallTitle),
+                      CustomDropDown(
+                        options: widget.mediaObj.type == 'ANIME'
+                            ? MediaListStatus.values
+                                .map((v) => listStatusSpecification(v, true))
+                                .toList()
+                            : MediaListStatus.values
+                                .map((v) => listStatusSpecification(v, false))
+                                .toList(),
+                        substituteText: 'Add',
+                        startIndex: _data.mediaListStatus != null
+                            ? _data.mediaListStatus.index
+                            : null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

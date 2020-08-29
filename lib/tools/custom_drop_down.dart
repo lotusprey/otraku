@@ -6,13 +6,11 @@ class CustomDropDown extends StatefulWidget {
   final List<String> options;
   final int startIndex;
   final String substituteText;
-  final double additionalOffsetY;
 
   CustomDropDown({
     @required this.options,
     this.startIndex,
     this.substituteText = 'Select',
-    this.additionalOffsetY = 0,
   });
 
   @override
@@ -33,8 +31,7 @@ class _CustomDropDownState extends State<CustomDropDown>
   Offset _overlayOffset;
   double _overlayWidth;
 
-  @override
-  Widget build(BuildContext context) {
+  void _buildOverlay() {
     if (_showOverlay) {
       _entry = OverlayEntry(
         builder: (ctx) => Positioned(
@@ -52,12 +49,7 @@ class _CustomDropDownState extends State<CustomDropDown>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.options
-                      .map((o) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2),
-                            child: Text(o, style: _palette.smallTitle),
-                          ))
-                      .toList(),
+                  children: _buildListOptions(),
                 ),
               ),
             ),
@@ -79,6 +71,26 @@ class _CustomDropDownState extends State<CustomDropDown>
         });
       });
     }
+  }
+
+  List<Widget> _buildListOptions() {
+    List<Widget> list = [];
+    for (int i = 0; i < widget.options.length; i++) {
+      list.add(Container(
+        color: _palette.primary,
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Text(
+          widget.options[i],
+          style: _index != i ? _palette.detail : _palette.paragraph,
+        ),
+      ));
+    }
+    return list;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _buildOverlay();
 
     return GestureDetector(
       key: _key,
@@ -127,7 +139,7 @@ class _CustomDropDownState extends State<CustomDropDown>
       _overlayWidth = renderBox.size.width;
       _overlayOffset = Offset(
         offset.dx,
-        offset.dy + widget.additionalOffsetY + renderBox.size.height + 10,
+        offset.dy + renderBox.size.height + 10,
       );
     });
   }

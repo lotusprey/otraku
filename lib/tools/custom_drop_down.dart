@@ -45,7 +45,7 @@ class _CustomDropDownState extends State<CustomDropDown>
               child: Container(
                 width: _overlayWidth,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,13 +76,19 @@ class _CustomDropDownState extends State<CustomDropDown>
   List<Widget> _buildListOptions() {
     List<Widget> list = [];
     for (int i = 0; i < widget.options.length; i++) {
-      list.add(Container(
-        color: _palette.primary,
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Text(
-          widget.options[i],
-          style: _index != i ? _palette.detail : _palette.paragraph,
+      list.add(GestureDetector(
+        child: Container(
+          width: _overlayWidth,
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: Text(
+            widget.options[i],
+            style: _index != i ? _palette.paragraph : _palette.exclamation,
+          ),
         ),
+        onTap: () => setState(() {
+          _showOverlay = !_showOverlay;
+          _index = i;
+        }),
       ));
     }
     return list;

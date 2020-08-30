@@ -73,11 +73,11 @@ flutter:
         - asset: resources/fonts/Overpass-Regular.ttf
         - asset: resources/fonts/Overpass-Bold.ttf
           weight: 700
-    - family: Arimo
+    - family: Rubik
       fonts:
-        - asset: resources/fonts/Arimo-Regular.ttf
-        - asset: resources/fonts/Arimo-Bold.ttf
-          weight: 700
+        - asset: resources/fonts/Rubik-Regular.ttf
+        - asset: resources/fonts/Rubik-Medium.ttf
+          weight: 500
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

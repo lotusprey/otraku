@@ -109,8 +109,9 @@ class Palette {
   final TextStyle contrastedTitle;
   final TextStyle smallTitle;
   final TextStyle buttonText;
-  final TextStyle detail;
+  final TextStyle exclamation;
   final TextStyle paragraph;
+  final TextStyle detail;
 
   Palette.light(Accents accents)
       : this._(
@@ -123,35 +124,39 @@ class Palette {
           headline: TextStyle(
             fontSize: FONT_BIG,
             color: Color(0xff4a4a4a),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           accentedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: accents.swatch.item1,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           contrastedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.black,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           smallTitle: TextStyle(
             fontSize: FONT_SMALL,
             color: Color(0xff4a4a4a),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           buttonText: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
-          detail: TextStyle(
+          exclamation: TextStyle(
             fontSize: FONT_SMALL,
-            color: Color(0xff4a4a4a),
+            color: accents.swatch.item1,
           ),
           paragraph: TextStyle(
             fontSize: FONT_SMALL,
             color: Colors.black,
+          ),
+          detail: TextStyle(
+            fontSize: FONT_SMALL,
+            color: Color(0xff4a4a4a),
           ),
           brightness: Brightness.dark,
         );
@@ -159,7 +164,7 @@ class Palette {
   Palette.dark(Accents accents)
       : this._(
           background: Colors.black,
-          primary: Color(0xff141414),
+          primary: Color(0xff212121),
           accent: accents.swatch.item1,
           contrast: Colors.white,
           faded: Color(0xff999999),
@@ -167,35 +172,39 @@ class Palette {
           headline: TextStyle(
             fontSize: FONT_BIG,
             color: Color(0xff999999),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           accentedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: accents.swatch.item1,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           contrastedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           smallTitle: TextStyle(
             fontSize: FONT_SMALL,
             color: Color(0xff999999),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
           buttonText: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
           ),
-          detail: TextStyle(
+          exclamation: TextStyle(
             fontSize: FONT_SMALL,
-            color: Color(0xff999999),
+            color: accents.swatch.item1,
           ),
           paragraph: TextStyle(
             fontSize: FONT_SMALL,
             color: Colors.white,
+          ),
+          detail: TextStyle(
+            fontSize: FONT_SMALL,
+            color: Color(0xff999999),
           ),
           brightness: Brightness.light,
         );
@@ -212,8 +221,9 @@ class Palette {
     @required this.contrastedTitle,
     @required this.smallTitle,
     @required this.buttonText,
-    @required this.detail,
+    @required this.exclamation,
     @required this.paragraph,
+    @required this.detail,
     @required Brightness brightness,
   }) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

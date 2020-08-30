@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
-          fontFamily: 'Overpass',
+          fontFamily: 'Rubik',
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: Consumer<Theming>(

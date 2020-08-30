@@ -38,7 +38,7 @@ class MediaList extends StatelessWidget {
             ),
             title: Text(
               entry.title,
-              style: palette.smallTitle,
+              style: palette.paragraph,
             ),
             trailing: Column(
               mainAxisSize: MainAxisSize.min,

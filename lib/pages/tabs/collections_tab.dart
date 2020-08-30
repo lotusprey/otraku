@@ -185,6 +185,19 @@ class _CollectionsTabState extends State<CollectionsTab> {
 
   //Return filtered lists to output on the screen
   List<Widget> _listBuilder() {
+    if (_listNames.length == 1) {
+      return [
+        SliverPadding(
+          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 30),
+          sliver: MediaList(
+            entries: _listEntries[0],
+            scoreFormat: _scoreFormat,
+            name: _listNames[0],
+          ),
+        ),
+      ];
+    }
+
     List<Widget> widgets = [];
     for (int i = 0; i < _listNames.length; i++) {
       widgets

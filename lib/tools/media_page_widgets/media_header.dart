@@ -7,7 +7,7 @@ import 'package:otraku/models/media_item_data.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/tools/overlays/edit_media_sheet.dart';
+import 'package:otraku/tools/overlays/edit_media_tools/edit_media_sheet.dart';
 import 'package:provider/provider.dart';
 
 class MediaHeader implements SliverPersistentHeaderDelegate {

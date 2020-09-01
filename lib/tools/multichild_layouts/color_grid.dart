@@ -13,7 +13,7 @@ class ColorGrid extends StatelessWidget {
 
     return GridView.builder(
       shrinkWrap: true,
-      itemCount: Accents.values.length,
+      itemCount: Accent.values.length,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
@@ -21,7 +21,7 @@ class ColorGrid extends StatelessWidget {
         maxCrossAxisExtent: 60,
       ),
       itemBuilder: (ctx, index) {
-        final accent = Accents.values[index].swatch.item1;
+        final accent = Accent.values[index].color;
 
         return GestureDetector(
           child: Container(
@@ -38,7 +38,7 @@ class ColorGrid extends StatelessWidget {
                 : null,
           ),
           onTap: () => Provider.of<Theming>(context, listen: false)
-              .setAccent(Accents.values[index]),
+              .setAccent(Accent.values[index]),
         );
       },
     );

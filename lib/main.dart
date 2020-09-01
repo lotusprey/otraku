@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Otraku',
         theme: ThemeData(
+          accentColor: Colors.transparent,
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
           fontFamily: 'Rubik',

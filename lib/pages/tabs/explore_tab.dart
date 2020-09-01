@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/pages/pushable/search_page.dart';
+import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
@@ -37,6 +38,7 @@ class _ExploreTabState extends State<ExploreTab> {
   List<Map<String, dynamic>> _data = [];
 
   //Output settings
+  Palette _palette;
   LargeTileConfiguration _tileConfig;
   bool _isLoading = true;
   bool _canIncrementPage = true;
@@ -192,7 +194,7 @@ class _ExploreTabState extends State<ExploreTab> {
                     child: Center(
                       child: Text(
                         'No results',
-                        style: Theme.of(context).textTheme.headline4,
+                        style: _palette.smallTitle,
                       ),
                     ),
                   ),
@@ -217,6 +219,8 @@ class _ExploreTabState extends State<ExploreTab> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    _palette = Provider.of<Theming>(context).palette;
 
     if (!_didChangeDependencies) {
       widget.scrollCtrl.addListener(_onScroll);

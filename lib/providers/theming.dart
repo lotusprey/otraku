@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Theming with ChangeNotifier {
   static bool _isDark;
-  static Accents _accents;
+  static Accent _accent;
 
   Palette _palette;
 
@@ -20,20 +19,20 @@ class Theming with ChangeNotifier {
 
     int index = preferences.getInt('accents');
     if (index == null) {
-      _accents = Accents.blue;
-      preferences.setInt('accents', Accents.blue.index);
+      _accent = Accent.blue;
+      preferences.setInt('accents', Accent.blue.index);
     } else {
-      _accents = Accents.values[index];
+      _accent = Accent.values[index];
     }
 
     if (_isDark) {
-      _palette = Palette.dark(_accents);
+      _palette = Palette.dark(_accent);
     } else {
-      _palette = Palette.light(_accents);
+      _palette = Palette.light(_accent);
     }
   }
 
-  void _saveConfig({bool isDarkValue, Accents accentsValue}) async {
+  void _saveConfig({bool isDarkValue, Accent accentValue}) async {
     final preferences = await SharedPreferences.getInstance();
 
     if (isDarkValue != null) {
@@ -41,9 +40,9 @@ class Theming with ChangeNotifier {
       preferences.setBool('isDark', isDarkValue);
     }
 
-    if (accentsValue != null) {
-      _accents = accentsValue;
-      preferences.setInt('accents', accentsValue.index);
+    if (accentValue != null) {
+      _accent = accentValue;
+      preferences.setInt('accents', accentValue.index);
     }
   }
 
@@ -53,26 +52,26 @@ class Theming with ChangeNotifier {
     }
 
     if (toDark) {
-      _palette = Palette.dark(_accents);
+      _palette = Palette.dark(_accent);
       _saveConfig(isDarkValue: true);
     } else {
-      _palette = Palette.light(_accents);
+      _palette = Palette.light(_accent);
       _saveConfig(isDarkValue: false);
     }
     notifyListeners();
   }
 
-  void setAccent(Accents accents) {
-    if (accents == _accents) {
+  void setAccent(Accent accent) {
+    if (accent == _accent) {
       return;
     }
 
     if (_isDark) {
-      _palette = Palette.dark(accents);
+      _palette = Palette.dark(accent);
     } else {
-      _palette = Palette.light(accents);
+      _palette = Palette.light(accent);
     }
-    _saveConfig(accentsValue: accents);
+    _saveConfig(accentValue: accent);
     notifyListeners();
   }
 
@@ -84,8 +83,8 @@ class Theming with ChangeNotifier {
     return _isDark;
   }
 
-  Accents get accents {
-    return _accents;
+  Accent get accent {
+    return _accent;
   }
 }
 
@@ -103,7 +102,6 @@ class Palette {
   final Color accent;
   final Color contrast;
   final Color faded;
-  final Color error;
   final TextStyle headline;
   final TextStyle accentedTitle;
   final TextStyle contrastedTitle;
@@ -113,14 +111,13 @@ class Palette {
   final TextStyle paragraph;
   final TextStyle detail;
 
-  Palette.light(Accents accents)
+  Palette.light(Accent accent)
       : this._(
           background: Colors.white,
           primary: Color(0xffe6eaed),
-          accent: accents.swatch.item1,
+          accent: accent.color,
           contrast: Colors.black,
           faded: Color(0xff4a4a4a),
-          error: accents.swatch.item2,
           headline: TextStyle(
             fontSize: FONT_BIG,
             color: Color(0xff4a4a4a),
@@ -128,7 +125,7 @@ class Palette {
           ),
           accentedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
-            color: accents.swatch.item1,
+            color: accent.color,
             fontWeight: FontWeight.w500,
           ),
           contrastedTitle: TextStyle(
@@ -148,7 +145,7 @@ class Palette {
           ),
           exclamation: TextStyle(
             fontSize: FONT_SMALL,
-            color: accents.swatch.item1,
+            color: accent.color,
           ),
           paragraph: TextStyle(
             fontSize: FONT_SMALL,
@@ -161,14 +158,13 @@ class Palette {
           brightness: Brightness.dark,
         );
 
-  Palette.dark(Accents accents)
+  Palette.dark(Accent accent)
       : this._(
           background: Colors.black,
           primary: Color(0xff212121),
-          accent: accents.swatch.item1,
+          accent: accent.color,
           contrast: Colors.white,
           faded: Color(0xff999999),
-          error: accents.swatch.item2,
           headline: TextStyle(
             fontSize: FONT_BIG,
             color: Color(0xff999999),
@@ -176,7 +172,7 @@ class Palette {
           ),
           accentedTitle: TextStyle(
             fontSize: FONT_MEDIUM,
-            color: accents.swatch.item1,
+            color: accent.color,
             fontWeight: FontWeight.w500,
           ),
           contrastedTitle: TextStyle(
@@ -196,7 +192,7 @@ class Palette {
           ),
           exclamation: TextStyle(
             fontSize: FONT_SMALL,
-            color: accents.swatch.item1,
+            color: accent.color,
           ),
           paragraph: TextStyle(
             fontSize: FONT_SMALL,
@@ -215,7 +211,6 @@ class Palette {
     @required this.accent,
     @required this.contrast,
     @required this.faded,
-    @required this.error,
     @required this.headline,
     @required this.accentedTitle,
     @required this.contrastedTitle,
@@ -227,35 +222,26 @@ class Palette {
     @required Brightness brightness,
   }) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: background,
       statusBarIconBrightness: brightness,
-      systemNavigationBarColor: background,
       systemNavigationBarIconBrightness: brightness,
     ));
   }
 }
 
-enum Accents {
+enum Accent {
   blue,
   orange,
   green,
+  pink,
 }
 
-extension AccentsExtension on Accents {
-  static const _swatches = const {
-    Accents.blue: Tuple(
-      Color(0xff216ead),
-      Color(0xffdb3550),
-    ),
-    Accents.orange: Tuple(
-      Color(0xffeda60c),
-      Color(0xffdb3550),
-    ),
-    Accents.green: Tuple(
-      Color(0xff32a852),
-      Color(0xffdb3550),
-    ),
+extension AccentsExtension on Accent {
+  static const _colors = const {
+    Accent.blue: Color(0xff2172b5),
+    Accent.orange: Color(0xffeda60c),
+    Accent.green: Color(0xff32a852),
+    Accent.pink: Color(0xffdb397a),
   };
 
-  Tuple<Color, Color> get swatch => _swatches[this];
+  Color get color => _colors[this];
 }

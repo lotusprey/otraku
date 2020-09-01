@@ -99,6 +99,8 @@ class MediaItem with ChangeNotifier {
     final query = r'''
       query ItemUserData($id: Int) {
         Media(id: $id) {
+          episodes
+          chapters
           mediaListEntry {
             status
             progress
@@ -118,15 +120,18 @@ class MediaItem with ChangeNotifier {
 
     final result = await post(_url, body: request, headers: _headers);
 
-    final Map<String, dynamic> body = (json.decode(result.body)
-        as Map<String, dynamic>)['data']['Media']['mediaListEntry'];
+    final Map<String, dynamic> body =
+        (json.decode(result.body) as Map<String, dynamic>)['data']['Media'];
 
-    if (body == null) {
-      return ListEntryUserData();
+    if (body['mediaListEntry'] == null) {
+      return ListEntryUserData(
+        id: id,
+        progressMax: body['episodes'] ?? body['chapters'],
+      );
     }
 
     MediaListStatus status = stringToEnum(
-        body['status'],
+        body['mediaListEntry']['status'],
         Map.fromIterable(
           MediaListStatus.values,
           key: (element) => describeEnum(element),
@@ -134,10 +139,14 @@ class MediaItem with ChangeNotifier {
         ));
 
     return ListEntryUserData(
+      id: id,
       mediaListStatus: status,
-      progress: body['progress'],
+      progress: body['mediaListEntry']['progress'],
+      progressMax: body['episodes'] ?? body['chapters'],
     );
   }
+
+  Future<void> updateUserData(ListEntryUserData data) async {}
 
   Future<bool> toggleFavourite(int id, String entryType) async {
     entryType = entryType.toLowerCase();

@@ -20,9 +20,12 @@ class NumberField extends StatefulWidget {
 class _NumberFieldState extends State<NumberField> {
   TextEditingController _controller;
   int _maxValue;
+  String _currentValue;
 
   @override
   Widget build(BuildContext context) {
+    _controller.text = _currentValue;
+
     return SizedBox(
       height: 40,
       child: TextFormField(
@@ -51,38 +54,22 @@ class _NumberFieldState extends State<NumberField> {
             onPressed: () => _validateInput(add: 1),
           ),
         ),
+        onChanged: (value) => _validateInput(),
       ),
     );
   }
 
   void _validateInput({int add = 0}) {
     if (_controller.text == '') {
-      _controller.text = '0';
-      _controller.selection = TextSelection.fromPosition(
-        TextPosition(offset: _controller.text.length),
-      );
+      setState(() => _currentValue = '0');
     } else {
       int number = int.parse(_controller.text) + add;
       if (number > _maxValue) {
-        _controller.text = _maxValue.toString();
-        _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length),
-        );
+        setState(() => _currentValue = _maxValue.toString());
       } else if (number < 0) {
-        _controller.text = '0';
-        _controller.selection = TextSelection.fromPosition(
-          TextPosition(offset: _controller.text.length),
-        );
+        setState(() => _currentValue = '0');
       } else {
-        String str = number.toString();
-        _controller.value = _controller.value.copyWith(
-          text: str,
-          selection: TextSelection(
-            baseOffset: str.length,
-            extentOffset: str.length,
-          ),
-          composing: TextRange.empty,
-        );
+        setState(() => _currentValue = number.toString());
       }
     }
   }
@@ -90,10 +77,9 @@ class _NumberFieldState extends State<NumberField> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue.toString());
-
+    _controller = TextEditingController();
+    _currentValue = widget.initialValue.toString();
     _maxValue = widget.maxValue ?? 10000;
-    _controller.addListener(_validateInput);
   }
 
   @override

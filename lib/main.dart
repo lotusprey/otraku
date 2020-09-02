@@ -3,7 +3,7 @@ import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/wave_bar_loader.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 import 'enums/auth_enum.dart';
 import 'pages/auth_page.dart';
@@ -93,7 +93,7 @@ class MyApp extends StatelessWidget {
                 ),
                 child: Scaffold(
                   backgroundColor: theming.palette.background,
-                  body: const Center(child: WaveBarLoader()),
+                  body: const Center(child: BlossomLoader()),
                 ),
               );
             },

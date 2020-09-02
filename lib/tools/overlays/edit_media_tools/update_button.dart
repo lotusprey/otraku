@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/list_entry_user_data.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
-import 'package:otraku/tools/wave_bar_loader.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 
 class UpdateButton extends StatefulWidget {
@@ -40,6 +40,6 @@ class _UpdateButtonState extends State<UpdateButton> {
               });
             },
           )
-        : const WaveBarLoader(barWidth: 10);
+        : const BlossomLoader(size: 30);
   }
 }

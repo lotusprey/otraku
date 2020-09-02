@@ -6,12 +6,12 @@ import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/pages/pushable/search_page.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/tools/navigation/media_control_header.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
-import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:otraku/providers/explorable_media.dart';
 
@@ -188,7 +188,7 @@ class _ExploreTabState extends State<ExploreTab> {
               )
             : _isLoading
                 ? const SliverFillRemaining(
-                    child: Center(child: WaveBarLoader()),
+                    child: Center(child: BlossomLoader()),
                   )
                 : SliverFillRemaining(
                     child: Center(
@@ -201,7 +201,7 @@ class _ExploreTabState extends State<ExploreTab> {
         if (_data.length > 0)
           _isLoading
               ? const SliverFillRemaining(
-                  child: Center(child: WaveBarLoader()),
+                  child: Center(child: BlossomLoader()),
                 )
               : const SliverToBoxAdapter(
                   child: SizedBox(height: 80),

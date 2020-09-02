@@ -7,11 +7,11 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/navigation/media_control_header.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
-import 'package:otraku/tools/wave_bar_loader.dart';
 import 'package:provider/provider.dart';
 
 class CollectionsTab extends StatefulWidget {
@@ -101,7 +101,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? const Center(child: WaveBarLoader())
+        ? const Center(child: BlossomLoader())
         : _collection.names.length > 0
             ? CustomScrollView(
                 controller: widget.scrollCtrl,

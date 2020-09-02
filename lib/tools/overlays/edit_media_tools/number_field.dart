@@ -25,6 +25,10 @@ class _NumberFieldState extends State<NumberField> {
   @override
   Widget build(BuildContext context) {
     _controller.text = _currentValue;
+    _controller.selection = TextSelection(
+      baseOffset: _currentValue.length,
+      extentOffset: _currentValue.length,
+    );
 
     return SizedBox(
       height: 40,

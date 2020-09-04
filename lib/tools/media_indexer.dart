@@ -10,7 +10,7 @@ class MediaIndexer extends StatelessWidget {
   static void pushMedia(BuildContext context, int mediaId, {Object tag}) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => MediaItemPage(id: mediaId, tag: tag),
+        builder: (_) => MediaItemPage(id: mediaId, tag: tag),
       ),
     );
   }

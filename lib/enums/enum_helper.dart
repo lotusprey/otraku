@@ -13,7 +13,7 @@ String clarifyEnum(String str) {
 
 /*
 Recieves a string that represents the text version of
-an enum value (similar to what describeEnum in "foundation"
+an enum value (what describeEnum in "foundation"
 would normally return) and a map of enum values. The map
 can be aquired this way:
 Map.fromIterable(

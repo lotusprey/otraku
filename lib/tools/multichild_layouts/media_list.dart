@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/score_format_enum.dart';
-import 'package:otraku/models/list_entry_tile_data.dart';
+import 'package:otraku/models/list_entry_media_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:provider/provider.dart';
 
 class MediaList extends StatelessWidget {
-  final List<ListEntryTileData> entries;
+  final List<ListEntryMediaData> entries;
   final String scoreFormat;
   final String name;
 

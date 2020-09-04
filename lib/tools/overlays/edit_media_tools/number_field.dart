@@ -59,6 +59,10 @@ class _NumberFieldState extends State<NumberField> {
           ),
         ),
         onChanged: (value) => _validateInput(),
+        onTap: () => _controller.selection = TextSelection(
+          baseOffset: _currentValue.length,
+          extentOffset: _currentValue.length,
+        ),
       ),
     );
   }

@@ -5,15 +5,9 @@ import 'package:http/http.dart';
 class ExplorableMedia with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
 
-  Map<String, String> _headers;
+  final Map<String, String> headers;
 
-  ExplorableMedia(String accessToken) {
-    _headers = {
-      'Authorization': 'Bearer $accessToken',
-      'Accept': 'application/json',
-      'Content-type': 'application/json',
-    };
-  }
+  ExplorableMedia(this.headers);
 
   Future<List<Map<String, dynamic>>> fetchMedia(
       Map<String, dynamic> filters) async {
@@ -43,7 +37,7 @@ class ExplorableMedia with ChangeNotifier {
       'variables': filters,
     });
 
-    final response = await post(_url, body: request, headers: _headers);
+    final response = await post(_url, body: request, headers: headers);
 
     final body = json.decode(response.body) as Map<String, dynamic>;
 
@@ -65,7 +59,7 @@ class ExplorableMedia with ChangeNotifier {
       ''',
     });
 
-    final response = await post(_url, body: request, headers: _headers);
+    final response = await post(_url, body: request, headers: headers);
 
     final List<dynamic> body =
         json.decode(response.body)['data']['GenreCollection'];
@@ -85,7 +79,7 @@ class ExplorableMedia with ChangeNotifier {
       ''',
     });
 
-    final response = await post(_url, body: request, headers: _headers);
+    final response = await post(_url, body: request, headers: headers);
 
     final List<dynamic> body =
         json.decode(response.body)['data']['MediaTagCollection'];

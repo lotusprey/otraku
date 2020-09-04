@@ -2,37 +2,47 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
+import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
+import 'package:otraku/providers/collection.dart';
+import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/tools/overlays/modal_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CollectionSortSheet extends StatelessWidget {
-  final Map<String, dynamic> filters;
-  final Function load;
+  final bool isAnimeCollection;
 
-  CollectionSortSheet(this.filters, this.load);
+  CollectionSortSheet(this.isAnimeCollection);
 
   @override
   Widget build(BuildContext context) {
+    Collection collection;
+    if (isAnimeCollection) {
+      collection = Provider.of<AnimeCollection>(context, listen: false);
+    } else {
+      collection = Provider.of<MangaCollection>(context, listen: false);
+    }
+
     final length = MediaListSort.values.length;
     final prefTitle = Provider.of<Auth>(context, listen: false).titleFormat;
-    String titleAsc;
-    String titleDesc;
+    MediaListSort titleAsc;
+    MediaListSort titleDesc;
 
     if (describeEnum(MediaListSort.values[length - 2]).contains(prefTitle)) {
-      titleAsc = describeEnum(MediaListSort.values[length - 2]);
-      titleDesc = describeEnum(MediaListSort.values[length - 1]);
+      titleAsc = MediaListSort.values[length - 2];
+      titleDesc = MediaListSort.values[length - 1];
     } else if (describeEnum(MediaListSort.values[length - 4])
         .contains(prefTitle)) {
-      titleAsc = describeEnum(MediaListSort.values[length - 4]);
-      titleDesc = describeEnum(MediaListSort.values[length - 3]);
+      titleAsc = MediaListSort.values[length - 4];
+      titleDesc = MediaListSort.values[length - 3];
     } else {
-      titleAsc = describeEnum(MediaListSort.values[length - 6]);
-      titleDesc = describeEnum(MediaListSort.values[length - 5]);
+      titleAsc = MediaListSort.values[length - 6];
+      titleDesc = MediaListSort.values[length - 5];
     }
 
     MediaListSort mediaSort = stringToEnum(
-      filters['sort'],
+      describeEnum(collection.sort),
       Map.fromIterable(
         MediaListSort.values,
         key: (element) => describeEnum(element),
@@ -70,26 +80,32 @@ class CollectionSortSheet extends StatelessWidget {
       onTap: (int index) {
         if (index != options.length - 1) {
           if (index != currentIndex) {
-            filters['sort'] = describeEnum(MediaListSort.values[index * 2 + 1]);
+            collection.sort = MediaListSort.values[index * 2 + 1];
+            SharedPreferences.getInstance()
+                .then((prefs) => prefs.setInt('sort', index * 2 + 1));
           } else {
             if (currentlyDesc) {
-              filters['sort'] = describeEnum(MediaListSort.values[index * 2]);
+              collection.sort = MediaListSort.values[index * 2];
+              SharedPreferences.getInstance()
+                  .then((prefs) => prefs.setInt('sort', index * 2));
             } else {
-              filters['sort'] =
-                  describeEnum(MediaListSort.values[index * 2 + 1]);
+              collection.sort = MediaListSort.values[index * 2 + 1];
+              SharedPreferences.getInstance()
+                  .then((prefs) => prefs.setInt('sort', index * 2 + 1));
             }
           }
         } else {
           if (index != currentIndex) {
-            filters['sort'] = titleDesc;
+            collection.sort = titleDesc;
           } else if (currentlyDesc) {
-            filters['sort'] = titleAsc;
+            collection.sort = titleAsc;
           } else {
-            filters['sort'] = titleDesc;
+            collection.sort = titleDesc;
           }
+          SharedPreferences.getInstance().then((prefs) => prefs.remove('sort'));
         }
 
-        load(forceLoad: true);
+        collection.fetchMediaListCollection();
       },
     );
   }

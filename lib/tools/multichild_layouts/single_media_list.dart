@@ -5,12 +5,12 @@ import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:provider/provider.dart';
 
-class MediaList extends StatelessWidget {
+class SingleMediaList extends StatelessWidget {
   final List<ListEntryMediaData> entries;
   final String scoreFormat;
   final String name;
 
-  MediaList({this.entries, this.scoreFormat, this.name = ''});
+  SingleMediaList({this.entries, this.scoreFormat, this.name = ''});
 
   @override
   Widget build(BuildContext context) {

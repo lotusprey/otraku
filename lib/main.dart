@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/pages/loading_page.dart';
+import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
@@ -7,10 +9,8 @@ import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 import 'enums/auth_enum.dart';
 import 'pages/auth_page.dart';
-import 'pages/tab_manager.dart';
 import 'providers/media_item.dart';
 import 'providers/auth.dart';
-import 'providers/anime_collection.dart';
 
 void main() {
   Provider.debugCheckInvalidValueType = null;
@@ -27,24 +27,30 @@ class MyApp extends StatelessWidget {
           create: (_) => Auth(),
         ),
         ProxyProvider<Auth, MediaItem>(
-          update: (_, auth, __) => MediaItem(auth.accessToken),
+          update: (_, auth, __) => MediaItem(auth.headers),
         ),
-        ProxyProvider<Auth, AnimeCollection>(
-          update: (_, auth, __) => AnimeCollection(
-            accessToken: auth.accessToken,
-            userId: auth.userId,
-            scoreFormat: auth.scoreFormat,
-          ),
+        ChangeNotifierProxyProvider<Auth, AnimeCollection>(
+          create: (_) => AnimeCollection(),
+          update: (_, auth, collection) => collection
+            ..init(
+              headers: auth.headers,
+              userId: auth.userId,
+              mediaListSort: auth.mediaListSort,
+              scoreFormat: auth.scoreFormat,
+            ),
         ),
-        ProxyProvider<Auth, MangaCollection>(
-          update: (_, auth, __) => MangaCollection(
-            accessToken: auth.accessToken,
-            userId: auth.userId,
-            scoreFormat: auth.scoreFormat,
-          ),
+        ChangeNotifierProxyProvider<Auth, MangaCollection>(
+          create: (_) => MangaCollection(),
+          update: (_, auth, collection) => collection
+            ..init(
+              headers: auth.headers,
+              userId: auth.userId,
+              mediaListSort: auth.mediaListSort,
+              scoreFormat: auth.scoreFormat,
+            ),
         ),
         ProxyProvider<Auth, ExplorableMedia>(
-          update: (_, auth, __) => ExplorableMedia(auth.accessToken),
+          update: (_, auth, __) => ExplorableMedia(auth.headers),
         ),
         ChangeNotifierProvider<ViewConfig>(
           create: (_) => ViewConfig(),
@@ -88,7 +94,7 @@ class MyApp extends StatelessWidget {
                       return const AuthPage();
                     }
 
-                    return const TabManager();
+                    return LoadingPage(theming.palette);
                   },
                 ),
                 child: Scaffold(

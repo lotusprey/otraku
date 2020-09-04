@@ -1,55 +1,122 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:otraku/models/list_entry_tile_data.dart';
+import 'package:otraku/enums/media_list_sort_enum.dart';
+import 'package:otraku/models/list_entry_media_data.dart';
+import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/collection.dart';
 
 class AnimeCollection extends Collection with ChangeNotifier {
   //Query settings
   static const String _url = 'https://graphql.anilist.co';
-  final int userId;
-  final String scoreFormat;
   Map<String, String> _headers;
+  int _userId;
+  String _scoreFormat;
+  MediaListSort _mediaListSort;
+
+  void init({
+    @required Map<String, String> headers,
+    @required int userId,
+    @required String scoreFormat,
+    @required MediaListSort mediaListSort,
+  }) {
+    _headers = headers;
+    _userId = userId;
+    _scoreFormat = scoreFormat;
+    _mediaListSort = mediaListSort;
+  }
 
   //Data
-  bool _isLoaded = false;
-  List<String> _names;
-  List<List<ListEntryTileData>> _entries;
+  bool _isLoading = false;
+  List<String> _names = [];
+  List<List<ListEntryMediaData>> _entryLists = [];
 
-  AnimeCollection({
-    @required accessToken,
-    @required this.userId,
-    @required this.scoreFormat,
-  }) {
-    _headers = {
-      'Authorization': 'Bearer $accessToken',
-      'Accept': 'application/json',
-      'Content-type': 'application/json',
-    };
+  @override
+  MediaListSort get sort {
+    return _mediaListSort;
   }
 
   @override
-  String get name => 'Anime';
+  set sort(MediaListSort value) {
+    _mediaListSort = value;
+  }
 
   @override
-  bool get isLoaded => _isLoaded;
+  String get name {
+    return 'Anime';
+  }
 
   @override
-  List<String> get names => _names;
+  bool get isLoading {
+    return _isLoading;
+  }
 
   @override
-  List<List<ListEntryTileData>> get entries => _entries;
+  bool get isEmpty {
+    return !_isLoading && _names.length == 0;
+  }
 
-  //Set isLoaded property to false in order to reload
-  void unload() => _isLoaded = false;
+  Tuple<List<String>, List<List<ListEntryMediaData>>> lists({
+    int listIndex = -1,
+    String search,
+  }) {
+    if (listIndex == -1) {
+      if (search == null) {
+        return Tuple(_names, _entryLists);
+      }
+
+      List<List<ListEntryMediaData>> currentEntries = [];
+      List<String> currentNames = [];
+      for (int i = 0; i < _names.length; i++) {
+        List<ListEntryMediaData> sublist = [];
+        for (ListEntryMediaData entry in _entryLists[i]) {
+          if (entry.title.toLowerCase().contains(search)) {
+            sublist.add(entry);
+          }
+        }
+
+        if (sublist.length > 0) {
+          currentEntries.add(sublist);
+          currentNames.add(_names[i]);
+        }
+      }
+
+      if (currentEntries.length == 0) {
+        return null;
+      }
+
+      return Tuple(currentNames, currentEntries);
+    }
+
+    if (search == null) {
+      return Tuple([_names[listIndex]], [_entryLists[listIndex]]);
+    }
+
+    List<ListEntryMediaData> currentEntries = [];
+    for (ListEntryMediaData entry in _entryLists[listIndex]) {
+      if (entry.title.toLowerCase().contains(search)) {
+        currentEntries.add(entry);
+      }
+    }
+
+    if (currentEntries.length == 0) {
+      return null;
+    }
+
+    return Tuple([_names[listIndex]], [currentEntries]);
+  }
 
   //Fetch anime media list collection
-  Future<void> fetchMediaListCollection(Map<String, dynamic> filters) async {
-    final query = r'''
+  @override
+  Future<void> fetchMediaListCollection() async {
+    _isLoading = true;
+
+    const query = r'''
       query Collection($userId: Int, $sort: [MediaListSort], $scoreFormat: ScoreFormat) {
         MediaListCollection(userId: $userId, type: ANIME, sort: $sort) {
           lists {
+            name
             entries {
               mediaId
               progress
@@ -62,13 +129,9 @@ class AnimeCollection extends Collection with ChangeNotifier {
                 }
                 coverImage {
                   medium
-                }                
-              }              
+                }
+              }
             }
-            name
-            isCustomList
-            isSplitCompletedList
-            status
           }
         }
         User(id: $userId) {
@@ -84,9 +147,9 @@ class AnimeCollection extends Collection with ChangeNotifier {
     final request = json.encode({
       'query': query,
       'variables': {
-        ...filters,
-        'userId': userId,
-        'scoreFormat': scoreFormat,
+        'userId': _userId,
+        'scoreFormat': _scoreFormat,
+        'sort': describeEnum(_mediaListSort),
       },
     });
 
@@ -100,7 +163,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
         ['sectionOrder'] as List<dynamic>;
 
     _names = [];
-    _entries = [];
+    _entryLists = [];
 
     for (final section in sectionOrder) {
       for (int i = 0; i < mediaListCollection.length; i++) {
@@ -109,8 +172,8 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
           _names.add(currentMediaList['name']);
 
-          _entries.add((currentMediaList['entries'] as List<dynamic>)
-              .map((e) => ListEntryTileData(
+          _entryLists.add((currentMediaList['entries'] as List<dynamic>)
+              .map((e) => ListEntryMediaData(
                     id: e['mediaId'],
                     title: e['media']['title']['userPreferred'],
                     cover: e['media']['coverImage']['medium'],
@@ -126,6 +189,12 @@ class AnimeCollection extends Collection with ChangeNotifier {
       }
     }
 
-    _isLoaded = true;
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  @override
+  Future<void> removeFromList(int id) {
+    return null;
   }
 }

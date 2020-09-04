@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/auth_enum.dart';
+import 'package:otraku/enums/media_list_sort_enum.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   static AuthStatus _status;
@@ -12,13 +14,18 @@ class Auth with ChangeNotifier {
   static int _userId;
   static String _titleFormat;
   static String _scoreFormat;
+  static MediaListSort _mediaListSort;
 
   AuthStatus get status {
     return _status;
   }
 
-  String get accessToken {
-    return _accessToken;
+  Map<String, String> get headers {
+    return {
+      'Authorization': 'Bearer $_accessToken',
+      'Accept': 'application/json',
+      'Content-type': 'application/json',
+    };
   }
 
   String get titleFormat {
@@ -27,6 +34,10 @@ class Auth with ChangeNotifier {
 
   String get scoreFormat {
     return _scoreFormat;
+  }
+
+  MediaListSort get mediaListSort {
+    return _mediaListSort;
   }
 
   int get userId {
@@ -122,6 +133,24 @@ class Auth with ChangeNotifier {
     _userId = viewer['id'];
     _titleFormat = viewer['options']['titleLanguage'];
     _scoreFormat = viewer['mediaListOptions']['scoreFormat'];
+
+    final preferrences = await SharedPreferences.getInstance();
+    int index = preferrences.getInt('sort');
+    if (index == null) {
+      switch (_titleFormat) {
+        case 'ENGLISH':
+          _mediaListSort = MediaListSort.MEDIA_TITLE_ENGLISH;
+          break;
+        case 'NATIVE':
+          _mediaListSort = MediaListSort.MEDIA_TITLE_NATIVE;
+          break;
+        default:
+          _mediaListSort = MediaListSort.MEDIA_TITLE_ROMAJI;
+          break;
+      }
+    } else {
+      _mediaListSort = MediaListSort.values[index];
+    }
 
     _status = AuthStatus.authorised;
     notifyListeners();

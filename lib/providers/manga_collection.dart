@@ -15,13 +15,7 @@ class MangaCollection extends Collection with ChangeNotifier {
   String _scoreFormat;
   MediaListSort _mediaListSort;
 
-  // MangaCollection({
-  //   @required this.headers,
-  //   @required this.userId,
-  //   @required this.scoreFormat,
-  //   @required this.mediaListSort,
-  // });
-
+  //Information passed by the Auth provider
   void init({
     @required Map<String, String> headers,
     @required int userId,
@@ -38,6 +32,8 @@ class MangaCollection extends Collection with ChangeNotifier {
   bool _isLoading = false;
   List<String> _names = [];
   List<List<ListEntryMediaData>> _entryLists = [];
+  int _listIndex = -1;
+  String _search = '';
 
   @override
   MediaListSort get sort {
@@ -50,8 +46,13 @@ class MangaCollection extends Collection with ChangeNotifier {
   }
 
   @override
-  String get name {
+  String get collectionName {
     return 'Manga';
+  }
+
+  @override
+  List<String> get names {
+    return [..._names];
   }
 
   @override
@@ -64,13 +65,29 @@ class MangaCollection extends Collection with ChangeNotifier {
     return !_isLoading && _names.length == 0;
   }
 
-  Tuple<List<String>, List<List<ListEntryMediaData>>> lists({
-    int listIndex = -1,
-    String search,
-  }) {
-    if (listIndex == -1) {
-      if (search == null) {
-        return Tuple(_names, _entryLists);
+  @override
+  String get search {
+    return _search;
+  }
+
+  ///Configure the list index and search filters
+  void setFilters({listIndex, search}) {
+    if (listIndex != null && listIndex >= -1 && listIndex < _names.length) {
+      _listIndex = listIndex;
+    }
+
+    if (search != null) {
+      _search = search;
+    }
+
+    notifyListeners();
+  }
+
+  //Returns filtered lists
+  Tuple<List<String>, List<List<ListEntryMediaData>>> lists() {
+    if (_listIndex == -1) {
+      if (_search == '') {
+        return Tuple([..._names], [..._entryLists]);
       }
 
       List<List<ListEntryMediaData>> currentEntries = [];
@@ -78,7 +95,7 @@ class MangaCollection extends Collection with ChangeNotifier {
       for (int i = 0; i < _names.length; i++) {
         List<ListEntryMediaData> sublist = [];
         for (ListEntryMediaData entry in _entryLists[i]) {
-          if (entry.title.toLowerCase().contains(search)) {
+          if (entry.title.toLowerCase().contains(_search)) {
             sublist.add(entry);
           }
         }
@@ -93,16 +110,20 @@ class MangaCollection extends Collection with ChangeNotifier {
         return null;
       }
 
-      return Tuple(currentNames, currentEntries);
+      return Tuple([...currentNames], [...currentEntries]);
     }
 
-    if (search == null) {
-      return Tuple([_names[listIndex]], [_entryLists[listIndex]]);
+    if (_search == '') {
+      return Tuple([
+        ...[_names[_listIndex]]
+      ], [
+        ...[_entryLists[_listIndex]]
+      ]);
     }
 
     List<ListEntryMediaData> currentEntries = [];
-    for (ListEntryMediaData entry in _entryLists[listIndex]) {
-      if (entry.title.toLowerCase().contains(search)) {
+    for (ListEntryMediaData entry in _entryLists[_listIndex]) {
+      if (entry.title.toLowerCase().contains(_search)) {
         currentEntries.add(entry);
       }
     }
@@ -111,7 +132,11 @@ class MangaCollection extends Collection with ChangeNotifier {
       return null;
     }
 
-    return Tuple([_names[listIndex]], [currentEntries]);
+    return Tuple([
+      ...[_names[_listIndex]]
+    ], [
+      ...[currentEntries]
+    ]);
   }
 
   //Fetch anime media list collection

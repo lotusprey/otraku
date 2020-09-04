@@ -8,16 +8,21 @@ abstract class Collection {
   set sort(MediaListSort value);
 
   //The name of this collection's type
-  String get name;
+  String get collectionName;
+
+  List<String> get names;
 
   bool get isLoading;
 
   bool get isEmpty;
 
-  Tuple<List<String>, List<List<ListEntryMediaData>>> lists({
-    int listIndex = -1,
-    String search,
-  });
+  String get search;
+
+  //Configure the list index and search filters
+  void setFilters({listIndex, search});
+
+  //Returns filtered lists
+  Tuple<List<String>, List<List<ListEntryMediaData>>> lists();
 
   //Fetch media list collection
   Future<void> fetchMediaListCollection();

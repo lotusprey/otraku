@@ -9,15 +9,9 @@ import 'package:otraku/models/list_entry_user_data.dart';
 class MediaItem with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
 
-  Map<String, String> _headers;
+  final Map<String, String> headers;
 
-  MediaItem(accessToken) {
-    _headers = {
-      'Authorization': 'Bearer $accessToken',
-      'Accept': 'application/json',
-      'Content-type': 'application/json',
-    };
-  }
+  MediaItem(this.headers);
 
   Future<Map<String, dynamic>> fetchItemData(int id) async {
     const query = r'''
@@ -89,7 +83,7 @@ class MediaItem with ChangeNotifier {
       'variables': variables,
     });
 
-    final response = await post(_url, body: request, headers: _headers);
+    final response = await post(_url, body: request, headers: headers);
 
     return (json.decode(response.body) as Map<String, dynamic>)['data']['Media']
         as Map<String, dynamic>;
@@ -118,7 +112,7 @@ class MediaItem with ChangeNotifier {
       'variables': variables,
     });
 
-    final result = await post(_url, body: request, headers: _headers);
+    final result = await post(_url, body: request, headers: headers);
 
     final Map<String, dynamic> body =
         (json.decode(result.body) as Map<String, dynamic>)['data']['Media'];
@@ -172,7 +166,7 @@ class MediaItem with ChangeNotifier {
       'variables': variables,
     });
 
-    final result = await post(_url, body: request, headers: _headers);
+    final result = await post(_url, body: request, headers: headers);
     return !(json.decode(result.body) as Map<String, dynamic>)
         .containsKey('errors');
   }

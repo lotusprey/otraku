@@ -49,8 +49,9 @@ class MyApp extends StatelessWidget {
               scoreFormat: auth.scoreFormat,
             ),
         ),
-        ProxyProvider<Auth, ExplorableMedia>(
-          update: (_, auth, __) => ExplorableMedia(auth.headers),
+        ChangeNotifierProxyProvider<Auth, ExplorableMedia>(
+          create: (_) => ExplorableMedia(),
+          update: (_, auth, explorable) => explorable..init(auth.headers),
         ),
         ChangeNotifierProvider<ViewConfig>(
           create: (_) => ViewConfig(),

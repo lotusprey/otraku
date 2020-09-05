@@ -57,8 +57,8 @@ class _ExploreTabState extends State<ExploreTab> {
       _data = [];
     }
 
-    final data = await Provider.of<ExplorableMedia>(context, listen: false)
-        .fetchMedia(_filters);
+    final data =
+        await Provider.of<ExplorableMedia>(context, listen: false).fetchMedia();
 
     if (data.length > 0) {
       final idNotIn = _filters['id_not_in'];
@@ -84,26 +84,6 @@ class _ExploreTabState extends State<ExploreTab> {
         _canIncrementPage) {
       await _load(incrementPage: true);
     }
-  }
-
-  //Configure 'search' variable for the query settings
-  void _search(String search) {
-    if (search == _filters['search']) {
-      return;
-    }
-
-    if (search != '') {
-      _filters['search'] = search;
-      _filters.remove('sort');
-    } else {
-      if (!_filters.containsKey('search')) {
-        return;
-      }
-      _filters.remove('search');
-      _filters['sort'] = describeEnum(MediaSort.TRENDING_DESC);
-    }
-
-    _load();
   }
 
   //Clear output settings
@@ -152,13 +132,16 @@ class _ExploreTabState extends State<ExploreTab> {
             searchActivate: () => Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (ctx) => SearchPage(
-                  search: _search,
+                  search: Provider.of<ExplorableMedia>(context, listen: false)
+                      .searchValue,
                   text: _filters['search'],
                 ),
               ),
             ),
             searchDeactivate: () => _clear(search: true),
-            isSearchActive: _filters.containsKey('search'),
+            isSearchActive: Provider.of<ExplorableMedia>(context, listen: false)
+                    .searchValue !=
+                null,
             filterActivate: () => Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (ctx) => FilterPage(
@@ -184,7 +167,10 @@ class _ExploreTabState extends State<ExploreTab> {
         _data.length > 0
             ? SliverPadding(
                 padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
-                sliver: LargeTileGrid(data: _data, tileConfig: _tileConfig),
+                sliver: LargeTileGrid(
+                  data: Provider.of<ExplorableMedia>(context).data,
+                  tileConfig: _tileConfig,
+                ),
               )
             : _isLoading
                 ? const SliverFillRemaining(

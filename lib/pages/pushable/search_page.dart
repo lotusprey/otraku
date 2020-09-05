@@ -21,9 +21,9 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController _controller;
   Palette _palette;
 
-  void _search(String search) {
+  void _search(String searchValue) {
     Navigator.of(context).pop();
-    widget.search(search.trim().toLowerCase());
+    widget.search(searchValue.trim().toLowerCase());
   }
 
   @override

@@ -5,22 +5,38 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
 class TextGrid extends StatelessWidget {
-  final List<Tuple<String, String>> options;
+  final List<String> options;
+  final List<Tuple<String, String>> optionsDual;
   final List<String> optionIn;
   final List<String> optionNotIn;
 
   TextGrid({
-    @required this.options,
+    this.options,
+    this.optionsDual,
     @required this.optionIn,
     @required this.optionNotIn,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (options != null) {
+      return Wrap(
+        spacing: 10,
+        runSpacing: 10,
+        children: options
+            .map((option) => _TextGridButton(
+                  title: option,
+                  optionIn: optionIn,
+                  optionNotIn: optionNotIn,
+                ))
+            .toList(),
+      );
+    }
+
     return Wrap(
       spacing: 10,
       runSpacing: 10,
-      children: options
+      children: optionsDual
           .map((option) => _TextGridButton(
                 title: option.item1,
                 optionIn: optionIn,

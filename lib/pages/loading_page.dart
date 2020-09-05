@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/providers/anime_collection.dart';
+import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/blossom_loader.dart';
@@ -35,11 +36,14 @@ class _LoadingPageState extends State<LoadingPage> {
     Provider.of<MangaCollection>(context, listen: false)
         .fetchMediaListCollection()
         .then((_) => _validateStatus());
+    Provider.of<ExplorableMedia>(context, listen: false)
+        .fetchFilters()
+        .then((_) => _validateStatus());
   }
 
   void _validateStatus() {
     _loadStatus++;
-    if (_loadStatus == 2) {
+    if (_loadStatus == 3) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => TabManager()),
       );

@@ -1,20 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/multichild_layouts/text_grid.dart';
 import 'package:provider/provider.dart';
 
 class FilterPage extends StatefulWidget {
-  final SizedBox _sizedBox = const SizedBox(height: 20);
-
   final Function loadMedia;
-  final Map<String, dynamic> filters;
 
   FilterPage({
     @required this.loadMedia,
-    @required this.filters,
   });
 
   @override
@@ -22,13 +17,9 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
+  static SizedBox _sizedBox = const SizedBox(height: 20);
+
   Palette _palette;
-
-  List<String> _genreIn;
-  List<String> _genreNotIn;
-  List<String> _tagIn;
-  List<String> _tagNotIn;
-
   TextGrid _genreGrid;
   TextGrid _tagGrid;
 
@@ -37,37 +28,51 @@ class _FilterPageState extends State<FilterPage> {
     super.initState();
     _palette = Provider.of<Theming>(context, listen: false).palette;
 
-    _genreIn = widget.filters['genre_in'] ?? [];
-    _genreNotIn = widget.filters['genre_not_in'] ?? [];
+    // _genreIn = widget.filters['genre_in'] ?? [];
+    // _genreNotIn = widget.filters['genre_not_in'] ?? [];
 
-    Provider.of<ExplorableMedia>(context, listen: false)
-        .fetchGenres()
-        .then((data) => setState(() {
-              _genreGrid = TextGrid(
-                options: data.map((g) => Tuple(g, null)).toList(),
-                optionIn: _genreIn,
-                optionNotIn: _genreNotIn,
-              );
-            }));
+    _genreGrid = TextGrid(
+      options: Provider.of<ExplorableMedia>(context, listen: false).genres,
+      optionIn: Provider.of<ExplorableMedia>(context, listen: false).genreIn,
+      optionNotIn:
+          Provider.of<ExplorableMedia>(context, listen: false).genreNotIn,
+    );
 
-    _tagIn = widget.filters['tag_in'] ?? [];
-    _tagNotIn = widget.filters['tag_not_in'] ?? [];
+    _tagGrid = TextGrid(
+      optionsDual: Provider.of<ExplorableMedia>(context, listen: false).tags,
+      optionIn: Provider.of<ExplorableMedia>(context, listen: false).tagIn,
+      optionNotIn:
+          Provider.of<ExplorableMedia>(context, listen: false).tagNotIn,
+    );
 
-    Provider.of<ExplorableMedia>(context, listen: false)
-        .fetchTags()
-        .then((data) => setState(() {
-              List<Tuple<String, String>> tags = [];
+    // Provider.of<ExplorableMedia>(context, listen: false)
+    //     .fetchGenres()
+    //     .then((data) => setState(() {
+    //           _genreGrid = TextGrid(
+    //             optionsDual: data.map((g) => Tuple(g, null)).toList(),
+    //             optionIn: _genreIn,
+    //             optionNotIn: _genreNotIn,
+    //           );
+    //         }));
 
-              for (Map<String, String> value in data) {
-                tags.add(Tuple(value['name'], value['description']));
-              }
+    // _tagIn = widget.filters['tag_in'] ?? [];
+    // _tagNotIn = widget.filters['tag_not_in'] ?? [];
 
-              _tagGrid = TextGrid(
-                options: tags,
-                optionIn: _tagIn,
-                optionNotIn: _tagNotIn,
-              );
-            }));
+    // Provider.of<ExplorableMedia>(context, listen: false)
+    //     .fetchTags()
+    //     .then((data) => setState(() {
+    //           List<Tuple<String, String>> tags = [];
+
+    //           for (Map<String, String> value in data) {
+    //             tags.add(Tuple(value['name'], value['description']));
+    //           }
+
+    //           _tagGrid = TextGrid(
+    //             optionsDual: tags,
+    //             optionIn: _tagIn,
+    //             optionNotIn: _tagNotIn,
+    //           );
+    //         }));
   }
 
   List<Widget> _gridSection(String name, TextGrid grid) {
@@ -108,29 +113,29 @@ class _FilterPageState extends State<FilterPage> {
             color: _palette.accent,
           ),
           onPressed: () {
-            if (_genreIn.length == 0) {
-              widget.filters.remove('genre_in');
-            } else {
-              widget.filters['genre_in'] = _genreIn;
-            }
+            // if (_genreIn.length == 0) {
+            //   widget.filters.remove('genre_in');
+            // } else {
+            //   widget.filters['genre_in'] = _genreIn;
+            // }
 
-            if (_genreNotIn.length == 0) {
-              widget.filters.remove('genre_not_in');
-            } else {
-              widget.filters['genre_not_in'] = _genreNotIn;
-            }
+            // if (_genreNotIn.length == 0) {
+            //   widget.filters.remove('genre_not_in');
+            // } else {
+            //   widget.filters['genre_not_in'] = _genreNotIn;
+            // }
 
-            if (_tagIn.length == 0) {
-              widget.filters.remove('tag_in');
-            } else {
-              widget.filters['tag_in'] = _tagIn;
-            }
+            // if (_tagIn.length == 0) {
+            //   widget.filters.remove('tag_in');
+            // } else {
+            //   widget.filters['tag_in'] = _tagIn;
+            // }
 
-            if (_tagNotIn.length == 0) {
-              widget.filters.remove('tag_not_in');
-            } else {
-              widget.filters['tag_not_in'] = _tagNotIn;
-            }
+            // if (_tagNotIn.length == 0) {
+            //   widget.filters.remove('tag_not_in');
+            // } else {
+            //   widget.filters['tag_not_in'] = _tagNotIn;
+            // }
 
             widget.loadMedia();
             Navigator.of(context).pop();

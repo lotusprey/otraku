@@ -1,37 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:provider/provider.dart';
 
 class LargeTileGrid extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
+  final Palette palette;
   final LargeTileConfiguration tileConfig;
 
-  LargeTileGrid({this.data, this.tileConfig});
+  LargeTileGrid(this.palette, this.tileConfig);
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        (_, index) => MediaIndexer(
-          mediaId: data[index]['id'],
-          child: _SimpleGridTile(
-            mediaId: data[index]['id'],
-            title: data[index]['title'],
-            imageUrl: data[index]['imageUrl'],
-            width: tileConfig.tileWidth,
-            height: tileConfig.tileHeight,
-            imageHeight: tileConfig.tileImgHeight,
+    final data = Provider.of<ExplorableMedia>(context).data;
+
+    if (data.length == 0) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(
+            'No results',
+            style: palette.smallTitle,
           ),
         ),
-        childCount: data.length,
-      ),
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: tileConfig.tileWidth,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: tileConfig.tileWHRatio,
+      );
+    }
+
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate(
+          (_, index) => MediaIndexer(
+            mediaId: data[index]['id'],
+            child: _SimpleGridTile(
+              mediaId: data[index]['id'],
+              title: data[index]['title'],
+              imageUrl: data[index]['imageUrl'],
+              width: tileConfig.tileWidth,
+              height: tileConfig.tileHeight,
+              imageHeight: tileConfig.tileImgHeight,
+            ),
+          ),
+          childCount: data.length,
+        ),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: tileConfig.tileWidth,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: tileConfig.tileWHRatio,
+        ),
       ),
     );
   }

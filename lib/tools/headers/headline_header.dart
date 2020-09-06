@@ -5,13 +5,25 @@ import 'package:flutter/rendering.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
-class HeadlineHeader implements SliverPersistentHeaderDelegate {
+class HeadlineHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SliverPersistentHeader(
+      pinned: false,
+      floating: false,
+      delegate: _HeadlineHeaderDelegate(context: context, headline: 'Explore'),
+    );
+  }
+}
+
+class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
   final String headline;
 
   Palette _palette;
   double _height;
 
-  HeadlineHeader({@required this.headline, @required BuildContext context}) {
+  _HeadlineHeaderDelegate(
+      {@required this.headline, @required BuildContext context}) {
     _palette = Provider.of<Theming>(context, listen: false).palette;
     _height = 40;
   }

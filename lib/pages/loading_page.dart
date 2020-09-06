@@ -31,10 +31,13 @@ class _LoadingPageState extends State<LoadingPage> {
   void initState() {
     super.initState();
     Provider.of<AnimeCollection>(context, listen: false)
-        .fetchMediaListCollection()
+        .fetchMedia()
         .then((_) => _validateStatus());
     Provider.of<MangaCollection>(context, listen: false)
-        .fetchMediaListCollection()
+        .fetchMedia()
+        .then((_) => _validateStatus());
+    Provider.of<ExplorableMedia>(context, listen: false)
+        .fetchMedia()
         .then((_) => _validateStatus());
     Provider.of<ExplorableMedia>(context, listen: false)
         .fetchFilters()
@@ -43,7 +46,7 @@ class _LoadingPageState extends State<LoadingPage> {
 
   void _validateStatus() {
     _loadStatus++;
-    if (_loadStatus == 3) {
+    if (_loadStatus == 4) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => TabManager()),
       );

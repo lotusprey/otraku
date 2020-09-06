@@ -9,8 +9,8 @@ import 'package:otraku/providers/collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/multichild_layouts/single_media_list.dart';
-import 'package:otraku/tools/navigation/media_control_header.dart';
-import 'package:otraku/tools/navigation/headline_header.dart';
+import 'package:otraku/tools/headers/media_control_header.dart';
+import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -57,7 +57,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
               iconSize: Palette.ICON_MEDIUM,
               onPressed: () {
                 _collection.setFilters(listIndex: -1, search: '');
-                _collection.fetchMediaListCollection();
+                _collection.fetchMedia();
               },
             ),
           ],
@@ -71,14 +71,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: <Widget>[
-        SliverPersistentHeader(
-          pinned: false,
-          floating: false,
-          delegate: HeadlineHeader(
-            context: context,
-            headline: '${_collection.collectionName} List',
-          ),
-        ),
+        HeadlineHeader(),
         SliverPersistentHeader(
           pinned: false,
           floating: true,
@@ -91,7 +84,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
             searchActivate: () => Navigator.of(context).push(
               CupertinoPageRoute(
                 builder: (ctx) => SearchPage(
-                  search: (value) => _collection.setFilters(search: value),
+                  searchFn: (value) => _collection.setFilters(search: value),
                   text: _collection.search,
                 ),
               ),

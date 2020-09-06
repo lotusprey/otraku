@@ -7,6 +7,7 @@ import 'package:otraku/models/list_entry_media_data.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/collection.dart';
 
+//Manages the users anime collection of lists
 class AnimeCollection extends Collection with ChangeNotifier {
   //Query settings
   static const String _url = 'https://graphql.anilist.co';
@@ -36,6 +37,11 @@ class AnimeCollection extends Collection with ChangeNotifier {
   String _search = '';
 
   @override
+  String get search {
+    return _search;
+  }
+
+  @override
   MediaListSort get sort {
     return _mediaListSort;
   }
@@ -63,11 +69,6 @@ class AnimeCollection extends Collection with ChangeNotifier {
   @override
   bool get isEmpty {
     return !_isLoading && _names.length == 0;
-  }
-
-  @override
-  String get search {
-    return _search;
   }
 
   //Configure the list index and search filters
@@ -141,7 +142,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
   //Fetch anime media list collection
   @override
-  Future<void> fetchMediaListCollection() async {
+  Future<void> fetchMedia() async {
     _isLoading = true;
 
     const query = r'''
@@ -223,10 +224,5 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
-  }
-
-  @override
-  Future<void> removeFromList(int id) {
-    return null;
   }
 }

@@ -121,39 +121,39 @@ class _BlossomLoaderState extends State<BlossomLoader>
     );
 
     _animation1 = TweenSequence([
+      lightDark,
       darkDarker,
       darkerDark,
       darkLight,
       lightLighter,
       lighterLight,
-      lightDark,
     ]).animate(_controller);
 
     _animation2 = TweenSequence([
-      darkerDark,
-      darkLight,
-      lightLighter,
       lighterLight,
       lightDark,
       darkDarker,
+      darkerDark,
+      darkLight,
+      lightLighter,
     ]).animate(_controller);
 
     _animation3 = TweenSequence([
-      lighterLight,
-      lightDark,
-      darkDarker,
       darkerDark,
       darkLight,
       lightLighter,
+      lighterLight,
+      lightDark,
+      darkDarker,
     ]).animate(_controller);
 
     _animation4 = TweenSequence([
-      lightDark,
       darkDarker,
       darkerDark,
       darkLight,
       lightLighter,
       lighterLight,
+      lightDark,
     ]).animate(_controller);
 
     _controller.repeat();

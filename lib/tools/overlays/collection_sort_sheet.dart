@@ -105,7 +105,7 @@ class CollectionSortSheet extends StatelessWidget {
           SharedPreferences.getInstance().then((prefs) => prefs.remove('sort'));
         }
 
-        collection.fetchMediaListCollection();
+        collection.fetchMedia();
       },
     );
   }

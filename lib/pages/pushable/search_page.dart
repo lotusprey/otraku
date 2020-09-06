@@ -5,12 +5,12 @@ import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
-  final Function(String) search;
+  final Function(String) searchFn;
   final String text;
 
   SearchPage({
     @required this.text,
-    @required this.search,
+    @required this.searchFn,
   });
 
   @override
@@ -23,7 +23,7 @@ class _SearchPageState extends State<SearchPage> {
 
   void _search(String searchValue) {
     Navigator.of(context).pop();
-    widget.search(searchValue.trim().toLowerCase());
+    widget.searchFn(searchValue.trim().toLowerCase());
   }
 
   @override

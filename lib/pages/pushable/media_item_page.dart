@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:otraku/models/media_item_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/media_page_widgets/media_header.dart';
+import 'package:otraku/tools/headers/media_header.dart';
 import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';

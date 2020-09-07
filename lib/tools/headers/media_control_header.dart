@@ -60,7 +60,7 @@ class MediaControlHeader implements SliverPersistentHeaderDelegate {
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
+                children: [
                   Row(
                     children: [
                       _HeaderButton(

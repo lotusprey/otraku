@@ -4,7 +4,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/collection.dart';
+import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/tools/overlays/modal_sheet.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,7 @@ class CollectionSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Collection collection;
+    CollectionProvider collection;
     if (isAnimeCollection) {
       collection = Provider.of<AnimeCollection>(context, listen: false);
     } else {

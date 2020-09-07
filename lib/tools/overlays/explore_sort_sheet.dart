@@ -14,22 +14,22 @@ class ExploreSortSheet extends StatelessWidget {
 
     final length = MediaSort.values.length;
     final prefTitle = Provider.of<Auth>(context, listen: false).titleFormat;
-    MediaSort titleAsc;
-    MediaSort titleDesc;
+    String titleAsc;
+    String titleDesc;
 
     if (describeEnum(MediaSort.values[length - 2]).contains(prefTitle)) {
-      titleAsc = MediaSort.values[length - 2];
-      titleDesc = MediaSort.values[length - 1];
+      titleAsc = describeEnum(MediaSort.values[length - 2]);
+      titleDesc = describeEnum(MediaSort.values[length - 1]);
     } else if (describeEnum(MediaSort.values[length - 4]).contains(prefTitle)) {
-      titleAsc = MediaSort.values[length - 4];
-      titleDesc = MediaSort.values[length - 3];
+      titleAsc = describeEnum(MediaSort.values[length - 4]);
+      titleDesc = describeEnum(MediaSort.values[length - 3]);
     } else {
-      titleAsc = MediaSort.values[length - 6];
-      titleDesc = MediaSort.values[length - 5];
+      titleAsc = describeEnum(MediaSort.values[length - 6]);
+      titleDesc = describeEnum(MediaSort.values[length - 5]);
     }
 
     MediaSort mediaSort = stringToEnum(
-      describeEnum(provider.sort),
+      provider.sort,
       Map.fromIterable(
         MediaSort.values,
         key: (element) => describeEnum(element),
@@ -65,9 +65,9 @@ class ExploreSortSheet extends StatelessWidget {
       onTap: (int index) {
         if (index != options.length - 1) {
           if (index != currentIndex || !currentlyDesc) {
-            provider.sort = MediaSort.values[index * 2 + 1];
+            provider.sort = describeEnum(MediaSort.values[index * 2 + 1]);
           } else {
-            provider.sort = MediaSort.values[index * 2];
+            provider.sort = describeEnum(MediaSort.values[index * 2]);
           }
         } else {
           if (index != currentIndex || !currentlyDesc) {

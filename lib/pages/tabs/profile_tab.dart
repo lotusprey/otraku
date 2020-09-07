@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class ProfileTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
+    final palette = Provider.of<Theming>(context).palette;
 
     return Center(
       child: IconButton(

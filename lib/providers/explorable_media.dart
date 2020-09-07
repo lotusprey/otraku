@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/tuple.dart';
+import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages all browsable media, genres, tags and all the filters
-class ExplorableMedia with ChangeNotifier {
+class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
 
@@ -26,10 +27,12 @@ class ExplorableMedia with ChangeNotifier {
     'id_not_in': [],
   };
 
+  @override
   String get search {
     return _filters['search'];
   }
 
+  @override
   set search(String searchValue) {
     if (searchValue == _filters['search']) return;
 
@@ -41,15 +44,21 @@ class ExplorableMedia with ChangeNotifier {
     fetchMedia();
   }
 
-  MediaSort get sort {
+  String get sort {
     return _filters['sort'];
   }
 
-  set sort(MediaSort mediaSort) {
-    _filters['sort'] = describeEnum(mediaSort);
+  set sort(String mediaSort) {
+    _filters['sort'] = mediaSort;
     fetchMedia();
   }
 
+  set type(String type) {
+    _filters['type'] = type;
+    fetchMedia();
+  }
+
+  @override
   bool get isLoading {
     return _isLoading;
   }
@@ -94,10 +103,6 @@ class ExplorableMedia with ChangeNotifier {
     return [];
   }
 
-  set type(String type) {
-    _filters['type'] = type;
-  }
-
   void setGenreTagFilters({
     List<String> newGenreIn,
     List<String> newGenreNotIn,
@@ -105,29 +110,54 @@ class ExplorableMedia with ChangeNotifier {
     List<String> newTagNotIn,
     bool addPageAndNotReset,
   }) {
-    if (newGenreIn == null || newGenreIn.length == 0) {
+    if (newGenreIn != null && newGenreIn.length == 0) {
       _filters.remove('genre_in');
     } else {
       _filters['genre_in'] = newGenreIn;
     }
 
-    if (newGenreNotIn == null || newGenreNotIn.length == 0) {
+    if (newGenreNotIn != null && newGenreNotIn.length == 0) {
       _filters.remove('genre_not_in');
     } else {
       _filters['genre_not_in'] = newGenreNotIn;
     }
 
-    if (newTagIn == null || newTagIn.length == 0) {
+    if (newTagIn != null && newTagIn.length == 0) {
       _filters.remove('tag_in');
     } else {
       _filters['tag_in'] = newTagIn;
     }
 
-    if (newTagNotIn == null || newTagNotIn.length == 0) {
+    if (newTagNotIn != null && newTagNotIn.length == 0) {
       _filters.remove('tag_not_in');
     } else {
       _filters['tag_not_in'] = newTagNotIn;
     }
+    fetchMedia();
+  }
+
+  bool areFiltersActive() {
+    return _filters.containsKey('genre_in') ||
+        _filters.containsKey('genre_not_in') ||
+        _filters.containsKey('tag_in') ||
+        _filters.containsKey('tag_not_in');
+  }
+
+  void clearGenreTagFilters() {
+    _filters.remove('genre_in');
+    _filters.remove('genre_not_in');
+    _filters.remove('tag_in');
+    _filters.remove('tag_not_in');
+    fetchMedia();
+  }
+
+  @override
+  void clear() {
+    _filters.remove('genre_in');
+    _filters.remove('genre_not_in');
+    _filters.remove('tag_in');
+    _filters.remove('tag_not_in');
+    _filters.remove('search');
     fetchMedia();
   }
 
@@ -137,11 +167,12 @@ class ExplorableMedia with ChangeNotifier {
   }
 
   //Fetches meida based on the set filters
+  @override
   Future<void> fetchMedia({bool clean = true}) async {
     _isLoading = true;
+    if (_data != null) notifyListeners();
 
     if (clean) {
-      _data = [];
       _filters['id_not_in'] = [];
       _filters['page'] = 1;
     }
@@ -175,6 +206,8 @@ class ExplorableMedia with ChangeNotifier {
     final response = await post(_url, body: request, headers: _headers);
 
     final body = json.decode(response.body) as Map<String, dynamic>;
+
+    if (clean) _data = [];
 
     for (final m in body['data']['Page']['media'] as List<dynamic>) {
       _data.add({

@@ -5,10 +5,10 @@ import 'package:http/http.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/models/list_entry_media_data.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/collection.dart';
+import 'package:otraku/providers/collection_provider.dart';
 
 //Manages the users anime collection of lists
-class AnimeCollection extends Collection with ChangeNotifier {
+class AnimeCollection with ChangeNotifier implements CollectionProvider {
   //Query settings
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
@@ -31,14 +31,35 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
   //Data
   bool _isLoading = false;
-  List<String> _names = [];
-  List<List<ListEntryMediaData>> _entryLists = [];
+  List<String> _names;
+  List<List<ListEntryMediaData>> _entryLists;
   int _listIndex = -1;
-  String _search = '';
+  String _search;
 
   @override
   String get search {
     return _search;
+  }
+
+  @override
+  set search(String value) {
+    if (value != _search) {
+      _search = value;
+      notifyListeners();
+    }
+  }
+
+  @override
+  int get listIndex {
+    return _listIndex;
+  }
+
+  @override
+  set listIndex(int index) {
+    if (index != null && index >= -1 && index < _names.length) {
+      _listIndex = index;
+      notifyListeners();
+    }
   }
 
   @override
@@ -48,12 +69,17 @@ class AnimeCollection extends Collection with ChangeNotifier {
 
   @override
   set sort(MediaListSort value) {
-    _mediaListSort = value;
+    if (value != null) _mediaListSort = value;
   }
 
   @override
   String get collectionName {
     return 'Anime';
+  }
+
+  @override
+  bool get isAnimeCollection {
+    return true;
   }
 
   @override
@@ -71,23 +97,17 @@ class AnimeCollection extends Collection with ChangeNotifier {
     return !_isLoading && _names.length == 0;
   }
 
-  //Configure the list index and search filters
-  void setFilters({listIndex, search}) {
-    if (listIndex != null && listIndex >= -1 && listIndex < _names.length) {
-      _listIndex = listIndex;
-    }
-
-    if (search != null) {
-      _search = search;
-    }
-
-    notifyListeners();
+  @override
+  void clear() {
+    _listIndex = -1;
+    _search = null;
+    fetchMedia();
   }
 
   //Returns filtered lists
   Tuple<List<String>, List<List<ListEntryMediaData>>> lists() {
     if (_listIndex == -1) {
-      if (_search == '') {
+      if (_search == null) {
         return Tuple([..._names], [..._entryLists]);
       }
 
@@ -114,7 +134,7 @@ class AnimeCollection extends Collection with ChangeNotifier {
       return Tuple([...currentNames], [...currentEntries]);
     }
 
-    if (_search == '') {
+    if (_search == null) {
       return Tuple([
         ...[_names[_listIndex]]
       ], [
@@ -144,6 +164,8 @@ class AnimeCollection extends Collection with ChangeNotifier {
   @override
   Future<void> fetchMedia() async {
     _isLoading = true;
+
+    if (_names != null) notifyListeners();
 
     const query = r'''
       query Collection($userId: Int, $sort: [MediaListSort], $scoreFormat: ScoreFormat) {

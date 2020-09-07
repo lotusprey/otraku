@@ -1,10 +1,13 @@
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/models/list_entry_media_data.dart';
 import 'package:otraku/models/tuple.dart';
+import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages the users collections of lists
-abstract class Collection {
-  String get search;
+abstract class CollectionProvider implements MediaGroupProvider {
+  int get listIndex;
+
+  set listIndex(int index);
 
   MediaListSort get sort;
 
@@ -13,18 +16,12 @@ abstract class Collection {
   //The name of this collection's type
   String get collectionName;
 
-  List<String> get names;
+  bool get isAnimeCollection;
 
-  bool get isLoading;
+  List<String> get names;
 
   bool get isEmpty;
 
-  //Configure the list index and search filters
-  void setFilters({listIndex, search});
-
   //Returns filtered lists
   Tuple<List<String>, List<List<ListEntryMediaData>>> lists();
-
-  //Fetch media list collection
-  Future<void> fetchMedia();
 }

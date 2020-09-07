@@ -1,11 +1,11 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
 class HeadlineHeader extends StatelessWidget {
+  const HeadlineHeader();
+
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
@@ -34,18 +34,13 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-          color: _palette.background.withAlpha(210),
-          child: Text(
-            headline,
-            style: _palette.headline.copyWith(height: 1),
-          ),
-        ),
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(left: 15, right: 15, top: 10),
+      color: _palette.background.withAlpha(210),
+      child: Text(
+        headline,
+        style: _palette.headline.copyWith(height: 1),
       ),
     );
   }

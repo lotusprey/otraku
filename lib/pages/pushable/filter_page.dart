@@ -14,9 +14,6 @@ class _FilterPageState extends State<FilterPage> {
   static SizedBox _sizedBox = const SizedBox(height: 20);
 
   Palette _palette;
-  TextGrid _genreGrid;
-  TextGrid _tagGrid;
-
   List<String> _genreIn;
   List<String> _genreNotIn;
   List<String> _tagIn;
@@ -32,18 +29,6 @@ class _FilterPageState extends State<FilterPage> {
         Provider.of<ExplorableMedia>(context, listen: false).genreNotIn;
     _tagIn = Provider.of<ExplorableMedia>(context, listen: false).tagIn;
     _tagNotIn = Provider.of<ExplorableMedia>(context, listen: false).tagNotIn;
-
-    _genreGrid = TextGrid(
-      options: Provider.of<ExplorableMedia>(context, listen: false).genres,
-      optionIn: _genreIn,
-      optionNotIn: _genreNotIn,
-    );
-
-    _tagGrid = TextGrid(
-      optionsDual: Provider.of<ExplorableMedia>(context, listen: false).tags,
-      optionIn: _tagIn,
-      optionNotIn: _tagNotIn,
-    );
   }
 
   List<Widget> _gridSection(String name, TextGrid grid) {
@@ -100,8 +85,23 @@ class _FilterPageState extends State<FilterPage> {
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: <Widget>[
-            ..._gridSection('Genres', _genreGrid),
-            ..._gridSection('Tags', _tagGrid),
+            ..._gridSection(
+              'Genres',
+              TextGrid(
+                options:
+                    Provider.of<ExplorableMedia>(context, listen: false).genres,
+                optionIn: _genreIn,
+                optionNotIn: _genreNotIn,
+              ),
+            ),
+            ..._gridSection(
+                'Tags',
+                TextGrid(
+                  optionsDual:
+                      Provider.of<ExplorableMedia>(context, listen: false).tags,
+                  optionIn: _tagIn,
+                  optionNotIn: _tagNotIn,
+                )),
             const SizedBox(height: 10),
           ],
         ),

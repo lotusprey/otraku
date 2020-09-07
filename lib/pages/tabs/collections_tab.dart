@@ -2,16 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/models/list_entry_media_data.dart';
-import 'package:otraku/pages/pushable/search_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/collection.dart';
+import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/tools/headers/collection_control_header.dart';
 import 'package:otraku/tools/multichild_layouts/single_media_list.dart';
-import 'package:otraku/tools/headers/media_control_header.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
-import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
 class CollectionsTab extends StatefulWidget {
@@ -30,13 +28,12 @@ class CollectionsTab extends StatefulWidget {
 
 class _CollectionsTabState extends State<CollectionsTab> {
   //Query settings
-  Collection _collection;
+  CollectionProvider _collection;
   String _scoreFormat;
 
   //Data
   List<String> _names = [];
   List<List<ListEntryMediaData>> _entryLists = [];
-  Map<String, Object> _segmentedControlPairs;
 
   Palette _palette;
 
@@ -56,7 +53,8 @@ class _CollectionsTabState extends State<CollectionsTab> {
               color: _palette.faded,
               iconSize: Palette.ICON_MEDIUM,
               onPressed: () {
-                _collection.setFilters(listIndex: -1, search: '');
+                _collection.listIndex = -1;
+                _collection.search = null;
                 _collection.fetchMedia();
               },
             ),
@@ -70,39 +68,9 @@ class _CollectionsTabState extends State<CollectionsTab> {
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
-      slivers: <Widget>[
-        HeadlineHeader(),
-        SliverPersistentHeader(
-          pinned: false,
-          floating: true,
-          delegate: MediaControlHeader(
-            context: context,
-            updateSegmentedControl: (value) => setState(
-              () => _collection.setFilters(listIndex: value as int),
-            ),
-            segmentedControlPairs: _segmentedControlPairs,
-            searchActivate: () => Navigator.of(context).push(
-              CupertinoPageRoute(
-                builder: (ctx) => SearchPage(
-                  searchFn: (value) => _collection.setFilters(search: value),
-                  text: _collection.search,
-                ),
-              ),
-            ),
-            searchDeactivate: () => _collection.setFilters(search: ''),
-            isSearchActive: _collection.search != '',
-            filterActivate: () {},
-            filterDeactivate: () {},
-            isFilterActive: false,
-            sort: () => showModalBottomSheet(
-              context: context,
-              builder: (ctx) => CollectionSortSheet(widget.isAnimeCollection),
-              backgroundColor: Colors.transparent,
-              isScrollControlled: true,
-            ),
-            refresh: () {},
-          ),
-        ),
+      slivers: [
+        const HeadlineHeader(),
+        CollectionControlHeader(_collection.isAnimeCollection),
         SliverToBoxAdapter(
           child: const SizedBox(height: 15),
         ),
@@ -194,11 +162,5 @@ class _CollectionsTabState extends State<CollectionsTab> {
 
     _names = tuple.item1;
     _entryLists = tuple.item2;
-
-    _segmentedControlPairs = {'All': -1};
-    final allNames = _collection.names;
-    for (int i = 0; i < allNames.length; i++) {
-      _segmentedControlPairs[allNames[i]] = i;
-    }
   }
 }

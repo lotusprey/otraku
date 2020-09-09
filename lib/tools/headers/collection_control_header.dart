@@ -68,6 +68,7 @@ class _CollectionControlHeaderDelegate
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TitleSegmentedControl(
+                initialValue: _collection.listIndex,
                 function: (value) => _collection.listIndex = value,
                 pairs: segmentedControlPairs,
               ),

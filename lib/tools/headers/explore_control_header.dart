@@ -118,7 +118,7 @@ class _FilterButton extends StatelessWidget {
     return Provider.of<ExplorableMedia>(context).areFiltersActive()
         ? GestureDetector(
             onTap: () => Navigator.of(context).push(
-              CupertinoPageRoute(builder: (_) => FilterPage()),
+              MaterialPageRoute(builder: (_) => FilterPage()),
             ),
             onLongPress: Provider.of<ExplorableMedia>(context, listen: false)
                 .clearGenreTagFilters,

@@ -16,7 +16,7 @@ class HeaderSearchButton extends StatelessWidget {
     return provider.search != null
         ? GestureDetector(
             onTap: () => Navigator.of(context).push(
-              CupertinoPageRoute(
+              MaterialPageRoute(
                 builder: (_) => SearchPage(
                   text: provider.search,
                   searchFn: (value) => provider.search = value,

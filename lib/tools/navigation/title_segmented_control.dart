@@ -5,12 +5,12 @@ import 'package:provider/provider.dart';
 class TitleSegmentedControl<T> extends StatefulWidget {
   final Function(T) function;
   final Map<String, T> pairs;
-  final int startIndex;
+  final int initialValue;
 
   TitleSegmentedControl({
     @required this.function,
     @required this.pairs,
-    this.startIndex = 0,
+    this.initialValue = 0,
   });
 
   @override
@@ -50,7 +50,7 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   @override
   void initState() {
     super.initState();
-    _current = widget.startIndex;
+    _current = widget.initialValue;
   }
 
   @override

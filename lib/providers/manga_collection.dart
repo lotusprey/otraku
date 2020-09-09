@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/models/list_entry_media_data.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/collection_provider.dart';
 
 //Manages the users manga collection of lists
@@ -33,7 +32,7 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
   bool _isLoading = false;
   List<String> _names;
   List<List<ListEntryMediaData>> _entryLists;
-  int _listIndex = -1;
+  int _listIndex = 0;
   String _search;
 
   @override
@@ -56,7 +55,7 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
 
   @override
   set listIndex(int index) {
-    if (index != null && index >= -1 && index < _names.length) {
+    if (index != null && index >= 0 && index < _names.length) {
       _listIndex = index;
       notifyListeners();
     }
@@ -88,58 +87,9 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
   }
 
   @override
-  bool get isLoading {
-    return _isLoading;
-  }
-
-  @override
-  bool get isEmpty {
-    return !_isLoading && _names.length == 0;
-  }
-
-  @override
-  void clear() {
-    _listIndex = -1;
-    _search = null;
-    fetchMedia();
-  }
-
-  //Returns filtered lists
-  Tuple<List<String>, List<List<ListEntryMediaData>>> lists() {
-    if (_listIndex == -1) {
-      if (_search == null) {
-        return Tuple([..._names], [..._entryLists]);
-      }
-
-      List<List<ListEntryMediaData>> currentEntries = [];
-      List<String> currentNames = [];
-      for (int i = 0; i < _names.length; i++) {
-        List<ListEntryMediaData> sublist = [];
-        for (ListEntryMediaData entry in _entryLists[i]) {
-          if (entry.title.toLowerCase().contains(_search)) {
-            sublist.add(entry);
-          }
-        }
-
-        if (sublist.length > 0) {
-          currentEntries.add(sublist);
-          currentNames.add(_names[i]);
-        }
-      }
-
-      if (currentEntries.length == 0) {
-        return null;
-      }
-
-      return Tuple([...currentNames], [...currentEntries]);
-    }
-
+  List<ListEntryMediaData> get entries {
     if (_search == null) {
-      return Tuple([
-        ...[_names[_listIndex]]
-      ], [
-        ...[_entryLists[_listIndex]]
-      ]);
+      return _entryLists[_listIndex];
     }
 
     List<ListEntryMediaData> currentEntries = [];
@@ -153,11 +103,24 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
       return null;
     }
 
-    return Tuple([
-      ...[_names[_listIndex]]
-    ], [
-      ...[currentEntries]
-    ]);
+    return currentEntries;
+  }
+
+  @override
+  bool get isLoading {
+    return _isLoading;
+  }
+
+  @override
+  bool get isEmpty {
+    return !_isLoading && _names.length == 0;
+  }
+
+  @override
+  void clear() {
+    _listIndex = 0;
+    _search = null;
+    fetchMedia();
   }
 
   //Fetch anime media list collection

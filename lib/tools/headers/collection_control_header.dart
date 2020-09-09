@@ -51,7 +51,7 @@ class _CollectionControlHeaderDelegate
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    Map<String, Object> segmentedControlPairs = {'All': -1};
+    Map<String, Object> segmentedControlPairs = {};
     final allNames = _collection.names;
     for (int i = 0; i < allNames.length; i++) {
       segmentedControlPairs[allNames[i]] = i;

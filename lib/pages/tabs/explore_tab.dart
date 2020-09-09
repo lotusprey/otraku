@@ -41,7 +41,7 @@ class _ExploreTabState extends State<ExploreTab> {
       ),
       controller: widget.scrollCtrl,
       slivers: [
-        const HeadlineHeader(),
+        const HeadlineHeader('Explore'),
         const ExploreControlHeader(),
         LargeTileGrid(_palette, _tileConfig),
       ],

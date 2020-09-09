@@ -83,6 +83,9 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
 
   @override
   List<String> get names {
+    if (_names == null || _names.length == 0) {
+      return null;
+    }
     return [..._names];
   }
 
@@ -113,7 +116,7 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
 
   @override
   bool get isEmpty {
-    return !_isLoading && _names.length == 0;
+    return !_isLoading && names == null;
   }
 
   @override

@@ -53,6 +53,10 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     fetchMedia();
   }
 
+  String get type {
+    return _filters['type'];
+  }
+
   set type(String type) {
     _filters['type'] = type;
     fetchMedia();

@@ -52,11 +52,12 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TitleSegmentedControl(
+                value: Provider.of<ExplorableMedia>(context).type,
+                pairs: const {'Anime': 'ANIME', 'Manga': 'MANGA'},
                 function: (value) => Provider.of<ExplorableMedia>(
                   context,
                   listen: false,
                 ).type = value,
-                pairs: const {'Anime': 'ANIME', 'Manga': 'MANGA'},
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,

@@ -3,14 +3,14 @@ import 'package:otraku/providers/theming.dart';
 import 'package:provider/provider.dart';
 
 class TitleSegmentedControl<T> extends StatefulWidget {
-  final Function(T) function;
+  final T value;
   final Map<String, T> pairs;
-  final int initialValue;
+  final Function(T) function;
 
   TitleSegmentedControl({
-    @required this.function,
+    @required this.value,
     @required this.pairs,
-    this.initialValue = 0,
+    @required this.function,
   });
 
   @override
@@ -20,37 +20,28 @@ class TitleSegmentedControl<T> extends StatefulWidget {
 class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   final SizedBox _sizedBox = const SizedBox(width: 10);
   Palette _palette;
-  int _current;
 
-  Widget _button(String title, T value, int index) => GestureDetector(
+  Widget _button(String title, T value) => GestureDetector(
         child: Text(
           title,
-          style: index != _current
+          style: value != widget.value
               ? _palette.contrastedTitle
               : _palette.accentedTitle,
         ),
         onTap: () {
-          setState(() => _current = index);
-          widget.function(value);
+          if (value != widget.value) {
+            widget.function(value);
+          }
         },
       );
 
   List<Widget> _buttons() {
     List<Widget> list = [];
-    int index = 0;
-
     for (var pair in widget.pairs.keys) {
-      list.add(_button(pair, widget.pairs[pair], index));
+      list.add(_button(pair, widget.pairs[pair]));
       list.add(_sizedBox);
-      index++;
     }
     return list;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _current = widget.initialValue;
   }
 
   @override

@@ -42,7 +42,7 @@ class HeaderSearchButton extends StatelessWidget {
             color: palette.faded,
             iconSize: Palette.ICON_MEDIUM,
             onPressed: () => Navigator.of(context).push(
-              CupertinoPageRoute(
+              MaterialPageRoute(
                 builder: (_) => SearchPage(
                   text: provider.search,
                   searchFn: (value) => provider.search = value,

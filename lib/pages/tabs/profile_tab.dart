@@ -16,7 +16,7 @@ class ProfileTab extends StatelessWidget {
         iconSize: Palette.ICON_MEDIUM,
         onPressed: () => Navigator.push(
             context,
-            CupertinoPageRoute(
+            MaterialPageRoute(
               builder: (ctx) => SettingsPage(),
             )),
       ),

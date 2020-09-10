@@ -141,7 +141,7 @@ class _FilterButton extends StatelessWidget {
             color: palette.faded,
             iconSize: Palette.ICON_MEDIUM,
             onPressed: () => Navigator.of(context).push(
-              CupertinoPageRoute(builder: (_) => FilterPage()),
+              MaterialPageRoute(builder: (_) => FilterPage()),
             ),
           );
   }

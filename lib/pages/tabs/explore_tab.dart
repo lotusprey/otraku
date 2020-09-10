@@ -22,7 +22,6 @@ class _ExploreTabState extends State<ExploreTab> {
   //Output settings
   Palette _palette;
   LargeTileConfiguration _tileConfig;
-  bool _didChangeDependencies = false;
 
   //Listens for the user reaching the bottom of the page
   void _onScroll() async {
@@ -49,21 +48,14 @@ class _ExploreTabState extends State<ExploreTab> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _palette = Provider.of<Theming>(context).palette;
-
-    if (!_didChangeDependencies) {
-      widget.scrollCtrl.addListener(_onScroll);
-
-      _tileConfig = Provider.of<ViewConfig>(
-        context,
-        listen: false,
-      ).tileConfiguration;
-
-      _didChangeDependencies = true;
-    }
+  void initState() {
+    super.initState();
+    widget.scrollCtrl.addListener(_onScroll);
+    _palette = Provider.of<Theming>(context, listen: false).palette;
+    _tileConfig = Provider.of<ViewConfig>(
+      context,
+      listen: false,
+    ).tileConfiguration;
   }
 
   @override

@@ -1,5 +1,5 @@
 import 'package:otraku/enums/media_list_sort_enum.dart';
-import 'package:otraku/models/list_entry_media_data.dart';
+import 'package:otraku/models/list_entry_media.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages the users collections of lists
@@ -19,7 +19,11 @@ abstract class CollectionProvider implements MediaGroupProvider {
 
   List<String> get names;
 
-  List<ListEntryMediaData> get entries;
+  List<ListEntryMedia> get entries;
 
   bool get isEmpty;
+
+  void sortCollection();
+
+  void sortList(int index);
 }

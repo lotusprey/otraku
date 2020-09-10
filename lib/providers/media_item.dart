@@ -98,6 +98,7 @@ class MediaItem with ChangeNotifier {
           mediaListEntry {
             status
             progress
+            score
           }
         }
       }
@@ -119,8 +120,10 @@ class MediaItem with ChangeNotifier {
 
     if (body['mediaListEntry'] == null) {
       return ListEntryUserData(
-        id: id,
+        mediaListStatus: null,
+        progress: 0,
         progressMax: body['episodes'] ?? body['chapters'],
+        score: 0,
       );
     }
 
@@ -133,10 +136,10 @@ class MediaItem with ChangeNotifier {
         ));
 
     return ListEntryUserData(
-      id: id,
       mediaListStatus: status,
       progress: body['mediaListEntry']['progress'],
       progressMax: body['episodes'] ?? body['chapters'],
+      score: body['mediaListEntry']['score'].toDouble(),
     );
   }
 

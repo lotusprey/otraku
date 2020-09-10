@@ -9,24 +9,6 @@ enum MediaListStatus {
   REPEATING,
 }
 
-enum AnimeListStatus {
-  WATCHING,
-  PLANNING,
-  COMPLETED,
-  DROPPED,
-  PAUSED,
-  REWATCHING,
-}
-
-enum MangaListStatus {
-  READING,
-  PLANNING,
-  COMPLETED,
-  DROPPED,
-  PAUSED,
-  REREADING,
-}
-
 //An enum clarification function
 String listStatusSpecification(MediaListStatus status, bool isAnime) {
   if (status == MediaListStatus.CURRENT) {

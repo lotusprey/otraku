@@ -37,16 +37,8 @@ class ExploreSortSheet extends StatelessWidget {
       ),
     );
 
-    int currentIndex;
-    bool currentlyDesc;
-
-    for (int i = 0; i < length; i++) {
-      if (mediaSort == MediaSort.values[i]) {
-        currentIndex = i ~/ 2;
-        currentlyDesc = i % 2 == 0 ? false : true;
-        break;
-      }
-    }
+    int currentIndex = mediaSort.index ~/ 2;
+    bool currentlyDesc = mediaSort.index % 2 == 0 ? false : true;
 
     if (currentIndex > (length - 5) ~/ 2) {
       currentIndex = (length - 6) ~/ 2;

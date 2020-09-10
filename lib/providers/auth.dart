@@ -136,20 +136,11 @@ class Auth with ChangeNotifier {
 
     final preferrences = await SharedPreferences.getInstance();
     int index = preferrences.getInt('sort');
-    if (index == null) {
-      switch (_titleFormat) {
-        case 'ENGLISH':
-          _mediaListSort = MediaListSort.MEDIA_TITLE_ENGLISH;
-          break;
-        case 'NATIVE':
-          _mediaListSort = MediaListSort.MEDIA_TITLE_NATIVE;
-          break;
-        default:
-          _mediaListSort = MediaListSort.MEDIA_TITLE_ROMAJI;
-          break;
-      }
-    } else {
+    if (index != null) {
       _mediaListSort = MediaListSort.values[index];
+    } else {
+      _mediaListSort = MediaListSort.TITLE;
+      preferrences.setInt('sort', MediaListSort.TITLE.index);
     }
 
     _status = AuthStatus.authorised;

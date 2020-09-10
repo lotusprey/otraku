@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
-import 'package:otraku/models/list_entry_media_data.dart';
+import 'package:otraku/models/list_entry_media.dart';
+import 'package:otraku/models/list_entry_user_data.dart';
 import 'package:otraku/providers/collection_provider.dart';
 
 //Manages the users anime collection of lists
@@ -31,7 +33,7 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
   //Data
   bool _isLoading = false;
   List<String> _names;
-  List<List<ListEntryMediaData>> _entryLists;
+  List<List<ListEntryMedia>> _entryLists;
   int _listIndex = 0;
   String _search;
 
@@ -90,13 +92,13 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
   }
 
   @override
-  List<ListEntryMediaData> get entries {
+  List<ListEntryMedia> get entries {
     if (_search == null) {
       return _entryLists[_listIndex];
     }
 
-    List<ListEntryMediaData> currentEntries = [];
-    for (ListEntryMediaData entry in _entryLists[_listIndex]) {
+    List<ListEntryMedia> currentEntries = [];
+    for (ListEntryMedia entry in _entryLists[_listIndex]) {
       if (entry.title.toLowerCase().contains(_search)) {
         currentEntries.add(entry);
       }
@@ -134,12 +136,13 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
     if (_names != null) notifyListeners();
 
     const query = r'''
-      query Collection($userId: Int, $sort: [MediaListSort], $scoreFormat: ScoreFormat) {
-        MediaListCollection(userId: $userId, type: ANIME, sort: $sort) {
+      query Collection($userId: Int, $scoreFormat: ScoreFormat) {
+        MediaListCollection(userId: $userId, type: ANIME, sort: SCORE_DESC) {
           lists {
             name
             entries {
               mediaId
+              status
               progress
               score(format: $scoreFormat)
               media {
@@ -170,7 +173,6 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
       'variables': {
         'userId': _userId,
         'scoreFormat': _scoreFormat,
-        'sort': describeEnum(_mediaListSort),
       },
     });
 
@@ -194,14 +196,25 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
           _names.add(currentMediaList['name']);
 
           _entryLists.add((currentMediaList['entries'] as List<dynamic>)
-              .map((e) => ListEntryMediaData(
+              .map((e) => ListEntryMedia(
                     id: e['mediaId'],
                     title: e['media']['title']['userPreferred'],
                     cover: e['media']['coverImage']['medium'],
                     format: e['media']['format'],
-                    score: e['score'].toDouble(),
-                    progress: e['progress'],
-                    totalEpCount: (e['media']['episodes'] ?? '?').toString(),
+                    progressMaxString:
+                        (e['media']['episodes'] ?? '?').toString(),
+                    userData: ListEntryUserData(
+                      mediaListStatus: stringToEnum(
+                          e['status'],
+                          Map.fromIterable(
+                            MediaListSort.values,
+                            key: (element) => describeEnum(element),
+                            value: (element) => element,
+                          )),
+                      progress: e['progress'],
+                      progressMax: e['media']['episodes'],
+                      score: e['score'].toDouble(),
+                    ),
                   ))
               .toList());
 
@@ -211,6 +224,36 @@ class AnimeCollection with ChangeNotifier implements CollectionProvider {
     }
 
     _isLoading = false;
+    sortCollection();
+  }
+
+  @override
+  void sortCollection() {
+    for (int i = 0; i < _entryLists.length; i++) {
+      sortList(i);
+    }
     notifyListeners();
+  }
+
+  @override
+  void sortList(int index) {
+    switch (_mediaListSort) {
+      case MediaListSort.TITLE:
+        _entryLists[index].sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case MediaListSort.TITLE_DESC:
+        _entryLists[index].sort((a, b) => b.title.compareTo(a.title));
+        break;
+      case MediaListSort.SCORE:
+        _entryLists[index]
+            .sort((a, b) => a.userData.score.compareTo(b.userData.score));
+        break;
+      case MediaListSort.SCORE_DESC:
+        _entryLists[index]
+            .sort((a, b) => b.userData.score.compareTo(a.userData.score));
+        break;
+      default:
+        break;
+    }
   }
 }

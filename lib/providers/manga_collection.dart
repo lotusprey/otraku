@@ -224,7 +224,7 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
     }
 
     _isLoading = false;
-    notifyListeners();
+    sortCollection();
   }
 
   @override

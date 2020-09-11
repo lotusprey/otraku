@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/list_entry_user_data.dart';
+import 'package:otraku/models/entry_user_data.dart';
 
-class ListEntryMedia {
+class MediaEntry {
   final int id;
   final String title;
   final String cover;
   final String format;
   final String progressMaxString;
-  ListEntryUserData userData;
+  EntryUserData userData;
 
-  ListEntryMedia({
+  MediaEntry({
     @required this.id,
     @required this.title,
     @required this.cover,

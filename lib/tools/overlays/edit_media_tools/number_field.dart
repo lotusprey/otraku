@@ -19,16 +19,12 @@ class NumberField extends StatefulWidget {
 
 class _NumberFieldState extends State<NumberField> {
   TextEditingController _controller;
-  int _maxValue;
   String _currentValue;
+  int _maxValue;
 
   @override
   Widget build(BuildContext context) {
     _controller.text = _currentValue;
-    _controller.selection = TextSelection(
-      baseOffset: _currentValue.length,
-      extentOffset: _currentValue.length,
-    );
 
     return SizedBox(
       height: 40,
@@ -42,7 +38,6 @@ class _NumberFieldState extends State<NumberField> {
         textAlignVertical: TextAlignVertical.top,
         style: widget.palette.paragraph,
         cursorColor: widget.palette.accent,
-        enableInteractiveSelection: false,
         decoration: InputDecoration(
           border: InputBorder.none,
           prefixIcon: IconButton(
@@ -59,16 +54,12 @@ class _NumberFieldState extends State<NumberField> {
           ),
         ),
         onChanged: (value) => _validateInput(),
-        onTap: () => _controller.selection = TextSelection(
-          baseOffset: _currentValue.length,
-          extentOffset: _currentValue.length,
-        ),
       ),
     );
   }
 
   void _validateInput({int add = 0}) {
-    if (_controller.text == '') {
+    if (_controller.text == null || _controller.text == '') {
       setState(() => _currentValue = '0');
     } else {
       int number = int.parse(_controller.text) + add;
@@ -87,7 +78,7 @@ class _NumberFieldState extends State<NumberField> {
     super.initState();
     _controller = TextEditingController();
     _currentValue = widget.initialValue.toString();
-    _maxValue = widget.maxValue ?? 10000;
+    _maxValue = widget.maxValue ?? 100000;
   }
 
   @override

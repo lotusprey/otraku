@@ -2,8 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/list_entry_user_data.dart';
-import 'package:otraku/models/media_item_data.dart';
+import 'package:otraku/models/media_page_data.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -12,7 +11,7 @@ import 'package:provider/provider.dart';
 
 class MediaHeader implements SliverPersistentHeaderDelegate {
   //Data
-  final MediaItemData mediaObj;
+  final MediaPageData mediaObj;
 
   //Output settings
   final Palette palette;
@@ -243,7 +242,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 
 class _FavoriteButton extends StatefulWidget {
   final Palette palette;
-  final MediaItemData mediaObj;
+  final MediaPageData mediaObj;
 
   _FavoriteButton(this.palette, this.mediaObj);
 
@@ -262,8 +261,8 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
       ),
       onPressed: () => Provider.of<MediaItem>(context, listen: false)
           .toggleFavourite(widget.mediaObj.id, widget.mediaObj.type)
-          .then((isSuccessful) {
-        if (isSuccessful)
+          .then((ok) {
+        if (ok)
           setState(
             () => widget.mediaObj.isFavourite = !widget.mediaObj.isFavourite,
           );
@@ -274,7 +273,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
 class _StatusButton extends StatefulWidget {
   final Palette palette;
-  final MediaItemData mediaObj;
+  final MediaPageData mediaObj;
 
   _StatusButton(this.palette, this.mediaObj);
 
@@ -283,11 +282,6 @@ class _StatusButton extends StatefulWidget {
 }
 
 class __StatusButtonState extends State<_StatusButton> {
-  MediaListStatus status;
-
-  void _update(ListEntryUserData data) =>
-      setState(() => status = data.mediaListStatus);
-
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
@@ -299,16 +293,18 @@ class __StatusButtonState extends State<_StatusButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(
-            status == null ? Icons.add : Icons.edit,
+            widget.mediaObj.entryUserData.status == null
+                ? Icons.add
+                : Icons.edit,
             size: Palette.ICON_SMALL,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
           Text(
-              status == null
+              widget.mediaObj.entryUserData.status == null
                   ? 'Add'
                   : listStatusSpecification(
-                      status,
+                      widget.mediaObj.entryUserData.status,
                       widget.mediaObj.type == 'ANIME',
                     ),
               style: widget.palette.buttonText),
@@ -316,16 +312,13 @@ class __StatusButtonState extends State<_StatusButton> {
       ),
       onPressed: () => showModalBottomSheet(
         context: context,
-        builder: (ctx) => EditMediaSheet(_update, widget.mediaObj),
+        builder: (ctx) => EditMediaSheet(
+            widget.mediaObj,
+            (data) => setState(
+                () => widget.mediaObj.entryUserData.status = data.status)),
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    status = widget.mediaObj.mediaListStatus;
   }
 }

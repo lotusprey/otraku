@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/list_entry_user_data.dart';
+import 'package:otraku/models/entry_user_data.dart';
 
 class MediaItem with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
@@ -89,13 +89,14 @@ class MediaItem with ChangeNotifier {
         as Map<String, dynamic>;
   }
 
-  Future<ListEntryUserData> fetchUserData(int id) async {
+  Future<EntryUserData> fetchUserData(int id) async {
     final query = r'''
       query ItemUserData($id: Int) {
         Media(id: $id) {
           episodes
           chapters
           mediaListEntry {
+            id
             status
             progress
             score
@@ -119,11 +120,9 @@ class MediaItem with ChangeNotifier {
         (json.decode(result.body) as Map<String, dynamic>)['data']['Media'];
 
     if (body['mediaListEntry'] == null) {
-      return ListEntryUserData(
-        mediaListStatus: null,
-        progress: 0,
+      return EntryUserData(
+        mediaId: id,
         progressMax: body['episodes'] ?? body['chapters'],
-        score: 0,
       );
     }
 
@@ -135,15 +134,36 @@ class MediaItem with ChangeNotifier {
           value: (element) => element,
         ));
 
-    return ListEntryUserData(
-      mediaListStatus: status,
+    return EntryUserData(
+      mediaId: id,
+      entryId: body['mediaListEntry']['id'],
+      status: status,
       progress: body['mediaListEntry']['progress'],
       progressMax: body['episodes'] ?? body['chapters'],
       score: body['mediaListEntry']['score'].toDouble(),
     );
   }
 
-  Future<void> updateUserData(ListEntryUserData data) async {}
+  Future<bool> updateUserData(EntryUserData data) async {
+    final query = '''
+      mutation {
+        SaveMediaListEntry(${data.entryId != null ? 'id: ${data.entryId},' : ''}
+          mediaId: ${data.mediaId}, 
+          status: ${describeEnum(data.status)}) {
+            id
+          }
+      }
+    ''';
+
+    final result = await post(
+      _url,
+      body: json.encode({'query': query}),
+      headers: headers,
+    );
+
+    return !(json.decode(result.body) as Map<String, dynamic>)
+        .containsKey('errors');
+  }
 
   Future<bool> toggleFavourite(int id, String entryType) async {
     entryType = entryType.toLowerCase();

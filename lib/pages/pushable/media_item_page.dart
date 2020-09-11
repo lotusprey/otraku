@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/models/media_item_data.dart';
+import 'package:otraku/models/media_page_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/media_header.dart';
@@ -21,13 +21,12 @@ class MediaItemPage extends StatefulWidget {
 
 class _MediaItemPageState extends State<MediaItemPage> {
   //Data
-  MediaItemData _mediaObj;
+  MediaPageData _mediaObj;
 
   //Output settings
   bool _isLoading = true;
   bool _didChangeDependencies = false;
   Palette _palette;
-  ScrollController _scrollCtrl;
   double _topInset;
   double _coverWidth;
   double _coverHeight;
@@ -46,7 +45,6 @@ class _MediaItemPageState extends State<MediaItemPage> {
           color: _palette.background,
           child: !_isLoading
               ? CustomScrollView(
-                  controller: _scrollCtrl,
                   physics: const BouncingScrollPhysics(),
                   slivers: <Widget>[
                     SliverPersistentHeader(
@@ -100,26 +98,25 @@ class _MediaItemPageState extends State<MediaItemPage> {
                             ),
                             const SizedBox(height: 10),
                             InfoGrid(_mediaObj),
-                            const SizedBox(height: 30),
                             Container(
                               height: 100,
-                              color: Colors.blue,
+                              width: 100,
                             ),
                             Container(
                               height: 100,
-                              color: Colors.blue,
+                              width: 100,
                             ),
                             Container(
                               height: 100,
-                              color: Colors.blue,
+                              width: 100,
                             ),
                             Container(
                               height: 100,
-                              color: Colors.blue,
+                              width: 100,
                             ),
                             Container(
                               height: 100,
-                              color: Colors.blue,
+                              width: 100,
                             ),
                           ],
                         ),
@@ -136,13 +133,11 @@ class _MediaItemPageState extends State<MediaItemPage> {
   @override
   void initState() {
     super.initState();
-    _mediaObj = MediaItemData(
+    _mediaObj = MediaPageData(
       context: context,
       mediaId: widget.id,
       setState: () => setState(() => _isLoading = false),
     );
-
-    _scrollCtrl = ScrollController();
   }
 
   @override
@@ -156,13 +151,5 @@ class _MediaItemPageState extends State<MediaItemPage> {
       _bannerHeight = _coverHeight + 110;
       _didChangeDependencies = true;
     }
-  }
-
-  @override
-  void dispose() {
-    if (_scrollCtrl.hasClients) {
-      _scrollCtrl.dispose();
-    }
-    super.dispose();
   }
 }

@@ -97,6 +97,8 @@ class Palette {
   static const double FONT_MEDIUM = 20;
   static const double FONT_SMALL = 15;
 
+  static const Color ERROR = Color(0xffeb1730);
+
   final Color background;
   final Color primary;
   final Color accent;
@@ -232,7 +234,7 @@ enum Accent {
   blue,
   orange,
   green,
-  pink,
+  purple,
 }
 
 extension AccentsExtension on Accent {
@@ -240,7 +242,7 @@ extension AccentsExtension on Accent {
     Accent.blue: Color(0xff2172b5),
     Accent.orange: Color(0xffeda60c),
     Accent.green: Color(0xff32a852),
-    Accent.pink: Color(0xffdb397a),
+    Accent.purple: Color(0xff692de3),
   };
 
   Color get color => _colors[this];

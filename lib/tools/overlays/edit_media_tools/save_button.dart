@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/entry_user_data.dart';
-import 'package:otraku/providers/media_item.dart';
+import 'package:otraku/providers/anime_collection.dart';
+import 'package:otraku/providers/collection_provider.dart';
+import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 
-class UpdateButton extends StatefulWidget {
+class SaveButton extends StatefulWidget {
+  final bool isAnime;
   final Palette palette;
   final EntryUserData oldData;
   final EntryUserData newData;
   final Function(EntryUserData) update;
 
-  UpdateButton({
+  SaveButton({
+    @required this.isAnime,
     @required this.palette,
     @required this.oldData,
     @required this.newData,
@@ -19,10 +23,10 @@ class UpdateButton extends StatefulWidget {
   });
 
   @override
-  _UpdateButtonState createState() => _UpdateButtonState();
+  _SaveButtonState createState() => _SaveButtonState();
 }
 
-class _UpdateButtonState extends State<UpdateButton> {
+class _SaveButtonState extends State<SaveButton> {
   bool _isLoading = false;
 
   @override
@@ -37,8 +41,11 @@ class _UpdateButtonState extends State<UpdateButton> {
                 Navigator.of(context).pop();
               } else {
                 setState(() => _isLoading = true);
-                Provider.of<MediaItem>(context, listen: false)
-                    .updateUserData(widget.newData)
+                final CollectionProvider collection = widget.isAnime
+                    ? Provider.of<AnimeCollection>(context, listen: false)
+                    : Provider.of<MangaCollection>(context, listen: false);
+                collection
+                    .updateEntry(widget.oldData, widget.newData)
                     .then((ok) {
                   if (ok) widget.update(widget.newData);
                   Navigator.of(context).pop();

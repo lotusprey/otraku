@@ -54,7 +54,7 @@ class MediaList extends StatelessWidget {
 
             return ListTile(
               leading: Hero(
-                tag: entry.id.toString(),
+                tag: entry.mediaId.toString(),
                 child: ClipRRect(
                   borderRadius: radius,
                   child: Container(
@@ -87,8 +87,8 @@ class MediaList extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(vertical: 2),
               onTap: () => MediaIndexer.pushMedia(
                 context,
-                entry.id,
-                tag: entry.id.toString(),
+                entry.mediaId,
+                tag: entry.mediaId.toString(),
               ),
             );
           },

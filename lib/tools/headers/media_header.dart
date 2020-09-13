@@ -293,18 +293,16 @@ class __StatusButtonState extends State<_StatusButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(
-            widget.mediaObj.entryUserData.status == null
-                ? Icons.add
-                : Icons.edit,
+            widget.mediaObj.status == null ? Icons.add : Icons.edit,
             size: Palette.ICON_SMALL,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
           Text(
-              widget.mediaObj.entryUserData.status == null
+              widget.mediaObj.status == null
                   ? 'Add'
                   : listStatusSpecification(
-                      widget.mediaObj.entryUserData.status,
+                      widget.mediaObj.status,
                       widget.mediaObj.type == 'ANIME',
                     ),
               style: widget.palette.buttonText),
@@ -312,10 +310,8 @@ class __StatusButtonState extends State<_StatusButton> {
       ),
       onPressed: () => showModalBottomSheet(
         context: context,
-        builder: (ctx) => EditMediaSheet(
-            widget.mediaObj,
-            (data) => setState(
-                () => widget.mediaObj.entryUserData.status = data.status)),
+        builder: (ctx) => EditMediaSheet(widget.mediaObj,
+            (data) => setState(() => widget.mediaObj.status = data.status)),
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
       ),

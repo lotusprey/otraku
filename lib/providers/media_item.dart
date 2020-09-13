@@ -144,27 +144,6 @@ class MediaItem with ChangeNotifier {
     );
   }
 
-  Future<bool> updateUserData(EntryUserData data) async {
-    final query = '''
-      mutation {
-        SaveMediaListEntry(${data.entryId != null ? 'id: ${data.entryId},' : ''}
-          mediaId: ${data.mediaId}, 
-          status: ${describeEnum(data.status)}) {
-            id
-          }
-      }
-    ''';
-
-    final result = await post(
-      _url,
-      body: json.encode({'query': query}),
-      headers: headers,
-    );
-
-    return !(json.decode(result.body) as Map<String, dynamic>)
-        .containsKey('errors');
-  }
-
   Future<bool> toggleFavourite(int id, String entryType) async {
     entryType = entryType.toLowerCase();
 

@@ -116,7 +116,7 @@ class __TextGridButtonState extends State<_TextGridButton> {
               : Container(
                   padding: _TextGridButton._edgeInsets,
                   decoration: BoxDecoration(
-                    color: Color(0xffd63324),
+                    color: Palette.ERROR,
                     borderRadius: _TextGridButton._borderRadius,
                   ),
                   child: Row(

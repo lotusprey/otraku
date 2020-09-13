@@ -37,6 +37,16 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
   String _search;
 
   @override
+  String get collectionName {
+    return 'Manga';
+  }
+
+  @override
+  bool get isAnimeCollection {
+    return false;
+  }
+
+  @override
   String get search {
     return _search;
   }
@@ -70,16 +80,6 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
   @override
   set sort(MediaListSort value) {
     if (value != null) _mediaListSort = value;
-  }
-
-  @override
-  String get collectionName {
-    return 'Manga';
-  }
-
-  @override
-  bool get isAnimeCollection {
-    return false;
   }
 
   @override
@@ -199,13 +199,13 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
             isSplitCompletedList: currentMediaList['isSplitCompletedList'],
             entries: (currentMediaList['entries'] as List<dynamic>)
                 .map((e) => MediaEntry(
-                      id: e['mediaId'],
+                      mediaId: e['mediaId'],
                       title: e['media']['title']['userPreferred'],
                       cover: e['media']['coverImage']['medium'],
                       format: e['media']['format'],
                       progressMaxString:
                           (e['media']['chapters'] ?? '?').toString(),
-                      userData: EntryUserData(
+                      entryUserData: EntryUserData(
                         mediaId: e['mediaId'],
                         progress: e['progress'],
                         progressMax: e['media']['chapters'],
@@ -258,5 +258,108 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
       default:
         break;
     }
+  }
+
+  @override
+  Future<bool> updateEntry(EntryUserData oldData, EntryUserData newData) async {
+    final updatable = oldData.entryId != null;
+
+    final query = '''
+      mutation Update(
+        ${updatable ? '\$id: Int' : ''}
+        \$mediaId: Int
+        \$status: MediaListStatus
+        \$scoreFormat: ScoreFormat
+      ) {
+      SaveMediaListEntry(
+        ${updatable ? 'id: \$id' : ''}
+        mediaId: \$mediaId, 
+        status: \$status) {
+          id
+          mediaId
+          status
+          progress
+          score(format: \$scoreFormat)
+          media {
+            format
+            chapters
+            title {
+              userPreferred
+            }
+            coverImage {
+              medium
+            }
+          }
+        }
+      }
+    ''';
+
+    final request = json.encode({
+      'query': query,
+      'variables': {
+        'id': newData.entryId,
+        'mediaId': newData.mediaId,
+        'status': describeEnum(newData.status),
+        'scoreFormat': _scoreFormat,
+      },
+    });
+
+    final result = await post(_url, body: request, headers: _headers);
+
+    final entryData =
+        (json.decode(result.body) as Map<String, dynamic>)['data'];
+
+    if (entryData == null) return false;
+
+    final data = entryData['SaveMediaListEntry'];
+
+    MediaEntry entry = MediaEntry(
+      mediaId: data['mediaId'],
+      title: data['media']['title']['userPreferred'],
+      cover: data['media']['coverImage']['medium'],
+      format: data['media']['format'],
+      progressMaxString: (data['media']['chapters'] ?? '?').toString(),
+      entryUserData: EntryUserData(
+        mediaId: data['mediaId'],
+        progress: data['chapters'],
+        progressMax: data['media']['chapters'],
+        score: data['score'].toDouble(),
+      ),
+    );
+
+    if (updatable) {
+      int oldListIndex;
+      for (int i = 0; i < _lists.length; i++) {
+        if (_lists[i].status == describeEnum(oldData.status)) {
+          oldListIndex = i;
+          break;
+        }
+      }
+
+      for (final e in _lists[oldListIndex].entries) {
+        if (e.mediaId == entry.mediaId) {
+          _lists[oldListIndex].entries.remove(e);
+          break;
+        }
+      }
+
+      if (oldData.status == entry.userData.status) {
+        _lists[oldListIndex].entries.add(entry);
+        sortList(oldListIndex);
+      }
+    }
+
+    if (!updatable || oldData.status != entry.userData.status) {
+      for (int i = 0; i < _lists.length; i++) {
+        if (_lists[i].status == describeEnum(newData.status)) {
+          _lists[i].entries.add(entry);
+          sortList(i);
+          break;
+        }
+      }
+    }
+
+    notifyListeners();
+    return true;
   }
 }

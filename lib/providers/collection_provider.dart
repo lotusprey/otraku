@@ -1,9 +1,15 @@
 import 'package:otraku/enums/media_list_sort_enum.dart';
+import 'package:otraku/models/entry_user_data.dart';
 import 'package:otraku/models/media_entry.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages the users collections of lists
 abstract class CollectionProvider implements MediaGroupProvider {
+  //The name of this collection's type
+  String get collectionName;
+
+  bool get isAnimeCollection;
+
   int get listIndex;
 
   set listIndex(int index);
@@ -11,11 +17,6 @@ abstract class CollectionProvider implements MediaGroupProvider {
   MediaListSort get sort;
 
   set sort(MediaListSort value);
-
-  //The name of this collection's type
-  String get collectionName;
-
-  bool get isAnimeCollection;
 
   List<String> get names;
 
@@ -26,4 +27,6 @@ abstract class CollectionProvider implements MediaGroupProvider {
   void sortCollection();
 
   void sortList(int index);
+
+  Future<bool> updateEntry(EntryUserData oldData, EntryUserData newData);
 }

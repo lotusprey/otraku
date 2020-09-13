@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/models/entry_user_data.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:provider/provider.dart';
 import 'package:otraku/providers/media_item.dart';
@@ -18,7 +17,7 @@ class MediaPageData {
   Image cover;
   Image banner;
   bool isFavourite;
-  EntryUserData entryUserData;
+  MediaListStatus status;
   String description;
   List<Tuple> info = [];
 
@@ -55,16 +54,13 @@ class MediaPageData {
       isFavourite = data['isFavourite'];
 
       if (data['mediaListEntry'] != null) {
-        entryUserData = EntryUserData(
-          mediaId: mediaId,
-          status: stringToEnum(
-              data['mediaListEntry']['status'].toString(),
-              Map.fromIterable(
-                MediaListStatus.values,
-                key: (element) => describeEnum(element),
-                value: (element) => element,
-              )),
-        );
+        status = stringToEnum(
+            data['mediaListEntry']['status'].toString(),
+            Map.fromIterable(
+              MediaListStatus.values,
+              key: (element) => describeEnum(element),
+              value: (element) => element,
+            ));
       }
 
       //Images

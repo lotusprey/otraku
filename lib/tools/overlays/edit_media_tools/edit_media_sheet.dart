@@ -7,7 +7,7 @@ import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/grid_child.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/number_field.dart';
-import 'package:otraku/tools/overlays/edit_media_tools/update_button.dart';
+import 'package:otraku/tools/overlays/edit_media_tools/save_button.dart';
 import 'package:provider/provider.dart';
 
 import 'drop_down_implementation.dart';
@@ -23,7 +23,8 @@ class EditMediaSheet extends StatefulWidget {
 }
 
 class _EditMediaSheetState extends State<EditMediaSheet> {
-  EntryUserData _data;
+  EntryUserData _oldData;
+  EntryUserData _newData;
   Palette _palette;
   double _topInset;
 
@@ -50,16 +51,17 @@ class _EditMediaSheetState extends State<EditMediaSheet> {
                 color: _palette.contrast,
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              if (_data != null)
-                UpdateButton(
-                  oldData: widget.media.entryUserData,
-                  newData: _data,
+              if (_oldData != null)
+                SaveButton(
+                  isAnime: widget.media.type == 'ANIME',
+                  oldData: _oldData,
+                  newData: _newData,
                   update: widget.update,
                   palette: _palette,
                 ),
             ],
           ),
-          if (_data != null)
+          if (_oldData != null)
             Expanded(
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -73,7 +75,7 @@ class _EditMediaSheetState extends State<EditMediaSheet> {
                       GridChild(
                         title: 'Status',
                         body: DropDownImplementation(
-                          _data,
+                          _newData,
                           widget.media.type == 'ANIME',
                           _palette,
                         ),
@@ -85,8 +87,8 @@ class _EditMediaSheetState extends State<EditMediaSheet> {
                           height: 40,
                           child: NumberField(
                             palette: _palette,
-                            initialValue: _data.progress,
-                            maxValue: _data.progressMax,
+                            initialValue: _newData.progress,
+                            maxValue: _newData.progressMax,
                           ),
                         ),
                         palette: _palette,
@@ -110,7 +112,10 @@ class _EditMediaSheetState extends State<EditMediaSheet> {
         .fetchUserData(widget.media.id)
         .then((data) {
       if (mounted) {
-        setState(() => _data = data);
+        setState(() {
+          _oldData = data;
+          _newData = EntryUserData.from(_oldData);
+        });
       }
     });
   }

@@ -18,6 +18,16 @@ class EntryUserData {
     this.status,
   });
 
+  EntryUserData.from(EntryUserData data)
+      : this(
+          mediaId: data.mediaId,
+          progress: data.progress,
+          progressMax: data.progressMax,
+          score: data.score,
+          entryId: data.entryId,
+          status: data.status,
+        );
+
   bool isSimilarTo(EntryUserData other) {
     return other.status == status &&
         other.progress == progress &&

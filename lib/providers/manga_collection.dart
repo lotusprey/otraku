@@ -9,7 +9,7 @@ import 'package:otraku/models/entry_user_data.dart';
 import 'package:otraku/providers/collection_provider.dart';
 
 //Manages the users manga collection of lists
-class MangaCollection with ChangeNotifier implements CollectionProvider {
+class MangaCollection extends CollectionProvider with ChangeNotifier {
   //Query settings
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
@@ -207,6 +207,7 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
                           (e['media']['chapters'] ?? '?').toString(),
                       entryUserData: EntryUserData(
                         mediaId: e['mediaId'],
+                        type: 'MANGA',
                         progress: e['progress'],
                         progressMax: e['media']['chapters'],
                         score: e['score'].toDouble(),
@@ -260,19 +261,23 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
     }
   }
 
+  //Updates entry data and its corresponding lists.
+  //Returns true if it was successful and false if it wasn't.
   @override
   Future<bool> updateEntry(EntryUserData oldData, EntryUserData newData) async {
-    final updatable = oldData.entryId != null;
+    //Determine if the entry is newly added or an old one.
+    final alreadyAdded = oldData.entryId != null;
 
+    //Update the entry.
     final query = '''
       mutation Update(
-        ${updatable ? '\$id: Int' : ''}
+        ${alreadyAdded ? '\$id: Int' : ''}
         \$mediaId: Int
         \$status: MediaListStatus
         \$scoreFormat: ScoreFormat
       ) {
       SaveMediaListEntry(
-        ${updatable ? 'id: \$id' : ''}
+        ${alreadyAdded ? 'id: \$id' : ''}
         mediaId: \$mediaId, 
         status: \$status) {
           id
@@ -309,50 +314,57 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
     final entryData =
         (json.decode(result.body) as Map<String, dynamic>)['data'];
 
+    //Check if the entry wasn't updated
     if (entryData == null) return false;
 
-    final data = entryData['SaveMediaListEntry'];
-
-    MediaEntry entry = MediaEntry(
-      mediaId: data['mediaId'],
-      title: data['media']['title']['userPreferred'],
-      cover: data['media']['coverImage']['medium'],
-      format: data['media']['format'],
-      progressMaxString: (data['media']['chapters'] ?? '?').toString(),
-      entryUserData: EntryUserData(
-        mediaId: data['mediaId'],
-        progress: data['chapters'],
-        progressMax: data['media']['chapters'],
-        score: data['score'].toDouble(),
-      ),
-    );
-
-    if (updatable) {
-      int oldListIndex;
+    //Remove the entry from the previous list if it existed before.
+    if (alreadyAdded) {
       for (int i = 0; i < _lists.length; i++) {
         if (_lists[i].status == describeEnum(oldData.status)) {
-          oldListIndex = i;
+          for (final e in _lists[i].entries) {
+            if (e.mediaId == newData.mediaId) {
+              _lists[i].entries.remove(e);
+              break;
+            }
+          }
           break;
         }
-      }
-
-      for (final e in _lists[oldListIndex].entries) {
-        if (e.mediaId == entry.mediaId) {
-          _lists[oldListIndex].entries.remove(e);
-          break;
-        }
-      }
-
-      if (oldData.status == entry.userData.status) {
-        _lists[oldListIndex].entries.add(entry);
-        sortList(oldListIndex);
       }
     }
 
-    if (!updatable || oldData.status != entry.userData.status) {
+    //Check if the list to which it was added exists locally.
+    int newListIndex;
+    for (int i = 0; i < _lists.length; i++) {
+      if (_lists[i].status == describeEnum(newData.status)) {
+        newListIndex = i;
+        break;
+      }
+    }
+
+    //If the list isn't available locally, fetch it. Otherwise,
+    //find it and add the updated entry.
+    if (newListIndex == null) {
+      await fetchSingleList(describeEnum(newData.status));
+    } else {
+      final data = entryData['SaveMediaListEntry'];
+
       for (int i = 0; i < _lists.length; i++) {
         if (_lists[i].status == describeEnum(newData.status)) {
-          _lists[i].entries.add(entry);
+          _lists[i].entries.add(MediaEntry(
+                mediaId: data['mediaId'],
+                title: data['media']['title']['userPreferred'],
+                cover: data['media']['coverImage']['medium'],
+                format: data['media']['format'],
+                progressMaxString:
+                    (data['media']['chapters'] ?? '?').toString(),
+                entryUserData: EntryUserData(
+                  mediaId: data['mediaId'],
+                  type: 'MANGA',
+                  progress: data['progress'],
+                  progressMax: data['media']['chapters'],
+                  score: data['score'].toDouble(),
+                ),
+              ));
           sortList(i);
           break;
         }
@@ -361,5 +373,95 @@ class MangaCollection with ChangeNotifier implements CollectionProvider {
 
     notifyListeners();
     return true;
+  }
+
+  @override
+  Future<void> fetchSingleList(String status) async {
+    const query = r'''
+      query Collection($userId: Int, $status: MediaListStatus, $scoreFormat: ScoreFormat) {
+        MediaListCollection(userId: $userId, status: $status, type: MANGA, sort: SCORE_DESC) {
+          lists {
+            name
+            status
+            isSplitCompletedList
+            entries {
+              mediaId
+              status
+              progress
+              score(format: $scoreFormat)
+              media {
+                format
+                chapters
+                title {
+                  userPreferred
+                }
+                coverImage {
+                  medium
+                }
+              }
+            }
+          }
+        }
+        User(id: $userId) {
+          mediaListOptions {
+            mangaList {
+              sectionOrder
+            }
+          }
+        }
+      }
+    ''';
+
+    final request = json.encode({
+      'query': query,
+      'variables': {
+        'userId': _userId,
+        'status': status,
+        'scoreFormat': _scoreFormat,
+      },
+    });
+
+    final response = await post(_url, body: request, headers: _headers);
+    final result = json.decode(response.body)['data'];
+
+    final listData = result['MediaListCollection']['lists'][0];
+
+    final sectionOrder = result['User']['mediaListOptions']['mangaList']
+        ['sectionOrder'] as List<dynamic>;
+
+    final list = EntryList(
+      name: listData['name'],
+      status: listData['status'],
+      isSplitCompletedList: listData['isSplitCompletedList'],
+      entries: (listData['entries'] as List<dynamic>)
+          .map((e) => MediaEntry(
+                mediaId: e['mediaId'],
+                title: e['media']['title']['userPreferred'],
+                cover: e['media']['coverImage']['medium'],
+                format: e['media']['format'],
+                progressMaxString: (e['media']['chapters'] ?? '?').toString(),
+                entryUserData: EntryUserData(
+                  mediaId: e['mediaId'],
+                  type: 'MANGA',
+                  progress: e['progress'],
+                  progressMax: e['media']['chapters'],
+                  score: e['score'].toDouble(),
+                ),
+              ))
+          .toList(),
+    );
+
+    for (int i = 0; i < sectionOrder.length; i++) {
+      if (sectionOrder[i] == list.name) {
+        if (sectionOrder.length == _lists.length) {
+          _lists[i] = list;
+        } else {
+          _lists.insert(i, list);
+          if (_listIndex >= i) _listIndex++;
+        }
+        sortList(i);
+        return;
+      }
+    }
   }
 }

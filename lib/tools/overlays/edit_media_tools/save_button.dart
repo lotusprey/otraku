@@ -8,14 +8,12 @@ import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 
 class SaveButton extends StatefulWidget {
-  final bool isAnime;
   final Palette palette;
   final EntryUserData oldData;
   final EntryUserData newData;
   final Function(EntryUserData) update;
 
   SaveButton({
-    @required this.isAnime,
     @required this.palette,
     @required this.oldData,
     @required this.newData,
@@ -33,7 +31,7 @@ class _SaveButtonState extends State<SaveButton> {
   Widget build(BuildContext context) {
     return !_isLoading
         ? IconButton(
-            icon: const Icon(Icons.done),
+            icon: const Icon(Icons.save),
             iconSize: Palette.ICON_MEDIUM,
             color: widget.palette.contrast,
             onPressed: () {
@@ -41,9 +39,10 @@ class _SaveButtonState extends State<SaveButton> {
                 Navigator.of(context).pop();
               } else {
                 setState(() => _isLoading = true);
-                final CollectionProvider collection = widget.isAnime
-                    ? Provider.of<AnimeCollection>(context, listen: false)
-                    : Provider.of<MangaCollection>(context, listen: false);
+                final CollectionProvider collection =
+                    widget.newData.type == 'ANIME'
+                        ? Provider.of<AnimeCollection>(context, listen: false)
+                        : Provider.of<MangaCollection>(context, listen: false);
                 collection
                     .updateEntry(widget.oldData, widget.newData)
                     .then((ok) {

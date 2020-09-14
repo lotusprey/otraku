@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/media_page_data.dart';
+import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/tools/overlays/edit_media_tools/edit_media_sheet.dart';
 import 'package:provider/provider.dart';
 
 class MediaHeader implements SliverPersistentHeaderDelegate {
@@ -242,9 +242,9 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 
 class _FavoriteButton extends StatefulWidget {
   final Palette palette;
-  final MediaPageData mediaObj;
+  final MediaPageData media;
 
-  _FavoriteButton(this.palette, this.mediaObj);
+  _FavoriteButton(this.palette, this.media);
 
   @override
   __FavoriteButtonState createState() => __FavoriteButtonState();
@@ -255,16 +255,16 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(
-        widget.mediaObj.isFavourite ? Icons.favorite : Icons.favorite_border,
+        widget.media.isFavourite ? Icons.favorite : Icons.favorite_border,
         size: Palette.ICON_MEDIUM,
         color: widget.palette.contrast,
       ),
       onPressed: () => Provider.of<MediaItem>(context, listen: false)
-          .toggleFavourite(widget.mediaObj.id, widget.mediaObj.type)
+          .toggleFavourite(widget.media.mediaId, widget.media.type)
           .then((ok) {
         if (ok)
           setState(
-            () => widget.mediaObj.isFavourite = !widget.mediaObj.isFavourite,
+            () => widget.media.isFavourite = !widget.media.isFavourite,
           );
       }),
     );
@@ -273,9 +273,9 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
 class _StatusButton extends StatefulWidget {
   final Palette palette;
-  final MediaPageData mediaObj;
+  final MediaPageData media;
 
-  _StatusButton(this.palette, this.mediaObj);
+  _StatusButton(this.palette, this.media);
 
   @override
   __StatusButtonState createState() => __StatusButtonState();
@@ -293,28 +293,27 @@ class __StatusButtonState extends State<_StatusButton> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(
-            widget.mediaObj.status == null ? Icons.add : Icons.edit,
+            widget.media.status == null ? Icons.add : Icons.edit,
             size: Palette.ICON_SMALL,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
           Text(
-              widget.mediaObj.status == null
+              widget.media.status == null
                   ? 'Add'
                   : listStatusSpecification(
-                      widget.mediaObj.status,
-                      widget.mediaObj.type == 'ANIME',
+                      widget.media.status,
+                      widget.media.type == 'ANIME',
                     ),
               style: widget.palette.buttonText),
         ],
       ),
-      onPressed: () => showModalBottomSheet(
-        context: context,
-        builder: (ctx) => EditMediaSheet(widget.mediaObj,
-            (data) => setState(() => widget.mediaObj.status = data.status)),
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-      ),
+      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => EditEntryPage(
+          widget.media.mediaId,
+          (data) => setState(() => widget.media.status = data.status),
+        ),
+      )),
     );
   }
 }

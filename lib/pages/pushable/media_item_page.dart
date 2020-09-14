@@ -21,7 +21,7 @@ class MediaItemPage extends StatefulWidget {
 
 class _MediaItemPageState extends State<MediaItemPage> {
   //Data
-  MediaPageData _mediaObj;
+  MediaPageData _media;
 
   //Output settings
   bool _isLoading = true;
@@ -52,7 +52,7 @@ class _MediaItemPageState extends State<MediaItemPage> {
                       floating: false,
                       delegate: MediaHeader(
                         palette: _palette,
-                        mediaObj: _mediaObj,
+                        mediaObj: _media,
                         coverWidth: _coverWidth,
                         coverHeight: _coverHeight,
                         height: _bannerHeight,
@@ -81,7 +81,7 @@ class _MediaItemPageState extends State<MediaItemPage> {
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: Text(
-                                  _mediaObj.description,
+                                  _media.description,
                                   style: _palette.paragraph,
                                   overflow: TextOverflow.fade,
                                 ),
@@ -91,13 +91,13 @@ class _MediaItemPageState extends State<MediaItemPage> {
                                 builder: (_) => PopUpAnimation(
                                   TextDialog(
                                     title: 'Description',
-                                    text: _mediaObj.description,
+                                    text: _media.description,
                                   ),
                                 ),
                               ),
                             ),
                             const SizedBox(height: 10),
-                            InfoGrid(_mediaObj),
+                            InfoGrid(_media),
                             Container(
                               height: 100,
                               width: 100,
@@ -133,9 +133,9 @@ class _MediaItemPageState extends State<MediaItemPage> {
   @override
   void initState() {
     super.initState();
-    _mediaObj = MediaPageData(
+    _media = MediaPageData(
       context: context,
-      mediaId: widget.id,
+      id: widget.id,
       setState: () => setState(() => _isLoading = false),
     );
   }

@@ -5,10 +5,9 @@ import 'package:otraku/providers/theming.dart';
 
 class DropDownImplementation extends StatefulWidget {
   final EntryUserData data;
-  final bool isAnime;
   final Palette palette;
 
-  DropDownImplementation(this.data, this.isAnime, this.palette);
+  DropDownImplementation(this.data, this.palette);
 
   @override
   _DropDownImplementationState createState() => _DropDownImplementationState();
@@ -35,7 +34,7 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
             .map((v) => DropdownMenuItem(
                   value: v,
                   child: Text(
-                    listStatusSpecification(v, widget.isAnime),
+                    listStatusSpecification(v, widget.data.type == 'ANIME'),
                     style: v != widget.data.status
                         ? widget.palette.paragraph
                         : widget.palette.exclamation,

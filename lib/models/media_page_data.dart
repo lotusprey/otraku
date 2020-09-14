@@ -7,7 +7,7 @@ import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 
 class MediaPageData {
-  int id;
+  int mediaId;
   String type;
   String title;
   int nextEpisode;
@@ -24,9 +24,9 @@ class MediaPageData {
   MediaPageData({
     @required BuildContext context,
     @required Function setState,
-    @required int mediaId,
+    @required int id,
   }) {
-    id = mediaId;
+    mediaId = id;
 
     Provider.of<MediaItem>(context, listen: false)
         .fetchItemData(id)

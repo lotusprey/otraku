@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/score_format_enum.dart';
+import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
@@ -90,6 +91,9 @@ class MediaList extends StatelessWidget {
                 entry.mediaId,
                 tag: entry.mediaId.toString(),
               ),
+              onLongPress: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => EditEntryPage(entry.mediaId, (_) {}),
+              )),
             );
           },
           childCount: entries.length,

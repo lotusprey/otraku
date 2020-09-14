@@ -93,6 +93,7 @@ class MediaItem with ChangeNotifier {
     final query = r'''
       query ItemUserData($id: Int) {
         Media(id: $id) {
+          type
           episodes
           chapters
           mediaListEntry {
@@ -122,6 +123,7 @@ class MediaItem with ChangeNotifier {
     if (body['mediaListEntry'] == null) {
       return EntryUserData(
         mediaId: id,
+        type: body['type'],
         progressMax: body['episodes'] ?? body['chapters'],
       );
     }
@@ -137,6 +139,7 @@ class MediaItem with ChangeNotifier {
     return EntryUserData(
       mediaId: id,
       entryId: body['mediaListEntry']['id'],
+      type: body['type'],
       status: status,
       progress: body['mediaListEntry']['progress'],
       progressMax: body['episodes'] ?? body['chapters'],

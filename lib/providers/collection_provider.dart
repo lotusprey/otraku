@@ -29,4 +29,6 @@ abstract class CollectionProvider implements MediaGroupProvider {
   void sortList(int index);
 
   Future<bool> updateEntry(EntryUserData oldData, EntryUserData newData);
+
+  Future<void> fetchSingleList(String status);
 }

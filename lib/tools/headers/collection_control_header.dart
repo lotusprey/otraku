@@ -63,7 +63,7 @@ class _CollectionControlHeaderDelegate
         child: Container(
           height: _height,
           padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
-          color: _palette.background.withAlpha(210),
+          color: _palette.background.withAlpha(200),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

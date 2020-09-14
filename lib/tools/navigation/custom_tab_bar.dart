@@ -23,7 +23,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
     return IconButton(
       icon: icon,
       iconSize: Palette.ICON_BIG,
-      color: _pageIndex == index ? _palette.primary : _palette.faded,
+      color: _pageIndex == index ? _palette.background : _palette.faded,
       onPressed: () {
         if (_pageIndex != index) {
           Provider.of<ViewConfig>(context, listen: false).switchPage(index);
@@ -54,7 +54,7 @@ class _CustomTabBarState extends State<CustomTabBar> {
             width: 255,
             height: 51,
             decoration: BoxDecoration(
-              color: _palette.background.withAlpha(210),
+              color: _palette.background.withAlpha(200),
               borderRadius: radius,
             ),
             child: Stack(

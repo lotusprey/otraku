@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
-import 'package:otraku/tools/multichild_layouts/text_grid.dart';
+import 'package:otraku/tools/multichild_layouts/filter_grid.dart';
 import 'package:provider/provider.dart';
 
 class FilterPage extends StatefulWidget {
@@ -24,21 +24,27 @@ class _FilterPageState extends State<FilterPage> {
     super.initState();
     _palette = Provider.of<Theming>(context, listen: false).palette;
 
-    _genreIn = Provider.of<ExplorableMedia>(context, listen: false).genreIn;
-    _genreNotIn =
-        Provider.of<ExplorableMedia>(context, listen: false).genreNotIn;
-    _tagIn = Provider.of<ExplorableMedia>(context, listen: false).tagIn;
-    _tagNotIn = Provider.of<ExplorableMedia>(context, listen: false).tagNotIn;
+    _genreIn = Provider.of<ExplorableMedia>(context, listen: false)
+        .filterWithKey(ExplorableMedia.KEY_GENRE_IN);
+    _genreNotIn = Provider.of<ExplorableMedia>(context, listen: false)
+        .filterWithKey(ExplorableMedia.KEY_GENRE_NOT_IN);
+    _tagIn = Provider.of<ExplorableMedia>(context, listen: false)
+        .filterWithKey(ExplorableMedia.KEY_TAG_IN);
+    _tagNotIn = Provider.of<ExplorableMedia>(context, listen: false)
+        .filterWithKey(ExplorableMedia.KEY_TAG_NOT_IN);
   }
 
-  List<Widget> _gridSection(String name, TextGrid grid) {
+  List<Widget> _gridSection(String name, FilterGrid grid) {
     if (grid == null) {
       return [];
     }
 
     final result = [
       _sizedBox,
-      Text(name, style: _palette.smallTitle),
+      Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Text(name, style: _palette.smallTitle),
+      ),
       _sizedBox,
       grid,
     ];
@@ -80,31 +86,36 @@ class _FilterPageState extends State<FilterPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ListView(
-          physics: const BouncingScrollPhysics(),
-          children: <Widget>[
-            ..._gridSection(
-              'Genres',
-              TextGrid(
-                options:
-                    Provider.of<ExplorableMedia>(context, listen: false).genres,
-                optionIn: _genreIn,
-                optionNotIn: _genreNotIn,
-              ),
+      body: ListView(
+        physics: const BouncingScrollPhysics(),
+        children: <Widget>[
+          ..._gridSection(
+            'Genres',
+            FilterGrid(
+              options:
+                  Provider.of<ExplorableMedia>(context, listen: false).genres,
+              optionIn: _genreIn,
+              optionNotIn: _genreNotIn,
+              rows: 2,
+              whRatio: 0.4,
             ),
-            ..._gridSection(
-                'Tags',
-                TextGrid(
-                  optionsDual:
-                      Provider.of<ExplorableMedia>(context, listen: false).tags,
-                  optionIn: _tagIn,
-                  optionNotIn: _tagNotIn,
-                )),
-            const SizedBox(height: 10),
-          ],
-        ),
+          ),
+          ..._gridSection(
+              'Tags',
+              FilterGrid(
+                options: Provider.of<ExplorableMedia>(context, listen: false)
+                    .tags
+                    .item1,
+                descriptions:
+                    Provider.of<ExplorableMedia>(context, listen: false)
+                        .tags
+                        .item2,
+                optionIn: _tagIn,
+                optionNotIn: _tagNotIn,
+                rows: 7,
+              )),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

@@ -1,75 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
-class TextGrid extends StatelessWidget {
+class FilterGrid extends StatelessWidget {
+  static const _padding = EdgeInsets.symmetric(horizontal: 10);
+
   final List<String> options;
-  final List<Tuple<String, String>> optionsDual;
+  final List<String> descriptions;
   final List<String> optionIn;
   final List<String> optionNotIn;
+  final int rows;
+  final double whRatio;
 
-  TextGrid({
-    this.options,
-    this.optionsDual,
+  FilterGrid({
+    @required this.options,
     @required this.optionIn,
     @required this.optionNotIn,
+    @required this.rows,
+    this.whRatio = 0.2,
+    this.descriptions = const [],
   });
 
   @override
   Widget build(BuildContext context) {
-    if (options != null) {
-      return Wrap(
-        spacing: 10,
-        runSpacing: 10,
-        children: options
-            .map((option) => _TextGridButton(
-                  title: option,
-                  optionIn: optionIn,
-                  optionNotIn: optionNotIn,
-                ))
-            .toList(),
-      );
-    }
-
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: optionsDual
-          .map((option) => _TextGridButton(
-                title: option.item1,
-                optionIn: optionIn,
-                optionNotIn: optionNotIn,
-                dialogText: option.item2,
-              ))
-          .toList(),
+    return SizedBox(
+      height: rows * 50.0,
+      child: GridView.builder(
+        padding: _padding,
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: rows,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: whRatio,
+        ),
+        itemBuilder: (_, index) => _FilterOption(
+          title: options[index],
+          optionIn: optionIn,
+          optionNotIn: optionNotIn,
+          description: descriptions.length > index ? descriptions[index] : null,
+        ),
+        itemCount: options.length,
+      ),
     );
   }
 }
 
-class _TextGridButton extends StatefulWidget {
-  static const SizedBox _sizedBox = const SizedBox(width: 5);
-  static const EdgeInsets _edgeInsets = const EdgeInsets.all(5);
-  static BorderRadius _borderRadius = BorderRadius.circular(5);
-
+class _FilterOption extends StatefulWidget {
   final String title;
   final List<String> optionIn;
   final List<String> optionNotIn;
-  final String dialogText;
+  final String description;
 
-  _TextGridButton({
+  _FilterOption({
     @required this.title,
     @required this.optionIn,
     @required this.optionNotIn,
-    this.dialogText,
+    this.description,
   });
 
   @override
-  __TextGridButtonState createState() => __TextGridButtonState();
+  _FilterOptionState createState() => _FilterOptionState();
 }
 
-class __TextGridButtonState extends State<_TextGridButton> {
+class _FilterOptionState extends State<_FilterOption> {
+  static const SizedBox _sizedBox = const SizedBox(width: 5);
+  static BorderRadius _borderRadius = BorderRadius.circular(10);
+
   Palette _palette;
   int _state;
 
@@ -89,44 +88,45 @@ class __TextGridButtonState extends State<_TextGridButton> {
           ? Container(
               decoration: BoxDecoration(
                 color: _palette.primary,
-                borderRadius: _TextGridButton._borderRadius,
+                borderRadius: _borderRadius,
               ),
-              padding: _TextGridButton._edgeInsets,
-              child: Text(widget.title, style: _palette.detail),
+              child: Center(
+                child: Text(widget.title, style: _palette.paragraph),
+              ),
             )
           : _state == 1
               ? Container(
-                  padding: _TextGridButton._edgeInsets,
                   decoration: BoxDecoration(
                     color: _palette.accent,
-                    borderRadius: _TextGridButton._borderRadius,
+                    borderRadius: _borderRadius,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: _palette.detail.copyWith(color: Colors.white),
+                        style: _palette.paragraph.copyWith(color: Colors.white),
                       ),
-                      _TextGridButton._sizedBox,
+                      _sizedBox,
                       const Icon(Icons.add, size: 15, color: Colors.white),
                     ],
                   ),
                 )
               : Container(
-                  padding: _TextGridButton._edgeInsets,
                   decoration: BoxDecoration(
                     color: Palette.ERROR,
-                    borderRadius: _TextGridButton._borderRadius,
+                    borderRadius: _borderRadius,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: _palette.detail.copyWith(color: Colors.white),
+                        style: _palette.paragraph.copyWith(color: Colors.white),
                       ),
-                      _TextGridButton._sizedBox,
+                      _sizedBox,
                       const Icon(Icons.remove, size: 15, color: Colors.white),
                     ],
                   ),
@@ -145,11 +145,11 @@ class __TextGridButtonState extends State<_TextGridButton> {
         }
       },
       onLongPress: () {
-        if (widget.dialogText != null) {
+        if (widget.description != null) {
           showDialog(
             context: context,
-            builder: (ctx) => PopUpAnimation(
-              TextDialog(title: widget.title, text: widget.dialogText),
+            builder: (_) => PopUpAnimation(
+              TextDialog(title: widget.title, text: widget.description),
             ),
           );
         }

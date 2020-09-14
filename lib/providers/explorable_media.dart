@@ -8,6 +8,11 @@ import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages all browsable media, genres, tags and all the filters
 class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
+  static const KEY_GENRE_IN = 'genre_in';
+  static const KEY_GENRE_NOT_IN = 'genre_not_in';
+  static const KEY_TAG_IN = 'tag_in';
+  static const KEY_TAG_NOT_IN = 'tag_not_in';
+
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
 
@@ -18,7 +23,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
   bool _isLoading = false;
   List<Map<String, dynamic>> _data;
   List<String> _genres;
-  List<Tuple<String, String>> _tags;
+  Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
     'page': 1,
     'perPage': 30,
@@ -75,34 +80,13 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     return [..._genres];
   }
 
-  List<String> get genreIn {
-    if (_filters.containsKey('genre_in')) {
-      return [..._filters['genre_in']];
-    }
-    return [];
+  Tuple<List<String>, List<String>> get tags {
+    return _tags;
   }
 
-  List<String> get genreNotIn {
-    if (_filters.containsKey('genre_not_in')) {
-      return [..._filters['genre_not_in']];
-    }
-    return [];
-  }
-
-  List<Tuple<String, String>> get tags {
-    return [..._tags];
-  }
-
-  List<String> get tagIn {
-    if (_filters.containsKey('tag_in')) {
-      return [..._filters['tag_in']];
-    }
-    return [];
-  }
-
-  List<String> get tagNotIn {
-    if (_filters.containsKey('tag_not_int')) {
-      return [..._filters['tag_not_in']];
+  List<String> filterWithKey(String key) {
+    if (_filters.containsKey(key)) {
+      return [..._filters[key]];
     }
     return [];
   }
@@ -115,52 +99,52 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     bool addPageAndNotReset,
   }) {
     if (newGenreIn != null && newGenreIn.length == 0) {
-      _filters.remove('genre_in');
+      _filters.remove(KEY_GENRE_IN);
     } else {
-      _filters['genre_in'] = newGenreIn;
+      _filters[KEY_GENRE_IN] = newGenreIn;
     }
 
     if (newGenreNotIn != null && newGenreNotIn.length == 0) {
-      _filters.remove('genre_not_in');
+      _filters.remove(KEY_GENRE_NOT_IN);
     } else {
-      _filters['genre_not_in'] = newGenreNotIn;
+      _filters[KEY_GENRE_NOT_IN] = newGenreNotIn;
     }
 
     if (newTagIn != null && newTagIn.length == 0) {
-      _filters.remove('tag_in');
+      _filters.remove(KEY_TAG_IN);
     } else {
-      _filters['tag_in'] = newTagIn;
+      _filters[KEY_TAG_IN] = newTagIn;
     }
 
     if (newTagNotIn != null && newTagNotIn.length == 0) {
-      _filters.remove('tag_not_in');
+      _filters.remove(KEY_TAG_NOT_IN);
     } else {
-      _filters['tag_not_in'] = newTagNotIn;
+      _filters[KEY_TAG_NOT_IN] = newTagNotIn;
     }
     fetchMedia();
   }
 
   bool areFiltersActive() {
-    return _filters.containsKey('genre_in') ||
-        _filters.containsKey('genre_not_in') ||
-        _filters.containsKey('tag_in') ||
-        _filters.containsKey('tag_not_in');
+    return _filters.containsKey(KEY_GENRE_IN) ||
+        _filters.containsKey(KEY_GENRE_NOT_IN) ||
+        _filters.containsKey(KEY_TAG_IN) ||
+        _filters.containsKey(KEY_TAG_NOT_IN);
   }
 
   void clearGenreTagFilters() {
-    _filters.remove('genre_in');
-    _filters.remove('genre_not_in');
-    _filters.remove('tag_in');
-    _filters.remove('tag_not_in');
+    _filters.remove(KEY_GENRE_IN);
+    _filters.remove(KEY_GENRE_NOT_IN);
+    _filters.remove(KEY_TAG_IN);
+    _filters.remove(KEY_TAG_NOT_IN);
     fetchMedia();
   }
 
   @override
   void clear() {
-    _filters.remove('genre_in');
-    _filters.remove('genre_not_in');
-    _filters.remove('tag_in');
-    _filters.remove('tag_not_in');
+    _filters.remove(KEY_GENRE_IN);
+    _filters.remove(KEY_GENRE_NOT_IN);
+    _filters.remove(KEY_TAG_IN);
+    _filters.remove(KEY_TAG_NOT_IN);
     _filters.remove('search');
     fetchMedia();
   }
@@ -182,7 +166,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     }
 
     const query = r'''
-      query Filter($page: Int, $perPage: Int, $id_not_in: [Int], 
+      query Browse($page: Int, $perPage: Int, $id_not_in: [Int], 
           $sort: [MediaSort], $type: MediaType, $search: String, 
           $genre_in: [String], $genre_not_in: [String], $tag_in: [String], 
           $tag_not_in: [String]) {
@@ -247,9 +231,11 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
         .map((g) => g.toString())
         .toList();
 
-    _tags = (body['MediaTagCollection'] as List<dynamic>)
-        .map((t) => Tuple(t['name'].toString(), t['description'].toString()))
-        .toList();
+    _tags = Tuple([], []);
+    for (final tag in body['MediaTagCollection']) {
+      _tags.item1.add(tag['name']);
+      _tags.item2.add(tag['description']);
+    }
 
     notifyListeners();
   }

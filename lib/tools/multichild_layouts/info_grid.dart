@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/media_page_data.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class InfoGrid extends StatelessWidget {
@@ -37,34 +38,25 @@ class InfoGrid extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: row1,
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: row2,
-          ),
-        ],
+      child: Padding(
+        padding: ViewConfig.PADDING,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: row1,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: row2,
+            ),
+          ],
+        ),
       ),
     );
-
-    // return Wrap(
-    //   spacing: 10,
-    //   runSpacing: 10,
-    //   children: mediaObj.info
-    //       .map((i) => _InfoTile(
-    //             i.item1,
-    //             i.item2,
-    //             palette,
-    //           ))
-    //       .toList(),
-    // );
   }
 }
 
@@ -104,33 +96,4 @@ class _InfoTile extends StatelessWidget {
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(5),
-  //       color: palette.primary,
-  //     ),
-  //     child: Padding(
-  //       padding: const EdgeInsets.symmetric(
-  //         vertical: 5,
-  //         horizontal: 10,
-  //       ),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: <Widget>[
-  //           Text(
-  //             heading,
-  //             style: palette.detail,
-  //           ),
-  //           Text(
-  //             subtitle,
-  //             style: palette.paragraph,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

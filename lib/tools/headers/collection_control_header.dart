@@ -37,11 +37,9 @@ class _CollectionControlHeaderDelegate
   Palette _palette;
 
   _CollectionControlHeaderDelegate(BuildContext context, bool isAnime) {
-    if (isAnime) {
-      _collection = Provider.of<AnimeCollection>(context);
-    } else {
-      _collection = Provider.of<MangaCollection>(context);
-    }
+    _collection = isAnime
+        ? Provider.of<AnimeCollection>(context)
+        : Provider.of<MangaCollection>(context);
     _palette = Provider.of<Theming>(context, listen: false).palette;
   }
 
@@ -83,14 +81,14 @@ class _CollectionControlHeaderDelegate
                     onPressed: () => showModalBottomSheet(
                       context: context,
                       builder: (ctx) =>
-                          CollectionSortSheet(_collection.isAnimeCollection),
+                          CollectionSortSheet(_collection.isAnime),
                       backgroundColor: Colors.transparent,
                       isScrollControlled: true,
                     ),
                   ),
                   HeaderRefreshButton(
                     listenable: _collection,
-                    readable: _collection.isAnimeCollection
+                    readable: _collection.isAnime
                         ? Provider.of<AnimeCollection>(context, listen: false)
                         : Provider.of<MangaCollection>(context, listen: false),
                     palette: _palette,

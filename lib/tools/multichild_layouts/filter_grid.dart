@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
 class FilterGrid extends StatelessWidget {
-  static const _padding = EdgeInsets.symmetric(horizontal: 10);
-
   final List<String> options;
   final List<String> descriptions;
   final List<String> optionIn;
@@ -18,16 +17,16 @@ class FilterGrid extends StatelessWidget {
     @required this.optionIn,
     @required this.optionNotIn,
     @required this.rows,
-    this.whRatio = 0.2,
+    this.whRatio = 0.15,
     this.descriptions = const [],
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: rows * 50.0,
+      height: rows * 45.0,
       child: GridView.builder(
-        padding: _padding,
+        padding: ViewConfig.PADDING,
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

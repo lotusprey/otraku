@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/tools/overlays/modal_sheet.dart';
 import 'package:provider/provider.dart';
@@ -16,12 +15,9 @@ class CollectionSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CollectionProvider collection;
-    if (isAnimeCollection) {
-      collection = Provider.of<AnimeCollection>(context, listen: false);
-    } else {
-      collection = Provider.of<MangaCollection>(context, listen: false);
-    }
+    final collection = isAnimeCollection
+        ? Provider.of<AnimeCollection>(context, listen: false)
+        : Provider.of<MangaCollection>(context, listen: false);
 
     final mediaSort = collection.sort;
     final currentIndex = mediaSort.index ~/ 2;

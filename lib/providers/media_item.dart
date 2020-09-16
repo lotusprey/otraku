@@ -101,6 +101,7 @@ class MediaItem with ChangeNotifier {
             status
             progress
             score
+            customLists
           }
         }
       }
@@ -144,6 +145,7 @@ class MediaItem with ChangeNotifier {
       progress: body['mediaListEntry']['progress'],
       progressMax: body['episodes'] ?? body['chapters'],
       score: body['mediaListEntry']['score'].toDouble(),
+      customLists: body['customLists'],
     );
   }
 

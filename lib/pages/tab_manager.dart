@@ -3,6 +3,8 @@ import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/profile_tab.dart';
+import 'package:otraku/providers/anime_collection.dart';
+import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/navigation/floating_navigation.dart';
@@ -29,7 +31,6 @@ class _TabManagerState extends State<TabManager>
   Map<int, Widget> _pages;
   ScrollController _scrollCtrl;
   Palette _palette;
-  double _topInset;
 
   bool _didChangeDependencies = false;
 
@@ -41,8 +42,7 @@ class _TabManagerState extends State<TabManager>
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButtonAnimator: const DisableAnimationAnimator(),
       body: Consumer<ViewConfig>(
-        builder: (_, viewConfig, __) => Padding(
-          padding: EdgeInsets.only(top: _topInset),
+        builder: (_, viewConfig, __) => SafeArea(
           child: _pages[viewConfig.pageIndex],
         ),
       ),
@@ -57,7 +57,6 @@ class _TabManagerState extends State<TabManager>
     if (!_didChangeDependencies) {
       _scrollCtrl = ScrollController();
       Provider.of<ViewConfig>(context, listen: false).init(context);
-      _topInset = Provider.of<ViewConfig>(context, listen: false).topInset;
 
       _navigation = FloatingNavigation(
         child: CustomTabBar(),
@@ -67,13 +66,13 @@ class _TabManagerState extends State<TabManager>
       _pages = {
         TabManager.INBOX: InboxTab(),
         TabManager.ANIME_LIST: CollectionsTab(
+          collection: Provider.of<AnimeCollection>(context, listen: false),
           scrollCtrl: _scrollCtrl,
-          isAnimeCollection: true,
           key: UniqueKey(),
         ),
         TabManager.MANGA_LIST: CollectionsTab(
+          collection: Provider.of<MangaCollection>(context, listen: false),
           scrollCtrl: _scrollCtrl,
-          isAnimeCollection: false,
           key: UniqueKey(),
         ),
         TabManager.EXPLORE: ExploreTab(_scrollCtrl),

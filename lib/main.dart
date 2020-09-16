@@ -29,6 +29,10 @@ class MyApp extends StatelessWidget {
         ProxyProvider<Auth, MediaItem>(
           update: (_, auth, __) => MediaItem(auth.headers),
         ),
+        ChangeNotifierProxyProvider<Auth, ExplorableMedia>(
+          create: (_) => ExplorableMedia(),
+          update: (_, auth, explorable) => explorable..init(auth.headers),
+        ),
         ChangeNotifierProxyProvider<Auth, AnimeCollection>(
           create: (_) => AnimeCollection(),
           update: (_, auth, collection) => collection
@@ -39,19 +43,8 @@ class MyApp extends StatelessWidget {
               scoreFormat: auth.scoreFormat,
             ),
         ),
-        ChangeNotifierProxyProvider<Auth, MangaCollection>(
+        ChangeNotifierProvider<MangaCollection>(
           create: (_) => MangaCollection(),
-          update: (_, auth, collection) => collection
-            ..init(
-              headers: auth.headers,
-              userId: auth.userId,
-              mediaListSort: auth.mediaListSort,
-              scoreFormat: auth.scoreFormat,
-            ),
-        ),
-        ChangeNotifierProxyProvider<Auth, ExplorableMedia>(
-          create: (_) => ExplorableMedia(),
-          update: (_, auth, explorable) => explorable..init(auth.headers),
         ),
         ChangeNotifierProvider<ViewConfig>(
           create: (_) => ViewConfig(),

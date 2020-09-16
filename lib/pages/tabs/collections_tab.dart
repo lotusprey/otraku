@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
 import 'package:otraku/providers/collection_provider.dart';
-import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/headers/collection_control_header.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
@@ -13,11 +11,11 @@ import 'package:provider/provider.dart';
 
 class CollectionsTab extends StatefulWidget {
   final ScrollController scrollCtrl;
-  final bool isAnimeCollection;
+  final CollectionProvider collection;
 
   CollectionsTab({
     @required this.scrollCtrl,
-    @required this.isAnimeCollection,
+    @required this.collection,
     @required key,
   }) : super(key: key);
 
@@ -26,11 +24,9 @@ class CollectionsTab extends StatefulWidget {
 }
 
 class _CollectionsTabState extends State<CollectionsTab> {
-  CollectionProvider _collection;
-
   @override
   Widget build(BuildContext context) {
-    if (_collection.isEmpty) {
+    if (widget.collection.isEmpty) {
       final palette = Provider.of<Theming>(context, listen: false).palette;
       return CustomScrollView(
         physics: const BouncingScrollPhysics(
@@ -44,15 +40,16 @@ class _CollectionsTabState extends State<CollectionsTab> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'No ${_collection.collectionName} Results',
+                    'No ${widget.collection.collectionName} Results',
                     style: palette.smallTitle,
                   ),
                   IconButton(
                     icon: const Icon(LineAwesomeIcons.retweet),
                     color: palette.faded,
                     iconSize: Palette.ICON_MEDIUM,
-                    onPressed: () =>
-                        _collection.fetchMedia().then((_) => setState(() {})),
+                    onPressed: () => widget.collection
+                        .fetchMedia()
+                        .then((_) => setState(() {})),
                   ),
                 ],
               ),
@@ -68,26 +65,13 @@ class _CollectionsTabState extends State<CollectionsTab> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        HeadlineHeader('${_collection.collectionName} List'),
-        CollectionControlHeader(widget.isAnimeCollection),
-        SliverToBoxAdapter(
-          child: const SizedBox(height: 15),
-        ),
+        HeadlineHeader('${widget.collection.collectionName} List'),
+        CollectionControlHeader(widget.collection.isAnime),
         MediaList(
-          widget.isAnimeCollection,
+          widget.collection.isAnime,
           Provider.of<Auth>(context, listen: false).scoreFormat,
         ),
       ],
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.isAnimeCollection) {
-      _collection = Provider.of<AnimeCollection>(context, listen: false);
-    } else {
-      _collection = Provider.of<MangaCollection>(context, listen: false);
-    }
   }
 }

@@ -12,6 +12,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
   static const KEY_GENRE_NOT_IN = 'genre_not_in';
   static const KEY_TAG_IN = 'tag_in';
   static const KEY_TAG_NOT_IN = 'tag_not_in';
+  static const KEY_ID_NOT_IN = 'id_not_in';
 
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
@@ -29,7 +30,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     'perPage': 30,
     'type': 'ANIME',
     'sort': describeEnum(MediaSort.TRENDING_DESC),
-    'id_not_in': [],
+    KEY_ID_NOT_IN: [],
   };
 
   @override
@@ -161,7 +162,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     if (_data != null) notifyListeners();
 
     if (clean) {
-      _filters['id_not_in'] = [];
+      _filters[KEY_ID_NOT_IN] = [];
       _filters['page'] = 1;
     }
 
@@ -203,7 +204,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
         'imageUrl': m['coverImage']['large'],
         'id': m['id'],
       });
-      (_filters['id_not_in'] as List<dynamic>).add(m['id']);
+      (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
     }
 
     _isLoading = false;

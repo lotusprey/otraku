@@ -3,9 +3,9 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +19,7 @@ class MediaList extends StatelessWidget {
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(5);
     final palette = Provider.of<Theming>(context, listen: false).palette;
-    final CollectionProvider collection = isAnimeCollection
+    final collection = isAnimeCollection
         ? Provider.of<AnimeCollection>(context)
         : Provider.of<MangaCollection>(context);
     final entries = collection.entries;
@@ -47,7 +47,7 @@ class MediaList extends StatelessWidget {
     }
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: ViewConfig.PADDING,
       sliver: SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
           (ctx, index) {

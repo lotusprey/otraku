@@ -311,7 +311,7 @@ class __StatusButtonState extends State<_StatusButton> {
       onPressed: () => Navigator.of(context).push(MaterialPageRoute(
         builder: (_) => EditEntryPage(
           widget.media.mediaId,
-          (data) => setState(() => widget.media.status = data.status),
+          (status) => setState(() => widget.media.status = status),
         ),
       )),
     );

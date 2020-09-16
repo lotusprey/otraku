@@ -9,6 +9,7 @@ class EntryUserData {
   int progress;
   int progressMax;
   double score;
+  List<String> customLists;
 
   EntryUserData({
     @required this.mediaId,
@@ -18,6 +19,7 @@ class EntryUserData {
     this.score = 0,
     this.entryId,
     this.status,
+    this.customLists = const [],
   });
 
   EntryUserData.from(EntryUserData data)
@@ -29,11 +31,6 @@ class EntryUserData {
           score: data.score,
           entryId: data.entryId,
           status: data.status,
+          customLists: data.customLists,
         );
-
-  bool isSimilarTo(EntryUserData other) {
-    return other.status == status &&
-        other.progress == progress &&
-        other.score == score;
-  }
 }

@@ -226,6 +226,9 @@ class Palette {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarIconBrightness: brightness,
       systemNavigationBarIconBrightness: brightness,
+      statusBarColor: background,
+      systemNavigationBarColor: background,
+      systemNavigationBarDividerColor: background,
     ));
   }
 }

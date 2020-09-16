@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/multichild_layouts/filter_grid.dart';
 import 'package:provider/provider.dart';
 
@@ -11,8 +13,6 @@ class FilterPage extends StatefulWidget {
 }
 
 class _FilterPageState extends State<FilterPage> {
-  static SizedBox _sizedBox = const SizedBox(height: 20);
-
   Palette _palette;
   List<String> _genreIn;
   List<String> _genreNotIn;
@@ -40,12 +40,10 @@ class _FilterPageState extends State<FilterPage> {
     }
 
     final result = [
-      _sizedBox,
       Padding(
-        padding: const EdgeInsets.only(left: 10),
+        padding: ViewConfig.PADDING,
         child: Text(name, style: _palette.smallTitle),
       ),
-      _sizedBox,
       grid,
     ];
 
@@ -56,35 +54,27 @@ class _FilterPageState extends State<FilterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: _palette.background,
-        actionsForegroundColor: _palette.accent,
-        middle: Text('Filters', style: _palette.contrastedTitle),
-        leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            size: Palette.ICON_MEDIUM,
-            color: _palette.accent,
+      appBar: CustomAppBar(
+        title: 'Filters',
+        trailing: [
+          IconButton(
+            icon: Icon(
+              Icons.done,
+              size: Palette.ICON_MEDIUM,
+              color: _palette.accent,
+            ),
+            onPressed: () {
+              Provider.of<ExplorableMedia>(context, listen: false)
+                  .setGenreTagFilters(
+                newGenreIn: _genreIn,
+                newGenreNotIn: _genreNotIn,
+                newTagIn: _tagIn,
+                newTagNotIn: _tagNotIn,
+              );
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        trailing: IconButton(
-          icon: Icon(
-            Icons.done,
-            size: Palette.ICON_MEDIUM,
-            color: _palette.accent,
-          ),
-          onPressed: () {
-            Provider.of<ExplorableMedia>(context, listen: false)
-                .setGenreTagFilters(
-              newGenreIn: _genreIn,
-              newGenreNotIn: _genreNotIn,
-              newTagIn: _tagIn,
-              newTagNotIn: _tagNotIn,
-            );
-            Navigator.of(context).pop();
-          },
-        ),
+        ],
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
@@ -97,7 +87,7 @@ class _FilterPageState extends State<FilterPage> {
               optionIn: _genreIn,
               optionNotIn: _genreNotIn,
               rows: 2,
-              whRatio: 0.4,
+              whRatio: 0.25,
             ),
           ),
           ..._gridSection(
@@ -114,7 +104,6 @@ class _FilterPageState extends State<FilterPage> {
                 optionNotIn: _tagNotIn,
                 rows: 7,
               )),
-          const SizedBox(height: 10),
         ],
       ),
     );

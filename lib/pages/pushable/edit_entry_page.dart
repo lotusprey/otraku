@@ -1,16 +1,23 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/providers/anime_collection.dart';
+import 'package:otraku/providers/collection_provider.dart';
+import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/drop_down_implementation.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/grid_child.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/number_field.dart';
-import 'package:otraku/tools/overlays/edit_media_tools/save_button.dart';
 import 'package:provider/provider.dart';
 
 class EditEntryPage extends StatefulWidget {
   final int mediaId;
-  final Function(EntryUserData) update;
+  final Function(MediaListStatus) update;
 
   EditEntryPage(this.mediaId, this.update);
 
@@ -19,6 +26,7 @@ class EditEntryPage extends StatefulWidget {
 }
 
 class _EditEntryPageState extends State<EditEntryPage> {
+  CollectionProvider _collection;
   EntryUserData _oldData;
   EntryUserData _newData;
   Palette _palette;
@@ -27,37 +35,16 @@ class _EditEntryPageState extends State<EditEntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      appBar: AppBar(
-        backgroundColor: _palette.background,
-        shadowColor: _palette.background,
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          color: _palette.contrast,
-          iconSize: Palette.ICON_MEDIUM,
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        centerTitle: true,
-        title: Text('Edit', style: _palette.contrastedTitle),
-        actions: _oldData != null
-            ? [
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  color: Palette.ERROR,
-                  iconSize: Palette.ICON_MEDIUM,
-                  onPressed: () {},
-                ),
-                SaveButton(
-                  oldData: _oldData,
-                  newData: _newData,
-                  palette: _palette,
-                  update: widget.update,
-                ),
-              ]
-            : null,
+      appBar: _EditAppBar(
+        oldData: _oldData,
+        newData: _newData,
+        collection: _collection,
+        update: widget.update,
+        palette: _palette,
       ),
       body: _oldData != null
           ? Padding(
-              padding: const EdgeInsets.all(10),
+              padding: ViewConfig.PADDING,
               child: GridView(
                 physics: const BouncingScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -101,6 +88,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
         setState(() {
           _oldData = data;
           _newData = EntryUserData.from(_oldData);
+          _collection = _newData.type == 'ANIME'
+              ? Provider.of<AnimeCollection>(context, listen: false)
+              : Provider.of<MangaCollection>(context, listen: false);
         });
       }
     });
@@ -110,5 +100,94 @@ class _EditEntryPageState extends State<EditEntryPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _palette = Provider.of<Theming>(context).palette;
+  }
+}
+
+class _EditAppBar extends StatefulWidget implements PreferredSizeWidget {
+  final EntryUserData oldData;
+  final EntryUserData newData;
+  final CollectionProvider collection;
+  final Function(MediaListStatus) update;
+  final Palette palette;
+
+  _EditAppBar({
+    @required this.oldData,
+    @required this.newData,
+    @required this.collection,
+    @required this.update,
+    @required this.palette,
+  });
+
+  @override
+  __EditAppBarState createState() => __EditAppBarState();
+
+  @override
+  Size get preferredSize => Size.fromHeight(CustomAppBar.CUSTOM_APP_BAR_HEIGHT);
+}
+
+class __EditAppBarState extends State<_EditAppBar> {
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomAppBar(
+      title: 'Edit',
+      trailing: widget.oldData != null && !_isLoading
+          ? [
+              IconButton(
+                icon: const Icon(Icons.delete),
+                color: widget.palette.contrast,
+                iconSize: Palette.ICON_MEDIUM,
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    backgroundColor: widget.palette.primary,
+                    title: Text(
+                      'Remove entry?',
+                      style: widget.palette.smallTitle,
+                    ),
+                    actions: [
+                      FlatButton(
+                        child: Text('No', style: widget.palette.paragraph),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      FlatButton(
+                        child: Text('Yes', style: widget.palette.exclamation),
+                        onPressed: () {
+                          setState(() => _isLoading = true);
+                          widget.collection
+                              .removeEntry(widget.oldData)
+                              .then((ok) {
+                            Navigator.of(context).pop();
+                            if (ok) {
+                              widget.update(null);
+                              Navigator.of(context).pop();
+                            } else {
+                              setState(() => _isLoading = false);
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.save),
+                color: widget.palette.contrast,
+                iconSize: Palette.ICON_MEDIUM,
+                onPressed: () {
+                  setState(() => _isLoading = true);
+                  widget.collection
+                      .updateEntry(widget.oldData, widget.newData)
+                      .then((ok) {
+                    if (ok) widget.update(widget.newData.status);
+                    Navigator.of(context).pop();
+                  });
+                },
+              ),
+            ]
+          : const [BlossomLoader(size: 30)],
+    );
   }
 }

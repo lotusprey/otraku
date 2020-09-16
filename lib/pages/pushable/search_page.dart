@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
@@ -43,26 +44,18 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: _palette.background,
-        actionsForegroundColor: _palette.accent,
-        middle: Text('Search', style: _palette.contrastedTitle),
-        leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            size: Palette.ICON_MEDIUM,
-            color: _palette.accent,
+      appBar: CustomAppBar(
+        title: 'Search',
+        trailing: [
+          IconButton(
+            icon: Icon(
+              Icons.done,
+              size: Palette.ICON_MEDIUM,
+              color: _palette.accent,
+            ),
+            onPressed: () => _search(_controller.text),
           ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        trailing: IconButton(
-          icon: Icon(
-            Icons.done,
-            size: Palette.ICON_MEDIUM,
-            color: _palette.accent,
-          ),
-          onPressed: () => _search(_controller.text),
-        ),
+        ],
       ),
       body: Center(
         child: Padding(

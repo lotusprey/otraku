@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/multichild_layouts/color_grid.dart';
 import 'package:otraku/tools/navigation/title_segmented_control.dart';
 import 'package:provider/provider.dart';
@@ -17,21 +19,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      appBar: CupertinoNavigationBar(
-        backgroundColor: _palette.background,
-        actionsForegroundColor: _palette.accent,
-        middle: Text('Settings', style: _palette.contrastedTitle),
-        leading: IconButton(
-          icon: Icon(
-            Icons.close,
-            size: Palette.ICON_MEDIUM,
-            color: _palette.accent,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: CustomAppBar(
+        title: 'Settings',
       ),
       body: Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+        padding: ViewConfig.PADDING,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

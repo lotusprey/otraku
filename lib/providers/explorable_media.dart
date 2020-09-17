@@ -8,11 +8,15 @@ import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages all browsable media, genres, tags and all the filters
 class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
+  static const KEY_STATUS_IN = 'status_in';
+  static const KEY_STATUS_NOT_IN = 'status_not_in';
+  static const KEY_FORMAT_IN = 'format_in';
+  static const KEY_FORMAT_NOT_IN = 'format_not_in';
+  static const KEY_ID_NOT_IN = 'id_not_in';
   static const KEY_GENRE_IN = 'genre_in';
   static const KEY_GENRE_NOT_IN = 'genre_not_in';
   static const KEY_TAG_IN = 'tag_in';
   static const KEY_TAG_NOT_IN = 'tag_not_in';
-  static const KEY_ID_NOT_IN = 'id_not_in';
 
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
@@ -65,6 +69,8 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
 
   set type(String type) {
     _filters['type'] = type;
+    _filters.remove(KEY_FORMAT_IN);
+    _filters.remove(KEY_FORMAT_NOT_IN);
     fetchMedia();
   }
 
@@ -85,7 +91,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     return _tags;
   }
 
-  List<String> filterWithKey(String key) {
+  List<String> getFilterWithKey(String key) {
     if (_filters.containsKey(key)) {
       return [..._filters[key]];
     }
@@ -93,12 +99,39 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
   }
 
   void setGenreTagFilters({
+    List<String> newStatusIn,
+    List<String> newStatusNotIn,
+    List<String> newFormatIn,
+    List<String> newFormatNotIn,
     List<String> newGenreIn,
     List<String> newGenreNotIn,
     List<String> newTagIn,
     List<String> newTagNotIn,
-    bool addPageAndNotReset,
   }) {
+    if (newStatusIn != null && newStatusIn.length == 0) {
+      _filters.remove(KEY_STATUS_IN);
+    } else {
+      _filters[KEY_STATUS_IN] = newStatusIn;
+    }
+
+    if (newStatusNotIn != null && newStatusNotIn.length == 0) {
+      _filters.remove(KEY_STATUS_NOT_IN);
+    } else {
+      _filters[KEY_STATUS_NOT_IN] = newStatusNotIn;
+    }
+
+    if (newFormatIn != null && newFormatIn.length == 0) {
+      _filters.remove(KEY_FORMAT_IN);
+    } else {
+      _filters[KEY_FORMAT_IN] = newFormatIn;
+    }
+
+    if (newFormatNotIn != null && newFormatNotIn.length == 0) {
+      _filters.remove(KEY_FORMAT_NOT_IN);
+    } else {
+      _filters[KEY_FORMAT_NOT_IN] = newFormatNotIn;
+    }
+
     if (newGenreIn != null && newGenreIn.length == 0) {
       _filters.remove(KEY_GENRE_IN);
     } else {
@@ -126,26 +159,31 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
   }
 
   bool areFiltersActive() {
-    return _filters.containsKey(KEY_GENRE_IN) ||
+    return _filters.containsKey(KEY_STATUS_IN) ||
+        _filters.containsKey(KEY_STATUS_NOT_IN) ||
+        _filters.containsKey(KEY_FORMAT_IN) ||
+        _filters.containsKey(KEY_FORMAT_NOT_IN) ||
+        _filters.containsKey(KEY_GENRE_IN) ||
         _filters.containsKey(KEY_GENRE_NOT_IN) ||
         _filters.containsKey(KEY_TAG_IN) ||
         _filters.containsKey(KEY_TAG_NOT_IN);
   }
 
-  void clearGenreTagFilters() {
+  void clearGenreTagFilters({bool fetch = true}) {
+    _filters.remove(KEY_STATUS_IN);
+    _filters.remove(KEY_STATUS_NOT_IN);
+    _filters.remove(KEY_FORMAT_IN);
+    _filters.remove(KEY_FORMAT_NOT_IN);
     _filters.remove(KEY_GENRE_IN);
     _filters.remove(KEY_GENRE_NOT_IN);
     _filters.remove(KEY_TAG_IN);
     _filters.remove(KEY_TAG_NOT_IN);
-    fetchMedia();
+    if (fetch) fetchMedia();
   }
 
   @override
   void clear() {
-    _filters.remove(KEY_GENRE_IN);
-    _filters.remove(KEY_GENRE_NOT_IN);
-    _filters.remove(KEY_TAG_IN);
-    _filters.remove(KEY_TAG_NOT_IN);
+    clearGenreTagFilters(fetch: false);
     _filters.remove('search');
     fetchMedia();
   }
@@ -166,15 +204,24 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
       _filters['page'] = 1;
     }
 
-    const query = r'''
-      query Browse($page: Int, $perPage: Int, $id_not_in: [Int], 
-          $sort: [MediaSort], $type: MediaType, $search: String, 
-          $genre_in: [String], $genre_not_in: [String], $tag_in: [String], 
-          $tag_not_in: [String]) {
-        Page(page: $page, perPage: $perPage) {
-          media(id_not_in: $id_not_in, sort: $sort, type: $type, 
-          search: $search, genre_in: $genre_in, genre_not_in: $genre_not_in, 
-          tag_in: $tag_in, tag_not_in: $tag_not_in) {
+    final query = '''
+      query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
+          \$sort: [MediaSort], \$type: MediaType, \$search: String,
+          ${_filters.containsKey(KEY_STATUS_IN) ? '\$status_in: [MediaStatus],' : ''}
+          ${_filters.containsKey(KEY_STATUS_NOT_IN) ? '\$status_not_in: [MediaStatus],' : ''}
+          ${_filters.containsKey(KEY_FORMAT_IN) ? '\$format_in: [MediaFormat],' : ''}
+          ${_filters.containsKey(KEY_FORMAT_NOT_IN) ? '\$format_not_in: [MediaFormat],' : ''}
+          \$genre_in: [String], \$genre_not_in: [String], \$tag_in: [String], 
+          \$tag_not_in: [String]) {
+        Page(page: \$page, perPage: \$perPage) {
+          media(id_not_in: \$id_not_in, sort: \$sort, type: \$type, 
+          search: \$search,
+          ${_filters.containsKey(KEY_STATUS_IN) ? 'status_in: \$status_in,' : ''}
+          ${_filters.containsKey(KEY_STATUS_NOT_IN) ? 'status_not_in: \$status_not_in,' : ''}
+          ${_filters.containsKey(KEY_FORMAT_IN) ? 'format_in: \$format_in,' : ''}
+          ${_filters.containsKey(KEY_FORMAT_NOT_IN) ? 'format_not_in: \$format_not_in,' : ''}
+          genre_in: \$genre_in, genre_not_in: \$genre_not_in, 
+          tag_in: \$tag_in, tag_not_in: \$tag_not_in) {
             id
             title {
               userPreferred

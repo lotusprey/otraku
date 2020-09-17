@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 class FilterGrid extends StatelessWidget {
   final List<String> options;
+  final List<Object> values;
   final List<String> descriptions;
   final List<String> optionIn;
   final List<String> optionNotIn;
@@ -14,17 +15,18 @@ class FilterGrid extends StatelessWidget {
 
   FilterGrid({
     @required this.options,
+    @required this.values,
     @required this.optionIn,
     @required this.optionNotIn,
     @required this.rows,
-    this.whRatio = 0.15,
+    @required this.whRatio,
     this.descriptions = const [],
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: rows * 45.0,
+      height: rows * 30.0 + (rows - 1) * 10 + 20,
       child: GridView.builder(
         padding: ViewConfig.PADDING,
         physics: const BouncingScrollPhysics(),
@@ -37,6 +39,7 @@ class FilterGrid extends StatelessWidget {
         ),
         itemBuilder: (_, index) => _FilterOption(
           title: options[index],
+          value: values[index],
           optionIn: optionIn,
           optionNotIn: optionNotIn,
           description: descriptions.length > index ? descriptions[index] : null,
@@ -49,12 +52,14 @@ class FilterGrid extends StatelessWidget {
 
 class _FilterOption extends StatefulWidget {
   final String title;
+  final Object value;
   final List<String> optionIn;
   final List<String> optionNotIn;
   final String description;
 
   _FilterOption({
     @required this.title,
+    @required this.value,
     @required this.optionIn,
     @required this.optionNotIn,
     this.description,
@@ -75,9 +80,9 @@ class _FilterOptionState extends State<_FilterOption> {
   void initState() {
     super.initState();
     _palette = Provider.of<Theming>(context, listen: false).palette;
-    _state = widget.optionIn.contains(widget.title)
+    _state = widget.optionIn.contains(widget.value)
         ? 1
-        : widget.optionNotIn.contains(widget.title) ? -1 : 0;
+        : widget.optionNotIn.contains(widget.value) ? -1 : 0;
   }
 
   @override
@@ -132,14 +137,14 @@ class _FilterOptionState extends State<_FilterOption> {
                 ),
       onTap: () {
         if (_state == 0) {
-          widget.optionIn.add(widget.title);
+          widget.optionIn.add(widget.value);
           setState(() => _state = 1);
         } else if (_state == 1) {
-          widget.optionIn.remove(widget.title);
-          widget.optionNotIn.add(widget.title);
+          widget.optionIn.remove(widget.value);
+          widget.optionNotIn.add(widget.value);
           setState(() => _state = -1);
         } else {
-          widget.optionNotIn.remove(widget.title);
+          widget.optionNotIn.remove(widget.value);
           setState(() => _state = 0);
         }
       },

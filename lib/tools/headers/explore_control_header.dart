@@ -7,8 +7,9 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/header_refresh_button.dart';
-import 'package:otraku/tools/headers/header_search_button.dart';
+import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/navigation/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,7 @@ class ExploreControlHeader extends StatelessWidget {
 }
 
 class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
-  static const _height = 100.0;
+  static const _height = 95.0;
 
   Palette _palette;
 
@@ -46,45 +47,51 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           height: _height,
-          padding: const EdgeInsets.only(top: 15, left: 15, right: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           color: _palette.background.withAlpha(200),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TitleSegmentedControl(
-                value: Provider.of<ExplorableMedia>(context).type,
-                pairs: const {'Anime': 'ANIME', 'Manga': 'MANGA'},
-                function: (value) => Provider.of<ExplorableMedia>(
-                  context,
-                  listen: false,
-                ).type = value,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: TitleSegmentedControl(
+                  value: Provider.of<ExplorableMedia>(context).type,
+                  pairs: const {'Anime': 'ANIME', 'Manga': 'MANGA'},
+                  function: (value) => Provider.of<ExplorableMedia>(
+                    context,
+                    listen: false,
+                  ).type = value,
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  HeaderSearchButton(
-                    Provider.of<ExplorableMedia>(context),
-                    _palette,
-                  ),
-                  _FilterButton(_palette),
-                  IconButton(
-                    icon: const Icon(LineAwesomeIcons.sort),
-                    color: _palette.faded,
-                    iconSize: Palette.ICON_MEDIUM,
-                    onPressed: () => showModalBottomSheet(
-                      context: context,
-                      builder: (ctx) => ExploreSortSheet(),
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
+              SizedBox(
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    HeaderSearchBar(
+                      Provider.of<ExplorableMedia>(context),
+                      _palette,
                     ),
-                  ),
-                  HeaderRefreshButton(
-                    listenable: Provider.of<ExplorableMedia>(context),
-                    readable:
-                        Provider.of<ExplorableMedia>(context, listen: false),
-                    palette: _palette,
-                  ),
-                ],
+                    _FilterButton(_palette),
+                    IconButton(
+                      icon: const Icon(LineAwesomeIcons.sort),
+                      color: _palette.faded,
+                      iconSize: Palette.ICON_MEDIUM,
+                      onPressed: () => showModalBottomSheet(
+                        context: context,
+                        builder: (ctx) => ExploreSortSheet(),
+                        backgroundColor: Colors.transparent,
+                        isScrollControlled: true,
+                      ),
+                    ),
+                    HeaderRefreshButton(
+                      listenable: Provider.of<ExplorableMedia>(context),
+                      readable:
+                          Provider.of<ExplorableMedia>(context, listen: false),
+                      palette: _palette,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -125,6 +132,7 @@ class _FilterButton extends StatelessWidget {
                 .clearGenreTagFilters,
             child: Container(
               width: 48,
+              height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: palette.accent,

@@ -7,7 +7,6 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/navigation/floating_navigation.dart';
 import 'package:otraku/tools/navigation/custom_tab_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +26,7 @@ class TabManager extends StatefulWidget {
 
 class _TabManagerState extends State<TabManager>
     with SingleTickerProviderStateMixin {
-  FloatingNavigation _navigation;
+  CustomTabBar _navigation;
   Map<int, Widget> _pages;
   ScrollController _scrollCtrl;
   Palette _palette;
@@ -58,10 +57,7 @@ class _TabManagerState extends State<TabManager>
       _scrollCtrl = ScrollController();
       Provider.of<ViewConfig>(context, listen: false).init(context);
 
-      _navigation = FloatingNavigation(
-        child: CustomTabBar(),
-        scrollCtrl: _scrollCtrl,
-      );
+      _navigation = CustomTabBar(_scrollCtrl);
 
       _pages = {
         TabManager.INBOX: InboxTab(),

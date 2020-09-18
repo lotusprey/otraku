@@ -36,17 +36,17 @@ class CollectionSortSheet extends StatelessWidget {
         if (index == currentIndex) {
           if (currentlyDesc) {
             collection.sort = MediaListSort.values[index * 2];
-            SharedPreferences.getInstance()
-                .then((prefs) => prefs.setInt('sort', index * 2));
+            SharedPreferences.getInstance().then((prefs) =>
+                prefs.setInt('${collection.typeLCase}Sort', index * 2));
           } else {
             collection.sort = MediaListSort.values[index * 2 + 1];
-            SharedPreferences.getInstance()
-                .then((prefs) => prefs.setInt('sort', index * 2 + 1));
+            SharedPreferences.getInstance().then((prefs) =>
+                prefs.setInt('${collection.typeLCase}Sort', index * 2 + 1));
           }
         } else {
           collection.sort = MediaListSort.values[index * 2];
-          SharedPreferences.getInstance()
-              .then((prefs) => prefs.setInt('sort', index * 2));
+          SharedPreferences.getInstance().then((prefs) =>
+              prefs.setInt('${collection.typeLCase}Sort', index * 2));
         }
 
         collection.sortCollection();

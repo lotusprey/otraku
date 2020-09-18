@@ -12,10 +12,10 @@ import 'package:otraku/providers/media_group_provider.dart';
 
 class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   static const String _url = 'https://graphql.anilist.co';
-  static Map<String, String> _headers;
-  static int _userId;
-  static String _scoreFormat;
-  static MediaListSort _mediaListSort;
+  Map<String, String> _headers;
+  int _userId;
+  String _scoreFormat;
+  MediaListSort _mediaListSort;
 
   final bool isAnime;
   final String typeUCase;

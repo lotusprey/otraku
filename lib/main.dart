@@ -39,12 +39,19 @@ class MyApp extends StatelessWidget {
             ..init(
               headers: auth.headers,
               userId: auth.userId,
-              mediaListSort: auth.mediaListSort,
+              mediaListSort: auth.animeSort,
               scoreFormat: auth.scoreFormat,
             ),
         ),
-        ChangeNotifierProvider<MangaCollection>(
+        ChangeNotifierProxyProvider<Auth, MangaCollection>(
           create: (_) => MangaCollection(),
+          update: (_, auth, collection) => collection
+            ..init(
+              headers: auth.headers,
+              userId: auth.userId,
+              mediaListSort: auth.mangaSort,
+              scoreFormat: auth.scoreFormat,
+            ),
         ),
         ChangeNotifierProvider<ViewConfig>(
           create: (_) => ViewConfig(),

@@ -6,10 +6,10 @@ import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:provider/provider.dart';
 
 class LargeTileGrid extends StatelessWidget {
-  final Palette palette;
   final LargeTileConfiguration tileConfig;
+  final Palette palette;
 
-  LargeTileGrid(this.palette, this.tileConfig);
+  LargeTileGrid(this.tileConfig, this.palette);
 
   @override
   Widget build(BuildContext context) {

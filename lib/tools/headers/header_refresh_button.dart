@@ -1,5 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 import 'package:otraku/providers/theming.dart';
 
@@ -24,8 +24,8 @@ class HeaderRefreshButton extends StatelessWidget {
             child: Center(child: BlossomLoader(size: 30)),
           )
         : IconButton(
-            icon: const Icon(LineAwesomeIcons.retweet),
-            iconSize: Palette.ICON_MEDIUM,
+            icon: const Icon(CupertinoIcons.refresh),
+            iconSize: Palette.ICON_SMALL,
             color: palette.faded,
             onPressed: readable.clear,
           );

@@ -58,18 +58,7 @@ class _AuthPageState extends State<AuthPage> {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 color: _palette.accent,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.account_circle,
-                      size: Palette.ICON_MEDIUM,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 5),
-                    Text('Connect', style: _palette.buttonText),
-                  ],
-                ),
+                child: Text('Connect', style: _palette.buttonText),
                 onPressed: _authenticate,
               )
             : const Center(child: BlossomLoader()),

@@ -57,45 +57,46 @@ class _MediaItemPageState extends State<MediaItemPage> {
                           height: _bannerHeight,
                         ),
                       ),
-                      SliverPadding(
-                        padding: ViewConfig.PADDING,
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate(
-                            [
-                              Text(
-                                'Description',
-                                style: _palette.smallTitle,
-                              ),
-                              const SizedBox(height: 10),
-                              GestureDetector(
-                                child: Container(
-                                  width: double.infinity,
-                                  constraints: BoxConstraints(maxHeight: 130),
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: _palette.primary,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: Text(
-                                    _media.description,
-                                    style: _palette.paragraph,
-                                    overflow: TextOverflow.fade,
-                                  ),
+                      if (_media.description != null)
+                        SliverPadding(
+                          padding: ViewConfig.PADDING,
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate(
+                              [
+                                Text(
+                                  'Description',
+                                  style: _palette.smallTitle,
                                 ),
-                                onTap: () => showDialog(
-                                  context: context,
-                                  builder: (_) => PopUpAnimation(
-                                    TextDialog(
-                                      title: 'Description',
-                                      text: _media.description,
+                                const SizedBox(height: 10),
+                                GestureDetector(
+                                  child: Container(
+                                    width: double.infinity,
+                                    constraints: BoxConstraints(maxHeight: 130),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: _palette.primary,
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: Text(
+                                      _media.description,
+                                      style: _palette.paragraph,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                                  ),
+                                  onTap: () => showDialog(
+                                    context: context,
+                                    builder: (_) => PopUpAnimation(
+                                      TextDialog(
+                                        title: 'Description',
+                                        text: _media.description,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                       SliverToBoxAdapter(child: InfoGrid(_media)),
                     ],
                   )

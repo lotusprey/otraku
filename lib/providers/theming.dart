@@ -92,6 +92,7 @@ class Palette {
   static const double ICON_BIG = 35;
   static const double ICON_MEDIUM = 30;
   static const double ICON_SMALL = 25;
+  static const double ICON_SMALLER = 20;
 
   static const double FONT_BIG = 30;
   static const double FONT_MEDIUM = 20;

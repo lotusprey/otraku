@@ -3,6 +3,7 @@ import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/pages/tab_manager.dart';
 
 class ViewConfig with ChangeNotifier {
+  static const double CONTROL_HEADER_ICON_HEIGHT = 35;
   static const PADDING = EdgeInsets.all(10);
   static int _pageIndex = TabManager.ANIME_LIST;
   static LargeTileConfiguration _largeTileConfiguration;
@@ -25,12 +26,12 @@ class ViewConfig with ChangeNotifier {
     return _pageIndex;
   }
 
-  LargeTileConfiguration get tileConfiguration {
-    return _largeTileConfiguration;
-  }
-
-  void switchPage(int index) {
+  set pageIndex(int index) {
     _pageIndex = index;
     notifyListeners();
+  }
+
+  LargeTileConfiguration get tileConfiguration {
+    return _largeTileConfiguration;
   }
 }

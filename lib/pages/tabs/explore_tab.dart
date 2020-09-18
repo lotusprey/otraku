@@ -42,7 +42,7 @@ class _ExploreTabState extends State<ExploreTab> {
       slivers: [
         const HeadlineHeader('Explore'),
         const ExploreControlHeader(),
-        LargeTileGrid(_palette, _tileConfig),
+        LargeTileGrid(_tileConfig, _palette),
       ],
     );
   }

@@ -89,8 +89,8 @@ class _ModalOption extends StatelessWidget {
             desc != null
                 ? Icon(
                     desc
-                        ? LineAwesomeIcons.angle_down
-                        : LineAwesomeIcons.angle_up,
+                        ? LineAwesomeIcons.arrow_down
+                        : LineAwesomeIcons.arrow_up,
                     color: palette.accent,
                     size: Palette.ICON_MEDIUM,
                   )

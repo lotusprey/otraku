@@ -66,7 +66,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
       ),
       slivers: [
         HeadlineHeader('${widget.collection.collectionName} List'),
-        CollectionControlHeader(widget.collection.isAnime),
+        CollectionControlHeader(widget.collection.isAnime, widget.scrollCtrl),
         MediaList(
           widget.collection.isAnime,
           Provider.of<Auth>(context, listen: false).scoreFormat,

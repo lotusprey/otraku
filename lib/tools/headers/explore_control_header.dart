@@ -15,14 +15,16 @@ import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
 class ExploreControlHeader extends StatelessWidget {
-  const ExploreControlHeader();
+  final ScrollController scrollCtrl;
+
+  const ExploreControlHeader(this.scrollCtrl);
 
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
       pinned: false,
       floating: true,
-      delegate: _ExploreControlHeaderDelegate(context),
+      delegate: _ExploreControlHeaderDelegate(context, scrollCtrl),
     );
   }
 }
@@ -31,9 +33,12 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 95.0;
 
   Palette _palette;
+  ScrollController _scrollCtrl;
 
-  _ExploreControlHeaderDelegate(BuildContext context) {
+  _ExploreControlHeaderDelegate(
+      BuildContext context, ScrollController scrollController) {
     _palette = Provider.of<Theming>(context, listen: false).palette;
+    _scrollCtrl = scrollController;
   }
 
   @override
@@ -57,10 +62,14 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 child: TitleSegmentedControl(
                   value: Provider.of<ExplorableMedia>(context).type,
                   pairs: const {'Anime': 'ANIME', 'Manga': 'MANGA'},
-                  function: (value) => Provider.of<ExplorableMedia>(
-                    context,
-                    listen: false,
-                  ).type = value,
+                  onNewValue: (value) {
+                    Provider.of<ExplorableMedia>(
+                      context,
+                      listen: false,
+                    ).type = value;
+                    _scrollCtrl.jumpTo(0);
+                  },
+                  onSameValue: (_) => _scrollCtrl.jumpTo(0),
                 ),
               ),
               SizedBox(

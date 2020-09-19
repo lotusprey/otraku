@@ -33,8 +33,9 @@ class _SettingsPageState extends State<SettingsPage> {
             TitleSegmentedControl(
               value: Provider.of<Theming>(context).isDark ? true : false,
               pairs: const {'Light': false, 'Dark': true},
-              function: (toDark) => Provider.of<Theming>(context, listen: false)
-                  .setTheme(toDark: toDark),
+              onNewValue: (toDark) =>
+                  Provider.of<Theming>(context, listen: false)
+                      .setTheme(toDark: toDark),
             ),
             const SizedBox(height: 5),
             ColorGrid(_palette),

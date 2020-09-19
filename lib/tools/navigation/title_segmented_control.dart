@@ -5,12 +5,14 @@ import 'package:provider/provider.dart';
 class TitleSegmentedControl<T> extends StatefulWidget {
   final T value;
   final Map<String, T> pairs;
-  final Function(T) function;
+  final Function(T) onNewValue;
+  final Function(T) onSameValue;
 
   TitleSegmentedControl({
     @required this.value,
     @required this.pairs,
-    @required this.function,
+    @required this.onNewValue,
+    this.onSameValue,
   });
 
   @override
@@ -30,7 +32,9 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
         ),
         onTap: () {
           if (value != widget.value) {
-            widget.function(value);
+            widget.onNewValue(value);
+          } else {
+            widget.onSameValue(value);
           }
         },
       );

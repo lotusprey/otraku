@@ -16,15 +16,16 @@ import 'package:provider/provider.dart';
 
 class CollectionControlHeader extends StatelessWidget {
   final bool isAnime;
+  final ScrollController scrollCtrl;
 
-  const CollectionControlHeader(this.isAnime);
+  const CollectionControlHeader(this.isAnime, this.scrollCtrl);
 
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
       pinned: false,
       floating: true,
-      delegate: _CollectionControlHeaderDelegate(context, isAnime),
+      delegate: _CollectionControlHeaderDelegate(context, isAnime, scrollCtrl),
     );
   }
 }
@@ -34,9 +35,11 @@ class _CollectionControlHeaderDelegate
   static const _height = 95.0;
 
   CollectionProvider _collection;
+  ScrollController _scrollCtrl;
   Palette _palette;
 
-  _CollectionControlHeaderDelegate(BuildContext context, bool isAnime) {
+  _CollectionControlHeaderDelegate(
+      BuildContext context, bool isAnime, this._scrollCtrl) {
     _collection = isAnime
         ? Provider.of<AnimeCollection>(context)
         : Provider.of<MangaCollection>(context);
@@ -70,7 +73,11 @@ class _CollectionControlHeaderDelegate
                 child: TitleSegmentedControl(
                   value: _collection.listIndex,
                   pairs: segmentedControlPairs,
-                  function: (value) => _collection.listIndex = value,
+                  onNewValue: (value) {
+                    _collection.listIndex = value;
+                    _scrollCtrl.jumpTo(0);
+                  },
+                  onSameValue: (_) => _scrollCtrl.jumpTo(0),
                 ),
               ),
               SizedBox(

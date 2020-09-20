@@ -61,13 +61,11 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   ),
                   GridChild(
                     title: 'Progress',
-                    body: SizedBox(
-                      height: 40,
-                      child: NumberField(
-                        palette: _palette,
-                        initialValue: _newData.progress,
-                        maxValue: _newData.progressMax,
-                      ),
+                    body: NumberField(
+                      palette: _palette,
+                      initialValue: _newData.progress,
+                      maxValue: _newData.progressMax,
+                      update: (progress) => _newData.progress = progress,
                     ),
                     palette: _palette,
                   ),

@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 
 class EntryUserData {
-  int mediaId;
-  int entryId;
-  String type;
+  final int mediaId;
+  final int entryId;
+  final String type;
   MediaListStatus status;
   int progress;
-  int progressMax;
+  final int progressMax;
   double score;
-  List<String> customLists;
+  Map<String, bool> customLists;
 
   EntryUserData({
     @required this.mediaId,
@@ -19,7 +19,7 @@ class EntryUserData {
     this.score = 0,
     this.entryId,
     this.status,
-    this.customLists = const [],
+    this.customLists = const {},
   });
 
   EntryUserData.from(EntryUserData data)

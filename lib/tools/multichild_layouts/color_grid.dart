@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class ColorGrid extends StatelessWidget {
@@ -9,8 +10,6 @@ class ColorGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(5);
-
     return GridView.builder(
       shrinkWrap: true,
       itemCount: Accent.values.length,
@@ -27,7 +26,7 @@ class ColorGrid extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: accent,
-              borderRadius: radius,
+              borderRadius: ViewConfig.RADIUS,
             ),
             child: accent == palette.accent
                 ? const Icon(

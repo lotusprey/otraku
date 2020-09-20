@@ -143,7 +143,7 @@ class _FilterButton extends StatelessWidget {
               width: 48,
               height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: ViewConfig.RADIUS,
                 color: palette.accent,
               ),
               child: const Icon(

@@ -75,7 +75,7 @@ class _MediaItemPageState extends State<MediaItemPage> {
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: _palette.primary,
-                                      borderRadius: BorderRadius.circular(5),
+                                      borderRadius: ViewConfig.RADIUS,
                                     ),
                                     child: Text(
                                       _media.description,

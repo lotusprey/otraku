@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/auth.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
@@ -55,7 +56,7 @@ class _AuthPageState extends State<AuthPage> {
         child: !_triedConnecting
             ? RaisedButton(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: ViewConfig.RADIUS,
                 ),
                 color: _palette.accent,
                 child: Text('Connect', style: _palette.buttonText),

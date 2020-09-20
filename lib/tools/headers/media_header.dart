@@ -6,6 +6,7 @@ import 'package:otraku/models/media_page_data.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
@@ -73,7 +74,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                 children: [
                   GestureDetector(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius: ViewConfig.RADIUS,
                       child: Container(
                         height: coverHeight,
                         width: coverWidth,
@@ -287,7 +288,7 @@ class __StatusButtonState extends State<_StatusButton> {
     return RaisedButton(
       color: widget.palette.accent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: ViewConfig.RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class ModalSheet extends StatelessWidget {
@@ -27,7 +28,7 @@ class ModalSheet extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: palette.background,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: ViewConfig.RADIUS,
       ),
       child: Column(
         children: <Widget>[

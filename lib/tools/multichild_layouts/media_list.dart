@@ -17,7 +17,6 @@ class MediaList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(5);
     final palette = Provider.of<Theming>(context, listen: false).palette;
     final collection = isAnimeCollection
         ? Provider.of<AnimeCollection>(context)
@@ -57,7 +56,7 @@ class MediaList extends StatelessWidget {
               leading: Hero(
                 tag: entry.mediaId.toString(),
                 child: ClipRRect(
-                  borderRadius: radius,
+                  borderRadius: ViewConfig.RADIUS,
                   child: Container(
                     width: 50,
                     height: 50,

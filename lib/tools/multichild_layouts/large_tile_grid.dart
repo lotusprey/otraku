@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +84,7 @@ class _SimpleGridTile extends StatelessWidget {
           Hero(
             tag: mediaId,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: ViewConfig.RADIUS,
               child: Container(
                 height: imageHeight,
                 width: width,

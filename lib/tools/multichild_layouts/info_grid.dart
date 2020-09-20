@@ -71,7 +71,7 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: ViewConfig.RADIUS,
         color: palette.primary,
       ),
       child: Padding(

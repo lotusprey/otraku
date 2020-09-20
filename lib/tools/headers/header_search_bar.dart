@@ -44,7 +44,7 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
             filled: true,
             fillColor: widget.palette.primary,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: ViewConfig.RADIUS,
               borderSide: BorderSide.none,
             ),
             prefixIcon: Icon(

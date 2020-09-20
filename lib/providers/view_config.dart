@@ -5,6 +5,7 @@ import 'package:otraku/pages/tab_manager.dart';
 class ViewConfig with ChangeNotifier {
   static const double CONTROL_HEADER_ICON_HEIGHT = 35;
   static const PADDING = EdgeInsets.all(10);
+  static const RADIUS = BorderRadius.all(Radius.circular(5));
   static int _pageIndex = TabManager.ANIME_LIST;
   static LargeTileConfiguration _largeTileConfiguration;
 

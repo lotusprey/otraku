@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class PopUpAnimation extends StatefulWidget {
@@ -62,7 +63,7 @@ class TextDialog extends StatelessWidget {
       elevation: 0,
       backgroundColor: palette.background,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: ViewConfig.RADIUS,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -103,7 +104,7 @@ class ImageDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(5);
+    final borderRadius = ViewConfig.RADIUS;
 
     return Dialog(
       elevation: 0,
@@ -130,7 +131,7 @@ class ImageTextDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Provider.of<Theming>(context, listen: false).palette;
-    final borderRadius = BorderRadius.circular(5);
+    final borderRadius = ViewConfig.RADIUS;
 
     return Dialog(
       elevation: 0,

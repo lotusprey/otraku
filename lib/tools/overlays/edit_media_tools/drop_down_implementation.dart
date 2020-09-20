@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_user_data.dart';
 import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/view_config.dart';
 
 class DropDownImplementation extends StatefulWidget {
   final EntryUserData data;
@@ -21,15 +22,12 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: widget.palette.primary,
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: ViewConfig.RADIUS,
       ),
       child: DropdownButton(
         value: widget.data.status,
         hint: Text('Add'),
-        onChanged: (value) {
-          setState(() => widget.data.status = value);
-          widget.data.status = value;
-        },
+        onChanged: (value) => setState(() => widget.data.status = value),
         items: MediaListStatus.values
             .map((v) => DropdownMenuItem(
                   value: v,

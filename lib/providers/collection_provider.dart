@@ -146,38 +146,46 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     _lists = [];
 
+    List<dynamic> organisedCollection = [];
+
     for (final section in sectionOrder) {
       for (int i = 0; i < mediaListCollection.length; i++) {
         if (section == mediaListCollection[i]['name']) {
-          final currentMediaList = mediaListCollection.removeAt(i);
-
-          _lists.add(EntryList(
-            name: currentMediaList['name'],
-            status: currentMediaList['status'],
-            isCustomList: currentMediaList['isCustomList'],
-            isSplitCompletedList: currentMediaList['isSplitCompletedList'],
-            entries: (currentMediaList['entries'] as List<dynamic>)
-                .map((e) => MediaEntry(
-                      mediaId: e['mediaId'],
-                      title: e['media']['title']['userPreferred'],
-                      cover: e['media']['coverImage']['medium'],
-                      format: e['media']['format'],
-                      progressMaxString:
-                          (e['media'][mediaParts] ?? '?').toString(),
-                      entryUserData: EntryUserData(
-                        mediaId: e['mediaId'],
-                        type: typeUCase,
-                        progress: e['progress'],
-                        progressMax: e['media'][mediaParts],
-                        score: e['score'].toDouble(),
-                      ),
-                    ))
-                .toList(),
-          ));
-
+          organisedCollection.add(mediaListCollection.removeAt(i));
           break;
         }
       }
+    }
+
+    if (mediaListCollection.length > 0) {
+      for (final list in mediaListCollection) {
+        organisedCollection.add(list);
+      }
+    }
+
+    for (final list in organisedCollection) {
+      _lists.add(EntryList(
+        name: list['name'],
+        status: list['status'],
+        isCustomList: list['isCustomList'],
+        isSplitCompletedList: list['isSplitCompletedList'],
+        entries: (list['entries'] as List<dynamic>)
+            .map((e) => MediaEntry(
+                  mediaId: e['mediaId'],
+                  title: e['media']['title']['userPreferred'],
+                  cover: e['media']['coverImage']['medium'],
+                  format: e['media']['format'],
+                  progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
+                  entryUserData: EntryUserData(
+                    mediaId: e['mediaId'],
+                    type: typeUCase,
+                    progress: e['progress'],
+                    progressMax: e['media'][mediaParts],
+                    score: e['score'].toDouble(),
+                  ),
+                ))
+            .toList(),
+      ));
     }
 
     _isLoading = false;
@@ -187,29 +195,29 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   //Sorts all lists.
   void sortCollection() {
     for (int i = 0; i < _lists.length; i++) {
-      sortList(i);
+      _sortList(_lists[i]);
     }
     notifyListeners();
   }
 
   //Sorts a list at a given index.
-  void sortList(int index) {
+  void _sortList(EntryList list) {
     switch (_mediaListSort) {
       case MediaListSort.TITLE:
-        _lists[index].entries.sort((a, b) => a.title.compareTo(b.title));
+        list.entries.sort((a, b) => a.title.compareTo(b.title));
         break;
       case MediaListSort.TITLE_DESC:
-        _lists[index].entries.sort((a, b) => b.title.compareTo(a.title));
+        list.entries.sort((a, b) => b.title.compareTo(a.title));
         break;
       case MediaListSort.SCORE:
-        _lists[index].entries.sort((a, b) {
+        list.entries.sort((a, b) {
           int comparison = a.userData.score.compareTo(b.userData.score);
           if (comparison != 0) return comparison;
           return a.title.compareTo(b.title);
         });
         break;
       case MediaListSort.SCORE_DESC:
-        _lists[index].entries.sort((a, b) {
+        list.entries.sort((a, b) {
           int comparison = b.userData.score.compareTo(a.userData.score);
           if (comparison != 0) return comparison;
           return a.title.compareTo(b.title);
@@ -232,17 +240,20 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         ${alreadyAdded ? '\$id: Int' : ''}
         \$mediaId: Int
         \$status: MediaListStatus
+        \$progress: Int
         \$scoreFormat: ScoreFormat
       ) {
       SaveMediaListEntry(
         ${alreadyAdded ? 'id: \$id' : ''}
         mediaId: \$mediaId, 
-        status: \$status) {
+        status: \$status,
+        progress: \$progress) {
           id
           mediaId
           status
           progress
           score(format: \$scoreFormat)
+          customLists(asArray: true)
           media {
             format
             $mediaParts
@@ -263,6 +274,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         'id': newData.entryId,
         'mediaId': newData.mediaId,
         'status': describeEnum(newData.status),
+        'progress': newData.progress,
         'scoreFormat': _scoreFormat,
       },
     });
@@ -275,15 +287,26 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     //Check if the operation was successful
     if (entryData == null) return false;
 
-    //Remove the entry from the previous list if it existed before.
+    //If the entry already existed, remove it from its main list
+    //and the custom lists, where it was added.
     if (alreadyAdded) {
       for (int i = 0; i < _lists.length; i++) {
-        if (_lists[i].status == describeEnum(oldData.status)) {
-          for (final e in _lists[i].entries) {
-            if (e.mediaId == newData.mediaId) {
-              _lists[i].entries.remove(e);
-              if (_lists[i].entries.length == 0) {
+        if ((!_lists[i].isCustomList &&
+                _lists[i].status == describeEnum(oldData.status)) ||
+            (_lists[i].isCustomList &&
+                oldData.customLists[_lists[i].name] == true)) {
+          List<MediaEntry> entries = _lists[i].entries;
+
+          for (int j = 0; j < entries.length; j++) {
+            if (entries[j].mediaId == oldData.mediaId) {
+              entries.removeAt(j);
+
+              //If a list, from where the entry was removed,
+              //is left empty, remove the list too.
+              if (entries.length == 0) {
                 _lists.removeAt(i);
+                i--;
+
                 if (_listIndex > 0 && _listIndex >= _lists.length) {
                   _listIndex = _lists.length - 1;
                 }
@@ -291,47 +314,66 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
               break;
             }
           }
-          break;
         }
       }
     }
 
-    //Check if the list to which it was added exists locally.
-    int newListIndex;
-    for (int i = 0; i < _lists.length; i++) {
-      if (_lists[i].status == describeEnum(newData.status)) {
-        newListIndex = i;
-        break;
+    //Lists that exist locally and should be updated
+    List<EntryList> updatableLists = [];
+
+    //Check if the list with the entry's status is available
+    for (final list in _lists) {
+      if (!list.isCustomList && list.status == describeEnum(newData.status)) {
+        updatableLists.add(list);
       }
     }
 
-    //If the list isn't available locally, fetch it. Otherwise,
-    //find it and add the updated entry.
-    if (newListIndex == null) {
+    //If the needed list with the entry's status isn't available, fetch it.
+    if (updatableLists.length == 0) {
       await fetchSingleList(describeEnum(newData.status));
-    } else {
-      final data = entryData['SaveMediaListEntry'];
+    }
 
-      for (int i = 0; i < _lists.length; i++) {
-        if (_lists[i].status == describeEnum(newData.status)) {
-          _lists[i].entries.add(MediaEntry(
-                mediaId: data['mediaId'],
-                title: data['media']['title']['userPreferred'],
-                cover: data['media']['coverImage']['medium'],
-                format: data['media']['format'],
-                progressMaxString:
-                    (data['media'][mediaParts] ?? '?').toString(),
-                entryUserData: EntryUserData(
-                  mediaId: data['mediaId'],
-                  type: typeUCase,
-                  progress: data['progress'],
-                  progressMax: data['media'][mediaParts],
-                  score: data['score'].toDouble(),
-                ),
-              ));
-          sortList(i);
-          break;
-        }
+    //Similarly, all the custom lists that contain the entry, should
+    //be added for update or fetched.
+    for (final key in newData.customLists.keys
+        .where((k) => newData.customLists[k] == true)) {
+      final list = _lists.firstWhere(
+        (l) => l.isCustomList && l.name == key,
+        orElse: () => null,
+      );
+
+      if (list == null) {
+        await fetchSingleList(
+          describeEnum(newData.status),
+          customListName: key,
+        );
+      } else {
+        updatableLists.add(list);
+      }
+    }
+
+    //Update all the updatable lists
+    if (updatableLists.length > 0) {
+      final data = entryData['SaveMediaListEntry'];
+      final entry = MediaEntry(
+        mediaId: data['mediaId'],
+        title: data['media']['title']['userPreferred'],
+        cover: data['media']['coverImage']['medium'],
+        format: data['media']['format'],
+        progressMaxString: (data['media'][mediaParts] ?? '?').toString(),
+        entryUserData: EntryUserData(
+          mediaId: data['mediaId'],
+          type: typeUCase,
+          progress: data['progress'],
+          progressMax: data['media'][mediaParts],
+          score: data['score'].toDouble(),
+          customLists: data['customLists'],
+        ),
+      );
+
+      for (final list in updatableLists) {
+        list.entries.add(entry);
+        _sortList(list);
       }
     }
 
@@ -366,12 +408,15 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     //Remove the entry from the lists where it occured
     for (final list in _lists) {
-      if (list.status == describeEnum(data.status) ||
-          (list.status == null && data.customLists.contains(list.name))) {
-        for (final e in list.entries) {
-          if (e.mediaId == data.mediaId) {
-            list.entries.remove(e);
-            if (list.entries.length == 0) {
+      if ((!list.isCustomList && list.status == describeEnum(data.status)) ||
+          (list.isCustomList && data.customLists[list.name] == true)) {
+        List<MediaEntry> entries = list.entries;
+
+        for (int i = 0; i < entries.length; i++) {
+          if (entries[i].mediaId == data.mediaId) {
+            entries.removeAt(i);
+
+            if (entries.length == 0) {
               _lists.remove(list);
               if (_listIndex > 0 && _listIndex >= _lists.length) {
                 _listIndex = _lists.length - 1;
@@ -448,11 +493,20 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     );
   }
 
-  //Fetches a single list with a given status and add it.
-  Future<void> fetchSingleList(String status) async {
+  //Fetches a single list. If @customListName is null, it gets the non-custom
+  //list that corresponds to this status. Otherwise, it gets a custom list
+  //with the same name.
+  Future<void> fetchSingleList(String status, {String customListName}) async {
     final tuple = await fetchLists(status: status);
-    final listData = tuple.item1[0];
     final sectionOrder = tuple.item2;
+    final listData = customListName == null
+        ? tuple.item1.firstWhere((l) => !l['isCustomList'], orElse: () => null)
+        : tuple.item1.firstWhere(
+            (l) => l['isCustomList'] && l['name'] == customListName,
+            orElse: () => null,
+          );
+
+    if (listData == null) return;
 
     final list = EntryList(
       name: listData['name'],
@@ -485,7 +539,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
           _lists.insert(i, list);
           if (_listIndex >= i) _listIndex++;
         }
-        sortList(i);
+        _sortList(_lists[i]);
         return;
       }
     }

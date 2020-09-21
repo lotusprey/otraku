@@ -9,11 +9,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData leading;
   final String title;
   final List<Widget> trailing;
+  final bool wrapTrailing;
 
   CustomAppBar({
     this.leading = LineAwesomeIcons.arrow_left,
     this.title,
     this.trailing,
+    this.wrapTrailing = true,
   });
 
   @override
@@ -39,7 +41,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             Positioned(
               left: 0,
-              child: _AppBarIcon(IconButton(
+              child: AppBarIcon(IconButton(
                 icon: Icon(leading),
                 color: palette.accent,
                 iconSize: Palette.ICON_MEDIUM,
@@ -50,9 +52,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Positioned(
                 right: 0,
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: trailing.map((t) => _AppBarIcon(t)).toList(),
-                ),
+                    mainAxisSize: MainAxisSize.min,
+                    children: wrapTrailing
+                        ? trailing.map((t) => AppBarIcon(t)).toList()
+                        : trailing),
               ),
             Text(
               title,
@@ -68,10 +71,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(CUSTOM_APP_BAR_HEIGHT);
 }
 
-class _AppBarIcon extends StatelessWidget {
+class AppBarIcon extends StatelessWidget {
   final Widget child;
 
-  _AppBarIcon(this.child);
+  const AppBarIcon(this.child);
 
   @override
   Widget build(BuildContext context) {

@@ -35,12 +35,18 @@ class _EditEntryPageState extends State<EditEntryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      appBar: _EditAppBar(
-        oldData: _oldData,
-        newData: _newData,
-        collection: _collection,
-        update: widget.update,
-        palette: _palette,
+      appBar: CustomAppBar(
+        title: 'Edit',
+        trailing: [
+          _UpdateButtons(
+            oldData: _oldData,
+            newData: _newData,
+            collection: _collection,
+            update: widget.update,
+            palette: _palette,
+          )
+        ],
+        wrapTrailing: false,
       ),
       body: _oldData != null
           ? Padding(
@@ -101,14 +107,14 @@ class _EditEntryPageState extends State<EditEntryPage> {
   }
 }
 
-class _EditAppBar extends StatefulWidget implements PreferredSizeWidget {
+class _UpdateButtons extends StatefulWidget {
   final EntryUserData oldData;
   final EntryUserData newData;
   final CollectionProvider collection;
   final Function(MediaListStatus) update;
   final Palette palette;
 
-  _EditAppBar({
+  _UpdateButtons({
     @required this.oldData,
     @required this.newData,
     @required this.collection,
@@ -117,75 +123,76 @@ class _EditAppBar extends StatefulWidget implements PreferredSizeWidget {
   });
 
   @override
-  __EditAppBarState createState() => __EditAppBarState();
-
-  @override
-  Size get preferredSize => Size.fromHeight(CustomAppBar.CUSTOM_APP_BAR_HEIGHT);
+  _UpdateButtonsState createState() => _UpdateButtonsState();
 }
 
-class __EditAppBarState extends State<_EditAppBar> {
+class _UpdateButtonsState extends State<_UpdateButtons> {
   bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    return CustomAppBar(
-      title: 'Edit',
-      trailing: widget.oldData != null && !_isLoading
-          ? [
-              IconButton(
-                icon: const Icon(Icons.delete),
-                color: widget.palette.contrast,
-                iconSize: Palette.ICON_MEDIUM,
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    backgroundColor: widget.palette.primary,
-                    title: Text(
-                      'Remove entry?',
-                      style: widget.palette.smallTitle,
-                    ),
-                    actions: [
-                      FlatButton(
-                        child: Text('No', style: widget.palette.paragraph),
-                        onPressed: () => Navigator.of(context).pop(),
+    return widget.oldData != null && !_isLoading
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppBarIcon(
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  color: widget.palette.contrast,
+                  iconSize: Palette.ICON_MEDIUM,
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      backgroundColor: widget.palette.primary,
+                      title: Text(
+                        'Remove entry?',
+                        style: widget.palette.smallTitle,
                       ),
-                      FlatButton(
-                        child: Text('Yes', style: widget.palette.exclamation),
-                        onPressed: () {
-                          setState(() => _isLoading = true);
-                          widget.collection
-                              .removeEntry(widget.oldData)
-                              .then((ok) {
-                            Navigator.of(context).pop();
-                            if (ok) {
-                              widget.update(null);
+                      actions: [
+                        FlatButton(
+                          child: Text('No', style: widget.palette.paragraph),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        FlatButton(
+                          child: Text('Yes', style: widget.palette.exclamation),
+                          onPressed: () {
+                            setState(() => _isLoading = true);
+                            widget.collection
+                                .removeEntry(widget.oldData)
+                                .then((ok) {
                               Navigator.of(context).pop();
-                            } else {
-                              setState(() => _isLoading = false);
-                            }
-                          });
-                        },
-                      ),
-                    ],
+                              if (ok) {
+                                widget.update(null);
+                                Navigator.of(context).pop();
+                              } else {
+                                setState(() => _isLoading = false);
+                              }
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.save),
-                color: widget.palette.contrast,
-                iconSize: Palette.ICON_MEDIUM,
-                onPressed: () {
-                  setState(() => _isLoading = true);
-                  widget.collection
-                      .updateEntry(widget.oldData, widget.newData)
-                      .then((ok) {
-                    if (ok) widget.update(widget.newData.status);
-                    Navigator.of(context).pop();
-                  });
-                },
+              AppBarIcon(
+                IconButton(
+                  icon: const Icon(Icons.save),
+                  color: widget.palette.contrast,
+                  iconSize: Palette.ICON_MEDIUM,
+                  onPressed: () {
+                    setState(() => _isLoading = true);
+                    widget.collection
+                        .updateEntry(widget.oldData, widget.newData)
+                        .then((ok) {
+                      if (ok) widget.update(widget.newData.status);
+                      Navigator.of(context).pop();
+                    });
+                  },
+                ),
               ),
-            ]
-          : const [BlossomLoader(size: 30)],
-    );
+            ],
+          )
+        : const AppBarIcon(BlossomLoader(size: 30));
   }
 }

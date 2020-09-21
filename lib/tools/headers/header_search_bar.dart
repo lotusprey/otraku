@@ -61,8 +61,8 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
                     onPressed: () {
                       widget.provider.search = null;
                       _controller.clear();
-                      _focus.unfocus();
                       setState(() => _isEmpty = true);
+                      _focus.unfocus();
                     },
                   ),
           ),

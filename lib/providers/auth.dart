@@ -14,6 +14,8 @@ class Auth with ChangeNotifier {
   static int _userId;
   static String _titleFormat;
   static String _scoreFormat;
+  static bool _splitCompletedAnime;
+  static bool _splitCompletedManga;
   static MediaListSort _animeSort;
   static MediaListSort _mangaSort;
 
@@ -37,12 +39,12 @@ class Auth with ChangeNotifier {
     return _scoreFormat;
   }
 
-  MediaListSort get animeSort {
-    return _animeSort;
+  bool hasSplitCompletedList({@required bool ofAnime}) {
+    return ofAnime ? _splitCompletedAnime : _splitCompletedManga;
   }
 
-  MediaListSort get mangaSort {
-    return _mangaSort;
+  MediaListSort getSort({@required bool ofAnime}) {
+    return ofAnime ? _animeSort : _mangaSort;
   }
 
   int get userId {
@@ -103,6 +105,12 @@ class Auth with ChangeNotifier {
           }
           mediaListOptions {
             scoreFormat
+            animeList {
+              splitCompletedSectionByFormat
+            }
+            mangaList {
+              splitCompletedSectionByFormat
+            }
           }
         }
       }
@@ -138,6 +146,10 @@ class Auth with ChangeNotifier {
     _userId = viewer['id'];
     _titleFormat = viewer['options']['titleLanguage'];
     _scoreFormat = viewer['mediaListOptions']['scoreFormat'];
+    _splitCompletedAnime = viewer['mediaListOptions']['animeList']
+        ['splitCompletedSectionByFormat'];
+    _splitCompletedManga = viewer['mediaListOptions']['mangaList']
+        ['splitCompletedSectionByFormat'];
 
     final preferrences = await SharedPreferences.getInstance();
 

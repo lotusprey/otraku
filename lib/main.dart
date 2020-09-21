@@ -39,7 +39,8 @@ class MyApp extends StatelessWidget {
             ..init(
               headers: auth.headers,
               userId: auth.userId,
-              mediaListSort: auth.animeSort,
+              mediaListSort: auth.getSort(ofAnime: true),
+              hasSplitCompletedList: auth.hasSplitCompletedList(ofAnime: true),
               scoreFormat: auth.scoreFormat,
             ),
         ),
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
             ..init(
               headers: auth.headers,
               userId: auth.userId,
-              mediaListSort: auth.mangaSort,
+              mediaListSort: auth.getSort(ofAnime: false),
+              hasSplitCompletedList: auth.hasSplitCompletedList(ofAnime: false),
               scoreFormat: auth.scoreFormat,
             ),
         ),

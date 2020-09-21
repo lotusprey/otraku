@@ -94,6 +94,7 @@ class MediaItem with ChangeNotifier {
       query ItemUserData($id: Int) {
         Media(id: $id) {
           type
+          format
           episodes
           chapters
           mediaListEntry {
@@ -125,7 +126,9 @@ class MediaItem with ChangeNotifier {
       return EntryUserData(
         mediaId: id,
         type: body['type'],
+        format: body['format'],
         progressMax: body['episodes'] ?? body['chapters'],
+        customLists: {},
       );
     }
 
@@ -137,15 +140,23 @@ class MediaItem with ChangeNotifier {
           value: (element) => element,
         ));
 
+    final Map<String, bool> customLists = {};
+    for (final key
+        in (body['mediaListEntry']['customLists'] as Map<String, dynamic>)
+            .keys) {
+      customLists[key] = body['mediaListEntry']['customLists'][key];
+    }
+
     return EntryUserData(
       mediaId: id,
       entryId: body['mediaListEntry']['id'],
       type: body['type'],
+      format: body['format'],
       status: status,
       progress: body['mediaListEntry']['progress'],
       progressMax: body['episodes'] ?? body['chapters'],
       score: body['mediaListEntry']['score'].toDouble(),
-      customLists: body['customLists'],
+      customLists: customLists,
     );
   }
 

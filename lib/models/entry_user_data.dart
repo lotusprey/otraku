@@ -5,6 +5,7 @@ class EntryUserData {
   final int mediaId;
   final int entryId;
   final String type;
+  final String format;
   MediaListStatus status;
   int progress;
   final int progressMax;
@@ -14,6 +15,7 @@ class EntryUserData {
   EntryUserData({
     @required this.mediaId,
     @required this.type,
+    @required this.format,
     this.progress = 0,
     this.progressMax,
     this.score = 0,
@@ -26,6 +28,7 @@ class EntryUserData {
       : this(
           mediaId: data.mediaId,
           type: data.type,
+          format: data.format,
           progress: data.progress,
           progressMax: data.progressMax,
           score: data.score,

@@ -94,7 +94,7 @@ class Palette {
   static const double ICON_SMALL = 25;
   static const double ICON_SMALLER = 20;
 
-  static const double FONT_BIG = 30;
+  static const double FONT_BIG = 25;
   static const double FONT_MEDIUM = 20;
   static const double FONT_SMALL = 15;
 
@@ -144,7 +144,7 @@ class Palette {
           buttonText: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.normal,
           ),
           exclamation: TextStyle(
             fontSize: FONT_SMALL,
@@ -191,7 +191,7 @@ class Palette {
           buttonText: TextStyle(
             fontSize: FONT_MEDIUM,
             color: Colors.white,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.normal,
           ),
           exclamation: TextStyle(
             fontSize: FONT_SMALL,

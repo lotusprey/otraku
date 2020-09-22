@@ -142,7 +142,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                                     const SizedBox(width: 5),
                                     Text(
                                       mediaObj.popularity.toString(),
-                                      style: palette.smallTitle,
+                                      style: palette.detail,
                                     ),
                                   ],
                                 ),
@@ -175,7 +175,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                                     const SizedBox(width: 5),
                                     Text(
                                       mediaObj.favourites.toString(),
-                                      style: palette.smallTitle,
+                                      style: palette.detail,
                                     ),
                                   ],
                                 ),

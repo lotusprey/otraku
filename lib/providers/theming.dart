@@ -235,18 +235,20 @@ class Palette {
 }
 
 enum Accent {
-  blue,
   orange,
   green,
+  teal,
+  blue,
   purple,
 }
 
 extension AccentsExtension on Accent {
   static const _colors = const {
-    Accent.blue: Color(0xff2172b5),
     Accent.orange: Color(0xffeda60c),
     Accent.green: Color(0xff32a852),
-    Accent.purple: Color(0xff692de3),
+    Accent.teal: Color(0xff3cb0d6),
+    Accent.blue: Color(0xff2172b5),
+    Accent.purple: Color(0xff743bed),
   };
 
   Color get color => _colors[this];

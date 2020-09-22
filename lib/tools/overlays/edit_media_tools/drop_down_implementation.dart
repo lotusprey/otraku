@@ -26,7 +26,7 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
       ),
       child: DropdownButton(
         value: widget.data.status,
-        hint: Text('Add'),
+        hint: Text('Add', style: widget.palette.detail),
         onChanged: (value) => setState(() => widget.data.status = value),
         items: MediaListStatus.values
             .map((v) => DropdownMenuItem(

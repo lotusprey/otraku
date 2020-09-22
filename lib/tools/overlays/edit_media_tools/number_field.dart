@@ -22,7 +22,6 @@ class NumberField extends StatefulWidget {
 
 class _NumberFieldState extends State<NumberField> {
   TextEditingController _controller;
-  int _maxValue;
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +69,8 @@ class _NumberFieldState extends State<NumberField> {
     } else {
       int number = int.parse(_controller.text) + add;
 
-      if (number > _maxValue) {
-        result = _maxValue;
+      if (widget.maxValue != null && number > widget.maxValue) {
+        result = widget.maxValue;
       } else if (number < 0) {
         result = 0;
       } else {
@@ -97,7 +96,6 @@ class _NumberFieldState extends State<NumberField> {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue.toString());
     _controller.addListener(_validateInput);
-    _maxValue = widget.maxValue ?? 100000;
   }
 
   @override

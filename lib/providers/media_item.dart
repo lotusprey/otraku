@@ -97,11 +97,14 @@ class MediaItem with ChangeNotifier {
           format
           episodes
           chapters
+          volumes
           mediaListEntry {
             id
             status
             progress
+            progressVolumes
             score
+            repeat
             customLists
           }
         }
@@ -128,6 +131,7 @@ class MediaItem with ChangeNotifier {
         type: body['type'],
         format: body['format'],
         progressMax: body['episodes'] ?? body['chapters'],
+        progressVolumesMax: body['voumes'],
         customLists: {},
       );
     }
@@ -141,10 +145,12 @@ class MediaItem with ChangeNotifier {
         ));
 
     final Map<String, bool> customLists = {};
-    for (final key
-        in (body['mediaListEntry']['customLists'] as Map<String, dynamic>)
-            .keys) {
-      customLists[key] = body['mediaListEntry']['customLists'][key];
+    if (body['mediaListEntry']['customLists'] != null) {
+      for (final key
+          in (body['mediaListEntry']['customLists'] as Map<String, dynamic>)
+              .keys) {
+        customLists[key] = body['mediaListEntry']['customLists'][key];
+      }
     }
 
     return EntryUserData(
@@ -155,7 +161,10 @@ class MediaItem with ChangeNotifier {
       status: status,
       progress: body['mediaListEntry']['progress'],
       progressMax: body['episodes'] ?? body['chapters'],
+      progressVolumes: body['mediaListEntry']['volumes'],
+      progressVolumesMax: body['voumes'],
       score: body['mediaListEntry']['score'].toDouble(),
+      repeat: body['mediaListEntry']['repeat'],
       customLists: customLists,
     );
   }

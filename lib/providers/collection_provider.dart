@@ -246,14 +246,17 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         \$mediaId: Int
         \$status: MediaListStatus
         \$progress: Int
+        ${newData.type == 'MANGA' ? '\$progressVolumes: Int' : ''}
+        \$repeat: Int
         \$scoreFormat: ScoreFormat
       ) {
       SaveMediaListEntry(
         ${alreadyAdded ? 'id: \$id' : ''}
         mediaId: \$mediaId, 
         status: \$status,
-        progress: \$progress) {
-          id
+        progress: \$progress,
+        ${newData.type == 'MANGA' ? 'progressVolumes: \$progressVolumes,' : ''}
+        repeat: \$repeat) {
           mediaId
           status
           progress
@@ -280,16 +283,18 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         'mediaId': newData.mediaId,
         'status': describeEnum(newData.status),
         'progress': newData.progress,
+        'progressVolumes': newData.progressVolumes,
+        'repeat': newData.repeat,
         'scoreFormat': _scoreFormat,
       },
     });
 
     final result = await post(_url, body: request, headers: _headers);
 
-    final entryData =
-        (json.decode(result.body) as Map<String, dynamic>)['data'];
+    final data = (json.decode(result.body) as Map<String, dynamic>)['data']
+        ['SaveMediaListEntry'];
 
-    if (entryData == null) return false;
+    if (data == null) return false;
 
     //If the entry already existed, remove it from its main list
     //and the custom lists, where it was added.
@@ -345,8 +350,6 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     //Update all the updatable lists
     if (updatableLists.length > 0) {
-      final data = entryData['SaveMediaListEntry'];
-
       final Map<String, bool> customLists = {};
       for (final key in (data['customLists'] as Map<String, dynamic>).keys) {
         customLists[key] = data['customLists'][key];
@@ -399,10 +402,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     });
 
     final response = await post(_url, body: request, headers: _headers);
-    final body = json.decode(response.body)['data'];
+    final body = json.decode(response.body)['data']['DeleteMediaListEntry'];
 
     //Check if the operation was successful
-    if (body['deleted'] == false) return false;
+    if (body['deleted'] == null || body['deleted'] == false) return false;
 
     _removeLists(data);
 

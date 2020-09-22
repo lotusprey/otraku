@@ -11,8 +11,8 @@ import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/drop_down_implementation.dart';
-import 'package:otraku/tools/overlays/edit_media_tools/grid_child.dart';
 import 'package:otraku/tools/overlays/edit_media_tools/number_field.dart';
+import 'package:otraku/tools/overlays/edit_media_tools/score_field.dart';
 import 'package:provider/provider.dart';
 
 class EditEntryPage extends StatefulWidget {
@@ -26,10 +26,32 @@ class EditEntryPage extends StatefulWidget {
 }
 
 class _EditEntryPageState extends State<EditEntryPage> {
+  static const _box = SizedBox(width: 10, height: 10);
+
   CollectionProvider _collection;
   EntryUserData _oldData;
   EntryUserData _newData;
   Palette _palette;
+
+  Widget _dual(Widget child1, Widget child2) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            height: 75,
+            child: child1,
+          ),
+        ),
+        _box,
+        Expanded(
+          child: Container(
+            height: 75,
+            child: child2 ?? const SizedBox.expand(),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,36 +71,60 @@ class _EditEntryPageState extends State<EditEntryPage> {
         wrapTrailing: false,
       ),
       body: _oldData != null
-          ? Padding(
+          ? ListView(
               padding: ViewConfig.PADDING,
-              child: GridView(
-                physics: const BouncingScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 2,
-                ),
-                children: [
-                  GridChild(
+              children: [
+                _dual(
+                  _EditField(
                     title: 'Status',
                     body: DropDownImplementation(_newData, _palette),
                     palette: _palette,
                   ),
-                  GridChild(
+                  _EditField(
                     title: 'Progress',
                     body: NumberField(
                       palette: _palette,
                       initialValue: _newData.progress,
-                      maxValue: _newData.progressMax,
+                      maxValue: _newData.progressMax ?? 100000,
                       update: (progress) => _newData.progress = progress,
                     ),
                     palette: _palette,
                   ),
-                ],
-              ),
+                ),
+                _box,
+                _dual(
+                  _EditField(
+                    title: 'Repeat',
+                    body: NumberField(
+                      palette: _palette,
+                      initialValue: _newData.repeat,
+                      update: (repeat) => _newData.repeat = repeat,
+                    ),
+                    palette: _palette,
+                  ),
+                  _oldData.type == 'MANGA'
+                      ? _EditField(
+                          title: 'Progress Volumes',
+                          body: NumberField(
+                            palette: _palette,
+                            initialValue: _newData.progressVolumes,
+                            maxValue: _newData.progressVolumesMax ?? 100000,
+                            update: (progressVolumes) =>
+                                _newData.progressVolumes = progressVolumes,
+                          ),
+                          palette: _palette,
+                        )
+                      : null,
+                ),
+                _box,
+                _EditField(
+                  title: 'Score',
+                  body: ScoreField(),
+                  palette: _palette,
+                ),
+              ],
             )
-          : const SizedBox(),
+          : _box,
     );
   }
 
@@ -104,6 +150,36 @@ class _EditEntryPageState extends State<EditEntryPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _palette = Provider.of<Theming>(context).palette;
+  }
+}
+
+class _EditField extends StatelessWidget {
+  static const _space = SizedBox(height: 5);
+
+  final String title;
+  final Widget body;
+  final Palette palette;
+
+  _EditField({
+    @required this.title,
+    @required this.body,
+    @required this.palette,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: palette.smallTitle,
+        ),
+        _space,
+        body,
+      ],
+    );
   }
 }
 

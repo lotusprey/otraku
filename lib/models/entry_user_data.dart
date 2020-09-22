@@ -9,31 +9,38 @@ class EntryUserData {
   MediaListStatus status;
   int progress;
   final int progressMax;
+  int progressVolumes;
+  final int progressVolumesMax;
   double score;
+  int repeat;
   Map<String, bool> customLists;
 
   EntryUserData({
     @required this.mediaId,
     @required this.type,
     @required this.format,
-    this.progress = 0,
-    this.progressMax,
-    this.score = 0,
     this.entryId,
     this.status,
+    this.progress = 0,
+    this.progressMax,
+    this.progressVolumes = 0,
+    this.progressVolumesMax,
+    this.score = 0,
+    this.repeat = 0,
     this.customLists = const {},
   });
 
   EntryUserData.from(EntryUserData data)
       : this(
           mediaId: data.mediaId,
+          entryId: data.entryId,
           type: data.type,
           format: data.format,
+          status: data.status,
           progress: data.progress,
           progressMax: data.progressMax,
           score: data.score,
-          entryId: data.entryId,
-          status: data.status,
+          repeat: data.repeat,
           customLists: data.customLists,
         );
 }

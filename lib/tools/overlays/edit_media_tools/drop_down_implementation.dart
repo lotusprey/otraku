@@ -18,7 +18,6 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: widget.palette.primary,
@@ -40,7 +39,7 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
                 ))
             .toList(),
         dropdownColor: widget.palette.primary,
-        underline: SizedBox(),
+        underline: const SizedBox(),
         isExpanded: true,
       ),
     );

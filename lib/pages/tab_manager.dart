@@ -26,7 +26,7 @@ class _TabManagerState extends State<TabManager> {
   static const _box = SizedBox();
 
   List<Widget> _tabs;
-  PageController _pageController;
+  PageController _pageCtrl;
   int _pageIndex;
   ScrollController _scrollCtrl;
   Palette _palette;
@@ -72,15 +72,15 @@ class _TabManagerState extends State<TabManager> {
 
           if (index - _pageIndex > 1) {
             _jumpingPage = true;
-            _pageController.jumpToPage(index - 1);
+            _pageCtrl.jumpToPage(index - 1);
             _jumpingPage = false;
           } else if (_pageIndex - index > 1) {
             _jumpingPage = true;
-            _pageController.jumpToPage(index + 1);
+            _pageCtrl.jumpToPage(index + 1);
             _jumpingPage = false;
           }
 
-          _pageController.animateToPage(
+          _pageCtrl.animateToPage(
             index,
             duration: const Duration(milliseconds: 500),
             curve: Curves.fastOutSlowIn,
@@ -90,7 +90,7 @@ class _TabManagerState extends State<TabManager> {
       body: SafeArea(
         child: PageView(
           children: _tabs,
-          controller: _pageController,
+          controller: _pageCtrl,
           onPageChanged: (index) {
             if (!_jumpingPage) setState(() => _pageIndex = index);
           },
@@ -109,7 +109,7 @@ class _TabManagerState extends State<TabManager> {
       _scrollCtrl = ScrollController();
 
       _pageIndex = Provider.of<ViewConfig>(context, listen: false).pageIndex;
-      _pageController = PageController(initialPage: _pageIndex);
+      _pageCtrl = PageController(initialPage: _pageIndex);
 
       _tabs = [
         InboxTab(),
@@ -133,6 +133,7 @@ class _TabManagerState extends State<TabManager> {
 
   @override
   void dispose() {
+    _pageCtrl.dispose();
     if (_scrollCtrl.hasClients) {
       _scrollCtrl.dispose();
     }

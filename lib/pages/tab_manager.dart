@@ -7,11 +7,9 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/navigation/custom_tab_bar.dart';
 import 'package:provider/provider.dart';
 
 class TabManager extends StatefulWidget {
-  //Tab indexes
   static const int INBOX = 0;
   static const int ANIME_LIST = 1;
   static const int MANGA_LIST = 2;
@@ -24,25 +22,78 @@ class TabManager extends StatefulWidget {
   _TabManagerState createState() => _TabManagerState();
 }
 
-class _TabManagerState extends State<TabManager>
-    with SingleTickerProviderStateMixin {
-  CustomTabBar _navigation;
-  Map<int, Widget> _pages;
+class _TabManagerState extends State<TabManager> {
+  static const _box = SizedBox();
+
+  List<Widget> _tabs;
+  PageController _pageController;
+  int _pageIndex;
   ScrollController _scrollCtrl;
   Palette _palette;
 
   bool _didChangeDependencies = false;
+  bool _jumpingPage = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      floatingActionButton: _navigation,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButtonAnimator: const DisableAnimationAnimator(),
-      body: Consumer<ViewConfig>(
-        builder: (_, viewConfig, __) => SafeArea(
-          child: _pages[viewConfig.pageIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: _palette.foreground,
+        selectedItemColor: _palette.accent,
+        unselectedItemColor: _palette.faded,
+        iconSize: Palette.ICON_MEDIUM,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _pageIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inbox),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.play_arrow),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            title: _box,
+          ),
+        ],
+        onTap: (index) {
+          if (_pageIndex == index) return;
+
+          if (index - _pageIndex > 1) {
+            _jumpingPage = true;
+            _pageController.jumpToPage(index - 1);
+            _jumpingPage = false;
+          } else if (_pageIndex - index > 1) {
+            _jumpingPage = true;
+            _pageController.jumpToPage(index + 1);
+            _jumpingPage = false;
+          }
+
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
+          );
+        },
+      ),
+      body: SafeArea(
+        child: PageView(
+          children: _tabs,
+          controller: _pageController,
+          onPageChanged: (index) {
+            if (!_jumpingPage) setState(() => _pageIndex = index);
+          },
         ),
       ),
     );
@@ -54,26 +105,27 @@ class _TabManagerState extends State<TabManager>
     _palette = Provider.of<Theming>(context).palette;
 
     if (!_didChangeDependencies) {
-      _scrollCtrl = ScrollController();
       Provider.of<ViewConfig>(context, listen: false).init(context);
+      _scrollCtrl = ScrollController();
 
-      _navigation = CustomTabBar(_scrollCtrl);
+      _pageIndex = Provider.of<ViewConfig>(context, listen: false).pageIndex;
+      _pageController = PageController(initialPage: _pageIndex);
 
-      _pages = {
-        TabManager.INBOX: InboxTab(),
-        TabManager.ANIME_LIST: CollectionsTab(
+      _tabs = [
+        InboxTab(),
+        CollectionsTab(
           collection: Provider.of<AnimeCollection>(context, listen: false),
           scrollCtrl: _scrollCtrl,
           key: UniqueKey(),
         ),
-        TabManager.MANGA_LIST: CollectionsTab(
+        CollectionsTab(
           collection: Provider.of<MangaCollection>(context, listen: false),
           scrollCtrl: _scrollCtrl,
           key: UniqueKey(),
         ),
-        TabManager.EXPLORE: ExploreTab(_scrollCtrl),
-        TabManager.PROFILE: ProfileTab(),
-      };
+        ExploreTab(_scrollCtrl),
+        ProfileTab(),
+      ];
 
       _didChangeDependencies = true;
     }

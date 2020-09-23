@@ -42,7 +42,7 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(5),
             filled: true,
-            fillColor: widget.palette.primary,
+            fillColor: widget.palette.foreground,
             border: OutlineInputBorder(
               borderRadius: ViewConfig.RADIUS,
               borderSide: BorderSide.none,

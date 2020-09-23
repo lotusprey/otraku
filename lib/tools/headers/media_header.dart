@@ -49,7 +49,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
     return Container(
       width: double.infinity,
       height: _maxExtent,
-      color: palette.primary,
+      color: palette.foreground,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -109,7 +109,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                           Flexible(
                             child: Text(
                               'Ep ${mediaObj.nextEpisode} in ${mediaObj.timeUntilAiring}',
-                              style: palette.smallTitle,
+                              style: palette.detail,
                             ),
                           ),
                         Row(

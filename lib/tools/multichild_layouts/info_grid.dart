@@ -72,7 +72,7 @@ class _InfoTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: ViewConfig.RADIUS,
-        color: palette.primary,
+        color: palette.foreground,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(

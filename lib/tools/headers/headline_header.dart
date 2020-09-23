@@ -41,10 +41,10 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-      color: _palette.background.withAlpha(210),
+      color: _palette.translucent,
       child: Text(
         headline,
-        style: _palette.headline.copyWith(height: 1),
+        style: _palette.headline.copyWith(height: 1.0),
       ),
     );
   }

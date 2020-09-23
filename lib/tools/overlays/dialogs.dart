@@ -72,7 +72,7 @@ class TextDialog extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              color: palette.primary,
+              color: palette.foreground,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Text(title, style: palette.headline),
@@ -138,7 +138,7 @@ class ImageTextDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),
-      backgroundColor: palette.primary,
+      backgroundColor: palette.foreground,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

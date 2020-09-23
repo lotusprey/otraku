@@ -91,7 +91,7 @@ class _FilterOptionState extends State<_FilterOption> {
       child: _state == 0
           ? Container(
               decoration: BoxDecoration(
-                color: _palette.primary,
+                color: _palette.foreground,
                 borderRadius: _borderRadius,
               ),
               child: Center(
@@ -119,7 +119,7 @@ class _FilterOptionState extends State<_FilterOption> {
                 )
               : Container(
                   decoration: BoxDecoration(
-                    color: Palette.ERROR,
+                    color: _palette.error,
                     borderRadius: _borderRadius,
                   ),
                   child: Row(

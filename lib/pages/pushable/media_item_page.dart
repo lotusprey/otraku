@@ -65,7 +65,7 @@ class _MediaItemPageState extends State<MediaItemPage> {
                               [
                                 Text(
                                   'Description',
-                                  style: _palette.smallTitle,
+                                  style: _palette.detail,
                                 ),
                                 const SizedBox(height: 10),
                                 GestureDetector(
@@ -74,7 +74,7 @@ class _MediaItemPageState extends State<MediaItemPage> {
                                     constraints: BoxConstraints(maxHeight: 130),
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: _palette.primary,
+                                      color: _palette.foreground,
                                       borderRadius: ViewConfig.RADIUS,
                                     ),
                                     child: Text(

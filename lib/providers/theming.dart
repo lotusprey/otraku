@@ -1,90 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Theming with ChangeNotifier {
-  static bool _isDark;
-  static Accent _accent;
-
   Palette _palette;
+  int _swatchIndex;
 
   Future<void> init() async {
     final preferences = await SharedPreferences.getInstance();
 
-    _isDark = preferences.getBool('isDark');
-    if (_isDark == null) {
-      _isDark = false;
-      preferences.setBool('isDark', false);
+    _swatchIndex = preferences.getInt('swatch');
+    if (_swatchIndex == null) {
+      _swatchIndex = 0;
+      preferences.setInt('swatch', 0);
     }
 
-    int index = preferences.getInt('accents');
-    if (index == null) {
-      _accent = Accent.blue;
-      preferences.setInt('accents', Accent.blue.index);
-    } else {
-      _accent = Accent.values[index];
-    }
-
-    if (_isDark) {
-      _palette = Palette.dark(_accent);
-    } else {
-      _palette = Palette.light(_accent);
-    }
+    _palette = Palette(Palette.SWATCHES[_swatchIndex]);
   }
 
-  void _saveConfig({bool isDarkValue, Accent accentValue}) async {
-    final preferences = await SharedPreferences.getInstance();
-
-    if (isDarkValue != null) {
-      _isDark = isDarkValue;
-      preferences.setBool('isDark', isDarkValue);
-    }
-
-    if (accentValue != null) {
-      _accent = accentValue;
-      preferences.setInt('accents', accentValue.index);
-    }
-  }
-
-  void setTheme({@required bool toDark}) {
-    if (toDark == _isDark) {
-      return;
-    }
-
-    if (toDark) {
-      _palette = Palette.dark(_accent);
-      _saveConfig(isDarkValue: true);
-    } else {
-      _palette = Palette.light(_accent);
-      _saveConfig(isDarkValue: false);
-    }
-    notifyListeners();
-  }
-
-  void setAccent(Accent accent) {
-    if (accent == _accent) {
-      return;
-    }
-
-    if (_isDark) {
-      _palette = Palette.dark(accent);
-    } else {
-      _palette = Palette.light(accent);
-    }
-    _saveConfig(accentValue: accent);
-    notifyListeners();
-  }
-
-  Palette get palette {
+  get palette {
     return _palette;
   }
 
-  bool get isDark {
-    return _isDark;
+  get swatchIndex {
+    return _swatchIndex;
   }
 
-  Accent get accent {
-    return _accent;
+  set swatchIndex(int index) {
+    _swatchIndex = index;
+    _palette = Palette(Palette.SWATCHES[_swatchIndex]);
+
+    SharedPreferences.getInstance()
+        .then((preferences) => preferences.setInt('swatch', _swatchIndex));
   }
 }
 
@@ -98,158 +44,143 @@ class Palette {
   static const double FONT_MEDIUM = 20;
   static const double FONT_SMALL = 15;
 
-  static const Color ERROR = Color(0xffeb1730);
+  static const SWATCHES = [
+    const Swatch(
+      name: 'Slate',
+      background: Color(0xFF0F171E),
+      foreground: Color(0xFF2B3C4F),
+      translucent: Color(0xBB0F171E),
+      accent: Color(0xFF45A0F2),
+      error: Color(0xFFD74761),
+      faded: Color(0xFF56789F),
+      contrast: Color(0xFFCAD5E2),
+    ),
+  ];
 
-  final Color background;
-  final Color primary;
-  final Color accent;
-  final Color contrast;
-  final Color faded;
-  final TextStyle headline;
-  final TextStyle accentedTitle;
-  final TextStyle contrastedTitle;
-  final TextStyle smallTitle;
-  final TextStyle buttonText;
-  final TextStyle exclamation;
-  final TextStyle paragraph;
-  final TextStyle detail;
+  Swatch _swatch;
+  TextStyle _headline;
+  TextStyle _accentedTitle;
+  TextStyle _contrastedTitle;
+  TextStyle _buttonText;
+  TextStyle _paragraph;
+  TextStyle _exclamation;
+  TextStyle _detail;
 
-  Palette.light(Accent accent)
-      : this._(
-          background: Colors.white,
-          primary: Color(0xffe6eaed),
-          accent: accent.color,
-          contrast: Colors.black,
-          faded: Color(0xff4a4a4a),
-          headline: TextStyle(
-            fontSize: FONT_BIG,
-            color: Color(0xff4a4a4a),
-            fontWeight: FontWeight.w500,
-          ),
-          accentedTitle: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: accent.color,
-            fontWeight: FontWeight.w500,
-          ),
-          contrastedTitle: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: Colors.black,
-            fontWeight: FontWeight.w500,
-          ),
-          smallTitle: TextStyle(
-            fontSize: FONT_SMALL,
-            color: Color(0xff4a4a4a),
-            fontWeight: FontWeight.w500,
-          ),
-          buttonText: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: Colors.white,
-            fontWeight: FontWeight.normal,
-          ),
-          exclamation: TextStyle(
-            fontSize: FONT_SMALL,
-            color: accent.color,
-          ),
-          paragraph: TextStyle(
-            fontSize: FONT_SMALL,
-            color: Colors.black,
-          ),
-          detail: TextStyle(
-            fontSize: FONT_SMALL,
-            color: Color(0xff4a4a4a),
-          ),
-          brightness: Brightness.dark,
-        );
+  Palette(this._swatch) {
+    _headline = TextStyle(
+      fontSize: FONT_BIG,
+      color: _swatch.faded,
+      fontWeight: FontWeight.w500,
+    );
 
-  Palette.dark(Accent accent)
-      : this._(
-          background: Colors.black,
-          primary: Color(0xff212121),
-          accent: accent.color,
-          contrast: Colors.white,
-          faded: Color(0xff999999),
-          headline: TextStyle(
-            fontSize: FONT_BIG,
-            color: Color(0xff999999),
-            fontWeight: FontWeight.w500,
-          ),
-          accentedTitle: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: accent.color,
-            fontWeight: FontWeight.w500,
-          ),
-          contrastedTitle: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
-          ),
-          smallTitle: TextStyle(
-            fontSize: FONT_SMALL,
-            color: Color(0xff999999),
-            fontWeight: FontWeight.w500,
-          ),
-          buttonText: TextStyle(
-            fontSize: FONT_MEDIUM,
-            color: Colors.white,
-            fontWeight: FontWeight.normal,
-          ),
-          exclamation: TextStyle(
-            fontSize: FONT_SMALL,
-            color: accent.color,
-          ),
-          paragraph: TextStyle(
-            fontSize: FONT_SMALL,
-            color: Colors.white,
-          ),
-          detail: TextStyle(
-            fontSize: FONT_SMALL,
-            color: Color(0xff999999),
-          ),
-          brightness: Brightness.light,
-        );
+    _accentedTitle = TextStyle(
+      fontSize: FONT_MEDIUM,
+      color: _swatch.accent,
+      fontWeight: FontWeight.w500,
+    );
 
-  Palette._({
-    @required this.background,
-    @required this.primary,
-    @required this.accent,
-    @required this.contrast,
-    @required this.faded,
-    @required this.headline,
-    @required this.accentedTitle,
-    @required this.contrastedTitle,
-    @required this.smallTitle,
-    @required this.buttonText,
-    @required this.exclamation,
-    @required this.paragraph,
-    @required this.detail,
-    @required Brightness brightness,
-  }) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarIconBrightness: brightness,
-      systemNavigationBarIconBrightness: brightness,
-      statusBarColor: background,
-      systemNavigationBarColor: background,
-      systemNavigationBarDividerColor: background,
-    ));
+    _contrastedTitle = TextStyle(
+      fontSize: FONT_MEDIUM,
+      color: _swatch.contrast,
+      fontWeight: FontWeight.w500,
+    );
+
+    _buttonText = TextStyle(
+      fontSize: FONT_MEDIUM,
+      color: Colors.white,
+    );
+
+    _paragraph = TextStyle(
+      fontSize: FONT_SMALL,
+      color: _swatch.contrast,
+    );
+
+    _exclamation = TextStyle(
+      fontSize: FONT_SMALL,
+      color: _swatch.accent,
+    );
+
+    _detail = TextStyle(
+      fontSize: FONT_SMALL,
+      color: _swatch.faded,
+    );
+  }
+
+  get background {
+    return _swatch.background;
+  }
+
+  get foreground {
+    return _swatch.foreground;
+  }
+
+  get translucent {
+    return _swatch.translucent;
+  }
+
+  get accent {
+    return _swatch.accent;
+  }
+
+  get error {
+    return _swatch.error;
+  }
+
+  get contrast {
+    return _swatch.contrast;
+  }
+
+  get faded {
+    return _swatch.faded;
+  }
+
+  get headline {
+    return _headline;
+  }
+
+  get accentedTitle {
+    return _accentedTitle;
+  }
+
+  get contrastedTitle {
+    return _contrastedTitle;
+  }
+
+  get buttonText {
+    return _buttonText;
+  }
+
+  get paragraph {
+    return _paragraph;
+  }
+
+  get exclamation {
+    return _exclamation;
+  }
+
+  get detail {
+    return _detail;
   }
 }
 
-enum Accent {
-  orange,
-  green,
-  teal,
-  blue,
-  purple,
-}
+class Swatch {
+  final String name;
+  final Color background;
+  final Color foreground;
+  final Color translucent;
+  final Color accent;
+  final Color error;
+  final Color contrast;
+  final Color faded;
 
-extension AccentsExtension on Accent {
-  static const _colors = const {
-    Accent.orange: Color(0xffeda60c),
-    Accent.green: Color(0xff32a852),
-    Accent.teal: Color(0xff3cb0d6),
-    Accent.blue: Color(0xff2172b5),
-    Accent.purple: Color(0xff743bed),
-  };
-
-  Color get color => _colors[this];
+  const Swatch({
+    @required this.name,
+    @required this.background,
+    @required this.foreground,
+    @required this.translucent,
+    @required this.accent,
+    @required this.error,
+    @required this.contrast,
+    @required this.faded,
+  });
 }

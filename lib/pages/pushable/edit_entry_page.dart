@@ -174,7 +174,7 @@ class _EditField extends StatelessWidget {
       children: [
         Text(
           title,
-          style: palette.smallTitle,
+          style: palette.detail,
         ),
         _space,
         body,
@@ -219,10 +219,10 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
                   onPressed: () => showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
-                      backgroundColor: widget.palette.primary,
+                      backgroundColor: widget.palette.foreground,
                       title: Text(
                         'Remove entry?',
-                        style: widget.palette.smallTitle,
+                        style: widget.palette.faded,
                       ),
                       actions: [
                         FlatButton(

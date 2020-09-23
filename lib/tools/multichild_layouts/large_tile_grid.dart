@@ -21,7 +21,7 @@ class LargeTileGrid extends StatelessWidget {
         child: Center(
           child: Text(
             'No results',
-            style: palette.smallTitle,
+            style: palette.detail,
           ),
         ),
       );
@@ -88,7 +88,7 @@ class _SimpleGridTile extends StatelessWidget {
               child: Container(
                 height: imageHeight,
                 width: width,
-                color: palette.primary,
+                color: palette.foreground,
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
@@ -101,7 +101,7 @@ class _SimpleGridTile extends StatelessWidget {
             child: Text(
               title,
               overflow: TextOverflow.fade,
-              style: palette.smallTitle,
+              style: palette.detail,
             ),
           ),
         ],

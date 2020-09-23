@@ -20,13 +20,11 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: widget.palette.primary,
+        color: widget.palette.foreground,
         borderRadius: ViewConfig.RADIUS,
       ),
       child: DropdownButton(
         value: widget.data.status,
-        hint: Text('Add', style: widget.palette.detail),
-        onChanged: (value) => setState(() => widget.data.status = value),
         items: MediaListStatus.values
             .map((v) => DropdownMenuItem(
                   value: v,
@@ -38,7 +36,10 @@ class _DropDownImplementationState extends State<DropDownImplementation> {
                   ),
                 ))
             .toList(),
-        dropdownColor: widget.palette.primary,
+        onChanged: (status) => setState(() => widget.data.status = status),
+        hint: Text('Add', style: widget.palette.detail),
+        iconEnabledColor: widget.palette.faded,
+        dropdownColor: widget.palette.foreground,
         underline: const SizedBox(),
         isExpanded: true,
       ),

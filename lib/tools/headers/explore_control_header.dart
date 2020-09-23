@@ -53,7 +53,7 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
         child: Container(
           height: _height,
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          color: _palette.background.withAlpha(200),
+          color: _palette.translucent,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

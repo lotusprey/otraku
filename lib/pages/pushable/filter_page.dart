@@ -25,7 +25,7 @@ class FilterPage extends StatelessWidget {
     final result = [
       Padding(
         padding: ViewConfig.PADDING,
-        child: Text(name, style: palette.smallTitle),
+        child: Text(name, style: palette.detail),
       ),
       grid,
     ];

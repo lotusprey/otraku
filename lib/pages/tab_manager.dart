@@ -82,8 +82,8 @@ class _TabManagerState extends State<TabManager> {
 
           _pageController.animateToPage(
             index,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.ease,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastOutSlowIn,
           );
         },
       ),

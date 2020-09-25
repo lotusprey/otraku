@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/media_page_data.dart';
+import 'package:otraku/models/media_data.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
 class InfoGrid extends StatelessWidget {
-  final MediaPageData mediaObj;
+  final MediaData mediaObj;
 
   InfoGrid(this.mediaObj);
 

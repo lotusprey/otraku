@@ -2,12 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/models/media_data.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/media_header.dart';
 import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
 class MediaPage extends StatefulWidget {
   final int id;
@@ -26,7 +24,6 @@ class _MediaPageState extends State<MediaPage> {
   //Output settings
   bool _isLoading = true;
   bool _didChangeDependencies = false;
-  Palette _palette;
   double _coverWidth;
   double _coverHeight;
   double _bannerHeight;
@@ -34,14 +31,13 @@ class _MediaPageState extends State<MediaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _palette.background,
       body: Hero(
         tag: widget.tag,
         child: SafeArea(
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            color: _palette.background,
+            color: Theme.of(context).backgroundColor,
             child: !_isLoading
                 ? CustomScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -50,7 +46,6 @@ class _MediaPageState extends State<MediaPage> {
                         pinned: true,
                         floating: false,
                         delegate: MediaHeader(
-                          palette: _palette,
                           mediaObj: _media,
                           coverWidth: _coverWidth,
                           coverHeight: _coverHeight,
@@ -65,7 +60,7 @@ class _MediaPageState extends State<MediaPage> {
                               [
                                 Text(
                                   'Description',
-                                  style: _palette.detail,
+                                  style: Theme.of(context).textTheme.subtitle1,
                                 ),
                                 const SizedBox(height: 10),
                                 GestureDetector(
@@ -74,12 +69,13 @@ class _MediaPageState extends State<MediaPage> {
                                     constraints: BoxConstraints(maxHeight: 130),
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
-                                      color: _palette.foreground,
+                                      color: Theme.of(context).primaryColor,
                                       borderRadius: ViewConfig.RADIUS,
                                     ),
                                     child: Text(
                                       _media.description,
-                                      style: _palette.paragraph,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
                                       overflow: TextOverflow.fade,
                                     ),
                                   ),
@@ -121,7 +117,6 @@ class _MediaPageState extends State<MediaPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_didChangeDependencies) {
-      _palette = Provider.of<Theming>(context).palette;
       _coverWidth = MediaQuery.of(context).size.width * 0.35;
       _coverHeight = _coverWidth / 0.7;
       _bannerHeight = _coverHeight + 110;

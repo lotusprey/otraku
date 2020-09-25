@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:otraku/providers/theming.dart';
-import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double CUSTOM_APP_BAR_HEIGHT = 50;
@@ -20,16 +18,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
-
     return SafeArea(
       child: Container(
         height: CUSTOM_APP_BAR_HEIGHT,
         decoration: BoxDecoration(
-          color: palette.background,
+          color: Theme.of(context).backgroundColor,
           boxShadow: [
             BoxShadow(
-              color: palette.background,
+              color: Theme.of(context).backgroundColor,
               blurRadius: 7,
               offset: Offset(0, 3),
             ),
@@ -43,8 +39,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               left: 0,
               child: AppBarIcon(IconButton(
                 icon: Icon(leading),
-                color: palette.accent,
-                iconSize: Palette.ICON_MEDIUM,
+                color: Theme.of(context).accentColor,
                 onPressed: () => Navigator.of(context).pop(),
               )),
             ),
@@ -59,7 +54,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             Text(
               title,
-              style: palette.contrastedTitle,
+              style: Theme.of(context).textTheme.headline3,
             ),
           ],
         ),

@@ -6,7 +6,6 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/providers/explorable_media.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/multichild_layouts/filter_grid.dart';
@@ -14,9 +13,9 @@ import 'package:provider/provider.dart';
 
 class FilterPage extends StatelessWidget {
   List<Widget> _gridSection({
+    @required BuildContext context,
     @required String name,
     @required FilterGrid grid,
-    @required Palette palette,
   }) {
     if (grid == null) {
       return [];
@@ -25,7 +24,7 @@ class FilterPage extends StatelessWidget {
     final result = [
       Padding(
         padding: ViewConfig.PADDING,
-        child: Text(name, style: palette.detail),
+        child: Text(name, style: Theme.of(context).textTheme.subtitle1),
       ),
       grid,
     ];
@@ -35,7 +34,6 @@ class FilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
     final provider = Provider.of<ExplorableMedia>(context, listen: false);
 
     List<String> statusIn =
@@ -55,15 +53,13 @@ class FilterPage extends StatelessWidget {
         provider.getFilterWithKey(ExplorableMedia.KEY_TAG_NOT_IN);
 
     return Scaffold(
-      backgroundColor: palette.background,
       appBar: CustomAppBar(
         title: 'Filters',
         trailing: [
           IconButton(
             icon: Icon(
               Icons.done,
-              size: Palette.ICON_MEDIUM,
-              color: palette.accent,
+              color: Theme.of(context).accentColor,
             ),
             onPressed: () {
               provider.setGenreTagFilters(
@@ -85,6 +81,7 @@ class FilterPage extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         children: <Widget>[
           ..._gridSection(
+            context: context,
             name: 'Status',
             grid: FilterGrid(
               options: MediaStatus.values
@@ -96,9 +93,9 @@ class FilterPage extends StatelessWidget {
               rows: 1,
               whRatio: 0.2,
             ),
-            palette: palette,
           ),
           ..._gridSection(
+            context: context,
             name: 'Format',
             grid: FilterGrid(
               options: provider.type == 'ANIME'
@@ -116,9 +113,9 @@ class FilterPage extends StatelessWidget {
               rows: 1,
               whRatio: 0.3,
             ),
-            palette: palette,
           ),
           ..._gridSection(
+            context: context,
             name: 'Genres',
             grid: FilterGrid(
               options: provider.genres,
@@ -128,9 +125,9 @@ class FilterPage extends StatelessWidget {
               rows: 2,
               whRatio: 0.24,
             ),
-            palette: palette,
           ),
           ..._gridSection(
+            context: context,
             name: 'Tags',
             grid: FilterGrid(
               options: provider.tags.item1,
@@ -141,7 +138,6 @@ class FilterPage extends StatelessWidget {
               rows: 7,
               whRatio: 0.13,
             ),
-            palette: palette,
           ),
         ],
       ),

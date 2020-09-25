@@ -2,15 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/media_group_provider.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 
 class HeaderSearchBar extends StatefulWidget {
   final MediaGroupProvider provider;
-  final Palette palette;
 
-  HeaderSearchBar(this.provider, this.palette);
+  HeaderSearchBar(this.provider);
 
   @override
   _HeaderSearchBarState createState() => _HeaderSearchBarState();
@@ -34,30 +33,28 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
           //field is focused
           showCursor: false,
           controller: _controller,
-          cursorColor: widget.palette.accent,
-          style: widget.palette.paragraph,
+          cursorColor: Theme.of(context).accentColor,
+          style: Theme.of(context).textTheme.bodyText1,
           inputFormatters: [
             LengthLimitingTextInputFormatter(30),
           ],
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.all(5),
             filled: true,
-            fillColor: widget.palette.foreground,
+            fillColor: Theme.of(context).primaryColor,
             border: OutlineInputBorder(
               borderRadius: ViewConfig.RADIUS,
               borderSide: BorderSide.none,
             ),
             prefixIcon: Icon(
               LineAwesomeIcons.search,
-              color: widget.palette.faded,
-              size: Palette.ICON_SMALL,
+              size: Design.ICON_SMALL,
             ),
             suffixIcon: _isEmpty
                 ? null
                 : IconButton(
                     icon: const Icon(CupertinoIcons.clear),
-                    color: widget.palette.faded,
-                    iconSize: Palette.ICON_SMALLER,
+                    iconSize: Design.ICON_SMALLER,
                     onPressed: () {
                       widget.provider.search = null;
                       _controller.clear();

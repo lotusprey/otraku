@@ -4,8 +4,8 @@ import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/media_data.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/media_item.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
@@ -15,14 +15,12 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
   final MediaData mediaObj;
 
   //Output settings
-  final Palette palette;
   final double coverWidth;
   final double coverHeight;
   double _minExtent;
   double _maxExtent;
 
   MediaHeader({
-    @required this.palette,
     @required this.mediaObj,
     @required this.coverWidth,
     @required this.coverHeight,
@@ -43,13 +41,14 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
         ? shrinkOffset / buttonShrinkLimit
         : 1.0;
     final buttonInset = 10.0 + shrinkPercentage * 50.0;
-    final fadeColor =
-        palette.background.withAlpha((shrinkPercentage * 255).round());
+    final fadeColor = Theme.of(context)
+        .backgroundColor
+        .withAlpha((shrinkPercentage * 255).round());
 
     return Container(
       width: double.infinity,
       height: _maxExtent,
-      color: palette.foreground,
+      color: Theme.of(context).primaryColor,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -62,8 +61,8 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  palette.background.withAlpha(130),
-                  palette.background,
+                  Theme.of(context).backgroundColor.withAlpha(130),
+                  Theme.of(context).backgroundColor,
                 ],
               ),
             ),
@@ -101,7 +100,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                         Flexible(
                           child: Text(
                             mediaObj.title,
-                            style: palette.contrastedTitle,
+                            style: Theme.of(context).textTheme.headline3,
                             overflow: TextOverflow.fade,
                           ),
                         ),
@@ -109,7 +108,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                           Flexible(
                             child: Text(
                               'Ep ${mediaObj.nextEpisode} in ${mediaObj.timeUntilAiring}',
-                              style: palette.detail,
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ),
                         Row(
@@ -135,14 +134,15 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                                         child: const Icon(
                                           Icons.star,
                                           color: Colors.yellow,
-                                          size: Palette.ICON_SMALL,
+                                          size: Design.ICON_SMALL,
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
                                       mediaObj.popularity.toString(),
-                                      style: palette.detail,
+                                      style:
+                                          Theme.of(context).textTheme.subtitle1,
                                     ),
                                   ],
                                 ),
@@ -168,14 +168,15 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                                         child: const Icon(
                                           Icons.favorite,
                                           color: Colors.redAccent,
-                                          size: Palette.ICON_SMALL,
+                                          size: Design.ICON_SMALL,
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
                                       mediaObj.favourites.toString(),
-                                      style: palette.detail,
+                                      style:
+                                          Theme.of(context).textTheme.subtitle1,
                                     ),
                                   ],
                                 ),
@@ -205,12 +206,11 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                 IconButton(
                   icon: Icon(
                     Icons.close,
-                    size: Palette.ICON_MEDIUM,
-                    color: palette.contrast,
+                    color: Theme.of(context).dividerColor,
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                _FavoriteButton(palette, mediaObj),
+                _FavoriteButton(mediaObj),
               ],
             ),
           ),
@@ -218,7 +218,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
             left: buttonInset,
             right: buttonInset,
             bottom: 0,
-            child: _StatusButton(palette, mediaObj),
+            child: _StatusButton(mediaObj),
           ),
         ],
       ),
@@ -242,10 +242,9 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  final Palette palette;
   final MediaData media;
 
-  _FavoriteButton(this.palette, this.media);
+  _FavoriteButton(this.media);
 
   @override
   __FavoriteButtonState createState() => __FavoriteButtonState();
@@ -257,8 +256,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
     return IconButton(
       icon: Icon(
         widget.media.isFavourite ? Icons.favorite : Icons.favorite_border,
-        size: Palette.ICON_MEDIUM,
-        color: widget.palette.contrast,
+        color: Theme.of(context).dividerColor,
       ),
       onPressed: () => Provider.of<MediaItem>(context, listen: false)
           .toggleFavourite(widget.media.mediaId, widget.media.type)
@@ -273,10 +271,9 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 }
 
 class _StatusButton extends StatefulWidget {
-  final Palette palette;
   final MediaData media;
 
-  _StatusButton(this.palette, this.media);
+  _StatusButton(this.media);
 
   @override
   __StatusButtonState createState() => __StatusButtonState();
@@ -286,7 +283,6 @@ class __StatusButtonState extends State<_StatusButton> {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      color: widget.palette.accent,
       shape: RoundedRectangleBorder(
         borderRadius: ViewConfig.RADIUS,
       ),
@@ -295,7 +291,7 @@ class __StatusButtonState extends State<_StatusButton> {
         children: <Widget>[
           Icon(
             widget.media.status == null ? Icons.add : Icons.edit,
-            size: Palette.ICON_SMALL,
+            size: Design.ICON_SMALL,
             color: Colors.white,
           ),
           const SizedBox(width: 10),
@@ -306,7 +302,7 @@ class __StatusButtonState extends State<_StatusButton> {
                       widget.media.status,
                       widget.media.type == 'ANIME',
                     ),
-              style: widget.palette.buttonText),
+              style: Theme.of(context).textTheme.button),
         ],
       ),
       onPressed: () => Navigator.of(context).push(MaterialPageRoute(

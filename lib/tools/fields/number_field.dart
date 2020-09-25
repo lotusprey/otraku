@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 
 class NumberField extends StatefulWidget {
-  final Palette palette;
   final int initialValue;
   final int maxValue;
   final Function(int) update;
 
   NumberField({
-    @required this.palette,
     @required this.update,
     this.initialValue = 0,
     this.maxValue,
@@ -27,14 +24,13 @@ class _NumberFieldState extends State<NumberField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.palette.foreground,
+        color: Theme.of(context).primaryColor,
         borderRadius: ViewConfig.RADIUS,
       ),
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.remove, size: Palette.ICON_MEDIUM),
-            color: widget.palette.faded,
+            icon: const Icon(Icons.remove),
             onPressed: () => _validateInput(add: -1),
           ),
           Expanded(
@@ -45,15 +41,14 @@ class _NumberFieldState extends State<NumberField> {
                 WhitelistingTextInputFormatter.digitsOnly,
               ],
               textAlign: TextAlign.center,
-              style: widget.palette.paragraph,
-              cursorColor: widget.palette.accent,
+              style: Theme.of(context).textTheme.bodyText1,
+              cursorColor: Theme.of(context).accentColor,
               decoration: const InputDecoration(border: InputBorder.none),
               onChanged: (value) => _validateInput(),
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.add, size: Palette.ICON_MEDIUM),
-            color: widget.palette.faded,
+            icon: const Icon(Icons.add),
             onPressed: () => _validateInput(add: 1),
           ),
         ],

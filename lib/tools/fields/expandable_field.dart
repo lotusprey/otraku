@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 
 class ExpandableField extends StatefulWidget {
   final String text;
   final Function(String) onChange;
-  final Palette palette;
 
   ExpandableField({
     @required this.text,
     @required this.onChange,
-    @required this.palette,
   });
 
   @override
@@ -25,7 +22,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       decoration: BoxDecoration(
-        color: widget.palette.foreground,
+        color: Theme.of(context).primaryColor,
         borderRadius: ViewConfig.RADIUS,
       ),
       child: TextField(
@@ -33,8 +30,8 @@ class _ExpandableFieldState extends State<ExpandableField> {
         controller: _controller,
         onChanged: (text) => widget.onChange(text),
         maxLines: 5,
-        cursorColor: widget.palette.accent,
-        style: widget.palette.paragraph,
+        cursorColor: Theme.of(context).accentColor,
+        style: Theme.of(context).textTheme.bodyText1,
         decoration: InputDecoration(border: InputBorder.none),
       ),
     );

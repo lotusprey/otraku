@@ -1,9 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:provider/provider.dart';
 
 class ModalSheet extends StatelessWidget {
   final List<String> options;
@@ -20,34 +18,31 @@ class ModalSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
-
     return Container(
       height: options.length * 40 + 55.0,
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: palette.background,
+        color: Theme.of(context).backgroundColor,
         borderRadius: ViewConfig.RADIUS,
       ),
       child: Column(
         children: <Widget>[
           Text(
             'Sort',
-            style: palette.detail,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
-          ..._options(palette, context),
+          ..._options(context),
         ],
       ),
     );
   }
 
-  List<Widget> _options(Palette palette, BuildContext context) {
+  List<Widget> _options(BuildContext context) {
     List<Widget> list = [];
     for (int i = 0; i < options.length; i++) {
       list.add(_ModalOption(
         text: options[i],
-        palette: palette,
         desc: index == i ? desc : null,
         onTap: () {
           onTap(i);
@@ -61,13 +56,11 @@ class ModalSheet extends StatelessWidget {
 
 class _ModalOption extends StatelessWidget {
   final String text;
-  final Palette palette;
   final Function onTap;
   final bool desc;
 
   _ModalOption({
     @required this.text,
-    @required this.palette,
     @required this.onTap,
     this.desc,
   });
@@ -84,21 +77,19 @@ class _ModalOption extends StatelessWidget {
             Text(
               text,
               style: desc == null
-                  ? palette.contrastedTitle.copyWith(height: 1.0)
-                  : palette.accentedTitle.copyWith(height: 1.0),
+                  ? Theme.of(context).textTheme.headline3.copyWith(height: 1.0)
+                  : Theme.of(context).textTheme.headline2.copyWith(height: 1.0),
             ),
             desc != null
                 ? Icon(
                     desc
                         ? LineAwesomeIcons.arrow_down
                         : LineAwesomeIcons.arrow_up,
-                    color: palette.accent,
-                    size: Palette.ICON_MEDIUM,
+                    color: Theme.of(context).accentColor,
                   )
                 : Icon(
                     LineAwesomeIcons.angle_down,
-                    color: palette.background,
-                    size: Palette.ICON_MEDIUM,
+                    color: Theme.of(context).backgroundColor,
                   ),
           ],
         ),

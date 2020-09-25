@@ -1,9 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:provider/provider.dart';
 
 class PopUpAnimation extends StatefulWidget {
   final Widget child;
@@ -57,11 +55,9 @@ class TextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
-
     return Dialog(
       elevation: 0,
-      backgroundColor: palette.background,
+      backgroundColor: Theme.of(context).backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: ViewConfig.RADIUS,
       ),
@@ -72,22 +68,22 @@ class TextDialog extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              color: palette.foreground,
+              color: Theme.of(context).primaryColor,
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(title, style: palette.headline),
+            child: Text(title, style: Theme.of(context).textTheme.headline1),
           ),
           Flexible(
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(5)),
-                color: palette.background,
+                color: Theme.of(context).backgroundColor,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                child: Text(text, style: palette.paragraph),
+                child: Text(text, style: Theme.of(context).textTheme.bodyText1),
               ),
             ),
           ),
@@ -130,7 +126,6 @@ class ImageTextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
     final borderRadius = ViewConfig.RADIUS;
 
     return Dialog(
@@ -138,7 +133,7 @@ class ImageTextDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
       ),
-      backgroundColor: palette.foreground,
+      backgroundColor: Theme.of(context).primaryColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -150,7 +145,7 @@ class ImageTextDialog extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               text,
-              style: palette.contrastedTitle,
+              style: Theme.of(context).textTheme.headline2,
               textAlign: TextAlign.center,
             ),
           ),

@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
+import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -12,32 +11,20 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Palette _palette;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _palette.background,
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: CustomAppBar(
         title: 'Settings',
       ),
       body: ListView(
         padding: ViewConfig.PADDING,
         children: [
-          InputFieldStructure(
-            title: 'Theme',
-            body: _ThemeDropdown(),
-            palette: _palette,
-          ),
+          InputFieldStructure(title: 'Theme', body: _ThemeDropdown()),
         ],
       ),
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _palette = Provider.of<Theming>(context).palette;
   }
 }
 
@@ -47,19 +34,20 @@ class _ThemeDropdown extends StatefulWidget {
 }
 
 class _ThemeDropdownState extends State<_ThemeDropdown> {
-  Theming provider;
+  Design provider;
 
   @override
   Widget build(BuildContext context) {
     List<DropdownMenuItem> items = [];
-    for (int i = 0; i < Palette.SWATCHES.length; i++) {
+
+    for (final swatch in Swatch.values) {
       items.add(DropdownMenuItem(
-        value: i,
+        value: swatch,
         child: Text(
-          Palette.SWATCHES[i].name,
-          style: i != provider.swatchIndex
-              ? provider.palette.paragraph
-              : provider.palette.exclamation,
+          swatch.name,
+          style: swatch != provider.swatch
+              ? Theme.of(context).textTheme.bodyText1
+              : Theme.of(context).textTheme.bodyText2,
         ),
       ));
     }
@@ -67,15 +55,15 @@ class _ThemeDropdownState extends State<_ThemeDropdown> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: provider.palette.foreground,
+        color: Theme.of(context).primaryColor,
         borderRadius: ViewConfig.RADIUS,
       ),
       child: DropdownButton(
-        value: provider.swatchIndex,
+        value: provider.swatch,
         items: items,
-        onChanged: (index) => setState(() => provider.swatchIndex = index),
-        iconEnabledColor: provider.palette.faded,
-        dropdownColor: provider.palette.foreground,
+        onChanged: (swatch) => setState(() => provider.swatch = swatch),
+        iconEnabledColor: Theme.of(context).disabledColor,
+        dropdownColor: Theme.of(context).primaryColor,
         underline: const SizedBox(),
         // isExpanded: true,
       ),
@@ -85,6 +73,6 @@ class _ThemeDropdownState extends State<_ThemeDropdown> {
   @override
   void initState() {
     super.initState();
-    provider = Provider.of<Theming>(context, listen: false);
+    provider = Provider.of<Design>(context, listen: false);
   }
 }

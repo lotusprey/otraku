@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/design.dart';
 
 enum ScoreFormat {
   POINT_100,
@@ -24,7 +24,7 @@ extension ScoreFormatExtension on ScoreFormat {
 }
 
 Widget getWidgetFormScoreFormat(
-  Palette palette,
+  BuildContext context,
   String format,
   double score,
 ) {
@@ -37,12 +37,12 @@ Widget getWidgetFormScoreFormat(
     case 'POINT_10':
       return Text(
         score.toStringAsFixed(0),
-        style: palette.detail,
+        style: Theme.of(context).textTheme.subtitle1,
       );
     case 'POINT_10_DECIMAL':
       return Text(
         score.toStringAsFixed(score.truncate() == score ? 0 : 1),
-        style: palette.detail,
+        style: Theme.of(context).textTheme.subtitle1,
       );
     case 'POINT_5':
       return Row(
@@ -50,31 +50,19 @@ Widget getWidgetFormScoreFormat(
         children: <Widget>[
           Text(
             score.toStringAsFixed(0),
-            style: palette.detail,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
-          Icon(Icons.star, size: Palette.ICON_SMALL, color: palette.faded),
+          Icon(Icons.star, size: Design.ICON_SMALL),
         ],
       );
     case 'POINT_3':
       if (score == 3) {
-        return Icon(
-          Icons.sentiment_very_satisfied,
-          size: Palette.ICON_MEDIUM,
-          color: palette.faded,
-        );
+        return Icon(Icons.sentiment_very_satisfied);
       }
       if (score == 2) {
-        return Icon(
-          Icons.sentiment_neutral,
-          size: Palette.ICON_MEDIUM,
-          color: palette.faded,
-        );
+        return Icon(Icons.sentiment_neutral);
       }
-      return Icon(
-        Icons.sentiment_very_dissatisfied,
-        size: Palette.ICON_MEDIUM,
-        color: palette.faded,
-      );
+      return Icon(Icons.sentiment_very_dissatisfied);
     default:
       throw 'Unrecognised Score Format: $format';
   }

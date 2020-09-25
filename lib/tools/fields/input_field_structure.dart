@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
 
 class InputFieldStructure extends StatelessWidget {
   static const _space = SizedBox(height: 5);
 
   final String title;
   final Widget body;
-  final Palette palette;
   final bool enforceHeight;
 
   InputFieldStructure({
     @required this.title,
     @required this.body,
-    @required this.palette,
     this.enforceHeight = true,
   });
 
@@ -26,7 +23,7 @@ class InputFieldStructure extends StatelessWidget {
         children: [
           Text(
             title,
-            style: palette.detail,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
           _space,
           body,

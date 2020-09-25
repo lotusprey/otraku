@@ -3,7 +3,7 @@ import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/providers/theming.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
@@ -58,58 +58,61 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<ViewConfig>(
           create: (_) => ViewConfig(),
         ),
-        ChangeNotifierProvider<Theming>(
-          create: (_) => Theming(),
+        ChangeNotifierProvider<Design>(
+          create: (_) => Design(),
         ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Otraku',
-        theme: ThemeData(
-          accentColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          fontFamily: 'Rubik',
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+      child: const App(),
+    );
+  }
+}
+
+class App extends StatelessWidget {
+  const App({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Otraku',
+      theme: Provider.of<Design>(context).theme,
+      home: Consumer<Design>(
+        builder: (_, palette, themeChild) => FutureBuilder(
+          future: palette.theme == null
+              ? palette.init()
+              : Future.delayed(const Duration(seconds: 0)),
+          builder: (_, snapshotTheme) {
+            if (snapshotTheme.connectionState == ConnectionState.waiting) {
+              return themeChild;
+            }
+
+            return Consumer<Auth>(
+              builder: (_, auth, childAuth) => FutureBuilder(
+                future: auth.status == null
+                    ? auth.validateAccessToken()
+                    : Future.delayed(const Duration(seconds: 0)),
+                builder: (_, snapshotAuth) {
+                  if (snapshotAuth.connectionState == ConnectionState.waiting) {
+                    return childAuth;
+                  }
+
+                  if (auth.status != AuthStatus.authorised) {
+                    return const AuthPage();
+                  }
+
+                  return LoadingPage();
+                },
+              ),
+              child: Scaffold(
+                body: const Center(child: BlossomLoader()),
+              ),
+            );
+          },
         ),
-        home: Consumer<Theming>(
-          builder: (_, theming, childTheme) => FutureBuilder(
-            future: theming.palette == null
-                ? theming.init()
-                : Future.delayed(const Duration(seconds: 0)),
-            builder: (_, snapshotTheme) {
-              if (snapshotTheme.connectionState == ConnectionState.waiting) {
-                return childTheme;
-              }
-
-              return Consumer<Auth>(
-                builder: (_, auth, childAuth) => FutureBuilder(
-                  future: auth.status == null
-                      ? auth.validateAccessToken()
-                      : Future.delayed(const Duration(seconds: 0)),
-                  builder: (_, snapshotAuth) {
-                    if (snapshotAuth.connectionState ==
-                        ConnectionState.waiting) {
-                      return childAuth;
-                    }
-
-                    if (auth.status != AuthStatus.authorised) {
-                      return const AuthPage();
-                    }
-
-                    return LoadingPage(theming.palette);
-                  },
-                ),
-                child: Scaffold(
-                  backgroundColor: theming.palette.background,
-                  body: const Center(child: BlossomLoader()),
-                ),
-              );
-            },
-          ),
-          child: const Scaffold(
-            backgroundColor: Colors.black,
-          ),
+        child: const Scaffold(
+          backgroundColor: Colors.black,
         ),
       ),
     );

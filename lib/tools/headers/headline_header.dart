@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/providers/theming.dart';
-import 'package:provider/provider.dart';
 
 class HeadlineHeader extends StatelessWidget {
   final String headline;
@@ -20,15 +18,12 @@ class HeadlineHeader extends StatelessWidget {
 
 class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
   final String headline;
-
-  Palette _palette;
   double _height;
 
   _HeadlineHeaderDelegate({
     @required this.headline,
     @required BuildContext context,
   }) {
-    _palette = Provider.of<Theming>(context, listen: false).palette;
     _height = 40;
   }
 
@@ -41,10 +36,10 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-      color: _palette.translucent,
+      color: Theme.of(context).cardColor,
       child: Text(
         headline,
-        style: _palette.headline.copyWith(height: 1.0),
+        style: Theme.of(context).textTheme.headline1.copyWith(height: 1.0),
       ),
     );
   }

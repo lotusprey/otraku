@@ -7,7 +7,6 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/navigation/title_segmented_control.dart';
@@ -36,14 +35,12 @@ class _CollectionControlHeaderDelegate
 
   CollectionProvider _collection;
   ScrollController _scrollCtrl;
-  Palette _palette;
 
   _CollectionControlHeaderDelegate(
       BuildContext context, bool isAnime, this._scrollCtrl) {
     _collection = isAnime
         ? Provider.of<AnimeCollection>(context)
         : Provider.of<MangaCollection>(context);
-    _palette = Provider.of<Theming>(context, listen: false).palette;
   }
 
   @override
@@ -66,7 +63,7 @@ class _CollectionControlHeaderDelegate
         child: Container(
           height: _height,
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          color: _palette.translucent,
+          color: Theme.of(context).cardColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -87,11 +84,9 @@ class _CollectionControlHeaderDelegate
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    HeaderSearchBar(_collection, _palette),
+                    HeaderSearchBar(_collection),
                     IconButton(
                       icon: const Icon(LineAwesomeIcons.sort),
-                      color: _palette.faded,
-                      iconSize: Palette.ICON_MEDIUM,
                       onPressed: () => showModalBottomSheet(
                         context: context,
                         builder: (ctx) =>
@@ -106,7 +101,6 @@ class _CollectionControlHeaderDelegate
                           ? Provider.of<AnimeCollection>(context, listen: false)
                           : Provider.of<MangaCollection>(context,
                               listen: false),
-                      palette: _palette,
                     )
                   ],
                 ),

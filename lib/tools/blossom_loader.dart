@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
-import 'package:provider/provider.dart';
 
 class BlossomLoader extends StatefulWidget {
   final double size;
@@ -19,6 +17,8 @@ class _BlossomLoaderState extends State<BlossomLoader>
   Animation<Color> _animation3;
   Animation<Color> _animation4;
   double _diameter;
+
+  bool _didChangeDependencies = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,10 @@ class _BlossomLoaderState extends State<BlossomLoader>
   }
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didChangeDependencies) return;
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -57,7 +59,7 @@ class _BlossomLoaderState extends State<BlossomLoader>
 
     _diameter = (widget.size - 3) / 2;
 
-    final color = Provider.of<Theming>(context, listen: false).palette.accent;
+    final color = Theme.of(context).accentColor;
 
     final red = color.red;
     final green = color.green;
@@ -157,6 +159,7 @@ class _BlossomLoaderState extends State<BlossomLoader>
     ]).animate(_controller);
 
     _controller.repeat();
+    _didChangeDependencies = true;
   }
 
   @override

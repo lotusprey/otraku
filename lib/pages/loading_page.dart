@@ -3,15 +3,10 @@ import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 
 class LoadingPage extends StatefulWidget {
-  final Palette palette;
-
-  LoadingPage(this.palette);
-
   @override
   _LoadingPageState createState() => _LoadingPageState();
 }
@@ -21,10 +16,7 @@ class _LoadingPageState extends State<LoadingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: widget.palette.background,
-      body: const Center(child: BlossomLoader()),
-    );
+    return Scaffold(body: const Center(child: BlossomLoader()));
   }
 
   @override

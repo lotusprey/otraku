@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
-import 'package:provider/provider.dart';
 
 class TitleSegmentedControl<T> extends StatefulWidget {
   final T value;
@@ -21,14 +19,13 @@ class TitleSegmentedControl<T> extends StatefulWidget {
 
 class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   final SizedBox _sizedBox = const SizedBox(width: 10);
-  Palette _palette;
 
   Widget _button(String title, T value) => GestureDetector(
         child: Text(
           title,
           style: value != widget.value
-              ? _palette.contrastedTitle
-              : _palette.accentedTitle,
+              ? Theme.of(context).textTheme.headline3
+              : Theme.of(context).textTheme.headline2,
         ),
         onTap: () {
           if (value != widget.value) {
@@ -46,12 +43,6 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
       list.add(_sizedBox);
     }
     return list;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _palette = Provider.of<Theming>(context).palette;
   }
 
   @override

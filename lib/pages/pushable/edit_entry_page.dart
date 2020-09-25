@@ -6,7 +6,6 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/media_item.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -33,7 +32,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
   CollectionProvider _collection;
   EntryUserData _oldData;
   EntryUserData _newData;
-  Palette _palette;
 
   Widget _dual(Widget child1, Widget child2) {
     return Row(
@@ -48,7 +46,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _palette.background,
       appBar: CustomAppBar(
         title: 'Edit',
         trailing: [
@@ -57,7 +54,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
             newData: _newData,
             collection: _collection,
             update: widget.update,
-            palette: _palette,
           )
         ],
         wrapTrailing: false,
@@ -68,19 +64,14 @@ class _EditEntryPageState extends State<EditEntryPage> {
               children: [
                 _dual(
                   InputFieldStructure(
-                    title: 'Status',
-                    body: _StatusDropdown(_newData, _palette),
-                    palette: _palette,
-                  ),
+                      title: 'Status', body: _StatusDropdown(_newData)),
                   InputFieldStructure(
                     title: 'Progress',
                     body: NumberField(
-                      palette: _palette,
                       initialValue: _newData.progress,
                       maxValue: _newData.progressMax ?? 100000,
                       update: (progress) => _newData.progress = progress,
                     ),
-                    palette: _palette,
                   ),
                 ),
                 _box,
@@ -88,23 +79,19 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   InputFieldStructure(
                     title: 'Repeat',
                     body: NumberField(
-                      palette: _palette,
                       initialValue: _newData.repeat,
                       update: (repeat) => _newData.repeat = repeat,
                     ),
-                    palette: _palette,
                   ),
                   _oldData.type == 'MANGA'
                       ? InputFieldStructure(
                           title: 'Progress Volumes',
                           body: NumberField(
-                            palette: _palette,
                             initialValue: _newData.progressVolumes,
                             maxValue: _newData.progressVolumesMax ?? 100000,
                             update: (progressVolumes) =>
                                 _newData.progressVolumes = progressVolumes,
                           ),
-                          palette: _palette,
                         )
                       : null,
                 ),
@@ -112,7 +99,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
                 InputFieldStructure(
                   title: 'Score',
                   body: ScorePicker(_newData),
-                  palette: _palette,
                 ),
                 _box,
                 InputFieldStructure(
@@ -120,10 +106,8 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   body: ExpandableField(
                     text: _newData.notes,
                     onChange: (notes) => _newData.notes = notes,
-                    palette: _palette,
                   ),
                   enforceHeight: false,
-                  palette: _palette,
                 ),
                 _box,
                 _dual(
@@ -133,9 +117,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       date: _newData.startDate,
                       onChange: (startDate) => _newData.startDate = startDate,
                       helpText: 'Start Date',
-                      palette: _palette,
                     ),
-                    palette: _palette,
                   ),
                   InputFieldStructure(
                     title: 'End Date',
@@ -143,9 +125,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       date: _newData.endDate,
                       onChange: (endDate) => _newData.endDate = endDate,
                       helpText: 'End Date',
-                      palette: _palette,
                     ),
-                    palette: _palette,
                   ),
                 ),
               ],
@@ -171,12 +151,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
       }
     });
   }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _palette = Provider.of<Theming>(context).palette;
-  }
 }
 
 class _UpdateButtons extends StatefulWidget {
@@ -184,14 +158,12 @@ class _UpdateButtons extends StatefulWidget {
   final EntryUserData newData;
   final CollectionProvider collection;
   final Function(MediaListStatus) update;
-  final Palette palette;
 
   _UpdateButtons({
     @required this.oldData,
     @required this.newData,
     @required this.collection,
     @required this.update,
-    @required this.palette,
   });
 
   @override
@@ -210,23 +182,28 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
               AppBarIcon(
                 IconButton(
                   icon: const Icon(Icons.delete),
-                  color: widget.palette.contrast,
-                  iconSize: Palette.ICON_MEDIUM,
+                  color: Theme.of(context).dividerColor,
                   onPressed: () => showDialog(
                     context: context,
                     builder: (_) => AlertDialog(
-                      backgroundColor: widget.palette.foreground,
+                      backgroundColor: Theme.of(context).primaryColor,
                       title: Text(
                         'Remove entry?',
-                        style: widget.palette.paragraph,
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       actions: [
                         FlatButton(
-                          child: Text('No', style: widget.palette.paragraph),
+                          child: Text(
+                            'No',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                         FlatButton(
-                          child: Text('Yes', style: widget.palette.exclamation),
+                          child: Text(
+                            'Yes',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
                           onPressed: () {
                             setState(() => _isLoading = true);
                             widget.collection
@@ -250,8 +227,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
               AppBarIcon(
                 IconButton(
                   icon: const Icon(Icons.save),
-                  color: widget.palette.contrast,
-                  iconSize: Palette.ICON_MEDIUM,
+                  color: Theme.of(context).dividerColor,
                   onPressed: () {
                     setState(() => _isLoading = true);
                     widget.collection
@@ -271,9 +247,8 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
 
 class _StatusDropdown extends StatefulWidget {
   final EntryUserData data;
-  final Palette palette;
 
-  _StatusDropdown(this.data, this.palette);
+  _StatusDropdown(this.data);
 
   @override
   _StatusDropdownState createState() => _StatusDropdownState();
@@ -285,7 +260,7 @@ class _StatusDropdownState extends State<_StatusDropdown> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: widget.palette.foreground,
+        color: Theme.of(context).primaryColor,
         borderRadius: ViewConfig.RADIUS,
       ),
       child: DropdownButton(
@@ -296,15 +271,15 @@ class _StatusDropdownState extends State<_StatusDropdown> {
                   child: Text(
                     listStatusSpecification(v, widget.data.type == 'ANIME'),
                     style: v != widget.data.status
-                        ? widget.palette.paragraph
-                        : widget.palette.exclamation,
+                        ? Theme.of(context).textTheme.bodyText1
+                        : Theme.of(context).textTheme.bodyText2,
                   ),
                 ))
             .toList(),
         onChanged: (status) => setState(() => widget.data.status = status),
-        hint: Text('Add', style: widget.palette.detail),
-        iconEnabledColor: widget.palette.faded,
-        dropdownColor: widget.palette.foreground,
+        hint: Text('Add', style: Theme.of(context).textTheme.subtitle1),
+        iconEnabledColor: Theme.of(context).disabledColor,
+        dropdownColor: Theme.of(context).primaryColor,
         underline: const SizedBox(),
         isExpanded: true,
       ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/media_data.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:provider/provider.dart';
 
 class InfoGrid extends StatelessWidget {
   final MediaData mediaObj;
@@ -11,26 +9,16 @@ class InfoGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
-
     List<Widget> row1 = [];
     List<Widget> row2 = [];
     for (int i = 0; i < mediaObj.info.length; i++) {
       if (i % 2 == 0) {
         row1
-          ..add(_InfoTile(
-            mediaObj.info[i].item1,
-            mediaObj.info[i].item2,
-            palette,
-          ))
+          ..add(_InfoTile(mediaObj.info[i].item1, mediaObj.info[i].item2))
           ..add(const SizedBox(width: 10));
       } else {
         row2
-          ..add(_InfoTile(
-            mediaObj.info[i].item1,
-            mediaObj.info[i].item2,
-            palette,
-          ))
+          ..add(_InfoTile(mediaObj.info[i].item1, mediaObj.info[i].item2))
           ..add(const SizedBox(width: 10));
       }
     }
@@ -63,16 +51,15 @@ class InfoGrid extends StatelessWidget {
 class _InfoTile extends StatelessWidget {
   final String heading;
   final String subtitle;
-  final Palette palette;
 
-  const _InfoTile(this.heading, this.subtitle, this.palette);
+  const _InfoTile(this.heading, this.subtitle);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: ViewConfig.RADIUS,
-        color: palette.foreground,
+        color: Theme.of(context).primaryColor,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -84,11 +71,11 @@ class _InfoTile extends StatelessWidget {
           children: <Widget>[
             Text(
               heading,
-              style: palette.detail,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
             Text(
               subtitle,
-              style: palette.paragraph,
+              style: Theme.of(context).textTheme.bodyText1,
               maxLines: 2,
             ),
           ],

@@ -1,19 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/media_group_provider.dart';
-import 'package:otraku/providers/theming.dart';
 
 import '../blossom_loader.dart';
 
 class HeaderRefreshButton extends StatelessWidget {
   final MediaGroupProvider listenable;
   final MediaGroupProvider readable;
-  final Palette palette;
 
   HeaderRefreshButton({
     @required this.listenable,
     @required this.readable,
-    @required this.palette,
   });
 
   @override
@@ -25,8 +23,7 @@ class HeaderRefreshButton extends StatelessWidget {
           )
         : IconButton(
             icon: const Icon(CupertinoIcons.refresh),
-            iconSize: Palette.ICON_SMALL,
-            color: palette.faded,
+            iconSize: Design.ICON_SMALL,
             onPressed: readable.clear,
           );
   }

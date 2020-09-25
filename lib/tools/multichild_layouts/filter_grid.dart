@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
 class FilterGrid extends StatelessWidget {
   final List<String> options;
@@ -73,13 +71,11 @@ class _FilterOptionState extends State<_FilterOption> {
   static const SizedBox _sizedBox = const SizedBox(width: 5);
   static BorderRadius _borderRadius = BorderRadius.circular(10);
 
-  Palette _palette;
   int _state;
 
   @override
   void initState() {
     super.initState();
-    _palette = Provider.of<Theming>(context, listen: false).palette;
     _state = widget.optionIn.contains(widget.value)
         ? 1
         : widget.optionNotIn.contains(widget.value) ? -1 : 0;
@@ -91,17 +87,18 @@ class _FilterOptionState extends State<_FilterOption> {
       child: _state == 0
           ? Container(
               decoration: BoxDecoration(
-                color: _palette.foreground,
+                color: Theme.of(context).primaryColor,
                 borderRadius: _borderRadius,
               ),
               child: Center(
-                child: Text(widget.title, style: _palette.paragraph),
+                child: Text(widget.title,
+                    style: Theme.of(context).textTheme.bodyText1),
               ),
             )
           : _state == 1
               ? Container(
                   decoration: BoxDecoration(
-                    color: _palette.accent,
+                    color: Theme.of(context).accentColor,
                     borderRadius: _borderRadius,
                   ),
                   child: Row(
@@ -110,7 +107,10 @@ class _FilterOptionState extends State<_FilterOption> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: _palette.paragraph.copyWith(color: Colors.white),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            .copyWith(color: Colors.white),
                       ),
                       _sizedBox,
                       const Icon(Icons.add, size: 15, color: Colors.white),
@@ -119,7 +119,7 @@ class _FilterOptionState extends State<_FilterOption> {
                 )
               : Container(
                   decoration: BoxDecoration(
-                    color: _palette.error,
+                    color: Theme.of(context).errorColor,
                     borderRadius: _borderRadius,
                   ),
                   child: Row(
@@ -128,7 +128,10 @@ class _FilterOptionState extends State<_FilterOption> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: _palette.paragraph.copyWith(color: Colors.white),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1
+                            .copyWith(color: Colors.white),
                       ),
                       _sizedBox,
                       const Icon(Icons.remove, size: 15, color: Colors.white),

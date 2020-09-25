@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/providers/explorable_media.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
@@ -32,12 +31,10 @@ class ExploreControlHeader extends StatelessWidget {
 class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 95.0;
 
-  Palette _palette;
   ScrollController _scrollCtrl;
 
   _ExploreControlHeaderDelegate(
       BuildContext context, ScrollController scrollController) {
-    _palette = Provider.of<Theming>(context, listen: false).palette;
     _scrollCtrl = scrollController;
   }
 
@@ -53,7 +50,7 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
         child: Container(
           height: _height,
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          color: _palette.translucent,
+          color: Theme.of(context).cardColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -77,15 +74,10 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    HeaderSearchBar(
-                      Provider.of<ExplorableMedia>(context),
-                      _palette,
-                    ),
-                    _FilterButton(_palette),
+                    HeaderSearchBar(Provider.of<ExplorableMedia>(context)),
+                    _FilterButton(),
                     IconButton(
                       icon: const Icon(LineAwesomeIcons.sort),
-                      color: _palette.faded,
-                      iconSize: Palette.ICON_MEDIUM,
                       onPressed: () => showModalBottomSheet(
                         context: context,
                         builder: (ctx) => ExploreSortSheet(),
@@ -97,7 +89,6 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                       listenable: Provider.of<ExplorableMedia>(context),
                       readable:
                           Provider.of<ExplorableMedia>(context, listen: false),
-                      palette: _palette,
                     ),
                   ],
                 ),
@@ -126,10 +117,6 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
 }
 
 class _FilterButton extends StatelessWidget {
-  final Palette palette;
-
-  _FilterButton(this.palette);
-
   @override
   Widget build(BuildContext context) {
     return Provider.of<ExplorableMedia>(context).areFiltersActive()
@@ -144,19 +131,16 @@ class _FilterButton extends StatelessWidget {
               height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
               decoration: BoxDecoration(
                 borderRadius: ViewConfig.RADIUS,
-                color: palette.accent,
+                color: Theme.of(context).accentColor,
               ),
               child: const Icon(
                 LineAwesomeIcons.filter,
-                size: Palette.ICON_MEDIUM,
                 color: Colors.white,
               ),
             ),
           )
         : IconButton(
             icon: const Icon(LineAwesomeIcons.filter),
-            color: palette.faded,
-            iconSize: Palette.ICON_MEDIUM,
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => FilterPage()),
             ),

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +24,6 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   bool _triedConnecting = false;
-  Palette _palette;
   StreamSubscription _subscription;
 
   Future<void> _authenticate() async {
@@ -51,26 +49,19 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _palette.background,
       body: Center(
         child: !_triedConnecting
             ? RaisedButton(
                 shape: RoundedRectangleBorder(
                   borderRadius: ViewConfig.RADIUS,
                 ),
-                color: _palette.accent,
-                child: Text('Connect', style: _palette.buttonText),
+                color: Theme.of(context).accentColor,
+                child: Text('Connect'),
                 onPressed: _authenticate,
               )
             : const Center(child: BlossomLoader()),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _palette = Provider.of<Theming>(context, listen: false).palette;
   }
 
   @override

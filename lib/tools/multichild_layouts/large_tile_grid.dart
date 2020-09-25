@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/explorable_media.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
@@ -8,9 +7,8 @@ import 'package:provider/provider.dart';
 
 class LargeTileGrid extends StatelessWidget {
   final LargeTileConfiguration tileConfig;
-  final Palette palette;
 
-  LargeTileGrid(this.tileConfig, this.palette);
+  LargeTileGrid(this.tileConfig);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +19,7 @@ class LargeTileGrid extends StatelessWidget {
         child: Center(
           child: Text(
             'No results',
-            style: palette.detail,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
         ),
       );
@@ -74,8 +72,6 @@ class _SimpleGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Provider.of<Theming>(context, listen: false).palette;
-
     return Container(
       width: width,
       height: height,
@@ -88,7 +84,7 @@ class _SimpleGridTile extends StatelessWidget {
               child: Container(
                 height: imageHeight,
                 width: width,
-                color: palette.foreground,
+                color: Theme.of(context).primaryColor,
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
@@ -101,7 +97,7 @@ class _SimpleGridTile extends StatelessWidget {
             child: Text(
               title,
               overflow: TextOverflow.fade,
-              style: palette.detail,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
         ],

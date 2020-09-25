@@ -6,7 +6,6 @@ import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/profile_tab.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +31,6 @@ class _TabManagerState extends State<TabManager> {
   int _pageIndex;
   ScrollController _scrollCtrl;
   ValueNotifier<bool> _navBarVisibility;
-  Palette _palette;
 
   bool _didChangeDependencies = false;
   bool _jumpingPage = false;
@@ -49,7 +47,6 @@ class _TabManagerState extends State<TabManager> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _palette.background,
       bottomNavigationBar: ValueListenableBuilder(
         valueListenable: _navBarVisibility,
         builder: (_, value, child) => AnimatedContainer(
@@ -60,10 +57,6 @@ class _TabManagerState extends State<TabManager> {
         child: Wrap(
           children: [
             BottomNavigationBar(
-              backgroundColor: _palette.foreground,
-              selectedItemColor: _palette.accent,
-              unselectedItemColor: _palette.faded,
-              iconSize: Palette.ICON_MEDIUM,
               type: BottomNavigationBarType.fixed,
               currentIndex: _pageIndex,
               items: _tabItems,
@@ -105,8 +98,6 @@ class _TabManagerState extends State<TabManager> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _palette = Provider.of<Theming>(context).palette;
-
     if (!_didChangeDependencies) {
       Provider.of<ViewConfig>(context, listen: false).init(context);
       _pageIndex = Provider.of<ViewConfig>(context, listen: false).pageIndex;

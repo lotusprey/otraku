@@ -7,15 +7,16 @@ import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_list.dart';
 import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/fuzzy_date.dart';
 import 'package:otraku/models/media_entry.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
 class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   static const String _url = 'https://graphql.anilist.co';
-  Map<String, String> _headers;
-  int _userId;
-  String _scoreFormat;
+  static Map<String, String> _headers;
+  static int _userId;
+  static String _scoreFormat;
   bool _hasSplitCompletedList;
   MediaListSort _mediaListSort;
 
@@ -60,8 +61,13 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     return 'Manga';
   }
 
+  String get scoreFormat {
+    return _scoreFormat;
+  }
+
   bool get isEmpty {
-    return !_isLoading && (_lists == null || _lists.length == 0);
+    // return !_isLoading && (_lists == null || _lists.length == 0);
+    return _lists == null || _lists.length == 0;
   }
 
   @override
@@ -77,6 +83,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   }
 
   List<MediaEntry> get entries {
+    if (_lists == null || _lists.length - 1 < _listIndex) return null;
+
     if (_search == null) {
       return _lists[_listIndex].entries;
     }
@@ -189,6 +197,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
                     progress: e['progress'],
                     progressMax: e['media'][mediaParts],
                     score: e['score'].toDouble(),
+                    startDate: mapToDateTime(e['startedAt']),
+                    endDate: mapToDateTime(e['completedAt']),
                   ),
                 ))
             .toList(),
@@ -238,6 +248,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   //Updates entry data and its corresponding lists.
   //Returns true if it was successful and false if it wasn't.
   Future<bool> updateEntry(EntryUserData oldData, EntryUserData newData) async {
+    _isLoading = true;
     final alreadyAdded = oldData.entryId != null;
 
     final query = '''
@@ -248,6 +259,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         \$progress: Int
         ${newData.type == 'MANGA' ? '\$progressVolumes: Int' : ''}
         \$repeat: Int
+        \$score: Float
+        \$notes: String
+        \$startedAt: FuzzyDateInput
+        \$completedAt: FuzzyDateInput
         \$scoreFormat: ScoreFormat
       ) {
       SaveMediaListEntry(
@@ -256,11 +271,24 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         status: \$status,
         progress: \$progress,
         ${newData.type == 'MANGA' ? 'progressVolumes: \$progressVolumes,' : ''}
-        repeat: \$repeat) {
+        repeat: \$repeat,
+        score: \$score,
+        notes: \$notes,
+        startedAt: \$startedAt,
+        completedAt: \$completedAt) {
           mediaId
-          status
           progress
           score(format: \$scoreFormat)
+          startedAt {
+            year
+            month
+            day
+          }
+          completedAt {
+            year
+            month
+            day
+          }
           customLists
           media {
             format
@@ -285,6 +313,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         'progress': newData.progress,
         'progressVolumes': newData.progressVolumes,
         'repeat': newData.repeat,
+        'score': newData.score,
+        'notes': newData.notes,
+        'startedAt': dateTimeToMap(newData.startDate),
+        'completedAt': dateTimeToMap(newData.endDate),
         'scoreFormat': _scoreFormat,
       },
     });
@@ -298,7 +330,11 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     //If the entry already existed, remove it from its main list
     //and the custom lists, where it was added.
-    if (alreadyAdded) _removeLists(oldData);
+    String selectedListName;
+    if (alreadyAdded) {
+      selectedListName = _lists[_listIndex].name;
+      _removeLists(oldData);
+    }
 
     //Lists that exist locally and should be updated
     List<EntryList> updatableLists = [];
@@ -368,6 +404,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
           progress: data['progress'],
           progressMax: data['media'][mediaParts],
           score: data['score'].toDouble(),
+          startDate: mapToDateTime(data['startedAt']),
+          endDate: mapToDateTime(data['completedAt']),
           customLists: customLists,
         ),
       );
@@ -378,6 +416,16 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       }
     }
 
+    if (selectedListName != null) {
+      for (int i = 0; i < _lists.length; i++) {
+        if (_lists[i].name == selectedListName) {
+          _listIndex = i;
+          break;
+        }
+      }
+    }
+
+    _isLoading = false;
     notifyListeners();
     return true;
   }
@@ -475,6 +523,16 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
               status
               progress
               score(format: \$scoreFormat)
+              startedAt {
+                year
+                month
+                day
+              }
+              completedAt {
+                year
+                month
+                day
+              }
               media {
                 format
                 $mediaParts
@@ -530,7 +588,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     final listData = tuple.item1.firstWhere(
       (l) =>
           l['isCustomList'] == isCustomList &&
-          l['entries'][0]['media']['format'] == splitListFormat &&
+          (splitListFormat == null ||
+              l['entries'][0]['media']['format'] == splitListFormat) &&
           (name == null || l['name'] == name),
       orElse: () => null,
     );
@@ -558,21 +617,27 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
                   progress: e['progress'],
                   progressMax: e['media'][mediaParts],
                   score: e['score'].toDouble(),
+                  startDate: mapToDateTime(e['startedAt']),
+                  endDate: mapToDateTime(e['completedAt']),
                 ),
               ))
           .toList(),
     );
+    _sortList(list);
 
     for (int i = 0; i < sectionOrder.length; i++) {
       if (sectionOrder[i] == list.name) {
-        if (sectionOrder.length == _lists.length) {
-          _lists[i] = list;
-        } else {
-          _lists.insert(i, list);
-          if (_listIndex >= i) _listIndex++;
+        for (int j = i + 1; j < sectionOrder.length; j++) {
+          final nextListIndex =
+              _lists.indexWhere((l) => l.name == sectionOrder[j]);
+
+          if (nextListIndex != -1) {
+            _lists.insert(nextListIndex, list);
+            return;
+          }
         }
-        _sortList(_lists[i]);
-        return;
+
+        _lists.add(list);
       }
     }
   }

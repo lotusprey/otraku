@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/fuzzy_date.dart';
 
 class MediaItem with ChangeNotifier {
   static const String _url = 'https://graphql.anilist.co';
@@ -105,6 +106,17 @@ class MediaItem with ChangeNotifier {
             progressVolumes
             score
             repeat
+            notes
+            startedAt {
+              year
+              month
+              day
+            }
+            completedAt {
+              year
+              month
+              day
+            }
             customLists
           }
         }
@@ -137,12 +149,9 @@ class MediaItem with ChangeNotifier {
     }
 
     MediaListStatus status = stringToEnum(
-        body['mediaListEntry']['status'],
-        Map.fromIterable(
-          MediaListStatus.values,
-          key: (element) => describeEnum(element),
-          value: (element) => element,
-        ));
+      body['mediaListEntry']['status'],
+      MediaListStatus.values,
+    );
 
     final Map<String, bool> customLists = {};
     if (body['mediaListEntry']['customLists'] != null) {
@@ -159,12 +168,15 @@ class MediaItem with ChangeNotifier {
       type: body['type'],
       format: body['format'],
       status: status,
-      progress: body['mediaListEntry']['progress'],
+      progress: body['mediaListEntry']['progress'] ?? 0,
       progressMax: body['episodes'] ?? body['chapters'],
-      progressVolumes: body['mediaListEntry']['volumes'],
+      progressVolumes: body['mediaListEntry']['volumes'] ?? 0,
       progressVolumesMax: body['voumes'],
       score: body['mediaListEntry']['score'].toDouble(),
       repeat: body['mediaListEntry']['repeat'],
+      notes: body['mediaListEntry']['notes'],
+      startDate: mapToDateTime(body['mediaListEntry']['startedAt']),
+      endDate: mapToDateTime(body['mediaListEntry']['completedAt']),
       customLists: customLists,
     );
   }

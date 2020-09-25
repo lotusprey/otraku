@@ -13,6 +13,9 @@ class EntryUserData {
   final int progressVolumesMax;
   double score;
   int repeat;
+  String notes;
+  DateTime startDate;
+  DateTime endDate;
   Map<String, bool> customLists;
 
   EntryUserData({
@@ -27,6 +30,9 @@ class EntryUserData {
     this.progressVolumesMax,
     this.score = 0,
     this.repeat = 0,
+    this.notes = '',
+    this.startDate,
+    this.endDate,
     this.customLists = const {},
   });
 
@@ -39,8 +45,13 @@ class EntryUserData {
           status: data.status,
           progress: data.progress,
           progressMax: data.progressMax,
+          progressVolumes: data.progressVolumes,
+          progressVolumesMax: data.progressVolumesMax,
           score: data.score,
           repeat: data.repeat,
+          notes: data.notes,
+          startDate: data.startDate,
+          endDate: data.endDate,
           customLists: data.customLists,
         );
 }

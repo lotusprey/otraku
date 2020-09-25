@@ -21,7 +21,9 @@ class MediaList extends StatelessWidget {
     final collection = isAnimeCollection
         ? Provider.of<AnimeCollection>(context)
         : Provider.of<MangaCollection>(context);
-    if (collection.isEmpty) {
+    final entries = collection.entries;
+
+    if (entries == null) {
       return SliverFillRemaining(
         child: Center(
           child: Column(
@@ -29,7 +31,7 @@ class MediaList extends StatelessWidget {
             children: [
               Text(
                 'No ${collection.collectionName} Results',
-                style: palette.detail,
+                style: palette.smallTitle,
               ),
               IconButton(
                 icon: const Icon(LineAwesomeIcons.retweet),
@@ -42,8 +44,6 @@ class MediaList extends StatelessWidget {
         ),
       );
     }
-
-    final entries = collection.entries;
 
     return SliverPadding(
       padding: ViewConfig.PADDING,

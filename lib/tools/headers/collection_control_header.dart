@@ -52,8 +52,6 @@ class _CollectionControlHeaderDelegate
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    if (_collection.isEmpty) return const SizedBox();
-
     Map<String, Object> segmentedControlPairs = {};
     final allNames = _collection.names;
     for (int i = 0; i < allNames.length; i++) {

@@ -29,8 +29,6 @@ class Theming with ChangeNotifier {
     _swatchIndex = index;
     _palette = Palette(Palette.SWATCHES[_swatchIndex]);
 
-    notifyListeners();
-
     SharedPreferences.getInstance()
         .then((preferences) => preferences.setInt('swatch', _swatchIndex));
   }

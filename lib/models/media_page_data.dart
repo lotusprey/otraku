@@ -1,13 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/models/fuzzy_date.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:provider/provider.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 
-class MediaData {
+class MediaPageData {
   int mediaId;
   String type;
   String title;
@@ -22,7 +21,7 @@ class MediaData {
   String description;
   List<Tuple> info = [];
 
-  MediaData({
+  MediaPageData({
     @required BuildContext context,
     @required Function setState,
     @required int id,
@@ -56,9 +55,12 @@ class MediaData {
 
       if (data['mediaListEntry'] != null) {
         status = stringToEnum(
-          data['mediaListEntry']['status'].toString(),
-          MediaListStatus.values,
-        );
+            data['mediaListEntry']['status'].toString(),
+            Map.fromIterable(
+              MediaListStatus.values,
+              key: (element) => describeEnum(element),
+              value: (element) => element,
+            ));
       }
 
       //Images
@@ -129,13 +131,13 @@ class MediaData {
       }
 
       //Start Date
-      String startDate = mapToDateString(data['startDate']);
+      String startDate = _date(data['startDate']);
       if (startDate != null) {
         info.add(Tuple('Start Date', startDate));
       }
 
       //End Date
-      String endDate = mapToDateString(data['endDate']);
+      String endDate = _date(data['endDate']);
       if (endDate != null) {
         info.add(Tuple('End Date', endDate));
       }
@@ -199,5 +201,31 @@ class MediaData {
 
       setState();
     });
+  }
+
+  String _date(Map<String, dynamic> data) {
+    if (data['year'] == null) {
+      return null;
+    }
+
+    const months = {
+      1: 'Jan',
+      2: 'Feb',
+      3: 'Mar',
+      4: 'Apr',
+      5: 'May',
+      6: 'Jun',
+      7: 'Jul',
+      8: 'Aug',
+      9: 'Sep',
+      10: 'Oct',
+      11: 'Nov',
+      12: 'Dec',
+    };
+
+    String month = months[data['month'] as int];
+    var day = data['day'] ?? '';
+
+    return '$month $day, ${data['year']}';
   }
 }

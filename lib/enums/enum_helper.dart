@@ -3,8 +3,6 @@ Replaces _ with [blank_space] and makes each word
 start with an upper case letter and continue with
 lower case ones.
 */
-import 'package:flutter/foundation.dart';
-
 String clarifyEnum(String str) {
   return str.splitMapJoin(
     '_',
@@ -14,11 +12,22 @@ String clarifyEnum(String str) {
 }
 
 /*
-Transforms a string into enum. The string must be
-as if it was acquired through "describeEnum()" (from the
-foundation package) and the values must be the enum
-values ex. "MyEnum.values"
+Recieves a string that represents the text version of
+an enum value (what describeEnum in "foundation"
+would normally return) and a map of enum values. The map
+can be aquired this way:
+Map.fromIterable(
+  [ENUM].values,
+  key: (element) => describeEnum(element),
+  value: (element) => element,
+),
 */
-T stringToEnum<T>(String str, List<T> values) {
-  return values.firstWhere((v) => describeEnum(v) == str, orElse: () => null);
+Object stringToEnum(String str, Map<String, Object> enumMap) {
+  for (final key in enumMap.keys) {
+    if (str == key) {
+      return enumMap[key];
+    }
+  }
+
+  return null;
 }

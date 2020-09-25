@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
@@ -27,68 +26,66 @@ class _TabManagerState extends State<TabManager> {
   static const _box = SizedBox();
 
   List<Widget> _tabs;
-  List<BottomNavigationBarItem> _tabItems;
   PageController _pageCtrl;
   int _pageIndex;
   ScrollController _scrollCtrl;
-  ValueNotifier<bool> _navBarVisibility;
   Palette _palette;
 
   bool _didChangeDependencies = false;
   bool _jumpingPage = false;
 
-  void _scrollDirection() {
-    if (_scrollCtrl.position.userScrollDirection == ScrollDirection.reverse) {
-      if (_navBarVisibility.value) _navBarVisibility.value = false;
-    } else if (_scrollCtrl.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_navBarVisibility.value) _navBarVisibility.value = true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _palette.background,
-      bottomNavigationBar: ValueListenableBuilder(
-        valueListenable: _navBarVisibility,
-        builder: (_, value, child) => AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          height: value ? 56 : 0,
-          child: child,
-        ),
-        child: Wrap(
-          children: [
-            BottomNavigationBar(
-              backgroundColor: _palette.foreground,
-              selectedItemColor: _palette.accent,
-              unselectedItemColor: _palette.faded,
-              iconSize: Palette.ICON_MEDIUM,
-              type: BottomNavigationBarType.fixed,
-              currentIndex: _pageIndex,
-              items: _tabItems,
-              onTap: (index) {
-                if (_pageIndex == index) return;
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: _palette.foreground,
+        selectedItemColor: _palette.accent,
+        unselectedItemColor: _palette.faded,
+        iconSize: Palette.ICON_MEDIUM,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _pageIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.inbox),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.play_arrow),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore),
+            title: _box,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            title: _box,
+          ),
+        ],
+        onTap: (index) {
+          if (_pageIndex == index) return;
 
-                if (index - _pageIndex > 1) {
-                  _jumpingPage = true;
-                  _pageCtrl.jumpToPage(index - 1);
-                  _jumpingPage = false;
-                } else if (_pageIndex - index > 1) {
-                  _jumpingPage = true;
-                  _pageCtrl.jumpToPage(index + 1);
-                  _jumpingPage = false;
-                }
+          if (index - _pageIndex > 1) {
+            _jumpingPage = true;
+            _pageCtrl.jumpToPage(index - 1);
+            _jumpingPage = false;
+          } else if (_pageIndex - index > 1) {
+            _jumpingPage = true;
+            _pageCtrl.jumpToPage(index + 1);
+            _jumpingPage = false;
+          }
 
-                _pageCtrl.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.fastOutSlowIn,
-                );
-              },
-            ),
-          ],
-        ),
+          _pageCtrl.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastOutSlowIn,
+          );
+        },
       ),
       body: SafeArea(
         child: PageView(
@@ -109,12 +106,10 @@ class _TabManagerState extends State<TabManager> {
 
     if (!_didChangeDependencies) {
       Provider.of<ViewConfig>(context, listen: false).init(context);
+      _scrollCtrl = ScrollController();
+
       _pageIndex = Provider.of<ViewConfig>(context, listen: false).pageIndex;
       _pageCtrl = PageController(initialPage: _pageIndex);
-
-      _navBarVisibility = ValueNotifier(true);
-      _scrollCtrl = ScrollController();
-      _scrollCtrl.addListener(_scrollDirection);
 
       _tabs = [
         InboxTab(),
@@ -132,29 +127,6 @@ class _TabManagerState extends State<TabManager> {
         ProfileTab(),
       ];
 
-      _tabItems = const [
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.inbox),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.play_arrow),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.bookmark),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.explore),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          title: _box,
-        ),
-      ];
-
       _didChangeDependencies = true;
     }
   }
@@ -163,7 +135,6 @@ class _TabManagerState extends State<TabManager> {
   void dispose() {
     _pageCtrl.dispose();
     if (_scrollCtrl.hasClients) {
-      _scrollCtrl.removeListener(_scrollDirection);
       _scrollCtrl.dispose();
     }
     super.dispose();

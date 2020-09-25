@@ -28,7 +28,14 @@ class ExploreSortSheet extends StatelessWidget {
       titleDesc = describeEnum(MediaSort.values[length - 5]);
     }
 
-    MediaSort mediaSort = stringToEnum(provider.sort, MediaSort.values);
+    MediaSort mediaSort = stringToEnum(
+      provider.sort,
+      Map.fromIterable(
+        MediaSort.values,
+        key: (element) => describeEnum(element),
+        value: (element) => element,
+      ),
+    );
 
     int currentIndex = mediaSort.index ~/ 2;
     bool currentlyDesc = mediaSort.index % 2 == 0 ? false : true;

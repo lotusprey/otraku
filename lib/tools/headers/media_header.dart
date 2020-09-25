@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/media_data.dart';
+import 'package:otraku/models/media_page_data.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/theming.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 class MediaHeader implements SliverPersistentHeaderDelegate {
   //Data
-  final MediaData mediaObj;
+  final MediaPageData mediaObj;
 
   //Output settings
   final Palette palette;
@@ -243,7 +243,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 
 class _FavoriteButton extends StatefulWidget {
   final Palette palette;
-  final MediaData media;
+  final MediaPageData media;
 
   _FavoriteButton(this.palette, this.media);
 
@@ -274,7 +274,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
 class _StatusButton extends StatefulWidget {
   final Palette palette;
-  final MediaData media;
+  final MediaPageData media;
 
   _StatusButton(this.palette, this.media);
 

@@ -41,7 +41,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
                 children: [
                   Text(
                     'No ${widget.collection.collectionName} Results',
-                    style: palette.detail,
+                    style: palette.smallTitle,
                   ),
                   IconButton(
                     icon: const Icon(LineAwesomeIcons.retweet),

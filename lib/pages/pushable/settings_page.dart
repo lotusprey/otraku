@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:otraku/providers/theming.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
-import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -12,6 +11,8 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  static const _box = SizedBox(width: 10, height: 10);
+
   Palette _palette;
 
   @override
@@ -24,11 +25,9 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView(
         padding: ViewConfig.PADDING,
         children: [
-          InputFieldStructure(
-            title: 'Theme',
-            body: _ThemeDropdown(),
-            palette: _palette,
-          ),
+          Text('Theme', style: _palette.detail),
+          _box,
+          _ThemeDropDown(),
         ],
       ),
     );
@@ -41,12 +40,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-class _ThemeDropdown extends StatefulWidget {
+class _ThemeDropDown extends StatefulWidget {
   @override
-  _ThemeDropdownState createState() => _ThemeDropdownState();
+  _ThemeDropDownState createState() => _ThemeDropDownState();
 }
 
-class _ThemeDropdownState extends State<_ThemeDropdown> {
+class _ThemeDropDownState extends State<_ThemeDropDown> {
   Theming provider;
 
   @override
@@ -64,21 +63,13 @@ class _ThemeDropdownState extends State<_ThemeDropdown> {
       ));
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: provider.palette.foreground,
-        borderRadius: ViewConfig.RADIUS,
-      ),
-      child: DropdownButton(
-        value: provider.swatchIndex,
-        items: items,
-        onChanged: (index) => setState(() => provider.swatchIndex = index),
-        iconEnabledColor: provider.palette.faded,
-        dropdownColor: provider.palette.foreground,
-        underline: const SizedBox(),
-        // isExpanded: true,
-      ),
+    return DropdownButton(
+      value: provider.swatchIndex,
+      items: items,
+      onChanged: (index) => setState(() => provider.swatchIndex = index),
+      iconEnabledColor: provider.palette.faded,
+      dropdownColor: provider.palette.foreground,
+      underline: const SizedBox(),
     );
   }
 

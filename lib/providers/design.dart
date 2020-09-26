@@ -12,71 +12,63 @@ class Design with ChangeNotifier {
   static const double FONT_MEDIUM = 20;
   static const double FONT_SMALL = 15;
 
-  ThemeData _theme;
-  Swatch _swatch;
+  static ThemeData _theme;
+  static Swatch _swatch;
 
-  Future<void> init() async {
+  static Future<void> init() async {
     if (_theme != null) return;
 
     final preferences = await SharedPreferences.getInstance();
 
     final index = preferences.getInt('swatch');
     if (index == null) {
-      swatch = Swatch.slate;
+      _swatch = Swatch.slate;
+      _buildTheme(_swatch);
     } else {
-      swatch = Swatch.values[index];
+      _swatch = Swatch.values[index];
+      _buildTheme(_swatch);
     }
   }
 
-  ThemeData get theme {
-    return _theme;
-  }
-
-  Swatch get swatch {
-    return _swatch;
-  }
-
-  set swatch(Swatch value) {
-    _swatch = value;
-
+  static void _buildTheme(Swatch swatch) {
     _theme = ThemeData(
       fontFamily: 'Rubik',
       visualDensity: VisualDensity.adaptivePlatformDensity,
-      brightness: _swatch.colors['brightness'],
-      backgroundColor: _swatch.colors['background'],
-      scaffoldBackgroundColor: _swatch.colors['background'],
-      primaryColor: _swatch.colors['primary'],
-      accentColor: _swatch.colors['accent'],
-      errorColor: _swatch.colors['error'],
-      cardColor: _swatch.colors['translucent'],
+      brightness: swatch.colors['brightness'],
+      backgroundColor: swatch.colors['background'],
+      scaffoldBackgroundColor: swatch.colors['background'],
+      primaryColor: swatch.colors['primary'],
+      accentColor: swatch.colors['accent'],
+      errorColor: swatch.colors['error'],
+      cardColor: swatch.colors['translucent'],
+      buttonColor: swatch.colors['accent'],
+      dividerColor: swatch.colors['contrast'],
+      disabledColor: swatch.colors['faded'],
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      buttonColor: _swatch.colors['accent'],
-      dividerColor: _swatch.colors['contrast'],
-      disabledColor: _swatch.colors['faded'],
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: _swatch.colors['primary'],
-        selectedItemColor: _swatch.colors['accent'],
-        unselectedItemColor: _swatch.colors['faded'],
+        backgroundColor: swatch.colors['primary'],
+        selectedItemColor: swatch.colors['accent'],
+        unselectedItemColor: swatch.colors['faded'],
       ),
       iconTheme: IconThemeData(
-        color: _swatch.colors['faded'],
+        color: swatch.colors['faded'],
         size: ICON_MEDIUM,
       ),
       textTheme: TextTheme(
         headline1: TextStyle(
           fontSize: FONT_BIG,
-          color: _swatch.colors['faded'],
+          color: swatch.colors['faded'],
           fontWeight: FontWeight.w500,
         ),
         headline2: TextStyle(
           fontSize: FONT_MEDIUM,
-          color: _swatch.colors['accent'],
+          color: swatch.colors['accent'],
           fontWeight: FontWeight.w500,
         ),
         headline3: TextStyle(
           fontSize: FONT_MEDIUM,
-          color: _swatch.colors['contrast'],
+          color: swatch.colors['contrast'],
           fontWeight: FontWeight.w500,
         ),
         button: TextStyle(
@@ -85,23 +77,38 @@ class Design with ChangeNotifier {
         ),
         subtitle1: TextStyle(
           fontSize: FONT_SMALL,
-          color: _swatch.colors['faded'],
+          color: swatch.colors['faded'],
         ),
         bodyText1: TextStyle(
           fontSize: FONT_SMALL,
-          color: _swatch.colors['contrast'],
+          color: swatch.colors['contrast'],
         ),
         bodyText2: TextStyle(
           fontSize: FONT_SMALL,
-          color: _swatch.colors['accent'],
+          color: swatch.colors['accent'],
         ),
       ),
     );
+  }
+
+  ThemeData get theme {
+    return _theme;
+  }
+
+  get swatch {
+    return _swatch;
+  }
+
+  set swatch(Swatch value) {
+    if (value == null) return;
+
+    _swatch = value;
+    _buildTheme(_swatch);
 
     notifyListeners();
 
     SharedPreferences.getInstance()
-        .then((preferences) => preferences.setInt('swatch', _swatch.index));
+        .then((preferences) => preferences.setInt('swatch', value.index));
   }
 }
 
@@ -110,7 +117,7 @@ enum Swatch {
 }
 
 extension SwatchExtension on Swatch {
-  static const _swatches = {
+  static const swatches = {
     Swatch.slate: {
       'background': Color(0xFF0F171E),
       'primary': Color(0xFF2B3C4F),
@@ -127,7 +134,7 @@ extension SwatchExtension on Swatch {
     Swatch.slate: 'Slate',
   };
 
-  Map<String, dynamic> get colors => _swatches[this];
+  Map<String, dynamic> get colors => swatches[this];
 
   String get name => _names[this];
 }

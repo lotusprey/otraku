@@ -10,7 +10,7 @@ class ProfileTab extends StatelessWidget {
         icon: Icon(Icons.settings),
         onPressed: () => Navigator.push(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (ctx) => SettingsPage(),
             )),
       ),

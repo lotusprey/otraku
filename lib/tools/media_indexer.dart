@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
@@ -20,9 +21,11 @@ class MediaIndexer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => MediaIndexer.pushMedia(context, mediaId, tag: mediaId),
-      onLongPress: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => EditEntryPage(mediaId, (_) {}),
-      )),
+      onLongPress: () => Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (_) => EditEntryPage(mediaId, (_) {}),
+        ),
+      ),
       child: child,
     );
   }

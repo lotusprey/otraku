@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/score_format_enum.dart';
@@ -86,9 +87,11 @@ class MediaList extends StatelessWidget {
                 entry.mediaId,
                 tag: entry.mediaId.toString(),
               ),
-              onLongPress: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (_) => EditEntryPage(entry.mediaId, (_) {}),
-              )),
+              onLongPress: () => Navigator.of(context).push(
+                CupertinoPageRoute(
+                  builder: (_) => EditEntryPage(entry.mediaId, (_) {}),
+                ),
+              ),
             );
           },
           childCount: entries.length,

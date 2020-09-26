@@ -122,7 +122,7 @@ class _FilterButton extends StatelessWidget {
     return Provider.of<ExplorableMedia>(context).areFiltersActive()
         ? GestureDetector(
             onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => FilterPage()),
+              CupertinoPageRoute(builder: (_) => FilterPage()),
             ),
             onLongPress: Provider.of<ExplorableMedia>(context, listen: false)
                 .clearGenreTagFilters,
@@ -142,7 +142,7 @@ class _FilterButton extends StatelessWidget {
         : IconButton(
             icon: const Icon(LineAwesomeIcons.filter),
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => FilterPage()),
+              CupertinoPageRoute(builder: (_) => FilterPage()),
             ),
           );
   }

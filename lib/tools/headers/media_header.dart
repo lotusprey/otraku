@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -305,12 +306,14 @@ class __StatusButtonState extends State<_StatusButton> {
               style: Theme.of(context).textTheme.button),
         ],
       ),
-      onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => EditEntryPage(
-          widget.media.mediaId,
-          (status) => setState(() => widget.media.status = status),
+      onPressed: () => Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (_) => EditEntryPage(
+            widget.media.mediaId,
+            (status) => setState(() => widget.media.status = status),
+          ),
         ),
-      )),
+      ),
     );
   }
 }

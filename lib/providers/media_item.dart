@@ -1,13 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_user_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
 
-class MediaItem with ChangeNotifier {
+class MediaItem {
   static const String _url = 'https://graphql.anilist.co';
 
   final Map<String, String> headers;

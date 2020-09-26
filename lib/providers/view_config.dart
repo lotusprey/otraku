@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/pages/tab_manager.dart';
 
-class ViewConfig with ChangeNotifier {
+class ViewConfig {
   static const double CONTROL_HEADER_ICON_HEIGHT = 35;
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = BorderRadius.all(Radius.circular(5));
-  static int _pageIndex = TabManager.ANIME_LIST;
-  static LargeTileConfiguration _largeTileConfiguration;
 
-  void init(BuildContext context) {
+  static LargeTileConfiguration _largeTileConfiguration;
+  static int initialPage = TabManager.ANIME_LIST;
+  static bool _hasInit = false;
+
+  static void init(BuildContext context) {
+    if (_hasInit) return;
+
     double tileWHRatio = 0.5;
     double tileWidth = (MediaQuery.of(context).size.width - 40) / 3;
     double tileHeight = tileWidth * 2;
@@ -21,18 +25,11 @@ class ViewConfig with ChangeNotifier {
       tileHeight: tileHeight,
       tileImgHeight: tileImgHeight,
     );
+
+    _hasInit = true;
   }
 
-  int get pageIndex {
-    return _pageIndex;
-  }
-
-  set pageIndex(int index) {
-    _pageIndex = index;
-    notifyListeners();
-  }
-
-  LargeTileConfiguration get tileConfiguration {
+  static LargeTileConfiguration get tileConfiguration {
     return _largeTileConfiguration;
   }
 }

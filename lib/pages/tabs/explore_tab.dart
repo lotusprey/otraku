@@ -49,10 +49,7 @@ class _ExploreTabState extends State<ExploreTab> {
   void initState() {
     super.initState();
     widget.scrollCtrl.addListener(_onScroll);
-    _tileConfig = Provider.of<ViewConfig>(
-      context,
-      listen: false,
-    ).tileConfiguration;
+    _tileConfig = ViewConfig.tileConfiguration;
   }
 
   @override

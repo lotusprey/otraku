@@ -59,76 +59,98 @@ class _EditEntryPageState extends State<EditEntryPage> {
         wrapTrailing: false,
       ),
       body: _oldData != null
-          ? ListView(
-              padding: ViewConfig.PADDING,
-              children: [
-                _dual(
-                  InputFieldStructure(
-                      title: 'Status', body: _StatusDropdown(_newData)),
-                  InputFieldStructure(
-                    title: 'Progress',
-                    body: NumberField(
-                      initialValue: _newData.progress,
-                      maxValue: _newData.progressMax ?? 100000,
-                      update: (progress) => _newData.progress = progress,
+          ? LayoutBuilder(
+              builder: (_, constraints) => ListView(
+                padding: ViewConfig.PADDING,
+                children: [
+                  _dual(
+                    InputFieldStructure(
+                        title: 'Status', body: _StatusDropdown(_newData)),
+                    InputFieldStructure(
+                      title: 'Progress',
+                      body: NumberField(
+                        initialValue: _newData.progress,
+                        maxValue: _newData.progressMax ?? 100000,
+                        update: (progress) => _newData.progress = progress,
+                      ),
                     ),
                   ),
-                ),
-                _box,
-                _dual(
-                  InputFieldStructure(
-                    title: 'Repeat',
-                    body: NumberField(
-                      initialValue: _newData.repeat,
-                      update: (repeat) => _newData.repeat = repeat,
+                  _box,
+                  _dual(
+                    InputFieldStructure(
+                      title: 'Repeat',
+                      body: NumberField(
+                        initialValue: _newData.repeat,
+                        update: (repeat) => _newData.repeat = repeat,
+                      ),
                     ),
+                    _oldData.type == 'MANGA'
+                        ? InputFieldStructure(
+                            title: 'Progress Volumes',
+                            body: NumberField(
+                              initialValue: _newData.progressVolumes,
+                              maxValue: _newData.progressVolumesMax ?? 100000,
+                              update: (progressVolumes) =>
+                                  _newData.progressVolumes = progressVolumes,
+                            ),
+                          )
+                        : null,
                   ),
-                  _oldData.type == 'MANGA'
-                      ? InputFieldStructure(
-                          title: 'Progress Volumes',
-                          body: NumberField(
-                            initialValue: _newData.progressVolumes,
-                            maxValue: _newData.progressVolumesMax ?? 100000,
-                            update: (progressVolumes) =>
-                                _newData.progressVolumes = progressVolumes,
-                          ),
-                        )
-                      : null,
-                ),
-                _box,
-                InputFieldStructure(
-                  title: 'Score',
-                  body: ScorePicker(_newData),
-                ),
-                _box,
-                InputFieldStructure(
-                  title: 'Notes',
-                  body: ExpandableField(
-                    text: _newData.notes,
-                    onChange: (notes) => _newData.notes = notes,
-                  ),
-                  enforceHeight: false,
-                ),
-                _box,
-                _dual(
+                  _box,
                   InputFieldStructure(
-                    title: 'Start Date',
-                    body: DateField(
-                      date: _newData.startDate,
-                      onChange: (startDate) => _newData.startDate = startDate,
-                      helpText: 'Start Date',
-                    ),
+                    title: 'Score',
+                    body: ScorePicker(_newData),
                   ),
+                  _box,
                   InputFieldStructure(
-                    title: 'End Date',
-                    body: DateField(
-                      date: _newData.endDate,
-                      onChange: (endDate) => _newData.endDate = endDate,
-                      helpText: 'End Date',
+                    title: 'Notes',
+                    body: ExpandableField(
+                      text: _newData.notes,
+                      onChange: (notes) => _newData.notes = notes,
                     ),
+                    enforceHeight: false,
                   ),
-                ),
-              ],
+                  _box,
+                  if (constraints.maxWidth < 385) ...[
+                    InputFieldStructure(
+                      title: 'Start Date',
+                      body: DateField(
+                        date: _newData.startDate,
+                        onChange: (startDate) => _newData.startDate = startDate,
+                        helpText: 'Start Date',
+                      ),
+                    ),
+                    _box,
+                    InputFieldStructure(
+                      title: 'End Date',
+                      body: DateField(
+                        date: _newData.endDate,
+                        onChange: (endDate) => _newData.endDate = endDate,
+                        helpText: 'End Date',
+                      ),
+                    ),
+                  ] else
+                    _dual(
+                      InputFieldStructure(
+                        title: 'Start Date',
+                        body: DateField(
+                          date: _newData.startDate,
+                          onChange: (startDate) =>
+                              _newData.startDate = startDate,
+                          helpText: 'Start Date',
+                        ),
+                      ),
+                      InputFieldStructure(
+                        title: 'End Date',
+                        body: DateField(
+                          date: _newData.endDate,
+                          onChange: (endDate) => _newData.endDate = endDate,
+                          helpText: 'End Date',
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             )
           : _box,
     );

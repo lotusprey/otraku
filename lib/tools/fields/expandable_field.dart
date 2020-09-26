@@ -29,6 +29,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
         scrollPhysics: const BouncingScrollPhysics(),
         controller: _controller,
         onChanged: (text) => widget.onChange(text),
+        minLines: 1,
         maxLines: 5,
         cursorColor: Theme.of(context).accentColor,
         style: Theme.of(context).textTheme.bodyText1,

@@ -35,8 +35,7 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
   ) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.only(left: 15, right: 15, top: 10),
-      color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
       child: Text(
         headline,
         style: Theme.of(context).textTheme.headline1.copyWith(height: 1.0),

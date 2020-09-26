@@ -82,10 +82,12 @@ class Design with ChangeNotifier {
         bodyText1: TextStyle(
           fontSize: FONT_SMALL,
           color: swatch.colors['contrast'],
+          fontWeight: FontWeight.normal,
         ),
         bodyText2: TextStyle(
           fontSize: FONT_SMALL,
           color: swatch.colors['accent'],
+          fontWeight: FontWeight.normal,
         ),
       ),
     );

@@ -32,7 +32,6 @@ class _TabManagerState extends State<TabManager> {
   ScrollController _scrollCtrl;
   ValueNotifier<bool> _navBarVisibility;
 
-  bool _didChangeDependencies = false;
   bool _jumpingPage = false;
 
   void _scrollDirection() {
@@ -96,58 +95,53 @@ class _TabManagerState extends State<TabManager> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_didChangeDependencies) {
-      Provider.of<ViewConfig>(context, listen: false).init(context);
-      _pageIndex = Provider.of<ViewConfig>(context, listen: false).pageIndex;
-      _pageCtrl = PageController(initialPage: _pageIndex);
+  void initState() {
+    super.initState();
+    _pageIndex = ViewConfig.initialPage;
+    _pageCtrl = PageController(initialPage: _pageIndex);
 
-      _navBarVisibility = ValueNotifier(true);
-      _scrollCtrl = ScrollController();
-      _scrollCtrl.addListener(_scrollDirection);
+    _navBarVisibility = ValueNotifier(true);
+    _scrollCtrl = ScrollController();
+    _scrollCtrl.addListener(_scrollDirection);
 
-      _tabs = [
-        InboxTab(),
-        CollectionsTab(
-          collection: Provider.of<AnimeCollection>(context, listen: false),
-          scrollCtrl: _scrollCtrl,
-          key: UniqueKey(),
-        ),
-        CollectionsTab(
-          collection: Provider.of<MangaCollection>(context, listen: false),
-          scrollCtrl: _scrollCtrl,
-          key: UniqueKey(),
-        ),
-        ExploreTab(_scrollCtrl),
-        ProfileTab(),
-      ];
+    _tabs = [
+      InboxTab(),
+      CollectionsTab(
+        collection: Provider.of<AnimeCollection>(context, listen: false),
+        scrollCtrl: _scrollCtrl,
+        key: UniqueKey(),
+      ),
+      CollectionsTab(
+        collection: Provider.of<MangaCollection>(context, listen: false),
+        scrollCtrl: _scrollCtrl,
+        key: UniqueKey(),
+      ),
+      ExploreTab(_scrollCtrl),
+      ProfileTab(),
+    ];
 
-      _tabItems = const [
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.inbox),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.play_arrow),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.bookmark),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.explore),
-          title: _box,
-        ),
-        const BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          title: _box,
-        ),
-      ];
-
-      _didChangeDependencies = true;
-    }
+    _tabItems = const [
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.inbox),
+        title: _box,
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.play_arrow),
+        title: _box,
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.bookmark),
+        title: _box,
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.explore),
+        title: _box,
+      ),
+      const BottomNavigationBarItem(
+        icon: Icon(Icons.person),
+        title: _box,
+      ),
+    ];
   }
 
   @override

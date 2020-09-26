@@ -4,21 +4,17 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/design.dart';
-import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
-import 'enums/auth_enum.dart';
-import 'pages/auth_page.dart';
 import 'providers/media_item.dart';
 import 'providers/auth.dart';
 
-void main() {
-  Provider.debugCheckInvalidValueType = null;
-
-  runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Design.init();
+  runApp(Otraku());
 }
 
-class MyApp extends StatelessWidget {
+class Otraku extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -55,9 +51,6 @@ class MyApp extends StatelessWidget {
               scoreFormat: auth.scoreFormat,
             ),
         ),
-        ChangeNotifierProvider<ViewConfig>(
-          create: (_) => ViewConfig(),
-        ),
         ChangeNotifierProvider<Design>(
           create: (_) => Design(),
         ),
@@ -78,43 +71,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
       theme: Provider.of<Design>(context).theme,
-      home: Consumer<Design>(
-        builder: (_, palette, themeChild) => FutureBuilder(
-          future: palette.theme == null
-              ? palette.init()
-              : Future.delayed(const Duration(seconds: 0)),
-          builder: (_, snapshotTheme) {
-            if (snapshotTheme.connectionState == ConnectionState.waiting) {
-              return themeChild;
-            }
-
-            return Consumer<Auth>(
-              builder: (_, auth, childAuth) => FutureBuilder(
-                future: auth.status == null
-                    ? auth.validateAccessToken()
-                    : Future.delayed(const Duration(seconds: 0)),
-                builder: (_, snapshotAuth) {
-                  if (snapshotAuth.connectionState == ConnectionState.waiting) {
-                    return childAuth;
-                  }
-
-                  if (auth.status != AuthStatus.authorised) {
-                    return const AuthPage();
-                  }
-
-                  return LoadingPage();
-                },
-              ),
-              child: Scaffold(
-                body: const Center(child: BlossomLoader()),
-              ),
-            );
-          },
-        ),
-        child: const Scaffold(
-          backgroundColor: Colors.black,
-        ),
-      ),
+      home: LoadingPage(),
     );
   }
 }

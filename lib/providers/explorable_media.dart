@@ -259,7 +259,9 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
   }
 
   //Fetches genres and tags
-  Future<void> fetchFilters() async {
+  Future<void> fetchInitial() async {
+    _isLoading = true;
+
     final request = json.encode({
       'query': r'''
         query Filters {
@@ -267,6 +269,17 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
           MediaTagCollection {
             name
             description
+          }
+          Page(page: 1, perPage: 30) {
+            media(sort: TRENDING_DESC, type: ANIME) {
+              id
+              title {
+                userPreferred
+              }
+              coverImage {
+                large
+              }
+            }
           }
         }
       ''',
@@ -285,6 +298,17 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
       _tags.item2.add(tag['description']);
     }
 
-    notifyListeners();
+    _data = [];
+
+    for (final m in body['Page']['media'] as List<dynamic>) {
+      _data.add({
+        'title': m['title']['userPreferred'],
+        'imageUrl': m['coverImage']['large'],
+        'id': m['id'],
+      });
+      (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
+    }
+
+    _isLoading = false;
   }
 }

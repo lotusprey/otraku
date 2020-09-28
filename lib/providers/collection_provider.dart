@@ -178,8 +178,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     for (final list in organisedCollection) {
       _lists.add(EntryList(
         name: list['name'],
-        status: list['status'],
         isCustomList: list['isCustomList'],
+        status: list['isCustomList'] ? null : list['status'],
         splitCompletedListFormat: list['isSplitCompletedList']
             ? list['entries'][0]['media']['format']
             : null,
@@ -263,6 +263,9 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         \$notes: String
         \$startedAt: FuzzyDateInput
         \$completedAt: FuzzyDateInput
+        \$private: Boolean
+        \$hiddenFromStatusLists: Boolean
+        \$customLists: [String]
         \$scoreFormat: ScoreFormat
       ) {
       SaveMediaListEntry(
@@ -275,7 +278,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         score: \$score,
         notes: \$notes,
         startedAt: \$startedAt,
-        completedAt: \$completedAt) {
+        completedAt: \$completedAt,
+        private: \$private,
+        hiddenFromStatusLists: \$hiddenFromStatusLists,
+        customLists: \$customLists) {
           mediaId
           progress
           score(format: \$scoreFormat)
@@ -317,6 +323,12 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         'notes': newData.notes,
         'startedAt': dateTimeToMap(newData.startDate),
         'completedAt': dateTimeToMap(newData.endDate),
+        'private': newData.private,
+        'hiddenFromStatusLists': newData.hiddenFromStatusLists,
+        'customLists': newData.customLists
+            .where((t) => t.item2)
+            .map((t) => t.item1)
+            .toList(),
         'scoreFormat': _scoreFormat,
       },
     });
@@ -333,30 +345,31 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     String selectedListName;
     if (alreadyAdded) {
       selectedListName = _lists[_listIndex].name;
-      _removeLists(oldData);
+      _removeEntryFromLists(oldData);
     }
 
     //Lists that exist locally and should be updated
-    List<EntryList> updatableLists = [];
+    List<EntryList> listsForUpdate = [];
 
     //Check if the non-custom list is available
-    for (final list in _lists) {
-      if (_hasSplitCompletedList &&
-          newData.status == MediaListStatus.COMPLETED) {
+    if (_hasSplitCompletedList && newData.status == MediaListStatus.COMPLETED) {
+      for (final list in _lists) {
         if (list.splitCompletedListFormat == newData.format) {
-          updatableLists.add(list);
+          listsForUpdate.add(list);
           break;
         }
-      } else {
-        if (!list.isCustomList && list.status == describeEnum(newData.status)) {
-          updatableLists.add(list);
+      }
+    } else {
+      for (final list in _lists) {
+        if (list.status == describeEnum(newData.status)) {
+          listsForUpdate.add(list);
           break;
         }
       }
     }
 
     //If not available, fetch it.
-    if (updatableLists.length == 0) {
+    if (listsForUpdate.length == 0) {
       await fetchSingleList(
           status: describeEnum(newData.status),
           splitListFormat: _hasSplitCompletedList &&
@@ -367,28 +380,29 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     //Similarly, all the custom lists that contain the entry, should
     //be added for update or fetched.
-    for (final key in newData.customLists.keys
-        .where((k) => newData.customLists[k] == true)) {
-      final list = _lists.firstWhere(
-        (l) => l.isCustomList && l.name == key,
-        orElse: () => null,
-      );
-
-      if (list == null) {
-        await fetchSingleList(
-          isCustomList: true,
-          name: key,
+    for (final tuple in newData.customLists) {
+      if (tuple.item2) {
+        final list = _lists.firstWhere(
+          (l) => l.isCustomList && l.name == tuple.item1,
+          orElse: () => null,
         );
-      } else {
-        updatableLists.add(list);
+
+        if (list == null) {
+          await fetchSingleList(
+            isCustomList: true,
+            name: tuple.item1,
+          );
+        } else {
+          listsForUpdate.add(list);
+        }
       }
     }
 
     //Update all the updatable lists
-    if (updatableLists.length > 0) {
-      final Map<String, bool> customLists = {};
-      for (final key in (data['customLists'] as Map<String, dynamic>).keys) {
-        customLists[key] = data['customLists'][key];
+    if (listsForUpdate.length > 0) {
+      final List<Tuple<String, bool>> customLists = [];
+      for (final key in data['customLists'].keys) {
+        customLists.add(Tuple(key, data['customLists'][key]));
       }
 
       final entry = MediaEntry(
@@ -410,7 +424,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         ),
       );
 
-      for (final list in updatableLists) {
+      for (final list in listsForUpdate) {
         list.entries.add(entry);
         _sortList(list);
       }
@@ -455,31 +469,41 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     //Check if the operation was successful
     if (body['deleted'] == null || body['deleted'] == false) return false;
 
-    _removeLists(data);
+    _removeEntryFromLists(data);
 
     notifyListeners();
     return true;
   }
 
   //Remove an entry from all lists, where its data occured
-  void _removeLists(EntryUserData data) {
+  void _removeEntryFromLists(EntryUserData data) {
     List<EntryList> entryHolders = [];
 
     for (final list in _lists) {
-      if (list.isCustomList && data.customLists[list.name] == true) {
-        entryHolders.add(list);
+      // print(list.name);
+      if (list.isCustomList) {
+        // print('this is a custom one');
+        for (final tuple in data.customLists) {
+          // print(tuple.item1);
+          if (tuple.item1 == list.name && tuple.item2) {
+            // print('this is a checked one');
+            entryHolders.add(list);
+            break;
+          }
+        }
         continue;
       }
 
-      if (_hasSplitCompletedList && data.status == MediaListStatus.COMPLETED) {
-        if (list.splitCompletedListFormat == data.format) {
-          entryHolders.add(list);
-          continue;
-        }
-      } else {
-        if (!list.isCustomList && list.status == describeEnum(data.status)) {
-          entryHolders.add(list);
-          continue;
+      if (!data.hiddenFromStatusLists) {
+        if (_hasSplitCompletedList &&
+            data.status == MediaListStatus.COMPLETED) {
+          if (list.splitCompletedListFormat == data.format) {
+            entryHolders.add(list);
+          }
+        } else {
+          if (list.status == describeEnum(data.status)) {
+            entryHolders.add(list);
+          }
         }
       }
     }
@@ -550,6 +574,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
           mediaListOptions {
             ${typeLCase}List {
               sectionOrder
+              customLists
             }
           }
         }
@@ -568,8 +593,21 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     final response = await post(_url, body: request, headers: _headers);
     final result = json.decode(response.body)['data'];
 
+    final lists = result['MediaListCollection']['lists'];
+    final List<dynamic> customListNames =
+        result['User']['mediaListOptions']['${typeLCase}List']['customLists'];
+
+    for (String name in customListNames) {
+      for (final list in lists) {
+        if (list['isCustomList'] &&
+            list['name'].toString().toLowerCase() == name.toLowerCase()) {
+          list['name'] = name;
+        }
+      }
+    }
+
     return Tuple(
-      result['MediaListCollection']['lists'],
+      lists,
       result['User']['mediaListOptions']['${typeLCase}List']['sectionOrder'],
     );
   }
@@ -598,8 +636,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     final list = EntryList(
       name: listData['name'],
-      status: listData['status'],
       isCustomList: listData['isCustomList'],
+      status: listData['isCustomList'] ? null : listData['status'],
       splitCompletedListFormat: listData['isSplitCompletedList']
           ? listData['entries'][0]['media']['format']
           : null,
@@ -638,6 +676,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         }
 
         _lists.add(list);
+        return;
       }
     }
   }

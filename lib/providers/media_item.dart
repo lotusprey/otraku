@@ -5,6 +5,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_user_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
+import 'package:otraku/models/tuple.dart';
 
 class MediaItem {
   static const String _url = 'https://graphql.anilist.co';
@@ -116,6 +117,8 @@ class MediaItem {
               month
               day
             }
+            private
+            hiddenFromStatusLists
             customLists
           }
         }
@@ -143,7 +146,7 @@ class MediaItem {
         format: body['format'],
         progressMax: body['episodes'] ?? body['chapters'],
         progressVolumesMax: body['voumes'],
-        customLists: {},
+        customLists: [],
       );
     }
 
@@ -152,12 +155,10 @@ class MediaItem {
       MediaListStatus.values,
     );
 
-    final Map<String, bool> customLists = {};
+    final List<Tuple<String, bool>> customLists = [];
     if (body['mediaListEntry']['customLists'] != null) {
-      for (final key
-          in (body['mediaListEntry']['customLists'] as Map<String, dynamic>)
-              .keys) {
-        customLists[key] = body['mediaListEntry']['customLists'][key];
+      for (final key in body['mediaListEntry']['customLists'].keys) {
+        customLists.add(Tuple(key, body['mediaListEntry']['customLists'][key]));
       }
     }
 
@@ -176,6 +177,8 @@ class MediaItem {
       notes: body['mediaListEntry']['notes'],
       startDate: mapToDateTime(body['mediaListEntry']['startedAt']),
       endDate: mapToDateTime(body['mediaListEntry']['completedAt']),
+      private: body['mediaListEntry']['private'],
+      hiddenFromStatusLists: body['mediaListEntry']['hiddenFromStatusLists'],
       customLists: customLists,
     );
   }

@@ -203,14 +203,15 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     ),
                   ),
                   _box,
-                  InputFieldStructure(
-                    enforceHeight: false,
-                    title: 'Custom Lists',
-                    body: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: _rows(),
+                  if (_oldData.customLists.length > 0)
+                    InputFieldStructure(
+                      enforceHeight: false,
+                      title: 'Custom Lists',
+                      body: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: _rows(),
+                      ),
                     ),
-                  ),
                 ],
               ),
             )

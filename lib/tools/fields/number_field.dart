@@ -5,12 +5,14 @@ import 'package:otraku/providers/view_config.dart';
 class NumberField extends StatefulWidget {
   final int initialValue;
   final int maxValue;
-  final Function(int) update;
+  final num fraction;
+  final Function(num) update;
 
   NumberField({
     @required this.update,
     this.initialValue = 0,
     this.maxValue,
+    this.fraction = 1,
   });
 
   @override
@@ -31,7 +33,7 @@ class _NumberFieldState extends State<NumberField> {
         children: [
           IconButton(
             icon: const Icon(Icons.remove),
-            onPressed: () => _validateInput(add: -1),
+            onPressed: () => _validateInput(add: -widget.fraction),
           ),
           Expanded(
             child: TextField(
@@ -49,20 +51,20 @@ class _NumberFieldState extends State<NumberField> {
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () => _validateInput(add: 1),
+            onPressed: () => _validateInput(add: widget.fraction),
           ),
         ],
       ),
     );
   }
 
-  void _validateInput({int add = 0}) {
-    int result;
+  void _validateInput({double add = 0}) {
+    num result;
 
     if (_controller.text == null || _controller.text == '') {
       result = 0;
     } else {
-      int number = int.parse(_controller.text) + add;
+      num number = int.parse(_controller.text) + add;
 
       if (widget.maxValue != null && number > widget.maxValue) {
         result = widget.maxValue;

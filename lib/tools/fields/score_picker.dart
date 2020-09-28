@@ -140,15 +140,27 @@ class _TenScorePickerState extends State<_TenScorePicker> {
   Widget build(BuildContext context) {
     double score = widget.data.score.truncateToDouble();
 
-    return Slider.adaptive(
-      value: score,
-      onChanged: (value) => setState(() => widget.data.score = value),
-      min: 0,
-      max: 10,
-      divisions: 10,
-      label: score.toStringAsFixed(0),
-      activeColor: Theme.of(context).accentColor,
-      inactiveColor: Theme.of(context).primaryColor,
+    return Row(
+      children: [
+        Expanded(
+          child: Slider.adaptive(
+            value: score,
+            onChanged: (value) => setState(() => widget.data.score = value),
+            min: 0,
+            max: 10,
+            divisions: 10,
+            activeColor: Theme.of(context).accentColor,
+            inactiveColor: Theme.of(context).primaryColor,
+          ),
+        ),
+        SizedBox(
+          width: 30,
+          child: Text(
+            score.toStringAsFixed(0),
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -167,15 +179,27 @@ class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
   Widget build(BuildContext context) {
     double score = widget.data.score;
 
-    return Slider.adaptive(
-      value: score,
-      onChanged: (value) => setState(() => widget.data.score = value),
-      min: 0,
-      max: 10,
-      divisions: 20,
-      label: score.toString(),
-      activeColor: Theme.of(context).accentColor,
-      inactiveColor: Theme.of(context).primaryColor,
+    return Row(
+      children: [
+        Expanded(
+          child: Slider.adaptive(
+            value: score,
+            onChanged: (value) => setState(() => widget.data.score = value),
+            min: 0,
+            max: 10,
+            divisions: 100,
+            activeColor: Theme.of(context).accentColor,
+            inactiveColor: Theme.of(context).primaryColor,
+          ),
+        ),
+        SizedBox(
+          width: 40,
+          child: Text(
+            score.toStringAsFixed(1),
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+      ],
     );
   }
 }

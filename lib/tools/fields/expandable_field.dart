@@ -3,11 +3,11 @@ import 'package:otraku/providers/view_config.dart';
 
 class ExpandableField extends StatefulWidget {
   final String text;
-  final Function(String) onChange;
+  final Function(String) onChanged;
 
   ExpandableField({
     @required this.text,
-    @required this.onChange,
+    @required this.onChanged,
   });
 
   @override
@@ -28,7 +28,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
       child: TextField(
         scrollPhysics: const BouncingScrollPhysics(),
         controller: _controller,
-        onChanged: (text) => widget.onChange(text),
+        onChanged: (text) => widget.onChanged(text),
         minLines: 1,
         maxLines: 5,
         cursorColor: Theme.of(context).accentColor,

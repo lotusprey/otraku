@@ -10,9 +10,9 @@ class EntryList {
 
   EntryList({
     @required this.name,
-    @required this.status,
     @required this.isCustomList,
-    @required this.splitCompletedListFormat,
     @required this.entries,
+    this.status,
+    this.splitCompletedListFormat,
   });
 }

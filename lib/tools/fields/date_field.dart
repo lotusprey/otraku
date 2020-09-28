@@ -3,12 +3,12 @@ import 'package:otraku/providers/view_config.dart';
 
 class DateField extends StatefulWidget {
   final DateTime date;
-  final Function(DateTime) onChange;
+  final Function(DateTime) onChanged;
   final String helpText;
 
   DateField({
     @required this.date,
-    @required this.onChange,
+    @required this.onChanged,
     @required this.helpText,
   });
 
@@ -39,7 +39,7 @@ class _DateFieldState extends State<DateField> {
       ).then((pickedDate) {
         if (pickedDate == null) return;
         setState(() => date = pickedDate);
-        widget.onChange(pickedDate);
+        widget.onChanged(pickedDate);
       }),
     );
   }
@@ -64,7 +64,7 @@ class _DateFieldState extends State<DateField> {
                   icon: const Icon(Icons.clear),
                   onPressed: () {
                     setState(() => date = null);
-                    widget.onChange(null);
+                    widget.onChanged(null);
                   },
                 ),
               ],

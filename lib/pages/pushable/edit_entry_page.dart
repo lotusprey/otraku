@@ -8,6 +8,7 @@ import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
 import 'package:otraku/tools/fields/expandable_field.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
@@ -33,7 +34,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
   EntryUserData _oldData;
   EntryUserData _newData;
 
-  Widget _dual(Widget child1, Widget child2) {
+  Widget _row(Widget child1, Widget child2) {
     return Row(
       children: [
         Expanded(child: child1),
@@ -41,6 +42,38 @@ class _EditEntryPageState extends State<EditEntryPage> {
         Expanded(child: child2 ?? const SizedBox(height: 75)),
       ],
     );
+  }
+
+  List<Widget> _rows() {
+    List<Widget> list = [];
+    for (int i = 1; i < _newData.customLists.length; i += 2) {
+      list.add(_row(
+        CheckboxField(
+          text: _newData.customLists[i - 1].item1,
+          initialValue: _newData.customLists[i - 1].item2,
+          onChanged: (boolean) => _newData.customLists[i - 1] =
+              _newData.customLists[i - 1].withItem2(boolean),
+        ),
+        CheckboxField(
+          text: _newData.customLists[i].item1,
+          initialValue: _newData.customLists[i].item2,
+          onChanged: (boolean) => _newData.customLists[i] =
+              _newData.customLists[i].withItem2(boolean),
+        ),
+      ));
+    }
+    if (_newData.customLists.length % 2 != 0) {
+      list.add(_row(
+        CheckboxField(
+          text: _newData.customLists.last.item1,
+          initialValue: _newData.customLists.last.item2,
+          onChanged: (boolean) => _newData.customLists.last =
+              _newData.customLists.last.withItem2(boolean),
+        ),
+        null,
+      ));
+    }
+    return list;
   }
 
   @override
@@ -61,9 +94,10 @@ class _EditEntryPageState extends State<EditEntryPage> {
       body: _oldData != null
           ? LayoutBuilder(
               builder: (_, constraints) => ListView(
+                physics: const BouncingScrollPhysics(),
                 padding: ViewConfig.PADDING,
                 children: [
-                  _dual(
+                  _row(
                     InputFieldStructure(
                         title: 'Status', body: _StatusDropdown(_newData)),
                     InputFieldStructure(
@@ -76,7 +110,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     ),
                   ),
                   _box,
-                  _dual(
+                  _row(
                     InputFieldStructure(
                       title: 'Repeat',
                       body: NumberField(
@@ -106,7 +140,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     title: 'Notes',
                     body: ExpandableField(
                       text: _newData.notes,
-                      onChange: (notes) => _newData.notes = notes,
+                      onChanged: (notes) => _newData.notes = notes,
                     ),
                     enforceHeight: false,
                   ),
@@ -116,7 +150,8 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       title: 'Start Date',
                       body: DateField(
                         date: _newData.startDate,
-                        onChange: (startDate) => _newData.startDate = startDate,
+                        onChanged: (startDate) =>
+                            _newData.startDate = startDate,
                         helpText: 'Start Date',
                       ),
                     ),
@@ -125,17 +160,17 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       title: 'End Date',
                       body: DateField(
                         date: _newData.endDate,
-                        onChange: (endDate) => _newData.endDate = endDate,
+                        onChanged: (endDate) => _newData.endDate = endDate,
                         helpText: 'End Date',
                       ),
                     ),
                   ] else
-                    _dual(
+                    _row(
                       InputFieldStructure(
                         title: 'Start Date',
                         body: DateField(
                           date: _newData.startDate,
-                          onChange: (startDate) =>
+                          onChanged: (startDate) =>
                               _newData.startDate = startDate,
                           helpText: 'Start Date',
                         ),
@@ -144,11 +179,38 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         title: 'End Date',
                         body: DateField(
                           date: _newData.endDate,
-                          onChange: (endDate) => _newData.endDate = endDate,
+                          onChanged: (endDate) => _newData.endDate = endDate,
                           helpText: 'End Date',
                         ),
                       ),
                     ),
+                  _box,
+                  InputFieldStructure(
+                    enforceHeight: false,
+                    title: 'Additional List Settings',
+                    body: _row(
+                      CheckboxField(
+                        text: 'Private',
+                        initialValue: _newData.private,
+                        onChanged: (private) => _newData.private = private,
+                      ),
+                      CheckboxField(
+                        text: 'Hide from status lists',
+                        initialValue: _newData.hiddenFromStatusLists,
+                        onChanged: (hiddenFromStatusLists) => _newData
+                            .hiddenFromStatusLists = hiddenFromStatusLists,
+                      ),
+                    ),
+                  ),
+                  _box,
+                  InputFieldStructure(
+                    enforceHeight: false,
+                    title: 'Custom Lists',
+                    body: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _rows(),
+                    ),
+                  ),
                 ],
               ),
             )
@@ -165,7 +227,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
       if (mounted) {
         setState(() {
           _oldData = data;
-          _newData = EntryUserData.from(_oldData);
+          _newData = _oldData.clone();
           _collection = _newData.type == 'ANIME'
               ? Provider.of<AnimeCollection>(context, listen: false)
               : Provider.of<MangaCollection>(context, listen: false);

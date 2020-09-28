@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/models/tuple.dart';
 
 class EntryUserData {
   final int mediaId;
@@ -16,7 +17,9 @@ class EntryUserData {
   String notes;
   DateTime startDate;
   DateTime endDate;
-  Map<String, bool> customLists;
+  bool private;
+  bool hiddenFromStatusLists;
+  List<Tuple<String, bool>> customLists;
 
   EntryUserData({
     @required this.mediaId,
@@ -33,25 +36,36 @@ class EntryUserData {
     this.notes = '',
     this.startDate,
     this.endDate,
-    this.customLists = const {},
+    this.private = false,
+    this.hiddenFromStatusLists = false,
+    this.customLists = const [],
   });
 
-  EntryUserData.from(EntryUserData data)
-      : this(
-          mediaId: data.mediaId,
-          entryId: data.entryId,
-          type: data.type,
-          format: data.format,
-          status: data.status,
-          progress: data.progress,
-          progressMax: data.progressMax,
-          progressVolumes: data.progressVolumes,
-          progressVolumesMax: data.progressVolumesMax,
-          score: data.score,
-          repeat: data.repeat,
-          notes: data.notes,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          customLists: data.customLists,
-        );
+  EntryUserData clone() {
+    List<Tuple<String, bool>> customListsCopy = [];
+    for (final tuple in customLists) {
+      customListsCopy.add(Tuple(tuple.item1, tuple.item2));
+    }
+
+    return EntryUserData(
+      mediaId: mediaId,
+      type: type,
+      format: format,
+      entryId: entryId,
+      status: MediaListStatus.values[status.index],
+      progress: progress,
+      progressMax: progressMax,
+      progressVolumes: progressVolumes,
+      progressVolumesMax: progressVolumesMax,
+      score: score,
+      repeat: repeat,
+      notes: notes,
+      startDate:
+          startDate == null ? null : DateTime.parse(startDate.toString()),
+      endDate: endDate == null ? null : DateTime.parse(endDate.toString()),
+      private: private,
+      hiddenFromStatusLists: hiddenFromStatusLists,
+      customLists: customListsCopy,
+    );
+  }
 }

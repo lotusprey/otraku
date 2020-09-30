@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/models/media_entry.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
@@ -97,7 +99,7 @@ class _MediaListTile extends StatelessWidget {
                         width: 60,
                         child: Center(
                           child: Text(
-                            media.userData.format,
+                            clarifyEnum(media.userData.format),
                             style: Theme.of(context).textTheme.subtitle2,
                           ),
                         ),
@@ -106,7 +108,9 @@ class _MediaListTile extends StatelessWidget {
                         width: 50,
                         child: Center(
                           child: Text(
-                            '${media.userData.progress}/${media.progressMaxString}',
+                            media.userData.status != MediaListStatus.COMPLETED
+                                ? '${media.userData.progress} / ${media.progressMaxString}'
+                                : media.userData.progress.toString(),
                             style: Theme.of(context).textTheme.subtitle2,
                           ),
                         ),

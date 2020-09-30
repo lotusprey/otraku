@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_list.dart';
@@ -118,7 +119,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
   @override
   set search(String value) {
-    value = value.trim().toLowerCase();
+    if (value != null) value = value.trim().toLowerCase();
     if (value != _search) {
       _search = value;
       notifyListeners();
@@ -184,26 +185,33 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         splitCompletedListFormat: list['isSplitCompletedList']
             ? list['entries'][0]['media']['format']
             : null,
-        entries: (list['entries'] as List<dynamic>)
-            .map((e) => MediaEntry(
-                  mediaId: e['mediaId'],
-                  title: e['media']['title']['userPreferred'],
-                  cover: e['media']['coverImage']['large'],
-                  format: e['media']['format'],
-                  progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
-                  entryUserData: EntryUserData(
-                    mediaId: e['mediaId'],
-                    type: typeUCase,
-                    format: e['media']['format'],
-                    progress: e['progress'],
-                    progressMax: e['media'][mediaParts],
-                    score: e['score'].toDouble(),
-                    startDate: mapToDateTime(e['startedAt']),
-                    endDate: mapToDateTime(e['completedAt']),
-                    notes: e['notes'],
-                  ),
-                ))
-            .toList(),
+        entries: (list['entries'] as List<dynamic>).map((e) {
+          final status = stringToEnum(
+            e['status'],
+            MediaListStatus.values,
+          );
+
+          return MediaEntry(
+            mediaId: e['mediaId'],
+            title: e['media']['title']['userPreferred'],
+            cover: e['media']['coverImage']['large'],
+            format: e['media']['format'],
+            progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
+            entryUserData: EntryUserData(
+              mediaId: e['mediaId'],
+              type: typeUCase,
+              format: e['media']['format'],
+              status: status,
+              progress: e['progress'],
+              progressMax: e['media'][mediaParts],
+              score: e['score'].toDouble(),
+              startDate: mapToDateTime(e['startedAt']),
+              endDate: mapToDateTime(e['completedAt']),
+              repeat: e['repeat'],
+              notes: e['notes'],
+            ),
+          );
+        }).toList(),
       ));
     }
 
@@ -238,6 +246,34 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       case MediaListSort.SCORE_DESC:
         list.entries.sort((a, b) {
           int comparison = b.userData.score.compareTo(a.userData.score);
+          if (comparison != 0) return comparison;
+          return a.title.compareTo(b.title);
+        });
+        break;
+      case MediaListSort.PROGRESS:
+        list.entries.sort((a, b) {
+          int comparison = a.userData.progress.compareTo(b.userData.progress);
+          if (comparison != 0) return comparison;
+          return a.title.compareTo(b.title);
+        });
+        break;
+      case MediaListSort.PROGRESS_DESC:
+        list.entries.sort((a, b) {
+          int comparison = b.userData.progress.compareTo(a.userData.progress);
+          if (comparison != 0) return comparison;
+          return a.title.compareTo(b.title);
+        });
+        break;
+      case MediaListSort.REPEAT:
+        list.entries.sort((a, b) {
+          int comparison = a.userData.repeat.compareTo(b.userData.repeat);
+          if (comparison != 0) return comparison;
+          return a.title.compareTo(b.title);
+        });
+        break;
+      case MediaListSort.REPEAT_DESC:
+        list.entries.sort((a, b) {
+          int comparison = b.userData.repeat.compareTo(a.userData.repeat);
           if (comparison != 0) return comparison;
           return a.title.compareTo(b.title);
         });
@@ -548,6 +584,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
               mediaId
               status
               progress
+              repeat
               notes
               score(format: \$scoreFormat)
               startedAt {
@@ -644,26 +681,33 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       splitCompletedListFormat: listData['isSplitCompletedList']
           ? listData['entries'][0]['media']['format']
           : null,
-      entries: (listData['entries'] as List<dynamic>)
-          .map((e) => MediaEntry(
-                mediaId: e['mediaId'],
-                title: e['media']['title']['userPreferred'],
-                cover: e['media']['coverImage']['large'],
-                format: e['media']['format'],
-                progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
-                entryUserData: EntryUserData(
-                  mediaId: e['mediaId'],
-                  type: typeUCase,
-                  format: e['media']['format'],
-                  progress: e['progress'],
-                  progressMax: e['media'][mediaParts],
-                  score: e['score'].toDouble(),
-                  startDate: mapToDateTime(e['startedAt']),
-                  endDate: mapToDateTime(e['completedAt']),
-                  notes: e['notes'],
-                ),
-              ))
-          .toList(),
+      entries: (listData['entries'] as List<dynamic>).map((e) {
+        final status = stringToEnum(
+          e['status'],
+          MediaListStatus.values,
+        );
+
+        return MediaEntry(
+          mediaId: e['mediaId'],
+          title: e['media']['title']['userPreferred'],
+          cover: e['media']['coverImage']['large'],
+          format: e['media']['format'],
+          progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
+          entryUserData: EntryUserData(
+            mediaId: e['mediaId'],
+            type: typeUCase,
+            format: e['media']['format'],
+            status: status,
+            progress: e['progress'],
+            progressMax: e['media'][mediaParts],
+            score: e['score'].toDouble(),
+            startDate: mapToDateTime(e['startedAt']),
+            endDate: mapToDateTime(e['completedAt']),
+            notes: e['notes'],
+            repeat: e['repeat'],
+          ),
+        );
+      }).toList(),
     );
     _sortList(list);
 

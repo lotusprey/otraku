@@ -44,15 +44,14 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
 
   @override
   set search(String searchValue) {
-    searchValue = searchValue.trim().toLowerCase();
-
-    if (searchValue == _filters['search']) return;
-
-    if (searchValue == null || searchValue == '') {
+    if (searchValue == null || searchValue.trim() == '') {
       _filters.remove('search');
     } else {
+      searchValue = searchValue.trim().toLowerCase();
+      if (searchValue == _filters['search']) return;
       _filters['search'] = searchValue;
     }
+
     fetchMedia();
   }
 

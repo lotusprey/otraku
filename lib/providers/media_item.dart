@@ -149,7 +149,7 @@ class MediaItem {
       );
     }
 
-    MediaListStatus status = stringToEnum(
+    final status = stringToEnum(
       body['mediaListEntry']['status'],
       MediaListStatus.values,
     );

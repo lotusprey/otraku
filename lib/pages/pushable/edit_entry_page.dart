@@ -137,7 +137,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   ),
                   _box,
                   InputFieldStructure(
-                    title: 'Notes',
+                    title: constraints.maxWidth.toString(), //'Notes',
                     body: ExpandableField(
                       text: _newData.notes,
                       onChanged: (notes) => _newData.notes = notes,
@@ -145,7 +145,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     enforceHeight: false,
                   ),
                   _box,
-                  if (constraints.maxWidth < 370) ...[
+                  if (constraints.maxWidth < 380) ...[
                     InputFieldStructure(
                       title: 'Start Date',
                       body: DateField(

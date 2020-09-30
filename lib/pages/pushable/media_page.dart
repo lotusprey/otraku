@@ -65,8 +65,6 @@ class _MediaPageState extends State<MediaPage> {
                                 const SizedBox(height: 10),
                                 GestureDetector(
                                   child: Container(
-                                    width: double.infinity,
-                                    constraints: BoxConstraints(maxHeight: 130),
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).primaryColor,
@@ -77,6 +75,7 @@ class _MediaPageState extends State<MediaPage> {
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                       overflow: TextOverflow.fade,
+                                      maxLines: 7,
                                     ),
                                   ),
                                   onTap: () => showDialog(

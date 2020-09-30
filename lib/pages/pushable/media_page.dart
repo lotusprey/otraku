@@ -46,7 +46,7 @@ class _MediaPageState extends State<MediaPage> {
                         pinned: true,
                         floating: false,
                         delegate: MediaHeader(
-                          mediaObj: _media,
+                          media: _media,
                           coverWidth: _coverWidth,
                           coverHeight: _coverHeight,
                           height: _bannerHeight,
@@ -94,6 +94,11 @@ class _MediaPageState extends State<MediaPage> {
                           ),
                         ),
                       SliverToBoxAdapter(child: InfoGrid(_media)),
+                      const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 500,
+                        ),
+                      ),
                     ],
                   )
                 : null,

@@ -52,7 +52,7 @@ class EntryUserData {
       type: type,
       format: format,
       entryId: entryId,
-      status: MediaListStatus.values[status.index],
+      status: status != null ? MediaListStatus.values[status.index] : null,
       progress: progress,
       progressMax: progressMax,
       progressVolumes: progressVolumes,

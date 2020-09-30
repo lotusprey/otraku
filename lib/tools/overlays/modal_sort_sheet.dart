@@ -1,15 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/view_config.dart';
 
-class ModalSheet extends StatelessWidget {
+class ModalSortSheet extends StatelessWidget {
   final List<String> options;
   final int index;
   final bool desc;
   final Function(int) onTap;
 
-  ModalSheet({
+  ModalSortSheet({
     @required this.options,
     @required this.index,
     @required this.desc,
@@ -19,7 +20,7 @@ class ModalSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: options.length * 40 + 55.0,
+      height: options.length * 35 + 20.0,
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -28,10 +29,6 @@ class ModalSheet extends StatelessWidget {
       ),
       child: Column(
         children: <Widget>[
-          Text(
-            'Sort',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
           ..._options(context),
         ],
       ),
@@ -85,10 +82,12 @@ class _ModalOption extends StatelessWidget {
                     desc
                         ? LineAwesomeIcons.arrow_down
                         : LineAwesomeIcons.arrow_up,
+                    size: Design.ICON_SMALL,
                     color: Theme.of(context).accentColor,
                   )
                 : Icon(
                     LineAwesomeIcons.angle_down,
+                    size: Design.ICON_SMALL,
                     color: Theme.of(context).backgroundColor,
                   ),
           ],

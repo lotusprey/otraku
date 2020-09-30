@@ -11,6 +11,7 @@ class Design with ChangeNotifier {
   static const double FONT_BIG = 25;
   static const double FONT_MEDIUM = 20;
   static const double FONT_SMALL = 15;
+  static const double FONT_SMALLER = 13;
 
   static ThemeData _theme;
   static Swatch _swatch;
@@ -75,10 +76,6 @@ class Design with ChangeNotifier {
           fontSize: FONT_MEDIUM,
           color: Colors.white,
         ),
-        subtitle1: TextStyle(
-          fontSize: FONT_SMALL,
-          color: swatch.colors['faded'],
-        ),
         bodyText1: TextStyle(
           fontSize: FONT_SMALL,
           color: swatch.colors['contrast'],
@@ -87,6 +84,15 @@ class Design with ChangeNotifier {
         bodyText2: TextStyle(
           fontSize: FONT_SMALL,
           color: swatch.colors['accent'],
+          fontWeight: FontWeight.normal,
+        ),
+        subtitle1: TextStyle(
+          fontSize: FONT_SMALL,
+          color: swatch.colors['faded'],
+        ),
+        subtitle2: TextStyle(
+          fontSize: FONT_SMALLER,
+          color: swatch.colors['faded'],
           fontWeight: FontWeight.normal,
         ),
       ),

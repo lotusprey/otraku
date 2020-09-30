@@ -145,7 +145,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     enforceHeight: false,
                   ),
                   _box,
-                  if (constraints.maxWidth < 385) ...[
+                  if (constraints.maxWidth < 370) ...[
                     InputFieldStructure(
                       title: 'Start Date',
                       body: DateField(

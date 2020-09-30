@@ -4,7 +4,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/providers/auth.dart';
 import 'package:otraku/providers/explorable_media.dart';
-import 'package:otraku/tools/overlays/modal_sheet.dart';
+import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
 class ExploreSortSheet extends StatelessWidget {
@@ -43,7 +43,7 @@ class ExploreSortSheet extends StatelessWidget {
     }
     options.add('Title');
 
-    return ModalSheet(
+    return ModalSortSheet(
       options: options,
       index: currentIndex,
       desc: currentlyDesc,

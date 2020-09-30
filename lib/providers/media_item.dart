@@ -28,7 +28,6 @@ class MediaItem {
           }
           coverImage {
             extraLarge
-            large
           }
           bannerImage
           isFavourite

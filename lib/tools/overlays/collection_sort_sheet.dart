@@ -4,7 +4,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/tools/overlays/modal_sheet.dart';
+import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +28,7 @@ class CollectionSortSheet extends StatelessWidget {
       options.add(clarifyEnum(describeEnum(MediaListSort.values[i])));
     }
 
-    return ModalSheet(
+    return ModalSortSheet(
       options: options,
       index: currentIndex,
       desc: currentlyDesc,

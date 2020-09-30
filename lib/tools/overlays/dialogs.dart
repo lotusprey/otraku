@@ -14,34 +14,34 @@ class PopUpAnimation extends StatefulWidget {
 
 class _PopUpAnimationState extends State<PopUpAnimation>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
+  AnimationController _ctrl;
+  Animation<double> _anim;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _ctrl = AnimationController(
       duration: const Duration(
         milliseconds: 150,
       ),
       vsync: this,
       value: 0.1,
     );
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
 
-    _controller.forward();
+    _ctrl.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
-      scale: _animation,
+      scale: _anim,
       child: widget.child,
     );
   }
@@ -68,17 +68,17 @@ class TextDialog extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).backgroundColor,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(title, style: Theme.of(context).textTheme.headline1),
+            padding: ViewConfig.PADDING,
+            child: Text(title, style: Theme.of(context).textTheme.headline3),
           ),
           Flexible(
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(5)),
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).primaryColor,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: SingleChildScrollView(
@@ -88,28 +88,6 @@ class TextDialog extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ImageDialog extends StatelessWidget {
-  final Image image;
-
-  const ImageDialog(this.image);
-
-  @override
-  Widget build(BuildContext context) {
-    final borderRadius = ViewConfig.RADIUS;
-
-    return Dialog(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: borderRadius,
-      ),
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        child: image,
       ),
     );
   }
@@ -145,7 +123,7 @@ class ImageTextDialog extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: Text(
               text,
-              style: Theme.of(context).textTheme.headline2,
+              style: Theme.of(context).textTheme.headline3,
               textAlign: TextAlign.center,
             ),
           ),

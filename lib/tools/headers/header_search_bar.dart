@@ -64,7 +64,7 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
                   ),
           ),
           onChanged: (text) {
-            widget.provider.search = text.trim();
+            widget.provider.search = text;
             if (text.length > 0) {
               setState(() => _isEmpty = false);
             } else {

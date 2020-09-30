@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 
 class MediaHeader implements SliverPersistentHeaderDelegate {
   //Data
-  final MediaData mediaObj;
+  final MediaData media;
 
   //Output settings
   final double coverWidth;
@@ -22,7 +22,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
   double _maxExtent;
 
   MediaHeader({
-    @required this.mediaObj,
+    @required this.media,
     @required this.coverWidth,
     @required this.coverHeight,
     @required height,
@@ -53,9 +53,9 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (mediaObj.banner != null) mediaObj.banner,
+          if (media.banner != null) media.banner,
           Container(
-            padding: const EdgeInsets.only(left: 10, right: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -67,127 +67,57 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                 ],
               ),
             ),
-            child: Container(
-              height: coverHeight,
-              width: double.infinity,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    child: ClipRRect(
-                      borderRadius: ViewConfig.RADIUS,
-                      child: Container(
-                        height: coverHeight,
-                        width: coverWidth,
-                        child: mediaObj.cover,
-                      ),
-                    ),
-                    onTap: () => showDialog(
-                      context: context,
-                      builder: (ctx) => PopUpAnimation(
-                        ImageTextDialog(
-                          text: mediaObj.title,
-                          image: mediaObj.cover,
+            child: Center(
+              child: Container(
+                height: coverHeight,
+                width: double.infinity,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      child: ClipRRect(
+                        borderRadius: ViewConfig.RADIUS,
+                        child: Container(
+                          height: coverHeight,
+                          width: coverWidth,
+                          child: media.cover,
                         ),
                       ),
-                      barrierDismissible: true,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            mediaObj.title,
-                            style: Theme.of(context).textTheme.headline3,
-                            overflow: TextOverflow.fade,
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (ctx) => PopUpAnimation(
+                          ImageTextDialog(
+                            text: media.title,
+                            image: media.cover,
                           ),
                         ),
-                        if (mediaObj.nextEpisode != null)
+                        barrierDismissible: true,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
                           Flexible(
                             child: Text(
-                              'Ep ${mediaObj.nextEpisode} in ${mediaObj.timeUntilAiring}',
-                              style: Theme.of(context).textTheme.subtitle1,
+                              media.title,
+                              style: Theme.of(context).textTheme.headline3,
+                              overflow: TextOverflow.fade,
                             ),
                           ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (mediaObj.popularity != null)
-                              Flexible(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Opacity(
-                                      opacity: 1 - shrinkPercentage,
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black26,
-                                              blurRadius: 7,
-                                            ),
-                                          ],
-                                        ),
-                                        child: const Icon(
-                                          Icons.star,
-                                          color: Colors.yellow,
-                                          size: Design.ICON_SMALL,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      mediaObj.popularity.toString(),
-                                      style:
-                                          Theme.of(context).textTheme.subtitle1,
-                                    ),
-                                  ],
-                                ),
+                          if (media.nextEpisode != null)
+                            Flexible(
+                              child: Text(
+                                'Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                                style: Theme.of(context).textTheme.bodyText2,
                               ),
-                            const SizedBox(width: 10),
-                            if (mediaObj.favourites != null)
-                              Flexible(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Opacity(
-                                      opacity: 1 - shrinkPercentage,
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black26,
-                                              blurRadius: 7,
-                                            ),
-                                          ],
-                                        ),
-                                        child: const Icon(
-                                          Icons.favorite,
-                                          color: Colors.redAccent,
-                                          size: Design.ICON_SMALL,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      mediaObj.favourites.toString(),
-                                      style:
-                                          Theme.of(context).textTheme.subtitle1,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        ),
-                      ],
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -211,7 +141,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                _FavoriteButton(mediaObj),
+                _FavoriteButton(media, shrinkOffset),
               ],
             ),
           ),
@@ -219,7 +149,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
             left: buttonInset,
             right: buttonInset,
             bottom: 0,
-            child: _StatusButton(mediaObj),
+            child: _StatusButton(media),
           ),
         ],
       ),
@@ -244,8 +174,9 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 
 class _FavoriteButton extends StatefulWidget {
   final MediaData media;
+  final double shrinkOffset;
 
-  _FavoriteButton(this.media);
+  _FavoriteButton(this.media, this.shrinkOffset);
 
   @override
   __FavoriteButtonState createState() => __FavoriteButtonState();
@@ -254,19 +185,35 @@ class _FavoriteButton extends StatefulWidget {
 class __FavoriteButtonState extends State<_FavoriteButton> {
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        widget.media.isFavourite ? Icons.favorite : Icons.favorite_border,
-        color: Theme.of(context).dividerColor,
-      ),
-      onPressed: () => Provider.of<MediaItem>(context, listen: false)
-          .toggleFavourite(widget.media.mediaId, widget.media.type)
-          .then((ok) {
-        if (ok)
-          setState(
-            () => widget.media.isFavourite = !widget.media.isFavourite,
-          );
-      }),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.shrinkOffset < 30)
+          Text(
+            widget.media.favourites.toString(),
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        IconButton(
+          icon: Icon(
+            widget.media.isFavourite ? Icons.favorite : Icons.favorite_border,
+            color: Theme.of(context).dividerColor,
+          ),
+          onPressed: () => Provider.of<MediaItem>(context, listen: false)
+              .toggleFavourite(widget.media.mediaId, widget.media.type)
+              .then((ok) {
+            if (ok)
+              setState(
+                () {
+                  widget.media.isFavourite = !widget.media.isFavourite;
+                  if (widget.media.isFavourite)
+                    widget.media.favourites++;
+                  else
+                    widget.media.favourites--;
+                },
+              );
+          }),
+        ),
+      ],
     );
   }
 }

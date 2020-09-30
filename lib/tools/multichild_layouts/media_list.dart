@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/score_format_enum.dart';
+import 'package:otraku/models/media_entry.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
 class MediaList extends StatelessWidget {
@@ -46,57 +48,115 @@ class MediaList extends StatelessWidget {
       padding: ViewConfig.PADDING,
       sliver: SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
-          (ctx, index) {
-            final entry = entries[index];
+          (ctx, index) => _MediaListTile(entries[index], scoreFormat),
+          childCount: entries.length,
+        ),
+        itemExtent: 110,
+      ),
+    );
+  }
+}
 
-            return ListTile(
-              leading: Hero(
-                tag: entry.mediaId.toString(),
-                child: ClipRRect(
-                  borderRadius: ViewConfig.RADIUS,
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    color: Theme.of(context).primaryColor,
-                    child: Image.network(entry.cover, fit: BoxFit.cover),
-                  ),
-                ),
+class _MediaListTile extends StatelessWidget {
+  final MediaEntry media;
+  final String scoreFormat;
+
+  _MediaListTile(this.media, this.scoreFormat);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Row(
+        children: [
+          Hero(
+            tag: media.mediaId,
+            child: SizedBox(
+              height: 100,
+              width: 70,
+              child: ClipRRect(
+                child: Image.network(media.cover, fit: BoxFit.cover),
+                borderRadius: ViewConfig.RADIUS,
               ),
-              title: Text(
-                entry.title,
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              trailing: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  getWidgetFormScoreFormat(
-                    context,
-                    scoreFormat,
-                    entry.userData.score,
-                  ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    '${entry.userData.progress}/${entry.progressMaxString}',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    media.title,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 60,
+                        child: Center(
+                          child: Text(
+                            media.userData.format,
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 50,
+                        child: Center(
+                          child: Text(
+                            '${media.userData.progress}/${media.progressMaxString}',
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 50,
+                        child: Center(
+                          child: getWidgetFormScoreFormat(
+                            context,
+                            scoreFormat,
+                            media.userData.score,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 50,
+                        child: Center(
+                          child: media.userData.notes != null
+                              ? IconButton(
+                                  icon: const Icon(Icons.comment),
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (_) => PopUpAnimation(
+                                      TextDialog(
+                                        title: 'Comment',
+                                        text: media.userData.notes,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : null,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 2),
-              onTap: () => MediaIndexer.pushMedia(
-                context,
-                entry.mediaId,
-                tag: entry.mediaId.toString(),
-              ),
-              onLongPress: () => Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (_) => EditEntryPage(entry.mediaId, (_) {}),
-                ),
-              ),
-            );
-          },
-          childCount: entries.length,
+            ),
+          ),
+        ],
+      ),
+      onTap: () => MediaIndexer.pushMedia(
+        context,
+        media.mediaId,
+        tag: media.mediaId,
+      ),
+      onLongPress: () => Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (_) => EditEntryPage(media.mediaId, (_) {}),
         ),
-        itemExtent: 60,
       ),
     );
   }

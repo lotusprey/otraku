@@ -85,7 +85,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   List<MediaEntry> get entries {
     if (_lists == null || _lists.length - 1 < _listIndex) return null;
 
-    if (_search == null) {
+    if (_search == null || _search == '') {
       return _lists[_listIndex].entries;
     }
 
@@ -118,6 +118,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
   @override
   set search(String value) {
+    value = value.trim().toLowerCase();
     if (value != _search) {
       _search = value;
       notifyListeners();
@@ -187,7 +188,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
             .map((e) => MediaEntry(
                   mediaId: e['mediaId'],
                   title: e['media']['title']['userPreferred'],
-                  cover: e['media']['coverImage']['medium'],
+                  cover: e['media']['coverImage']['large'],
                   format: e['media']['format'],
                   progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
                   entryUserData: EntryUserData(
@@ -199,6 +200,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
                     score: e['score'].toDouble(),
                     startDate: mapToDateTime(e['startedAt']),
                     endDate: mapToDateTime(e['completedAt']),
+                    notes: e['notes'],
                   ),
                 ))
             .toList(),
@@ -320,7 +322,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         'progressVolumes': newData.progressVolumes,
         'repeat': newData.repeat,
         'score': newData.score,
-        'notes': newData.notes,
+        'notes': newData.notes.trim(),
         'startedAt': dateTimeToMap(newData.startDate),
         'completedAt': dateTimeToMap(newData.endDate),
         'private': newData.private,
@@ -546,6 +548,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
               mediaId
               status
               progress
+              notes
               score(format: \$scoreFormat)
               startedAt {
                 year
@@ -564,7 +567,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
                   userPreferred
                 }
                 coverImage {
-                  medium
+                  large
                 }
               }
             }
@@ -645,7 +648,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
           .map((e) => MediaEntry(
                 mediaId: e['mediaId'],
                 title: e['media']['title']['userPreferred'],
-                cover: e['media']['coverImage']['medium'],
+                cover: e['media']['coverImage']['large'],
                 format: e['media']['format'],
                 progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
                 entryUserData: EntryUserData(
@@ -657,6 +660,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
                   score: e['score'].toDouble(),
                   startDate: mapToDateTime(e['startedAt']),
                   endDate: mapToDateTime(e['completedAt']),
+                  notes: e['notes'],
                 ),
               ))
           .toList(),

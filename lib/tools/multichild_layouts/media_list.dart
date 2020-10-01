@@ -24,7 +24,12 @@ class MediaList extends StatelessWidget {
     final collection = isAnimeCollection
         ? Provider.of<AnimeCollection>(context)
         : Provider.of<MangaCollection>(context);
+
     if (collection.isEmpty) {
+      if (collection.isLoading) {
+        return const SliverFillRemaining();
+      }
+
       return SliverFillRemaining(
         child: Center(
           child: Column(
@@ -68,89 +73,96 @@ class _MediaListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Row(
-        children: [
-          Hero(
-            tag: media.mediaId,
-            child: SizedBox(
-              height: 100,
-              width: 70,
-              child: ClipRRect(
-                child: Image.network(media.cover, fit: BoxFit.cover),
-                borderRadius: ViewConfig.RADIUS,
+      child: Container(
+        color: Theme.of(context).backgroundColor,
+        child: Row(
+          children: [
+            Hero(
+              tag: media.mediaId,
+              child: SizedBox(
+                height: 100,
+                width: 70,
+                child: ClipRRect(
+                  child: Image.network(media.cover, fit: BoxFit.cover),
+                  borderRadius: ViewConfig.RADIUS,
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    media.title,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: 60,
-                        child: Center(
-                          child: Text(
-                            clarifyEnum(media.userData.format),
-                            style: Theme.of(context).textTheme.subtitle2,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        media.title,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(
+                          width: 60,
+                          height: 30,
+                          child: Center(
+                            child: Text(
+                              clarifyEnum(media.userData.format),
+                              style: Theme.of(context).textTheme.subtitle2,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 50,
-                        child: Center(
-                          child: Text(
-                            media.userData.status != MediaListStatus.COMPLETED
-                                ? '${media.userData.progress} / ${media.progressMaxString}'
-                                : media.userData.progress.toString(),
-                            style: Theme.of(context).textTheme.subtitle2,
+                        SizedBox(
+                          width: 50,
+                          child: Center(
+                            child: Text(
+                              media.userData.status != MediaListStatus.COMPLETED
+                                  ? '${media.userData.progress} / ${media.progressMaxString}'
+                                  : media.userData.progress.toString(),
+                              style: Theme.of(context).textTheme.subtitle2,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 50,
-                        child: Center(
-                          child: getWidgetFormScoreFormat(
-                            context,
-                            scoreFormat,
-                            media.userData.score,
+                        SizedBox(
+                          width: 50,
+                          child: Center(
+                            child: getWidgetFormScoreFormat(
+                              context,
+                              scoreFormat,
+                              media.userData.score,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 50,
-                        child: Center(
-                          child: media.userData.notes != null
-                              ? IconButton(
-                                  icon: const Icon(Icons.comment),
-                                  onPressed: () => showDialog(
-                                    context: context,
-                                    builder: (_) => PopUpAnimation(
-                                      TextDialog(
-                                        title: 'Comment',
-                                        text: media.userData.notes,
+                        SizedBox(
+                          width: 50,
+                          child: Center(
+                            child: media.userData.notes != null
+                                ? IconButton(
+                                    icon: const Icon(Icons.comment),
+                                    onPressed: () => showDialog(
+                                      context: context,
+                                      builder: (_) => PopUpAnimation(
+                                        TextDialog(
+                                          title: 'Comment',
+                                          text: media.userData.notes,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              : null,
+                                  )
+                                : null,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       onTap: () => MediaIndexer.pushMedia(
         context,

@@ -4,10 +4,7 @@ import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/profile_tab.dart';
-import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:provider/provider.dart';
 
 class TabManager extends StatefulWidget {
   static const int INBOX = 0;
@@ -107,12 +104,12 @@ class _TabManagerState extends State<TabManager> {
     _tabs = [
       InboxTab(),
       CollectionsTab(
-        collection: Provider.of<AnimeCollection>(context, listen: false),
+        isAnime: true,
         scrollCtrl: _scrollCtrl,
         key: UniqueKey(),
       ),
       CollectionsTab(
-        collection: Provider.of<MangaCollection>(context, listen: false),
+        isAnime: false,
         scrollCtrl: _scrollCtrl,
         key: UniqueKey(),
       ),

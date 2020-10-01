@@ -137,7 +137,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   ),
                   _box,
                   InputFieldStructure(
-                    title: constraints.maxWidth.toString(), //'Notes',
+                    title: 'Notes',
                     body: ExpandableField(
                       text: _newData.notes,
                       onChanged: (notes) => _newData.notes = notes,

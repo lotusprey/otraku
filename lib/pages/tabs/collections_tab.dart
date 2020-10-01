@@ -1,20 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/collection_provider.dart';
+import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/tools/headers/collection_control_header.dart';
+import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:provider/provider.dart';
 
 class CollectionsTab extends StatefulWidget {
   final ScrollController scrollCtrl;
-  final CollectionProvider collection;
+  final bool isAnime;
 
   CollectionsTab({
     @required this.scrollCtrl,
-    @required this.collection,
+    @required this.isAnime,
     @required key,
   }) : super(key: key);
 
@@ -25,33 +26,30 @@ class CollectionsTab extends StatefulWidget {
 class _CollectionsTabState extends State<CollectionsTab> {
   @override
   Widget build(BuildContext context) {
-    if (widget.collection.isEmpty) {
-      return CustomScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        controller: widget.scrollCtrl,
-        slivers: [
-          SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'No ${widget.collection.collectionName} Results',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                  IconButton(
-                    icon: const Icon(LineAwesomeIcons.retweet),
-                    onPressed: () => widget.collection
-                        .fetchMedia()
-                        .then((_) => setState(() {})),
-                  ),
-                ],
+    final collection = widget.isAnime
+        ? Provider.of<AnimeCollection>(context, listen: false)
+        : Provider.of<MangaCollection>(context, listen: false);
+
+    if (collection.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'No ${collection.collectionName}',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            SizedBox(
+              height: 60,
+              child: HeaderRefreshButton(
+                readable: collection,
+                listenable: widget.isAnime
+                    ? Provider.of<AnimeCollection>(context)
+                    : Provider.of<MangaCollection>(context),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
@@ -61,10 +59,10 @@ class _CollectionsTabState extends State<CollectionsTab> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        HeadlineHeader('${widget.collection.collectionName} List'),
-        CollectionControlHeader(widget.collection.isAnime, widget.scrollCtrl),
+        HeadlineHeader('${collection.collectionName} List'),
+        CollectionControlHeader(widget.isAnime, widget.scrollCtrl),
         MediaList(
-          widget.collection.isAnime,
+          widget.isAnime,
           Provider.of<Auth>(context, listen: false).scoreFormat,
         ),
       ],

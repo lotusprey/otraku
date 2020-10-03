@@ -6,7 +6,7 @@ import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:provider/provider.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/explorable.dart';
 
 class ExploreTab extends StatefulWidget {
   final ScrollController scrollCtrl;
@@ -25,8 +25,8 @@ class _ExploreTabState extends State<ExploreTab> {
   void _onScroll() async {
     if (widget.scrollCtrl.position.pixels ==
             widget.scrollCtrl.position.maxScrollExtent &&
-        !Provider.of<ExplorableMedia>(context, listen: false).isLoading) {
-      Provider.of<ExplorableMedia>(context, listen: false).addPage();
+        !Provider.of<Explorable>(context, listen: false).isLoading) {
+      Provider.of<Explorable>(context, listen: false).addPage();
     }
   }
 

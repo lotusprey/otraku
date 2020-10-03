@@ -6,7 +6,7 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/multichild_layouts/filter_grid.dart';
@@ -35,23 +35,20 @@ class FilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ExplorableMedia>(context, listen: false);
+    final provider = Provider.of<Explorable>(context, listen: false);
 
-    List<String> statusIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_STATUS_IN);
+    List<String> statusIn = provider.getFilterWithKey(Explorable.KEY_STATUS_IN);
     List<String> statusNotIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_STATUS_NOT_IN);
-    List<String> formatIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_FORMAT_IN);
+        provider.getFilterWithKey(Explorable.KEY_STATUS_NOT_IN);
+    List<String> formatIn = provider.getFilterWithKey(Explorable.KEY_FORMAT_IN);
     List<String> formatNotIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_FORMAT_NOT_IN);
-    List<String> genreIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_GENRE_IN);
+        provider.getFilterWithKey(Explorable.KEY_FORMAT_NOT_IN);
+    List<String> genreIn = provider.getFilterWithKey(Explorable.KEY_GENRE_IN);
     List<String> genreNotIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_GENRE_NOT_IN);
-    List<String> tagIn = provider.getFilterWithKey(ExplorableMedia.KEY_TAG_IN);
+        provider.getFilterWithKey(Explorable.KEY_GENRE_NOT_IN);
+    List<String> tagIn = provider.getFilterWithKey(Explorable.KEY_TAG_IN);
     List<String> tagNotIn =
-        provider.getFilterWithKey(ExplorableMedia.KEY_TAG_NOT_IN);
+        provider.getFilterWithKey(Explorable.KEY_TAG_NOT_IN);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -100,15 +97,15 @@ class FilterPage extends StatelessWidget {
             name: 'Format',
             grid: FilterGrid(
               options: provider.type == Browsable.anime
-                  ? AnimeFormatEnum.values
+                  ? AnimeFormat.values
                       .map((f) => clarifyEnum(describeEnum(f)))
                       .toList()
-                  : MangaFormatEnum.values
+                  : MangaFormat.values
                       .map((f) => clarifyEnum(describeEnum(f)))
                       .toList(),
-              values: provider.type == Browsable.manga
-                  ? AnimeFormatEnum.values.map((f) => describeEnum(f)).toList()
-                  : MangaFormatEnum.values.map((f) => describeEnum(f)).toList(),
+              values: provider.type == Browsable.anime
+                  ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
+                  : MangaFormat.values.map((f) => describeEnum(f)).toList(),
               optionIn: formatIn,
               optionNotIn: formatNotIn,
               rows: 1,

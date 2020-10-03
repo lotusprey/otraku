@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:provider/provider.dart';
@@ -25,8 +25,8 @@ class Otraku extends StatelessWidget {
         ProxyProvider<Auth, MediaItem>(
           update: (_, auth, __) => MediaItem(auth.headers),
         ),
-        ChangeNotifierProxyProvider<Auth, ExplorableMedia>(
-          create: (_) => ExplorableMedia(),
+        ChangeNotifierProxyProvider<Auth, Explorable>(
+          create: (_) => Explorable(),
           update: (_, auth, explorable) => explorable..init(auth.headers),
         ),
         ChangeNotifierProxyProvider<Auth, AnimeCollection>(

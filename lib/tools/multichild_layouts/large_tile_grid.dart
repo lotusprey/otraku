@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
@@ -13,9 +12,10 @@ class LargeTileGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<ExplorableMedia>(context).data;
+    final type = Provider.of<Explorable>(context).type;
+    final results = Provider.of<Explorable>(context).results;
 
-    if (data.length == 0) {
+    if (results.length == 0) {
       return SliverFillRemaining(
         child: Center(
           child: Text(
@@ -31,18 +31,18 @@ class LargeTileGrid extends StatelessWidget {
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, index) => MediaIndexer(
-            itemType: Browsable.anime,
-            id: data[index]['id'],
+            itemType: type,
+            id: results[index].id,
             child: _SimpleGridTile(
-              mediaId: data[index]['id'],
-              title: data[index]['title'],
-              imageUrl: data[index]['imageUrl'],
+              mediaId: results[index].id,
+              text: results[index].text,
+              imageUrl: results[index].imageUrl,
               width: tileConfig.tileWidth,
               height: tileConfig.tileHeight,
               imageHeight: tileConfig.tileImgHeight,
             ),
           ),
-          childCount: data.length,
+          childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: tileConfig.tileWidth,
@@ -57,7 +57,7 @@ class LargeTileGrid extends StatelessWidget {
 
 class _SimpleGridTile extends StatelessWidget {
   final int mediaId;
-  final String title;
+  final String text;
   final String imageUrl;
   final double width;
   final double height;
@@ -65,7 +65,7 @@ class _SimpleGridTile extends StatelessWidget {
 
   _SimpleGridTile({
     @required this.mediaId,
-    @required this.title,
+    @required this.text,
     @required this.imageUrl,
     @required this.width,
     @required this.height,
@@ -97,7 +97,7 @@ class _SimpleGridTile extends StatelessWidget {
           const SizedBox(height: 10),
           Flexible(
             child: Text(
-              title,
+              text,
               overflow: TextOverflow.fade,
               style: Theme.of(context).textTheme.subtitle1,
             ),

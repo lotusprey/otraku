@@ -4,7 +4,7 @@ import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
@@ -72,11 +72,11 @@ class _LoadingPageState extends State<LoadingPage> {
       ViewConfig.init(context);
 
       _fetchAnimeCollection = () =>
-          Provider.of<AnimeCollection>(context, listen: false).fetchMedia();
+          Provider.of<AnimeCollection>(context, listen: false).fetchData();
       _fetchMangaCollection = () =>
-          Provider.of<MangaCollection>(context, listen: false).fetchMedia();
-      _fetchExplorableMedia = () =>
-          Provider.of<ExplorableMedia>(context, listen: false).fetchInitial();
+          Provider.of<MangaCollection>(context, listen: false).fetchData();
+      _fetchExplorableMedia =
+          () => Provider.of<Explorable>(context, listen: false).fetchInitial();
 
       _didChangeDependencies = true;
     }

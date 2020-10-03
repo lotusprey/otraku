@@ -8,7 +8,8 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/design.dart';
+import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
@@ -47,6 +48,8 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
+    final provider = Provider.of<Explorable>(context, listen: false);
+
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -60,17 +63,14 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TitleSegmentedControl(
-                  value: Provider.of<ExplorableMedia>(context).type,
+                  value: Provider.of<Explorable>(context).type,
                   pairs: Map.fromIterable(
                     Browsable.values,
                     key: (v) => clarifyEnum(describeEnum(v)),
                     value: (v) => v,
                   ),
                   onNewValue: (value) {
-                    Provider.of<ExplorableMedia>(
-                      context,
-                      listen: false,
-                    ).type = value;
+                    provider.type = value;
                     _scrollCtrl.jumpTo(0);
                   },
                   onSameValue: (_) => _scrollCtrl.jumpTo(0),
@@ -81,21 +81,23 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    HeaderSearchBar(Provider.of<ExplorableMedia>(context)),
-                    _FilterButton(),
-                    IconButton(
-                      icon: const Icon(LineAwesomeIcons.sort),
-                      onPressed: () => showModalBottomSheet(
-                        context: context,
-                        builder: (ctx) => ExploreSortSheet(),
-                        backgroundColor: Colors.transparent,
-                        isScrollControlled: true,
+                    HeaderSearchBar(provider),
+                    if (provider.type == Browsable.anime ||
+                        provider.type == Browsable.manga) ...[
+                      _FilterButton(),
+                      IconButton(
+                        icon: const Icon(LineAwesomeIcons.sort),
+                        onPressed: () => showModalBottomSheet(
+                          context: context,
+                          builder: (ctx) => ExploreSortSheet(),
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                        ),
                       ),
-                    ),
+                    ],
                     HeaderRefreshButton(
-                      listenable: Provider.of<ExplorableMedia>(context),
-                      readable:
-                          Provider.of<ExplorableMedia>(context, listen: false),
+                      listenable: provider,
+                      readable: provider,
                     ),
                   ],
                 ),
@@ -126,12 +128,12 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
 class _FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider.of<ExplorableMedia>(context).areFiltersActive()
+    return Provider.of<Explorable>(context, listen: false).areFiltersActive()
         ? GestureDetector(
             onTap: () => Navigator.of(context).push(
               CupertinoPageRoute(builder: (_) => FilterPage()),
             ),
-            onLongPress: Provider.of<ExplorableMedia>(context, listen: false)
+            onLongPress: Provider.of<Explorable>(context, listen: false)
                 .clearGenreTagFilters,
             child: Container(
               width: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
@@ -142,6 +144,7 @@ class _FilterButton extends StatelessWidget {
               ),
               child: const Icon(
                 LineAwesomeIcons.filter,
+                size: Design.ICON_SMALL,
                 color: Colors.white,
               ),
             ),

@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/explorable_media.dart';
+import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
 class ExploreSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ExplorableMedia>(context, listen: false);
+    final provider = Provider.of<Explorable>(context, listen: false);
 
     final length = MediaSort.values.length;
     final prefTitle = Provider.of<Auth>(context, listen: false).titleFormat;

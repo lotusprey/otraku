@@ -1,4 +1,4 @@
-enum AnimeFormatEnum {
+enum AnimeFormat {
   TV,
   TV_SHORT,
   MOVIE,

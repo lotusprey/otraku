@@ -7,5 +7,5 @@ abstract class MediaGroupProvider {
 
   void clear();
 
-  Future<void> fetchMedia();
+  Future<void> fetchData();
 }

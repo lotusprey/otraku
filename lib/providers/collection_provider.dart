@@ -143,12 +143,12 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   void clear() {
     _listIndex = 0;
     _search = null;
-    fetchMedia();
+    fetchData();
   }
 
   //Fetches media list collection.
   @override
-  Future<void> fetchMedia() async {
+  Future<void> fetchData() async {
     _isLoading = true;
 
     if (_lists != null) notifyListeners();

@@ -4,11 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
+import 'package:otraku/models/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
 //Manages all browsable media, genres, tags and all the filters
-class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
+class Explorable with ChangeNotifier implements MediaGroupProvider {
   static const KEY_STATUS_IN = 'status_in';
   static const KEY_STATUS_NOT_IN = 'status_not_in';
   static const KEY_FORMAT_IN = 'format_in';
@@ -28,7 +29,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
 
   Browsable _type = Browsable.anime;
   bool _isLoading = false;
-  List<Map<String, dynamic>> _data;
+  List<BrowseResult> _results;
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
@@ -52,7 +53,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
 
     _filters.remove(KEY_FORMAT_IN);
     _filters.remove(KEY_FORMAT_NOT_IN);
-    fetchMedia();
+    fetchData();
   }
 
   @override
@@ -70,7 +71,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
       _filters['search'] = searchValue;
     }
 
-    fetchMedia();
+    fetchData();
   }
 
   String get sort {
@@ -79,7 +80,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
 
   set sort(String mediaSort) {
     _filters['sort'] = mediaSort;
-    fetchMedia();
+    fetchData();
   }
 
   @override
@@ -87,8 +88,8 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     return _isLoading;
   }
 
-  List<Map<String, dynamic>> get data {
-    return [..._data];
+  List<BrowseResult> get results {
+    return [..._results];
   }
 
   List<String> get genres {
@@ -163,7 +164,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     } else {
       _filters[KEY_TAG_NOT_IN] = newTagNotIn;
     }
-    fetchMedia();
+    fetchData();
   }
 
   bool areFiltersActive() {
@@ -186,33 +187,36 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     _filters.remove(KEY_GENRE_NOT_IN);
     _filters.remove(KEY_TAG_IN);
     _filters.remove(KEY_TAG_NOT_IN);
-    if (fetch) fetchMedia();
+    if (fetch) fetchData();
   }
 
   @override
   void clear() {
     clearGenreTagFilters(fetch: false);
     _filters.remove('search');
-    fetchMedia();
+    fetchData();
   }
 
   void addPage() {
     _filters['page']++;
-    fetchMedia(clean: false);
+    fetchData(clean: false);
   }
 
   //Fetches meida based on the set filters
   @override
-  Future<void> fetchMedia({bool clean = true}) async {
+  Future<void> fetchData({bool clean = true}) async {
     _isLoading = true;
-    if (_data != null) notifyListeners();
+    if (_results != null) notifyListeners();
 
     if (clean) {
       _filters[KEY_ID_NOT_IN] = [];
       _filters['page'] = 1;
     }
 
-    final query = '''
+    final currentType = _type;
+    String request;
+    if (currentType == Browsable.anime || currentType == Browsable.manga) {
+      final query = '''
       query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
           \$sort: [MediaSort], \$type: MediaType, \$search: String,
           ${_filters.containsKey(KEY_STATUS_IN) ? '\$status_in: [MediaStatus],' : ''}
@@ -242,24 +246,64 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
       }
     ''';
 
-    final request = json.encode({
-      'query': query,
-      'variables': _filters,
-    });
+      request = json.encode({
+        'query': query,
+        'variables': _filters,
+      });
+    } else if (currentType == Browsable.characters) {
+      final query = '''
+          query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
+            \$sort: [CharacterSort], \$search: String) {
+              Page(page: \$page, perPage: \$perPage) {
+                characters(id_not_in: \$id_not_in, sort: \$sort, search: \$search) {
+                  id
+                  name {
+                    full
+                  }
+                  image {
+                    large
+                  }
+                }
+              }
+            }
+        ''';
+
+      request = json.encode({
+        'query': query,
+        'variables': {
+          'page': _filters['page'],
+          'perPage': _filters['perPage'],
+          'id_not_in': _filters[KEY_ID_NOT_IN],
+          'search': _filters['search'],
+          'sort': 'FAVOURITES_DESC',
+        },
+      });
+    }
 
     final response = await post(_url, body: request, headers: _headers);
 
     final body = json.decode(response.body) as Map<String, dynamic>;
 
-    if (clean) _data = [];
+    if (clean) _results = [];
 
-    for (final m in body['data']['Page']['media'] as List<dynamic>) {
-      _data.add({
-        'title': m['title']['userPreferred'],
-        'imageUrl': m['coverImage']['large'],
-        'id': m['id'],
-      });
-      (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
+    if (currentType == Browsable.anime || _type == Browsable.manga) {
+      for (final m in body['data']['Page']['media'] as List<dynamic>) {
+        _results.add(BrowseResult(
+          id: m['id'],
+          text: m['title']['userPreferred'],
+          imageUrl: m['coverImage']['large'],
+        ));
+        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
+      }
+    } else if (currentType == Browsable.characters) {
+      for (final c in body['data']['Page']['characters'] as List<dynamic>) {
+        _results.add(BrowseResult(
+          id: c['id'],
+          text: c['name']['full'],
+          imageUrl: c['image']['large'],
+        ));
+        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(c['id']);
+      }
     }
 
     _isLoading = false;
@@ -306,14 +350,14 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
       _tags.item2.add(tag['description']);
     }
 
-    _data = [];
+    _results = [];
 
     for (final m in body['Page']['media'] as List<dynamic>) {
-      _data.add({
-        'title': m['title']['userPreferred'],
-        'imageUrl': m['coverImage']['large'],
-        'id': m['id'],
-      });
+      _results.add(BrowseResult(
+        id: m['id'],
+        text: m['title']['userPreferred'],
+        imageUrl: m['coverImage']['large'],
+      ));
       (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
     }
 

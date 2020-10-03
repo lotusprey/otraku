@@ -27,7 +27,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
     @required this.coverHeight,
     @required height,
   }) {
-    _minExtent = 48;
+    _minExtent = ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
     _maxExtent = height;
   }
 
@@ -37,14 +37,11 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final buttonShrinkLimit = _maxExtent * 4.0 / 5.0;
-    final shrinkPercentage = shrinkOffset < buttonShrinkLimit
-        ? shrinkOffset / buttonShrinkLimit
-        : 1.0;
-    final buttonInset = 10.0 + shrinkPercentage * 50.0;
-    final fadeColor = Theme.of(context)
-        .backgroundColor
-        .withAlpha((shrinkPercentage * 255).round());
+    final transition = _maxExtent * 4.0 / 5.0;
+    final shrinkPercentage =
+        shrinkOffset < transition ? shrinkOffset / transition : 1.0;
+    final buttonMinWidth = MediaQuery.of(context).size.width - coverWidth - 30;
+    final addition = MediaQuery.of(context).size.width - 100 - buttonMinWidth;
 
     return Container(
       width: double.infinity,
@@ -55,8 +52,11 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
         children: [
           if (media.banner != null) media.banner,
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            width: double.infinity,
+            padding: const EdgeInsets.only(
+              top: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
+              left: 10,
+              right: 10,
+            ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -67,57 +67,57 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                 ],
               ),
             ),
-            child: Center(
-              child: Container(
-                height: coverHeight,
-                width: double.infinity,
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      child: ClipRRect(
-                        borderRadius: ViewConfig.RADIUS,
-                        child: Container(
-                          height: coverHeight,
-                          width: coverWidth,
-                          child: media.cover,
-                        ),
-                      ),
-                      onTap: () => showDialog(
-                        context: context,
-                        builder: (ctx) => PopUpAnimation(
-                          ImageTextDialog(
-                            text: media.title,
-                            image: media.cover,
-                          ),
-                        ),
-                        barrierDismissible: true,
+            child: Container(
+              height: coverHeight,
+              width: double.infinity,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    child: ClipRRect(
+                      borderRadius: ViewConfig.RADIUS,
+                      child: Container(
+                        height: coverHeight,
+                        width: coverWidth,
+                        child: media.cover,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (ctx) => PopUpAnimation(
+                        ImageTextDialog(
+                          text: media.title,
+                          image: media.cover,
+                        ),
+                      ),
+                      barrierDismissible: true,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            media.title,
+                            style: Theme.of(context).textTheme.headline3,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
+                        if (media.nextEpisode != null)
                           Flexible(
                             child: Text(
-                              media.title,
-                              style: Theme.of(context).textTheme.headline3,
-                              overflow: TextOverflow.fade,
+                              'Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                           ),
-                          if (media.nextEpisode != null)
-                            Flexible(
-                              child: Text(
-                                'Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
-                            ),
-                        ],
-                      ),
+                        const Flexible(child: SizedBox(height: 40)),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -125,7 +125,9 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
             Container(
               height: double.infinity,
               width: double.infinity,
-              color: fadeColor,
+              color: Theme.of(context)
+                  .backgroundColor
+                  .withAlpha((shrinkPercentage * 255).round()),
             ),
           Positioned(
             top: 0,
@@ -141,15 +143,17 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                _FavoriteButton(media, shrinkOffset),
+                _FavoriteButton(media, shrinkPercentage),
               ],
             ),
           ),
           Positioned(
-            left: buttonInset,
-            right: buttonInset,
-            bottom: 0,
-            child: _StatusButton(media),
+            right: shrinkPercentage * 40 + 10,
+            bottom: shrinkPercentage * 7 + 10,
+            child: _StatusButton(
+              media,
+              buttonMinWidth + addition * shrinkPercentage,
+            ),
           ),
         ],
       ),
@@ -174,9 +178,9 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 
 class _FavoriteButton extends StatefulWidget {
   final MediaData media;
-  final double shrinkOffset;
+  final double shrinkPercentage;
 
-  _FavoriteButton(this.media, this.shrinkOffset);
+  _FavoriteButton(this.media, this.shrinkPercentage);
 
   @override
   __FavoriteButtonState createState() => __FavoriteButtonState();
@@ -188,7 +192,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.shrinkOffset < 30)
+        if (widget.shrinkPercentage < 0.5)
           Text(
             widget.media.favourites.toString(),
             style: Theme.of(context).textTheme.bodyText1,
@@ -220,8 +224,9 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
 class _StatusButton extends StatefulWidget {
   final MediaData media;
+  final double width;
 
-  _StatusButton(this.media);
+  _StatusButton(this.media, this.width);
 
   @override
   __StatusButtonState createState() => __StatusButtonState();
@@ -230,34 +235,38 @@ class _StatusButton extends StatefulWidget {
 class __StatusButtonState extends State<_StatusButton> {
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(
-        borderRadius: ViewConfig.RADIUS,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            widget.media.status == null ? Icons.add : Icons.edit,
-            size: Design.ICON_SMALL,
-            color: Colors.white,
-          ),
-          const SizedBox(width: 10),
-          Text(
-              widget.media.status == null
-                  ? 'Add'
-                  : listStatusSpecification(
-                      widget.media.status,
-                      widget.media.type == 'ANIME',
-                    ),
-              style: Theme.of(context).textTheme.button),
-        ],
-      ),
-      onPressed: () => Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (_) => EditEntryPage(
-            widget.media.mediaId,
-            (status) => setState(() => widget.media.status = status),
+    return SizedBox(
+      width: widget.width,
+      child: RaisedButton(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        shape: RoundedRectangleBorder(
+          borderRadius: ViewConfig.RADIUS,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              widget.media.status == null ? Icons.add : Icons.edit,
+              size: Design.ICON_SMALL,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 10),
+            Text(
+                widget.media.status == null
+                    ? 'Add'
+                    : listStatusSpecification(
+                        widget.media.status,
+                        widget.media.type == 'ANIME',
+                      ),
+                style: Theme.of(context).textTheme.button),
+          ],
+        ),
+        onPressed: () => Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => EditEntryPage(
+              widget.media.mediaId,
+              (status) => setState(() => widget.media.status = status),
+            ),
           ),
         ),
       ),

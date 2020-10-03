@@ -13,7 +13,6 @@ class MediaData {
   String title;
   int nextEpisode;
   String timeUntilAiring;
-  int popularity;
   int favourites;
   Image cover;
   Image banner;
@@ -33,7 +32,7 @@ class MediaData {
         .fetchItemData(id)
         .then((data) {
       //General
-      title = data['title']['english'] ?? data['title']['romaji'];
+      title = data['title']['userPreferred'];
       type = data['type'];
 
       if (data['nextAiringEpisode'] != null) {
@@ -45,10 +44,10 @@ class MediaData {
         int days = hours ~/ 24;
         hours %= 24;
 
-        timeUntilAiring = '${days}d ${hours}h ${minutes}m';
+        timeUntilAiring =
+            '${days != 0 ? '${days}d ' : ''}${hours != 0 ? '${hours}h ' : ''}${minutes != 0 ? '${minutes}m' : ''}';
       }
 
-      popularity = data['popularity'];
       favourites = data['favourites'];
 
       //User Data
@@ -128,6 +127,11 @@ class MediaData {
         info.add(Tuple('Mean Score', '${data["meanScore"]}%'));
       }
 
+      //Popularity
+      if (data['popularity'] != null) {
+        info.add(Tuple('Popularity', '${data['popularity']}'));
+      }
+
       //Start Date
       String startDate = mapToDateString(data['startDate']);
       if (startDate != null) {
@@ -148,6 +152,11 @@ class MediaData {
           season += ' ${data["seasonYear"]}';
         }
         info.add(Tuple('Season', season));
+      }
+
+      //Source
+      if (data['source'] != null) {
+        info.add(Tuple('Source', clarifyEnum(data['source'])));
       }
 
       //Studios
@@ -192,9 +201,29 @@ class MediaData {
         }
       }
 
+      //English Title
+      if (data['title']['english'] != null) {
+        info.add(Tuple('English', data['title']['english']));
+      }
+
+      //Romaji Title
+      if (data['title']['romaji'] != null) {
+        info.add(Tuple('Romaji', data['title']['romaji']));
+      }
+
+      //Native Title
+      if (data['title']['native'] != null) {
+        info.add(Tuple('Native', data['title']['native']));
+      }
+
+      //Hashtag
+      if (data['hashtag'] != null) {
+        info.add(Tuple('Hashtag', data['hashtag']));
+      }
+
       //Country of Origin
       if (data['countryOfOrigin'] != null) {
-        info.add(Tuple('Country of Origin', data['countryOfOrigin']));
+        info.add(Tuple('Origin', data['countryOfOrigin']));
       }
 
       setState();

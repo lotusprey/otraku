@@ -3,7 +3,8 @@ import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/pages/tab_manager.dart';
 
 class ViewConfig {
-  static const double CONTROL_HEADER_ICON_HEIGHT = 35;
+  static const CONTROL_HEADER_ICON_HEIGHT = 35.0;
+  static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = BorderRadius.all(Radius.circular(5));
 

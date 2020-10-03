@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/entry_data.dart';
 
 class MediaEntry {
   final int mediaId;
@@ -7,7 +7,7 @@ class MediaEntry {
   final String cover;
   final String format;
   final String progressMaxString;
-  EntryUserData _userData;
+  EntryData _userData;
 
   MediaEntry({
     @required this.mediaId,
@@ -20,11 +20,11 @@ class MediaEntry {
     _userData = entryUserData;
   }
 
-  EntryUserData get userData {
+  EntryData get userData {
     return _userData;
   }
 
-  set userData(EntryUserData data) {
+  set userData(EntryData data) {
     if (data != null) {
       _userData = data;
     }

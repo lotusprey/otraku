@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/entry_data.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
@@ -31,8 +31,8 @@ class _EditEntryPageState extends State<EditEntryPage> {
   static const _box = SizedBox(width: 10, height: 10);
 
   CollectionProvider _collection;
-  EntryUserData _oldData;
-  EntryUserData _newData;
+  EntryData _oldData;
+  EntryData _newData;
 
   Widget _row(Widget child1, Widget child2) {
     return Row(
@@ -239,8 +239,8 @@ class _EditEntryPageState extends State<EditEntryPage> {
 }
 
 class _UpdateButtons extends StatefulWidget {
-  final EntryUserData oldData;
-  final EntryUserData newData;
+  final EntryData oldData;
+  final EntryData newData;
   final CollectionProvider collection;
   final Function(MediaListStatus) update;
 
@@ -331,7 +331,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
 }
 
 class _StatusDropdown extends StatefulWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   _StatusDropdown(this.data);
 

@@ -16,8 +16,7 @@ class Auth with ChangeNotifier {
   static String _scoreFormat;
   static bool _splitCompletedAnime;
   static bool _splitCompletedManga;
-  static MediaListSort _animeSort;
-  static MediaListSort _mangaSort;
+  static MediaListSort _sort;
 
   AuthStatus get status {
     return _status;
@@ -43,8 +42,8 @@ class Auth with ChangeNotifier {
     return ofAnime ? _splitCompletedAnime : _splitCompletedManga;
   }
 
-  MediaListSort getSort({@required bool ofAnime}) {
-    return ofAnime ? _animeSort : _mangaSort;
+  MediaListSort get sort {
+    return _sort;
   }
 
   int get userId {
@@ -153,20 +152,12 @@ class Auth with ChangeNotifier {
 
     final preferrences = await SharedPreferences.getInstance();
 
-    int index = preferrences.getInt('animeSort');
+    int index = preferrences.getInt('sort');
     if (index != null) {
-      _animeSort = MediaListSort.values[index];
+      _sort = MediaListSort.values[index];
     } else {
-      _animeSort = MediaListSort.TITLE;
-      preferrences.setInt('animeSort', MediaListSort.TITLE.index);
-    }
-
-    index = preferrences.getInt('mangaSort');
-    if (index != null) {
-      _mangaSort = MediaListSort.values[index];
-    } else {
-      _mangaSort = MediaListSort.TITLE;
-      preferrences.setInt('mangaSort', MediaListSort.TITLE.index);
+      _sort = MediaListSort.TITLE;
+      preferrences.setInt('sort', MediaListSort.TITLE.index);
     }
 
     _status = AuthStatus.authorised;

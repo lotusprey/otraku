@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/entry_data.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 import 'package:provider/provider.dart';
 
 class ScorePicker extends StatelessWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   ScorePicker(this.data);
 
@@ -31,7 +31,7 @@ class ScorePicker extends StatelessWidget {
 }
 
 class _SmileyScorePicker extends StatefulWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   _SmileyScorePicker(this.data);
 
@@ -78,7 +78,7 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
 }
 
 class _StarScorePicker extends StatefulWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   _StarScorePicker(this.data);
 
@@ -127,7 +127,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
 }
 
 class _TenScorePicker extends StatefulWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   _TenScorePicker(this.data);
 
@@ -166,7 +166,7 @@ class _TenScorePickerState extends State<_TenScorePicker> {
 }
 
 class _TenDecimalScorePicker extends StatefulWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   _TenDecimalScorePicker(this.data);
 
@@ -205,7 +205,7 @@ class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
 }
 
 class _HundredScorePicker extends StatelessWidget {
-  final EntryUserData data;
+  final EntryData data;
 
   _HundredScorePicker(this.data);
 

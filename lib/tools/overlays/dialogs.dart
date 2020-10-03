@@ -120,8 +120,8 @@ class ImageTextDialog extends StatelessWidget {
             child: image,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+            child: SelectableText(
               text,
               style: Theme.of(context).textTheme.headline3,
               textAlign: TextAlign.center,

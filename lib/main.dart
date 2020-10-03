@@ -35,7 +35,7 @@ class Otraku extends StatelessWidget {
             ..init(
               headers: auth.headers,
               userId: auth.userId,
-              mediaListSort: auth.getSort(ofAnime: true),
+              mediaListSort: auth.sort,
               hasSplitCompletedList: auth.hasSplitCompletedList(ofAnime: true),
               scoreFormat: auth.scoreFormat,
             ),
@@ -46,7 +46,7 @@ class Otraku extends StatelessWidget {
             ..init(
               headers: auth.headers,
               userId: auth.userId,
-              mediaListSort: auth.getSort(ofAnime: false),
+              mediaListSort: auth.sort,
               hasSplitCompletedList: auth.hasSplitCompletedList(ofAnime: false),
               scoreFormat: auth.scoreFormat,
             ),

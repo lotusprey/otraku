@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/media_group_provider.dart';
@@ -25,6 +26,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     _headers = headers;
   }
 
+  Browsable _type = Browsable.anime;
   bool _isLoading = false;
   List<Map<String, dynamic>> _data;
   List<String> _genres;
@@ -37,6 +39,22 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     KEY_ID_NOT_IN: [],
   };
 
+  Browsable get type {
+    return _type;
+  }
+
+  set type(Browsable value) {
+    if (value == null) return;
+    _type = value;
+
+    if (value == Browsable.anime) _filters['type'] = 'ANIME';
+    if (value == Browsable.manga) _filters['type'] = 'MANGA';
+
+    _filters.remove(KEY_FORMAT_IN);
+    _filters.remove(KEY_FORMAT_NOT_IN);
+    fetchMedia();
+  }
+
   @override
   String get search {
     return _filters['search'];
@@ -47,7 +65,7 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
     if (searchValue == null || searchValue.trim() == '') {
       _filters.remove('search');
     } else {
-      searchValue = searchValue.trim().toLowerCase();
+      searchValue = searchValue.trim();
       if (searchValue == _filters['search']) return;
       _filters['search'] = searchValue;
     }
@@ -61,17 +79,6 @@ class ExplorableMedia with ChangeNotifier implements MediaGroupProvider {
 
   set sort(String mediaSort) {
     _filters['sort'] = mediaSort;
-    fetchMedia();
-  }
-
-  String get type {
-    return _filters['type'];
-  }
-
-  set type(String type) {
-    _filters['type'] = type;
-    _filters.remove(KEY_FORMAT_IN);
-    _filters.remove(KEY_FORMAT_NOT_IN);
     fetchMedia();
   }
 

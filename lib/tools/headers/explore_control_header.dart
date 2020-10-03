@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -58,7 +61,11 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 child: TitleSegmentedControl(
                   value: Provider.of<ExplorableMedia>(context).type,
-                  pairs: const {'Anime': 'ANIME', 'Manga': 'MANGA'},
+                  pairs: Map.fromIterable(
+                    Browsable.values,
+                    key: (v) => clarifyEnum(describeEnum(v)),
+                    value: (v) => v,
+                  ),
                   onNewValue: (value) {
                     Provider.of<ExplorableMedia>(
                       context,
@@ -127,7 +134,7 @@ class _FilterButton extends StatelessWidget {
             onLongPress: Provider.of<ExplorableMedia>(context, listen: false)
                 .clearGenreTagFilters,
             child: Container(
-              width: 48,
+              width: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
               height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
               decoration: BoxDecoration(
                 borderRadius: ViewConfig.RADIUS,

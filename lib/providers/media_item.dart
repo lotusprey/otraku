@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/entry_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
 import 'package:otraku/models/tuple.dart';
 
@@ -20,8 +20,10 @@ class MediaItem {
         Media(id: $id) {
           type
           title {
+            userPreferred
             english
             romaji
+            native
           }
           nextAiringEpisode {
             airingAt
@@ -49,6 +51,8 @@ class MediaItem {
           volumes
           season
           seasonYear
+          source
+          hashtag
           countryOfOrigin
           startDate {
             year
@@ -89,7 +93,7 @@ class MediaItem {
         as Map<String, dynamic>;
   }
 
-  Future<EntryUserData> fetchUserData(int id) async {
+  Future<EntryData> fetchUserData(int id) async {
     final query = r'''
       query ItemUserData($id: Int) {
         Media(id: $id) {
@@ -139,7 +143,7 @@ class MediaItem {
         (json.decode(result.body) as Map<String, dynamic>)['data']['Media'];
 
     if (body['mediaListEntry'] == null) {
-      return EntryUserData(
+      return EntryData(
         mediaId: id,
         type: body['type'],
         format: body['format'],
@@ -149,11 +153,6 @@ class MediaItem {
       );
     }
 
-    final status = stringToEnum(
-      body['mediaListEntry']['status'],
-      MediaListStatus.values,
-    );
-
     final List<Tuple<String, bool>> customLists = [];
     if (body['mediaListEntry']['customLists'] != null) {
       for (final key in body['mediaListEntry']['customLists'].keys) {
@@ -161,12 +160,15 @@ class MediaItem {
       }
     }
 
-    return EntryUserData(
+    return EntryData(
       mediaId: id,
       entryId: body['mediaListEntry']['id'],
       type: body['type'],
       format: body['format'],
-      status: status,
+      status: stringToEnum(
+        body['mediaListEntry']['status'],
+        MediaListStatus.values,
+      ),
       progress: body['mediaListEntry']['progress'] ?? 0,
       progressMax: body['episodes'] ?? body['chapters'],
       progressVolumes: body['mediaListEntry']['volumes'] ?? 0,

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/tuple.dart';
 
-class EntryUserData {
+class EntryData {
   final int mediaId;
   final int entryId;
   final String type;
@@ -21,7 +21,7 @@ class EntryUserData {
   bool hiddenFromStatusLists;
   List<Tuple<String, bool>> customLists;
 
-  EntryUserData({
+  EntryData({
     @required this.mediaId,
     @required this.type,
     @required this.format,
@@ -41,13 +41,13 @@ class EntryUserData {
     this.customLists = const [],
   });
 
-  EntryUserData clone() {
+  EntryData clone() {
     List<Tuple<String, bool>> customListsCopy = [];
     for (final tuple in customLists) {
       customListsCopy.add(Tuple(tuple.item1, tuple.item2));
     }
 
-    return EntryUserData(
+    return EntryData(
       mediaId: mediaId,
       type: type,
       format: format,

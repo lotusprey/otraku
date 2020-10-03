@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/anime_format_enum.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
@@ -98,14 +99,14 @@ class FilterPage extends StatelessWidget {
             context: context,
             name: 'Format',
             grid: FilterGrid(
-              options: provider.type == 'ANIME'
+              options: provider.type == Browsable.anime
                   ? AnimeFormatEnum.values
                       .map((f) => clarifyEnum(describeEnum(f)))
                       .toList()
                   : MangaFormatEnum.values
                       .map((f) => clarifyEnum(describeEnum(f)))
                       .toList(),
-              values: provider.type == 'ANIME'
+              values: provider.type == Browsable.manga
                   ? AnimeFormatEnum.values.map((f) => describeEnum(f)).toList()
                   : MangaFormatEnum.values.map((f) => describeEnum(f)).toList(),
               optionIn: formatIn,

@@ -7,7 +7,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_list.dart';
-import 'package:otraku/models/entry_user_data.dart';
+import 'package:otraku/models/entry_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
 import 'package:otraku/models/media_entry.dart';
 import 'package:otraku/models/tuple.dart';
@@ -18,8 +18,8 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   static Map<String, String> _headers;
   static int _userId;
   static String _scoreFormat;
+  static MediaListSort _mediaListSort;
   bool _hasSplitCompletedList;
-  MediaListSort _mediaListSort;
 
   final bool isAnime;
   final String typeUCase;
@@ -67,7 +67,6 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   }
 
   bool get isEmpty {
-    // return !_isLoading && (_lists == null || _lists.length == 0);
     return _lists == null || _lists.length == 0;
   }
 
@@ -119,7 +118,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
   @override
   set search(String value) {
-    if (value != null) value = value.trim().toLowerCase();
+    if (value != null) value = value.trim();
     if (value != _search) {
       _search = value;
       notifyListeners();
@@ -178,45 +177,11 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     }
 
     for (final list in organisedCollection) {
-      _lists.add(EntryList(
-        name: list['name'],
-        isCustomList: list['isCustomList'],
-        status: list['isCustomList'] ? null : list['status'],
-        splitCompletedListFormat: list['isSplitCompletedList']
-            ? list['entries'][0]['media']['format']
-            : null,
-        entries: (list['entries'] as List<dynamic>).map((e) {
-          final status = stringToEnum(
-            e['status'],
-            MediaListStatus.values,
-          );
-
-          return MediaEntry(
-            mediaId: e['mediaId'],
-            title: e['media']['title']['userPreferred'],
-            cover: e['media']['coverImage']['large'],
-            format: e['media']['format'],
-            progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
-            entryUserData: EntryUserData(
-              mediaId: e['mediaId'],
-              type: typeUCase,
-              format: e['media']['format'],
-              status: status,
-              progress: e['progress'],
-              progressMax: e['media'][mediaParts],
-              score: e['score'].toDouble(),
-              startDate: mapToDateTime(e['startedAt']),
-              endDate: mapToDateTime(e['completedAt']),
-              repeat: e['repeat'],
-              notes: e['notes'],
-            ),
-          );
-        }).toList(),
-      ));
+      _lists.add(_sortList(_createList(list)));
     }
 
     _isLoading = false;
-    sortCollection();
+    notifyListeners();
   }
 
   //Sorts all lists.
@@ -228,7 +193,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   }
 
   //Sorts a list at a given index.
-  void _sortList(EntryList list) {
+  EntryList _sortList(EntryList list) {
     switch (_mediaListSort) {
       case MediaListSort.TITLE:
         list.entries.sort((a, b) => a.title.compareTo(b.title));
@@ -281,11 +246,13 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       default:
         break;
     }
+
+    return list;
   }
 
   //Updates entry data and its corresponding lists.
   //Returns true if it was successful and false if it wasn't.
-  Future<bool> updateEntry(EntryUserData oldData, EntryUserData newData) async {
+  Future<bool> updateEntry(EntryData oldData, EntryData newData) async {
     _isLoading = true;
     final alreadyAdded = oldData.entryId != null;
 
@@ -341,7 +308,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
               userPreferred
             }
             coverImage {
-              medium
+              large
             }
           }
         }
@@ -358,7 +325,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         'progressVolumes': newData.progressVolumes,
         'repeat': newData.repeat,
         'score': newData.score,
-        'notes': newData.notes.trim(),
+        'notes': newData.notes,
         'startedAt': dateTimeToMap(newData.startDate),
         'completedAt': dateTimeToMap(newData.endDate),
         'private': newData.private,
@@ -446,10 +413,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       final entry = MediaEntry(
         mediaId: data['mediaId'],
         title: data['media']['title']['userPreferred'],
-        cover: data['media']['coverImage']['medium'],
+        cover: data['media']['coverImage']['large'],
         format: data['media']['format'],
         progressMaxString: (data['media'][mediaParts] ?? '?').toString(),
-        entryUserData: EntryUserData(
+        entryUserData: EntryData(
           mediaId: data['mediaId'],
           type: typeUCase,
           format: data['media']['format'],
@@ -484,7 +451,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
   //Removes the entry from all lists.
   //Returns true if it was successful and false if it wasn't.
-  Future<bool> removeEntry(EntryUserData data) async {
+  Future<bool> removeEntry(EntryData data) async {
     //Remove the entry
     final query = r'''
       mutation Remove($id: Int) {
@@ -514,7 +481,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   }
 
   //Remove an entry from all lists, where its data occured
-  void _removeEntryFromLists(EntryUserData data) {
+  void _removeEntryFromLists(EntryData data) {
     List<EntryList> entryHolders = [];
 
     for (final list in _lists) {
@@ -674,42 +641,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     if (listData == null) return;
 
-    final list = EntryList(
-      name: listData['name'],
-      isCustomList: listData['isCustomList'],
-      status: listData['isCustomList'] ? null : listData['status'],
-      splitCompletedListFormat: listData['isSplitCompletedList']
-          ? listData['entries'][0]['media']['format']
-          : null,
-      entries: (listData['entries'] as List<dynamic>).map((e) {
-        final status = stringToEnum(
-          e['status'],
-          MediaListStatus.values,
-        );
-
-        return MediaEntry(
-          mediaId: e['mediaId'],
-          title: e['media']['title']['userPreferred'],
-          cover: e['media']['coverImage']['large'],
-          format: e['media']['format'],
-          progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
-          entryUserData: EntryUserData(
-            mediaId: e['mediaId'],
-            type: typeUCase,
-            format: e['media']['format'],
-            status: status,
-            progress: e['progress'],
-            progressMax: e['media'][mediaParts],
-            score: e['score'].toDouble(),
-            startDate: mapToDateTime(e['startedAt']),
-            endDate: mapToDateTime(e['completedAt']),
-            notes: e['notes'],
-            repeat: e['repeat'],
-          ),
-        );
-      }).toList(),
-    );
-    _sortList(list);
+    final list = _sortList(_createList(listData));
 
     for (int i = 0; i < sectionOrder.length; i++) {
       if (sectionOrder[i] == list.name) {
@@ -727,5 +659,41 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         return;
       }
     }
+  }
+
+  EntryList _createList(Map<String, dynamic> list) {
+    return EntryList(
+      name: list['name'],
+      isCustomList: list['isCustomList'],
+      status: list['isCustomList'] ? null : list['status'],
+      splitCompletedListFormat: list['isSplitCompletedList']
+          ? list['entries'][0]['media']['format']
+          : null,
+      entries: (list['entries'] as List<dynamic>)
+          .map((e) => MediaEntry(
+                mediaId: e['mediaId'],
+                title: e['media']['title']['userPreferred'],
+                cover: e['media']['coverImage']['large'],
+                format: e['media']['format'],
+                progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
+                entryUserData: EntryData(
+                  mediaId: e['mediaId'],
+                  type: typeUCase,
+                  format: e['media']['format'],
+                  status: stringToEnum(
+                    e['status'],
+                    MediaListStatus.values,
+                  ),
+                  progress: e['progress'],
+                  progressMax: e['media'][mediaParts],
+                  score: e['score'].toDouble(),
+                  startDate: mapToDateTime(e['startedAt']),
+                  endDate: mapToDateTime(e['completedAt']),
+                  repeat: e['repeat'],
+                  notes: e['notes'],
+                ),
+              ))
+          .toList(),
+    );
   }
 }

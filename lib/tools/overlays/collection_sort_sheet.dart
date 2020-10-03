@@ -15,9 +15,7 @@ class CollectionSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final collection = isAnimeCollection
-        ? Provider.of<AnimeCollection>(context, listen: false)
-        : Provider.of<MangaCollection>(context, listen: false);
+    final collection = Provider.of<AnimeCollection>(context, listen: false);
 
     final mediaSort = collection.sort;
     final currentIndex = mediaSort.index ~/ 2;
@@ -36,20 +34,21 @@ class CollectionSortSheet extends StatelessWidget {
         if (index == currentIndex) {
           if (currentlyDesc) {
             collection.sort = MediaListSort.values[index * 2];
-            SharedPreferences.getInstance().then((prefs) =>
-                prefs.setInt('${collection.typeLCase}Sort', index * 2));
+            SharedPreferences.getInstance()
+                .then((prefs) => prefs.setInt('sort', index * 2));
           } else {
             collection.sort = MediaListSort.values[index * 2 + 1];
-            SharedPreferences.getInstance().then((prefs) =>
-                prefs.setInt('${collection.typeLCase}Sort', index * 2 + 1));
+            SharedPreferences.getInstance()
+                .then((prefs) => prefs.setInt('sort', index * 2 + 1));
           }
         } else {
           collection.sort = MediaListSort.values[index * 2];
-          SharedPreferences.getInstance().then((prefs) =>
-              prefs.setInt('${collection.typeLCase}Sort', index * 2));
+          SharedPreferences.getInstance()
+              .then((prefs) => prefs.setInt('sort', index * 2));
         }
 
-        collection.sortCollection();
+        Provider.of<AnimeCollection>(context, listen: false).sortCollection();
+        Provider.of<MangaCollection>(context, listen: false).sortCollection();
       },
     );
   }

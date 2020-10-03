@@ -9,7 +9,7 @@ String clarifyEnum(String str) {
   return str.splitMapJoin(
     '_',
     onMatch: (_) => ' ',
-    onNonMatch: (s) => s[0] + s.substring(1).toLowerCase(),
+    onNonMatch: (s) => s[0].toUpperCase() + s.substring(1).toLowerCase(),
   );
 }
 

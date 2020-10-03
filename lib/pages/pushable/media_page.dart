@@ -75,7 +75,7 @@ class _MediaPageState extends State<MediaPage> {
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                       overflow: TextOverflow.fade,
-                                      maxLines: 7,
+                                      maxLines: 5,
                                     ),
                                   ),
                                   onTap: () => showDialog(
@@ -123,7 +123,7 @@ class _MediaPageState extends State<MediaPage> {
     if (!_didChangeDependencies) {
       _coverWidth = MediaQuery.of(context).size.width * 0.35;
       _coverHeight = _coverWidth / 0.7;
-      _bannerHeight = _coverHeight + 110;
+      _bannerHeight = _coverHeight + ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
       _didChangeDependencies = true;
     }
   }

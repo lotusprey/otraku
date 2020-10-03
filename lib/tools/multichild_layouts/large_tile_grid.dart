@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/providers/explorable_media.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
@@ -30,7 +31,8 @@ class LargeTileGrid extends StatelessWidget {
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, index) => MediaIndexer(
-            mediaId: data[index]['id'],
+            itemType: Browsable.anime,
+            id: data[index]['id'],
             child: _SimpleGridTile(
               mediaId: data[index]['id'],
               title: data[index]['title'],

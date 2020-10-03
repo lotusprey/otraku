@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
@@ -36,7 +37,7 @@ class MediaList extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'No ${collection.collectionName} Results',
+                'No ${collection.collectionName}',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
               IconButton(
@@ -51,11 +52,26 @@ class MediaList extends StatelessWidget {
 
     final entries = collection.entries;
 
+    if (entries == null) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(
+            'No ${collection.collectionName} Results',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+      );
+    }
+
     return SliverPadding(
       padding: ViewConfig.PADDING,
       sliver: SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
-          (ctx, index) => _MediaListTile(entries[index], scoreFormat),
+          (ctx, index) => _MediaListTile(
+            entries[index],
+            isAnimeCollection,
+            scoreFormat,
+          ),
           childCount: entries.length,
         ),
         itemExtent: 110,
@@ -66,9 +82,10 @@ class MediaList extends StatelessWidget {
 
 class _MediaListTile extends StatelessWidget {
   final MediaEntry media;
+  final bool isAnime;
   final String scoreFormat;
 
-  _MediaListTile(this.media, this.scoreFormat);
+  _MediaListTile(this.media, this.isAnime, this.scoreFormat);
 
   @override
   Widget build(BuildContext context) {
@@ -165,9 +182,9 @@ class _MediaListTile extends StatelessWidget {
         ),
       ),
       onTap: () => MediaIndexer.pushMedia(
-        context,
-        media.mediaId,
-        tag: media.mediaId,
+        context: context,
+        type: isAnime ? Browsable.anime : Browsable.manga,
+        id: media.mediaId,
       ),
       onLongPress: () => Navigator.of(context).push(
         CupertinoPageRoute(

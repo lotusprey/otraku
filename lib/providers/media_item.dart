@@ -5,18 +5,19 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
+import 'package:otraku/models/media_data.dart';
 import 'package:otraku/models/tuple.dart';
 
 class MediaItem {
   static const String _url = 'https://graphql.anilist.co';
 
-  final Map<String, String> headers;
+  final Map<String, String> _headers;
 
-  MediaItem(this.headers);
+  MediaItem(this._headers);
 
-  Future<Map<String, dynamic>> fetchItemData(int id) async {
+  Future<MediaData> fetchItemData(int id) async {
     const query = r'''
-      query ItemData($id: Int) {
+      query Media($id: Int) {
         Media(id: $id) {
           type
           title {
@@ -87,10 +88,13 @@ class MediaItem {
       'variables': variables,
     });
 
-    final response = await post(_url, body: request, headers: headers);
+    final response = await post(_url, body: request, headers: _headers);
 
-    return (json.decode(response.body) as Map<String, dynamic>)['data']['Media']
-        as Map<String, dynamic>;
+    return MediaData(
+      id,
+      (json.decode(response.body) as Map<String, dynamic>)['data']['Media']
+          as Map<String, dynamic>,
+    );
   }
 
   Future<EntryData> fetchUserData(int id) async {
@@ -137,7 +141,7 @@ class MediaItem {
       'variables': variables,
     });
 
-    final result = await post(_url, body: request, headers: headers);
+    final result = await post(_url, body: request, headers: _headers);
 
     final Map<String, dynamic> body =
         (json.decode(result.body) as Map<String, dynamic>)['data']['Media'];
@@ -182,34 +186,5 @@ class MediaItem {
       hiddenFromStatusLists: body['mediaListEntry']['hiddenFromStatusLists'],
       customLists: customLists,
     );
-  }
-
-  Future<bool> toggleFavourite(int id, String entryType) async {
-    entryType = entryType.toLowerCase();
-
-    final query = '''
-      mutation(\$id: Int) {
-        ToggleFavourite(${entryType}Id: \$id) {
-          $entryType(page: 1, perPage: 1) {
-            pageInfo {
-              currentPage
-            }
-          }
-        }
-      }
-    ''';
-
-    final Map<String, Object> variables = {
-      'id': id,
-    };
-
-    final request = json.encode({
-      'query': query,
-      'variables': variables,
-    });
-
-    final result = await post(_url, body: request, headers: headers);
-    return !(json.decode(result.body) as Map<String, dynamic>)
-        .containsKey('errors');
   }
 }

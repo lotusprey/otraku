@@ -4,6 +4,7 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/design.dart';
+import 'package:otraku/providers/page_item.dart';
 import 'package:provider/provider.dart';
 import 'providers/media_item.dart';
 import 'providers/auth.dart';
@@ -24,6 +25,9 @@ class Otraku extends StatelessWidget {
         ),
         ProxyProvider<Auth, MediaItem>(
           update: (_, auth, __) => MediaItem(auth.headers),
+        ),
+        ProxyProvider<Auth, PageItem>(
+          update: (_, auth, __) => PageItem(auth.headers),
         ),
         ChangeNotifierProxyProvider<Auth, Explorable>(
           create: (_) => Explorable(),

@@ -1,17 +1,18 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/models/media_data.dart';
+import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/headers/media_header.dart';
+import 'package:otraku/tools/headers/media_page_header.dart';
 import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:provider/provider.dart';
 
 class MediaPage extends StatefulWidget {
   final int id;
   final Object tag;
 
-  MediaPage({@required this.id, this.tag});
+  MediaPage(this.id, this.tag);
 
   @override
   _MediaPageState createState() => _MediaPageState();
@@ -45,11 +46,11 @@ class _MediaPageState extends State<MediaPage> {
                       SliverPersistentHeader(
                         pinned: true,
                         floating: false,
-                        delegate: MediaHeader(
+                        delegate: MediaPageHeader(
                           media: _media,
                           coverWidth: _coverWidth,
                           coverHeight: _coverHeight,
-                          height: _bannerHeight,
+                          maxHeight: _bannerHeight,
                         ),
                       ),
                       if (_media.description != null)
@@ -110,11 +111,13 @@ class _MediaPageState extends State<MediaPage> {
   @override
   void initState() {
     super.initState();
-    _media = MediaData(
-      context: context,
-      id: widget.id,
-      setState: () => setState(() => _isLoading = false),
-    );
+    Provider.of<MediaItem>(context, listen: false)
+        .fetchItemData(widget.id)
+        .then((media) {
+      _media = media;
+      precacheImage(_media.cover.image, context)
+          .then((_) => setState(() => _isLoading = false));
+    });
   }
 
   @override

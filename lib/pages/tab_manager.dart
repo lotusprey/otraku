@@ -20,8 +20,6 @@ class TabManager extends StatefulWidget {
 }
 
 class _TabManagerState extends State<TabManager> {
-  static const _box = SizedBox();
-
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _tabItems;
   PageController _pageCtrl;
@@ -54,6 +52,7 @@ class _TabManagerState extends State<TabManager> {
           children: [
             BottomNavigationBar(
               type: BottomNavigationBarType.fixed,
+              selectedFontSize: 0,
               currentIndex: _pageIndex,
               items: _tabItems,
               onTap: (index) {
@@ -120,23 +119,23 @@ class _TabManagerState extends State<TabManager> {
     _tabItems = const [
       const BottomNavigationBarItem(
         icon: Icon(Icons.inbox),
-        title: _box,
+        label: '',
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.play_arrow),
-        title: _box,
+        label: '',
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.bookmark),
-        title: _box,
+        label: '',
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.explore),
-        title: _box,
+        label: '',
       ),
       const BottomNavigationBarItem(
         icon: Icon(Icons.person),
-        title: _box,
+        label: '',
       ),
     ];
   }

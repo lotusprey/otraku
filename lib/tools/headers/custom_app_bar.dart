@@ -11,7 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   CustomAppBar({
     this.leading = LineAwesomeIcons.arrow_left,
-    this.title,
+    this.title = '',
     this.trailing,
     this.wrapTrailing = true,
   });

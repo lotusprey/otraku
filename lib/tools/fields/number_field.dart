@@ -40,7 +40,7 @@ class _NumberFieldState extends State<NumberField> {
               controller: _controller,
               keyboardType: TextInputType.number,
               inputFormatters: [
-                WhitelistingTextInputFormatter.digitsOnly,
+                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
               ],
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyText1,

@@ -126,4 +126,11 @@ class _CollectionControlHeaderDelegate
 
   @override
   OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+
+  @override
+  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+      null;
+
+  @override
+  TickerProvider get vsync => null;
 }

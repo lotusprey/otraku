@@ -93,6 +93,23 @@ class TextDialog extends StatelessWidget {
   }
 }
 
+class ImageDialog extends StatelessWidget {
+  final Image image;
+
+  const ImageDialog(this.image);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      child: ClipRRect(
+        borderRadius: ViewConfig.RADIUS,
+        child: image,
+      ),
+    );
+  }
+}
+
 class ImageTextDialog extends StatelessWidget {
   final String text;
   final Image image;

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
 
@@ -27,7 +28,9 @@ class MediaIndexer extends StatelessWidget {
           switch (type) {
             case Browsable.anime:
             case Browsable.manga:
-              return MediaPage(id: id, tag: tag ?? id);
+              return MediaPage(id, tag ?? id);
+            case Browsable.characters:
+              return CharacterPage(id, tag ?? id);
             default:
               return null;
           }
@@ -44,11 +47,14 @@ class MediaIndexer extends StatelessWidget {
         type: itemType,
         id: id,
       ),
-      onLongPress: () => Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (_) => EditEntryPage(id, (_) {}),
-        ),
-      ),
+      onLongPress: () {
+        if (itemType == Browsable.anime || itemType == Browsable.manga)
+          Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) => EditEntryPage(id, (_) {}),
+            ),
+          );
+      },
       child: child,
     );
   }

@@ -6,30 +6,26 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/media_data.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/design.dart';
-import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
-class MediaHeader implements SliverPersistentHeaderDelegate {
+class MediaPageHeader implements SliverPersistentHeaderDelegate {
   //Data
   final MediaData media;
 
   //Output settings
   final double coverWidth;
   final double coverHeight;
-  double _minExtent;
-  double _maxExtent;
+  final double minHeight = ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+  final double maxHeight;
 
-  MediaHeader({
+  MediaPageHeader({
     @required this.media,
     @required this.coverWidth,
     @required this.coverHeight,
-    @required height,
-  }) {
-    _minExtent = ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
-    _maxExtent = height;
-  }
+    @required this.maxHeight,
+  });
 
   @override
   Widget build(
@@ -37,15 +33,16 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final transition = _maxExtent * 4.0 / 5.0;
+    final transition = maxHeight * 4.0 / 5.0;
     final shrinkPercentage =
         shrinkOffset < transition ? shrinkOffset / transition : 1.0;
+    // final shrinkPercentage = shrinkOffset / (maxHeight - minHeight);
     final buttonMinWidth = MediaQuery.of(context).size.width - coverWidth - 30;
     final addition = MediaQuery.of(context).size.width - 100 - buttonMinWidth;
 
     return Container(
       width: double.infinity,
-      height: _maxExtent,
+      height: maxHeight,
       color: Theme.of(context).primaryColor,
       child: Stack(
         fit: StackFit.expand,
@@ -143,7 +140,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                _FavoriteButton(media, shrinkPercentage),
+                FavoriteButton(media, shrinkPercentage),
               ],
             ),
           ),
@@ -161,10 +158,10 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => _maxExtent;
+  double get maxExtent => maxHeight;
 
   @override
-  double get minExtent => _minExtent;
+  double get minExtent => minHeight;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
@@ -174,52 +171,13 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
 
   @override
   OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
-}
-
-class _FavoriteButton extends StatefulWidget {
-  final MediaData media;
-  final double shrinkPercentage;
-
-  _FavoriteButton(this.media, this.shrinkPercentage);
 
   @override
-  __FavoriteButtonState createState() => __FavoriteButtonState();
-}
+  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+      null;
 
-class __FavoriteButtonState extends State<_FavoriteButton> {
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (widget.shrinkPercentage < 0.5)
-          Text(
-            widget.media.favourites.toString(),
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        IconButton(
-          icon: Icon(
-            widget.media.isFavourite ? Icons.favorite : Icons.favorite_border,
-            color: Theme.of(context).dividerColor,
-          ),
-          onPressed: () => Provider.of<MediaItem>(context, listen: false)
-              .toggleFavourite(widget.media.mediaId, widget.media.type)
-              .then((ok) {
-            if (ok)
-              setState(
-                () {
-                  widget.media.isFavourite = !widget.media.isFavourite;
-                  if (widget.media.isFavourite)
-                    widget.media.favourites++;
-                  else
-                    widget.media.favourites--;
-                },
-              );
-          }),
-        ),
-      ],
-    );
-  }
+  TickerProvider get vsync => null;
 }
 
 class _StatusButton extends StatefulWidget {
@@ -264,7 +222,7 @@ class __StatusButtonState extends State<_StatusButton> {
         onPressed: () => Navigator.of(context).push(
           CupertinoPageRoute(
             builder: (_) => EditEntryPage(
-              widget.media.mediaId,
+              widget.media.id,
               (status) => setState(() => widget.media.status = status),
             ),
           ),

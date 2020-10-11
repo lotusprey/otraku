@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/browse_result.dart';
+import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
@@ -235,12 +235,8 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
           genre_in: \$genre_in, genre_not_in: \$genre_not_in, 
           tag_in: \$tag_in, tag_not_in: \$tag_not_in) {
             id
-            title {
-              userPreferred
-            }
-            coverImage {
-              large
-            }
+            title {userPreferred}
+            coverImage {large}
           }
         }
       }
@@ -250,19 +246,19 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
         'query': query,
         'variables': _filters,
       });
-    } else if (currentType == Browsable.characters) {
+    } else if (currentType == Browsable.characters ||
+        currentType == Browsable.staff) {
+      final bool char = currentType == Browsable.characters;
       final query = '''
           query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
-            \$sort: [CharacterSort], \$search: String) {
+            \$sort: [${char ? 'CharacterSort' : 'StaffSort'}], 
+            \$search: String) {
               Page(page: \$page, perPage: \$perPage) {
-                characters(id_not_in: \$id_not_in, sort: \$sort, search: \$search) {
+                ${char ? 'characters' : 'staff'}(id_not_in: \$id_not_in, 
+                sort: \$sort, search: \$search) {
                   id
-                  name {
-                    full
-                  }
-                  image {
-                    large
-                  }
+                  name {full}
+                  image {large}
                 }
               }
             }
@@ -290,16 +286,19 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
       for (final m in body['data']['Page']['media'] as List<dynamic>) {
         _results.add(BrowseResult(
           id: m['id'],
-          text: m['title']['userPreferred'],
+          title: m['title']['userPreferred'],
           imageUrl: m['coverImage']['large'],
         ));
         (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
       }
-    } else if (currentType == Browsable.characters) {
-      for (final c in body['data']['Page']['characters'] as List<dynamic>) {
+    } else if (currentType == Browsable.characters ||
+        currentType == Browsable.staff) {
+      for (final c in body['data']['Page']
+              [currentType == Browsable.characters ? 'characters' : 'staff']
+          as List<dynamic>) {
         _results.add(BrowseResult(
           id: c['id'],
-          text: c['name']['full'],
+          title: c['name']['full'],
           imageUrl: c['image']['large'],
         ));
         (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(c['id']);
@@ -355,7 +354,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
     for (final m in body['Page']['media'] as List<dynamic>) {
       _results.add(BrowseResult(
         id: m['id'],
-        text: m['title']['userPreferred'],
+        title: m['title']['userPreferred'],
         imageUrl: m['coverImage']['large'],
       ));
       (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);

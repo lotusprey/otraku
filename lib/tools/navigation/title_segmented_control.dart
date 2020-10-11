@@ -5,12 +5,14 @@ class TitleSegmentedControl<T> extends StatefulWidget {
   final Map<String, T> pairs;
   final Function(T) onNewValue;
   final Function(T) onSameValue;
+  final bool small;
 
   TitleSegmentedControl({
     @required this.value,
     @required this.pairs,
     @required this.onNewValue,
     @required this.onSameValue,
+    this.small = false,
   });
 
   @override
@@ -20,12 +22,14 @@ class TitleSegmentedControl<T> extends StatefulWidget {
 class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   final SizedBox _sizedBox = const SizedBox(width: 10);
 
+  bool _didChangeDependencies = false;
+  TextStyle _selected;
+  TextStyle _unSelected;
+
   Widget _button(String title, T value) => GestureDetector(
         child: Text(
           title,
-          style: value != widget.value
-              ? Theme.of(context).textTheme.headline3
-              : Theme.of(context).textTheme.headline2,
+          style: value != widget.value ? _unSelected : _selected,
         ),
         onTap: () {
           if (value != widget.value) {
@@ -55,5 +59,19 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
         children: _buttons(),
       ),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_didChangeDependencies) {
+      _selected = widget.small
+          ? Theme.of(context).textTheme.bodyText2
+          : Theme.of(context).textTheme.headline2;
+      _unSelected = widget.small
+          ? Theme.of(context).textTheme.bodyText1
+          : Theme.of(context).textTheme.headline3;
+      _didChangeDependencies = true;
+    }
   }
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
-import 'package:otraku/models/media_entry.dart';
+import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
@@ -41,7 +42,7 @@ class MediaList extends StatelessWidget {
                 style: Theme.of(context).textTheme.subtitle1,
               ),
               IconButton(
-                icon: const Icon(LineAwesomeIcons.retweet),
+                icon: const Icon(FeatherIcons.refreshCw),
                 onPressed: collection.clear,
               ),
             ],
@@ -67,14 +68,14 @@ class MediaList extends StatelessWidget {
       padding: ViewConfig.PADDING,
       sliver: SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
-          (ctx, index) => _MediaListTile(
+          (_, index) => _MediaListTile(
             entries[index],
             isAnimeCollection,
             scoreFormat,
           ),
           childCount: entries.length,
         ),
-        itemExtent: 110,
+        itemExtent: 150,
       ),
     );
   }
@@ -97,11 +98,11 @@ class _MediaListTile extends StatelessWidget {
             Hero(
               tag: media.mediaId,
               child: SizedBox(
-                height: 100,
-                width: 70,
+                height: 140,
+                width: 95,
                 child: ClipRRect(
                   child: Image.network(media.cover, fit: BoxFit.cover),
-                  borderRadius: ViewConfig.RADIUS,
+                  borderRadius: ViewConfig.BORDER_RADIUS,
                 ),
               ),
             ),

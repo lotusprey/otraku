@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -43,11 +43,11 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
             filled: true,
             fillColor: Theme.of(context).primaryColor,
             border: OutlineInputBorder(
-              borderRadius: ViewConfig.RADIUS,
+              borderRadius: ViewConfig.BORDER_RADIUS,
               borderSide: BorderSide.none,
             ),
             prefixIcon: Icon(
-              LineAwesomeIcons.search,
+              FeatherIcons.search,
               size: Design.ICON_SMALL,
             ),
             suffixIcon: _isEmpty

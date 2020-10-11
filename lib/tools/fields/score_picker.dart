@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/entry_data.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/fields/number_field.dart';
@@ -63,7 +63,7 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -110,7 +110,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

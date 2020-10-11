@@ -59,7 +59,7 @@ class TextDialog extends StatelessWidget {
       elevation: 0,
       backgroundColor: Theme.of(context).backgroundColor,
       shape: RoundedRectangleBorder(
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -103,7 +103,7 @@ class ImageDialog extends StatelessWidget {
     return Dialog(
       elevation: 0,
       child: ClipRRect(
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
         child: image,
       ),
     );
@@ -121,7 +121,7 @@ class ImageTextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = ViewConfig.RADIUS;
+    final borderRadius = ViewConfig.BORDER_RADIUS;
 
     return Dialog(
       elevation: 0,

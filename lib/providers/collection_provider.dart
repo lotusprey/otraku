@@ -7,9 +7,9 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_list.dart';
-import 'package:otraku/models/entry_data.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
-import 'package:otraku/models/media_entry.dart';
+import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
@@ -406,8 +406,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     //Update all the updatable lists
     if (listsForUpdate.length > 0) {
       final List<Tuple<String, bool>> customLists = [];
-      for (final key in data['customLists'].keys) {
-        customLists.add(Tuple(key, data['customLists'][key]));
+      if (data['customLists'] != null) {
+        for (final key in data['customLists'].keys) {
+          customLists.add(Tuple(key, data['customLists'][key]));
+        }
       }
 
       final entry = MediaEntry(
@@ -541,7 +543,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
           \$scoreFormat: ScoreFormat) {
         MediaListCollection(
             userId: \$userId, ${status != null ? 'status: \$status,' : ''} 
-            type: $typeUCase, sort: SCORE_DESC) {
+            type: $typeUCase) {
           lists {
             name
             status

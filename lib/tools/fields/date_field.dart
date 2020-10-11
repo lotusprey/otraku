@@ -49,7 +49,7 @@ class _DateFieldState extends State<DateField> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: date != null
           ? Row(

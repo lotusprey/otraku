@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
@@ -86,7 +86,7 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         provider.type == Browsable.manga) ...[
                       _FilterButton(),
                       IconButton(
-                        icon: const Icon(LineAwesomeIcons.sort),
+                        icon: const Icon(Icons.sort),
                         onPressed: () => showModalBottomSheet(
                           context: context,
                           builder: (ctx) => ExploreSortSheet(),
@@ -146,18 +146,18 @@ class _FilterButton extends StatelessWidget {
               width: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
               height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
               decoration: BoxDecoration(
-                borderRadius: ViewConfig.RADIUS,
+                borderRadius: ViewConfig.BORDER_RADIUS,
                 color: Theme.of(context).accentColor,
               ),
               child: const Icon(
-                LineAwesomeIcons.filter,
+                FeatherIcons.filter,
                 size: Design.ICON_SMALL,
                 color: Colors.white,
               ),
             ),
           )
         : IconButton(
-            icon: const Icon(LineAwesomeIcons.filter),
+            icon: const Icon(FeatherIcons.filter),
             onPressed: () => Navigator.of(context).push(
               CupertinoPageRoute(builder: (_) => FilterPage()),
             ),

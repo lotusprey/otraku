@@ -10,7 +10,7 @@ class TitleSegmentedControl<T> extends StatefulWidget {
     @required this.value,
     @required this.pairs,
     @required this.onNewValue,
-    this.onSameValue,
+    @required this.onSameValue,
   });
 
   @override

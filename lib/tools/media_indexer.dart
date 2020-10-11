@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/pages/pushable/character_page.dart';
+import 'package:otraku/pages/pushable/person_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
 
@@ -30,7 +30,8 @@ class MediaIndexer extends StatelessWidget {
             case Browsable.manga:
               return MediaPage(id, tag ?? id);
             case Browsable.characters:
-              return CharacterPage(id, tag ?? id);
+            case Browsable.staff:
+              return PersonPage(id, tag ?? id, type);
             default:
               return null;
           }

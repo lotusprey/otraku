@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/entry_data.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/models/fuzzy_date.dart';
-import 'package:otraku/models/media_data.dart';
+import 'package:otraku/models/page_data/media_data.dart';
 import 'package:otraku/models/tuple.dart';
 
 class MediaItem {

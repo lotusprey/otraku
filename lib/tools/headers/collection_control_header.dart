@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
@@ -86,7 +85,7 @@ class _CollectionControlHeaderDelegate
                   children: [
                     HeaderSearchBar(_collection),
                     IconButton(
-                      icon: const Icon(LineAwesomeIcons.sort),
+                      icon: const Icon(Icons.sort),
                       onPressed: () => showModalBottomSheet(
                         context: context,
                         builder: (ctx) =>

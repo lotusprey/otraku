@@ -56,7 +56,7 @@ class _ThemeDropdownState extends State<_ThemeDropdown> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: DropdownButton(
         value: provider.swatch,

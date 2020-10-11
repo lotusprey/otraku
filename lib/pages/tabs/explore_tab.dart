@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/explore_control_header.dart';
 import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
-import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:provider/provider.dart';
 import 'package:otraku/providers/explorable.dart';
@@ -18,9 +16,6 @@ class ExploreTab extends StatefulWidget {
 }
 
 class _ExploreTabState extends State<ExploreTab> {
-  //Output settings
-  LargeTileConfiguration _tileConfig;
-
   //Listens for the user reaching the bottom of the page
   void _onScroll() async {
     if (widget.scrollCtrl.position.pixels ==
@@ -40,7 +35,7 @@ class _ExploreTabState extends State<ExploreTab> {
       slivers: [
         const HeadlineHeader('Explore'),
         ExploreControlHeader(widget.scrollCtrl),
-        LargeTileGrid(_tileConfig),
+        LargeTileGrid(),
       ],
     );
   }
@@ -49,7 +44,6 @@ class _ExploreTabState extends State<ExploreTab> {
   void initState() {
     super.initState();
     widget.scrollCtrl.addListener(_onScroll);
-    _tileConfig = ViewConfig.tileConfiguration;
   }
 
   @override

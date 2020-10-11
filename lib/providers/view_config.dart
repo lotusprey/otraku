@@ -6,7 +6,8 @@ class ViewConfig {
   static const CONTROL_HEADER_ICON_HEIGHT = 35.0;
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
-  static const RADIUS = BorderRadius.all(Radius.circular(5));
+  static const RADIUS = Radius.circular(5);
+  static const BORDER_RADIUS = BorderRadius.all(RADIUS);
 
   static LargeTileConfiguration _largeTileConfiguration;
   static int initialPage = TabManager.ANIME_LIST;

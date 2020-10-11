@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/view_config.dart';
 
@@ -25,7 +25,7 @@ class ModalSortSheet extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: Column(
         children: <Widget>[
@@ -79,14 +79,12 @@ class _ModalOption extends StatelessWidget {
             ),
             desc != null
                 ? Icon(
-                    desc
-                        ? LineAwesomeIcons.arrow_down
-                        : LineAwesomeIcons.arrow_up,
+                    desc ? FeatherIcons.arrowDown : FeatherIcons.arrowUp,
                     size: Design.ICON_SMALL,
                     color: Theme.of(context).accentColor,
                   )
                 : Icon(
-                    LineAwesomeIcons.angle_down,
+                    FeatherIcons.arrowDown,
                     size: Design.ICON_SMALL,
                     color: Theme.of(context).backgroundColor,
                   ),

@@ -27,7 +27,7 @@ class _NumberFieldState extends State<NumberField> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: Row(
         children: [

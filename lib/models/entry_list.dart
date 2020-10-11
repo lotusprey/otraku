@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/media_entry.dart';
+import 'package:otraku/models/sample_data/media_entry.dart';
 
 class EntryList {
   final String name;

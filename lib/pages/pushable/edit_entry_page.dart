@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/entry_data.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/collection_provider.dart';
 import 'package:otraku/providers/manga_collection.dart';
@@ -266,7 +267,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
             children: [
               AppBarIcon(
                 IconButton(
-                  icon: const Icon(Icons.delete),
+                  icon: const Icon(FeatherIcons.trash),
                   color: Theme.of(context).dividerColor,
                   onPressed: () => showDialog(
                     context: context,
@@ -311,7 +312,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
               ),
               AppBarIcon(
                 IconButton(
-                  icon: const Icon(Icons.save),
+                  icon: const Icon(FeatherIcons.save),
                   color: Theme.of(context).dividerColor,
                   onPressed: () {
                     setState(() => _isLoading = true);
@@ -346,7 +347,7 @@ class _StatusDropdownState extends State<_StatusDropdown> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: DropdownButton(
         value: widget.data.status,

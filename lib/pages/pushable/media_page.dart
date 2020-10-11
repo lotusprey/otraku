@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/models/media_data.dart';
+import 'package:otraku/models/page_data/media_data.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
@@ -69,7 +69,7 @@ class _MediaPageState extends State<MediaPage> {
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).primaryColor,
-                                      borderRadius: ViewConfig.RADIUS,
+                                      borderRadius: ViewConfig.BORDER_RADIUS,
                                     ),
                                     child: Text(
                                       _media.description,

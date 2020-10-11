@@ -53,7 +53,7 @@ class _AuthPageState extends State<AuthPage> {
         child: !_triedConnecting
             ? RaisedButton(
                 shape: RoundedRectangleBorder(
-                  borderRadius: ViewConfig.RADIUS,
+                  borderRadius: ViewConfig.BORDER_RADIUS,
                 ),
                 color: Theme.of(context).accentColor,
                 child: Text('Connect'),

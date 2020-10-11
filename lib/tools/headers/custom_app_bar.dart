@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double CUSTOM_APP_BAR_HEIGHT = 50;
@@ -10,7 +10,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool wrapTrailing;
 
   CustomAppBar({
-    this.leading = LineAwesomeIcons.arrow_left,
+    this.leading = FeatherIcons.arrowLeft,
     this.title = '',
     this.trailing,
     this.wrapTrailing = true,

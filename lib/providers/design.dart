@@ -128,7 +128,7 @@ extension SwatchExtension on Swatch {
   static const swatches = {
     Swatch.slate: {
       'background': Color(0xFF0F171E),
-      'primary': Color(0xFF2B3C4F),
+      'primary': Color(0xFF1D2835),
       'translucent': Color(0xBB0F171E),
       'accent': Color(0xFF45A0F2),
       'error': Color(0xFFD74761),

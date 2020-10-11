@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/media_data.dart';
+import 'package:otraku/models/page_data/media_data.dart';
 import 'package:otraku/providers/view_config.dart';
 
 class InfoGrid extends StatelessWidget {
@@ -58,7 +58,7 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
         color: Theme.of(context).primaryColor,
       ),
       child: Padding(

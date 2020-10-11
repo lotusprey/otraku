@@ -23,7 +23,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.RADIUS,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: TextField(
         scrollPhysics: const BouncingScrollPhysics(),

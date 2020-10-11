@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
@@ -118,23 +119,23 @@ class _TabManagerState extends State<TabManager> {
 
     _tabItems = const [
       const BottomNavigationBarItem(
-        icon: Icon(Icons.inbox),
+        icon: Icon(FeatherIcons.inbox),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(Icons.play_arrow),
+        icon: Icon(FeatherIcons.play),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(Icons.bookmark),
+        icon: Icon(FeatherIcons.bookmark),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(Icons.explore),
+        icon: Icon(FeatherIcons.compass),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(Icons.person),
+        icon: Icon(FeatherIcons.user),
         label: '',
       ),
     ];

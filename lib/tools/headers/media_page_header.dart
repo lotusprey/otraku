@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/media_data.dart';
+import 'package:otraku/models/page_data/media_data.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -36,14 +36,22 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
     final transition = maxHeight * 4.0 / 5.0;
     final shrinkPercentage =
         shrinkOffset < transition ? shrinkOffset / transition : 1.0;
-    // final shrinkPercentage = shrinkOffset / (maxHeight - minHeight);
     final buttonMinWidth = MediaQuery.of(context).size.width - coverWidth - 30;
     final addition = MediaQuery.of(context).size.width - 100 - buttonMinWidth;
 
     return Container(
       width: double.infinity,
       height: maxHeight,
-      color: Theme.of(context).primaryColor,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).backgroundColor,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -72,7 +80,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                 children: [
                   GestureDetector(
                     child: ClipRRect(
-                      borderRadius: ViewConfig.RADIUS,
+                      borderRadius: ViewConfig.BORDER_RADIUS,
                       child: Container(
                         height: coverHeight,
                         width: coverWidth,
@@ -198,7 +206,7 @@ class __StatusButtonState extends State<_StatusButton> {
       child: RaisedButton(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(
-          borderRadius: ViewConfig.RADIUS,
+          borderRadius: ViewConfig.BORDER_RADIUS,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

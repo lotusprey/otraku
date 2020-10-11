@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
-import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:provider/provider.dart';
 
 class LargeTileGrid extends StatelessWidget {
-  final LargeTileConfiguration tileConfig;
-
-  LargeTileGrid(this.tileConfig);
-
   @override
   Widget build(BuildContext context) {
     final type = Provider.of<Explorable>(context).type;
@@ -35,20 +30,17 @@ class LargeTileGrid extends StatelessWidget {
             id: results[index].id,
             child: _SimpleGridTile(
               mediaId: results[index].id,
-              text: results[index].text,
+              text: results[index].title,
               imageUrl: results[index].imageUrl,
-              width: tileConfig.tileWidth,
-              height: tileConfig.tileHeight,
-              imageHeight: tileConfig.tileImgHeight,
             ),
           ),
           childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: tileConfig.tileWidth,
+          maxCrossAxisExtent: ViewConfig.tileConfiguration.tileWidth,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: tileConfig.tileWHRatio,
+          childAspectRatio: ViewConfig.tileConfiguration.tileWHRatio,
         ),
       ),
     );
@@ -59,33 +51,27 @@ class _SimpleGridTile extends StatelessWidget {
   final int mediaId;
   final String text;
   final String imageUrl;
-  final double width;
-  final double height;
-  final double imageHeight;
 
   _SimpleGridTile({
     @required this.mediaId,
     @required this.text,
     @required this.imageUrl,
-    @required this.width,
-    @required this.height,
-    @required this.imageHeight,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
-      height: height,
+      width: ViewConfig.tileConfiguration.tileWidth,
+      height: ViewConfig.tileConfiguration.tileHeight,
       child: Column(
-        children: <Widget>[
+        children: [
           Hero(
             tag: mediaId,
             child: ClipRRect(
-              borderRadius: ViewConfig.RADIUS,
+              borderRadius: ViewConfig.BORDER_RADIUS,
               child: Container(
-                height: imageHeight,
-                width: width,
+                height: ViewConfig.tileConfiguration.tileImgHeight,
+                width: ViewConfig.tileConfiguration.tileWidth,
                 color: Theme.of(context).primaryColor,
                 child: Image.network(
                   imageUrl,

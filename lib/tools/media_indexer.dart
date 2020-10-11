@@ -4,22 +4,26 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/pages/pushable/person_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
+import 'package:otraku/pages/pushable/studio_page.dart';
 
 class MediaIndexer extends StatelessWidget {
   final Browsable itemType;
   final int id;
+  final String heroTitle;
   final Widget child;
 
   MediaIndexer({
     @required this.itemType,
     @required this.id,
     @required this.child,
+    this.heroTitle,
   });
 
   static void pushMedia({
     @required BuildContext context,
     @required Browsable type,
     @required int id,
+    String heroTitle,
     Object tag,
   }) {
     Navigator.of(context).push(
@@ -32,8 +36,10 @@ class MediaIndexer extends StatelessWidget {
             case Browsable.characters:
             case Browsable.staff:
               return PersonPage(id, tag ?? id, type);
+            // case Browsable.studios:
+            //   return StudioPage(id, tag ?? id, heroTitle);
             default:
-              return null;
+              return StudioPage(id, tag ?? id, heroTitle);
           }
         },
       ),
@@ -47,6 +53,7 @@ class MediaIndexer extends StatelessWidget {
         context: context,
         type: itemType,
         id: id,
+        heroTitle: heroTitle,
       ),
       onLongPress: () {
         if (itemType == Browsable.anime || itemType == Browsable.manga)

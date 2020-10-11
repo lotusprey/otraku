@@ -1,6 +1,6 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/view_config.dart';
 
@@ -79,12 +79,14 @@ class _ModalOption extends StatelessWidget {
             ),
             desc != null
                 ? Icon(
-                    desc ? FeatherIcons.arrowDown : FeatherIcons.arrowUp,
+                    desc
+                        ? FluentSystemIcons.ic_fluent_arrow_down_filled
+                        : FluentSystemIcons.ic_fluent_arrow_up_filled,
                     size: Design.ICON_SMALL,
                     color: Theme.of(context).accentColor,
                   )
                 : Icon(
-                    FeatherIcons.arrowDown,
+                    FluentSystemIcons.ic_fluent_arrow_down_filled,
                     size: Design.ICON_SMALL,
                     color: Theme.of(context).backgroundColor,
                   ),

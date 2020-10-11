@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -21,8 +22,7 @@ class CollectionControlHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
-      pinned: false,
-      floating: true,
+      pinned: true,
       delegate: _CollectionControlHeaderDelegate(context, isAnime, scrollCtrl),
     );
   }
@@ -85,7 +85,8 @@ class _CollectionControlHeaderDelegate
                   children: [
                     HeaderSearchBar(_collection),
                     IconButton(
-                      icon: const Icon(Icons.sort),
+                      icon: const Icon(
+                          FluentSystemIcons.ic_fluent_arrow_sort_filled),
                       onPressed: () => showModalBottomSheet(
                         context: context,
                         builder: (ctx) =>

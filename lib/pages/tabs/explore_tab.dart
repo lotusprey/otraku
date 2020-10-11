@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/tools/headers/explore_control_header.dart';
-import 'package:otraku/tools/multichild_layouts/large_tile_grid.dart';
+import 'package:otraku/tools/multichild_layouts/explore_grid.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:provider/provider.dart';
 import 'package:otraku/providers/explorable.dart';
@@ -35,7 +35,7 @@ class _ExploreTabState extends State<ExploreTab> {
       slivers: [
         const HeadlineHeader('Explore'),
         ExploreControlHeader(widget.scrollCtrl),
-        LargeTileGrid(),
+        ExploreGrid(),
       ],
     );
   }

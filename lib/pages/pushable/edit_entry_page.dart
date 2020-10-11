@@ -1,6 +1,6 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/providers/anime_collection.dart';
@@ -267,7 +267,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
             children: [
               AppBarIcon(
                 IconButton(
-                  icon: const Icon(FeatherIcons.trash),
+                  icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
                   color: Theme.of(context).dividerColor,
                   onPressed: () => showDialog(
                     context: context,
@@ -312,7 +312,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
               ),
               AppBarIcon(
                 IconButton(
-                  icon: const Icon(FeatherIcons.save),
+                  icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
                   color: Theme.of(context).dividerColor,
                   onPressed: () {
                     setState(() => _isLoading = true);

@@ -23,7 +23,7 @@ class MediaData extends PageItemData {
           isFavourite: data['isFavourite'],
           favourites: data['favourites'],
           browsable:
-              data['type'] == 'Anime' ? Browsable.anime : Browsable.manga,
+              data['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
         ) {
     //General
     title = data['title']['userPreferred'];

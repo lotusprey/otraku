@@ -1,10 +1,10 @@
 import 'dart:ui';
 
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
@@ -25,8 +25,7 @@ class ExploreControlHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
-      pinned: false,
-      floating: true,
+      pinned: true,
       delegate: _ExploreControlHeaderDelegate(context, scrollCtrl),
     );
   }
@@ -86,7 +85,9 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         provider.type == Browsable.manga) ...[
                       _FilterButton(),
                       IconButton(
-                        icon: const Icon(Icons.sort),
+                        icon: const Icon(
+                          FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                        ),
                         onPressed: () => showModalBottomSheet(
                           context: context,
                           builder: (ctx) => ExploreSortSheet(),
@@ -150,14 +151,14 @@ class _FilterButton extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               child: const Icon(
-                FeatherIcons.filter,
+                FluentSystemIcons.ic_fluent_filter_filled,
                 size: Design.ICON_SMALL,
                 color: Colors.white,
               ),
             ),
           )
         : IconButton(
-            icon: const Icon(FeatherIcons.filter),
+            icon: const Icon(FluentSystemIcons.ic_fluent_filter_filled),
             onPressed: () => Navigator.of(context).push(
               CupertinoPageRoute(builder: (_) => FilterPage()),
             ),

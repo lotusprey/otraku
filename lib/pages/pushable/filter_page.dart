@@ -1,7 +1,7 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/enums/anime_format_enum.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
@@ -57,7 +57,7 @@ class FilterPage extends StatelessWidget {
         trailing: [
           IconButton(
             icon: Icon(
-              FeatherIcons.check,
+              FluentSystemIcons.ic_fluent_checkmark_filled,
               color: Theme.of(context).accentColor,
             ),
             onPressed: () {

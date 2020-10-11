@@ -3,4 +3,5 @@ enum Browsable {
   manga,
   characters,
   staff,
+  studios,
 }

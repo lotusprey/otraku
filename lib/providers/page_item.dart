@@ -1,19 +1,16 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/models/page_data/person_data.dart';
+import 'package:otraku/models/page_data/studio_data.dart';
+import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/sample_data/connection.dart';
+import 'package:otraku/models/tuple.dart';
 
 class PageItem {
   static const String _url = 'https://graphql.anilist.co';
-  static const String ANIME = 'anime';
-  static const String MANGA = 'manga';
-  static const String CHARACTER = 'character';
-  static const String STAFF = 'staff';
-  static const String STUDIO = 'studio';
 
   final Map<String, String> _headers;
 
@@ -24,12 +21,22 @@ class PageItem {
       Browsable.anime: 'anime',
       Browsable.manga: 'manga',
       Browsable.characters: 'character',
+      Browsable.staff: 'staff',
+      Browsable.studios: 'studio',
+    }[browsable];
+
+    String pageName = const {
+      Browsable.anime: 'anime',
+      Browsable.manga: 'manga',
+      Browsable.characters: 'characters',
+      Browsable.staff: 'staff',
+      Browsable.studios: 'studios',
     }[browsable];
 
     final query = '''
       mutation(\$id: Int) {
         ToggleFavourite(${idName}Id: \$id) {
-          ${describeEnum(browsable)}(page: 1, perPage: 1) {
+          $pageName(page: 1, perPage: 1) {
             pageInfo {
               currentPage
             }
@@ -99,7 +106,7 @@ class PageItem {
           id: actor['id'],
           title: actor['name']['full'],
           imageUrl: actor['image']['large'],
-          text: actor['language'],
+          text: clarifyEnum(actor['language']),
           browsable: Browsable.staff,
         ));
       }
@@ -244,6 +251,61 @@ class PageItem {
       browsable: Browsable.staff,
       primaryConnections: primaryConnections,
       secondaryConnections: secondaryConnections,
+    );
+  }
+
+  Future<StudioData> fetchStudio(int id) async {
+    const query = r'''
+      query Studio($id: Int) {
+        Studio(id: $id) {
+          name
+          favourites 
+          isFavourite
+          media(sort: START_DATE_DESC) {
+            nodes {
+              id
+              title {userPreferred}
+              coverImage {large}
+              seasonYear
+            }
+          }
+        }
+      }
+    ''';
+
+    final request = json.encode({
+      'query': query,
+      'variables': {'id': id},
+    });
+
+    final result = await post(_url, body: request, headers: _headers);
+
+    final data = json.decode(result.body)['data']['Studio'];
+
+    List<int> years = [data['media']['nodes'][0]['seasonYear']];
+    List<List<BrowseResult>> media = [[]];
+
+    for (final m in data['media']['nodes']) {
+      if (years.last != m['seasonYear']) {
+        years.add(m['seasonYear']);
+        media.add([]);
+      }
+
+      media.last.add(BrowseResult(
+        id: m['id'],
+        title: m['title']['userPreferred'],
+        imageUrl: m['coverImage']['large'],
+        browsable: Browsable.anime,
+      ));
+    }
+
+    return StudioData(
+      name: data['name'],
+      media: Tuple(years, media),
+      id: id,
+      isFavourite: data['isFavourite'],
+      favourites: data['favourites'],
+      browsable: Browsable.studios,
     );
   }
 }

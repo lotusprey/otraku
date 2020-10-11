@@ -251,11 +251,10 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
       final bool char = currentType == Browsable.characters;
       final query = '''
           query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
-            \$sort: [${char ? 'CharacterSort' : 'StaffSort'}], 
             \$search: String) {
               Page(page: \$page, perPage: \$perPage) {
                 ${char ? 'characters' : 'staff'}(id_not_in: \$id_not_in, 
-                sort: \$sort, search: \$search) {
+                sort: FAVOURITES_DESC, search: \$search) {
                   id
                   name {full}
                   image {large}
@@ -271,7 +270,28 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
           'perPage': _filters['perPage'],
           'id_not_in': _filters[KEY_ID_NOT_IN],
           'search': _filters['search'],
-          'sort': 'FAVOURITES_DESC',
+        },
+      });
+    } else if (currentType == Browsable.studios) {
+      const query = r'''
+        query Browse($page: Int, $perPage: Int, $id_not_in: [Int], 
+          $search: String) {
+            Page(page: $page, perPage: $perPage) {
+              studios(id_not_in: $id_not_in, search: $search) {
+                id
+                name
+              }
+            }
+          }
+      ''';
+
+      request = json.encode({
+        'query': query,
+        'variables': {
+          'page': _filters['page'],
+          'perPage': _filters['perPage'],
+          'id_not_in': _filters[KEY_ID_NOT_IN],
+          'search': _filters['search'],
         },
       });
     }
@@ -288,20 +308,31 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
           id: m['id'],
           title: m['title']['userPreferred'],
           imageUrl: m['coverImage']['large'],
+          browsable: currentType,
         ));
         (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
       }
     } else if (currentType == Browsable.characters ||
         currentType == Browsable.staff) {
-      for (final c in body['data']['Page']
+      for (final p in body['data']['Page']
               [currentType == Browsable.characters ? 'characters' : 'staff']
           as List<dynamic>) {
         _results.add(BrowseResult(
-          id: c['id'],
-          title: c['name']['full'],
-          imageUrl: c['image']['large'],
+          id: p['id'],
+          title: p['name']['full'],
+          imageUrl: p['image']['large'],
+          browsable: currentType,
         ));
-        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(c['id']);
+        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(p['id']);
+      }
+    } else if (currentType == Browsable.studios) {
+      for (final s in body['data']['Page']['studios'] as List<dynamic>) {
+        _results.add(BrowseResult(
+          id: s['id'],
+          title: s['name'],
+          browsable: currentType,
+        ));
+        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(s['id']);
       }
     }
 
@@ -356,6 +387,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
         id: m['id'],
         title: m['title']['userPreferred'],
         imageUrl: m['coverImage']['large'],
+        browsable: Browsable.anime,
       ));
       (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
     }

@@ -1,7 +1,6 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
@@ -42,7 +41,8 @@ class MediaList extends StatelessWidget {
                 style: Theme.of(context).textTheme.subtitle1,
               ),
               IconButton(
-                icon: const Icon(FeatherIcons.refreshCw),
+                icon: const Icon(
+                    FluentSystemIcons.ic_fluent_arrow_repeat_all_filled),
                 onPressed: collection.clear,
               ),
             ],

@@ -1,6 +1,6 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -24,7 +24,8 @@ class HeaderRefreshButton extends StatelessWidget {
             child: Center(child: BlossomLoader(size: 30)),
           )
         : IconButton(
-            icon: const Icon(FeatherIcons.refreshCw),
+            icon:
+                const Icon(FluentSystemIcons.ic_fluent_arrow_repeat_all_filled),
             iconSize: Design.ICON_SMALL,
             onPressed: readable.clear,
           );

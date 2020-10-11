@@ -111,7 +111,8 @@ class _PersonPageState extends State<PersonPage> {
                         ),
                       ),
                       if (_person.primaryConnections.length > 0 &&
-                          _person.secondaryConnections.length > 0)
+                          _person.secondaryConnections.length > 0) ...[
+                        SliverToBoxAdapter(child: _space),
                         SliverToBoxAdapter(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -126,9 +127,11 @@ class _PersonPageState extends State<PersonPage> {
                               onNewValue: (value) =>
                                   setState(() => _showPrimaryResults = value),
                               onSameValue: (_) {},
+                              small: true,
                             ),
                           ),
                         ),
+                      ],
                       SliverPadding(
                         padding: ViewConfig.PADDING,
                         sliver: _MediaConnectionGrid(
@@ -319,7 +322,6 @@ class _Header implements SliverPersistentHeaderDelegate {
     final image = Image.network(person.imageUrl, fit: BoxFit.cover);
 
     return Container(
-      width: double.infinity,
       height: maxExtent,
       child: Stack(
         fit: StackFit.expand,

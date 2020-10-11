@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:provider/provider.dart';
 
-class LargeTileGrid extends StatelessWidget {
+class ExploreGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final type = Provider.of<Explorable>(context).type;
     final results = Provider.of<Explorable>(context).results;
 
     if (results.length == 0) {
@@ -21,12 +21,39 @@ class LargeTileGrid extends StatelessWidget {
       );
     }
 
+    if (results[0].browsable == Browsable.studios) {
+      return SliverPadding(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+        sliver: SliverFixedExtentList(
+          delegate: SliverChildBuilderDelegate(
+            (_, index) => MediaIndexer(
+              itemType: results[index].browsable,
+              id: results[index].id,
+              heroTitle: results[index].title,
+              child: Hero(
+                tag: results[index].id,
+                child: Container(
+                  child: Text(
+                    results[index].title,
+                    style: Theme.of(context).textTheme.headline3,
+                    maxLines: 2,
+                  ),
+                ),
+              ),
+            ),
+            childCount: results.length,
+          ),
+          itemExtent: 60,
+        ),
+      );
+    }
+
     return SliverPadding(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, index) => MediaIndexer(
-            itemType: type,
+            itemType: results[index].browsable,
             id: results[index].id,
             child: _SimpleGridTile(
               mediaId: results[index].id,

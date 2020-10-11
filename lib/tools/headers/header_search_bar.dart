@@ -1,7 +1,7 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -28,10 +28,6 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
         padding: const EdgeInsets.only(right: 10),
         child: TextField(
           focusNode: _focus,
-          //showCursor to false is a workaround for a bug
-          //that scrolls the page to the top, whenever the
-          //field is focused
-          showCursor: false,
           controller: _controller,
           cursorColor: Theme.of(context).accentColor,
           style: Theme.of(context).textTheme.bodyText1,
@@ -47,13 +43,13 @@ class _HeaderSearchBarState extends State<HeaderSearchBar> {
               borderSide: BorderSide.none,
             ),
             prefixIcon: Icon(
-              FeatherIcons.search,
+              FluentSystemIcons.ic_fluent_search_regular,
               size: Design.ICON_SMALL,
             ),
             suffixIcon: _isEmpty
                 ? null
                 : IconButton(
-                    icon: const Icon(CupertinoIcons.clear),
+                    icon: const Icon(Icons.close),
                     iconSize: Design.ICON_SMALLER,
                     onPressed: () {
                       widget.provider.search = null;

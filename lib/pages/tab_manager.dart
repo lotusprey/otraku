@@ -1,6 +1,6 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
@@ -119,23 +119,23 @@ class _TabManagerState extends State<TabManager> {
 
     _tabItems = const [
       const BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.inbox),
+        icon: Icon(FluentSystemIcons.ic_fluent_mail_inbox_filled),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.play),
+        icon: Icon(FluentSystemIcons.ic_fluent_movies_and_tv_filled),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.bookmark),
+        icon: Icon(FluentSystemIcons.ic_fluent_bookmark_filled),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.compass),
+        icon: Icon(Icons.explore),
         label: '',
       ),
       const BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.user),
+        icon: Icon(FluentSystemIcons.ic_fluent_person_filled),
         label: '',
       ),
     ];

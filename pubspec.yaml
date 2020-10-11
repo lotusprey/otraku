@@ -30,6 +30,7 @@ dependencies:
   flutter_secure_storage: ^3.3.3
   cupertino_icons: ^1.0.0
   line_awesome_flutter: ^1.0.1
+  flutter_feather_icons: ^1.0.3
 
 dev_dependencies:
   flutter_test:

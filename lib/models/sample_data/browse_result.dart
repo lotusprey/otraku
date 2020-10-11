@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 
 class BrowseResult {
   int id;
-  String text;
+  String title;
   String imageUrl;
 
   BrowseResult({
     @required this.id,
-    @required this.text,
+    @required this.title,
     @required this.imageUrl,
   });
 }

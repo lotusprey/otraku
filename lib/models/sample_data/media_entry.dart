@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/entry_data.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 
 class MediaEntry {
   final int mediaId;

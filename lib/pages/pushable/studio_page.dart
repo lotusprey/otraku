@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/models/page_data/studio_data.dart';
 import 'package:otraku/providers/page_item.dart';
+import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/favourite_button.dart';
+import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
 import 'package:provider/provider.dart';
 
 class StudioPage extends StatefulWidget {
   final int id;
-  final String name;
-  final Object tag;
+  final String textTag;
 
-  StudioPage(this.id, this.tag, this.name);
+  StudioPage(this.id, this.textTag);
 
   @override
   _StudioPageState createState() => _StudioPageState();
@@ -32,9 +35,46 @@ class _StudioPageState extends State<StudioPage> {
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
-                delegate: _Header(_studio, widget.tag, widget.name),
+                delegate: _StudioHeader(_studio, widget.textTag),
               ),
-              SliverToBoxAdapter(child: Container(height: 800)),
+              if (_studio != null)
+                for (int i = 0; i < _studio.media.item1.length; i++) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: ViewConfig.PADDING,
+                      child: Text(
+                        _studio.media.item1[i],
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
+                    padding: ViewConfig.PADDING,
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate(
+                        (_, index) => MediaIndexer(
+                          itemType: Browsable.anime,
+                          id: _studio.media.item2[i][index].id,
+                          tag: _studio.media.item2[i][index].imageUrl,
+                          child: CustomGridTile(
+                            mediaId: _studio.media.item2[i][index].id,
+                            text: _studio.media.item2[i][index].title,
+                            imageUrl: _studio.media.item2[i][index].imageUrl,
+                          ),
+                        ),
+                        childCount: _studio.media.item2[i].length,
+                      ),
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent:
+                            ViewConfig.tileConfiguration.tileWidth,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                        childAspectRatio:
+                            ViewConfig.tileConfiguration.tileWHRatio,
+                      ),
+                    ),
+                  ),
+                ],
             ],
           ),
         ),
@@ -46,17 +86,16 @@ class _StudioPageState extends State<StudioPage> {
   void initState() {
     super.initState();
     Provider.of<PageItem>(context, listen: false)
-        .fetchStudio(widget.id)
+        .fetchStudio(widget.id, null)
         .then((studio) => setState(() => _studio = studio));
   }
 }
 
-class _Header implements SliverPersistentHeaderDelegate {
+class _StudioHeader implements SliverPersistentHeaderDelegate {
   final StudioData studio;
-  final Object tag;
-  final String title;
+  final String textTag;
 
-  _Header(this.studio, this.tag, this.title);
+  _StudioHeader(this.studio, this.textTag);
 
   @override
   Widget build(
@@ -69,6 +108,7 @@ class _Header implements SliverPersistentHeaderDelegate {
     return Container(
       height: maxExtent,
       decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).backgroundColor,
@@ -85,9 +125,9 @@ class _Header implements SliverPersistentHeaderDelegate {
             child: Align(
               alignment: Alignment.center,
               child: Hero(
-                tag: tag,
+                tag: textTag,
                 child: Text(
-                  title,
+                  textTag,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headline1,
                 ),
@@ -106,9 +146,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                   color: Theme.of(context).dividerColor,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                studio != null
-                    ? FavoriteButton(studio, shrinkPercentage)
-                    : const SizedBox(),
+                if (studio != null) FavoriteButton(studio, shrinkPercentage)
               ],
             ),
           ),

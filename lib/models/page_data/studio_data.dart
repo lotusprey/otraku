@@ -5,7 +5,8 @@ import 'package:otraku/models/tuple.dart';
 
 class StudioData extends PageItemData {
   final String name;
-  final Tuple<List<int>, List<List<BrowseResult>>> media;
+  final Tuple<List<String>, List<List<BrowseResult>>> media;
+  int _nextPage;
 
   StudioData({
     @required this.name,
@@ -19,5 +20,23 @@ class StudioData extends PageItemData {
           isFavourite: isFavourite,
           favourites: favourites,
           browsable: browsable,
-        );
+        ) {
+    _nextPage = 1;
+  }
+
+  int get nextPage {
+    return _nextPage;
+  }
+
+  void appendMedia(List<String> years, List<List<BrowseResult>> anime) {
+    if (media.item1.last == years.first) {
+      years.removeAt(0);
+      media.item2.last.addAll(anime.removeAt(0));
+    }
+
+    media.item1.addAll(years);
+    media.item2.addAll(anime);
+
+    _nextPage++;
+  }
 }

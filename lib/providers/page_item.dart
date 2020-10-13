@@ -11,6 +11,13 @@ import 'package:otraku/models/tuple.dart';
 
 class PageItem {
   static const String _url = 'https://graphql.anilist.co';
+  static const String _personMain = r'''
+    name{full native alternative}
+    image{large}
+    favourites 
+    isFavourite
+    description(asHtml: true)
+  ''';
 
   final Map<String, String> _headers;
 
@@ -55,33 +62,39 @@ class PageItem {
         .containsKey('errors');
   }
 
-  Future<PersonData> fetchCharacter(int id) async {
-    const query = r'''
-      query Character($id: Int) {
-        Character(id: $id) {
-          name{full native alternative}
-          image{large}
-          favourites 
-          isFavourite
-          description(asHtml: true)
-          media
-          {
-            edges
-            {
-              characterRole 
-              voiceActors
-              {
-                id 
-                name{full}
-                image{large}
-                language
-              }
-              node
-              {
-                id
-                title{userPreferred}
-                coverImage{large}
-              }
+  Future<PersonData> fetchCharacter(int id, PersonData character) async {
+    final query = '''
+      query Character(\$id: Int, \$page: Int) {
+        Character(id: \$id) {
+          ${character == null ? _personMain : ''}
+          anime: media(page: \$page, type: ANIME) {
+            ...media
+          }
+          manga: media(page: \$page, type: MANGA) {
+            ...media
+          }
+        }
+      }
+      fragment media on MediaConnection {
+        edges {
+          characterRole
+          voiceActors {
+            id
+            name {
+              full
+            }
+            image {
+              large
+            }
+            language
+          }
+          node {
+            id
+            title {
+              userPreferred
+            }
+            coverImage {
+              large
             }
           }
         }
@@ -90,79 +103,80 @@ class PageItem {
 
     final request = json.encode({
       'query': query,
-      'variables': {'id': id},
+      'variables': {
+        'id': id,
+        'page': character == null ? 1 : character.nextPage,
+      },
     });
 
     final result = await post(_url, body: request, headers: _headers);
 
     final data = json.decode(result.body)['data']['Character'];
 
+    if (character == null) {
+      character = PersonData(
+        id: id,
+        fullName: data['name']['full'],
+        altNames: (data['name']['alternative'] as List<dynamic>)
+            .map((a) => a.toString())
+            .toList()
+              ..insert(0, data['name']['native']),
+        imageUrl: data['image']['large'],
+        description:
+            data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
+        isFavourite: data['isFavourite'],
+        favourites: data['favourites'],
+        browsable: Browsable.characters,
+        primaryConnections: [],
+        secondaryConnections: [],
+      );
+    }
+
     List<Connection> primaryConnections = [];
     List<Connection> secondaryConnections = [];
-    for (final connection in data['media']['edges']) {
+
+    for (final connection in data['anime']['edges']) {
       List<Connection> voiceActors = [];
-      for (final actor in connection['voiceActors']) {
+      for (final va in connection['voiceActors']) {
         voiceActors.add(Connection(
-          id: actor['id'],
-          title: actor['name']['full'],
-          imageUrl: actor['image']['large'],
-          text: clarifyEnum(actor['language']),
+          id: va['id'],
+          title: va['name']['full'],
+          imageUrl: va['image']['large'],
+          text: clarifyEnum(va['language']),
           browsable: Browsable.staff,
         ));
       }
 
-      if (voiceActors.length == 0) {
-        secondaryConnections.add(Connection(
-          text: clarifyEnum(connection['characterRole']),
-          id: connection['node']['id'],
-          title: connection['node']['title']['userPreferred'],
-          imageUrl: connection['node']['coverImage']['large'],
-          browsable: connection['node']['type'] == 'ANIME'
-              ? Browsable.anime
-              : Browsable.manga,
-        ));
-      } else {
-        primaryConnections.add(Connection(
-          text: clarifyEnum(connection['characterRole']),
-          others: voiceActors,
-          id: connection['node']['id'],
-          title: connection['node']['title']['userPreferred'],
-          imageUrl: connection['node']['coverImage']['large'],
-          browsable: connection['node']['type'] == 'ANIME'
-              ? Browsable.anime
-              : Browsable.manga,
-        ));
-      }
+      primaryConnections.add(Connection(
+        others: voiceActors,
+        id: connection['node']['id'],
+        title: connection['node']['title']['userPreferred'],
+        text: clarifyEnum(connection['characterRole']),
+        imageUrl: connection['node']['coverImage']['large'],
+        browsable: Browsable.anime,
+      ));
     }
 
-    return PersonData(
-      id: id,
-      fullName: data['name']['full'],
-      altNames: (data['name']['alternative'] as List<dynamic>)
-          .map((a) => a.toString())
-          .toList()
-            ..insert(0, data['name']['native'].toString()),
-      imageUrl: data['image']['large'],
-      description:
-          data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-      browsable: Browsable.characters,
-      primaryConnections: primaryConnections,
-      secondaryConnections: secondaryConnections,
-    );
+    for (final connection in data['manga']['edges']) {
+      secondaryConnections.add(Connection(
+        id: connection['node']['id'],
+        title: connection['node']['title']['userPreferred'],
+        text: clarifyEnum(connection['characterRole']),
+        imageUrl: connection['node']['coverImage']['large'],
+        browsable: Browsable.manga,
+      ));
+    }
+
+    return character
+      ..appendConnections(primaryConnections, secondaryConnections);
   }
 
-  Future<PersonData> fetchStaff(int id) async {
-    const query = r'''
-      query Staff($id: Int) {
-        Staff(id: $id) {
-          name{full native alternative}
-          image{large}
-          favourites
-          isFavourite
-          description(asHtml: true)
-          characters {
+  Future<PersonData> fetchStaff(int id, PersonData staff) async {
+    final query = '''
+      query Staff(\$id: Int, \$page: Int) {
+        Staff(id: \$id) {
+          ${staff == null ? _personMain : ''}
+          characters(page: \$page) {
             edges {
               role
               media {
@@ -178,7 +192,7 @@ class PageItem {
               }
             }
           }
-          staffMedia {
+          staffMedia(page: \$page) {
             edges {
               staffRole
               node {
@@ -195,14 +209,38 @@ class PageItem {
 
     final request = json.encode({
       'query': query,
-      'variables': {'id': id},
+      'variables': {'id': id, 'page': staff == null ? 1 : staff.nextPage},
     });
 
     final result = await post(_url, body: request, headers: _headers);
 
     final data = json.decode(result.body)['data']['Staff'];
 
+    if (staff == null) {
+      List<String> altNames = (data['name']['alternative'] as List<dynamic>)
+          .map((a) => a.toString())
+          .toList();
+      if (data['name']['native'] != null)
+        altNames.insert(0, data['name']['native']);
+
+      staff = PersonData(
+        id: id,
+        fullName: data['name']['full'],
+        altNames: altNames,
+        imageUrl: data['image']['large'],
+        description:
+            data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
+        isFavourite: data['isFavourite'],
+        favourites: data['favourites'],
+        browsable: Browsable.staff,
+        primaryConnections: [],
+        secondaryConnections: [],
+      );
+    }
+
     List<Connection> primaryConnections = [];
+    List<Connection> secondaryConnections = [];
+
     for (final connection in data['characters']['edges']) {
       primaryConnections.add(Connection(
         id: connection['media'][0]['id'],
@@ -223,7 +261,6 @@ class PageItem {
       ));
     }
 
-    List<Connection> secondaryConnections = [];
     for (final connection in data['staffMedia']['edges']) {
       secondaryConnections.add(Connection(
         id: connection['node']['id'],
@@ -236,37 +273,25 @@ class PageItem {
       ));
     }
 
-    return PersonData(
-      id: id,
-      fullName: data['name']['full'],
-      altNames: (data['name']['alternative'] as List<dynamic>)
-          .map((a) => a.toString())
-          .toList()
-            ..insert(0, data['name']['native'].toString()),
-      imageUrl: data['image']['large'],
-      description:
-          data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-      browsable: Browsable.staff,
-      primaryConnections: primaryConnections,
-      secondaryConnections: secondaryConnections,
-    );
+    return staff..appendConnections(primaryConnections, secondaryConnections);
   }
 
-  Future<StudioData> fetchStudio(int id) async {
-    const query = r'''
-      query Studio($id: Int) {
-        Studio(id: $id) {
-          name
-          favourites 
-          isFavourite
-          media(sort: START_DATE_DESC) {
+  Future<StudioData> fetchStudio(int id, StudioData studio) async {
+    final query = '''
+      query Studio(\$id: Int, \$page: Int) {
+        Studio(id: \$id) {
+          ${studio == null ? """
+            name
+            favourites 
+            isFavourite
+          """ : ''}
+          media(sort: START_DATE_DESC, page: \$page) {
             nodes {
               id
               title {userPreferred}
               coverImage {large}
-              seasonYear
+              startDate {year}
+              status
             }
           }
         }
@@ -275,19 +300,36 @@ class PageItem {
 
     final request = json.encode({
       'query': query,
-      'variables': {'id': id},
+      'variables': {'id': id, 'page': studio == null ? 1 : studio.nextPage},
     });
 
     final result = await post(_url, body: request, headers: _headers);
 
     final data = json.decode(result.body)['data']['Studio'];
 
-    List<int> years = [data['media']['nodes'][0]['seasonYear']];
+    String firstYearElement = (data['media']['nodes'][0]['startDate']['year'] ??
+            clarifyEnum(data['media']['nodes'][0]['status']))
+        .toString();
+
+    if (studio == null) {
+      studio = StudioData(
+        id: id,
+        name: data['name'],
+        isFavourite: data['isFavourite'],
+        favourites: data['favourites'],
+        browsable: Browsable.studios,
+        media: Tuple([firstYearElement], [[]]),
+      );
+    }
+
+    List<String> years = [firstYearElement];
     List<List<BrowseResult>> media = [[]];
 
     for (final m in data['media']['nodes']) {
-      if (years.last != m['seasonYear']) {
-        years.add(m['seasonYear']);
+      String year =
+          (m['startDate']['year'] ?? clarifyEnum(m['status'])).toString();
+      if (years.last != year) {
+        years.add(year);
         media.add([]);
       }
 
@@ -299,13 +341,6 @@ class PageItem {
       ));
     }
 
-    return StudioData(
-      name: data['name'],
-      media: Tuple(years, media),
-      id: id,
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-      browsable: Browsable.studios,
-    );
+    return studio..appendMedia(years, media);
   }
 }

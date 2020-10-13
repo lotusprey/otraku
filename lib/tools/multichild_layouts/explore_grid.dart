@@ -3,6 +3,7 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
 import 'package:provider/provider.dart';
 
 class ExploreGrid extends StatelessWidget {
@@ -29,9 +30,9 @@ class ExploreGrid extends StatelessWidget {
             (_, index) => MediaIndexer(
               itemType: results[index].browsable,
               id: results[index].id,
-              heroTitle: results[index].title,
+              tag: results[index].title,
               child: Hero(
-                tag: results[index].id,
+                tag: results[index].title,
                 child: Container(
                   child: Text(
                     results[index].title,
@@ -55,7 +56,8 @@ class ExploreGrid extends StatelessWidget {
           (_, index) => MediaIndexer(
             itemType: results[index].browsable,
             id: results[index].id,
-            child: _SimpleGridTile(
+            tag: results[index].imageUrl,
+            child: CustomGridTile(
               mediaId: results[index].id,
               text: results[index].title,
               imageUrl: results[index].imageUrl,
@@ -69,53 +71,6 @@ class ExploreGrid extends StatelessWidget {
           crossAxisSpacing: 10,
           childAspectRatio: ViewConfig.tileConfiguration.tileWHRatio,
         ),
-      ),
-    );
-  }
-}
-
-class _SimpleGridTile extends StatelessWidget {
-  final int mediaId;
-  final String text;
-  final String imageUrl;
-
-  _SimpleGridTile({
-    @required this.mediaId,
-    @required this.text,
-    @required this.imageUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: ViewConfig.tileConfiguration.tileWidth,
-      height: ViewConfig.tileConfiguration.tileHeight,
-      child: Column(
-        children: [
-          Hero(
-            tag: mediaId,
-            child: ClipRRect(
-              borderRadius: ViewConfig.BORDER_RADIUS,
-              child: Container(
-                height: ViewConfig.tileConfiguration.tileImgHeight,
-                width: ViewConfig.tileConfiguration.tileWidth,
-                color: Theme.of(context).primaryColor,
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Flexible(
-            child: Text(
-              text,
-              overflow: TextOverflow.fade,
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          ),
-        ],
       ),
     );
   }

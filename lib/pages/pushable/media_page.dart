@@ -10,9 +10,9 @@ import 'package:provider/provider.dart';
 
 class MediaPage extends StatefulWidget {
   final int id;
-  final Object tag;
+  final String tagImageUrl;
 
-  MediaPage(this.id, this.tag);
+  MediaPage(this.id, this.tagImageUrl);
 
   @override
   _MediaPageState createState() => _MediaPageState();
@@ -23,7 +23,6 @@ class _MediaPageState extends State<MediaPage> {
   MediaData _media;
 
   //Output settings
-  bool _isLoading = true;
   bool _didChangeDependencies = false;
   double _coverWidth;
   double _coverHeight;
@@ -32,77 +31,108 @@ class _MediaPageState extends State<MediaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Hero(
-        tag: widget.tag,
-        child: SafeArea(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).backgroundColor,
-            child: !_isLoading
-                ? CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    slivers: <Widget>[
-                      SliverPersistentHeader(
-                        pinned: true,
-                        floating: false,
-                        delegate: MediaPageHeader(
-                          media: _media,
-                          coverWidth: _coverWidth,
-                          coverHeight: _coverHeight,
-                          maxHeight: _bannerHeight,
-                        ),
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Theme.of(context).backgroundColor,
+          child: _media != null
+              ? CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    SliverPersistentHeader(
+                      pinned: true,
+                      floating: false,
+                      delegate: MediaPageHeader(
+                        media: _media,
+                        coverWidth: _coverWidth,
+                        coverHeight: _coverHeight,
+                        maxHeight: _bannerHeight,
+                        tagImageUrl: widget.tagImageUrl,
                       ),
-                      if (_media.description != null)
-                        SliverPadding(
-                          padding: ViewConfig.PADDING,
-                          sliver: SliverList(
-                            delegate: SliverChildListDelegate(
-                              [
-                                Text(
-                                  'Description',
-                                  style: Theme.of(context).textTheme.subtitle1,
-                                ),
-                                const SizedBox(height: 10),
-                                GestureDetector(
-                                  child: Container(
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).primaryColor,
-                                      borderRadius: ViewConfig.BORDER_RADIUS,
-                                    ),
-                                    child: Text(
-                                      _media.description,
-                                      style:
-                                          Theme.of(context).textTheme.bodyText1,
-                                      overflow: TextOverflow.fade,
-                                      maxLines: 5,
-                                    ),
+                    ),
+                    if (_media.description != null)
+                      SliverPadding(
+                        padding: ViewConfig.PADDING,
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              Text(
+                                'Description',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
+                              const SizedBox(height: 10),
+                              GestureDetector(
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context).primaryColor,
+                                    borderRadius: ViewConfig.BORDER_RADIUS,
                                   ),
-                                  onTap: () => showDialog(
-                                    context: context,
-                                    builder: (_) => PopUpAnimation(
-                                      TextDialog(
-                                        title: 'Description',
-                                        text: _media.description,
-                                      ),
-                                    ),
+                                  child: Text(
+                                    _media.description,
+                                    style:
+                                        Theme.of(context).textTheme.bodyText1,
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 5,
                                   ),
                                 ),
-                              ],
-                            ),
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (_) => PopUpAnimation(
+                                    TextDialog(
+                                      title: 'Description',
+                                      text: _media.description,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      SliverToBoxAdapter(child: InfoGrid(_media)),
-                      const SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 500,
-                        ),
                       ),
-                    ],
-                  )
-                : null,
-          ),
+                    SliverToBoxAdapter(child: InfoGrid(_media)),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 500,
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: _coverWidth,
+                            height: _coverHeight,
+                            child: Hero(
+                              tag: widget.tagImageUrl,
+                              child: ClipRRect(
+                                borderRadius: ViewConfig.BORDER_RADIUS,
+                                child: Image.network(
+                                  widget.tagImageUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
         ),
       ),
     );
@@ -115,8 +145,9 @@ class _MediaPageState extends State<MediaPage> {
         .fetchItemData(widget.id)
         .then((media) {
       _media = media;
-      precacheImage(_media.cover.image, context)
-          .then((_) => setState(() => _isLoading = false));
+      precacheImage(_media.cover.image, context).then((_) {
+        if (mounted) setState(() {});
+      });
     });
   }
 

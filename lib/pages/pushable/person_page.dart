@@ -16,10 +16,10 @@ import 'package:provider/provider.dart';
 
 class PersonPage extends StatefulWidget {
   final int id;
-  final Object tag;
+  final String tagImageUrl;
   final Browsable type;
 
-  PersonPage(this.id, this.tag, this.type);
+  PersonPage(this.id, this.tagImageUrl, this.type);
 
   @override
   _PersonPageState createState() => _PersonPageState();
@@ -28,8 +28,8 @@ class PersonPage extends StatefulWidget {
 class _PersonPageState extends State<PersonPage> {
   static const _space = SizedBox(height: 10);
 
-  bool _isLoading = true;
   bool _showPrimaryResults = true;
+  Function(int, PersonData) loadFunc;
   PersonData _person;
 
   @override
@@ -37,113 +37,145 @@ class _PersonPageState extends State<PersonPage> {
     final coverWidth = MediaQuery.of(context).size.width * 0.35;
 
     return Scaffold(
-      body: Hero(
-        tag: widget.tag,
-        child: SafeArea(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Theme.of(context).backgroundColor,
-            child: !_isLoading
-                ? CustomScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      SliverPersistentHeader(
-                        pinned: true,
-                        floating: false,
-                        delegate: _Header(
-                          person: _person,
-                          coverWidth: coverWidth,
-                          coverHeight: coverWidth / 0.7,
-                        ),
+      body: SafeArea(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Theme.of(context).backgroundColor,
+          child: _person != null
+              ? CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverPersistentHeader(
+                      pinned: true,
+                      floating: false,
+                      delegate: _Header(
+                        person: _person,
+                        coverWidth: coverWidth,
+                        coverHeight: coverWidth / 0.7,
+                        tagImageUrl: widget.tagImageUrl,
                       ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: ViewConfig.PADDING,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _space,
-                              Text(
-                                _person.fullName,
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                              Text(
-                                _person.altNames.join(', '),
-                                style: Theme.of(context).textTheme.bodyText1,
-                                maxLines: 3,
-                              ),
-                              _space,
-                              if (_person.description != null &&
-                                  _person.description != '')
-                                InputFieldStructure(
-                                  title: 'Description',
-                                  body: GestureDetector(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).primaryColor,
-                                        borderRadius: ViewConfig.BORDER_RADIUS,
-                                      ),
-                                      child: Text(
-                                        _person.description,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                        overflow: TextOverflow.fade,
-                                        maxLines: 8,
-                                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: ViewConfig.PADDING,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _space,
+                            Text(
+                              _person.fullName,
+                              style: Theme.of(context).textTheme.headline2,
+                            ),
+                            Text(
+                              _person.altNames.join(', '),
+                              style: Theme.of(context).textTheme.bodyText1,
+                              maxLines: 3,
+                            ),
+                            _space,
+                            if (_person.description != null &&
+                                _person.description != '')
+                              InputFieldStructure(
+                                title: 'Description',
+                                body: GestureDetector(
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor,
+                                      borderRadius: ViewConfig.BORDER_RADIUS,
                                     ),
-                                    onTap: () => showDialog(
-                                      context: context,
-                                      builder: (_) => PopUpAnimation(
-                                        TextDialog(
-                                          title: 'Description',
-                                          text: _person.description,
-                                        ),
+                                    child: Text(
+                                      _person.description,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText1,
+                                      overflow: TextOverflow.fade,
+                                      maxLines: 8,
+                                    ),
+                                  ),
+                                  onTap: () => showDialog(
+                                    context: context,
+                                    builder: (_) => PopUpAnimation(
+                                      TextDialog(
+                                        title: 'Description',
+                                        text: _person.description,
                                       ),
                                     ),
                                   ),
-                                  enforceHeight: false,
                                 ),
-                            ],
-                          ),
+                                enforceHeight: false,
+                              ),
+                          ],
                         ),
                       ),
-                      if (_person.primaryConnections.length > 0 &&
-                          _person.secondaryConnections.length > 0) ...[
-                        SliverToBoxAdapter(child: _space),
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: TitleSegmentedControl(
-                              value: _showPrimaryResults,
-                              pairs: widget.type == Browsable.characters
-                                  ? {'Anime': true, 'Manga': false}
-                                  : {
-                                      'Voice Acting': true,
-                                      'Staff Roles': false,
-                                    },
-                              onNewValue: (value) =>
-                                  setState(() => _showPrimaryResults = value),
-                              onSameValue: (_) {},
-                              small: true,
-                            ),
+                    ),
+                    if (_person.primaryConnections.length > 0 &&
+                        _person.secondaryConnections.length > 0) ...[
+                      SliverToBoxAdapter(child: _space),
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: TitleSegmentedControl(
+                            value: _showPrimaryResults,
+                            pairs: widget.type == Browsable.characters
+                                ? {'Anime': true, 'Manga': false}
+                                : {
+                                    'Voice Acting': true,
+                                    'Staff Roles': false,
+                                  },
+                            onNewValue: (value) =>
+                                setState(() => _showPrimaryResults = value),
+                            onSameValue: (_) {},
+                            small: true,
                           ),
-                        ),
-                      ],
-                      SliverPadding(
-                        padding: ViewConfig.PADDING,
-                        sliver: _MediaConnectionGrid(
-                          _showPrimaryResults
-                              ? _person.primaryConnections
-                              : _person.secondaryConnections,
                         ),
                       ),
                     ],
-                  )
-                : null,
-          ),
+                    SliverPadding(
+                      padding: ViewConfig.PADDING,
+                      sliver: _MediaConnectionGrid(
+                        _showPrimaryResults
+                            ? _person.primaryConnections
+                            : _person.secondaryConnections,
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.close,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Hero(
+                        tag: widget.tagImageUrl,
+                        child: Container(
+                          width: coverWidth,
+                          height: coverWidth / 0.7,
+                          child: ClipRRect(
+                            borderRadius: ViewConfig.BORDER_RADIUS,
+                            child: Image.network(
+                              widget.tagImageUrl,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
         ),
       ),
     );
@@ -152,14 +184,14 @@ class _PersonPageState extends State<PersonPage> {
   @override
   void initState() {
     super.initState();
-    final func = widget.type == Browsable.characters
+    loadFunc = widget.type == Browsable.characters
         ? Provider.of<PageItem>(context, listen: false).fetchCharacter
         : Provider.of<PageItem>(context, listen: false).fetchStaff;
-    func(widget.id).then((person) {
-      _person = person;
+
+    loadFunc(widget.id, null).then((person) {
       _showPrimaryResults =
-          _person.primaryConnections.length == 0 ? false : true;
-      setState(() => _isLoading = false);
+          person.primaryConnections.length == 0 ? false : true;
+      if (mounted) setState(() => _person = person);
     });
   }
 }
@@ -201,8 +233,9 @@ class _MediaConnectionTile extends StatelessWidget {
           children: [
             Expanded(
               child: MediaIndexer(
-                itemType: media.browsable,
                 id: media.id,
+                itemType: media.browsable,
+                tag: media.imageUrl,
                 child: Container(
                   color: Colors.transparent,
                   child: Row(
@@ -249,6 +282,7 @@ class _MediaConnectionTile extends StatelessWidget {
                 child: MediaIndexer(
                   id: media.others[0].id,
                   itemType: media.others[0].browsable,
+                  tag: media.others[0].imageUrl,
                   child: Container(
                     color: Colors.transparent,
                     child: Row(
@@ -305,11 +339,13 @@ class _Header implements SliverPersistentHeaderDelegate {
   final PersonData person;
   final double coverWidth;
   final double coverHeight;
+  final String tagImageUrl;
 
   _Header({
     @required this.person,
     @required this.coverWidth,
     @required this.coverHeight,
+    @required this.tagImageUrl,
   });
 
   @override
@@ -337,12 +373,15 @@ class _Header implements SliverPersistentHeaderDelegate {
               children: [
                 Flexible(
                   child: GestureDetector(
-                    child: ClipRRect(
-                      borderRadius: ViewConfig.BORDER_RADIUS,
-                      child: Container(
-                        width: coverWidth,
-                        height: coverHeight,
-                        child: image,
+                    child: Hero(
+                      tag: tagImageUrl,
+                      child: ClipRRect(
+                        borderRadius: ViewConfig.BORDER_RADIUS,
+                        child: Container(
+                          width: coverWidth,
+                          height: coverHeight,
+                          child: image,
+                        ),
                       ),
                     ),
                     onTap: () => showDialog(

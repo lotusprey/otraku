@@ -6,7 +6,6 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/view_config.dart';
@@ -90,13 +89,16 @@ class _MediaListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MediaIndexer(
+      id: media.mediaId,
+      itemType: isAnime ? Browsable.anime : Browsable.manga,
+      tag: media.cover,
       child: Container(
         color: Theme.of(context).backgroundColor,
         child: Row(
           children: [
             Hero(
-              tag: media.mediaId,
+              tag: media.cover,
               child: SizedBox(
                 height: 140,
                 width: 95,
@@ -180,16 +182,6 @@ class _MediaListTile extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-      onTap: () => MediaIndexer.pushMedia(
-        context: context,
-        type: isAnime ? Browsable.anime : Browsable.manga,
-        id: media.mediaId,
-      ),
-      onLongPress: () => Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (_) => EditEntryPage(media.mediaId, (_) {}),
         ),
       ),
     );

@@ -9,6 +9,7 @@ class PersonData extends PageItemData {
   final String description;
   final List<Connection> primaryConnections;
   final List<Connection> secondaryConnections;
+  int _nextPage;
 
   PersonData({
     this.primaryConnections = const [],
@@ -26,5 +27,17 @@ class PersonData extends PageItemData {
           isFavourite: isFavourite,
           favourites: favourites,
           browsable: browsable,
-        );
+        ) {
+    _nextPage = 2;
+  }
+
+  int get nextPage {
+    return _nextPage;
+  }
+
+  void appendConnections(List<Connection> primary, List<Connection> secondary) {
+    primaryConnections.addAll(primary);
+    secondaryConnections.addAll(secondary);
+    _nextPage++;
+  }
 }

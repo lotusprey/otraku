@@ -19,12 +19,14 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
   final double coverHeight;
   final double minHeight = ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
   final double maxHeight;
+  final String tagImageUrl;
 
   MediaPageHeader({
     @required this.media,
     @required this.coverWidth,
     @required this.coverHeight,
     @required this.maxHeight,
+    @required this.tagImageUrl,
   });
 
   @override
@@ -79,12 +81,15 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    child: ClipRRect(
-                      borderRadius: ViewConfig.BORDER_RADIUS,
-                      child: Container(
-                        height: coverHeight,
-                        width: coverWidth,
-                        child: media.cover,
+                    child: Hero(
+                      tag: tagImageUrl,
+                      child: ClipRRect(
+                        borderRadius: ViewConfig.BORDER_RADIUS,
+                        child: Container(
+                          height: coverHeight,
+                          width: coverWidth,
+                          child: media.cover,
+                        ),
                       ),
                     ),
                     onTap: () => showDialog(

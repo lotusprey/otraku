@@ -9,22 +9,21 @@ import 'package:otraku/pages/pushable/studio_page.dart';
 class MediaIndexer extends StatelessWidget {
   final Browsable itemType;
   final int id;
-  final String heroTitle;
+  final String tag;
   final Widget child;
 
   MediaIndexer({
     @required this.itemType,
     @required this.id,
+    @required this.tag,
     @required this.child,
-    this.heroTitle,
   });
 
   static void pushMedia({
     @required BuildContext context,
     @required Browsable type,
     @required int id,
-    String heroTitle,
-    Object tag,
+    @required String tag,
   }) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -32,14 +31,14 @@ class MediaIndexer extends StatelessWidget {
           switch (type) {
             case Browsable.anime:
             case Browsable.manga:
-              return MediaPage(id, tag ?? id);
+              return MediaPage(id, tag);
             case Browsable.characters:
             case Browsable.staff:
-              return PersonPage(id, tag ?? id, type);
+              return PersonPage(id, tag, type);
             // case Browsable.studios:
             //   return StudioPage(id, tag ?? id, heroTitle);
             default:
-              return StudioPage(id, tag ?? id, heroTitle);
+              return StudioPage(id, tag);
           }
         },
       ),
@@ -53,7 +52,7 @@ class MediaIndexer extends StatelessWidget {
         context: context,
         type: itemType,
         id: id,
-        heroTitle: heroTitle,
+        tag: tag,
       ),
       onLongPress: () {
         if (itemType == Browsable.anime || itemType == Browsable.manga)

@@ -23,11 +23,11 @@ dependencies:
     sdk: flutter
 
   http: ^0.12.2
-  url_launcher: ^5.5.3
+  url_launcher: ^5.7.2
   uni_links: ^0.4.0
   provider: ^4.3.2+2
-  shared_preferences: ^0.5.10
-  flutter_secure_storage: ^3.3.3
+  shared_preferences: ^0.5.12
+  flutter_secure_storage: ^3.3.5
   fluentui_icons: ^0.2.0
 
 dev_dependencies:

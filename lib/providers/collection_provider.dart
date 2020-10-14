@@ -300,6 +300,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
             month
             day
           }
+          notes
           customLists
           media {
             format
@@ -425,6 +426,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
           progress: data['progress'],
           progressMax: data['media'][mediaParts],
           score: data['score'].toDouble(),
+          notes: data['notes'],
           startDate: mapToDateTime(data['startedAt']),
           endDate: mapToDateTime(data['completedAt']),
           customLists: customLists,

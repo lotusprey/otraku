@@ -33,7 +33,7 @@ class EntryData {
     this.progressVolumesMax,
     this.score = 0,
     this.repeat = 0,
-    this.notes = '',
+    this.notes,
     this.startDate,
     this.endDate,
     this.private = false,

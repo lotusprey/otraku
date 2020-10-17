@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
 import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/tools/headers/collection_control_header.dart';
+import 'package:otraku/tools/headers/collection_header.dart';
 import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
@@ -60,7 +60,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
       ),
       slivers: [
         HeadlineHeader('${collection.collectionName} List'),
-        CollectionControlHeader(widget.isAnime, widget.scrollCtrl),
+        CollectionHeader(widget.isAnime, widget.scrollCtrl),
         MediaList(
           widget.isAnime,
           Provider.of<Auth>(context, listen: false).scoreFormat,

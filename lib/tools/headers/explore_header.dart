@@ -11,32 +11,31 @@ import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
-import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
-import 'package:otraku/tools/navigation/title_segmented_control.dart';
+import 'package:otraku/tools/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
-class ExploreControlHeader extends StatelessWidget {
+class ExploreHeader extends StatelessWidget {
   final ScrollController scrollCtrl;
 
-  const ExploreControlHeader(this.scrollCtrl);
+  const ExploreHeader(this.scrollCtrl);
 
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
       pinned: true,
-      delegate: _ExploreControlHeaderDelegate(context, scrollCtrl),
+      delegate: _ExploreHeaderDelegate(context, scrollCtrl),
     );
   }
 }
 
-class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
+class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 95.0;
 
   ScrollController _scrollCtrl;
 
-  _ExploreControlHeaderDelegate(
+  _ExploreHeaderDelegate(
       BuildContext context, ScrollController scrollController) {
     _scrollCtrl = scrollController;
   }
@@ -48,59 +47,57 @@ class _ExploreControlHeaderDelegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final provider = Provider.of<Explorable>(context, listen: false);
-
+    // TODO fix type change
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           height: _height,
-          padding: const EdgeInsets.symmetric(horizontal: 15),
           color: Theme.of(context).cardColor,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: TitleSegmentedControl(
-                  value: Provider.of<Explorable>(context).type,
-                  pairs: Map.fromIterable(
-                    Browsable.values,
-                    key: (v) => clarifyEnum(describeEnum(v)),
-                    value: (v) => v,
-                  ),
-                  onNewValue: (value) {
-                    provider.type = value;
-                    _scrollCtrl.jumpTo(0);
-                  },
-                  onSameValue: (_) => _scrollCtrl.jumpTo(0),
+              TitleSegmentedControl(
+                initialValue:
+                    Provider.of<Explorable>(context, listen: false).type,
+                pairs: Map.fromIterable(
+                  Browsable.values,
+                  key: (v) => clarifyEnum(describeEnum(v)),
+                  value: (v) => v,
                 ),
+                onNewValue: (value) {
+                  Provider.of<Explorable>(context, listen: false).type = value;
+                  _scrollCtrl.jumpTo(0);
+                },
+                onSameValue: (_) => _scrollCtrl.jumpTo(0),
               ),
-              SizedBox(
-                height: 50,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    HeaderSearchBar(provider),
-                    if (provider.type == Browsable.anime ||
-                        provider.type == Browsable.manga) ...[
-                      _FilterButton(),
-                      IconButton(
-                        icon: const Icon(
-                          FluentSystemIcons.ic_fluent_arrow_sort_filled,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: SizedBox(
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      HeaderSearchBar(provider),
+                      if (provider.type == Browsable.anime ||
+                          provider.type == Browsable.manga) ...[
+                        _FilterButton(),
+                        IconButton(
+                          icon: const Icon(
+                            FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                          ),
+                          onPressed: () => showModalBottomSheet(
+                            context: context,
+                            builder: (ctx) => ExploreSortSheet(),
+                            backgroundColor: Colors.transparent,
+                            isScrollControlled: true,
+                          ),
                         ),
-                        onPressed: () => showModalBottomSheet(
-                          context: context,
-                          builder: (ctx) => ExploreSortSheet(),
-                          backgroundColor: Colors.transparent,
-                          isScrollControlled: true,
-                        ),
-                      ),
+                      ],
                     ],
-                    HeaderRefreshButton(
-                      listenable: provider,
-                      readable: provider,
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],

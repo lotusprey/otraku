@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class TitleSegmentedControl<T> extends StatefulWidget {
-  final T value;
+  final T initialValue;
   final Map<String, T> pairs;
   final Function(T) onNewValue;
   final Function(T) onSameValue;
   final bool small;
 
   TitleSegmentedControl({
-    @required this.value,
+    @required this.initialValue,
     @required this.pairs,
     @required this.onNewValue,
     @required this.onSameValue,
@@ -20,8 +20,9 @@ class TitleSegmentedControl<T> extends StatefulWidget {
 }
 
 class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
-  final SizedBox _sizedBox = const SizedBox(width: 10);
+  final SizedBox _space = const SizedBox(width: 10);
 
+  T _value;
   bool _didChangeDependencies = false;
   TextStyle _selected;
   TextStyle _unSelected;
@@ -29,25 +30,17 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   Widget _button(String title, T value) => GestureDetector(
         child: Text(
           title,
-          style: value != widget.value ? _unSelected : _selected,
+          style: value != _value ? _unSelected : _selected,
         ),
         onTap: () {
-          if (value != widget.value) {
+          if (value != _value) {
+            setState(() => _value = value);
             widget.onNewValue(value);
           } else {
             widget.onSameValue(value);
           }
         },
       );
-
-  List<Widget> _buttons() {
-    List<Widget> list = [];
-    for (var pair in widget.pairs.keys) {
-      list.add(_button(pair, widget.pairs[pair]));
-      list.add(_sizedBox);
-    }
-    return list;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +49,13 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: _buttons(),
+        children: [
+          _space,
+          for (final pair in widget.pairs.keys) ...[
+            _button(pair, widget.pairs[pair]),
+            _space,
+          ],
+        ],
       ),
     );
   }
@@ -65,11 +64,12 @@ class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_didChangeDependencies) {
+      _value = widget.initialValue;
       _selected = widget.small
-          ? Theme.of(context).textTheme.bodyText2
+          ? Theme.of(context).textTheme.headline5
           : Theme.of(context).textTheme.headline2;
       _unSelected = widget.small
-          ? Theme.of(context).textTheme.bodyText1
+          ? Theme.of(context).textTheme.headline6
           : Theme.of(context).textTheme.headline3;
       _didChangeDependencies = true;
     }

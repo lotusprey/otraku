@@ -24,11 +24,10 @@ class Design with ChangeNotifier {
     final index = preferences.getInt('swatch');
     if (index == null) {
       _swatch = Swatch.slate;
-      _buildTheme(_swatch);
     } else {
       _swatch = Swatch.values[index];
-      _buildTheme(_swatch);
     }
+    _buildTheme(_swatch);
   }
 
   static void _buildTheme(Swatch swatch) {
@@ -69,6 +68,16 @@ class Design with ChangeNotifier {
         ),
         headline3: TextStyle(
           fontSize: FONT_MEDIUM,
+          color: swatch.colors['contrast'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline5: TextStyle(
+          fontSize: FONT_SMALL,
+          color: swatch.colors['accent'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline6: TextStyle(
+          fontSize: FONT_SMALL,
           color: swatch.colors['contrast'],
           fontWeight: FontWeight.w500,
         ),
@@ -125,7 +134,7 @@ enum Swatch {
 }
 
 extension SwatchExtension on Swatch {
-  static const swatches = {
+  static const _swatches = {
     Swatch.slate: {
       'background': Color(0xFF0F171E),
       'primary': Color(0xFF1D2835),
@@ -142,7 +151,7 @@ extension SwatchExtension on Swatch {
     Swatch.slate: 'Slate',
   };
 
-  Map<String, dynamic> get colors => swatches[this];
+  Map<String, dynamic> get colors => _swatches[this];
 
   String get name => _names[this];
 }

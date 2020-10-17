@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/tools/headers/explore_control_header.dart';
+import 'package:otraku/providers/explorable.dart';
+import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/headers/explore_header.dart';
 import 'package:otraku/tools/multichild_layouts/explore_grid.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:provider/provider.dart';
-import 'package:otraku/providers/explorable.dart';
 
 class ExploreTab extends StatefulWidget {
   final ScrollController scrollCtrl;
@@ -16,15 +17,6 @@ class ExploreTab extends StatefulWidget {
 }
 
 class _ExploreTabState extends State<ExploreTab> {
-  //Listens for the user reaching the bottom of the page
-  void _onScroll() async {
-    if (widget.scrollCtrl.position.pixels ==
-            widget.scrollCtrl.position.maxScrollExtent &&
-        !Provider.of<Explorable>(context, listen: false).isLoading) {
-      Provider.of<Explorable>(context, listen: false).addPage();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -34,21 +26,26 @@ class _ExploreTabState extends State<ExploreTab> {
       controller: widget.scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore'),
-        ExploreControlHeader(widget.scrollCtrl),
+        ExploreHeader(widget.scrollCtrl),
         ExploreGrid(),
+        _ConditionalLoader(),
       ],
     );
   }
+}
 
+class _ConditionalLoader extends StatelessWidget {
   @override
-  void initState() {
-    super.initState();
-    widget.scrollCtrl.addListener(_onScroll);
-  }
-
-  @override
-  void dispose() {
-    widget.scrollCtrl.removeListener(_onScroll);
-    super.dispose();
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Center(
+          child: Provider.of<Explorable>(context).hasNextPage
+              ? BlossomLoader()
+              : null,
+        ),
+      ),
+    );
   }
 }

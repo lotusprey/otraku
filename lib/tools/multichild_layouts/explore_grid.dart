@@ -7,6 +7,13 @@ import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
 import 'package:provider/provider.dart';
 
 class ExploreGrid extends StatelessWidget {
+  void _loadMore(BuildContext context) {
+    if (Provider.of<Explorable>(context, listen: false).hasNextPage &&
+        !Provider.of<Explorable>(context, listen: false).isLoading) {
+      Provider.of<Explorable>(context, listen: false).addPage();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final results = Provider.of<Explorable>(context).results;
@@ -27,21 +34,25 @@ class ExploreGrid extends StatelessWidget {
         padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (_, index) => MediaIndexer(
-              itemType: results[index].browsable,
-              id: results[index].id,
-              tag: results[index].title,
-              child: Hero(
+            (_, index) {
+              if (index == results.length - 6) _loadMore(context);
+
+              return MediaIndexer(
+                itemType: results[index].browsable,
+                id: results[index].id,
                 tag: results[index].title,
-                child: Container(
-                  child: Text(
-                    results[index].title,
-                    style: Theme.of(context).textTheme.headline3,
-                    maxLines: 2,
+                child: Hero(
+                  tag: results[index].title,
+                  child: Container(
+                    child: Text(
+                      results[index].title,
+                      style: Theme.of(context).textTheme.headline3,
+                      maxLines: 2,
+                    ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
             childCount: results.length,
           ),
           itemExtent: 60,
@@ -53,16 +64,20 @@ class ExploreGrid extends StatelessWidget {
       padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, index) => MediaIndexer(
-            itemType: results[index].browsable,
-            id: results[index].id,
-            tag: results[index].imageUrl,
-            child: CustomGridTile(
-              mediaId: results[index].id,
-              text: results[index].title,
-              imageUrl: results[index].imageUrl,
-            ),
-          ),
+          (_, index) {
+            if (index == results.length - 6) _loadMore(context);
+
+            return MediaIndexer(
+              itemType: results[index].browsable,
+              id: results[index].id,
+              tag: results[index].imageUrl,
+              child: CustomGridTile(
+                mediaId: results[index].id,
+                text: results[index].title,
+                imageUrl: results[index].imageUrl,
+              ),
+            );
+          },
           childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(

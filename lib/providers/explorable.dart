@@ -29,6 +29,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
 
   Browsable _type = Browsable.anime;
   bool _isLoading = false;
+  bool _hasNextPage = true;
   List<BrowseResult> _results;
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
@@ -86,6 +87,10 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
   @override
   bool get isLoading {
     return _isLoading;
+  }
+
+  bool get hasNextPage {
+    return _hasNextPage;
   }
 
   List<BrowseResult> get results {
@@ -206,11 +211,12 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
   @override
   Future<void> fetchData({bool clean = true}) async {
     _isLoading = true;
-    if (_results != null) notifyListeners();
+    // if (_results != null) notifyListeners();
 
     if (clean) {
       _filters[KEY_ID_NOT_IN] = [];
       _filters['page'] = 1;
+      _hasNextPage = true;
     }
 
     final currentType = _type;
@@ -226,6 +232,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
           \$genre_in: [String], \$genre_not_in: [String], \$tag_in: [String], 
           \$tag_not_in: [String]) {
         Page(page: \$page, perPage: \$perPage) {
+          pageInfo {hasNextPage}
           media(id_not_in: \$id_not_in, sort: \$sort, type: \$type, 
           search: \$search,
           ${_filters.containsKey(KEY_STATUS_IN) ? 'status_in: \$status_in,' : ''}
@@ -253,6 +260,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
           query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
             \$search: String) {
               Page(page: \$page, perPage: \$perPage) {
+                pageInfo {hasNextPage}
                 ${char ? 'characters' : 'staff'}(id_not_in: \$id_not_in, 
                 sort: FAVOURITES_DESC, search: \$search) {
                   id
@@ -277,6 +285,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
         query Browse($page: Int, $perPage: Int, $id_not_in: [Int], 
           $search: String) {
             Page(page: $page, perPage: $perPage) {
+              pageInfo {hasNextPage}
               studios(id_not_in: $id_not_in, search: $search) {
                 id
                 name
@@ -299,6 +308,8 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
     final response = await post(_url, body: request, headers: _headers);
 
     final body = json.decode(response.body) as Map<String, dynamic>;
+
+    _hasNextPage = body['data']['Page']['pageInfo']['hasNextPage'];
 
     if (clean) _results = [];
 

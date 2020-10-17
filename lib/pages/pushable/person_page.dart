@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/models/page_data/person_data.dart';
-import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/providers/page_item.dart';
 import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
-import 'package:otraku/tools/media_indexer.dart';
-import 'package:otraku/tools/navigation/title_segmented_control.dart';
+import 'package:otraku/tools/multichild_layouts/media_connection_grid.dart';
+import 'package:otraku/tools/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,6 @@ class PersonPage extends StatefulWidget {
 class _PersonPageState extends State<PersonPage> {
   static const _space = SizedBox(height: 10);
 
-  bool _showPrimaryResults = true;
   Function(int, PersonData) loadFunc;
   PersonData _person;
 
@@ -108,34 +107,44 @@ class _PersonPageState extends State<PersonPage> {
                         ),
                       ),
                     ),
-                    if (_person.primaryConnections.length > 0 &&
-                        _person.secondaryConnections.length > 0) ...[
+                    if (_person.leftConnections.length > 0 &&
+                        _person.rightConnections.length > 0) ...[
                       SliverToBoxAdapter(child: _space),
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: TitleSegmentedControl(
-                            value: _showPrimaryResults,
-                            pairs: widget.type == Browsable.characters
-                                ? {'Anime': true, 'Manga': false}
-                                : {
-                                    'Voice Acting': true,
-                                    'Staff Roles': false,
-                                  },
-                            onNewValue: (value) =>
-                                setState(() => _showPrimaryResults = value),
-                            onSameValue: (_) {},
-                            small: true,
-                          ),
+                        child: TitleSegmentedControl(
+                          initialValue: _person.currentlyOnLeftPage,
+                          pairs: widget.type == Browsable.characters
+                              ? {'Anime': true, 'Manga': false}
+                              : {
+                                  'Voice Acting': true,
+                                  'Staff Roles': false,
+                                },
+                          onNewValue: (onTheLeft) => setState(
+                              () => _person.currentlyOnLeftPage = onTheLeft),
+                          onSameValue: (_) {},
+                          small: true,
                         ),
                       ),
                     ],
                     SliverPadding(
                       padding: ViewConfig.PADDING,
-                      sliver: _MediaConnectionGrid(
-                        _showPrimaryResults
-                            ? _person.primaryConnections
-                            : _person.secondaryConnections,
+                      sliver: MediaConnectionGrid(
+                        _person.connections,
+                        () async {
+                          if (_person.hasNextPage)
+                            loadFunc(widget.id, _person)
+                                .then((_) => setState(() {}));
+                        },
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: _person.hasNextPage
+                              ? const BlossomLoader()
+                              : null,
+                        ),
                       ),
                     ),
                   ],
@@ -189,149 +198,8 @@ class _PersonPageState extends State<PersonPage> {
         : Provider.of<PageItem>(context, listen: false).fetchStaff;
 
     loadFunc(widget.id, null).then((person) {
-      _showPrimaryResults =
-          person.primaryConnections.length == 0 ? false : true;
       if (mounted) setState(() => _person = person);
     });
-  }
-}
-
-class _MediaConnectionGrid extends StatelessWidget {
-  final List<Connection> media;
-
-  _MediaConnectionGrid(this.media);
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverFixedExtentList(
-      delegate: SliverChildBuilderDelegate(
-        (_, index) => _MediaConnectionTile(media[index]),
-        childCount: media.length,
-      ),
-      itemExtent: 110,
-    );
-  }
-}
-
-class _MediaConnectionTile extends StatelessWidget {
-  final Connection media;
-
-  _MediaConnectionTile(this.media);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          borderRadius: ViewConfig.BORDER_RADIUS,
-          color: Theme.of(context).primaryColor,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              child: MediaIndexer(
-                id: media.id,
-                itemType: media.browsable,
-                tag: media.imageUrl,
-                child: Container(
-                  color: Colors.transparent,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 65,
-                        height: 100,
-                        child: ClipRRect(
-                          child:
-                              Image.network(media.imageUrl, fit: BoxFit.cover),
-                          borderRadius: ViewConfig.BORDER_RADIUS,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  media.title,
-                                  overflow: TextOverflow.fade,
-                                  style: Theme.of(context).textTheme.bodyText1,
-                                ),
-                              ),
-                              Text(
-                                media.text,
-                                style: Theme.of(context).textTheme.subtitle2,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if (media.others.length > 0)
-              Expanded(
-                child: MediaIndexer(
-                  id: media.others[0].id,
-                  itemType: media.others[0].browsable,
-                  tag: media.others[0].imageUrl,
-                  child: Container(
-                    color: Colors.transparent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    media.others[0].title,
-                                    overflow: TextOverflow.fade,
-                                    textAlign: TextAlign.end,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                ),
-                                Text(
-                                  media.others[0].text,
-                                  style: Theme.of(context).textTheme.subtitle2,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 65,
-                          height: 100,
-                          child: ClipRRect(
-                            child: Image.network(
-                              media.others[0].imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: ViewConfig.BORDER_RADIUS,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
@@ -365,8 +233,8 @@ class _Header implements SliverPersistentHeaderDelegate {
           Padding(
             padding: const EdgeInsets.only(
               top: ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10,
-              left: 15,
-              right: 15,
+              left: 10,
+              right: 10,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

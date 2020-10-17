@@ -7,13 +7,17 @@ class PersonData extends PageItemData {
   final List<String> altNames;
   final String imageUrl;
   final String description;
-  final List<Connection> primaryConnections;
-  final List<Connection> secondaryConnections;
-  int _nextPage;
+  final List<Connection> leftConnections;
+  final List<Connection> rightConnections;
+  bool _leftHasNextPage;
+  bool _rightHasNextPage;
+  bool currentlyOnLeftPage = true;
+  int _leftNextPage = 2;
+  int _rightNextPage = 2;
 
   PersonData({
-    this.primaryConnections = const [],
-    this.secondaryConnections = const [],
+    this.leftConnections = const [],
+    this.rightConnections = const [],
     @required this.fullName,
     @required this.altNames,
     @required this.imageUrl,
@@ -27,17 +31,32 @@ class PersonData extends PageItemData {
           isFavourite: isFavourite,
           favourites: favourites,
           browsable: browsable,
-        ) {
-    _nextPage = 2;
+        );
+
+  bool get hasNextPage {
+    if (currentlyOnLeftPage) return _leftHasNextPage;
+    return _rightHasNextPage;
   }
 
   int get nextPage {
-    return _nextPage;
+    if (currentlyOnLeftPage) return _leftNextPage;
+    return _rightNextPage;
   }
 
-  void appendConnections(List<Connection> primary, List<Connection> secondary) {
-    primaryConnections.addAll(primary);
-    secondaryConnections.addAll(secondary);
-    _nextPage++;
+  List<Connection> get connections {
+    if (currentlyOnLeftPage) return leftConnections;
+    return rightConnections;
+  }
+
+  void appendLeft(List<Connection> primary, bool hasNext) {
+    leftConnections.addAll(primary);
+    _leftNextPage++;
+    _leftHasNextPage = hasNext;
+  }
+
+  void appendRight(List<Connection> secondary, bool hasNext) {
+    rightConnections.addAll(secondary);
+    _rightNextPage++;
+    _rightHasNextPage = hasNext;
   }
 }

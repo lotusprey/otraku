@@ -63,19 +63,26 @@ class PageItem {
   }
 
   Future<PersonData> fetchCharacter(int id, PersonData character) async {
+    const anime = r'''
+      anime: media(page: $page, type: ANIME) {
+        ...media
+      }
+    ''';
+
+    const manga = r'''
+      manga: media(page: $page, type: MANGA) {
+        ...media
+      }
+    ''';
+
     final query = '''
       query Character(\$id: Int, \$page: Int) {
         Character(id: \$id) {
-          ${character == null ? _personMain : ''}
-          anime: media(page: \$page, type: ANIME) {
-            ...media
-          }
-          manga: media(page: \$page, type: MANGA) {
-            ...media
-          }
+          ${character == null ? _personMain + anime + manga : character.currentlyOnLeftPage ? anime : manga}
         }
       }
       fragment media on MediaConnection {
+        pageInfo {hasNextPage}
         edges {
           characterRole
           voiceActors {
@@ -113,108 +120,173 @@ class PageItem {
 
     final data = json.decode(result.body)['data']['Character'];
 
+    List<Connection> leftConnections = [];
+    List<Connection> rightConnections = [];
+
+    if (character == null || character.currentlyOnLeftPage)
+      for (final connection in data['anime']['edges']) {
+        List<Connection> voiceActors = [];
+        for (final va in connection['voiceActors']) {
+          voiceActors.add(Connection(
+            id: va['id'],
+            title: va['name']['full'],
+            imageUrl: va['image']['large'],
+            text: clarifyEnum(va['language']),
+            browsable: Browsable.staff,
+          ));
+        }
+
+        leftConnections.add(Connection(
+          others: voiceActors,
+          id: connection['node']['id'],
+          title: connection['node']['title']['userPreferred'],
+          text: clarifyEnum(connection['characterRole']),
+          imageUrl: connection['node']['coverImage']['large'],
+          browsable: Browsable.anime,
+        ));
+      }
+
+    if (character == null || !character.currentlyOnLeftPage)
+      for (final connection in data['manga']['edges']) {
+        rightConnections.add(Connection(
+          id: connection['node']['id'],
+          title: connection['node']['title']['userPreferred'],
+          text: clarifyEnum(connection['characterRole']),
+          imageUrl: connection['node']['coverImage']['large'],
+          browsable: Browsable.manga,
+        ));
+      }
+
     if (character == null) {
+      List<String> altNames = (data['name']['alternative'] as List<dynamic>)
+          .map((a) => a.toString())
+          .toList();
+      if (data['name']['native'] != null)
+        altNames.insert(0, data['name']['native']);
+
       character = PersonData(
         id: id,
         fullName: data['name']['full'],
-        altNames: (data['name']['alternative'] as List<dynamic>)
-            .map((a) => a.toString())
-            .toList()
-              ..insert(0, data['name']['native']),
+        altNames: altNames,
         imageUrl: data['image']['large'],
         description:
             data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
         isFavourite: data['isFavourite'],
         favourites: data['favourites'],
         browsable: Browsable.characters,
-        primaryConnections: [],
-        secondaryConnections: [],
+        leftConnections: [],
+        rightConnections: [],
       );
     }
 
-    List<Connection> primaryConnections = [];
-    List<Connection> secondaryConnections = [];
+    if (data['anime'] != null)
+      character.appendLeft(
+          leftConnections, data['anime']['pageInfo']['hasNextPage']);
+    if (data['manga'] != null)
+      character.appendRight(
+          rightConnections, data['manga']['pageInfo']['hasNextPage']);
 
-    for (final connection in data['anime']['edges']) {
-      List<Connection> voiceActors = [];
-      for (final va in connection['voiceActors']) {
-        voiceActors.add(Connection(
-          id: va['id'],
-          title: va['name']['full'],
-          imageUrl: va['image']['large'],
-          text: clarifyEnum(va['language']),
-          browsable: Browsable.staff,
-        ));
-      }
-
-      primaryConnections.add(Connection(
-        others: voiceActors,
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        text: clarifyEnum(connection['characterRole']),
-        imageUrl: connection['node']['coverImage']['large'],
-        browsable: Browsable.anime,
-      ));
+    if (character.leftConnections.length == 0 &&
+        character.rightConnections.length > 0) {
+      character.currentlyOnLeftPage = false;
     }
 
-    for (final connection in data['manga']['edges']) {
-      secondaryConnections.add(Connection(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        text: clarifyEnum(connection['characterRole']),
-        imageUrl: connection['node']['coverImage']['large'],
-        browsable: Browsable.manga,
-      ));
-    }
-
-    return character
-      ..appendConnections(primaryConnections, secondaryConnections);
+    return character;
   }
 
   Future<PersonData> fetchStaff(int id, PersonData staff) async {
+    const characters = r'''
+      characters(page: $page) {
+        pageInfo {hasNextPage}
+        edges {
+          role
+          media {
+            id
+            type
+            title {userPreferred}
+            coverImage {large}
+          }
+          node {
+            id
+            name {full}
+            image {large}
+          }
+        }
+      }
+    ''';
+
+    const staffMedia = r'''
+      staffMedia(page: $page) {
+        pageInfo {hasNextPage}
+        edges {
+          staffRole
+          node {
+            id
+            type
+            title {userPreferred}
+            coverImage {large}
+          }
+        }
+      }
+    ''';
+
     final query = '''
       query Staff(\$id: Int, \$page: Int) {
         Staff(id: \$id) {
-          ${staff == null ? _personMain : ''}
-          characters(page: \$page) {
-            edges {
-              role
-              media {
-                id
-                type
-                title {userPreferred}
-                coverImage {large}
-              }
-              node {
-                id
-                name {full}
-                image {large}
-              }
-            }
-          }
-          staffMedia(page: \$page) {
-            edges {
-              staffRole
-              node {
-                id
-                type
-                title {userPreferred}
-                coverImage {large}
-              }
-            }
-          }
+          ${staff == null ? _personMain + characters + staffMedia : staff.currentlyOnLeftPage ? characters : staffMedia}
         }
       }
     ''';
 
     final request = json.encode({
       'query': query,
-      'variables': {'id': id, 'page': staff == null ? 1 : staff.nextPage},
+      'variables': {
+        'id': id,
+        'page': staff == null ? 1 : staff.nextPage,
+      },
     });
 
     final result = await post(_url, body: request, headers: _headers);
 
     final data = json.decode(result.body)['data']['Staff'];
+
+    List<Connection> leftConnections = [];
+    List<Connection> rightConnections = [];
+
+    if (staff == null || staff.currentlyOnLeftPage)
+      for (final connection in data['characters']['edges']) {
+        if (connection['media'].length > 0)
+          leftConnections.add(Connection(
+            id: connection['media'][0]['id'],
+            title: connection['media'][0]['title']['userPreferred'],
+            imageUrl: connection['media'][0]['coverImage']['large'],
+            browsable: connection['media'][0]['type'] == 'ANIME'
+                ? Browsable.anime
+                : Browsable.manga,
+            others: [
+              Connection(
+                id: connection['node']['id'],
+                title: connection['node']['name']['full'],
+                text: clarifyEnum(connection['role']),
+                imageUrl: connection['node']['image']['large'],
+                browsable: Browsable.characters,
+              ),
+            ],
+          ));
+      }
+
+    if (staff == null || !staff.currentlyOnLeftPage)
+      for (final connection in data['staffMedia']['edges']) {
+        rightConnections.add(Connection(
+          id: connection['node']['id'],
+          title: connection['node']['title']['userPreferred'],
+          text: connection['staffRole'],
+          imageUrl: connection['node']['coverImage']['large'],
+          browsable: connection['node']['type'] == 'ANIME'
+              ? Browsable.anime
+              : Browsable.manga,
+        ));
+      }
 
     if (staff == null) {
       List<String> altNames = (data['name']['alternative'] as List<dynamic>)
@@ -233,47 +305,24 @@ class PageItem {
         isFavourite: data['isFavourite'],
         favourites: data['favourites'],
         browsable: Browsable.staff,
-        primaryConnections: [],
-        secondaryConnections: [],
+        leftConnections: [],
+        rightConnections: [],
       );
     }
 
-    List<Connection> primaryConnections = [];
-    List<Connection> secondaryConnections = [];
+    if (data['characters'] != null)
+      staff.appendLeft(
+          leftConnections, data['characters']['pageInfo']['hasNextPage']);
+    if (data['staffMedia'] != null)
+      staff.appendRight(
+          rightConnections, data['staffMedia']['pageInfo']['hasNextPage']);
 
-    for (final connection in data['characters']['edges']) {
-      primaryConnections.add(Connection(
-        id: connection['media'][0]['id'],
-        title: connection['media'][0]['title']['userPreferred'],
-        imageUrl: connection['media'][0]['coverImage']['large'],
-        browsable: connection['media'][0]['type'] == 'ANIME'
-            ? Browsable.anime
-            : Browsable.manga,
-        others: [
-          Connection(
-            id: connection['node']['id'],
-            title: connection['node']['name']['full'],
-            text: clarifyEnum(connection['role']),
-            imageUrl: connection['node']['image']['large'],
-            browsable: Browsable.characters,
-          ),
-        ],
-      ));
+    if (staff.leftConnections.length == 0 &&
+        staff.rightConnections.length > 0) {
+      staff.currentlyOnLeftPage = false;
     }
 
-    for (final connection in data['staffMedia']['edges']) {
-      secondaryConnections.add(Connection(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        text: connection['staffRole'],
-        imageUrl: connection['node']['coverImage']['large'],
-        browsable: connection['node']['type'] == 'ANIME'
-            ? Browsable.anime
-            : Browsable.manga,
-      ));
-    }
-
-    return staff..appendConnections(primaryConnections, secondaryConnections);
+    return staff;
   }
 
   Future<StudioData> fetchStudio(int id, StudioData studio) async {

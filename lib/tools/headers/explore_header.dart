@@ -47,7 +47,7 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final provider = Provider.of<Explorable>(context, listen: false);
-    // TODO fix type change
+
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -80,11 +80,13 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      HeaderSearchBar(provider),
-                      if (provider.type == Browsable.anime ||
-                          provider.type == Browsable.manga) ...[
-                        _FilterButton(),
-                        IconButton(
+                      ExploreSearchBar(
+                        provider.search,
+                        (value) => provider.search = value,
+                      ),
+                      Flexible(child: _FilterButton()),
+                      Flexible(
+                        child: IconButton(
                           icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_sort_filled,
                           ),
@@ -95,7 +97,7 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                             isScrollControlled: true,
                           ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
@@ -133,7 +135,7 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
 class _FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider.of<Explorable>(context, listen: false).areFiltersActive()
+    return Provider.of<Explorable>(context).areFiltersActive()
         ? GestureDetector(
             onTap: () => Navigator.of(context).push(
               CupertinoPageRoute(builder: (_) => FilterPage()),

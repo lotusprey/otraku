@@ -80,7 +80,10 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      HeaderSearchBar(_collection),
+                      CollectionSearchBar(
+                        _collection.search,
+                        (value) => _collection.search = value,
+                      ),
                       IconButton(
                         icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_sort_filled),

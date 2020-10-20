@@ -4,6 +4,7 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/models/page_data/studio_data.dart';
 import 'package:otraku/providers/page_item.dart';
 import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
@@ -21,6 +22,20 @@ class StudioPage extends StatefulWidget {
 
 class _StudioPageState extends State<StudioPage> {
   StudioData _studio;
+  double extentOnLastCall = 0;
+
+  bool _loadMore(Notification notification) {
+    if (notification is ScrollNotification &&
+        notification.metrics.extentAfter <= 50 &&
+        notification.metrics.extentAfter + 50 > extentOnLastCall) {
+      extentOnLastCall = notification.metrics.extentAfter + 50;
+      Provider.of<PageItem>(context, listen: false)
+          .fetchStudio(widget.id, _studio)
+          .then((_) => setState(() {}));
+    }
+
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,52 +45,65 @@ class _StudioPageState extends State<StudioPage> {
           width: double.infinity,
           height: double.infinity,
           color: Theme.of(context).backgroundColor,
-          child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _StudioHeader(_studio, widget.textTag),
-              ),
-              if (_studio != null)
-                for (int i = 0; i < _studio.media.item1.length; i++) ...[
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: ViewConfig.PADDING,
-                      child: Text(
-                        _studio.media.item1[i],
-                        style: Theme.of(context).textTheme.headline3,
+          child: NotificationListener(
+            onNotification: (notification) => _loadMore(notification),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _StudioHeader(_studio, widget.textTag),
+                ),
+                if (_studio != null) ...[
+                  for (int i = 0; i < _studio.media.item1.length; i++) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: ViewConfig.PADDING,
+                        child: Text(
+                          _studio.media.item1[i],
+                          style: Theme.of(context).textTheme.headline3,
+                        ),
                       ),
                     ),
-                  ),
-                  SliverPadding(
-                    padding: ViewConfig.PADDING,
-                    sliver: SliverGrid(
-                      delegate: SliverChildBuilderDelegate(
-                        (_, index) => MediaIndexer(
-                          itemType: Browsable.anime,
-                          id: _studio.media.item2[i][index].id,
-                          tag: _studio.media.item2[i][index].imageUrl,
-                          child: CustomGridTile(
-                            mediaId: _studio.media.item2[i][index].id,
-                            text: _studio.media.item2[i][index].title,
-                            imageUrl: _studio.media.item2[i][index].imageUrl,
+                    SliverPadding(
+                      padding: ViewConfig.PADDING,
+                      sliver: SliverGrid(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, index) => MediaIndexer(
+                            itemType: Browsable.anime,
+                            id: _studio.media.item2[i][index].id,
+                            tag: _studio.media.item2[i][index].imageUrl,
+                            child: CustomGridTile(
+                              mediaId: _studio.media.item2[i][index].id,
+                              text: _studio.media.item2[i][index].title,
+                              imageUrl: _studio.media.item2[i][index].imageUrl,
+                            ),
                           ),
+                          childCount: _studio.media.item2[i].length,
                         ),
-                        childCount: _studio.media.item2[i].length,
+                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent:
+                              ViewConfig.tileConfiguration.tileWidth,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          childAspectRatio:
+                              ViewConfig.tileConfiguration.tileWHRatio,
+                        ),
                       ),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent:
-                            ViewConfig.tileConfiguration.tileWidth,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                        childAspectRatio:
-                            ViewConfig.tileConfiguration.tileWHRatio,
+                    ),
+                  ],
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Center(
+                        child:
+                            _studio.hasNextPage ? const BlossomLoader() : null,
                       ),
                     ),
                   ),
                 ],
-            ],
+              ],
+            ),
           ),
         ),
       ),

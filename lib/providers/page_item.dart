@@ -335,6 +335,7 @@ class PageItem {
             isFavourite
           """ : ''}
           media(sort: START_DATE_DESC, page: \$page) {
+            pageInfo {hasNextPage}
             nodes {
               id
               title {userPreferred}
@@ -390,6 +391,7 @@ class PageItem {
       ));
     }
 
-    return studio..appendMedia(years, media);
+    return studio
+      ..appendMedia(years, media, data['media']['pageInfo']['hasNextPage']);
   }
 }

@@ -69,9 +69,17 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
                 pairs: segmentedControlPairs,
                 onNewValue: (value) {
                   _collection.listIndex = value;
-                  _scrollCtrl.jumpTo(0);
+                  if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
+                  _scrollCtrl.animateTo(0,
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.decelerate);
                 },
-                onSameValue: (_) => _scrollCtrl.jumpTo(0),
+                onSameValue: (_) {
+                  if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
+                  _scrollCtrl.animateTo(0,
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.decelerate);
+                },
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),

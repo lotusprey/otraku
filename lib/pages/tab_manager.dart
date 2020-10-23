@@ -21,14 +21,14 @@ class TabManager extends StatefulWidget {
 }
 
 class _TabManagerState extends State<TabManager> {
+  static ScrollController _scrollCtrl;
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _tabItems;
   PageController _pageCtrl;
   int _pageIndex;
-  ScrollController _scrollCtrl;
   ValueNotifier<bool> _navBarVisibility;
 
-  bool _jumpingPage = false;
+  bool _bottomNavigationPageChange = false;
 
   void _scrollDirection() {
     if (_scrollCtrl.position.userScrollDirection == ScrollDirection.reverse) {
@@ -59,21 +59,22 @@ class _TabManagerState extends State<TabManager> {
               onTap: (index) {
                 if (_pageIndex == index) return;
 
-                if (index - _pageIndex > 1) {
-                  _jumpingPage = true;
-                  _pageCtrl.jumpToPage(index - 1);
-                  _jumpingPage = false;
-                } else if (_pageIndex - index > 1) {
-                  _jumpingPage = true;
-                  _pageCtrl.jumpToPage(index + 1);
-                  _jumpingPage = false;
+                _bottomNavigationPageChange = true;
+                final position = MediaQuery.of(context).size.width * index;
+                if (index > _pageIndex) {
+                  _pageCtrl.jumpTo(position - 100);
+                } else {
+                  _pageCtrl.jumpTo(position + 100);
                 }
 
-                _pageCtrl.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.fastOutSlowIn,
-                );
+                _pageCtrl
+                    .animateTo(
+                      position,
+                      duration: const Duration(milliseconds: 200),
+                      curve: Curves.decelerate,
+                    )
+                    .then((_) => setState(() => _pageIndex = index));
+                _bottomNavigationPageChange = false;
               },
             ),
           ],
@@ -84,7 +85,8 @@ class _TabManagerState extends State<TabManager> {
           children: _tabs,
           controller: _pageCtrl,
           onPageChanged: (index) {
-            if (!_jumpingPage) setState(() => _pageIndex = index);
+            if (!_bottomNavigationPageChange)
+              setState(() => _pageIndex = index);
           },
         ),
       ),

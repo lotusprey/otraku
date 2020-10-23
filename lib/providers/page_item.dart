@@ -357,6 +357,8 @@ class PageItem {
 
     final data = json.decode(result.body)['data']['Studio'];
 
+    if ((data['media']['nodes'] as List<dynamic>).length == 0) return studio;
+
     String firstYearElement = (data['media']['nodes'][0]['startDate']['year'] ??
             clarifyEnum(data['media']['nodes'][0]['status']))
         .toString();

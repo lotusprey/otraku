@@ -121,19 +121,17 @@ class ImageTextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = ViewConfig.BORDER_RADIUS;
-
     return Dialog(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: borderRadius,
+        borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       backgroundColor: Theme.of(context).primaryColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ClipRRect(
-            borderRadius: borderRadius,
+            borderRadius: ViewConfig.BORDER_RADIUS,
             child: image,
           ),
           Padding(

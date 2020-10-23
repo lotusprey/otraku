@@ -24,11 +24,12 @@ class _StudioPageState extends State<StudioPage> {
   StudioData _studio;
   double extentOnLastCall = 0;
 
+  int counter = 0;
   bool _loadMore(Notification notification) {
     if (notification is ScrollNotification &&
         notification.metrics.extentAfter <= 50 &&
-        notification.metrics.extentAfter + 50 > extentOnLastCall) {
-      extentOnLastCall = notification.metrics.extentAfter + 50;
+        notification.metrics.maxScrollExtent > extentOnLastCall) {
+      extentOnLastCall = notification.metrics.maxScrollExtent;
       Provider.of<PageItem>(context, listen: false)
           .fetchStudio(widget.id, _studio)
           .then((_) => setState(() {}));

@@ -257,7 +257,6 @@ class _Header implements SliverPersistentHeaderDelegate {
                       builder: (ctx) => PopUpAnimation(
                         ImageDialog(image),
                       ),
-                      barrierDismissible: true,
                     ),
                   ),
                 ),

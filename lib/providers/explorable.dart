@@ -54,6 +54,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
 
     _filters.remove(KEY_FORMAT_IN);
     _filters.remove(KEY_FORMAT_NOT_IN);
+    notifyListeners();
     fetchData();
   }
 

@@ -15,6 +15,7 @@ import 'package:otraku/providers/media_group_provider.dart';
 
 class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   static const String _url = 'https://graphql.anilist.co';
+
   static Map<String, String> _headers;
   static int _userId;
   static String _scoreFormat;
@@ -25,6 +26,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
   final String typeUCase;
   final String typeLCase;
   final String mediaParts;
+  String _entryFieldsForFetching;
 
   CollectionProvider({
     @required this.isAnime,
@@ -46,6 +48,22 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     _scoreFormat = scoreFormat;
     _hasSplitCompletedList = hasSplitCompletedList;
     _mediaListSort = mediaListSort;
+    _entryFieldsForFetching = '''
+      mediaId
+      status
+      progress
+      repeat
+      notes
+      score(format: \$scoreFormat)
+      startedAt {year month day}
+      completedAt {year month day}
+      media {
+      format
+      $mediaParts
+      title {userPreferred}
+      coverImage {large}
+      }
+    ''';
   }
 
   //Data
@@ -287,31 +305,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
         private: \$private,
         hiddenFromStatusLists: \$hiddenFromStatusLists,
         customLists: \$customLists) {
-          mediaId
-          progress
-          score(format: \$scoreFormat)
-          startedAt {
-            year
-            month
-            day
-          }
-          completedAt {
-            year
-            month
-            day
-          }
-          notes
-          customLists
-          media {
-            format
-            $mediaParts
-            title {
-              userPreferred
-            }
-            coverImage {
-              large
-            }
-          }
+          $_entryFieldsForFetching
         }
       }
     ''';
@@ -406,32 +400,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     //Update all the updatable lists
     if (listsForUpdate.length > 0) {
-      final List<Tuple<String, bool>> customLists = [];
-      if (data['customLists'] != null) {
-        for (final key in data['customLists'].keys) {
-          customLists.add(Tuple(key, data['customLists'][key]));
-        }
-      }
-
-      final entry = MediaEntry(
-        mediaId: data['mediaId'],
-        title: data['media']['title']['userPreferred'],
-        cover: data['media']['coverImage']['large'],
-        format: data['media']['format'],
-        progressMaxString: (data['media'][mediaParts] ?? '?').toString(),
-        entryUserData: EntryData(
-          mediaId: data['mediaId'],
-          type: typeUCase,
-          format: data['media']['format'],
-          progress: data['progress'],
-          progressMax: data['media'][mediaParts],
-          score: data['score'].toDouble(),
-          notes: data['notes'],
-          startDate: mapToDateTime(data['startedAt']),
-          endDate: mapToDateTime(data['completedAt']),
-          customLists: customLists,
-        ),
-      );
+      final entry = _createEntry(data);
 
       for (final list in listsForUpdate) {
         list.entries.add(entry);
@@ -489,13 +458,9 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     List<EntryList> entryHolders = [];
 
     for (final list in _lists) {
-      // print(list.name);
       if (list.isCustomList) {
-        // print('this is a custom one');
         for (final tuple in data.customLists) {
-          // print(tuple.item1);
           if (tuple.item1 == list.name && tuple.item2) {
-            // print('this is a checked one');
             entryHolders.add(list);
             break;
           }
@@ -552,32 +517,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
             isCustomList
             isSplitCompletedList
             entries {
-              mediaId
-              status
-              progress
-              repeat
-              notes
-              score(format: \$scoreFormat)
-              startedAt {
-                year
-                month
-                day
-              }
-              completedAt {
-                year
-                month
-                day
-              }
-              media {
-                format
-                $mediaParts
-                title {
-                  userPreferred
-                }
-                coverImage {
-                  large
-                }
-              }
+              $_entryFieldsForFetching
             }
           }
         }
@@ -665,39 +605,39 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     }
   }
 
-  EntryList _createList(Map<String, dynamic> list) {
-    return EntryList(
-      name: list['name'],
-      isCustomList: list['isCustomList'],
-      status: list['isCustomList'] ? null : list['status'],
-      splitCompletedListFormat: list['isSplitCompletedList']
-          ? list['entries'][0]['media']['format']
-          : null,
-      entries: (list['entries'] as List<dynamic>)
-          .map((e) => MediaEntry(
-                mediaId: e['mediaId'],
-                title: e['media']['title']['userPreferred'],
-                cover: e['media']['coverImage']['large'],
-                format: e['media']['format'],
-                progressMaxString: (e['media'][mediaParts] ?? '?').toString(),
-                entryUserData: EntryData(
-                  mediaId: e['mediaId'],
-                  type: typeUCase,
-                  format: e['media']['format'],
-                  status: stringToEnum(
-                    e['status'],
-                    MediaListStatus.values,
-                  ),
-                  progress: e['progress'],
-                  progressMax: e['media'][mediaParts],
-                  score: e['score'].toDouble(),
-                  startDate: mapToDateTime(e['startedAt']),
-                  endDate: mapToDateTime(e['completedAt']),
-                  repeat: e['repeat'],
-                  notes: e['notes'],
-                ),
-              ))
-          .toList(),
-    );
-  }
+  EntryList _createList(Map<String, dynamic> list) => EntryList(
+        name: list['name'],
+        isCustomList: list['isCustomList'],
+        status: list['isCustomList'] ? null : list['status'],
+        splitCompletedListFormat: list['isSplitCompletedList']
+            ? list['entries'][0]['media']['format']
+            : null,
+        entries: (list['entries'] as List<dynamic>)
+            .map((e) => _createEntry(e))
+            .toList(),
+      );
+
+  MediaEntry _createEntry(Map<String, dynamic> entry) => MediaEntry(
+        mediaId: entry['mediaId'],
+        title: entry['media']['title']['userPreferred'],
+        cover: entry['media']['coverImage']['large'],
+        format: entry['media']['format'],
+        progressMaxString: (entry['media'][mediaParts] ?? '?').toString(),
+        entryUserData: EntryData(
+          mediaId: entry['mediaId'],
+          type: typeUCase,
+          format: entry['media']['format'],
+          status: stringToEnum(
+            entry['status'],
+            MediaListStatus.values,
+          ),
+          progress: entry['progress'],
+          progressMax: entry['media'][mediaParts],
+          score: entry['score'].toDouble(),
+          startDate: mapToDateTime(entry['startedAt']),
+          endDate: mapToDateTime(entry['completedAt']),
+          repeat: entry['repeat'],
+          notes: entry['notes'],
+        ),
+      );
 }

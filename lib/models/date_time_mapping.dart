@@ -42,3 +42,13 @@ Map<String, int> dateTimeToMap(DateTime date) {
     'day': date.day,
   };
 }
+
+String secondsToTime(int seconds) {
+  int minutes = seconds ~/ 60;
+  int hours = minutes ~/ 60;
+  minutes %= 60;
+  int days = hours ~/ 24;
+  hours %= 24;
+
+  return '${days != 0 ? '${days}d ' : ''}${hours != 0 ? '${hours}h ' : ''}${minutes != 0 ? '${minutes}m' : ''}';
+}

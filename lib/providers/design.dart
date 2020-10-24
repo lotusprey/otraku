@@ -71,6 +71,11 @@ class Design with ChangeNotifier {
           color: swatch.colors['contrast'],
           fontWeight: FontWeight.w500,
         ),
+        headline4: TextStyle(
+          fontSize: FONT_MEDIUM,
+          color: swatch.colors['faded'],
+          fontWeight: FontWeight.w500,
+        ),
         headline5: TextStyle(
           fontSize: FONT_SMALL,
           color: swatch.colors['accent'],
@@ -131,6 +136,9 @@ class Design with ChangeNotifier {
 
 enum Swatch {
   slate,
+  amethyst,
+  peach,
+  mint,
 }
 
 extension SwatchExtension on Swatch {
@@ -145,10 +153,43 @@ extension SwatchExtension on Swatch {
       'contrast': Color(0xFFCAD5E2),
       'brightness': Brightness.dark,
     },
+    Swatch.amethyst: {
+      'background': Color(0xFF1E1E3F),
+      'primary': Color(0xFF2D2B55),
+      'translucent': Color(0xBB1E1E3F),
+      'accent': Color(0xFFDFCD01),
+      'error': Color(0xFFF94E7E),
+      'faded': Color(0xFFA7A0F8),
+      'contrast': Color(0xFFE8D9FC),
+      'brightness': Brightness.dark,
+    },
+    Swatch.peach: {
+      'background': Color(0xFFFFEFEB),
+      'primary': Color(0xFFFFCFC2),
+      'translucent': Color(0xBBFFEFEB),
+      'accent': Color(0xFFFF2F0A),
+      'error': Color(0xFFBA1812),
+      'faded': Color(0xFF754543),
+      'contrast': Color(0xFF413939),
+      'brightness': Brightness.light,
+    },
+    Swatch.mint: {
+      'background': Color(0xFF163B3B),
+      'primary': Color(0xFF1A6157),
+      'translucent': Color(0xBB163B3B),
+      'accent': Color(0xFF00E4A3),
+      'error': Color(0xFFD87CAC),
+      'faded': Color(0xFF85D6C2),
+      'contrast': Color(0xFFFFFEFF),
+      'brightness': Brightness.light,
+    },
   };
 
   static const _names = {
     Swatch.slate: 'Slate',
+    Swatch.amethyst: 'Amethyst',
+    Swatch.peach: 'Peach',
+    Swatch.mint: 'Mint',
   };
 
   Map<String, dynamic> get colors => _swatches[this];

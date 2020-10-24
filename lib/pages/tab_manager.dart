@@ -116,7 +116,7 @@ class _TabManagerState extends State<TabManager> {
         key: UniqueKey(),
       ),
       ExploreTab(_scrollCtrl),
-      ProfileTab(),
+      ProfileTab(null),
     ];
 
     _tabItems = const [

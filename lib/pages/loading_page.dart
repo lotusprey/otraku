@@ -6,6 +6,7 @@ import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/manga_collection.dart';
+import 'package:otraku/providers/users.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,7 @@ class _LoadingPageState extends State<LoadingPage> {
   Future<void> Function() _fetchAnimeCollection;
   Future<void> Function() _fetchMangaCollection;
   Future<void> Function() _fetchExplorableMedia;
+  Future<void> Function() _fetchViewer;
 
   @override
   Widget build(BuildContext context) {
@@ -43,16 +45,25 @@ class _LoadingPageState extends State<LoadingPage> {
               _fetchAnimeCollection().then((_) => _goToTabManager());
               _fetchMangaCollection();
               _fetchExplorableMedia();
+              _fetchViewer();
               break;
             case TabManager.MANGA_LIST:
-              _fetchMangaCollection().then((_) => _goToTabManager());
               _fetchAnimeCollection();
+              _fetchMangaCollection().then((_) => _goToTabManager());
               _fetchExplorableMedia();
+              _fetchViewer();
               break;
             case TabManager.EXPLORE:
-              _fetchExplorableMedia().then((_) => _goToTabManager());
               _fetchAnimeCollection();
               _fetchMangaCollection();
+              _fetchExplorableMedia().then((_) => _goToTabManager());
+              _fetchViewer();
+              break;
+            case TabManager.PROFILE:
+              _fetchAnimeCollection();
+              _fetchMangaCollection();
+              _fetchExplorableMedia();
+              _fetchViewer().then((_) => _goToTabManager());
               break;
           }
 
@@ -77,6 +88,8 @@ class _LoadingPageState extends State<LoadingPage> {
           Provider.of<MangaCollection>(context, listen: false).fetchData();
       _fetchExplorableMedia =
           () => Provider.of<Explorable>(context, listen: false).fetchInitial();
+      _fetchViewer =
+          () => Provider.of<Users>(context, listen: false).fetchViewer();
 
       _didChangeDependencies = true;
     }

@@ -5,18 +5,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/auth_enum.dart';
 import 'package:otraku/enums/media_list_sort_enum.dart';
+import 'package:otraku/models/user_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
   static AuthStatus _status;
   static String _accessToken;
-
-  static int _userId;
-  static String _titleFormat;
-  static String _scoreFormat;
-  static bool _splitCompletedAnime;
-  static bool _splitCompletedManga;
-  static MediaListSort _sort;
+  static UserSettings _userSettings;
 
   AuthStatus get status {
     return _status;
@@ -30,29 +25,7 @@ class Auth with ChangeNotifier {
     };
   }
 
-  String get titleFormat {
-    return _titleFormat;
-  }
-
-  String get scoreFormat {
-    return _scoreFormat;
-  }
-
-  bool hasSplitCompletedList({@required bool ofAnime}) {
-    return ofAnime ? _splitCompletedAnime : _splitCompletedManga;
-  }
-
-  MediaListSort get sort {
-    return _sort;
-  }
-
-  int get userId {
-    if (_userId == null) {
-      throw "The user id isn't set";
-    }
-
-    return _userId;
-  }
+  UserSettings get userSettings => _userSettings;
 
   Future<void> setAccessToken(String value) async {
     _accessToken = value;
@@ -71,7 +44,6 @@ class Auth with ChangeNotifier {
     final storage = FlutterSecureStorage();
     storage.delete(key: 'accessToken');
 
-    _userId = null;
     _accessToken = null;
     notifyListeners();
   }
@@ -89,18 +61,13 @@ class Auth with ChangeNotifier {
 
     const url = 'https://graphql.anilist.co';
 
-    final headers = {
-      'Authorization': 'Bearer $_accessToken',
-      'Accept': 'application/json',
-      'Content-type': 'application/json',
-    };
-
     const query = '''
       query MyId {
         Viewer {
           id
           options {
             titleLanguage
+            displayAdultContent
           }
           mediaListOptions {
             scoreFormat
@@ -140,25 +107,21 @@ class Auth with ChangeNotifier {
       return;
     }
 
-    final viewer = body['data']['Viewer'];
-
-    _userId = viewer['id'];
-    _titleFormat = viewer['options']['titleLanguage'];
-    _scoreFormat = viewer['mediaListOptions']['scoreFormat'];
-    _splitCompletedAnime = viewer['mediaListOptions']['animeList']
-        ['splitCompletedSectionByFormat'];
-    _splitCompletedManga = viewer['mediaListOptions']['mangaList']
-        ['splitCompletedSectionByFormat'];
-
+    final view = body['data']['Viewer'];
     final preferrences = await SharedPreferences.getInstance();
-
     int index = preferrences.getInt('sort');
-    if (index != null) {
-      _sort = MediaListSort.values[index];
-    } else {
-      _sort = MediaListSort.TITLE;
-      preferrences.setInt('sort', MediaListSort.TITLE.index);
-    }
+
+    _userSettings = UserSettings(
+      userId: view['id'],
+      scoreFormat: view['mediaListOptions']['scoreFormat'],
+      splitCompletedAnime: view['mediaListOptions']['animeList']
+          ['splitCompletedSectionByFormat'],
+      splitCompletedManga: view['mediaListOptions']['mangaList']
+          ['splitCompletedSectionByFormat'],
+      sort: index != null ? MediaListSort.values[index] : MediaListSort.TITLE,
+      titleFormat: view['options']['titleLanguage'],
+      displayAdultContent: view['options']['displayAdultContent'],
+    );
 
     _status = AuthStatus.authorised;
     notifyListeners();

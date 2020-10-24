@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/providers/anime_collection.dart';
+import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
@@ -81,6 +81,8 @@ class MediaList extends StatelessWidget {
 }
 
 class _MediaListTile extends StatelessWidget {
+  static const _space = SizedBox(height: 5);
+
   final MediaEntry media;
   final bool isAnime;
   final String scoreFormat;
@@ -115,32 +117,58 @@ class _MediaListTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        media.title,
-                        style: Theme.of(context).textTheme.bodyText1,
-                        overflow: TextOverflow.fade,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        SizedBox(
-                          width: 60,
-                          height: 30,
-                          child: Center(
-                            child: Text(
-                              clarifyEnum(media.userData.format),
-                              style: Theme.of(context).textTheme.subtitle2,
-                            ),
+                        Flexible(
+                          child: Text(
+                            media.title,
+                            style: Theme.of(context).textTheme.bodyText1,
+                            overflow: TextOverflow.fade,
                           ),
                         ),
+                        _space,
+                        RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.subtitle2,
+                            children: [
+                              TextSpan(
+                                text: clarifyEnum(media.userData.format),
+                              ),
+                              if (media.timeUntilAiring != null)
+                                TextSpan(
+                                  text:
+                                      ' • Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                                  style: TextStyle(
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                              if (media.nextEpisode != null &&
+                                  media.nextEpisode - 1 >
+                                      media.userData.progress)
+                                TextSpan(
+                                  text:
+                                      ' • ${media.nextEpisode - 1 - media.userData.progress} ep behind',
+                                  style: TextStyle(
+                                    color: Theme.of(context).errorColor,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
                         SizedBox(
                           width: 50,
                           child: Center(
                             child: Text(
-                              media.userData.status != MediaListStatus.COMPLETED
-                                  ? '${media.userData.progress} / ${media.progressMaxString}'
+                              media.userData.progress !=
+                                      media.userData.progressMax
+                                  ? '${media.userData.progress} / ${media.userData.progressMax ?? '?'}'
                                   : media.userData.progress.toString(),
                               style: Theme.of(context).textTheme.subtitle2,
                             ),
@@ -158,6 +186,29 @@ class _MediaListTile extends StatelessWidget {
                         ),
                         SizedBox(
                           width: 50,
+                          child: Center(
+                            child: media.userData.repeat > 0
+                                ? Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        media.userData.repeat.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1,
+                                      ),
+                                      const Icon(
+                                        FluentSystemIcons
+                                            .ic_fluent_arrow_repeat_all_filled,
+                                        size: Design.ICON_SMALLER,
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 30,
                           child: Center(
                             child: media.userData.notes != null
                                 ? IconButton(

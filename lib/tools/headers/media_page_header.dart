@@ -42,7 +42,6 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
     final addition = MediaQuery.of(context).size.width - 100 - buttonMinWidth;
 
     return Container(
-      width: double.infinity,
       height: maxHeight,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
@@ -76,7 +75,6 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
             ),
             child: Container(
               height: coverHeight,
-              width: double.infinity,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,7 +98,6 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                           image: media.cover,
                         ),
                       ),
-                      barrierDismissible: true,
                     ),
                   ),
                   const SizedBox(width: 10),

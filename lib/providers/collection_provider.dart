@@ -8,12 +8,16 @@ import 'package:otraku/enums/media_list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_list.dart';
 import 'package:otraku/models/page_data/entry_data.dart';
-import 'package:otraku/models/fuzzy_date.dart';
+import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/media_group_provider.dart';
 
 class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
+  // ***************************************************************************
+  // FIELDS & DATA
+  // ***************************************************************************
+
   static const String _url = 'https://graphql.anilist.co';
 
   static Map<String, String> _headers;
@@ -52,6 +56,7 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       mediaId
       status
       progress
+      progressVolumes
       repeat
       notes
       score(format: \$scoreFormat)
@@ -60,20 +65,22 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
       media {
       format
       $mediaParts
+      volumes
+      nextAiringEpisode {episode timeUntilAiring}
       title {userPreferred}
       coverImage {large}
       }
     ''';
   }
 
-  //Data
-
   bool _isLoading = false;
   List<EntryList> _lists;
   int _listIndex = 0;
   String _search;
 
-  //Getters and Setters
+  // ***************************************************************************
+  // GETTERS, SETTERS & FILTERING
+  // ***************************************************************************
 
   String get collectionName {
     if (isAnime) return 'Anime';
@@ -154,8 +161,6 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     }
   }
 
-  //Methods
-
   //Clear the filters and fetch the collection again.
   @override
   void clear() {
@@ -164,7 +169,11 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     fetchData();
   }
 
-  //Fetches media list collection.
+  // ***************************************************************************
+  // LIST HANDLING
+  // ***************************************************************************
+
+  //The initial fetch of the collection
   @override
   Future<void> fetchData() async {
     _isLoading = true;
@@ -202,6 +211,123 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     notifyListeners();
   }
 
+  //Fetches a list collection.
+  Future<Tuple<List<dynamic>, List<dynamic>>> fetchLists(
+      {String status}) async {
+    final query = '''
+      query Collection(
+          \$userId: Int, ${status != null ? '\$status: MediaListStatus,' : ''} 
+          \$scoreFormat: ScoreFormat) {
+        MediaListCollection(
+            userId: \$userId, ${status != null ? 'status: \$status,' : ''} 
+            type: $typeUCase) {
+          lists {
+            name
+            status
+            isCustomList
+            isSplitCompletedList
+            entries {
+              $_entryFieldsForFetching
+            }
+          }
+        }
+        User(id: \$userId) {
+          mediaListOptions {
+            ${typeLCase}List {
+              sectionOrder
+              customLists
+            }
+          }
+        }
+      }
+    ''';
+
+    final request = json.encode({
+      'query': query,
+      'variables': {
+        'userId': _userId,
+        'status': status,
+        'scoreFormat': _scoreFormat,
+      },
+    });
+
+    final response = await post(_url, body: request, headers: _headers);
+    final result = json.decode(response.body)['data'];
+
+    final lists = result['MediaListCollection']['lists'];
+    final List<dynamic> customListNames =
+        result['User']['mediaListOptions']['${typeLCase}List']['customLists'];
+
+    for (String name in customListNames) {
+      for (final list in lists) {
+        if (list['isCustomList'] &&
+            list['name'].toString().toLowerCase() == name.toLowerCase()) {
+          list['name'] = name;
+        }
+      }
+    }
+
+    return Tuple(
+      lists,
+      result['User']['mediaListOptions']['${typeLCase}List']['sectionOrder'],
+    );
+  }
+
+  //Fetches a single list. If @customListName is null, it gets
+  //the non-custom list that corresponds to this
+  //status. Otherwise, it gets a custom list
+  //with the same name.
+  Future<void> fetchSingleList({
+    String status,
+    String name,
+    bool isCustomList = false,
+    String splitListFormat,
+  }) async {
+    final tuple = await fetchLists(status: status);
+    final sectionOrder = tuple.item2;
+    final listData = tuple.item1.firstWhere(
+      (l) =>
+          l['isCustomList'] == isCustomList &&
+          (splitListFormat == null ||
+              l['entries'][0]['media']['format'] == splitListFormat) &&
+          (name == null || l['name'] == name),
+      orElse: () => null,
+    );
+
+    if (listData == null) return;
+
+    final list = _sortList(_createList(listData));
+
+    for (int i = 0; i < sectionOrder.length; i++) {
+      if (sectionOrder[i] == list.name) {
+        for (int j = i + 1; j < sectionOrder.length; j++) {
+          final nextListIndex =
+              _lists.indexWhere((l) => l.name == sectionOrder[j]);
+
+          if (nextListIndex != -1) {
+            _lists.insert(nextListIndex, list);
+            return;
+          }
+        }
+
+        _lists.add(list);
+        return;
+      }
+    }
+  }
+
+  EntryList _createList(Map<String, dynamic> list) => EntryList(
+        name: list['name'],
+        isCustomList: list['isCustomList'],
+        status: list['isCustomList'] ? null : list['status'],
+        splitCompletedListFormat: list['isSplitCompletedList']
+            ? list['entries'][0]['media']['format']
+            : null,
+        entries: (list['entries'] as List<dynamic>)
+            .map((e) => _createEntry(e))
+            .toList(),
+      );
+
   //Sorts all lists.
   void sortCollection() {
     for (int i = 0; i < _lists.length; i++) {
@@ -210,7 +336,6 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     notifyListeners();
   }
 
-  //Sorts a list at a given index.
   EntryList _sortList(EntryList list) {
     switch (_mediaListSort) {
       case MediaListSort.TITLE:
@@ -267,6 +392,10 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
 
     return list;
   }
+
+  // ***************************************************************************
+  // ENTRY HANDLING
+  // ***************************************************************************
 
   //Updates entry data and its corresponding lists.
   //Returns true if it was successful and false if it wasn't.
@@ -501,129 +630,18 @@ class CollectionProvider with ChangeNotifier implements MediaGroupProvider {
     }
   }
 
-  //Fetches a list collection.
-  Future<Tuple<List<dynamic>, List<dynamic>>> fetchLists(
-      {String status}) async {
-    final query = '''
-      query Collection(
-          \$userId: Int, ${status != null ? '\$status: MediaListStatus,' : ''} 
-          \$scoreFormat: ScoreFormat) {
-        MediaListCollection(
-            userId: \$userId, ${status != null ? 'status: \$status,' : ''} 
-            type: $typeUCase) {
-          lists {
-            name
-            status
-            isCustomList
-            isSplitCompletedList
-            entries {
-              $_entryFieldsForFetching
-            }
-          }
-        }
-        User(id: \$userId) {
-          mediaListOptions {
-            ${typeLCase}List {
-              sectionOrder
-              customLists
-            }
-          }
-        }
-      }
-    ''';
-
-    final request = json.encode({
-      'query': query,
-      'variables': {
-        'userId': _userId,
-        'status': status,
-        'scoreFormat': _scoreFormat,
-      },
-    });
-
-    final response = await post(_url, body: request, headers: _headers);
-    final result = json.decode(response.body)['data'];
-
-    final lists = result['MediaListCollection']['lists'];
-    final List<dynamic> customListNames =
-        result['User']['mediaListOptions']['${typeLCase}List']['customLists'];
-
-    for (String name in customListNames) {
-      for (final list in lists) {
-        if (list['isCustomList'] &&
-            list['name'].toString().toLowerCase() == name.toLowerCase()) {
-          list['name'] = name;
-        }
-      }
-    }
-
-    return Tuple(
-      lists,
-      result['User']['mediaListOptions']['${typeLCase}List']['sectionOrder'],
-    );
-  }
-
-  //Fetches a single list. If @customListName is null, it gets the non-custom
-  //list that corresponds to this status. Otherwise, it gets a custom list
-  //with the same name.
-  Future<void> fetchSingleList({
-    String status,
-    String name,
-    bool isCustomList = false,
-    String splitListFormat,
-  }) async {
-    final tuple = await fetchLists(status: status);
-    final sectionOrder = tuple.item2;
-    final listData = tuple.item1.firstWhere(
-      (l) =>
-          l['isCustomList'] == isCustomList &&
-          (splitListFormat == null ||
-              l['entries'][0]['media']['format'] == splitListFormat) &&
-          (name == null || l['name'] == name),
-      orElse: () => null,
-    );
-
-    if (listData == null) return;
-
-    final list = _sortList(_createList(listData));
-
-    for (int i = 0; i < sectionOrder.length; i++) {
-      if (sectionOrder[i] == list.name) {
-        for (int j = i + 1; j < sectionOrder.length; j++) {
-          final nextListIndex =
-              _lists.indexWhere((l) => l.name == sectionOrder[j]);
-
-          if (nextListIndex != -1) {
-            _lists.insert(nextListIndex, list);
-            return;
-          }
-        }
-
-        _lists.add(list);
-        return;
-      }
-    }
-  }
-
-  EntryList _createList(Map<String, dynamic> list) => EntryList(
-        name: list['name'],
-        isCustomList: list['isCustomList'],
-        status: list['isCustomList'] ? null : list['status'],
-        splitCompletedListFormat: list['isSplitCompletedList']
-            ? list['entries'][0]['media']['format']
-            : null,
-        entries: (list['entries'] as List<dynamic>)
-            .map((e) => _createEntry(e))
-            .toList(),
-      );
-
   MediaEntry _createEntry(Map<String, dynamic> entry) => MediaEntry(
         mediaId: entry['mediaId'],
         title: entry['media']['title']['userPreferred'],
         cover: entry['media']['coverImage']['large'],
-        format: entry['media']['format'],
-        progressMaxString: (entry['media'][mediaParts] ?? '?').toString(),
-        entryUserData: EntryData(
+        nextEpisode: entry['media']['nextAiringEpisode'] != null
+            ? entry['media']['nextAiringEpisode']['episode']
+            : null,
+        timeUntilAiring: entry['media']['nextAiringEpisode'] != null
+            ? secondsToTime(
+                entry['media']['nextAiringEpisode']['timeUntilAiring'])
+            : null,
+        userData: EntryData(
           mediaId: entry['mediaId'],
           type: typeUCase,
           format: entry['media']['format'],

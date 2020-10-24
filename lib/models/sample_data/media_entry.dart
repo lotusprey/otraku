@@ -5,28 +5,16 @@ class MediaEntry {
   final int mediaId;
   final String title;
   final String cover;
-  final String format;
-  final String progressMaxString;
-  EntryData _userData;
+  final int nextEpisode;
+  final String timeUntilAiring;
+  EntryData userData;
 
   MediaEntry({
     @required this.mediaId,
     @required this.title,
     @required this.cover,
-    @required this.format,
-    @required this.progressMaxString,
-    @required entryUserData,
-  }) {
-    _userData = entryUserData;
-  }
-
-  EntryData get userData {
-    return _userData;
-  }
-
-  set userData(EntryData data) {
-    if (data != null) {
-      _userData = data;
-    }
-  }
+    @required this.nextEpisode,
+    @required this.timeUntilAiring,
+    @required this.userData,
+  });
 }

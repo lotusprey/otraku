@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/auth.dart';
 import 'package:otraku/providers/manga_collection.dart';
+import 'package:otraku/providers/users.dart';
 import 'package:otraku/tools/headers/collection_header.dart';
 import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
@@ -63,7 +63,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
         CollectionHeader(widget.isAnime, widget.scrollCtrl),
         MediaList(
           widget.isAnime,
-          Provider.of<Auth>(context, listen: false).scoreFormat,
+          Provider.of<Users>(context, listen: false).settings.scoreFormat,
         ),
       ],
     );

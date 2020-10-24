@@ -22,9 +22,11 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
 
   static const String _url = 'https://graphql.anilist.co';
   Map<String, String> _headers;
+  bool _adultContent;
 
-  void init(Map<String, String> headers) {
+  void init(Map<String, String> headers, bool adultContent) {
     _headers = headers;
+    _adultContent = adultContent;
   }
 
   Browsable _type = Browsable.anime;
@@ -234,7 +236,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
           \$tag_not_in: [String]) {
         Page(page: \$page, perPage: \$perPage) {
           pageInfo {hasNextPage}
-          media(id_not_in: \$id_not_in, sort: \$sort, type: \$type, 
+          media(id_not_in: \$id_not_in, sort: \$sort, type: \$type, ${_adultContent ? '' : 'isAdult: false,'}
           search: \$search,
           ${_filters.containsKey(KEY_STATUS_IN) ? 'status_in: \$status_in,' : ''}
           ${_filters.containsKey(KEY_STATUS_NOT_IN) ? 'status_not_in: \$status_not_in,' : ''}
@@ -357,7 +359,7 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
     _isLoading = true;
 
     final request = json.encode({
-      'query': r'''
+      'query': '''
         query Filters {
           GenreCollection
           MediaTagCollection {
@@ -365,14 +367,10 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
             description
           }
           Page(page: 1, perPage: 30) {
-            media(sort: TRENDING_DESC, type: ANIME) {
+            media(sort: TRENDING_DESC, type: ANIME, ${_adultContent ? '' : 'isAdult: false'}) {
               id
-              title {
-                userPreferred
-              }
-              coverImage {
-                large
-              }
+              title {userPreferred}
+              coverImage {large}
             }
           }
         }

@@ -101,6 +101,7 @@ class ImageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: Colors.transparent,
       elevation: 0,
       child: ClipRRect(
         borderRadius: ViewConfig.BORDER_RADIUS,

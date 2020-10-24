@@ -93,12 +93,14 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
           prefixIcon: Icon(
             FluentSystemIcons.ic_fluent_search_regular,
             size: Design.ICON_SMALL,
+            color: Theme.of(context).disabledColor,
           ),
           suffixIcon: _isEmpty
               ? null
               : IconButton(
                   icon: const Icon(Icons.close),
                   iconSize: Design.ICON_SMALLER,
+                  color: Theme.of(context).disabledColor,
                   onPressed: () {
                     widget.updateValue(null);
                     _controller.clear();

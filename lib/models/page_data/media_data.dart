@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/models/fuzzy_date.dart';
+import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/page_data/page_item_data.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
@@ -32,14 +32,8 @@ class MediaData extends PageItemData {
     if (data['nextAiringEpisode'] != null) {
       nextEpisode = data['nextAiringEpisode']['episode'];
 
-      int minutes = data['nextAiringEpisode']['timeUntilAiring'] ~/ 60;
-      int hours = minutes ~/ 60;
-      minutes %= 60;
-      int days = hours ~/ 24;
-      hours %= 24;
-
       timeUntilAiring =
-          '${days != 0 ? '${days}d ' : ''}${hours != 0 ? '${hours}h ' : ''}${minutes != 0 ? '${minutes}m' : ''}';
+          secondsToTime(data['nextAiringEpisode']['timeUntilAiring']);
     }
 
     //User Data

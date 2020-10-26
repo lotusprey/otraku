@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/design.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -34,18 +37,18 @@ class _ThemeDropdown extends StatefulWidget {
 }
 
 class _ThemeDropdownState extends State<_ThemeDropdown> {
-  Design provider;
-
   @override
   Widget build(BuildContext context) {
+    final box = GetStorage();
+    final currentThemeIndex = box.read('theme') ?? 0;
     List<DropdownMenuItem> items = [];
 
-    for (final swatch in Swatch.values) {
+    for (final theme in Themes.values) {
       items.add(DropdownMenuItem(
-        value: swatch,
+        value: theme,
         child: Text(
-          swatch.name,
-          style: swatch != provider.swatch
+          clarifyEnum(describeEnum(theme)),
+          style: theme.index != currentThemeIndex
               ? Theme.of(context).textTheme.bodyText1
               : Theme.of(context).textTheme.bodyText2,
         ),
@@ -59,20 +62,17 @@ class _ThemeDropdownState extends State<_ThemeDropdown> {
         borderRadius: ViewConfig.BORDER_RADIUS,
       ),
       child: DropdownButton(
-        value: provider.swatch,
+        value: Themes.values[currentThemeIndex],
         items: items,
-        onChanged: (swatch) => setState(() => provider.swatch = swatch),
+        onChanged: (theme) => setState(() {
+          box.write('theme', (theme as Themes).index);
+          Get.changeTheme((theme as Themes).themeData);
+        }),
         iconEnabledColor: Theme.of(context).disabledColor,
         dropdownColor: Theme.of(context).primaryColor,
         underline: const SizedBox(),
         // isExpanded: true,
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    provider = Provider.of<Design>(context, listen: false);
   }
 }

@@ -24,11 +24,8 @@ class _TabManagerState extends State<TabManager> {
   static ScrollController _scrollCtrl;
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _tabItems;
-  PageController _pageCtrl;
   int _pageIndex;
   ValueNotifier<bool> _navBarVisibility;
-
-  bool _bottomNavigationPageChange = false;
 
   void _scrollDirection() {
     if (_scrollCtrl.position.userScrollDirection == ScrollDirection.reverse) {
@@ -58,36 +55,16 @@ class _TabManagerState extends State<TabManager> {
               items: _tabItems,
               onTap: (index) {
                 if (_pageIndex == index) return;
-
-                _bottomNavigationPageChange = true;
-                final position = MediaQuery.of(context).size.width * index;
-                if (index > _pageIndex) {
-                  _pageCtrl.jumpTo(position - 100);
-                } else {
-                  _pageCtrl.jumpTo(position + 100);
-                }
-
-                _pageCtrl
-                    .animateTo(
-                      position,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.decelerate,
-                    )
-                    .then((_) => setState(() => _pageIndex = index));
-                _bottomNavigationPageChange = false;
+                setState(() => _pageIndex = index);
               },
             ),
           ],
         ),
       ),
       body: SafeArea(
-        child: PageView(
-          children: _tabs,
-          controller: _pageCtrl,
-          onPageChanged: (index) {
-            if (!_bottomNavigationPageChange)
-              setState(() => _pageIndex = index);
-          },
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: _tabs[_pageIndex],
         ),
       ),
     );
@@ -97,7 +74,6 @@ class _TabManagerState extends State<TabManager> {
   void initState() {
     super.initState();
     _pageIndex = ViewConfig.initialPage;
-    _pageCtrl = PageController(initialPage: _pageIndex);
 
     _navBarVisibility = ValueNotifier(true);
     _scrollCtrl = ScrollController();
@@ -106,12 +82,14 @@ class _TabManagerState extends State<TabManager> {
     _tabs = [
       InboxTab(),
       CollectionsTab(
-        isAnime: true,
+        ofAnime: true,
+        otherUserId: null,
         scrollCtrl: _scrollCtrl,
         key: UniqueKey(),
       ),
       CollectionsTab(
-        isAnime: false,
+        ofAnime: false,
+        otherUserId: null,
         scrollCtrl: _scrollCtrl,
         key: UniqueKey(),
       ),
@@ -145,7 +123,6 @@ class _TabManagerState extends State<TabManager> {
 
   @override
   void dispose() {
-    _pageCtrl.dispose();
     if (_scrollCtrl.hasClients) {
       _scrollCtrl.removeListener(_scrollDirection);
       _scrollCtrl.dispose();

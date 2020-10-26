@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/models/page_data/person_data.dart';
@@ -8,9 +5,9 @@ import 'package:otraku/models/page_data/studio_data.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/models/tuple.dart';
+import 'package:otraku/providers/network_service.dart';
 
 class PageItem {
-  static const String _url = 'https://graphql.anilist.co';
   static const String _personMain = r'''
     name{full native alternative}
     image{large}
@@ -19,11 +16,7 @@ class PageItem {
     description(asHtml: true)
   ''';
 
-  final Map<String, String> _headers;
-
-  PageItem(this._headers);
-
-  Future<bool> toggleFavourite(int id, Browsable browsable) async {
+  static Future<bool> toggleFavourite(int id, Browsable browsable) async {
     String idName = const {
       Browsable.anime: 'anime',
       Browsable.manga: 'manga',
@@ -52,17 +45,16 @@ class PageItem {
       }
     ''';
 
-    final request = json.encode({
-      'query': query,
-      'variables': {'id': id},
-    });
+    final result = await NetworkService.request(
+      query,
+      {'id': id},
+      popOnError: false,
+    );
 
-    final result = await post(_url, body: request, headers: _headers);
-    return !(json.decode(result.body) as Map<String, dynamic>)
-        .containsKey('errors');
+    return result != null;
   }
 
-  Future<PersonData> fetchCharacter(int id, PersonData character) async {
+  static Future<PersonData> fetchCharacter(int id, PersonData character) async {
     const anime = r'''
       anime: media(page: $page, type: ANIME) {
         ...media
@@ -108,17 +100,14 @@ class PageItem {
       }
     ''';
 
-    final request = json.encode({
-      'query': query,
-      'variables': {
-        'id': id,
-        'page': character == null ? 1 : character.nextPage,
-      },
+    final body = await NetworkService.request(query, {
+      'id': id,
+      'page': character == null ? 1 : character.nextPage,
     });
 
-    final result = await post(_url, body: request, headers: _headers);
+    if (body == null) return null;
 
-    final data = json.decode(result.body)['data']['Character'];
+    final data = body['Character'];
 
     List<Connection> leftConnections = [];
     List<Connection> rightConnections = [];
@@ -194,7 +183,7 @@ class PageItem {
     return character;
   }
 
-  Future<PersonData> fetchStaff(int id, PersonData staff) async {
+  static Future<PersonData> fetchStaff(int id, PersonData staff) async {
     const characters = r'''
       characters(page: $page) {
         pageInfo {hasNextPage}
@@ -238,17 +227,14 @@ class PageItem {
       }
     ''';
 
-    final request = json.encode({
-      'query': query,
-      'variables': {
-        'id': id,
-        'page': staff == null ? 1 : staff.nextPage,
-      },
+    final body = await NetworkService.request(query, {
+      'id': id,
+      'page': staff == null ? 1 : staff.nextPage,
     });
 
-    final result = await post(_url, body: request, headers: _headers);
+    if (body == null) return null;
 
-    final data = json.decode(result.body)['data']['Staff'];
+    final data = body['Staff'];
 
     List<Connection> leftConnections = [];
     List<Connection> rightConnections = [];
@@ -325,7 +311,7 @@ class PageItem {
     return staff;
   }
 
-  Future<StudioData> fetchStudio(int id, StudioData studio) async {
+  static Future<StudioData> fetchStudio(int id, StudioData studio) async {
     final query = '''
       query Studio(\$id: Int, \$page: Int) {
         Studio(id: \$id) {
@@ -348,14 +334,14 @@ class PageItem {
       }
     ''';
 
-    final request = json.encode({
-      'query': query,
-      'variables': {'id': id, 'page': studio == null ? 1 : studio.nextPage},
+    final body = await NetworkService.request(query, {
+      'id': id,
+      'page': studio == null ? 1 : studio.nextPage,
     });
 
-    final result = await post(_url, body: request, headers: _headers);
+    if (body == null) return null;
 
-    final data = json.decode(result.body)['data']['Studio'];
+    final data = body['Studio'];
 
     if ((data['media']['nodes'] as List<dynamic>).length == 0) return studio;
 

@@ -8,7 +8,6 @@ import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
-import 'package:provider/provider.dart';
 
 class StudioPage extends StatefulWidget {
   final int id;
@@ -30,9 +29,7 @@ class _StudioPageState extends State<StudioPage> {
         notification.metrics.extentAfter <= 50 &&
         notification.metrics.maxScrollExtent > extentOnLastCall) {
       extentOnLastCall = notification.metrics.maxScrollExtent;
-      Provider.of<PageItem>(context, listen: false)
-          .fetchStudio(widget.id, _studio)
-          .then((_) => setState(() {}));
+      PageItem.fetchStudio(widget.id, _studio).then((_) => setState(() {}));
     }
 
     return false;
@@ -114,9 +111,10 @@ class _StudioPageState extends State<StudioPage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<PageItem>(context, listen: false)
-        .fetchStudio(widget.id, null)
-        .then((studio) => setState(() => _studio = studio));
+    PageItem.fetchStudio(widget.id, null).then((studio) {
+      if (studio == null) return;
+      setState(() => _studio = studio);
+    });
   }
 }
 

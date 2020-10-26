@@ -1,21 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/manga_collection.dart';
-import 'package:otraku/providers/users.dart';
+import 'package:otraku/providers/collections.dart';
 import 'package:otraku/tools/headers/collection_header.dart';
-import 'package:otraku/tools/headers/header_refresh_button.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 import 'package:provider/provider.dart';
 
 class CollectionsTab extends StatefulWidget {
   final ScrollController scrollCtrl;
-  final bool isAnime;
+  final int otherUserId;
+  final bool ofAnime;
 
   CollectionsTab({
     @required this.scrollCtrl,
-    @required this.isAnime,
+    @required this.otherUserId,
+    @required this.ofAnime,
     @required key,
   }) : super(key: key);
 
@@ -26,32 +25,10 @@ class CollectionsTab extends StatefulWidget {
 class _CollectionsTabState extends State<CollectionsTab> {
   @override
   Widget build(BuildContext context) {
-    final collection = widget.isAnime
-        ? Provider.of<AnimeCollection>(context, listen: false)
-        : Provider.of<MangaCollection>(context, listen: false);
-
-    if (collection.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'No ${collection.collectionName}',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            SizedBox(
-              height: 60,
-              child: HeaderRefreshButton(
-                readable: collection,
-                listenable: widget.isAnime
-                    ? Provider.of<AnimeCollection>(context)
-                    : Provider.of<MangaCollection>(context),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    Provider.of<Collections>(context, listen: false).assignCollection(
+      widget.ofAnime,
+      widget.otherUserId,
+    );
 
     return CustomScrollView(
       controller: widget.scrollCtrl,
@@ -59,12 +36,9 @@ class _CollectionsTabState extends State<CollectionsTab> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        HeadlineHeader('${collection.collectionName} List'),
-        CollectionHeader(widget.isAnime, widget.scrollCtrl),
-        MediaList(
-          widget.isAnime,
-          Provider.of<Users>(context, listen: false).settings.scoreFormat,
-        ),
+        HeadlineHeader('${widget.ofAnime ? 'Anime' : 'Manga'} List'),
+        CollectionHeader(widget.scrollCtrl),
+        MediaList(widget.ofAnime),
       ],
     );
   }

@@ -20,7 +20,7 @@ class TitleSegmentedControl<T> extends StatefulWidget {
 }
 
 class _TitleSegmentedControlState<T> extends State<TitleSegmentedControl> {
-  final SizedBox _space = const SizedBox(width: 10);
+  static const _space = SizedBox(width: 10);
 
   T _value;
   bool _didChangeDependencies = false;

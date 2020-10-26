@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/page_data/page_item_data.dart';
 import 'package:otraku/providers/page_item.dart';
-import 'package:provider/provider.dart';
 
 class FavoriteButton extends StatefulWidget {
   final PageItemData data;
@@ -32,9 +31,9 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             widget.data.isFavourite ? Icons.favorite : Icons.favorite_border,
             color: Theme.of(context).dividerColor,
           ),
-          onPressed: () => Provider.of<PageItem>(context, listen: false)
-              .toggleFavourite(widget.data.id, widget.data.browsable)
-              .then((ok) {
+          onPressed: () =>
+              PageItem.toggleFavourite(widget.data.id, widget.data.browsable)
+                  .then((ok) {
             if (ok)
               setState(
                   () => widget.data.isFavourite = !widget.data.isFavourite);

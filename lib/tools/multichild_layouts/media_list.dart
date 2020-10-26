@@ -4,30 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/score_format_enum.dart';
+import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/design.dart';
-import 'package:otraku/providers/manga_collection.dart';
+import 'package:otraku/providers/collections.dart';
 import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
 class MediaList extends StatelessWidget {
-  final bool isAnimeCollection;
-  final String scoreFormat;
+  final bool isAnime;
 
-  MediaList(this.isAnimeCollection, this.scoreFormat);
+  MediaList(this.isAnime);
 
   @override
   Widget build(BuildContext context) {
-    final collection = isAnimeCollection
-        ? Provider.of<AnimeCollection>(context)
-        : Provider.of<MangaCollection>(context);
+    final collection = Provider.of<Collections>(context).collection;
 
-    if (collection.isEmpty) {
-      if (collection.isLoading) {
-        return const SliverFillRemaining();
+    if (collection == null) {
+      if (Provider.of<Collections>(context, listen: false).fetching) {
+        return const SliverFillRemaining(child: BlossomLoader());
       }
 
       return SliverFillRemaining(
@@ -36,13 +33,8 @@ class MediaList extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'No ${collection.collectionName}',
+                'No ${isAnime ? 'Anime' : 'Manga'}',
                 style: Theme.of(context).textTheme.subtitle1,
-              ),
-              IconButton(
-                icon: const Icon(
-                    FluentSystemIcons.ic_fluent_arrow_repeat_all_filled),
-                onPressed: collection.clear,
               ),
             ],
           ),
@@ -52,11 +44,11 @@ class MediaList extends StatelessWidget {
 
     final entries = collection.entries;
 
-    if (entries == null) {
+    if (entries.length == 0) {
       return SliverFillRemaining(
         child: Center(
           child: Text(
-            'No ${collection.collectionName} Results',
+            'No ${isAnime ? 'Anime' : 'Manga'} Results',
             style: Theme.of(context).textTheme.subtitle1,
           ),
         ),
@@ -67,11 +59,7 @@ class MediaList extends StatelessWidget {
       padding: ViewConfig.PADDING,
       sliver: SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
-          (_, index) => _MediaListTile(
-            entries[index],
-            isAnimeCollection,
-            scoreFormat,
-          ),
+          (_, index) => _MediaListTile(entries[index], collection.scoreFormat),
           childCount: entries.length,
         ),
         itemExtent: 150,
@@ -84,16 +72,15 @@ class _MediaListTile extends StatelessWidget {
   static const _space = SizedBox(height: 5);
 
   final MediaEntry media;
-  final bool isAnime;
   final String scoreFormat;
 
-  _MediaListTile(this.media, this.isAnime, this.scoreFormat);
+  _MediaListTile(this.media, this.scoreFormat);
 
   @override
   Widget build(BuildContext context) {
     return MediaIndexer(
       id: media.mediaId,
-      itemType: isAnime ? Browsable.anime : Browsable.manga,
+      itemType: Browsable.anime,
       tag: media.cover,
       child: Container(
         color: Theme.of(context).backgroundColor,
@@ -134,7 +121,7 @@ class _MediaListTile extends StatelessWidget {
                             style: Theme.of(context).textTheme.subtitle2,
                             children: [
                               TextSpan(
-                                text: clarifyEnum(media.userData.format),
+                                text: clarifyEnum(media.format),
                               ),
                               if (media.timeUntilAiring != null)
                                 TextSpan(
@@ -145,11 +132,10 @@ class _MediaListTile extends StatelessWidget {
                                   ),
                                 ),
                               if (media.nextEpisode != null &&
-                                  media.nextEpisode - 1 >
-                                      media.userData.progress)
+                                  media.nextEpisode - 1 > media.progress)
                                 TextSpan(
                                   text:
-                                      ' • ${media.nextEpisode - 1 - media.userData.progress} ep behind',
+                                      ' • ${media.nextEpisode - 1 - media.progress} ep behind',
                                   style: TextStyle(
                                     color: Theme.of(context).errorColor,
                                   ),
@@ -166,10 +152,9 @@ class _MediaListTile extends StatelessWidget {
                           width: 50,
                           child: Center(
                             child: Text(
-                              media.userData.progress !=
-                                      media.userData.progressMax
-                                  ? '${media.userData.progress} / ${media.userData.progressMax ?? '?'}'
-                                  : media.userData.progress.toString(),
+                              media.progress != media.progressMax
+                                  ? '${media.progress} / ${media.progressMax ?? '?'}'
+                                  : media.progress.toString(),
                               style: Theme.of(context).textTheme.subtitle2,
                             ),
                           ),
@@ -180,19 +165,19 @@ class _MediaListTile extends StatelessWidget {
                             child: getWidgetFormScoreFormat(
                               context,
                               scoreFormat,
-                              media.userData.score,
+                              media.score,
                             ),
                           ),
                         ),
                         SizedBox(
                           width: 50,
                           child: Center(
-                            child: media.userData.repeat > 0
+                            child: media.repeat > 0
                                 ? Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        media.userData.repeat.toString(),
+                                        media.repeat.toString(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle1,
@@ -200,7 +185,7 @@ class _MediaListTile extends StatelessWidget {
                                       const Icon(
                                         FluentSystemIcons
                                             .ic_fluent_arrow_repeat_all_filled,
-                                        size: Design.ICON_SMALLER,
+                                        size: Styles.ICON_SMALLER,
                                       ),
                                     ],
                                   )
@@ -210,7 +195,7 @@ class _MediaListTile extends StatelessWidget {
                         SizedBox(
                           width: 30,
                           child: Center(
-                            child: media.userData.notes != null
+                            child: media.notes != null
                                 ? IconButton(
                                     icon: const Icon(Icons.comment),
                                     onPressed: () => showDialog(
@@ -218,7 +203,7 @@ class _MediaListTile extends StatelessWidget {
                                       builder: (_) => PopUpAnimation(
                                         TextDialog(
                                           title: 'Comment',
-                                          text: media.userData.notes,
+                                          text: media.notes,
                                         ),
                                       ),
                                     ),

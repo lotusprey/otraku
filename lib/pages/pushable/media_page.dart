@@ -6,7 +6,6 @@ import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
 class MediaPage extends StatefulWidget {
   final int id;
@@ -141,9 +140,8 @@ class _MediaPageState extends State<MediaPage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<MediaItem>(context, listen: false)
-        .fetchItemData(widget.id)
-        .then((media) {
+    MediaItem.fetchItemData(widget.id).then((media) {
+      if (media == null) return;
       _media = media;
       precacheImage(_media.cover.image, context).then((_) {
         if (mounted) setState(() {});

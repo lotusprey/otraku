@@ -12,7 +12,6 @@ import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/multichild_layouts/media_connection_grid.dart';
 import 'package:otraku/tools/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
 class PersonPage extends StatefulWidget {
   final int id;
@@ -194,10 +193,11 @@ class _PersonPageState extends State<PersonPage> {
   void initState() {
     super.initState();
     loadFunc = widget.type == Browsable.characters
-        ? Provider.of<PageItem>(context, listen: false).fetchCharacter
-        : Provider.of<PageItem>(context, listen: false).fetchStaff;
+        ? PageItem.fetchCharacter
+        : PageItem.fetchStaff;
 
     loadFunc(widget.id, null).then((person) {
+      if (person == null) return;
       if (mounted) setState(() => _person = person);
     });
   }

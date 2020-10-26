@@ -2,10 +2,8 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/page_data/entry_data.dart';
-import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/collection_provider.dart';
-import 'package:otraku/providers/manga_collection.dart';
+import 'package:otraku/models/page_data/edit_entry.dart';
+import 'package:otraku/providers/collections.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
@@ -31,9 +29,9 @@ class EditEntryPage extends StatefulWidget {
 class _EditEntryPageState extends State<EditEntryPage> {
   static const _box = SizedBox(width: 10, height: 10);
 
-  CollectionProvider _collection;
-  EntryData _oldData;
-  EntryData _newData;
+  EditEntry _oldData;
+  EditEntry _newData;
+  String _scoreFormat;
 
   Widget _row(Widget child1, Widget child2) {
     return Row(
@@ -84,9 +82,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
         title: 'Edit',
         trailing: [
           _UpdateButtons(
-            oldData: _oldData,
-            newData: _newData,
-            collection: _collection,
+            original: _oldData,
+            changed: _newData,
+            // collection: _collection,
             update: widget.update,
           )
         ],
@@ -134,7 +132,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   _box,
                   InputFieldStructure(
                     title: 'Score',
-                    body: ScorePicker(_newData),
+                    body: ScorePicker(_newData, _scoreFormat),
                   ),
                   _box,
                   InputFieldStructure(
@@ -150,9 +148,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     InputFieldStructure(
                       title: 'Start Date',
                       body: DateField(
-                        date: _newData.startDate,
+                        date: _newData.startedAt,
                         onChanged: (startDate) =>
-                            _newData.startDate = startDate,
+                            _newData.startedAt = startDate,
                         helpText: 'Start Date',
                       ),
                     ),
@@ -160,8 +158,8 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     InputFieldStructure(
                       title: 'End Date',
                       body: DateField(
-                        date: _newData.endDate,
-                        onChanged: (endDate) => _newData.endDate = endDate,
+                        date: _newData.completedAt,
+                        onChanged: (endDate) => _newData.completedAt = endDate,
                         helpText: 'End Date',
                       ),
                     ),
@@ -170,17 +168,18 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       InputFieldStructure(
                         title: 'Start Date',
                         body: DateField(
-                          date: _newData.startDate,
+                          date: _newData.startedAt,
                           onChanged: (startDate) =>
-                              _newData.startDate = startDate,
+                              _newData.startedAt = startDate,
                           helpText: 'Start Date',
                         ),
                       ),
                       InputFieldStructure(
                         title: 'End Date',
                         body: DateField(
-                          date: _newData.endDate,
-                          onChanged: (endDate) => _newData.endDate = endDate,
+                          date: _newData.completedAt,
+                          onChanged: (endDate) =>
+                              _newData.completedAt = endDate,
                           helpText: 'End Date',
                         ),
                       ),
@@ -223,16 +222,13 @@ class _EditEntryPageState extends State<EditEntryPage> {
   @override
   void initState() {
     super.initState();
-    Provider.of<MediaItem>(context, listen: false)
-        .fetchUserData(widget.mediaId)
-        .then((data) {
+    MediaItem.fetchUserData(widget.mediaId).then((data) {
+      if (data == null) return;
       if (mounted) {
         setState(() {
-          _oldData = data;
+          _oldData = data.item1;
           _newData = _oldData.clone();
-          _collection = _newData.type == 'ANIME'
-              ? Provider.of<AnimeCollection>(context, listen: false)
-              : Provider.of<MangaCollection>(context, listen: false);
+          _scoreFormat = data.item2;
         });
       }
     });
@@ -240,15 +236,13 @@ class _EditEntryPageState extends State<EditEntryPage> {
 }
 
 class _UpdateButtons extends StatefulWidget {
-  final EntryData oldData;
-  final EntryData newData;
-  final CollectionProvider collection;
+  final EditEntry original;
+  final EditEntry changed;
   final Function(MediaListStatus) update;
 
   _UpdateButtons({
-    @required this.oldData,
-    @required this.newData,
-    @required this.collection,
+    @required this.original,
+    @required this.changed,
     @required this.update,
   });
 
@@ -261,7 +255,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.oldData != null && !_isLoading
+    return widget.original != null && !_isLoading
         ? Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -292,15 +286,12 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
                           ),
                           onPressed: () {
                             setState(() => _isLoading = true);
-                            widget.collection
-                                .removeEntry(widget.oldData)
+                            Provider.of<Collections>(context, listen: false)
+                                .removeEntry(widget.original)
                                 .then((ok) {
-                              Navigator.of(context).pop();
                               if (ok) {
-                                widget.update(null);
                                 Navigator.of(context).pop();
-                              } else {
-                                setState(() => _isLoading = false);
+                                widget.update(null);
                               }
                             });
                           },
@@ -312,18 +303,19 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
               ),
               AppBarIcon(
                 IconButton(
-                  icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
-                  color: Theme.of(context).dividerColor,
-                  onPressed: () {
-                    setState(() => _isLoading = true);
-                    widget.collection
-                        .updateEntry(widget.oldData, widget.newData)
-                        .then((ok) {
-                      if (ok) widget.update(widget.newData.status);
-                      Navigator.of(context).pop();
-                    });
-                  },
-                ),
+                    icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
+                    color: Theme.of(context).dividerColor,
+                    onPressed: () {
+                      setState(() => _isLoading = true);
+                      Provider.of<Collections>(context, listen: false)
+                          .updateEntry(widget.original, widget.changed)
+                          .then((ok) {
+                        if (ok) {
+                          Navigator.of(context).pop();
+                          widget.update(widget.changed.status);
+                        }
+                      });
+                    }),
               ),
             ],
           )
@@ -332,7 +324,7 @@ class _UpdateButtonsState extends State<_UpdateButtons> {
 }
 
 class _StatusDropdown extends StatefulWidget {
-  final EntryData data;
+  final EditEntry data;
 
   _StatusDropdown(this.data);
 

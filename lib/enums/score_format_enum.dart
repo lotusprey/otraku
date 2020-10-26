@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/design.dart';
+import 'package:otraku/enums/theme_enum.dart';
 
 enum ScoreFormat {
   POINT_100,
@@ -52,7 +52,7 @@ Widget getWidgetFormScoreFormat(
             score.toStringAsFixed(0),
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          Icon(Icons.star, size: Design.ICON_SMALL),
+          Icon(Icons.star, size: Styles.ICON_SMALL),
         ],
       );
     case 'POINT_3':

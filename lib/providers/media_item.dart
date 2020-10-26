@@ -1,21 +1,13 @@
-import 'dart:convert';
-
-import 'package:http/http.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/page_data/entry_data.dart';
+import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/page_data/media_data.dart';
 import 'package:otraku/models/tuple.dart';
+import 'package:otraku/providers/network_service.dart';
 
 class MediaItem {
-  static const String _url = 'https://graphql.anilist.co';
-
-  final Map<String, String> _headers;
-
-  MediaItem(this._headers);
-
-  Future<MediaData> fetchItemData(int id) async {
+  static Future<MediaData> fetchItemData(int id) async {
     const query = r'''
       query Media($id: Int) {
         Media(id: $id) {
@@ -60,30 +52,19 @@ class MediaItem {
       }
     ''';
 
-    final Map<String, int> variables = {
-      'id': id,
-    };
+    final data = await NetworkService.request(query, {'id': id});
 
-    final request = json.encode({
-      'query': query,
-      'variables': variables,
-    });
+    if (data == null) return null;
 
-    final response = await post(_url, body: request, headers: _headers);
-
-    return MediaData(
-      id,
-      (json.decode(response.body) as Map<String, dynamic>)['data']['Media']
-          as Map<String, dynamic>,
-    );
+    return MediaData(id, data['Media']);
   }
 
-  Future<EntryData> fetchUserData(int id) async {
+  static Future<Tuple<EditEntry, String>> fetchUserData(int id) async {
     final query = r'''
       query ItemUserData($id: Int) {
         Media(id: $id) {
+          id
           type
-          format
           episodes
           chapters
           volumes
@@ -95,46 +76,32 @@ class MediaItem {
             score
             repeat
             notes
-            startedAt {
-              year
-              month
-              day
-            }
-            completedAt {
-              year
-              month
-              day
-            }
+            startedAt {year month day}
+            completedAt {year month day}
             private
             hiddenFromStatusLists
             customLists
           }
         }
+        Viewer {mediaListOptions {scoreFormat}}
       }
     ''';
 
-    final Map<String, Object> variables = {
-      'id': id,
-    };
+    final data = await NetworkService.request(query, {'id': id});
 
-    final request = json.encode({
-      'query': query,
-      'variables': variables,
-    });
+    if (data == null) return null;
 
-    final result = await post(_url, body: request, headers: _headers);
-
-    final Map<String, dynamic> body =
-        (json.decode(result.body) as Map<String, dynamic>)['data']['Media'];
+    final body = data['Media'];
 
     if (body['mediaListEntry'] == null) {
-      return EntryData(
-        mediaId: id,
-        type: body['type'],
-        format: body['format'],
-        progressMax: body['episodes'] ?? body['chapters'],
-        progressVolumesMax: body['voumes'],
-        customLists: [],
+      return Tuple(
+        EditEntry(
+          type: body['type'],
+          mediaId: id,
+          progressMax: body['episodes'] ?? body['chapters'],
+          progressVolumesMax: body['voumes'],
+        ),
+        data['Viewer']['mediaListOptions']['scoreFormat'],
       );
     }
 
@@ -145,27 +112,29 @@ class MediaItem {
       }
     }
 
-    return EntryData(
-      mediaId: id,
-      entryId: body['mediaListEntry']['id'],
-      type: body['type'],
-      format: body['format'],
-      status: stringToEnum(
-        body['mediaListEntry']['status'],
-        MediaListStatus.values,
+    return Tuple(
+      EditEntry(
+        type: body['type'],
+        mediaId: id,
+        entryId: body['mediaListEntry']['id'],
+        status: stringToEnum(
+          body['mediaListEntry']['status'],
+          MediaListStatus.values,
+        ),
+        progress: body['mediaListEntry']['progress'] ?? 0,
+        progressMax: body['episodes'] ?? body['chapters'],
+        progressVolumes: body['mediaListEntry']['volumes'] ?? 0,
+        progressVolumesMax: body['voumes'],
+        score: body['mediaListEntry']['score'].toDouble(),
+        repeat: body['mediaListEntry']['repeat'],
+        notes: body['mediaListEntry']['notes'],
+        startedAt: mapToDateTime(body['mediaListEntry']['startedAt']),
+        completedAt: mapToDateTime(body['mediaListEntry']['completedAt']),
+        private: body['mediaListEntry']['private'],
+        hiddenFromStatusLists: body['mediaListEntry']['hiddenFromStatusLists'],
+        customLists: customLists,
       ),
-      progress: body['mediaListEntry']['progress'] ?? 0,
-      progressMax: body['episodes'] ?? body['chapters'],
-      progressVolumes: body['mediaListEntry']['volumes'] ?? 0,
-      progressVolumesMax: body['voumes'],
-      score: body['mediaListEntry']['score'].toDouble(),
-      repeat: body['mediaListEntry']['repeat'],
-      notes: body['mediaListEntry']['notes'],
-      startDate: mapToDateTime(body['mediaListEntry']['startedAt']),
-      endDate: mapToDateTime(body['mediaListEntry']['completedAt']),
-      private: body['mediaListEntry']['private'],
-      hiddenFromStatusLists: body['mediaListEntry']['hiddenFromStatusLists'],
-      customLists: customLists,
+      data['Viewer']['mediaListOptions']['scoreFormat'],
     );
   }
 }

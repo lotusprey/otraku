@@ -4,28 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/enums/auth_enum.dart';
-import 'package:otraku/enums/media_list_sort_enum.dart';
-import 'package:otraku/models/user_settings.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:otraku/providers/network_service.dart';
 
 class Auth with ChangeNotifier {
-  static AuthStatus _status;
-  static String _accessToken;
-  static UserSettings _userSettings;
+  AuthStatus _status;
+  String _accessToken;
+  int _viewerId;
 
-  AuthStatus get status {
-    return _status;
-  }
+  int get viewerId => _viewerId;
 
-  Map<String, String> get headers {
-    return {
-      'Authorization': 'Bearer $_accessToken',
-      'Accept': 'application/json',
-      'Content-type': 'application/json',
-    };
-  }
-
-  UserSettings get userSettings => _userSettings;
+  AuthStatus get status => _status;
 
   Future<void> setAccessToken(String value) async {
     _accessToken = value;
@@ -65,24 +53,17 @@ class Auth with ChangeNotifier {
       query MyId {
         Viewer {
           id
-          options {
-            titleLanguage
-            displayAdultContent
-          }
-          mediaListOptions {
-            scoreFormat
-            animeList {
-              splitCompletedSectionByFormat
-            }
-            mangaList {
-              splitCompletedSectionByFormat
-            }
-          }
         }
       }
     ''';
 
     final request = json.encode({'query': query});
+
+    final headers = {
+      'Authorization': 'Bearer $_accessToken',
+      'Accept': 'application/json',
+      'Content-type': 'application/json',
+    };
 
     final response = await post(
       url,
@@ -107,21 +88,9 @@ class Auth with ChangeNotifier {
       return;
     }
 
-    final view = body['data']['Viewer'];
-    final preferrences = await SharedPreferences.getInstance();
-    int index = preferrences.getInt('sort');
+    _viewerId = body['data']['Viewer']['id'];
 
-    _userSettings = UserSettings(
-      userId: view['id'],
-      scoreFormat: view['mediaListOptions']['scoreFormat'],
-      splitCompletedAnime: view['mediaListOptions']['animeList']
-          ['splitCompletedSectionByFormat'],
-      splitCompletedManga: view['mediaListOptions']['mangaList']
-          ['splitCompletedSectionByFormat'],
-      sort: index != null ? MediaListSort.values[index] : MediaListSort.TITLE,
-      titleFormat: view['options']['titleLanguage'],
-      displayAdultContent: view['options']['displayAdultContent'],
-    );
+    NetworkService.headers = headers;
 
     _status = AuthStatus.authorised;
     notifyListeners();

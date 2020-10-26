@@ -4,25 +4,22 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/collection_provider.dart';
-import 'package:otraku/providers/manga_collection.dart';
+import 'package:otraku/providers/collections.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
 class CollectionHeader extends StatelessWidget {
-  final bool isAnime;
   final ScrollController scrollCtrl;
 
-  const CollectionHeader(this.isAnime, this.scrollCtrl);
+  const CollectionHeader(this.scrollCtrl);
 
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
       pinned: true,
-      delegate: _CollectionHeaderDelegate(context, isAnime, scrollCtrl),
+      delegate: _CollectionHeaderDelegate(scrollCtrl),
     );
   }
 }
@@ -30,14 +27,9 @@ class CollectionHeader extends StatelessWidget {
 class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 95.0;
 
-  CollectionProvider _collection;
   ScrollController _scrollCtrl;
 
-  _CollectionHeaderDelegate(BuildContext context, isAnime, this._scrollCtrl) {
-    _collection = isAnime
-        ? Provider.of<AnimeCollection>(context, listen: false)
-        : Provider.of<MangaCollection>(context, listen: false);
-  }
+  _CollectionHeaderDelegate(this._scrollCtrl);
 
   @override
   Widget build(
@@ -45,10 +37,11 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    if (_collection.isEmpty) return const SizedBox();
+    final collection = Provider.of<Collections>(context).collection;
+    if (collection == null) return Container();
 
     Map<String, Object> segmentedControlPairs = {};
-    final allNames = _collection.names;
+    final allNames = context.read<Collections>().collection.listNames;
     for (int i = 0; i < allNames.length; i++) {
       segmentedControlPairs[allNames[i]] = i;
     }
@@ -65,10 +58,10 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TitleSegmentedControl(
-                initialValue: _collection.listIndex,
+                initialValue: collection.listIndex,
                 pairs: segmentedControlPairs,
                 onNewValue: (value) {
-                  _collection.listIndex = value;
+                  collection.listIndex = value;
                   if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
                   _scrollCtrl.animateTo(0,
                       duration: const Duration(milliseconds: 200),
@@ -89,16 +82,15 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       CollectionSearchBar(
-                        _collection.search,
-                        (value) => _collection.search = value,
+                        collection.search,
+                        (value) => collection.search = value,
                       ),
                       IconButton(
                         icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_sort_filled),
                         onPressed: () => showModalBottomSheet(
                           context: context,
-                          builder: (ctx) =>
-                              CollectionSortSheet(_collection.isAnime),
+                          builder: (ctx) => CollectionSortSheet(),
                           backgroundColor: Colors.transparent,
                           isScrollControlled: true,
                         ),

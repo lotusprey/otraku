@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/providers/design.dart';
+import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:provider/provider.dart';
@@ -92,14 +92,14 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
           ),
           prefixIcon: Icon(
             FluentSystemIcons.ic_fluent_search_regular,
-            size: Design.ICON_SMALL,
+            size: Styles.ICON_SMALL,
             color: Theme.of(context).disabledColor,
           ),
           suffixIcon: _isEmpty
               ? null
               : IconButton(
                   icon: const Icon(Icons.close),
-                  iconSize: Design.ICON_SMALLER,
+                  iconSize: Styles.ICON_SMALLER,
                   color: Theme.of(context).disabledColor,
                   onPressed: () {
                     widget.updateValue(null);

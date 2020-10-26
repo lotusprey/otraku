@@ -1,7 +1,7 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/design.dart';
+import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/providers/view_config.dart';
 
 class ModalSortSheet extends StatelessWidget {
@@ -82,12 +82,12 @@ class _ModalOption extends StatelessWidget {
                     desc
                         ? FluentSystemIcons.ic_fluent_arrow_down_filled
                         : FluentSystemIcons.ic_fluent_arrow_up_filled,
-                    size: Design.ICON_SMALL,
+                    size: Styles.ICON_SMALL,
                     color: Theme.of(context).accentColor,
                   )
                 : Icon(
                     FluentSystemIcons.ic_fluent_arrow_down_filled,
-                    size: Design.ICON_SMALL,
+                    size: Styles.ICON_SMALL,
                     color: Theme.of(context).backgroundColor,
                   ),
           ],

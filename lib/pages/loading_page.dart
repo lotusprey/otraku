@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/auth_enum.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
-import 'package:otraku/providers/anime_collection.dart';
 import 'package:otraku/providers/auth.dart';
+import 'package:otraku/providers/collections.dart';
 import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/manga_collection.dart';
 import 'package:otraku/providers/users.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
@@ -82,14 +81,13 @@ class _LoadingPageState extends State<LoadingPage> {
     if (!_didChangeDependencies) {
       ViewConfig.init(context);
 
-      _fetchAnimeCollection = () =>
-          Provider.of<AnimeCollection>(context, listen: false).fetchData();
-      _fetchMangaCollection = () =>
-          Provider.of<MangaCollection>(context, listen: false).fetchData();
+      _fetchAnimeCollection =
+          Provider.of<Collections>(context, listen: false).fetchMyAnime;
+      _fetchMangaCollection =
+          Provider.of<Collections>(context, listen: false).fetchMyManga;
       _fetchExplorableMedia =
-          () => Provider.of<Explorable>(context, listen: false).fetchInitial();
-      _fetchViewer =
-          () => Provider.of<Users>(context, listen: false).fetchViewer();
+          Provider.of<Explorable>(context, listen: false).fetchInitial;
+      _fetchViewer = Provider.of<Users>(context, listen: false).fetchViewer;
 
       _didChangeDependencies = true;
     }

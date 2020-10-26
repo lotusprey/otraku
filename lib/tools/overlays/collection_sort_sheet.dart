@@ -1,29 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_list_sort_enum.dart';
-import 'package:otraku/providers/anime_collection.dart';
-import 'package:otraku/providers/manga_collection.dart';
+import 'package:otraku/enums/list_sort_enum.dart';
+import 'package:otraku/providers/collections.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CollectionSortSheet extends StatelessWidget {
-  final bool isAnimeCollection;
-
-  CollectionSortSheet(this.isAnimeCollection);
-
   @override
   Widget build(BuildContext context) {
-    final collection = Provider.of<AnimeCollection>(context, listen: false);
+    final collection =
+        Provider.of<Collections>(context, listen: false).collection;
 
     final mediaSort = collection.sort;
     final currentIndex = mediaSort.index ~/ 2;
     final currentlyDesc = mediaSort.index % 2 == 0 ? false : true;
 
     List<String> options = [];
-    for (int i = 0; i < MediaListSort.values.length; i += 2) {
-      options.add(clarifyEnum(describeEnum(MediaListSort.values[i])));
+    for (int i = 0; i < ListSort.values.length; i += 2) {
+      options.add(clarifyEnum(describeEnum(ListSort.values[i])));
     }
 
     return ModalSortSheet(
@@ -33,22 +28,13 @@ class CollectionSortSheet extends StatelessWidget {
       onTap: (int index) {
         if (index == currentIndex) {
           if (currentlyDesc) {
-            collection.sort = MediaListSort.values[index * 2];
-            SharedPreferences.getInstance()
-                .then((prefs) => prefs.setInt('sort', index * 2));
+            collection.sort = ListSort.values[index * 2];
           } else {
-            collection.sort = MediaListSort.values[index * 2 + 1];
-            SharedPreferences.getInstance()
-                .then((prefs) => prefs.setInt('sort', index * 2 + 1));
+            collection.sort = ListSort.values[index * 2 + 1];
           }
         } else {
-          collection.sort = MediaListSort.values[index * 2];
-          SharedPreferences.getInstance()
-              .then((prefs) => prefs.setInt('sort', index * 2));
+          collection.sort = ListSort.values[index * 2];
         }
-
-        Provider.of<AnimeCollection>(context, listen: false).sortCollection();
-        Provider.of<MangaCollection>(context, listen: false).sortCollection();
       },
     );
   }

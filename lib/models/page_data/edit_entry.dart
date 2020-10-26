@@ -2,11 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/tuple.dart';
 
-class EntryData {
+class EditEntry {
   final int mediaId;
   final int entryId;
   final String type;
-  final String format;
   MediaListStatus status;
   int progress;
   final int progressMax;
@@ -15,16 +14,15 @@ class EntryData {
   double score;
   int repeat;
   String notes;
-  DateTime startDate;
-  DateTime endDate;
+  DateTime startedAt;
+  DateTime completedAt;
   bool private;
   bool hiddenFromStatusLists;
   List<Tuple<String, bool>> customLists;
 
-  EntryData({
+  EditEntry({
     @required this.mediaId,
     @required this.type,
-    @required this.format,
     this.entryId,
     this.status,
     this.progress = 0,
@@ -34,23 +32,22 @@ class EntryData {
     this.score = 0,
     this.repeat = 0,
     this.notes,
-    this.startDate,
-    this.endDate,
+    this.startedAt,
+    this.completedAt,
     this.private = false,
     this.hiddenFromStatusLists = false,
     this.customLists = const [],
   });
 
-  EntryData clone() {
+  EditEntry clone() {
     List<Tuple<String, bool>> customListsCopy = [];
     for (final tuple in customLists) {
       customListsCopy.add(Tuple(tuple.item1, tuple.item2));
     }
 
-    return EntryData(
+    return EditEntry(
       mediaId: mediaId,
       type: type,
-      format: format,
       entryId: entryId,
       status: status != null ? MediaListStatus.values[status.index] : null,
       progress: progress,
@@ -60,9 +57,10 @@ class EntryData {
       score: score,
       repeat: repeat,
       notes: notes,
-      startDate:
-          startDate == null ? null : DateTime.parse(startDate.toString()),
-      endDate: endDate == null ? null : DateTime.parse(endDate.toString()),
+      startedAt:
+          startedAt == null ? null : DateTime.parse(startedAt.toString()),
+      completedAt:
+          completedAt == null ? null : DateTime.parse(completedAt.toString()),
       private: private,
       hiddenFromStatusLists: hiddenFromStatusLists,
       customLists: customListsCopy,

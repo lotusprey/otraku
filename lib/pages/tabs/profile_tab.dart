@@ -27,7 +27,9 @@ class _ProfileTabState extends State<ProfileTab> {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
-        SliverPersistentHeader(delegate: _Header(_user)),
+        SliverPersistentHeader(
+          delegate: _Header(_user, widget.id == null),
+        ),
       ],
     );
   }
@@ -48,8 +50,9 @@ class _ProfileTabState extends State<ProfileTab> {
 
 class _Header implements SliverPersistentHeaderDelegate {
   final User user;
+  final bool isMe;
 
-  _Header(this.user);
+  _Header(this.user, this.isMe);
 
   @override
   Widget build(
@@ -60,7 +63,8 @@ class _Header implements SliverPersistentHeaderDelegate {
     if (user == null) return const SizedBox();
 
     final shrinkPercentage = shrinkOffset / (maxExtent - minExtent);
-    final avatar = Image.network(user.avatar, fit: BoxFit.cover);
+    final avatar =
+        user != null ? Image.network(user.avatar, fit: BoxFit.cover) : null;
 
     return Container(
       height: maxExtent,
@@ -77,61 +81,63 @@ class _Header implements SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (user.banner != null)
-            Image.network(
-              user.banner,
-              fit: BoxFit.cover,
-            ),
-          Container(
-            padding: const EdgeInsets.only(
-              top: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
-              left: 10,
-              right: 10,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Theme.of(context).backgroundColor.withAlpha(70),
-                  Theme.of(context).backgroundColor,
-                ],
+          if (user != null) ...[
+            if (user.banner != null)
+              Image.network(
+                user.banner,
+                fit: BoxFit.cover,
               ),
-            ),
-            child: Column(
-              children: [
-                GestureDetector(
-                  child: Hero(
-                    tag: user.avatar,
-                    child: ClipRRect(
-                      borderRadius: ViewConfig.BORDER_RADIUS,
-                      child: Container(
-                        height: 150,
-                        width: 150,
-                        child: avatar,
+            Container(
+              padding: const EdgeInsets.only(
+                top: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
+                left: 10,
+                right: 10,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).backgroundColor.withAlpha(70),
+                    Theme.of(context).backgroundColor,
+                  ],
+                ),
+              ),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    child: Hero(
+                      tag: user.avatar,
+                      child: ClipRRect(
+                        borderRadius: ViewConfig.BORDER_RADIUS,
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          child: avatar,
+                        ),
+                      ),
+                    ),
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (_) => PopUpAnimation(
+                        ImageDialog(avatar),
                       ),
                     ),
                   ),
-                  onTap: () => showDialog(
-                    context: context,
-                    builder: (_) => PopUpAnimation(
-                      ImageDialog(avatar),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(user.name, style: Theme.of(context).textTheme.headline3),
-              ],
+                  const SizedBox(height: 10),
+                  Text(user.name, style: Theme.of(context).textTheme.headline3),
+                ],
+              ),
             ),
-          ),
-          if (shrinkOffset > 0)
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: Theme.of(context)
-                  .backgroundColor
-                  .withAlpha((shrinkPercentage * 255).round()),
-            ),
+            if (shrinkOffset > 0)
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                color: Theme.of(context)
+                    .backgroundColor
+                    .withAlpha((shrinkPercentage * 255).round()),
+              ),
+          ],
           Positioned(
             top: 0,
             left: 0,
@@ -139,7 +145,7 @@ class _Header implements SliverPersistentHeaderDelegate {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (user.isMe) ...[
+                if (isMe) ...[
                   const SizedBox(),
                   IconButton(
                     icon: const Icon(

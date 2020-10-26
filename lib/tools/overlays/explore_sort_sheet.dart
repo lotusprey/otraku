@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/users.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +13,7 @@ class ExploreSortSheet extends StatelessWidget {
 
     final length = MediaSort.values.length;
     final prefTitle =
-        Provider.of<Users>(context, listen: false).settings.titleFormat;
+        Provider.of<Explorable>(context, listen: false).titleFormat;
     String titleAsc;
     String titleDesc;
 
@@ -29,7 +28,10 @@ class ExploreSortSheet extends StatelessWidget {
       titleDesc = describeEnum(MediaSort.values[length - 5]);
     }
 
-    MediaSort mediaSort = stringToEnum(provider.sort, MediaSort.values);
+    MediaSort mediaSort = stringToEnum(
+      provider.getFilterWithKey(Explorable.SORT),
+      MediaSort.values,
+    );
 
     int currentIndex = mediaSort.index ~/ 2;
     bool currentlyDesc = mediaSort.index % 2 == 0 ? false : true;
@@ -49,19 +51,27 @@ class ExploreSortSheet extends StatelessWidget {
       index: currentIndex,
       desc: currentlyDesc,
       onTap: (int index) {
+        String sort;
         if (index != options.length - 1) {
           if (index != currentIndex || !currentlyDesc) {
-            provider.sort = describeEnum(MediaSort.values[index * 2 + 1]);
+            sort = describeEnum(MediaSort.values[index * 2 + 1]);
           } else {
-            provider.sort = describeEnum(MediaSort.values[index * 2]);
+            sort = describeEnum(MediaSort.values[index * 2]);
           }
         } else {
           if (index != currentIndex || !currentlyDesc) {
-            provider.sort = titleDesc;
+            sort = titleDesc;
           } else {
-            provider.sort = titleAsc;
+            sort = titleAsc;
           }
         }
+
+        provider.setFilterWithKey(
+          Explorable.SORT,
+          value: sort,
+          notify: true,
+          refetch: true,
+        );
       },
     );
   }

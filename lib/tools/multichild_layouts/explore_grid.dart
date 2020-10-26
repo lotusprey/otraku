@@ -10,7 +10,7 @@ class ExploreGrid extends StatelessWidget {
   void _loadMore(BuildContext context) {
     if (Provider.of<Explorable>(context, listen: false).hasNextPage &&
         !Provider.of<Explorable>(context, listen: false).isLoading) {
-      Provider.of<Explorable>(context, listen: false).addPage();
+      Provider.of<Explorable>(context, listen: false).loadMore();
     }
   }
 

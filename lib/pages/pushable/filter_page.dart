@@ -38,18 +38,30 @@ class FilterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<Explorable>(context, listen: false);
 
-    List<String> statusIn = provider.getFilterWithKey(Explorable.KEY_STATUS_IN);
-    List<String> statusNotIn =
-        provider.getFilterWithKey(Explorable.KEY_STATUS_NOT_IN);
-    List<String> formatIn = provider.getFilterWithKey(Explorable.KEY_FORMAT_IN);
-    List<String> formatNotIn =
-        provider.getFilterWithKey(Explorable.KEY_FORMAT_NOT_IN);
-    List<String> genreIn = provider.getFilterWithKey(Explorable.KEY_GENRE_IN);
-    List<String> genreNotIn =
-        provider.getFilterWithKey(Explorable.KEY_GENRE_NOT_IN);
-    List<String> tagIn = provider.getFilterWithKey(Explorable.KEY_TAG_IN);
-    List<String> tagNotIn =
-        provider.getFilterWithKey(Explorable.KEY_TAG_NOT_IN);
+    List<String> statusIn = [
+      ...(provider.getFilterWithKey(Explorable.STATUS_IN) ?? []),
+    ];
+    List<String> statusNotIn = [
+      ...(provider.getFilterWithKey(Explorable.STATUS_NOT_IN) ?? []),
+    ];
+    List<String> formatIn = [
+      ...(provider.getFilterWithKey(Explorable.FORMAT_IN) ?? []),
+    ];
+    List<String> formatNotIn = [
+      ...(provider.getFilterWithKey(Explorable.FORMAT_NOT_IN) ?? []),
+    ];
+    List<String> genreIn = [
+      ...(provider.getFilterWithKey(Explorable.GENRE_IN) ?? []),
+    ];
+    List<String> genreNotIn = [
+      ...(provider.getFilterWithKey(Explorable.GENRE_NOT_IN) ?? []),
+    ];
+    List<String> tagIn = [
+      ...(provider.getFilterWithKey(Explorable.TAG_IN) ?? []),
+    ];
+    List<String> tagNotIn = [
+      ...(provider.getFilterWithKey(Explorable.TAG_NOT_IN) ?? []),
+    ];
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -61,16 +73,18 @@ class FilterPage extends StatelessWidget {
               color: Theme.of(context).accentColor,
             ),
             onPressed: () {
-              provider.setGenreTagFilters(
-                newStatusIn: statusIn,
-                newStatusNotIn: statusNotIn,
-                newFormatIn: formatIn,
-                newFormatNotIn: formatNotIn,
-                newGenreIn: genreIn,
-                newGenreNotIn: genreNotIn,
-                newTagIn: tagIn,
-                newTagNotIn: tagNotIn,
-              );
+              provider.setFilterWithKey(Explorable.STATUS_IN, value: statusIn);
+              provider.setFilterWithKey(Explorable.STATUS_NOT_IN,
+                  value: statusNotIn);
+              provider.setFilterWithKey(Explorable.FORMAT_IN, value: formatIn);
+              provider.setFilterWithKey(Explorable.FORMAT_NOT_IN,
+                  value: formatNotIn);
+              provider.setFilterWithKey(Explorable.GENRE_IN, value: genreIn);
+              provider.setFilterWithKey(Explorable.GENRE_NOT_IN,
+                  value: genreNotIn);
+              provider.setFilterWithKey(Explorable.TAG_IN, value: tagIn);
+              provider.setFilterWithKey(Explorable.TAG_NOT_IN,
+                  value: tagNotIn, notify: true, refetch: true);
               Navigator.of(context).pop();
             },
           ),

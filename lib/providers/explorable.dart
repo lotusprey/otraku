@@ -1,33 +1,99 @@
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/media_group_provider.dart';
+import 'package:otraku/providers/network_service.dart';
 
 //Manages all browsable media, genres, tags and all the filters
-class Explorable with ChangeNotifier implements MediaGroupProvider {
-  static const KEY_STATUS_IN = 'status_in';
-  static const KEY_STATUS_NOT_IN = 'status_not_in';
-  static const KEY_FORMAT_IN = 'format_in';
-  static const KEY_FORMAT_NOT_IN = 'format_not_in';
-  static const KEY_ID_NOT_IN = 'id_not_in';
-  static const KEY_GENRE_IN = 'genre_in';
-  static const KEY_GENRE_NOT_IN = 'genre_not_in';
-  static const KEY_TAG_IN = 'tag_in';
-  static const KEY_TAG_NOT_IN = 'tag_not_in';
+class Explorable with ChangeNotifier {
+  // ***************************************************************************
+  // CONSTANTS
+  // ***************************************************************************
 
-  static const String _url = 'https://graphql.anilist.co';
-  Map<String, String> _headers;
-  bool _adultContent;
+  static const STATUS_IN = 'status_in';
+  static const STATUS_NOT_IN = 'status_not_in';
+  static const FORMAT_IN = 'format_in';
+  static const FORMAT_NOT_IN = 'format_not_in';
+  static const ID_NOT_IN = 'id_not_in';
+  static const GENRE_IN = 'genre_in';
+  static const GENRE_NOT_IN = 'genre_not_in';
+  static const TAG_IN = 'tag_in';
+  static const TAG_NOT_IN = 'tag_not_in';
+  static const IS_ADULT = 'isAdult';
+  static const SEARCH = 'search';
+  static const TYPE = 'type';
+  static const SORT = 'sort';
+  static const PAGE = 'page';
 
-  void init(Map<String, String> headers, bool adultContent) {
-    _headers = headers;
-    _adultContent = adultContent;
-  }
+  static const _mediaQuery = r'''
+    query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
+        $status_not_in: [MediaStatus], $format_in: [MediaFormat], $format_not_in: [MediaFormat], 
+        $genre_in: [String], $genre_not_in: [String], $tag_in: [String], $tag_not_in: [String], 
+        $onList: Boolean, $isAdult: Boolean, $startDate_greater: FuzzyDateInt, 
+        $startDate_lesser: FuzzyDateInt, $countryOfOrigin: CountryCode, $source: MediaSource, 
+        $season: MediaSeason, $id_not_in: [Int], $sort: [MediaSort]) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        media(type: $type, search: $search, status_in: $status_in, status_not_in: $status_not_in, 
+        format_in: $format_in, format_not_in: $format_not_in, genre_in: $genre_in, 
+        genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
+        onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
+        startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
+        source: $source, season: $season, id_not_in: $id_not_in, sort: $sort) {
+          id
+          title {userPreferred}
+          coverImage {large}
+        }
+      }
+    }
+  ''';
+
+  static const _charactersQuery = r'''
+    query Characters($page: Int, $search: String, $id_not_in: [Int]) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
+          id
+          name {full}
+          image {large}
+        }
+      }
+    }
+  ''';
+
+  static const _staffQuery = r'''
+    query Staff($page: Int, $search: String, $id_not_in: [Int]) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
+          id
+          name {full}
+          image {large}
+        }
+      }
+    }
+  ''';
+
+  static const _studiosQuery = r'''
+    query Studios($page: Int, $search: String, $id_not_in: [Int]) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        studios(search: $search, id_not_in: $id_not_in) {
+          id
+          name
+        }
+      }
+    }
+  ''';
+
+  // ***************************************************************************
+  // DATA
+  // ***************************************************************************
+
+  bool _displayAdultContent;
+  String _titleFormat;
 
   Browsable _type = Browsable.anime;
   bool _isLoading = false;
@@ -36,317 +102,165 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
-    'page': 1,
-    'perPage': 30,
-    'type': 'ANIME',
-    'sort': describeEnum(MediaSort.TRENDING_DESC),
-    KEY_ID_NOT_IN: [],
+    PAGE: 1,
+    TYPE: 'ANIME',
+    SORT: describeEnum(MediaSort.TRENDING_DESC),
+    ID_NOT_IN: [],
   };
 
-  Browsable get type {
-    return _type;
-  }
+  // ***************************************************************************
+  // GETTERS
+  // ***************************************************************************
+
+  bool get isLoading => _isLoading;
+
+  bool get hasNextPage => _hasNextPage;
+
+  Browsable get type => _type;
+
+  List<BrowseResult> get results => [..._results];
+
+  List<String> get genres => [..._genres];
+
+  Tuple<List<String>, List<String>> get tags => _tags;
+
+  String get titleFormat => _titleFormat;
+
+  // ***************************************************************************
+  // FUNCTIONS CONTROLLING QUERY VARIABLES
+  // ***************************************************************************
 
   set type(Browsable value) {
     if (value == null) return;
     _type = value;
 
-    if (value == Browsable.anime) _filters['type'] = 'ANIME';
-    if (value == Browsable.manga) _filters['type'] = 'MANGA';
+    if (value == Browsable.anime) _filters[TYPE] = 'ANIME';
+    if (value == Browsable.manga) _filters[TYPE] = 'MANGA';
 
-    _filters.remove(KEY_FORMAT_IN);
-    _filters.remove(KEY_FORMAT_NOT_IN);
+    _filters.remove(FORMAT_IN);
+    _filters.remove(FORMAT_NOT_IN);
     notifyListeners();
     fetchData();
   }
 
-  @override
-  String get search {
-    return _filters['search'];
-  }
+  dynamic getFilterWithKey(String key) => _filters[key];
 
-  @override
-  set search(String searchValue) {
-    if (searchValue == null || searchValue.trim() == '') {
-      _filters.remove('search');
-    } else {
-      searchValue = searchValue.trim();
-      if (searchValue == _filters['search']) return;
-      _filters['search'] = searchValue;
-    }
-
-    fetchData();
-  }
-
-  String get sort {
-    return _filters['sort'];
-  }
-
-  set sort(String mediaSort) {
-    _filters['sort'] = mediaSort;
-    fetchData();
-  }
-
-  @override
-  bool get isLoading {
-    return _isLoading;
-  }
-
-  bool get hasNextPage {
-    return _hasNextPage;
-  }
-
-  List<BrowseResult> get results {
-    return [..._results];
-  }
-
-  List<String> get genres {
-    return [..._genres];
-  }
-
-  Tuple<List<String>, List<String>> get tags {
-    return _tags;
-  }
-
-  List<String> getFilterWithKey(String key) {
-    if (_filters.containsKey(key)) {
-      return [..._filters[key]];
-    }
-    return [];
-  }
-
-  void setGenreTagFilters({
-    List<String> newStatusIn,
-    List<String> newStatusNotIn,
-    List<String> newFormatIn,
-    List<String> newFormatNotIn,
-    List<String> newGenreIn,
-    List<String> newGenreNotIn,
-    List<String> newTagIn,
-    List<String> newTagNotIn,
+  void setFilterWithKey(
+    String key, {
+    dynamic value,
+    bool notify = false,
+    bool refetch = false,
   }) {
-    if (newStatusIn != null && newStatusIn.length == 0) {
-      _filters.remove(KEY_STATUS_IN);
+    if (value == null ||
+        (value is List && value.length == 0) ||
+        (value is String && value.trim() == '')) {
+      _filters.remove(key);
     } else {
-      _filters[KEY_STATUS_IN] = newStatusIn;
+      _filters[key] = value;
     }
 
-    if (newStatusNotIn != null && newStatusNotIn.length == 0) {
-      _filters.remove(KEY_STATUS_NOT_IN);
-    } else {
-      _filters[KEY_STATUS_NOT_IN] = newStatusNotIn;
-    }
-
-    if (newFormatIn != null && newFormatIn.length == 0) {
-      _filters.remove(KEY_FORMAT_IN);
-    } else {
-      _filters[KEY_FORMAT_IN] = newFormatIn;
-    }
-
-    if (newFormatNotIn != null && newFormatNotIn.length == 0) {
-      _filters.remove(KEY_FORMAT_NOT_IN);
-    } else {
-      _filters[KEY_FORMAT_NOT_IN] = newFormatNotIn;
-    }
-
-    if (newGenreIn != null && newGenreIn.length == 0) {
-      _filters.remove(KEY_GENRE_IN);
-    } else {
-      _filters[KEY_GENRE_IN] = newGenreIn;
-    }
-
-    if (newGenreNotIn != null && newGenreNotIn.length == 0) {
-      _filters.remove(KEY_GENRE_NOT_IN);
-    } else {
-      _filters[KEY_GENRE_NOT_IN] = newGenreNotIn;
-    }
-
-    if (newTagIn != null && newTagIn.length == 0) {
-      _filters.remove(KEY_TAG_IN);
-    } else {
-      _filters[KEY_TAG_IN] = newTagIn;
-    }
-
-    if (newTagNotIn != null && newTagNotIn.length == 0) {
-      _filters.remove(KEY_TAG_NOT_IN);
-    } else {
-      _filters[KEY_TAG_NOT_IN] = newTagNotIn;
-    }
-    fetchData();
+    if (notify) notifyListeners();
+    if (refetch) fetchData();
   }
 
-  bool areFiltersActive() {
-    return _filters.containsKey(KEY_STATUS_IN) ||
-        _filters.containsKey(KEY_STATUS_NOT_IN) ||
-        _filters.containsKey(KEY_FORMAT_IN) ||
-        _filters.containsKey(KEY_FORMAT_NOT_IN) ||
-        _filters.containsKey(KEY_GENRE_IN) ||
-        _filters.containsKey(KEY_GENRE_NOT_IN) ||
-        _filters.containsKey(KEY_TAG_IN) ||
-        _filters.containsKey(KEY_TAG_NOT_IN);
+  bool anyActiveFilterFrom(List<String> keys) {
+    for (final key in keys) {
+      if (_filters.containsKey(key)) return true;
+    }
+    return false;
   }
 
-  void clearGenreTagFilters({bool fetch = true}) {
-    _filters.remove(KEY_STATUS_IN);
-    _filters.remove(KEY_STATUS_NOT_IN);
-    _filters.remove(KEY_FORMAT_IN);
-    _filters.remove(KEY_FORMAT_NOT_IN);
-    _filters.remove(KEY_GENRE_IN);
-    _filters.remove(KEY_GENRE_NOT_IN);
-    _filters.remove(KEY_TAG_IN);
-    _filters.remove(KEY_TAG_NOT_IN);
-    if (fetch) fetchData();
-  }
-
-  @override
-  void clear() {
-    clearGenreTagFilters(fetch: false);
-    _filters.remove('search');
-    fetchData();
-  }
-
-  void addPage() {
-    _filters['page']++;
+  void loadMore() {
+    _filters[PAGE]++;
     fetchData(clean: false);
   }
 
-  //Fetches meida based on the set filters
-  @override
+  // ***************************************************************************
+  // DATA FETCHING
+  // ***************************************************************************
+
   Future<void> fetchData({bool clean = true}) async {
     _isLoading = true;
-    // if (_results != null) notifyListeners();
 
     if (clean) {
-      _filters[KEY_ID_NOT_IN] = [];
-      _filters['page'] = 1;
+      _filters[ID_NOT_IN] = [];
+      _filters[PAGE] = 1;
       _hasNextPage = true;
     }
 
     final currentType = _type;
-    String request;
+    String query;
+    Map<String, dynamic> variables;
+
     if (currentType == Browsable.anime || currentType == Browsable.manga) {
-      final query = '''
-      query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
-          \$sort: [MediaSort], \$type: MediaType, \$search: String,
-          ${_filters.containsKey(KEY_STATUS_IN) ? '\$status_in: [MediaStatus],' : ''}
-          ${_filters.containsKey(KEY_STATUS_NOT_IN) ? '\$status_not_in: [MediaStatus],' : ''}
-          ${_filters.containsKey(KEY_FORMAT_IN) ? '\$format_in: [MediaFormat],' : ''}
-          ${_filters.containsKey(KEY_FORMAT_NOT_IN) ? '\$format_not_in: [MediaFormat],' : ''}
-          \$genre_in: [String], \$genre_not_in: [String], \$tag_in: [String], 
-          \$tag_not_in: [String]) {
-        Page(page: \$page, perPage: \$perPage) {
-          pageInfo {hasNextPage}
-          media(id_not_in: \$id_not_in, sort: \$sort, type: \$type, ${_adultContent ? '' : 'isAdult: false,'}
-          search: \$search,
-          ${_filters.containsKey(KEY_STATUS_IN) ? 'status_in: \$status_in,' : ''}
-          ${_filters.containsKey(KEY_STATUS_NOT_IN) ? 'status_not_in: \$status_not_in,' : ''}
-          ${_filters.containsKey(KEY_FORMAT_IN) ? 'format_in: \$format_in,' : ''}
-          ${_filters.containsKey(KEY_FORMAT_NOT_IN) ? 'format_not_in: \$format_not_in,' : ''}
-          genre_in: \$genre_in, genre_not_in: \$genre_not_in, 
-          tag_in: \$tag_in, tag_not_in: \$tag_not_in) {
-            id
-            title {userPreferred}
-            coverImage {large}
-          }
-        }
+      query = _mediaQuery;
+      variables = _filters;
+    } else {
+      variables = {
+        PAGE: _filters[PAGE],
+        SEARCH: _filters[SEARCH],
+        ID_NOT_IN: _filters[ID_NOT_IN],
+      };
+
+      if (currentType == Browsable.characters) {
+        query = _charactersQuery;
+      } else if (currentType == Browsable.staff) {
+        query = _staffQuery;
+      } else {
+        query = _studiosQuery;
       }
-    ''';
-
-      request = json.encode({
-        'query': query,
-        'variables': _filters,
-      });
-    } else if (currentType == Browsable.characters ||
-        currentType == Browsable.staff) {
-      final bool char = currentType == Browsable.characters;
-      final query = '''
-          query Browse(\$page: Int, \$perPage: Int, \$id_not_in: [Int], 
-            \$search: String) {
-              Page(page: \$page, perPage: \$perPage) {
-                pageInfo {hasNextPage}
-                ${char ? 'characters' : 'staff'}(id_not_in: \$id_not_in, 
-                sort: FAVOURITES_DESC, search: \$search) {
-                  id
-                  name {full}
-                  image {large}
-                }
-              }
-            }
-        ''';
-
-      request = json.encode({
-        'query': query,
-        'variables': {
-          'page': _filters['page'],
-          'perPage': _filters['perPage'],
-          'id_not_in': _filters[KEY_ID_NOT_IN],
-          'search': _filters['search'],
-        },
-      });
-    } else if (currentType == Browsable.studios) {
-      const query = r'''
-        query Browse($page: Int, $perPage: Int, $id_not_in: [Int], 
-          $search: String) {
-            Page(page: $page, perPage: $perPage) {
-              pageInfo {hasNextPage}
-              studios(id_not_in: $id_not_in, search: $search) {
-                id
-                name
-              }
-            }
-          }
-      ''';
-
-      request = json.encode({
-        'query': query,
-        'variables': {
-          'page': _filters['page'],
-          'perPage': _filters['perPage'],
-          'id_not_in': _filters[KEY_ID_NOT_IN],
-          'search': _filters['search'],
-        },
-      });
     }
 
-    final response = await post(_url, body: request, headers: _headers);
+    final data = await NetworkService.request(
+      query,
+      variables,
+      popOnError: false,
+    );
 
-    final body = json.decode(response.body) as Map<String, dynamic>;
+    if (data == null) return null;
 
-    _hasNextPage = body['data']['Page']['pageInfo']['hasNextPage'];
+    _hasNextPage = data['Page']['pageInfo']['hasNextPage'];
 
     if (clean) _results = [];
 
-    if (currentType == Browsable.anime || _type == Browsable.manga) {
-      for (final m in body['data']['Page']['media'] as List<dynamic>) {
+    if (currentType == Browsable.anime || currentType == Browsable.manga) {
+      for (final m in data['Page']['media'] as List<dynamic>) {
         _results.add(BrowseResult(
           id: m['id'],
           title: m['title']['userPreferred'],
           imageUrl: m['coverImage']['large'],
           browsable: currentType,
         ));
-        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
+        (_filters[ID_NOT_IN] as List<dynamic>).add(m['id']);
       }
-    } else if (currentType == Browsable.characters ||
-        currentType == Browsable.staff) {
-      for (final p in body['data']['Page']
-              [currentType == Browsable.characters ? 'characters' : 'staff']
-          as List<dynamic>) {
+    } else if (currentType == Browsable.characters) {
+      for (final c in data['Page']['characters'] as List<dynamic>) {
         _results.add(BrowseResult(
-          id: p['id'],
-          title: p['name']['full'],
-          imageUrl: p['image']['large'],
+          id: c['id'],
+          title: c['name']['full'],
+          imageUrl: c['image']['large'],
           browsable: currentType,
         ));
-        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(p['id']);
+        (_filters[ID_NOT_IN] as List<dynamic>).add(c['id']);
       }
-    } else if (currentType == Browsable.studios) {
-      for (final s in body['data']['Page']['studios'] as List<dynamic>) {
+    } else if (currentType == Browsable.staff) {
+      for (final c in data['Page']['staff'] as List<dynamic>) {
+        _results.add(BrowseResult(
+          id: c['id'],
+          title: c['name']['full'],
+          imageUrl: c['image']['large'],
+          browsable: currentType,
+        ));
+        (_filters[ID_NOT_IN] as List<dynamic>).add(c['id']);
+      }
+    } else {
+      for (final s in data['Page']['studios'] as List<dynamic>) {
         _results.add(BrowseResult(
           id: s['id'],
           title: s['name'],
           browsable: currentType,
         ));
-        (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(s['id']);
+        (_filters[ID_NOT_IN] as List<dynamic>).add(s['id']);
       }
     }
 
@@ -354,52 +268,61 @@ class Explorable with ChangeNotifier implements MediaGroupProvider {
     notifyListeners();
   }
 
-  //Fetches genres and tags
+  //Fetches genres, tags and initial media
   Future<void> fetchInitial() async {
     _isLoading = true;
 
-    final request = json.encode({
-      'query': '''
+    final query = '''
         query Filters {
+          Viewer {
+            options {
+              titleLanguage
+              displayAdultContent
+            }
+          }
           GenreCollection
           MediaTagCollection {
             name
             description
           }
           Page(page: 1, perPage: 30) {
-            media(sort: TRENDING_DESC, type: ANIME, ${_adultContent ? '' : 'isAdult: false'}) {
+            media(sort: TRENDING_DESC, type: ANIME) {
               id
               title {userPreferred}
               coverImage {large}
             }
           }
         }
-      ''',
-    });
+      ''';
 
-    final response = await post(_url, body: request, headers: _headers);
-    final body = json.decode(response.body)['data'];
+    final data = await NetworkService.request(query, null, popOnError: false);
 
-    _genres = (body['GenreCollection'] as List<dynamic>)
+    if (data == null) return;
+
+    _titleFormat = data['Viewer']['options']['titleLanguage'];
+    _displayAdultContent = data['Viewer']['options']['displayAdultContent'];
+    if (!_displayAdultContent) _filters[IS_ADULT] = false;
+
+    _genres = (data['GenreCollection'] as List<dynamic>)
         .map((g) => g.toString())
         .toList();
 
     _tags = Tuple([], []);
-    for (final tag in body['MediaTagCollection']) {
+    for (final tag in data['MediaTagCollection']) {
       _tags.item1.add(tag['name']);
       _tags.item2.add(tag['description']);
     }
 
     _results = [];
 
-    for (final m in body['Page']['media'] as List<dynamic>) {
+    for (final m in data['Page']['media'] as List<dynamic>) {
       _results.add(BrowseResult(
         id: m['id'],
         title: m['title']['userPreferred'],
         imageUrl: m['coverImage']['large'],
         browsable: Browsable.anime,
       ));
-      (_filters[KEY_ID_NOT_IN] as List<dynamic>).add(m['id']);
+      (_filters[ID_NOT_IN] as List<dynamic>).add(m['id']);
     }
 
     _isLoading = false;

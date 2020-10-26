@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
-import 'package:otraku/providers/design.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
@@ -89,8 +89,13 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ExploreSearchBar(
-                        provider.search,
-                        (value) => provider.search = value,
+                        provider.getFilterWithKey(Explorable.SEARCH),
+                        (value) => provider.setFilterWithKey(
+                          Explorable.SEARCH,
+                          value: value,
+                          notify: true,
+                          refetch: true,
+                        ),
                       ),
                       Flexible(child: _FilterButton()),
                       Flexible(
@@ -143,13 +148,33 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
 class _FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Provider.of<Explorable>(context).areFiltersActive()
+    final provider = Provider.of<Explorable>(context, listen: false);
+
+    return Provider.of<Explorable>(context).anyActiveFilterFrom([
+      Explorable.STATUS_IN,
+      Explorable.STATUS_NOT_IN,
+      Explorable.FORMAT_IN,
+      Explorable.FORMAT_NOT_IN,
+      Explorable.GENRE_IN,
+      Explorable.GENRE_NOT_IN,
+      Explorable.TAG_IN,
+      Explorable.TAG_NOT_IN,
+    ])
         ? GestureDetector(
             onTap: () => Navigator.of(context).push(
               CupertinoPageRoute(builder: (_) => FilterPage()),
             ),
-            onLongPress: Provider.of<Explorable>(context, listen: false)
-                .clearGenreTagFilters,
+            onLongPress: () {
+              provider.setFilterWithKey(Explorable.STATUS_IN, value: null);
+              provider.setFilterWithKey(Explorable.STATUS_NOT_IN, value: null);
+              provider.setFilterWithKey(Explorable.FORMAT_IN, value: null);
+              provider.setFilterWithKey(Explorable.FORMAT_IN, value: null);
+              provider.setFilterWithKey(Explorable.GENRE_IN, value: null);
+              provider.setFilterWithKey(Explorable.GENRE_NOT_IN, value: null);
+              provider.setFilterWithKey(Explorable.TAG_IN, value: null);
+              provider.setFilterWithKey(Explorable.TAG_NOT_IN,
+                  value: null, notify: true, refetch: true);
+            },
             child: Container(
               width: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
               height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
@@ -159,7 +184,7 @@ class _FilterButton extends StatelessWidget {
               ),
               child: const Icon(
                 FluentSystemIcons.ic_fluent_filter_filled,
-                size: Design.ICON_SMALL,
+                size: Styles.ICON_SMALL,
                 color: Colors.white,
               ),
             ),

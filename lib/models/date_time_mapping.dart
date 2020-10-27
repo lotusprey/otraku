@@ -22,6 +22,8 @@ String mapToDateString(Map<String, dynamic> map) {
   String month = months[map['month']];
   var day = map['day'] ?? '';
 
+  if (month == '' && day == '') return '${map['year']}';
+
   return '$month $day, ${map['year']}';
 }
 

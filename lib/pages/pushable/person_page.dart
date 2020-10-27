@@ -10,7 +10,7 @@ import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/multichild_layouts/media_connection_grid.dart';
-import 'package:otraku/tools/title_segmented_control.dart';
+import 'package:otraku/tools/headers/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class PersonPage extends StatefulWidget {

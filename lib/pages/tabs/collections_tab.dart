@@ -43,3 +43,62 @@ class _CollectionsTabState extends State<CollectionsTab> {
     );
   }
 }
+
+class CollectionDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final collection = Provider.of<Collections>(context).collection;
+    final names = collection.listNames;
+    final counts = collection.listEntryCounts;
+    final selected = collection.listIndex;
+
+    return SafeArea(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        padding: const EdgeInsets.only(left: 20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).backgroundColor,
+              Theme.of(context).backgroundColor.withAlpha(0),
+            ],
+          ),
+        ),
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.only(top: 35),
+          children: [
+            for (int i = 0; i < names.length; i++) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    if (i != selected)
+                      Provider.of<Collections>(context, listen: false)
+                          .collection
+                          .listIndex = i;
+                  },
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(names[i],
+                          style: i != selected
+                              ? Theme.of(context).textTheme.headline3
+                              : Theme.of(context).textTheme.headline2),
+                      Text(
+                        counts[i].toString(),
+                        style: Theme.of(context).textTheme.headline4,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ]
+          ],
+        ),
+      ),
+    );
+  }
+}

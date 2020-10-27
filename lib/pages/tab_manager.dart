@@ -22,6 +22,7 @@ class TabManager extends StatefulWidget {
 
 class _TabManagerState extends State<TabManager> {
   static ScrollController _scrollCtrl;
+  List<Widget> _drawers;
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _tabItems;
   int _pageIndex;
@@ -61,6 +62,7 @@ class _TabManagerState extends State<TabManager> {
           ],
         ),
       ),
+      drawer: _drawers[_pageIndex],
       body: SafeArea(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
@@ -78,6 +80,14 @@ class _TabManagerState extends State<TabManager> {
     _navBarVisibility = ValueNotifier(true);
     _scrollCtrl = ScrollController();
     _scrollCtrl.addListener(_scrollDirection);
+
+    _drawers = [
+      const SizedBox(),
+      CollectionDrawer(),
+      CollectionDrawer(),
+      const SizedBox(),
+      const SizedBox(),
+    ];
 
     _tabs = [
       InboxTab(),

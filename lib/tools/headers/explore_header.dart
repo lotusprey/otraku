@@ -12,7 +12,7 @@ import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/providers/explorable.dart';
 import 'package:otraku/providers/view_config.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
-import 'package:otraku/tools/title_segmented_control.dart';
+import 'package:otraku/tools/headers/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
 import 'package:provider/provider.dart';
 

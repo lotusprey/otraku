@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/providers/collections.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
-import 'package:otraku/tools/title_segmented_control.dart';
+import 'package:otraku/tools/headers/lists_navigation.dart';
 import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -37,14 +37,10 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final collection = Provider.of<Collections>(context).collection;
-    if (collection == null) return Container();
+    final collection =
+        Provider.of<Collections>(context, listen: false).collection;
 
-    Map<String, Object> segmentedControlPairs = {};
-    final allNames = context.read<Collections>().collection.listNames;
-    for (int i = 0; i < allNames.length; i++) {
-      segmentedControlPairs[allNames[i]] = i;
-    }
+    if (collection == null) return Container();
 
     return ClipRect(
       child: BackdropFilter(
@@ -57,23 +53,7 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TitleSegmentedControl(
-                initialValue: collection.listIndex,
-                pairs: segmentedControlPairs,
-                onNewValue: (value) {
-                  collection.listIndex = value;
-                  if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
-                  _scrollCtrl.animateTo(0,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.decelerate);
-                },
-                onSameValue: (_) {
-                  if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
-                  _scrollCtrl.animateTo(0,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.decelerate);
-                },
-              ),
+              _ListNavigationImplementation(_scrollCtrl),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: SizedBox(
@@ -127,4 +107,31 @@ class _CollectionHeaderDelegate implements SliverPersistentHeaderDelegate {
 
   @override
   TickerProvider get vsync => null;
+}
+
+class _ListNavigationImplementation extends StatelessWidget {
+  final ScrollController scrollCtrl;
+
+  _ListNavigationImplementation(this.scrollCtrl);
+
+  @override
+  Widget build(BuildContext context) {
+    final collection = Provider.of<Collections>(context).collection;
+
+    return ListsNavigation(
+      index: collection.listIndex,
+      swipeResponse: (int value) =>
+          Provider.of<Collections>(context, listen: false)
+              .collection
+              .listIndex = value,
+      onHeaderTap: () {
+        if (scrollCtrl.offset > 100) scrollCtrl.jumpTo(100);
+        scrollCtrl.animateTo(0,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.decelerate);
+      },
+      titles: collection.listNames,
+      subtitles: collection.listEntryCounts,
+    );
+  }
 }

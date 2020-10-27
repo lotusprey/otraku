@@ -58,9 +58,15 @@ class Collection {
   }
 
   List<String> get listNames {
-    List<String> listNames = [];
-    for (final list in lists) listNames.add(list.name);
-    return listNames;
+    List<String> names = [];
+    for (final list in lists) names.add(list.name);
+    return names;
+  }
+
+  List<int> get listEntryCounts {
+    List<int> counts = [];
+    for (final list in lists) counts.add(list.entries.length);
+    return counts;
   }
 
   List<MediaEntry> get entries {

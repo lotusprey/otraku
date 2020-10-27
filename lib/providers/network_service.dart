@@ -20,7 +20,10 @@ class NetworkService {
       _url,
       body: json.encode({'query': query, 'variables': variables}),
       headers: _headers,
-    );
+    ).catchError((err) {
+      _handleError(popOnError, err.toString());
+      return null;
+    });
 
     final Map<String, dynamic> body = json.decode(response.body);
 
@@ -29,27 +32,31 @@ class NetworkService {
           .map((e) => e['message'].toString())
           .toList();
 
-      if (popOnError) Get.back();
-
-      Get.defaultDialog(
-        backgroundColor: Get.theme.backgroundColor,
-        titleStyle: Get.theme.textTheme.headline3,
-        title: 'An error occured',
-        content: Text(
-          messages.join('\n'),
-          style: Get.theme.textTheme.bodyText1,
-        ),
-        actions: [
-          FlatButton(
-            child: Text('Ok :(', style: Get.theme.textTheme.bodyText2),
-            onPressed: Get.back,
-          ),
-        ],
-      );
+      _handleError(popOnError, messages.join('\n'));
 
       return null;
     }
 
     return body['data'];
+  }
+
+  static void _handleError(bool popOnError, String error) {
+    if (popOnError) Get.back();
+
+    Get.defaultDialog(
+      backgroundColor: Get.theme.backgroundColor,
+      titleStyle: Get.theme.textTheme.headline3,
+      title: 'An error occured',
+      content: Text(
+        error,
+        style: Get.theme.textTheme.bodyText1,
+      ),
+      actions: [
+        FlatButton(
+          child: Text('OK', style: Get.theme.textTheme.bodyText2),
+          onPressed: Get.back,
+        ),
+      ],
+    );
   }
 }

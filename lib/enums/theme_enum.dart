@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/providers/view_config.dart';
 
 enum Themes {
   slate,
@@ -88,6 +89,12 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     iconTheme: IconThemeData(
       color: theme['faded'],
       size: Styles.ICON_MEDIUM,
+    ),
+    buttonTheme: ButtonThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: ViewConfig.BORDER_RADIUS,
+      ),
+      buttonColor: theme['accent'],
     ),
     textTheme: TextTheme(
       headline1: TextStyle(

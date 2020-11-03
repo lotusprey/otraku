@@ -4,21 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/models/user.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
+import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/providers/users.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:provider/provider.dart';
 
-class ProfileTab extends StatefulWidget {
+class UserTab extends StatefulWidget {
   final int id;
 
-  ProfileTab(this.id);
+  UserTab(this.id);
 
   @override
-  _ProfileTabState createState() => _ProfileTabState();
+  _UserTabState createState() => _UserTabState();
 }
 
-class _ProfileTabState extends State<ProfileTab> {
+class _UserTabState extends State<UserTab> {
+  static const _space = SizedBox(width: 10);
+
   User _user;
   bool _didChangeDependencies = false;
 
@@ -29,6 +32,54 @@ class _ProfileTabState extends State<ProfileTab> {
       slivers: [
         SliverPersistentHeader(
           delegate: _Header(_user, widget.id == null),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          sliver: SliverToBoxAdapter(
+            child: Row(
+              children: [
+                Expanded(
+                  child: RaisedButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          FluentSystemIcons.ic_fluent_movies_and_tv_regular,
+                          color: Theme.of(context).backgroundColor,
+                        ),
+                        _space,
+                        Text('Anime List',
+                            style: Theme.of(context).textTheme.button),
+                      ],
+                    ),
+                    onPressed: () => widget.id == null
+                        ? AppConfig.pageIndex = TabManager.ANIME_LIST
+                        : print('TODO'),
+                  ),
+                ),
+                _space,
+                Expanded(
+                  child: RaisedButton(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          FluentSystemIcons.ic_fluent_bookmark_regular,
+                          color: Theme.of(context).backgroundColor,
+                        ),
+                        _space,
+                        Text('Manga List',
+                            style: Theme.of(context).textTheme.button),
+                      ],
+                    ),
+                    onPressed: () => widget.id == null
+                        ? AppConfig.pageIndex = TabManager.MANGA_LIST
+                        : print('TODO'),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -89,7 +140,7 @@ class _Header implements SliverPersistentHeaderDelegate {
               ),
             Container(
               padding: const EdgeInsets.only(
-                top: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
+                top: AppConfig.MATERIAL_TAP_TARGET_SIZE,
                 left: 10,
                 right: 10,
               ),
@@ -109,7 +160,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: user.avatar,
                       child: ClipRRect(
-                        borderRadius: ViewConfig.BORDER_RADIUS,
+                        borderRadius: AppConfig.BORDER_RADIUS,
                         child: Container(
                           height: 150,
                           width: 150,

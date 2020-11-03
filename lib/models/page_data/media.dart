@@ -6,7 +6,7 @@ import 'package:otraku/models/page_data/page_item_data.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 
-class MediaData extends PageItemData {
+class Media extends PageItemData {
   String type;
   String title;
   int nextEpisode;
@@ -17,7 +17,7 @@ class MediaData extends PageItemData {
   String description;
   List<Tuple> info = [];
 
-  MediaData(int id, Map<String, dynamic> data)
+  Media(int id, Map<String, dynamic> data)
       : super(
           id: id,
           isFavourite: data['isFavourite'],

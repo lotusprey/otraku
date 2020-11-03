@@ -3,13 +3,13 @@ import 'package:otraku/models/page_data/page_item_data.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
 
-class StudioData extends PageItemData {
+class Studio extends PageItemData {
   final String name;
   final Tuple<List<String>, List<List<BrowseResult>>> media;
   bool _hasNextPage = true;
   int _nextPage = 1;
 
-  StudioData({
+  Studio({
     @required this.name,
     @required this.media,
     @required id,

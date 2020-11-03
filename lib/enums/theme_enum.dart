@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 
 enum Themes {
-  slate,
+  navy,
+  cyber,
+  night,
+  frost,
   amethyst,
-  peach,
-  mint,
 }
 
 extension Styles on Themes {
@@ -20,7 +21,7 @@ extension Styles on Themes {
   static const double FONT_SMALLER = 13;
 
   static const _themes = {
-    Themes.slate: {
+    Themes.navy: {
       'background': Color(0xFF0F171E),
       'primary': Color(0xFF1D2835),
       'translucent': Color(0xBB0F171E),
@@ -28,6 +29,36 @@ extension Styles on Themes {
       'error': Color(0xFFD74761),
       'faded': Color(0xFF56789F),
       'contrast': Color(0xFFCAD5E2),
+      'brightness': Brightness.dark,
+    },
+    Themes.cyber: {
+      'background': Color(0xFF163B3B),
+      'primary': Color(0xFF1A6157),
+      'translucent': Color(0xBB163B3B),
+      'accent': Color(0xFF00E4A3),
+      'error': Color(0xFFD87CAC),
+      'faded': Color(0xFF85D6C2),
+      'contrast': Color(0xFFFFFEFF),
+      'brightness': Brightness.light,
+    },
+    Themes.night: {
+      'background': Color(0xFF08123A),
+      'primary': Color(0xFF1E2964),
+      'translucent': Color(0xBB08123A),
+      'accent': Color(0xFF41C0AA),
+      'error': Color(0xFFF445AF),
+      'faded': Color(0xFF6B80DB),
+      'contrast': Color(0xFFEBFFFA),
+      'brightness': Brightness.dark,
+    },
+    Themes.frost: {
+      'background': Color(0xFFF5F5F5),
+      'primary': Color(0xFFE1E5F2),
+      'translucent': Color(0xBBF5F5F5),
+      'accent': Color(0xFF28A0B8),
+      'error': Color(0xFFE88E5F),
+      'faded': Color(0xFF045876),
+      'contrast': Color(0xFF022B3A),
       'brightness': Brightness.dark,
     },
     Themes.amethyst: {
@@ -39,26 +70,6 @@ extension Styles on Themes {
       'faded': Color(0xFFA7A0F8),
       'contrast': Color(0xFFE8D9FC),
       'brightness': Brightness.dark,
-    },
-    Themes.peach: {
-      'background': Color(0xFFFFEFEB),
-      'primary': Color(0xFFFFCFC2),
-      'translucent': Color(0xBBFFEFEB),
-      'accent': Color(0xFFFF2F0A),
-      'error': Color(0xFFBA1812),
-      'faded': Color(0xFF754543),
-      'contrast': Color(0xFF413939),
-      'brightness': Brightness.light,
-    },
-    Themes.mint: {
-      'background': Color(0xFF163B3B),
-      'primary': Color(0xFF1A6157),
-      'translucent': Color(0xBB163B3B),
-      'accent': Color(0xFF00E4A3),
-      'error': Color(0xFFD87CAC),
-      'faded': Color(0xFF85D6C2),
-      'contrast': Color(0xFFFFFEFF),
-      'brightness': Brightness.light,
     },
   };
 
@@ -92,7 +103,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     ),
     buttonTheme: ButtonThemeData(
       shape: RoundedRectangleBorder(
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       buttonColor: theme['accent'],
     ),
@@ -129,7 +140,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       ),
       button: TextStyle(
         fontSize: Styles.FONT_MEDIUM,
-        color: Colors.white,
+        color: theme['background'],
       ),
       bodyText1: TextStyle(
         fontSize: Styles.FONT_SMALL,

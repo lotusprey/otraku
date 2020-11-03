@@ -33,7 +33,7 @@ class Collection {
   int get listIndex => _listIndex;
 
   set listIndex(int value) {
-    if (value < 0 || value >= lists.length) return;
+    if (value < 0 || value >= lists.length || value == _listIndex) return;
     _listIndex = value;
     notifyHandle();
   }
@@ -69,6 +69,13 @@ class Collection {
     return counts;
   }
 
+  int get totalEntryCount {
+    int count = 0;
+    for (final list in lists)
+      if (list.status != null) count += list.entries.length;
+    return count;
+  }
+
   List<MediaEntry> get entries {
     if (_search == null) return [...lists[_listIndex].entries];
 
@@ -85,26 +92,23 @@ class Collection {
     EditEntry original,
     EditEntry changed,
     MediaEntry entry,
-    List<String> customLists,
+    List<String> newCustomLists,
   ) {
-    removeEntry(original, notify: false);
+    removeEntry(original, cleanUp: false);
 
     List<EntryList> updatedLists = [];
 
     if (!changed.hiddenFromStatusLists) {
       for (final list in lists) {
-        if (completedListIsSplit) {
-          if (list.status == changed.status &&
-              !list.isCustomList &&
-              ((list.splitCompletedListFormat == entry.format &&
-                      list.status == MediaListStatus.COMPLETED) ||
-                  list.status != MediaListStatus.COMPLETED)) {
+        if (completedListIsSplit &&
+            changed.status == MediaListStatus.COMPLETED) {
+          if (list.splitCompletedListFormat == entry.format) {
             list.entries.add(entry);
             updatedLists.add(list);
             break;
           }
         } else {
-          if (list.status == changed.status && !list.isCustomList) {
+          if (!list.isCustomList && list.status == changed.status) {
             list.entries.add(entry);
             updatedLists.add(list);
             break;
@@ -120,25 +124,25 @@ class Collection {
 
     for (final list in lists) {
       if (list.isCustomList) {
-        for (int i = 0; i < customLists.length; i++) {
-          if (list.name.toLowerCase() == customLists[i].toLowerCase()) {
+        for (int i = 0; i < newCustomLists.length; i++) {
+          if (list.name.toLowerCase() == newCustomLists[i].toLowerCase()) {
             list.entries.add(entry);
             updatedLists.add(list);
-            customLists.removeAt(i--);
+            newCustomLists.removeAt(i--);
             break;
           }
         }
       }
     }
 
-    if (customLists.length > 0) {
+    if (newCustomLists.length > 0) {
       fetchHandle();
       return;
     }
 
     for (int i = 0; i < lists.length; i++) {
       if (lists[i].entries.length == 0) {
-        if (i <= _listIndex && _listIndex > 0) _listIndex--;
+        listIndex = _listIndex - 1;
         lists.removeAt(i--);
       }
     }
@@ -148,7 +152,7 @@ class Collection {
     notifyHandle();
   }
 
-  void removeEntry(EditEntry entry, {bool notify = true}) {
+  void removeEntry(EditEntry entry, {bool cleanUp = true}) {
     List<String> customLists = [];
     for (final tuple in entry.customLists)
       if (tuple.item2) customLists.add(tuple.item1.toLowerCase());
@@ -172,7 +176,15 @@ class Collection {
       }
     }
 
-    if (notify) notifyHandle();
+    if (cleanUp) {
+      for (int i = 0; i < lists.length; i++) {
+        if (lists[i].entries.length == 0) {
+          listIndex = _listIndex - 1;
+          lists.removeAt(i--);
+        }
+      }
+      notifyHandle();
+    }
   }
 
   static void sortLists(List<EntryList> entryLists, ListSort sorting) {

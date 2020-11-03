@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/page_data/media_data.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/models/page_data/media.dart';
+import 'package:otraku/providers/app_config.dart';
 
 class InfoGrid extends StatelessWidget {
-  final MediaData mediaObj;
+  final Media mediaObj;
 
   InfoGrid(this.mediaObj);
 
@@ -27,7 +27,7 @@ class InfoGrid extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: ViewConfig.PADDING,
+        padding: AppConfig.PADDING,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +58,7 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
         color: Theme.of(context).primaryColor,
       ),
       child: Padding(

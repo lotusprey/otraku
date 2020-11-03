@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/models/page_data/studio_data.dart';
+import 'package:otraku/models/page_data/studio.dart';
 import 'package:otraku/providers/page_item.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/media_indexer.dart';
@@ -20,7 +20,7 @@ class StudioPage extends StatefulWidget {
 }
 
 class _StudioPageState extends State<StudioPage> {
-  StudioData _studio;
+  Studio _studio;
   double extentOnLastCall = 0;
 
   int counter = 0;
@@ -56,7 +56,7 @@ class _StudioPageState extends State<StudioPage> {
                   for (int i = 0; i < _studio.media.item1.length; i++) ...[
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: ViewConfig.PADDING,
+                        padding: AppConfig.PADDING,
                         child: Text(
                           _studio.media.item1[i],
                           style: Theme.of(context).textTheme.headline3,
@@ -64,7 +64,7 @@ class _StudioPageState extends State<StudioPage> {
                       ),
                     ),
                     SliverPadding(
-                      padding: ViewConfig.PADDING,
+                      padding: AppConfig.PADDING,
                       sliver: SliverGrid(
                         delegate: SliverChildBuilderDelegate(
                           (_, index) => MediaIndexer(
@@ -80,12 +80,10 @@ class _StudioPageState extends State<StudioPage> {
                           childCount: _studio.media.item2[i].length,
                         ),
                         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent:
-                              ViewConfig.tileConfiguration.tileWidth,
+                          maxCrossAxisExtent: AppConfig.tileConfig.tileWidth,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
-                          childAspectRatio:
-                              ViewConfig.tileConfiguration.tileWHRatio,
+                          childAspectRatio: AppConfig.tileConfig.tileWHRatio,
                         ),
                       ),
                     ),
@@ -119,7 +117,7 @@ class _StudioPageState extends State<StudioPage> {
 }
 
 class _StudioHeader implements SliverPersistentHeaderDelegate {
-  final StudioData studio;
+  final Studio studio;
   final String textTag;
 
   _StudioHeader(this.studio, this.textTag);

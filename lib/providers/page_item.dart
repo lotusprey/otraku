@@ -1,7 +1,7 @@
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/models/page_data/person_data.dart';
-import 'package:otraku/models/page_data/studio_data.dart';
+import 'package:otraku/models/page_data/person.dart';
+import 'package:otraku/models/page_data/studio.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/models/tuple.dart';
@@ -54,7 +54,7 @@ class PageItem {
     return result != null;
   }
 
-  static Future<PersonData> fetchCharacter(int id, PersonData character) async {
+  static Future<Person> fetchCharacter(int id, Person character) async {
     const anime = r'''
       anime: media(page: $page, type: ANIME) {
         ...media
@@ -153,7 +153,7 @@ class PageItem {
       if (data['name']['native'] != null)
         altNames.insert(0, data['name']['native']);
 
-      character = PersonData(
+      character = Person(
         id: id,
         fullName: data['name']['full'],
         altNames: altNames,
@@ -183,7 +183,7 @@ class PageItem {
     return character;
   }
 
-  static Future<PersonData> fetchStaff(int id, PersonData staff) async {
+  static Future<Person> fetchStaff(int id, Person staff) async {
     const characters = r'''
       characters(page: $page) {
         pageInfo {hasNextPage}
@@ -281,7 +281,7 @@ class PageItem {
       if (data['name']['native'] != null)
         altNames.insert(0, data['name']['native']);
 
-      staff = PersonData(
+      staff = Person(
         id: id,
         fullName: data['name']['full'],
         altNames: altNames,
@@ -311,7 +311,7 @@ class PageItem {
     return staff;
   }
 
-  static Future<StudioData> fetchStudio(int id, StudioData studio) async {
+  static Future<Studio> fetchStudio(int id, Studio studio) async {
     final query = '''
       query Studio(\$id: Int, \$page: Int) {
         Studio(id: \$id) {
@@ -350,7 +350,7 @@ class PageItem {
         .toString();
 
     if (studio == null) {
-      studio = StudioData(
+      studio = Studio(
         id: id,
         name: data['name'],
         isFavourite: data['isFavourite'],

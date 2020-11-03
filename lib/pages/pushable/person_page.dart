@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/models/page_data/person_data.dart';
+import 'package:otraku/models/page_data/person.dart';
 import 'package:otraku/providers/page_item.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
@@ -27,8 +27,8 @@ class PersonPage extends StatefulWidget {
 class _PersonPageState extends State<PersonPage> {
   static const _space = SizedBox(height: 10);
 
-  Function(int, PersonData) loadFunc;
-  PersonData _person;
+  Function(int, Person) loadFunc;
+  Person _person;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class _PersonPageState extends State<PersonPage> {
                     ),
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: ViewConfig.PADDING,
+                        padding: AppConfig.PADDING,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -80,7 +80,7 @@ class _PersonPageState extends State<PersonPage> {
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       color: Theme.of(context).primaryColor,
-                                      borderRadius: ViewConfig.BORDER_RADIUS,
+                                      borderRadius: AppConfig.BORDER_RADIUS,
                                     ),
                                     child: Text(
                                       _person.description,
@@ -126,7 +126,7 @@ class _PersonPageState extends State<PersonPage> {
                       ),
                     ],
                     SliverPadding(
-                      padding: ViewConfig.PADDING,
+                      padding: AppConfig.PADDING,
                       sliver: MediaConnectionGrid(
                         _person.connections,
                         () async {
@@ -173,7 +173,7 @@ class _PersonPageState extends State<PersonPage> {
                           width: coverWidth,
                           height: coverWidth / 0.7,
                           child: ClipRRect(
-                            borderRadius: ViewConfig.BORDER_RADIUS,
+                            borderRadius: AppConfig.BORDER_RADIUS,
                             child: Image.network(
                               widget.tagImageUrl,
                               fit: BoxFit.cover,
@@ -204,7 +204,7 @@ class _PersonPageState extends State<PersonPage> {
 }
 
 class _Header implements SliverPersistentHeaderDelegate {
-  final PersonData person;
+  final Person person;
   final double coverWidth;
   final double coverHeight;
   final String tagImageUrl;
@@ -232,7 +232,7 @@ class _Header implements SliverPersistentHeaderDelegate {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              top: ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10,
+              top: AppConfig.MATERIAL_TAP_TARGET_SIZE + 10,
               left: 10,
               right: 10,
             ),
@@ -244,7 +244,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: tagImageUrl,
                       child: ClipRRect(
-                        borderRadius: ViewConfig.BORDER_RADIUS,
+                        borderRadius: AppConfig.BORDER_RADIUS,
                         child: Container(
                           width: coverWidth,
                           height: coverHeight,
@@ -307,11 +307,10 @@ class _Header implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent =>
-      coverHeight + ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+  double get maxExtent => coverHeight + AppConfig.MATERIAL_TAP_TARGET_SIZE + 10;
 
   @override
-  double get minExtent => ViewConfig.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => AppConfig.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

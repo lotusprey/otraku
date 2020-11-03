@@ -111,9 +111,6 @@ class Collections with ChangeNotifier {
   // DATA
   // ***************************************************************************
 
-  void init(int id) => _viewerId = id;
-
-  int _viewerId;
   Collection _myAnime;
   Collection _myManga;
   Collection _other;
@@ -154,12 +151,12 @@ class Collections with ChangeNotifier {
   // ***************************************************************************
 
   Future<void> fetchMyAnime() async {
-    _myAnime = await _fetchCollection(true, _viewerId);
+    _myAnime = await _fetchCollection(true, NetworkService.viewerId);
     if (_myAnime != null) notifyListeners();
   }
 
   Future<void> fetchMyManga() async {
-    _myManga = await _fetchCollection(false, _viewerId);
+    _myManga = await _fetchCollection(false, NetworkService.viewerId);
     if (_myManga != null) notifyListeners();
   }
 
@@ -175,7 +172,7 @@ class Collections with ChangeNotifier {
     Map<String, dynamic> data = await NetworkService.request(
       _collectionQuery,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
-      popOnError: false,
+      popOnError: userId != NetworkService.viewerId,
     );
 
     if (data == null) return null;
@@ -223,12 +220,12 @@ class Collections with ChangeNotifier {
 
     return Collection(
       notifyHandle: () => notifyListeners(),
-      fetchHandle: userId == _viewerId
+      fetchHandle: userId == NetworkService.viewerId
           ? ofAnime
               ? fetchMyAnime
               : fetchMyManga
           : null,
-      userId: _viewerId,
+      userId: NetworkService.viewerId,
       ofAnime: ofAnime,
       completedListIsSplit: metaData['splitCompletedSectionByFormat'],
       scoreFormat: data['user']['mediaListOptions']['scoreFormat'],
@@ -242,7 +239,7 @@ class Collections with ChangeNotifier {
   // ***************************************************************************
 
   Future<bool> updateEntry(EditEntry original, EditEntry changed) async {
-    final List<String> customLists =
+    final List<String> newCustomLists =
         changed.customLists.where((t) => t.item2).map((t) => t.item1).toList();
 
     final data = await NetworkService.request(
@@ -260,7 +257,7 @@ class Collections with ChangeNotifier {
         'completedAt': dateTimeToMap(changed.completedAt),
         'private': changed.private,
         'hiddenFromStatusLists': changed.hiddenFromStatusLists,
-        'customLists': customLists,
+        'customLists': newCustomLists,
       },
     );
 
@@ -269,9 +266,9 @@ class Collections with ChangeNotifier {
     MediaEntry entry = _createEntry(data['SaveMediaListEntry']);
 
     if (changed.type == 'ANIME') {
-      _myAnime.updateEntry(original, changed, entry, customLists);
+      _myAnime.updateEntry(original, changed, entry, newCustomLists);
     } else {
-      _myManga.updateEntry(original, changed, entry, customLists);
+      _myManga.updateEntry(original, changed, entry, newCustomLists);
     }
 
     return true;

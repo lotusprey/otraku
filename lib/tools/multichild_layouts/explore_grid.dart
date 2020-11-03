@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
 import 'package:provider/provider.dart';
@@ -81,10 +81,10 @@ class ExploreGrid extends StatelessWidget {
           childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: ViewConfig.tileConfiguration.tileWidth,
+          maxCrossAxisExtent: AppConfig.tileConfig.tileWidth,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: ViewConfig.tileConfiguration.tileWHRatio,
+          childAspectRatio: AppConfig.tileConfig.tileWHRatio,
         ),
       ),
     );

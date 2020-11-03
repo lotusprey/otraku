@@ -8,7 +8,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/multichild_layouts/filter_grid.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,7 @@ class FilterPage extends StatelessWidget {
 
     final result = [
       Padding(
-        padding: ViewConfig.PADDING,
+        padding: AppConfig.PADDING,
         child: Text(name, style: Theme.of(context).textTheme.subtitle1),
       ),
       grid,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 
 class CustomGridTile extends StatelessWidget {
   final int mediaId;
@@ -15,17 +15,17 @@ class CustomGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: ViewConfig.tileConfiguration.tileWidth,
-      height: ViewConfig.tileConfiguration.tileHeight,
+      width: AppConfig.tileConfig.tileWidth,
+      height: AppConfig.tileConfig.tileHeight,
       child: Column(
         children: [
           Hero(
             tag: imageUrl,
             child: ClipRRect(
-              borderRadius: ViewConfig.BORDER_RADIUS,
+              borderRadius: AppConfig.BORDER_RADIUS,
               child: Container(
-                height: ViewConfig.tileConfiguration.tileImgHeight,
-                width: ViewConfig.tileConfiguration.tileWidth,
+                height: AppConfig.tileConfig.tileImgHeight,
+                width: AppConfig.tileConfig.tileWidth,
                 color: Theme.of(context).primaryColor,
                 child: Image.network(
                   imageUrl,

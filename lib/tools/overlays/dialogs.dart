@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 
 class PopUpAnimation extends StatefulWidget {
   final Widget child;
@@ -59,7 +59,7 @@ class TextDialog extends StatelessWidget {
       elevation: 0,
       backgroundColor: Theme.of(context).backgroundColor,
       shape: RoundedRectangleBorder(
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -70,7 +70,7 @@ class TextDialog extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
               color: Theme.of(context).backgroundColor,
             ),
-            padding: ViewConfig.PADDING,
+            padding: AppConfig.PADDING,
             child: Text(title, style: Theme.of(context).textTheme.headline3),
           ),
           Flexible(
@@ -104,7 +104,7 @@ class ImageDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: ClipRRect(
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
         child: image,
       ),
     );
@@ -125,14 +125,14 @@ class ImageTextDialog extends StatelessWidget {
     return Dialog(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       backgroundColor: Theme.of(context).primaryColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           ClipRRect(
-            borderRadius: ViewConfig.BORDER_RADIUS,
+            borderRadius: AppConfig.BORDER_RADIUS,
             child: image,
           ),
           Padding(

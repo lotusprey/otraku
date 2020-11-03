@@ -2,12 +2,12 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/models/page_data/media_data.dart';
+import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/providers/network_service.dart';
 
 class MediaItem {
-  static Future<MediaData> fetchItemData(int id) async {
+  static Future<Media> fetchItemData(int id) async {
     const query = r'''
       query Media($id: Int) {
         Media(id: $id) {
@@ -56,7 +56,7 @@ class MediaItem {
 
     if (data == null) return null;
 
-    return MediaData(id, data['Media']);
+    return Media(id, data['Media']);
   }
 
   static Future<Tuple<EditEntry, String>> fetchUserData(int id) async {

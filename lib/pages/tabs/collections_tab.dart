@@ -36,7 +36,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        HeadlineHeader('${widget.ofAnime ? 'Anime' : 'Manga'} List'),
+        HeadlineHeader('${widget.ofAnime ? 'Anime' : 'Manga'} List', false),
         CollectionHeader(widget.scrollCtrl),
         MediaList(widget.ofAnime),
       ],
@@ -66,8 +66,15 @@ class CollectionDrawer extends StatelessWidget {
         ),
         child: ListView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(top: 35),
+          padding: const EdgeInsets.symmetric(vertical: 35),
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Text(
+                '${collection.totalEntryCount} Total',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+            ),
             for (int i = 0; i < names.length; i++) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),

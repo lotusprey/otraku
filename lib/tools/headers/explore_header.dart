@@ -10,7 +10,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/headers/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
@@ -176,10 +176,10 @@ class _FilterButton extends StatelessWidget {
                   value: null, notify: true, refetch: true);
             },
             child: Container(
-              width: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
-              height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
+              width: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+              height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
               decoration: BoxDecoration(
-                borderRadius: ViewConfig.BORDER_RADIUS,
+                borderRadius: AppConfig.BORDER_RADIUS,
                 color: Theme.of(context).accentColor,
               ),
               child: const Icon(

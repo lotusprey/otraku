@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 
 class ExpandableField extends StatefulWidget {
   final String text;
@@ -23,7 +23,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       child: TextField(
         scrollPhysics: const BouncingScrollPhysics(),

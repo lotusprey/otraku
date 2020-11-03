@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 
-class LargeTileConfiguration {
+class LargeTileConfig {
   final double tileWHRatio;
   final double tileWidth;
   final double tileHeight;
   final double tileImgHeight;
 
-  LargeTileConfiguration({
+  LargeTileConfig({
     @required this.tileWHRatio,
     @required this.tileWidth,
     @required this.tileHeight,

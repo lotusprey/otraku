@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 
@@ -22,7 +22,7 @@ class _SettingsPageState extends State<SettingsPage> {
         title: 'Settings',
       ),
       body: ListView(
-        padding: ViewConfig.PADDING,
+        padding: AppConfig.PADDING,
         children: [
           InputFieldStructure(title: 'Theme', body: _ThemeDropdown()),
         ],
@@ -59,7 +59,7 @@ class _ThemeDropdownState extends State<_ThemeDropdown> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       child: DropdownButton(
         value: Themes.values[currentThemeIndex],

@@ -1,6 +1,5 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class ListsNavigation extends StatelessWidget {
   final List<String> titles;
@@ -37,7 +36,7 @@ class ListsNavigation extends StatelessWidget {
                 child: IconButton(
                   padding: const EdgeInsets.all(0),
                   icon: const Icon(
-                    FluentSystemIcons.ic_fluent_apps_list_regular,
+                    FluentSystemIcons.ic_fluent_list_regular,
                   ),
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
@@ -62,7 +61,7 @@ class ListsNavigation extends StatelessWidget {
               child: Center(
                 child: Text(
                   titles[index],
-                  style: Get.theme.textTheme.headline2,
+                  style: Theme.of(context).textTheme.headline2,
                 ),
               ),
             ),
@@ -74,7 +73,7 @@ class ListsNavigation extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       subtitles[index].toString(),
-                      style: Get.theme.textTheme.headline3,
+                      style: Theme.of(context).textTheme.headline3,
                     ),
                   )
                 : null,

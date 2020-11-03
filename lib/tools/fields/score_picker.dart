@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 
 class ScorePicker extends StatelessWidget {
@@ -59,7 +59,7 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -106,7 +106,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

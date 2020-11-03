@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/models/page_data/media_data.dart';
+import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/providers/media_item.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -19,7 +19,7 @@ class MediaPage extends StatefulWidget {
 
 class _MediaPageState extends State<MediaPage> {
   //Data
-  MediaData _media;
+  Media _media;
 
   //Output settings
   bool _didChangeDependencies = false;
@@ -52,7 +52,7 @@ class _MediaPageState extends State<MediaPage> {
                     ),
                     if (_media.description != null)
                       SliverPadding(
-                        padding: ViewConfig.PADDING,
+                        padding: AppConfig.PADDING,
                         sliver: SliverList(
                           delegate: SliverChildListDelegate(
                             [
@@ -66,7 +66,7 @@ class _MediaPageState extends State<MediaPage> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor,
-                                    borderRadius: ViewConfig.BORDER_RADIUS,
+                                    borderRadius: AppConfig.BORDER_RADIUS,
                                   ),
                                   child: Text(
                                     _media.description,
@@ -119,7 +119,7 @@ class _MediaPageState extends State<MediaPage> {
                             child: Hero(
                               tag: widget.tagImageUrl,
                               child: ClipRRect(
-                                borderRadius: ViewConfig.BORDER_RADIUS,
+                                borderRadius: AppConfig.BORDER_RADIUS,
                                 child: Image.network(
                                   widget.tagImageUrl,
                                   fit: BoxFit.cover,
@@ -155,7 +155,7 @@ class _MediaPageState extends State<MediaPage> {
     if (!_didChangeDependencies) {
       _coverWidth = MediaQuery.of(context).size.width * 0.35;
       _coverHeight = _coverWidth / 0.7;
-      _bannerHeight = _coverHeight + ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+      _bannerHeight = _coverHeight + AppConfig.MATERIAL_TAP_TARGET_SIZE + 10;
       _didChangeDependencies = true;
     }
   }

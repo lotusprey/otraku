@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/models/page_data/media_data.dart';
+import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class MediaPageHeader implements SliverPersistentHeaderDelegate {
   //Data
-  final MediaData media;
+  final Media media;
 
   //Output settings
   final double coverWidth;
   final double coverHeight;
-  final double minHeight = ViewConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+  final double minHeight = AppConfig.MATERIAL_TAP_TARGET_SIZE + 10;
   final double maxHeight;
   final String tagImageUrl;
 
@@ -59,7 +59,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
           if (media.banner != null) media.banner,
           Container(
             padding: const EdgeInsets.only(
-              top: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
+              top: AppConfig.MATERIAL_TAP_TARGET_SIZE,
               left: 10,
               right: 10,
             ),
@@ -82,7 +82,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: tagImageUrl,
                       child: ClipRRect(
-                        borderRadius: ViewConfig.BORDER_RADIUS,
+                        borderRadius: AppConfig.BORDER_RADIUS,
                         child: Container(
                           height: coverHeight,
                           width: coverWidth,
@@ -191,7 +191,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
 }
 
 class _StatusButton extends StatefulWidget {
-  final MediaData media;
+  final Media media;
   final double width;
 
   _StatusButton(this.media, this.width);
@@ -208,7 +208,7 @@ class __StatusButtonState extends State<_StatusButton> {
       child: RaisedButton(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(
-          borderRadius: ViewConfig.BORDER_RADIUS,
+          borderRadius: AppConfig.BORDER_RADIUS,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -216,7 +216,7 @@ class __StatusButtonState extends State<_StatusButton> {
             Icon(
               widget.media.status == null ? Icons.add : Icons.edit,
               size: Styles.ICON_SMALL,
-              color: Colors.white,
+              color: Theme.of(context).backgroundColor,
             ),
             const SizedBox(width: 10),
             Text(

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:provider/provider.dart';
 
 class ExploreSearchBar extends StatelessWidget {
@@ -20,11 +20,11 @@ class ExploreSearchBar extends StatelessWidget {
 
     final type = Provider.of<Explorable>(context).type;
     if (type == Browsable.anime || type == Browsable.manga)
-      width -= ViewConfig.MATERIAL_TAP_TARGET_SIZE * 2;
+      width -= AppConfig.MATERIAL_TAP_TARGET_SIZE * 2;
 
     return AnimatedContainer(
       width: width,
-      height: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
+      height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
       duration: const Duration(milliseconds: 100),
       child: Center(
         child: _HeaderSearchBar(
@@ -45,9 +45,9 @@ class CollectionSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: ViewConfig.MATERIAL_TAP_TARGET_SIZE,
+      height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
       width: MediaQuery.of(context).size.width -
-          ViewConfig.MATERIAL_TAP_TARGET_SIZE -
+          AppConfig.MATERIAL_TAP_TARGET_SIZE -
           20,
       child: Center(child: _HeaderSearchBar(initialValue, updateValue)),
     );
@@ -72,7 +72,7 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: ViewConfig.CONTROL_HEADER_ICON_HEIGHT,
+      height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
       padding: const EdgeInsets.only(right: 10),
       child: TextField(
         focusNode: _focus,
@@ -87,7 +87,7 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
           filled: true,
           fillColor: Theme.of(context).primaryColor,
           border: OutlineInputBorder(
-            borderRadius: ViewConfig.BORDER_RADIUS,
+            borderRadius: AppConfig.BORDER_RADIUS,
             borderSide: BorderSide.none,
           ),
           prefixIcon: Icon(

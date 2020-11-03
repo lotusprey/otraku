@@ -1,11 +1,12 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
-import 'package:otraku/pages/tabs/profile_tab.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/pages/tabs/user_tab.dart';
+import 'package:otraku/providers/app_config.dart';
 
 class TabManager extends StatefulWidget {
   static const int INBOX = 0;
@@ -25,7 +26,6 @@ class _TabManagerState extends State<TabManager> {
   List<Widget> _drawers;
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _tabItems;
-  int _pageIndex;
   ValueNotifier<bool> _navBarVisibility;
 
   void _scrollDirection() {
@@ -37,36 +37,36 @@ class _TabManagerState extends State<TabManager> {
     }
   }
 
+  int counter = 0;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: ValueListenableBuilder(
-        valueListenable: _navBarVisibility,
-        builder: (_, value, child) => AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          height: value ? 56 : 0,
-          child: child,
+    return Obx(
+      () => Scaffold(
+        bottomNavigationBar: ValueListenableBuilder(
+          valueListenable: _navBarVisibility,
+          builder: (_, value, child) => AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: value ? 56 : 0,
+            child: child,
+          ),
+          child: Wrap(
+            children: [
+              BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                selectedFontSize: 0,
+                currentIndex: AppConfig.pageIndex.value,
+                items: _tabItems,
+                onTap: (index) => AppConfig.pageIndex = index,
+              ),
+            ],
+          ),
         ),
-        child: Wrap(
-          children: [
-            BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              selectedFontSize: 0,
-              currentIndex: _pageIndex,
-              items: _tabItems,
-              onTap: (index) {
-                if (_pageIndex == index) return;
-                setState(() => _pageIndex = index);
-              },
-            ),
-          ],
-        ),
-      ),
-      drawer: _drawers[_pageIndex],
-      body: SafeArea(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: _tabs[_pageIndex],
+        drawer: _drawers[AppConfig.pageIndex.value],
+        body: SafeArea(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: _tabs[AppConfig.pageIndex.value],
+          ),
         ),
       ),
     );
@@ -75,8 +75,6 @@ class _TabManagerState extends State<TabManager> {
   @override
   void initState() {
     super.initState();
-    _pageIndex = ViewConfig.initialPage;
-
     _navBarVisibility = ValueNotifier(true);
     _scrollCtrl = ScrollController();
     _scrollCtrl.addListener(_scrollDirection);
@@ -104,7 +102,7 @@ class _TabManagerState extends State<TabManager> {
         key: UniqueKey(),
       ),
       ExploreTab(_scrollCtrl),
-      ProfileTab(null),
+      UserTab(null),
     ];
 
     _tabItems = const [

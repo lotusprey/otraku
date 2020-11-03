@@ -5,7 +5,7 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/providers/collections.dart';
 import 'package:otraku/providers/media_item.dart';
-import 'package:otraku/providers/view_config.dart';
+import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -94,7 +94,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
           ? LayoutBuilder(
               builder: (_, constraints) => ListView(
                 physics: const BouncingScrollPhysics(),
-                padding: ViewConfig.PADDING,
+                padding: AppConfig.PADDING,
                 children: [
                   _row(
                     InputFieldStructure(
@@ -339,7 +339,7 @@ class _StatusDropdownState extends State<_StatusDropdown> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: ViewConfig.BORDER_RADIUS,
+        borderRadius: AppConfig.BORDER_RADIUS,
       ),
       child: DropdownButton(
         value: widget.data.status,

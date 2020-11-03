@@ -25,7 +25,7 @@ class _ExploreTabState extends State<ExploreTab> {
       ),
       controller: widget.scrollCtrl,
       slivers: [
-        const HeadlineHeader('Explore'),
+        const HeadlineHeader('Explore', false),
         ExploreHeader(widget.scrollCtrl),
         ExploreGrid(),
         _ConditionalLoader(),

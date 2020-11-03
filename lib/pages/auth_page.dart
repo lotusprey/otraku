@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/auth.dart';
-import 'package:otraku/providers/view_config.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:otraku/pages/load_app_page.dart';
+import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/providers/network_service.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,7 +35,10 @@ class _AuthPageState extends State<AuthPage> {
         final int start = link.indexOf('=') + 1;
         final int end = link.indexOf('&');
         final String accessToken = link.substring(start, end);
-        Provider.of<Auth>(context, listen: false).setAccessToken(accessToken);
+        // final int expiration =
+        //     int.parse(link.substring(link.lastIndexOf('=') + 1));
+        NetworkService.accessToken = accessToken;
+        Get.offAll(LoadAppPage());
       },
       onError: (error) => print('error: $error'),
     );
@@ -49,7 +53,7 @@ class _AuthPageState extends State<AuthPage> {
         child: !_triedConnecting
             ? RaisedButton(
                 shape: RoundedRectangleBorder(
-                  borderRadius: ViewConfig.BORDER_RADIUS,
+                  borderRadius: AppConfig.BORDER_RADIUS,
                 ),
                 color: Theme.of(context).accentColor,
                 child: Text('Connect'),

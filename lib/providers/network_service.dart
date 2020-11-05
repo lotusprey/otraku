@@ -78,7 +78,7 @@ class NetworkService {
   static void _handleError(
     bool popOnError,
     List<String> errors,
-    bool whileFetching,
+    bool onQuery,
   ) {
     if (errors.contains('Unauthorized.') || errors.contains('Invalid token')) {
       Get.offAll(AuthPage());
@@ -91,9 +91,7 @@ class NetworkService {
       radius: 5,
       backgroundColor: Get.theme.backgroundColor,
       titleStyle: Get.theme.textTheme.headline3,
-      title: whileFetching
-          ? 'An error occured on a data fetch'
-          : 'An error occured on a request',
+      title: onQuery ? 'A query error occured' : 'A request error occured',
       content: Text(
         errors.join('\n'),
         style: Get.theme.textTheme.bodyText1,

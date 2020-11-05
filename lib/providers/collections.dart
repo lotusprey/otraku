@@ -98,11 +98,7 @@ class Collections with ChangeNotifier {
 
   static const _removeEntryQuery = r'''
     mutation RemoveEntry($entryId: Int) {
-      DeleteMediaListEntry(id: $entryId) {
-        Deleted {
-          deleted
-        }
-      }
+      DeleteMediaListEntry(id: $entryId) {deleted}
     }
   ''';
 
@@ -262,10 +258,10 @@ class Collections with ChangeNotifier {
     final data = await NetworkService.request(
       _removeEntryQuery,
       {'entryId': entry.entryId},
+      popOnError: false,
     );
 
-    if (data == null ||
-        data['DeleteMediaListEntry']['Deleted']['deleted'] == false)
+    if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
       return false;
 
     if (entry.type == 'ANIME') {

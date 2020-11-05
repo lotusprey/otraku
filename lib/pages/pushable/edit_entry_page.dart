@@ -6,7 +6,6 @@ import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/providers/collections.dart';
 import 'package:otraku/providers/media_item.dart';
 import 'package:otraku/providers/app_config.dart';
-import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
 import 'package:otraku/tools/fields/expandable_field.dart';
@@ -81,14 +80,54 @@ class _EditEntryPageState extends State<EditEntryPage> {
       appBar: CustomAppBar(
         title: 'Edit',
         trailing: [
-          _UpdateButtons(
-            original: _oldData,
-            changed: _newData,
-            // collection: _collection,
-            update: widget.update,
-          )
+          if (_oldData != null) ...[
+            IconButton(
+              icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
+              color: Theme.of(context).dividerColor,
+              onPressed: () => showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  title: Text(
+                    'Remove entry?',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  actions: [
+                    FlatButton(
+                      child: Text(
+                        'No',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    FlatButton(
+                      child: Text(
+                        'Yes',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                      onPressed: () {
+                        Provider.of<Collections>(context, listen: false)
+                            .removeEntry(_oldData);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        widget.update(null);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            IconButton(
+                icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
+                color: Theme.of(context).dividerColor,
+                onPressed: () {
+                  Provider.of<Collections>(context, listen: false)
+                      .updateEntry(_oldData, _newData);
+                  Navigator.of(context).pop();
+                  widget.update(_newData.status);
+                }),
+          ],
         ],
-        wrapTrailing: false,
       ),
       body: _oldData != null
           ? LayoutBuilder(
@@ -232,94 +271,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
         });
       }
     });
-  }
-}
-
-class _UpdateButtons extends StatefulWidget {
-  final EditEntry original;
-  final EditEntry changed;
-  final Function(MediaListStatus) update;
-
-  _UpdateButtons({
-    @required this.original,
-    @required this.changed,
-    @required this.update,
-  });
-
-  @override
-  _UpdateButtonsState createState() => _UpdateButtonsState();
-}
-
-class _UpdateButtonsState extends State<_UpdateButtons> {
-  bool _isLoading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.original != null && !_isLoading
-        ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppBarIcon(
-                IconButton(
-                  icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
-                  color: Theme.of(context).dividerColor,
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      title: Text(
-                        'Remove entry?',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      actions: [
-                        FlatButton(
-                          child: Text(
-                            'No',
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        FlatButton(
-                          child: Text(
-                            'Yes',
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
-                          onPressed: () {
-                            setState(() => _isLoading = true);
-                            Provider.of<Collections>(context, listen: false)
-                                .removeEntry(widget.original)
-                                .then((ok) {
-                              if (ok) {
-                                Navigator.of(context).pop();
-                                widget.update(null);
-                              }
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              AppBarIcon(
-                IconButton(
-                    icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
-                    color: Theme.of(context).dividerColor,
-                    onPressed: () {
-                      setState(() => _isLoading = true);
-                      Provider.of<Collections>(context, listen: false)
-                          .updateEntry(widget.original, widget.changed)
-                          .then((ok) {
-                        if (ok) {
-                          Navigator.of(context).pop();
-                          widget.update(widget.changed.status);
-                        }
-                      });
-                    }),
-              ),
-            ],
-          )
-        : const AppBarIcon(BlossomLoader(size: 30));
   }
 }
 

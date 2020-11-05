@@ -90,6 +90,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     buttonColor: theme['accent'],
     dividerColor: theme['contrast'],
     disabledColor: theme['faded'],
+    unselectedWidgetColor: theme['faded'],
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(

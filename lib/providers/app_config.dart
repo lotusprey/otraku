@@ -11,6 +11,9 @@ class AppConfig {
   static const RADIUS = Radius.circular(5);
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
 
+  static const STARTUP_PAGE = 'startupPage';
+  static const THEME = 'theme';
+
   static RxInt _pageIndex;
   static LargeTileConfig _largeTileConfig;
   static bool _hasInit = false;
@@ -19,7 +22,7 @@ class AppConfig {
     if (_hasInit) return;
 
     _pageIndex =
-        (GetStorage().read('initialPage') as int ?? TabManager.ANIME_LIST).obs;
+        (GetStorage().read(STARTUP_PAGE) as int ?? TabManager.ANIME_LIST).obs;
 
     final tileWidth = (Get.mediaQuery.size.width - 40) / 3;
     _largeTileConfig = LargeTileConfig(
@@ -37,7 +40,7 @@ class AppConfig {
   static set pageIndex(int index) => _pageIndex.value = index;
 
   static set initialPage(int index) {
-    if (index >= 0 && index < 5) GetStorage()..write('initialPage', index);
+    if (index >= 0 && index < 5) GetStorage()..write(STARTUP_PAGE, index);
   }
 
   static LargeTileConfig get tileConfig => _largeTileConfig;

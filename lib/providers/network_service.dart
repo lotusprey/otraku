@@ -26,12 +26,12 @@ class NetworkService {
 
   static set accessToken(String token) {
     _accessToken = token;
-    FlutterSecureStorage().write(key: 'accessToken', value: _accessToken);
+    FlutterSecureStorage().write(key: 'accessToken1', value: _accessToken);
   }
 
   static Future<bool> logIn() async {
     if (_accessToken == null) {
-      _accessToken = await FlutterSecureStorage().read(key: 'accessToken');
+      _accessToken = await FlutterSecureStorage().read(key: 'accessToken1');
       if (_accessToken == null) return false;
     }
     return true;
@@ -42,7 +42,7 @@ class NetworkService {
     _viewerId = box.read('viewerId');
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnError: false);
-      _viewerId = data['Viewer']['id'];
+      if (data != null) _viewerId = data['Viewer']['id'];
     }
   }
 

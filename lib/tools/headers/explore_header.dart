@@ -183,14 +183,14 @@ class _FilterButton extends StatelessWidget {
                 color: Theme.of(context).accentColor,
               ),
               child: const Icon(
-                FluentSystemIcons.ic_fluent_filter_filled,
+                Icons.filter_alt,
                 size: Styles.ICON_SMALL,
                 color: Colors.white,
               ),
             ),
           )
         : IconButton(
-            icon: const Icon(FluentSystemIcons.ic_fluent_filter_filled),
+            icon: const Icon(Icons.filter_alt),
             onPressed: () => Navigator.of(context).push(
               CupertinoPageRoute(builder: (_) => FilterPage()),
             ),

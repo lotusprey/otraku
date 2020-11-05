@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/collection.dart';
 import 'package:otraku/models/date_time_mapping.dart';
@@ -200,22 +199,6 @@ class Collections with ChangeNotifier {
       lists.add(_createList(l, metaData['splitCompletedSectionByFormat']));
     }
 
-    ListSort sorting;
-    switch (data['user']['mediaListOptions']['rowOrder']) {
-      case 'title':
-        sorting = ListSort.TITLE;
-        break;
-      case 'score':
-        sorting = ListSort.SCORE_DESC;
-        break;
-      case 'updatedAt':
-        sorting = ListSort.UPDATED_AT_DESC;
-        break;
-      case 'createdAt':
-        sorting = ListSort.CREATED_AT_DESC;
-        break;
-    }
-
     _fetching = false;
 
     return Collection(
@@ -230,7 +213,8 @@ class Collections with ChangeNotifier {
       completedListIsSplit: metaData['splitCompletedSectionByFormat'],
       scoreFormat: data['user']['mediaListOptions']['scoreFormat'],
       lists: lists,
-      initialSort: sorting,
+      initialSort:
+          defaultSortFromString(data['user']['mediaListOptions']['rowOrder']),
     );
   }
 

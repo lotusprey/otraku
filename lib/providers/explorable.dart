@@ -92,9 +92,6 @@ class Explorable with ChangeNotifier {
   // DATA
   // ***************************************************************************
 
-  bool _displayAdultContent;
-  String _titleFormat;
-
   Browsable _type = Browsable.anime;
   bool _isLoading = false;
   bool _hasNextPage = true;
@@ -123,8 +120,6 @@ class Explorable with ChangeNotifier {
   List<String> get genres => [..._genres];
 
   Tuple<List<String>, List<String>> get tags => _tags;
-
-  String get titleFormat => _titleFormat;
 
   // ***************************************************************************
   // FUNCTIONS CONTROLLING QUERY VARIABLES
@@ -274,17 +269,9 @@ class Explorable with ChangeNotifier {
 
     final query = '''
         query Filters {
-          Viewer {
-            options {
-              titleLanguage
-              displayAdultContent
-            }
-          }
+          Viewer {options {displayAdultContent}}
           GenreCollection
-          MediaTagCollection {
-            name
-            description
-          }
+          MediaTagCollection {name description}
           Page(page: 1, perPage: 30) {
             media(sort: TRENDING_DESC, type: ANIME) {
               id
@@ -299,9 +286,8 @@ class Explorable with ChangeNotifier {
 
     if (data == null) return;
 
-    _titleFormat = data['Viewer']['options']['titleLanguage'];
-    _displayAdultContent = data['Viewer']['options']['displayAdultContent'];
-    if (!_displayAdultContent) _filters[IS_ADULT] = false;
+    if (!data['Viewer']['options']['displayAdultContent'])
+      _filters[IS_ADULT] = false;
 
     _genres = (data['GenreCollection'] as List<dynamic>)
         .map((g) => g.toString())

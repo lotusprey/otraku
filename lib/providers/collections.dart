@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/collection.dart';
 import 'package:otraku/models/date_time_mapping.dart';
@@ -210,7 +211,7 @@ class Collections with ChangeNotifier {
       scoreFormat: data['user']['mediaListOptions']['scoreFormat'],
       lists: lists,
       initialSort:
-          defaultSortFromString(data['user']['mediaListOptions']['rowOrder']),
+          ListSortHelper.getEnum(data['user']['mediaListOptions']['rowOrder']),
     );
   }
 

@@ -10,7 +10,7 @@ enum ScoreFormat {
 }
 
 extension ScoreFormatExtension on ScoreFormat {
-  static const _formats = {
+  static const _formats = const {
     ScoreFormat.POINT_100: 'POINT_100',
     ScoreFormat.POINT_10_DECIMAL: 'POINT_10_DECIMAL',
     ScoreFormat.POINT_10: 'POINT_10',
@@ -18,9 +18,7 @@ extension ScoreFormatExtension on ScoreFormat {
     ScoreFormat.POINT_3: 'POINT_3',
   };
 
-  String get string {
-    return _formats[this];
-  }
+  String get string => _formats[this];
 }
 
 Widget getWidgetFormScoreFormat(

@@ -45,31 +45,29 @@ class _DateFieldState extends State<DateField> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: AppConfig.BORDER_RADIUS,
-      ),
-      child: date != null
-          ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _picker(date),
-                Text(
-                  '${date.year}-${date.month}-${date.day}',
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    setState(() => date = null);
-                    widget.onChanged(null);
-                  },
-                ),
-              ],
-            )
-          : Row(children: [_picker(DateTime.now())]),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: AppConfig.BORDER_RADIUS,
+        ),
+        child: date != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _picker(date),
+                  Text(
+                    '${date.year}-${date.month}-${date.day}',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() => date = null);
+                      widget.onChanged(null);
+                    },
+                  ),
+                ],
+              )
+            : Row(children: [_picker(DateTime.now())]),
+      );
 }

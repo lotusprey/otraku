@@ -19,28 +19,26 @@ class _CheckboxFieldState extends State<CheckboxField> {
   bool _value;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Row(
-        children: [
-          Checkbox(
-            value: _value,
-            onChanged: (_) => _change(),
-            activeColor: Theme.of(context).accentColor,
-          ),
-          Expanded(
-            child: Text(
-              widget.text,
-              style: !_value
-                  ? Theme.of(context).textTheme.bodyText1
-                  : Theme.of(context).textTheme.bodyText2,
+  Widget build(BuildContext context) => GestureDetector(
+        child: Row(
+          children: [
+            Checkbox(
+              value: _value,
+              onChanged: (_) => _change(),
+              activeColor: Theme.of(context).accentColor,
             ),
-          ),
-        ],
-      ),
-      onTap: _change,
-    );
-  }
+            Expanded(
+              child: Text(
+                widget.text,
+                style: !_value
+                    ? Theme.of(context).textTheme.bodyText1
+                    : Theme.of(context).textTheme.bodyText2,
+              ),
+            ),
+          ],
+        ),
+        onTap: _change,
+      );
 
   void _change() {
     widget.onChanged(!_value);

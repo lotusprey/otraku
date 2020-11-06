@@ -14,21 +14,20 @@ class InputFieldStructure extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: enforceHeight ? 75 : null,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          _space,
-          body,
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        height: enforceHeight ? 85 : null,
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            _space,
+            body,
+          ],
+        ),
+      );
 }

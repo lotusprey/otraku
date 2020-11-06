@@ -18,25 +18,23 @@ class _ExpandableFieldState extends State<ExpandableField> {
   TextEditingController _controller;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: AppConfig.BORDER_RADIUS,
-      ),
-      child: TextField(
-        scrollPhysics: const BouncingScrollPhysics(),
-        controller: _controller,
-        onChanged: (text) => widget.onChanged(text),
-        minLines: 1,
-        maxLines: 5,
-        cursorColor: Theme.of(context).accentColor,
-        style: Theme.of(context).textTheme.bodyText1,
-        decoration: InputDecoration(border: InputBorder.none),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: AppConfig.BORDER_RADIUS,
+        ),
+        child: TextField(
+          scrollPhysics: const BouncingScrollPhysics(),
+          controller: _controller,
+          onChanged: (text) => widget.onChanged(text),
+          minLines: 1,
+          maxLines: 5,
+          cursorColor: Theme.of(context).accentColor,
+          style: Theme.of(context).textTheme.bodyText1,
+          decoration: InputDecoration(border: InputBorder.none),
+        ),
+      );
 
   @override
   void initState() {

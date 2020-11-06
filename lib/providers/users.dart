@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/models/settings.dart';
 import 'package:otraku/models/user.dart';
@@ -18,10 +19,7 @@ class Users with ChangeNotifier {
         about(asHtml: true)
         avatar {large}
         bannerImage
-        options {
-          titleLanguage
-          displayAdultContent
-        }
+        options {titleLanguage displayAdultContent airingNotifications}
         mediaListOptions {
           scoreFormat
           rowOrder
@@ -49,14 +47,15 @@ class Users with ChangeNotifier {
 
   static const _viewerMutation = r'''
     mutation UpdateUser($about: String, $titleLanguage: UserTitleLanguage, 
-        $displayAdultContent: Boolean, $scoreFormat: ScoreFormat, 
+        $displayAdultContent: Boolean, $airingNotifications: Boolean, $scoreFormat: ScoreFormat, 
         $rowOrder: String, $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean) {
       UpdateUser(about: $about, titleLanguage: $titleLanguage, 
-          displayAdultContent: $displayAdultContent, scoreFormat: $scoreFormat,
-          rowOrder: $rowOrder, animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime},
+          displayAdultContent: $displayAdultContent, airingNotifications: $airingNotifications, 
+          scoreFormat: $scoreFormat, rowOrder: $rowOrder, 
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime},
           mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
         about
-        options {titleLanguage displayAdultContent}
+        options {titleLanguage displayAdultContent airingNotifications}
         mediaListOptions {
           scoreFormat
           rowOrder
@@ -105,15 +104,19 @@ class Users with ChangeNotifier {
     );
 
     _settings = Settings(
-      stringToEnum(
+      scoreFormat: stringToEnum(
         viewer['mediaListOptions']['scoreFormat'],
         ScoreFormat.values,
       ),
-      defaultSortFromString(viewer['rowOrder']),
-      viewer['options']['titleLanguage'],
-      viewer['mediaListOptions']['animeList']['splitCompletedSectionByFormat'],
-      viewer['mediaListOptions']['mangaList']['splitCompletedSectionByFormat'],
-      viewer['options']['displayAdultContent'],
+      defaultSort:
+          ListSortHelper.getEnum(viewer['mediaListOptions']['rowOrder']),
+      titleLanguage: viewer['options']['titleLanguage'],
+      splitCompletedAnime: viewer['mediaListOptions']['animeList']
+          ['splitCompletedSectionByFormat'],
+      splitCompletedManga: viewer['mediaListOptions']['mangaList']
+          ['splitCompletedSectionByFormat'],
+      displayAdultContent: viewer['options']['displayAdultContent'],
+      airingNotifications: viewer['options']['airingNotifications'],
     );
 
     notifyListeners();
@@ -144,15 +147,19 @@ class Users with ChangeNotifier {
     final viewer = data['UpdateUser'];
 
     _settings = Settings(
-      stringToEnum(
+      scoreFormat: stringToEnum(
         viewer['mediaListOptions']['scoreFormat'],
         ScoreFormat.values,
       ),
-      defaultSortFromString(viewer['rowOrder']),
-      viewer['options']['titleLanguage'],
-      viewer['mediaListOptions']['animeList']['splitCompletedSectionByFormat'],
-      viewer['mediaListOptions']['mangaList']['splitCompletedSectionByFormat'],
-      viewer['options']['displayAdultContent'],
+      defaultSort:
+          ListSortHelper.getEnum(viewer['mediaListOptions']['rowOrder']),
+      titleLanguage: viewer['options']['titleLanguage'],
+      splitCompletedAnime: viewer['mediaListOptions']['animeList']
+          ['splitCompletedSectionByFormat'],
+      splitCompletedManga: viewer['mediaListOptions']['mangaList']
+          ['splitCompletedSectionByFormat'],
+      displayAdultContent: viewer['options']['displayAdultContent'],
+      airingNotifications: viewer['options']['airingNotifications'],
     );
 
     return _settings;

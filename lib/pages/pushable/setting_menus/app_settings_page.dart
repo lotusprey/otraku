@@ -18,7 +18,7 @@ class AppSettingsPage extends StatelessWidget {
         title: 'App',
       ),
       body: ListView(
-        padding: const EdgeInsets.all(15),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         children: [
           _RadioGrid(
             title: 'Startup Page',
@@ -105,6 +105,6 @@ class __RadioGridState extends State<_RadioGrid> {
   @override
   void initState() {
     super.initState();
-    current = widget.initialValue;
+    current = widget.initialValue ?? 0;
   }
 }

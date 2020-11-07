@@ -32,7 +32,7 @@ class ListSettingsPage extends StatelessWidget {
                 key: (v) => clarifyEnum(describeEnum(v)),
                 value: (v) => v,
               ),
-              onChange: (value) {
+              onChanged: (value) {
                 const key = 'scoreFormat';
                 if (value ==
                     Provider.of<Users>(context, listen: false)
@@ -53,7 +53,7 @@ class ListSettingsPage extends StatelessWidget {
                 ListSortHelper.defaultStrings,
                 ListSortHelper.defaultEnums,
               ),
-              onChange: (value) {
+              onChanged: (value) {
                 const key = 'rowOrder';
                 if (value ==
                     Provider.of<Users>(context, listen: false)
@@ -66,7 +66,7 @@ class ListSettingsPage extends StatelessWidget {
               },
             ),
             SwitchTile(
-              label: 'Split Completed Anime',
+              title: 'Split Completed Anime',
               initialValue: Provider.of<Users>(context, listen: false)
                   .settings
                   .splitCompletedAnime,
@@ -80,7 +80,7 @@ class ListSettingsPage extends StatelessWidget {
               },
             ),
             SwitchTile(
-              label: 'Split Completed Manga',
+              title: 'Split Completed Manga',
               initialValue: Provider.of<Users>(context, listen: false)
                   .settings
                   .splitCompletedManga,

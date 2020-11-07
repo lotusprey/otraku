@@ -28,7 +28,7 @@ class MediaSettingsPage extends StatelessWidget {
                 'English': 'ENGLISH',
                 'Native': 'NATIVE',
               },
-              onChange: (value) {
+              onChanged: (value) {
                 const key = 'titleLanguage';
                 if (value ==
                     Provider.of<Users>(context, listen: false)
@@ -41,7 +41,7 @@ class MediaSettingsPage extends StatelessWidget {
               },
             ),
             SwitchTile(
-              label: '18+ Content',
+              title: '18+ Content',
               initialValue: Provider.of<Users>(context, listen: false)
                   .settings
                   .displayAdultContent,
@@ -55,7 +55,7 @@ class MediaSettingsPage extends StatelessWidget {
               },
             ),
             SwitchTile(
-              label: 'Airing Anime Notifications',
+              title: 'Airing Anime Notifications',
               initialValue: Provider.of<Users>(context, listen: false)
                   .settings
                   .airingNotifications,

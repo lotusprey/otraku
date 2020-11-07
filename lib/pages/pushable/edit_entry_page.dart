@@ -1,8 +1,6 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/providers/collections.dart';
@@ -50,13 +48,13 @@ class _EditEntryPageState extends State<EditEntryPage> {
     for (int i = 1; i < _newData.customLists.length; i += 2) {
       list.add(_row(
         CheckboxField(
-          text: _newData.customLists[i - 1].item1,
+          title: _newData.customLists[i - 1].item1,
           initialValue: _newData.customLists[i - 1].item2,
           onChanged: (boolean) => _newData.customLists[i - 1] =
               _newData.customLists[i - 1].withItem2(boolean),
         ),
         CheckboxField(
-          text: _newData.customLists[i].item1,
+          title: _newData.customLists[i].item1,
           initialValue: _newData.customLists[i].item2,
           onChanged: (boolean) => _newData.customLists[i] =
               _newData.customLists[i].withItem2(boolean),
@@ -66,7 +64,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
     if (_newData.customLists.length % 2 != 0) {
       list.add(_row(
         CheckboxField(
-          text: _newData.customLists.last.item1,
+          title: _newData.customLists.last.item1,
           initialValue: _newData.customLists.last.item2,
           onChanged: (boolean) => _newData.customLists.last =
               _newData.customLists.last.withItem2(boolean),
@@ -147,7 +145,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                               v, _newData.type == 'ANIME'),
                           value: (v) => v,
                         ),
-                        onChange: (status) => _newData.status = status,
+                        onChanged: (status) => _newData.status = status,
                       ),
                       InputFieldStructure(
                         title: 'Progress',
@@ -231,16 +229,15 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         ),
                       ),
                     InputFieldStructure(
-                      enforceHeight: false,
                       title: 'Additional List Settings',
                       body: _row(
                         CheckboxField(
-                          text: 'Private',
+                          title: 'Private',
                           initialValue: _newData.private,
                           onChanged: (private) => _newData.private = private,
                         ),
                         CheckboxField(
-                          text: 'Hide from status lists',
+                          title: 'Hide from status lists',
                           initialValue: _newData.hiddenFromStatusLists,
                           onChanged: (hiddenFromStatusLists) => _newData
                               .hiddenFromStatusLists = hiddenFromStatusLists,

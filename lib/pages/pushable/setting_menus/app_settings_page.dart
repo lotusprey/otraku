@@ -30,7 +30,7 @@ class AppSettingsPage extends StatelessWidget {
               'Explore',
               'Profile',
             ],
-            onChange: (val) => box.write(AppConfig.STARTUP_PAGE, val),
+            onChanged: (val) => box.write(AppConfig.STARTUP_PAGE, val),
           ),
           _RadioGrid(
             title: 'Theme',
@@ -38,7 +38,7 @@ class AppSettingsPage extends StatelessWidget {
             options: Themes.values
                 .map((t) => clarifyEnum(describeEnum(Themes.values[t.index])))
                 .toList(),
-            onChange: (val) {
+            onChanged: (val) {
               Get.changeTheme(Themes.values[val].themeData);
               box.write(AppConfig.THEME, val);
             },
@@ -53,13 +53,13 @@ class _RadioGrid extends StatefulWidget {
   final String title;
   final int initialValue;
   final List<String> options;
-  final Function(int) onChange;
+  final Function(int) onChanged;
 
   _RadioGrid({
     @required this.title,
     @required this.initialValue,
     @required this.options,
-    @required this.onChange,
+    @required this.onChanged,
   });
 
   @override
@@ -87,7 +87,7 @@ class __RadioGridState extends State<_RadioGrid> {
               groupValue: current,
               onChanged: (val) {
                 setState(() => current = val);
-                widget.onChange(val);
+                widget.onChanged(val);
               },
               title: Text(
                 widget.options[i],

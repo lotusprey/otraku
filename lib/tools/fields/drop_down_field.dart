@@ -6,13 +6,13 @@ class DropDownField<T> extends StatefulWidget {
   final String title;
   final T initialValue;
   final Map<String, T> items;
-  final Function(T) onChange;
+  final Function(T) onChanged;
 
   DropDownField({
     @required this.title,
     @required this.initialValue,
     @required this.items,
-    @required this.onChange,
+    @required this.onChanged,
   });
 
   @override
@@ -50,7 +50,7 @@ class _DropDownFieldState<T> extends State<DropDownField> {
           items: menuItems,
           onChanged: (val) {
             setState(() => value = val);
-            widget.onChange(val);
+            widget.onChanged(val);
           },
           hint: Text('Choose', style: Theme.of(context).textTheme.subtitle1),
           iconEnabledColor: Theme.of(context).disabledColor,

@@ -6,7 +6,7 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 

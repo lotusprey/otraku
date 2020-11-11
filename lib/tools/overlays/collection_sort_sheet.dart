@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/providers/collections.dart';
+import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 import 'package:provider/provider.dart';
 

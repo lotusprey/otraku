@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 

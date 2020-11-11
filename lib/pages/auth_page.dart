@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/pages/load_app_page.dart';
-import 'package:otraku/providers/app_config.dart';
-import 'package:otraku/providers/network_service.dart';
+import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/network_service.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 

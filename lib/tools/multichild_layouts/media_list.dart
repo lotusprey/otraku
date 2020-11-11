@@ -6,8 +6,8 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/providers/collections.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -146,10 +146,8 @@ class _MediaListTile extends StatelessWidget {
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        SizedBox(
-                          width: 50,
+                        Flexible(
                           child: Center(
                             child: Text(
                               media.progress != media.progressMax
@@ -159,8 +157,7 @@ class _MediaListTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 50,
+                        Flexible(
                           child: Center(
                             child: getWidgetFormScoreFormat(
                               context,
@@ -169,31 +166,30 @@ class _MediaListTile extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 50,
+                        Flexible(
                           child: Center(
                             child: media.repeat > 0
                                 ? Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
+                                      const Icon(
+                                        FluentSystemIcons
+                                            .ic_fluent_arrow_repeat_all_filled,
+                                        size: Styles.ICON_SMALLER,
+                                      ),
+                                      const SizedBox(width: 5),
                                       Text(
                                         media.repeat.toString(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle1,
                                       ),
-                                      const Icon(
-                                        FluentSystemIcons
-                                            .ic_fluent_arrow_repeat_all_filled,
-                                        size: Styles.ICON_SMALLER,
-                                      ),
                                     ],
                                   )
                                 : null,
                           ),
                         ),
-                        SizedBox(
-                          width: 30,
+                        Flexible(
                           child: Center(
                             child: media.notes != null
                                 ? IconButton(

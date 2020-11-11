@@ -1,7 +1,7 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 
 class HeadlineHeader extends StatelessWidget {
   final String headline;

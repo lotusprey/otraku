@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/models/page_data/media.dart';
-import 'package:otraku/providers/media_item.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/media_item.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 import 'package:otraku/tools/multichild_layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';

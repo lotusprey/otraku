@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 
 class PopUpAnimation extends StatefulWidget {
   final Widget child;
@@ -71,7 +71,7 @@ class TextDialog extends StatelessWidget {
               color: Theme.of(context).backgroundColor,
             ),
             padding: AppConfig.PADDING,
-            child: Text(title, style: Theme.of(context).textTheme.headline3),
+            child: Text(title, style: Theme.of(context).textTheme.subtitle1),
           ),
           Flexible(
             child: Container(

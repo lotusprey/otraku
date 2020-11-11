@@ -6,7 +6,7 @@ import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/user_tab.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 
 class TabManager extends StatefulWidget {
   static const int INBOX = 0;

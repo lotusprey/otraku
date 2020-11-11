@@ -99,7 +99,7 @@ packages:
       name: get
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.15.0"
+    version: "3.16.0"
   get_storage:
     dependency: "direct main"
     description:
@@ -293,7 +293,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.7.8"
+    version: "5.7.10"
   url_launcher_linux:
     dependency: transitive
     description:

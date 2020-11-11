@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/collections.dart';
+import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/headers/collection_header.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';

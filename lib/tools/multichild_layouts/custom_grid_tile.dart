@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 
 class CustomGridTile extends StatelessWidget {
   final int mediaId;

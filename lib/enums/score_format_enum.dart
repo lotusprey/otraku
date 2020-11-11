@@ -31,36 +31,40 @@ Widget getWidgetFormScoreFormat(
   }
 
   switch (format) {
+    case 'POINT_10_DECIMAL':
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const Icon(Icons.star, size: Styles.ICON_SMALL),
+          const SizedBox(width: 5),
+          Text(
+            score.toStringAsFixed(score.truncate() == score ? 0 : 1),
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ],
+      );
     case 'POINT_100':
     case 'POINT_10':
-      return Text(
-        score.toStringAsFixed(0),
-        style: Theme.of(context).textTheme.subtitle1,
-      );
-    case 'POINT_10_DECIMAL':
-      return Text(
-        score.toStringAsFixed(score.truncate() == score ? 0 : 1),
-        style: Theme.of(context).textTheme.subtitle1,
-      );
     case 'POINT_5':
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          const Icon(Icons.star, size: Styles.ICON_SMALL),
+          const SizedBox(width: 5),
           Text(
             score.toStringAsFixed(0),
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          Icon(Icons.star, size: Styles.ICON_SMALL),
         ],
       );
     case 'POINT_3':
       if (score == 3) {
-        return Icon(Icons.sentiment_very_satisfied);
+        return const Icon(Icons.sentiment_very_satisfied);
       }
       if (score == 2) {
-        return Icon(Icons.sentiment_neutral);
+        return const Icon(Icons.sentiment_neutral);
       }
-      return Icon(Icons.sentiment_very_dissatisfied);
+      return const Icon(Icons.sentiment_very_dissatisfied);
     default:
       throw 'Unrecognised Score Format: $format';
   }

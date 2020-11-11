@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
-import 'package:otraku/providers/users.dart';
+import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';

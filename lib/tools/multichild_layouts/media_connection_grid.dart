@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/sample_data/connection.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 
 class MediaConnectionGrid extends StatefulWidget {

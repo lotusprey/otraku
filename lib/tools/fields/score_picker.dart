@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 
 class ScorePicker extends StatelessWidget {

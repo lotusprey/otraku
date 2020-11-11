@@ -4,7 +4,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/providers/collections.dart';
+import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/headers/lists_navigation.dart';
 import 'package:otraku/tools/overlays/collection_sort_sheet.dart';

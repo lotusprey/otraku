@@ -5,9 +5,10 @@ import 'package:get/get.dart';
 import 'package:otraku/pages/pushable/setting_menus/app_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_menus/list_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_menus/media_settings_page.dart';
-import 'package:otraku/providers/collections.dart';
-import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/users.dart';
+import 'package:otraku/pages/pushable/setting_menus/notification_settings_page.dart';
+import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:provider/provider.dart';
 
@@ -92,6 +93,22 @@ class SettingsPage extends StatelessWidget {
                   context,
                   CupertinoPageRoute(
                     builder: (ctx) => ListSettingsPage(changes),
+                  )),
+            ),
+            ListTile(
+              contentPadding: padding,
+              leading: Icon(
+                Icons.notifications_none,
+                color: Theme.of(context).dividerColor,
+              ),
+              title: Text(
+                'Notifications',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              onTap: () => Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (ctx) => NotificationSettingsPage(changes),
                   )),
             ),
           ],

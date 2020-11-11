@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/users.dart';
+import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
@@ -41,20 +41,6 @@ class MediaSettingsPage extends StatelessWidget {
               },
             ),
             SwitchTile(
-              title: '18+ Content',
-              initialValue: Provider.of<Users>(context, listen: false)
-                  .settings
-                  .displayAdultContent,
-              onChanged: (value) {
-                const adultContent = 'displayAdultContent';
-                if (changes.containsKey(adultContent)) {
-                  changes.remove(adultContent);
-                } else {
-                  changes[adultContent] = value;
-                }
-              },
-            ),
-            SwitchTile(
               title: 'Airing Anime Notifications',
               initialValue: Provider.of<Users>(context, listen: false)
                   .settings
@@ -65,6 +51,20 @@ class MediaSettingsPage extends StatelessWidget {
                   changes.remove(notifications);
                 } else {
                   changes[notifications] = value;
+                }
+              },
+            ),
+            SwitchTile(
+              title: '18+ Content',
+              initialValue: Provider.of<Users>(context, listen: false)
+                  .settings
+                  .displayAdultContent,
+              onChanged: (value) {
+                const adultContent = 'displayAdultContent';
+                if (changes.containsKey(adultContent)) {
+                  changes.remove(adultContent);
+                } else {
+                  changes[adultContent] = value;
                 }
               },
             ),

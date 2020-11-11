@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:flutter/services.dart';
+import 'package:otraku/controllers/app_config.dart';
 
 enum Themes {
   navy,
@@ -39,7 +40,7 @@ extension Styles on Themes {
       'error': Color(0xFFD87CAC),
       'faded': Color(0xFF85D6C2),
       'contrast': Color(0xFFFFFEFF),
-      'brightness': Brightness.light,
+      'brightness': Brightness.dark,
     },
     Themes.night: {
       'background': Color(0xFF08123A),
@@ -59,7 +60,7 @@ extension Styles on Themes {
       'error': Color(0xFFE88E5F),
       'faded': Color(0xFF045876),
       'contrast': Color(0xFF022B3A),
-      'brightness': Brightness.dark,
+      'brightness': Brightness.light,
     },
     Themes.amethyst: {
       'background': Color(0xFF1E1E3F),
@@ -77,6 +78,16 @@ extension Styles on Themes {
 }
 
 ThemeData _buildTheme(Map<String, dynamic> theme) {
+  final brightness = theme['brightness'] == Brightness.dark
+      ? Brightness.light
+      : Brightness.dark;
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    systemNavigationBarColor: theme['primary'],
+    systemNavigationBarIconBrightness: brightness,
+    statusBarIconBrightness: brightness,
+  ));
+
   return ThemeData(
     fontFamily: 'Rubik',
     visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -139,9 +150,14 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         color: theme['contrast'],
         fontWeight: FontWeight.w500,
       ),
-      button: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
-        color: theme['background'],
+      subtitle1: TextStyle(
+        fontSize: Styles.FONT_SMALL,
+        color: theme['faded'],
+      ),
+      subtitle2: TextStyle(
+        fontSize: Styles.FONT_SMALLER,
+        color: theme['faded'],
+        fontWeight: FontWeight.normal,
       ),
       bodyText1: TextStyle(
         fontSize: Styles.FONT_SMALL,
@@ -153,14 +169,9 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         color: theme['accent'],
         fontWeight: FontWeight.normal,
       ),
-      subtitle1: TextStyle(
-        fontSize: Styles.FONT_SMALL,
-        color: theme['faded'],
-      ),
-      subtitle2: TextStyle(
-        fontSize: Styles.FONT_SMALLER,
-        color: theme['faded'],
-        fontWeight: FontWeight.normal,
+      button: TextStyle(
+        fontSize: Styles.FONT_MEDIUM,
+        color: theme['background'],
       ),
     ),
   );

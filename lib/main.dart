@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/load_app_page.dart';
-import 'package:otraku/providers/app_config.dart';
-import 'package:otraku/providers/collections.dart';
-import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/users.dart';
+import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/users.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -18,16 +18,13 @@ Future<void> main() async {
 class Otraku extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Get.put(Explorable());
+    Get.put(Users());
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<Collections>(
           create: (_) => Collections(),
-        ),
-        ChangeNotifierProvider<Users>(
-          create: (_) => Users(),
-        ),
-        ChangeNotifierProvider<Explorable>(
-          create: (_) => Explorable(),
         ),
       ],
       child: const App(),

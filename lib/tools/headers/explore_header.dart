@@ -5,16 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
-import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/headers/title_segmented_control.dart';
 import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
-import 'package:provider/provider.dart';
 
 class ExploreHeader extends StatelessWidget {
   final ScrollController scrollCtrl;
@@ -46,7 +46,7 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final provider = Provider.of<Explorable>(context, listen: false);
+    final explorable = Get.find<Explorable>();
 
     return ClipRect(
       child: BackdropFilter(
@@ -60,15 +60,14 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TitleSegmentedControl(
-                initialValue:
-                    Provider.of<Explorable>(context, listen: false).type,
+                initialValue: explorable.type,
                 pairs: Map.fromIterable(
                   Browsable.values,
                   key: (v) => clarifyEnum(describeEnum(v)),
                   value: (v) => v,
                 ),
                 onNewValue: (value) {
-                  Provider.of<Explorable>(context, listen: false).type = value;
+                  explorable.type = value;
                   if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
                   _scrollCtrl.animateTo(0,
                       duration: const Duration(milliseconds: 200),
@@ -89,8 +88,8 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ExploreSearchBar(
-                        provider.getFilterWithKey(Explorable.SEARCH),
-                        (value) => provider.setFilterWithKey(
+                        explorable.getFilterWithKey(Explorable.SEARCH),
+                        (value) => explorable.setFilterWithKey(
                           Explorable.SEARCH,
                           value: value,
                           notify: true,
@@ -148,9 +147,9 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
 class _FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<Explorable>(context, listen: false);
+    final explorable = Get.find<Explorable>();
 
-    return Provider.of<Explorable>(context).anyActiveFilterFrom([
+    if (explorable.anyActiveFilterFrom([
       Explorable.STATUS_IN,
       Explorable.STATUS_NOT_IN,
       Explorable.FORMAT_IN,
@@ -159,41 +158,43 @@ class _FilterButton extends StatelessWidget {
       Explorable.GENRE_NOT_IN,
       Explorable.TAG_IN,
       Explorable.TAG_NOT_IN,
-    ])
-        ? GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              CupertinoPageRoute(builder: (_) => FilterPage()),
-            ),
-            onLongPress: () {
-              provider.setFilterWithKey(Explorable.STATUS_IN, value: null);
-              provider.setFilterWithKey(Explorable.STATUS_NOT_IN, value: null);
-              provider.setFilterWithKey(Explorable.FORMAT_IN, value: null);
-              provider.setFilterWithKey(Explorable.FORMAT_IN, value: null);
-              provider.setFilterWithKey(Explorable.GENRE_IN, value: null);
-              provider.setFilterWithKey(Explorable.GENRE_NOT_IN, value: null);
-              provider.setFilterWithKey(Explorable.TAG_IN, value: null);
-              provider.setFilterWithKey(Explorable.TAG_NOT_IN,
-                  value: null, notify: true, refetch: true);
-            },
-            child: Container(
-              width: AppConfig.MATERIAL_TAP_TARGET_SIZE,
-              height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
-              decoration: BoxDecoration(
-                borderRadius: AppConfig.BORDER_RADIUS,
-                color: Theme.of(context).accentColor,
-              ),
-              child: const Icon(
-                Icons.filter_alt,
-                size: Styles.ICON_SMALL,
-                color: Colors.white,
-              ),
-            ),
-          )
-        : IconButton(
-            icon: const Icon(Icons.filter_alt),
-            onPressed: () => Navigator.of(context).push(
-              CupertinoPageRoute(builder: (_) => FilterPage()),
-            ),
-          );
+    ])) {
+      return GestureDetector(
+        onTap: () => Navigator.of(context).push(
+          CupertinoPageRoute(builder: (_) => FilterPage()),
+        ),
+        onLongPress: () {
+          explorable.setFilterWithKey(Explorable.STATUS_IN, value: null);
+          explorable.setFilterWithKey(Explorable.STATUS_NOT_IN, value: null);
+          explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
+          explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
+          explorable.setFilterWithKey(Explorable.GENRE_IN, value: null);
+          explorable.setFilterWithKey(Explorable.GENRE_NOT_IN, value: null);
+          explorable.setFilterWithKey(Explorable.TAG_IN, value: null);
+          explorable.setFilterWithKey(Explorable.TAG_NOT_IN,
+              value: null, notify: true, refetch: true);
+        },
+        child: Container(
+          width: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+          height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
+          decoration: BoxDecoration(
+            borderRadius: AppConfig.BORDER_RADIUS,
+            color: Theme.of(context).accentColor,
+          ),
+          child: const Icon(
+            Icons.filter_alt,
+            size: Styles.ICON_SMALL,
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+
+    return IconButton(
+      icon: const Icon(Icons.filter_alt),
+      onPressed: () => Navigator.of(context).push(
+        CupertinoPageRoute(builder: (_) => FilterPage()),
+      ),
+    );
   }
 }

@@ -10,6 +10,7 @@ class Settings {
   final bool splitCompletedManga;
   final bool displayAdultContent;
   final bool airingNotifications;
+  final Map<String, bool> notificationOptions;
 
   Settings({
     @required this.scoreFormat,
@@ -19,5 +20,6 @@ class Settings {
     @required this.splitCompletedManga,
     @required this.displayAdultContent,
     @required this.airingNotifications,
+    @required this.notificationOptions,
   });
 }

@@ -2,101 +2,83 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:otraku/models/user.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
-import 'package:otraku/providers/users.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/users.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
-class UserTab extends StatefulWidget {
+class UserTab extends StatelessWidget {
+  static const _space = SizedBox(width: 10);
+
   final int id;
 
   UserTab(this.id);
 
   @override
-  _UserTabState createState() => _UserTabState();
-}
+  Widget build(BuildContext context) => Obx(() {
+        final users = Get.find<Users>();
+        final user = id == null ? users.me : users.them(id);
 
-class _UserTabState extends State<UserTab> {
-  static const _space = SizedBox(width: 10);
-
-  User _user;
-  bool _didChangeDependencies = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        SliverPersistentHeader(
-          delegate: _Header(_user, widget.id == null),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          sliver: SliverToBoxAdapter(
-            child: Row(
-              children: [
-                Expanded(
-                  child: RaisedButton(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          FluentSystemIcons.ic_fluent_movies_and_tv_regular,
-                          color: Theme.of(context).backgroundColor,
-                        ),
-                        _space,
-                        Text('Anime',
-                            style: Theme.of(context).textTheme.button),
-                      ],
-                    ),
-                    onPressed: () => widget.id == null
-                        ? AppConfig.pageIndex = TabManager.ANIME_LIST
-                        : print('TODO'),
-                  ),
-                ),
-                _space,
-                Expanded(
-                  child: RaisedButton(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          FluentSystemIcons.ic_fluent_bookmark_regular,
-                          color: Theme.of(context).backgroundColor,
-                        ),
-                        _space,
-                        Text('Manga',
-                            style: Theme.of(context).textTheme.button),
-                      ],
-                    ),
-                    onPressed: () => widget.id == null
-                        ? AppConfig.pageIndex = TabManager.MANGA_LIST
-                        : print('TODO'),
-                  ),
-                ),
-              ],
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverPersistentHeader(
+              delegate: _Header(user.id == null ? null : user, id == null),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_didChangeDependencies) {
-      if (widget.id == null) {
-        _user = Provider.of<Users>(context).me;
-      } else {
-        _user = Provider.of<Users>(context).them(widget.id);
-      }
-      _didChangeDependencies = true;
-    }
-  }
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              sliver: SliverToBoxAdapter(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: RaisedButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FluentSystemIcons.ic_fluent_movies_and_tv_regular,
+                              color: Theme.of(context).backgroundColor,
+                            ),
+                            _space,
+                            Text('Anime',
+                                style: Theme.of(context).textTheme.button),
+                          ],
+                        ),
+                        onPressed: () => id == null
+                            ? AppConfig.pageIndex = TabManager.ANIME_LIST
+                            : print('TODO'),
+                      ),
+                    ),
+                    _space,
+                    Expanded(
+                      child: RaisedButton(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              FluentSystemIcons.ic_fluent_bookmark_regular,
+                              color: Theme.of(context).backgroundColor,
+                            ),
+                            _space,
+                            Text('Manga',
+                                style: Theme.of(context).textTheme.button),
+                          ],
+                        ),
+                        onPressed: () => id == null
+                            ? AppConfig.pageIndex = TabManager.MANGA_LIST
+                            : print('TODO'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      });
 }
 
 class _Header implements SliverPersistentHeaderDelegate {

@@ -1,20 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/users.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
-import 'package:provider/provider.dart';
 
 class ExploreSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<Explorable>(context, listen: false);
+    final explorable = Get.find<Explorable>();
 
     final length = MediaSort.values.length;
-    final prefTitle =
-        Provider.of<Users>(context, listen: false).settings.titleLanguage;
+    final prefTitle = Get.find<Users>().settings.titleLanguage;
     String titleAsc;
     String titleDesc;
 
@@ -30,7 +29,7 @@ class ExploreSortSheet extends StatelessWidget {
     }
 
     MediaSort mediaSort = stringToEnum(
-      provider.getFilterWithKey(Explorable.SORT),
+      explorable.getFilterWithKey(Explorable.SORT),
       MediaSort.values,
     );
 
@@ -67,7 +66,7 @@ class ExploreSortSheet extends StatelessWidget {
           }
         }
 
-        provider.setFilterWithKey(
+        explorable.setFilterWithKey(
           Explorable.SORT,
           value: sort,
           notify: true,

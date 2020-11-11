@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/explorable.dart';
+import 'package:get/get.dart';
+import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/headers/explore_header.dart';
 import 'package:otraku/tools/multichild_layouts/explore_grid.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
-import 'package:provider/provider.dart';
 
 class ExploreTab extends StatefulWidget {
   final ScrollController scrollCtrl;
@@ -41,9 +41,7 @@ class _ConditionalLoader extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
-          child: Provider.of<Explorable>(context).hasNextPage
-              ? BlossomLoader()
-              : null,
+          child: Get.find<Explorable>().hasNextPage ? BlossomLoader() : null,
         ),
       ),
     );

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
-import 'package:otraku/providers/collections.dart';
-import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/network_service.dart';
-import 'package:otraku/providers/users.dart';
-import 'package:otraku/providers/app_config.dart';
+import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/controllers/users.dart';
+import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:provider/provider.dart';
 
@@ -31,9 +31,8 @@ class _LoadAppPageState extends State<LoadAppPage> {
       final Future<void> Function() fetchMangaCollection =
           Provider.of<Collections>(context, listen: false).fetchMyManga;
       final Future<void> Function() fetchExplorableMedia =
-          Provider.of<Explorable>(context, listen: false).fetchInitial;
-      final Future<void> Function() fetchViewer =
-          Provider.of<Users>(context, listen: false).fetchViewer;
+          Get.find<Explorable>().fetchInitial;
+      final Future<void> Function() fetchViewer = Get.find<Users>().fetchViewer;
 
       NetworkService.initViewerId().then((_) {
         switch (AppConfig.pageIndex.value) {

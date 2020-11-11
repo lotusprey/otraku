@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/app_config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class FilterGrid extends StatelessWidget {
@@ -26,7 +25,7 @@ class FilterGrid extends StatelessWidget {
     return SizedBox(
       height: rows * 30.0 + (rows - 1) * 10 + 20,
       child: GridView.builder(
-        padding: AppConfig.PADDING,
+        padding: const EdgeInsets.symmetric(vertical: 10),
         physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -109,10 +108,7 @@ class _FilterOptionState extends State<_FilterOption> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            .copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       _sizedBox,
                       const Icon(Icons.add, size: 15, color: Colors.white),
@@ -130,10 +126,7 @@ class _FilterOptionState extends State<_FilterOption> {
                     children: <Widget>[
                       Text(
                         widget.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            .copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                       _sizedBox,
                       const Icon(Icons.remove, size: 15, color: Colors.white),

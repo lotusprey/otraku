@@ -2,45 +2,48 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/providers/explorable.dart';
-import 'package:otraku/providers/app_config.dart';
-import 'package:provider/provider.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/app_config.dart';
 
 class ExploreSearchBar extends StatelessWidget {
   final String initialValue;
-  final Function(String) updateValue;
+  final Function(String) onChanged;
 
-  ExploreSearchBar(this.initialValue, this.updateValue);
+  ExploreSearchBar(this.initialValue, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width - 20;
+    final totalWidth = MediaQuery.of(context).size.width - 20;
 
-    final type = Provider.of<Explorable>(context).type;
-    if (type == Browsable.anime || type == Browsable.manga)
-      width -= AppConfig.MATERIAL_TAP_TARGET_SIZE * 2;
+    return Obx(() {
+      final type = Get.find<Explorable>().type;
 
-    return AnimatedContainer(
-      width: width,
-      height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
-      duration: const Duration(milliseconds: 100),
-      child: Center(
-        child: _HeaderSearchBar(
-          initialValue,
-          updateValue,
+      return AnimatedContainer(
+        width: totalWidth -
+            (type == Browsable.anime || type == Browsable.manga
+                ? AppConfig.MATERIAL_TAP_TARGET_SIZE * 2
+                : 0),
+        height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+        duration: const Duration(milliseconds: 100),
+        child: Center(
+          child: _HeaderSearchBar(
+            initialValue,
+            onChanged,
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 
 class CollectionSearchBar extends StatelessWidget {
   final String initialValue;
-  final Function(String) updateValue;
+  final Function(String) onChanged;
 
-  CollectionSearchBar(this.initialValue, this.updateValue);
+  CollectionSearchBar(this.initialValue, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +52,16 @@ class CollectionSearchBar extends StatelessWidget {
       width: MediaQuery.of(context).size.width -
           AppConfig.MATERIAL_TAP_TARGET_SIZE -
           20,
-      child: Center(child: _HeaderSearchBar(initialValue, updateValue)),
+      child: Center(child: _HeaderSearchBar(initialValue, onChanged)),
     );
   }
 }
 
 class _HeaderSearchBar extends StatefulWidget {
   final String initialValue;
-  final Function(String) updateValue;
+  final Function(String) onChanged;
 
-  _HeaderSearchBar(this.initialValue, this.updateValue);
+  _HeaderSearchBar(this.initialValue, this.onChanged);
 
   @override
   __HeaderSearchBarState createState() => __HeaderSearchBarState();
@@ -102,7 +105,7 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
                   iconSize: Styles.ICON_SMALLER,
                   color: Theme.of(context).disabledColor,
                   onPressed: () {
-                    widget.updateValue(null);
+                    widget.onChanged(null);
                     _controller.clear();
                     setState(() => _isEmpty = true);
                     _focus.unfocus();
@@ -110,7 +113,7 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
                 ),
         ),
         onChanged: (text) {
-          widget.updateValue(text);
+          widget.onChanged(text);
           if (text.length > 0) {
             setState(() => _isEmpty = false);
           } else {

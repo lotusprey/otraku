@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class User {
   final int id;
   final String name;
@@ -9,11 +7,11 @@ class User {
   final bool isMe;
 
   User({
-    @required this.id,
-    @required this.name,
-    @required this.description,
-    @required this.avatar,
-    @required this.banner,
+    this.id,
+    this.name,
+    this.description,
+    this.avatar,
+    this.banner,
     this.isMe = false,
   });
 }

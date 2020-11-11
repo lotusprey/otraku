@@ -5,7 +5,7 @@ import 'package:otraku/models/page_data/studio.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/network_service.dart';
+import 'package:otraku/controllers/network_service.dart';
 
 class PageItem {
   static const String _personMain = r'''

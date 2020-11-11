@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/network_service.dart';
+import 'package:otraku/controllers/network_service.dart';
 
 //Manages all browsable media, genres, tags and all the filters
-class Explorable with ChangeNotifier {
+class Explorable extends GetxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -92,10 +92,10 @@ class Explorable with ChangeNotifier {
   // DATA
   // ***************************************************************************
 
-  Browsable _type = Browsable.anime;
-  bool _isLoading = false;
-  bool _hasNextPage = true;
-  List<BrowseResult> _results;
+  final _isLoading = false.obs;
+  final _hasNextPage = true.obs;
+  final _results = List<BrowseResult>().obs;
+  final _type = Browsable.anime.obs;
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
@@ -109,13 +109,13 @@ class Explorable with ChangeNotifier {
   // GETTERS
   // ***************************************************************************
 
-  bool get isLoading => _isLoading;
+  bool get isLoading => _isLoading();
 
-  bool get hasNextPage => _hasNextPage;
+  bool get hasNextPage => _hasNextPage();
 
-  Browsable get type => _type;
+  Browsable get type => _type();
 
-  List<BrowseResult> get results => [..._results];
+  List<BrowseResult> get results => [..._results()];
 
   List<String> get genres => [..._genres];
 
@@ -127,14 +127,13 @@ class Explorable with ChangeNotifier {
 
   set type(Browsable value) {
     if (value == null) return;
-    _type = value;
+    _type.value = value;
 
     if (value == Browsable.anime) _filters[TYPE] = 'ANIME';
     if (value == Browsable.manga) _filters[TYPE] = 'MANGA';
 
     _filters.remove(FORMAT_IN);
     _filters.remove(FORMAT_NOT_IN);
-    notifyListeners();
     fetchData();
   }
 
@@ -154,7 +153,6 @@ class Explorable with ChangeNotifier {
       _filters[key] = value;
     }
 
-    if (notify) notifyListeners();
     if (refetch) fetchData();
   }
 
@@ -175,15 +173,14 @@ class Explorable with ChangeNotifier {
   // ***************************************************************************
 
   Future<void> fetchData({bool clean = true}) async {
-    _isLoading = true;
+    _isLoading.value = true;
 
     if (clean) {
       _filters[ID_NOT_IN] = [];
       _filters[PAGE] = 1;
-      _hasNextPage = true;
     }
 
-    final currentType = _type;
+    final currentType = _type.value;
     String query;
     Map<String, dynamic> variables;
 
@@ -214,13 +211,13 @@ class Explorable with ChangeNotifier {
 
     if (data == null) return null;
 
-    _hasNextPage = data['Page']['pageInfo']['hasNextPage'];
+    _hasNextPage.value = data['Page']['pageInfo']['hasNextPage'];
 
-    if (clean) _results = [];
+    List<BrowseResult> loaded = [];
 
     if (currentType == Browsable.anime || currentType == Browsable.manga) {
       for (final m in data['Page']['media'] as List<dynamic>) {
-        _results.add(BrowseResult(
+        loaded.add(BrowseResult(
           id: m['id'],
           title: m['title']['userPreferred'],
           imageUrl: m['coverImage']['large'],
@@ -230,7 +227,7 @@ class Explorable with ChangeNotifier {
       }
     } else if (currentType == Browsable.characters) {
       for (final c in data['Page']['characters'] as List<dynamic>) {
-        _results.add(BrowseResult(
+        loaded.add(BrowseResult(
           id: c['id'],
           title: c['name']['full'],
           imageUrl: c['image']['large'],
@@ -240,7 +237,7 @@ class Explorable with ChangeNotifier {
       }
     } else if (currentType == Browsable.staff) {
       for (final c in data['Page']['staff'] as List<dynamic>) {
-        _results.add(BrowseResult(
+        loaded.add(BrowseResult(
           id: c['id'],
           title: c['name']['full'],
           imageUrl: c['image']['large'],
@@ -250,7 +247,7 @@ class Explorable with ChangeNotifier {
       }
     } else {
       for (final s in data['Page']['studios'] as List<dynamic>) {
-        _results.add(BrowseResult(
+        loaded.add(BrowseResult(
           id: s['id'],
           title: s['name'],
           browsable: currentType,
@@ -259,13 +256,18 @@ class Explorable with ChangeNotifier {
       }
     }
 
-    _isLoading = false;
-    notifyListeners();
+    if (clean) {
+      _results.assignAll(loaded);
+    } else {
+      _results.addAll(loaded);
+    }
+
+    _isLoading.value = false;
   }
 
   //Fetches genres, tags and initial media
   Future<void> fetchInitial() async {
-    _isLoading = true;
+    _isLoading.value = true;
 
     final query = '''
         query Filters {
@@ -299,10 +301,10 @@ class Explorable with ChangeNotifier {
       _tags.item2.add(tag['description']);
     }
 
-    _results = [];
+    List<BrowseResult> loaded = [];
 
     for (final m in data['Page']['media'] as List<dynamic>) {
-      _results.add(BrowseResult(
+      loaded.add(BrowseResult(
         id: m['id'],
         title: m['title']['userPreferred'],
         imageUrl: m['coverImage']['large'],
@@ -311,6 +313,8 @@ class Explorable with ChangeNotifier {
       (_filters[ID_NOT_IN] as List<dynamic>).add(m['id']);
     }
 
-    _isLoading = false;
+    _results.assignAll(loaded);
+
+    _isLoading.value = false;
   }
 }

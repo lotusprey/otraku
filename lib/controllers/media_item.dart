@@ -4,7 +4,7 @@ import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/providers/network_service.dart';
+import 'package:otraku/controllers/network_service.dart';
 
 class MediaItem {
   static Future<Media> fetchItemData(int id) async {

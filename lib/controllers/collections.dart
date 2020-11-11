@@ -7,7 +7,7 @@ import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/entry_list.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/providers/network_service.dart';
+import 'package:otraku/controllers/network_service.dart';
 
 class Collections with ChangeNotifier {
   // ***************************************************************************
@@ -60,7 +60,7 @@ class Collections with ChangeNotifier {
     }
   ''';
 
-  static const _updateEntryQuery = r'''
+  static const _updateEntryMutation = r'''
     mutation UpdateEntry($entryId: Int, $mediaId: Int, $status: MediaListStatus,
         $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
         $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
@@ -97,7 +97,7 @@ class Collections with ChangeNotifier {
     }
   ''';
 
-  static const _removeEntryQuery = r'''
+  static const _removeEntryMutation = r'''
     mutation RemoveEntry($entryId: Int) {
       DeleteMediaListEntry(id: $entryId) {deleted}
     }
@@ -224,7 +224,7 @@ class Collections with ChangeNotifier {
         changed.customLists.where((t) => t.item2).map((t) => t.item1).toList();
 
     final data = await NetworkService.request(
-      _updateEntryQuery,
+      _updateEntryMutation,
       {
         'mediaId': changed.mediaId,
         'entryId': changed.entryId,
@@ -257,7 +257,7 @@ class Collections with ChangeNotifier {
 
   Future<bool> removeEntry(EditEntry entry) async {
     final data = await NetworkService.request(
-      _removeEntryQuery,
+      _removeEntryMutation,
       {'entryId': entry.entryId},
       popOnError: false,
     );

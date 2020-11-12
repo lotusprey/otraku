@@ -69,7 +69,6 @@ class ExploreSortSheet extends StatelessWidget {
         explorable.setFilterWithKey(
           Explorable.SORT,
           value: sort,
-          notify: true,
           refetch: true,
         );
       },

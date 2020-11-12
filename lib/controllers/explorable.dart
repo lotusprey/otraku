@@ -142,7 +142,6 @@ class Explorable extends GetxController {
   void setFilterWithKey(
     String key, {
     dynamic value,
-    bool notify = false,
     bool refetch = false,
   }) {
     if (value == null ||
@@ -154,6 +153,14 @@ class Explorable extends GetxController {
     }
 
     if (refetch) fetchData();
+  }
+
+  void clearFiltersWithKeys(List<String> keys) {
+    for (final key in keys) {
+      _filters.remove(key);
+    }
+
+    fetchData();
   }
 
   bool anyActiveFilterFrom(List<String> keys) {

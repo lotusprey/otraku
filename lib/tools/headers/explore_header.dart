@@ -92,7 +92,6 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                         (value) => explorable.setFilterWithKey(
                           Explorable.SEARCH,
                           value: value,
-                          notify: true,
                           refetch: true,
                         ),
                       ),
@@ -144,57 +143,89 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
   TickerProvider get vsync => null;
 }
 
-class _FilterButton extends StatelessWidget {
+class _FilterButton extends StatefulWidget {
+  @override
+  __FilterButtonState createState() => __FilterButtonState();
+}
+
+class __FilterButtonState extends State<_FilterButton> {
+  bool _active;
+
   @override
   Widget build(BuildContext context) {
     final explorable = Get.find<Explorable>();
 
-    if (explorable.anyActiveFilterFrom([
-      Explorable.STATUS_IN,
-      Explorable.STATUS_NOT_IN,
-      Explorable.FORMAT_IN,
-      Explorable.FORMAT_NOT_IN,
-      Explorable.GENRE_IN,
-      Explorable.GENRE_NOT_IN,
-      Explorable.TAG_IN,
-      Explorable.TAG_NOT_IN,
-    ])) {
-      return GestureDetector(
-        onTap: () => Navigator.of(context).push(
-          CupertinoPageRoute(builder: (_) => FilterPage()),
-        ),
-        onLongPress: () {
-          explorable.setFilterWithKey(Explorable.STATUS_IN, value: null);
-          explorable.setFilterWithKey(Explorable.STATUS_NOT_IN, value: null);
-          explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
-          explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
-          explorable.setFilterWithKey(Explorable.GENRE_IN, value: null);
-          explorable.setFilterWithKey(Explorable.GENRE_NOT_IN, value: null);
-          explorable.setFilterWithKey(Explorable.TAG_IN, value: null);
-          explorable.setFilterWithKey(Explorable.TAG_NOT_IN,
-              value: null, notify: true, refetch: true);
-        },
-        child: Container(
-          width: AppConfig.MATERIAL_TAP_TARGET_SIZE,
-          height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
-          decoration: BoxDecoration(
-            borderRadius: AppConfig.BORDER_RADIUS,
-            color: Theme.of(context).accentColor,
-          ),
-          child: const Icon(
-            Icons.filter_alt,
-            size: Styles.ICON_SMALL,
-            color: Colors.white,
+    if (_active == null) _active = _checkIfActive(explorable);
+
+    if (!_active) {
+      return IconButton(
+        icon: const Icon(Icons.filter_alt),
+        onPressed: () => Navigator.of(context).push(
+          CupertinoPageRoute(
+            builder: (_) => FilterPage((filterActivity) {
+              if (filterActivity == null) {
+                setState(() => _active = _checkIfActive(explorable));
+              } else if (!filterActivity) {
+                setState(() => _active = false);
+              } else {
+                setState(() => _active = true);
+              }
+            }),
           ),
         ),
       );
     }
 
-    return IconButton(
-      icon: const Icon(Icons.filter_alt),
-      onPressed: () => Navigator.of(context).push(
-        CupertinoPageRoute(builder: (_) => FilterPage()),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        CupertinoPageRoute(
+          builder: (_) => FilterPage((filterActivity) {
+            if (filterActivity == null) {
+              setState(() => _active = _checkIfActive(explorable));
+            } else if (!filterActivity) {
+              setState(() => _active = false);
+            } else {
+              setState(() => _active = true);
+            }
+          }),
+        ),
+      ),
+      onLongPress: () {
+        explorable.setFilterWithKey(Explorable.STATUS_IN, value: null);
+        explorable.setFilterWithKey(Explorable.STATUS_NOT_IN, value: null);
+        explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
+        explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
+        explorable.setFilterWithKey(Explorable.GENRE_IN, value: null);
+        explorable.setFilterWithKey(Explorable.GENRE_NOT_IN, value: null);
+        explorable.setFilterWithKey(Explorable.TAG_IN, value: null);
+        explorable.setFilterWithKey(Explorable.TAG_NOT_IN,
+            value: null, refetch: true);
+        setState(() => _active = false);
+      },
+      child: Container(
+        width: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+        height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
+        decoration: BoxDecoration(
+          borderRadius: AppConfig.BORDER_RADIUS,
+          color: Theme.of(context).accentColor,
+        ),
+        child: const Icon(
+          Icons.filter_alt,
+          size: Styles.ICON_SMALL,
+          color: Colors.white,
+        ),
       ),
     );
   }
+
+  bool _checkIfActive(Explorable explorable) => explorable.anyActiveFilterFrom([
+        Explorable.STATUS_IN,
+        Explorable.STATUS_NOT_IN,
+        Explorable.FORMAT_IN,
+        Explorable.FORMAT_NOT_IN,
+        Explorable.GENRE_IN,
+        Explorable.GENRE_NOT_IN,
+        Explorable.TAG_IN,
+        Explorable.TAG_NOT_IN,
+      ]);
 }

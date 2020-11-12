@@ -11,7 +11,8 @@ class ChipField extends StatefulWidget {
     @required this.initiallyPositive,
     @required this.onChanged,
     @required this.onRemoved,
-  });
+    key,
+  }) : super(key: key);
 
   @override
   _ChipFieldState createState() => _ChipFieldState();

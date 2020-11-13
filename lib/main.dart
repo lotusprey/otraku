@@ -7,7 +7,6 @@ import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
-import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,33 +17,14 @@ Future<void> main() async {
 class Otraku extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Get.put(Collections());
     Get.put(Explorable());
     Get.put(Users());
-
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<Collections>(
-          create: (_) => Collections(),
-        ),
-      ],
-      child: const App(),
-    );
-  }
-}
-
-class App extends StatelessWidget {
-  const App({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final themeIndex = GetStorage().read(AppConfig.THEME) ?? 0;
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
-      theme: Themes.values[themeIndex].themeData,
+      theme: Themes.values[GetStorage().read(AppConfig.THEME) ?? 0].themeData,
       home: LoadAppPage(),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
@@ -9,7 +10,7 @@ import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/controllers/network_service.dart';
 
-class Collections with ChangeNotifier {
+class Collections extends GetxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -103,6 +104,10 @@ class Collections with ChangeNotifier {
     }
   ''';
 
+  static const _MY_ANIME = 0;
+  static const _MY_MANGA = 1;
+  static const _OTHER = 2;
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -110,7 +115,7 @@ class Collections with ChangeNotifier {
   Collection _myAnime;
   Collection _myManga;
   Collection _other;
-  _CollectionSelection _currentCollection;
+  int _currentCollection;
   bool _fetching = false;
 
   // ***************************************************************************
@@ -121,24 +126,24 @@ class Collections with ChangeNotifier {
     if (userId == null) {
       if (ofAnime) {
         if (_myAnime == null) fetchMyAnime();
-        _currentCollection = _CollectionSelection.myAnime;
+        _currentCollection = _MY_ANIME;
       } else {
         if (_myManga == null) fetchMyManga();
-        _currentCollection = _CollectionSelection.myManga;
+        _currentCollection = _MY_MANGA;
       }
-      _other = null;
     } else {
-      if (_other == null) fetchUserCollection(ofAnime, userId);
-      _currentCollection = _CollectionSelection.other;
+      if (_other == null || _other.userId != userId)
+        fetchUserCollection(ofAnime, userId);
+
+      _currentCollection = _OTHER;
     }
   }
 
-  Collection get collection =>
-      _currentCollection == _CollectionSelection.myAnime
-          ? _myAnime
-          : _currentCollection == _CollectionSelection.myManga
-              ? _myManga
-              : _other;
+  Collection get collection => _currentCollection == _MY_ANIME
+      ? _myAnime
+      : _currentCollection == _MY_MANGA
+          ? _myManga
+          : _other;
 
   bool get fetching => _fetching;
 
@@ -148,17 +153,17 @@ class Collections with ChangeNotifier {
 
   Future<void> fetchMyAnime() async {
     _myAnime = await _fetchCollection(true, NetworkService.viewerId);
-    if (_myAnime != null) notifyListeners();
+    if (_myAnime != null) update();
   }
 
   Future<void> fetchMyManga() async {
     _myManga = await _fetchCollection(false, NetworkService.viewerId);
-    if (_myManga != null) notifyListeners();
+    if (_myManga != null) update();
   }
 
   Future<void> fetchUserCollection(bool ofAnime, int userId) async {
     _other = await _fetchCollection(ofAnime, userId);
-    if (_other != null) notifyListeners();
+    if (_other != null) update();
   }
 
   Future<Collection> _fetchCollection(bool ofAnime, int userId) async {
@@ -199,13 +204,13 @@ class Collections with ChangeNotifier {
     _fetching = false;
 
     return Collection(
-      notifyHandle: () => notifyListeners(),
+      updateHandle: update,
       fetchHandle: userId == NetworkService.viewerId
           ? ofAnime
               ? fetchMyAnime
               : fetchMyManga
           : null,
-      userId: NetworkService.viewerId,
+      userId: userId,
       ofAnime: ofAnime,
       completedListIsSplit: metaData['splitCompletedSectionByFormat'],
       scoreFormat: data['user']['mediaListOptions']['scoreFormat'],
@@ -322,10 +327,4 @@ class Collections with ChangeNotifier {
         createdAt: entry['createdAt'],
         updatedAt: entry['updatedAt'],
       );
-}
-
-enum _CollectionSelection {
-  myAnime,
-  myManga,
-  other,
 }

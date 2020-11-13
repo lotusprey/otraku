@@ -1,6 +1,6 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/controllers/collections.dart';
@@ -14,7 +14,6 @@ import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 import 'package:otraku/tools/fields/score_picker.dart';
-import 'package:provider/provider.dart';
 
 class EditEntryPage extends StatefulWidget {
   final int mediaId;
@@ -106,8 +105,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           style: Theme.of(context).textTheme.bodyText2,
                         ),
                         onPressed: () {
-                          Provider.of<Collections>(context, listen: false)
-                              .removeEntry(_oldData);
+                          Get.find<Collections>().removeEntry(_oldData);
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
                           widget.update(null);
@@ -121,8 +119,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
                   color: Theme.of(context).dividerColor,
                   onPressed: () {
-                    Provider.of<Collections>(context, listen: false)
-                        .updateEntry(_oldData, _newData);
+                    Get.find<Collections>().updateEntry(_oldData, _newData);
                     Navigator.of(context).pop();
                     widget.update(_newData.status);
                   }),

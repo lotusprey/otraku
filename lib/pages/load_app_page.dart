@@ -8,7 +8,6 @@ import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
-import 'package:provider/provider.dart';
 
 class LoadAppPage extends StatefulWidget {
   @override
@@ -27,9 +26,9 @@ class _LoadAppPageState extends State<LoadAppPage> {
       AppConfig.init(context);
 
       final Future<void> Function() fetchAnimeCollection =
-          Provider.of<Collections>(context, listen: false).fetchMyAnime;
+          Get.find<Collections>().fetchMyAnime;
       final Future<void> Function() fetchMangaCollection =
-          Provider.of<Collections>(context, listen: false).fetchMyManga;
+          Get.find<Collections>().fetchMyManga;
       final Future<void> Function() fetchExplorableMedia =
           Get.find<Explorable>().fetchInitial;
       final Future<void> Function() fetchViewer = Get.find<Users>().fetchViewer;

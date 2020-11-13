@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
-import 'package:provider/provider.dart';
 
 class MediaSettingsPage extends StatelessWidget {
   final Map<String, dynamic> changes;
@@ -20,9 +20,7 @@ class MediaSettingsPage extends StatelessWidget {
           children: [
             DropDownField(
               title: 'Title Language',
-              initialValue: Provider.of<Users>(context, listen: false)
-                  .settings
-                  .titleLanguage,
+              initialValue: Get.find<Users>().settings.titleLanguage,
               items: {
                 'Romaji': 'ROMAJI',
                 'English': 'ENGLISH',
@@ -30,10 +28,7 @@ class MediaSettingsPage extends StatelessWidget {
               },
               onChanged: (value) {
                 const key = 'titleLanguage';
-                if (value ==
-                    Provider.of<Users>(context, listen: false)
-                        .settings
-                        .titleLanguage) {
+                if (value == Get.find<Users>().settings.titleLanguage) {
                   changes.remove(key);
                 } else {
                   changes[key] = value;
@@ -42,9 +37,7 @@ class MediaSettingsPage extends StatelessWidget {
             ),
             SwitchTile(
               title: 'Airing Anime Notifications',
-              initialValue: Provider.of<Users>(context, listen: false)
-                  .settings
-                  .airingNotifications,
+              initialValue: Get.find<Users>().settings.airingNotifications,
               onChanged: (value) {
                 const notifications = 'airingNotifications';
                 if (changes.containsKey(notifications)) {
@@ -56,9 +49,7 @@ class MediaSettingsPage extends StatelessWidget {
             ),
             SwitchTile(
               title: '18+ Content',
-              initialValue: Provider.of<Users>(context, listen: false)
-                  .settings
-                  .displayAdultContent,
+              initialValue: Get.find<Users>().settings.displayAdultContent,
               onChanged: (value) {
                 const adultContent = 'displayAdultContent';
                 if (changes.containsKey(adultContent)) {

@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/headers/collection_header.dart';
 import 'package:otraku/tools/multichild_layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
-import 'package:provider/provider.dart';
 
 class CollectionsTab extends StatefulWidget {
   final ScrollController scrollCtrl;
@@ -25,7 +24,7 @@ class CollectionsTab extends StatefulWidget {
 class _CollectionsTabState extends State<CollectionsTab> {
   @override
   Widget build(BuildContext context) {
-    Provider.of<Collections>(context, listen: false).assignCollection(
+    Get.find<Collections>().assignCollection(
       widget.ofAnime,
       widget.otherUserId,
     );
@@ -47,7 +46,7 @@ class _CollectionsTabState extends State<CollectionsTab> {
 class CollectionDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final collection = Provider.of<Collections>(context).collection;
+    final collection = Get.find<Collections>().collection;
     final names = collection.listNames;
     final counts = collection.listEntryCounts;
     final selected = collection.listIndex;
@@ -81,10 +80,7 @@ class CollectionDrawer extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
-                    if (i != selected)
-                      Provider.of<Collections>(context, listen: false)
-                          .collection
-                          .listIndex = i;
+                    if (i != selected) collection.listIndex = i;
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,

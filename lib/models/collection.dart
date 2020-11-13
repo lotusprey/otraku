@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/entry_list.dart';
@@ -6,7 +5,7 @@ import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 
 class Collection {
-  final Function notifyHandle;
+  final Function updateHandle;
   final Function fetchHandle;
   final int userId;
   final bool ofAnime;
@@ -18,14 +17,14 @@ class Collection {
   String _search;
 
   Collection({
-    @required this.notifyHandle,
-    @required this.fetchHandle,
-    @required this.userId,
-    @required this.ofAnime,
-    @required this.completedListIsSplit,
-    @required this.scoreFormat,
-    @required this.lists,
-    @required initialSort,
+    this.updateHandle,
+    this.fetchHandle,
+    this.userId,
+    this.ofAnime,
+    this.completedListIsSplit,
+    this.scoreFormat,
+    this.lists,
+    initialSort,
   }) {
     sort = initialSort;
   }
@@ -35,7 +34,7 @@ class Collection {
   set listIndex(int value) {
     if (value < 0 || value >= lists.length || value == _listIndex) return;
     _listIndex = value;
-    notifyHandle();
+    updateHandle();
   }
 
   String get search => _search;
@@ -46,7 +45,7 @@ class Collection {
     } else {
       _search = value.trim();
     }
-    notifyHandle();
+    updateHandle();
   }
 
   ListSort get sort => _sort;
@@ -54,7 +53,7 @@ class Collection {
   set sort(ListSort value) {
     _sort = value;
     sortLists(lists, _sort);
-    notifyHandle();
+    updateHandle();
   }
 
   List<String> get listNames {
@@ -149,7 +148,7 @@ class Collection {
 
     sortLists(updatedLists, _sort);
 
-    notifyHandle();
+    updateHandle();
   }
 
   void removeEntry(EditEntry entry, {bool cleanUp = true}) {
@@ -183,7 +182,7 @@ class Collection {
           lists.removeAt(i--);
         }
       }
-      notifyHandle();
+      updateHandle();
     }
   }
 

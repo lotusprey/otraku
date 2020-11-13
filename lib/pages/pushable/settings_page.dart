@@ -10,7 +10,6 @@ import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   static const padding = const EdgeInsets.symmetric(horizontal: 5);
@@ -22,30 +21,27 @@ class SettingsPage extends StatelessWidget {
           title: 'Settings',
           callOnPop: () {
             if (changes.keys.length > 0) {
-              final ctx = Get.context;
-              Provider.of<Users>(ctx, listen: false)
-                  .updateSettings(changes)
-                  .then((_) {
+              Get.find<Users>().updateSettings(changes).then((_) {
                 if (changes.containsKey('displayAdultContent')) {
                   if (changes['displayAdultContent']) {
-                    Provider.of<Explorable>(ctx, listen: false)
+                    Get.find<Explorable>()
                         .setFilterWithKey(Explorable.IS_ADULT);
                   } else {
-                    Provider.of<Explorable>(ctx, listen: false)
+                    Get.find<Explorable>()
                         .setFilterWithKey(Explorable.IS_ADULT, value: false);
                   }
                 }
                 if (changes.containsKey('scoreFormat') ||
                     changes.containsKey('titleLanguage')) {
-                  Provider.of<Collections>(ctx, listen: false).fetchMyAnime();
-                  Provider.of<Collections>(ctx, listen: false).fetchMyManga();
+                  Get.find<Collections>().fetchMyAnime();
+                  Get.find<Collections>().fetchMyManga();
                   return;
                 }
                 if (changes.containsKey('splitCompletedAnime')) {
-                  Provider.of<Collections>(ctx, listen: false).fetchMyAnime();
+                  Get.find<Collections>().fetchMyAnime();
                 }
                 if (changes.containsKey('splitCompletedManga')) {
-                  Provider.of<Collections>(ctx, listen: false).fetchMyManga();
+                  Get.find<Collections>().fetchMyManga();
                 }
               });
             }

@@ -1,6 +1,6 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/score_format_enum.dart';
@@ -11,7 +11,6 @@ import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:provider/provider.dart';
 
 class MediaList extends StatelessWidget {
   final bool isAnime;
@@ -19,53 +18,55 @@ class MediaList extends StatelessWidget {
   MediaList(this.isAnime);
 
   @override
-  Widget build(BuildContext context) {
-    final collection = Provider.of<Collections>(context).collection;
+  Widget build(BuildContext context) =>
+      GetBuilder<Collections>(builder: (controller) {
+        final collection = controller.collection;
 
-    if (collection == null) {
-      if (Provider.of<Collections>(context, listen: false).fetching) {
-        return const SliverFillRemaining(child: BlossomLoader());
-      }
+        if (collection == null) {
+          if (controller.fetching) {
+            return const SliverFillRemaining(child: BlossomLoader());
+          }
 
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'No ${isAnime ? 'Anime' : 'Manga'}',
+          return SliverFillRemaining(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'No ${isAnime ? 'Anime' : 'Manga'}',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        final entries = collection.entries;
+
+        if (entries.length == 0) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Text(
+                'No ${isAnime ? 'Anime' : 'Manga'} Results',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
-            ],
+            ),
+          );
+        }
+
+        return SliverPadding(
+          padding: AppConfig.PADDING,
+          sliver: SliverFixedExtentList(
+            delegate: SliverChildBuilderDelegate(
+              (_, index) =>
+                  _MediaListTile(entries[index], collection.scoreFormat),
+              childCount: entries.length,
+            ),
+            itemExtent: 150,
           ),
-        ),
-      );
-    }
-
-    final entries = collection.entries;
-
-    if (entries.length == 0) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'No ${isAnime ? 'Anime' : 'Manga'} Results',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ),
-      );
-    }
-
-    return SliverPadding(
-      padding: AppConfig.PADDING,
-      sliver: SliverFixedExtentList(
-        delegate: SliverChildBuilderDelegate(
-          (_, index) => _MediaListTile(entries[index], collection.scoreFormat),
-          childCount: entries.length,
-        ),
-        itemExtent: 150,
-      ),
-    );
-  }
+        );
+      });
 }
 
 class _MediaListTile extends StatelessWidget {

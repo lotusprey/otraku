@@ -1,16 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
-import 'package:provider/provider.dart';
 
 class CollectionSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final collection =
-        Provider.of<Collections>(context, listen: false).collection;
+    final collection = Get.find<Collections>().collection;
 
     final mediaSort = collection.sort;
     final currentIndex = mediaSort.index ~/ 2;

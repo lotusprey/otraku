@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/pages/pushable/person_page.dart';
+import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
+import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
 
 class MediaIndexer extends StatelessWidget {
@@ -33,8 +34,9 @@ class MediaIndexer extends StatelessWidget {
             case Browsable.manga:
               return MediaPage(id, tag);
             case Browsable.characters:
+              return CharacterPage(id, tag);
             case Browsable.staff:
-              return PersonPage(id, tag, type);
+              return StaffPage(id, tag);
             // case Browsable.studios:
             //   return StudioPage(id, tag ?? id, heroTitle);
             default:
@@ -48,6 +50,7 @@ class MediaIndexer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => MediaIndexer.pushMedia(
         context: context,
         type: itemType,

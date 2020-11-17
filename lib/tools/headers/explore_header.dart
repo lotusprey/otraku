@@ -12,9 +12,9 @@ import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
-import 'package:otraku/tools/headers/title_segmented_control.dart';
-import 'package:otraku/tools/overlays/explore_sort_sheet.dart';
+import 'package:otraku/tools/overlays/media_sort_sheet.dart';
 
 class ExploreHeader extends StatelessWidget {
   final ScrollController scrollCtrl;
@@ -59,13 +59,12 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TitleSegmentedControl(
-                initialValue: explorable.type,
-                pairs: Map.fromIterable(
-                  Browsable.values,
-                  key: (v) => clarifyEnum(describeEnum(v)),
-                  value: (v) => v,
-                ),
+              BubbleTabBar(
+                initial: explorable.type,
+                options: Browsable.values
+                    .map((b) => clarifyEnum(describeEnum(b)))
+                    .toList(),
+                values: Browsable.values,
                 onNewValue: (value) {
                   explorable.type = value;
                   if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
@@ -103,7 +102,7 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                           ),
                           onPressed: () => showModalBottomSheet(
                             context: context,
-                            builder: (ctx) => ExploreSortSheet(),
+                            builder: (ctx) => MediaSortSheet(),
                             backgroundColor: Colors.transparent,
                             isScrollControlled: true,
                           ),

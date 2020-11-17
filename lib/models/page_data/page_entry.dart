@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 
-abstract class PageItemData {
-  int id;
-  bool isFavourite;
-  final int favourites;
+class PageEntry {
+  final int id;
   final Browsable browsable;
+  final int favourites;
+  bool isFavourite;
 
-  PageItemData({
+  PageEntry({
     @required this.id,
     @required this.isFavourite,
     @required this.favourites,

@@ -10,8 +10,8 @@ import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
-import 'package:otraku/tools/multichild_layouts/chip_grid.dart';
-import 'package:otraku/tools/multichild_layouts/filter_grid.dart';
+import 'package:otraku/tools/layouts/chip_grid.dart';
+import 'package:otraku/tools/layouts/filter_grid.dart';
 
 class FilterPage extends StatelessWidget {
   final Function(bool) onUpdate;

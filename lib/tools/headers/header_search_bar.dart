@@ -75,7 +75,6 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
   Widget build(BuildContext context) {
     return Container(
       height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
-      padding: const EdgeInsets.only(right: 10),
       child: TextField(
         focusNode: _focus,
         controller: _controller,

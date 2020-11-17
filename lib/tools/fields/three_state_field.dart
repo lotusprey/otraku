@@ -27,11 +27,8 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
         height: 35,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: _state == 0
-              ? Border.all(color: Theme.of(context).disabledColor)
-              : null,
           color: _state == 0
-              ? Theme.of(context).backgroundColor
+              ? Theme.of(context).primaryColor
               : _state == 1
                   ? Theme.of(context).accentColor
                   : Theme.of(context).errorColor,
@@ -39,7 +36,7 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
         child: Icon(
           _state < 2 ? Icons.add : Icons.remove,
           color: _state == 0
-              ? Theme.of(context).backgroundColor
+              ? Theme.of(context).primaryColor
               : Theme.of(context).dividerColor,
         ),
       ),

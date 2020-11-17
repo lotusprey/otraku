@@ -9,12 +9,7 @@ import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 
-class LoadAppPage extends StatefulWidget {
-  @override
-  _LoadAppPageState createState() => _LoadAppPageState();
-}
-
-class _LoadAppPageState extends State<LoadAppPage> {
+class LoadAppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NetworkService.logIn().then((loggedIn) {

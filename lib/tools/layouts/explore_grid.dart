@@ -4,7 +4,7 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/media_indexer.dart';
-import 'package:otraku/tools/multichild_layouts/custom_grid_tile.dart';
+import 'package:otraku/tools/layouts/custom_grid_tile.dart';
 
 class ExploreGrid extends StatelessWidget {
   void _loadMore() {

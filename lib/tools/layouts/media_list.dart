@@ -84,7 +84,6 @@ class _MediaListTile extends StatelessWidget {
       itemType: Browsable.anime,
       tag: media.cover,
       child: Container(
-        color: Theme.of(context).backgroundColor,
         child: Row(
           children: [
             Hero(

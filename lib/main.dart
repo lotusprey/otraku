@@ -9,7 +9,6 @@ import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   runApp(Otraku());
 }

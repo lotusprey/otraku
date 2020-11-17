@@ -18,37 +18,27 @@ class ModalSortSheet extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: options.length * 35 + 20.0,
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
-        borderRadius: AppConfig.BORDER_RADIUS,
-      ),
-      child: Column(
-        children: <Widget>[
-          ..._options(context),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _options(BuildContext context) {
-    List<Widget> list = [];
-    for (int i = 0; i < options.length; i++) {
-      list.add(_ModalOption(
-        text: options[i],
-        desc: index == i ? desc : null,
-        onTap: () {
-          onTap(i);
-          Navigator.of(context).pop();
-        },
-      ));
-    }
-    return list;
-  }
+  Widget build(BuildContext context) => Container(
+        height: options.length * 35 + 20.0,
+        margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Theme.of(context).backgroundColor,
+          borderRadius: AppConfig.BORDER_RADIUS,
+        ),
+        child: ListView.builder(
+          itemBuilder: (_, i) => _ModalOption(
+            text: options[i],
+            desc: i == index ? desc : null,
+            onTap: () {
+              onTap(i);
+              Navigator.pop(context);
+            },
+          ),
+          itemCount: options.length,
+          itemExtent: 35,
+        ),
+      );
 }
 
 class _ModalOption extends StatelessWidget {
@@ -66,11 +56,12 @@ class _ModalOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
+          children: [
             Text(
               text,
               style: desc == null
@@ -93,7 +84,6 @@ class _ModalOption extends StatelessWidget {
           ],
         ),
       ),
-      onTap: () => onTap(),
     );
   }
 }

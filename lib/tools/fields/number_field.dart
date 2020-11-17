@@ -95,7 +95,6 @@ class _NumberFieldState extends State<NumberField> {
 
   @override
   void dispose() {
-    _controller.removeListener(_validateInput);
     _controller.dispose();
     super.dispose();
   }

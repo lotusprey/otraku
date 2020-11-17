@@ -7,7 +7,7 @@ import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/overlays/modal_sort_sheet.dart';
 
-class ExploreSortSheet extends StatelessWidget {
+class MediaSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final explorable = Get.find<Explorable>();
@@ -50,6 +50,38 @@ class ExploreSortSheet extends StatelessWidget {
       options: options,
       index: currentIndex,
       desc: currentlyDesc,
+      // onChangedSort: (int sort) {
+      //   if (sort != options.length - 1) {
+      //     explorable.setFilterWithKey(
+      //       Explorable.SORT,
+      //       value: describeEnum(MediaSort.values[sort * 2 + 1]),
+      //       refetch: true,
+      //     );
+      //   } else {
+      //     explorable.setFilterWithKey(
+      //       Explorable.SORT,
+      //       value: titleDesc,
+      //       refetch: true,
+      //     );
+      //   }
+      // },
+      // onChangedOrder: (bool desc) {
+      //   if (currentIndex != options.length - 1) {
+      //     explorable.setFilterWithKey(
+      //       Explorable.SORT,
+      //       value: describeEnum(
+      //         MediaSort.values[desc ? currentIndex * 2 + 1 : currentIndex * 2],
+      //       ),
+      //       refetch: true,
+      //     );
+      //   } else {
+      //     explorable.setFilterWithKey(
+      //       Explorable.SORT,
+      //       value: desc ? titleDesc : titleAsc,
+      //       refetch: true,
+      //     );
+      //   }
+      // },
       onTap: (int index) {
         String sort;
         if (index != options.length - 1) {

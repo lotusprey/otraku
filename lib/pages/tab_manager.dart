@@ -132,7 +132,6 @@ class _TabManagerState extends State<TabManager> {
   @override
   void dispose() {
     if (_scrollCtrl.hasClients) {
-      _scrollCtrl.removeListener(_scrollDirection);
       _scrollCtrl.dispose();
     }
     super.dispose();

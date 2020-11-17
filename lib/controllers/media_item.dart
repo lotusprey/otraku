@@ -7,8 +7,7 @@ import 'package:otraku/models/tuple.dart';
 import 'package:otraku/controllers/network_service.dart';
 
 class MediaItem {
-  static Future<Media> fetchItemData(int id) async {
-    const query = r'''
+  static const _mediaQuery = r'''
       query Media($id: Int) {
         Media(id: $id) {
           type
@@ -28,7 +27,7 @@ class MediaItem {
           mediaListEntry {status}
           description
           format
-          status
+          status(version: 2)
           episodes
           duration
           chapters
@@ -52,15 +51,7 @@ class MediaItem {
       }
     ''';
 
-    final data = await NetworkService.request(query, {'id': id});
-
-    if (data == null) return null;
-
-    return Media(id, data['Media']);
-  }
-
-  static Future<Tuple<EditEntry, String>> fetchUserData(int id) async {
-    final query = r'''
+  static const _entryQuery = r'''
       query ItemUserData($id: Int) {
         Media(id: $id) {
           id
@@ -87,7 +78,16 @@ class MediaItem {
       }
     ''';
 
-    final data = await NetworkService.request(query, {'id': id});
+  static Future<Media> fetchItemData(int id) async {
+    final data = await NetworkService.request(_mediaQuery, {'id': id});
+
+    if (data == null) return null;
+
+    return Media(id, data['Media']);
+  }
+
+  static Future<Tuple<EditEntry, String>> fetchUserData(int id) async {
+    final data = await NetworkService.request(_entryQuery, {'id': id});
 
     if (data == null) return null;
 

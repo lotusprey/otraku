@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/headers/collection_header.dart';
-import 'package:otraku/tools/multichild_layouts/media_list.dart';
+import 'package:otraku/tools/layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 
 class CollectionsTab extends StatefulWidget {

@@ -38,7 +38,7 @@ class Collections extends GetxController {
             media {
               title {userPreferred}
               format
-              status
+              status(version: 2)
               startDate {year month day}
               endDate {year month day}
               episodes
@@ -85,7 +85,7 @@ class Collections extends GetxController {
           media {
             title {userPreferred}
             format
-            status
+            status(version: 2)
             startDate {year month day}
             endDate {year month day}
             episodes

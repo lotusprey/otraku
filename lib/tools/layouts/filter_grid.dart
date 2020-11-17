@@ -68,7 +68,7 @@ class _FilterOption extends StatefulWidget {
 
 class _FilterOptionState extends State<_FilterOption> {
   static const SizedBox _sizedBox = const SizedBox(width: 5);
-  static BorderRadius _borderRadius = BorderRadius.circular(10);
+  static BorderRadius _borderRadius = BorderRadius.circular(20);
 
   int _state;
 

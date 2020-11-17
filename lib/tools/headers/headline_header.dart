@@ -10,17 +10,15 @@ class HeadlineHeader extends StatelessWidget {
   const HeadlineHeader(this.headline, this.isPushed);
 
   @override
-  Widget build(BuildContext context) {
-    return SliverPersistentHeader(
-      pinned: false,
-      floating: false,
-      delegate: _HeadlineHeaderDelegate(
-        context: context,
-        headline: headline,
-        isPushed: isPushed,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => SliverPersistentHeader(
+        pinned: false,
+        floating: false,
+        delegate: _HeadlineHeaderDelegate(
+          context: context,
+          headline: headline,
+          isPushed: isPushed,
+        ),
+      );
 }
 
 class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
@@ -41,25 +39,25 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
     BuildContext context,
     double shrinkOffset,
     bool overlapsContent,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-      child: Row(
-        children: [
-          if (isPushed)
-            IconButton(
-              padding: const EdgeInsets.only(right: 20),
-              icon: const Icon(FluentSystemIcons.ic_fluent_arrow_left_filled),
-              onPressed: () => Navigator.pop(context),
+  ) =>
+      Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        child: Row(
+          children: [
+            if (isPushed)
+              IconButton(
+                padding: const EdgeInsets.only(right: 20),
+                icon: const Icon(FluentSystemIcons.ic_fluent_arrow_left_filled),
+                onPressed: () => Navigator.pop(context),
+              ),
+            Text(
+              headline,
+              style:
+                  Theme.of(context).textTheme.headline1.copyWith(height: 1.0),
             ),
-          Text(
-            headline,
-            style: Theme.of(context).textTheme.headline1.copyWith(height: 1.0),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 
   @override
   double get maxExtent => _height;

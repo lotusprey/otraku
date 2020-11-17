@@ -38,8 +38,7 @@ class NetworkService {
   }
 
   static Future<void> initViewerId() async {
-    final box = GetStorage();
-    _viewerId = box.read('viewerId');
+    _viewerId = GetStorage().read('viewerId');
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnError: false);
       if (data != null) _viewerId = data['Viewer']['id'];

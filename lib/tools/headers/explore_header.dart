@@ -8,13 +8,14 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/app_config.dart';
 import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
-import 'package:otraku/tools/overlays/media_sort_sheet.dart';
+import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class ExploreHeader extends StatelessWidget {
   final ScrollController scrollCtrl;
@@ -102,7 +103,17 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                           ),
                           onPressed: () => showModalBottomSheet(
                             context: context,
-                            builder: (ctx) => MediaSortSheet(),
+                            builder: (ctx) => MediaSortSheet(
+                              stringToEnum(
+                                explorable.getFilterWithKey(Explorable.SORT),
+                                MediaSort.values,
+                              ),
+                              (sort) => explorable.setFilterWithKey(
+                                Explorable.SORT,
+                                value: describeEnum(sort),
+                                refetch: true,
+                              ),
+                            ),
                             backgroundColor: Colors.transparent,
                             isScrollControlled: true,
                           ),

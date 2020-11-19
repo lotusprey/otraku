@@ -130,7 +130,7 @@ class ImageTextDialog extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+        children: [
           ClipRRect(
             borderRadius: AppConfig.BORDER_RADIUS,
             child: image,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/app_config.dart';
 
-class CustomGridTile extends StatelessWidget {
+class LargeGridTile extends StatelessWidget {
   final int mediaId;
   final String text;
   final String imageUrl;
 
-  CustomGridTile({
+  LargeGridTile({
     @required this.mediaId,
     @required this.text,
     @required this.imageUrl,

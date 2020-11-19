@@ -34,7 +34,7 @@ Widget getWidgetFormScoreFormat(
     case 'POINT_10_DECIMAL':
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+        children: [
           const Icon(Icons.star, size: Styles.ICON_SMALL),
           const SizedBox(width: 5),
           Text(
@@ -48,7 +48,7 @@ Widget getWidgetFormScoreFormat(
     case 'POINT_5':
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
+        children: [
           const Icon(Icons.star, size: Styles.ICON_SMALL),
           const SizedBox(width: 5),
           Text(

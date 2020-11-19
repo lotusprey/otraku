@@ -211,7 +211,7 @@ class __StatusButtonState extends State<_StatusButton> {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
             Icon(
               widget.media.status == null ? Icons.add : Icons.edit,
               size: Styles.ICON_SMALL,

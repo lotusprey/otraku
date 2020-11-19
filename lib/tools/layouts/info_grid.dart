@@ -68,7 +68,7 @@ class _InfoTile extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Text(
               heading,
               style: Theme.of(context).textTheme.subtitle1,

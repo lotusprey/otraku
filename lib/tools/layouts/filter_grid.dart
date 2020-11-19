@@ -105,7 +105,7 @@ class _FilterOptionState extends State<_FilterOption> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Text(
                         widget.title,
                         style: Theme.of(context).textTheme.bodyText1,
@@ -123,7 +123,7 @@ class _FilterOptionState extends State<_FilterOption> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Text(
                         widget.title,
                         style: Theme.of(context).textTheme.bodyText1,

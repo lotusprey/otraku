@@ -38,7 +38,7 @@ class _MediaPageState extends State<MediaPage> {
           child: _media != null
               ? CustomScrollView(
                   physics: const BouncingScrollPhysics(),
-                  slivers: <Widget>[
+                  slivers: [
                     SliverPersistentHeader(
                       pinned: true,
                       floating: false,

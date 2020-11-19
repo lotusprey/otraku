@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/headers/lists_navigation.dart';
-import 'package:otraku/tools/overlays/collection_sort_sheet.dart';
+import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class CollectionHeader extends StatelessWidget {
   final ScrollController scrollCtrl;

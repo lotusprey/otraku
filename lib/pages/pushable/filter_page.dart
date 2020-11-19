@@ -90,7 +90,7 @@ class FilterPage extends StatelessWidget {
       body: ListView(
         physics: const BouncingScrollPhysics(),
         padding: AppConfig.PADDING,
-        children: <Widget>[
+        children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Text('Status', style: Theme.of(context).textTheme.subtitle1),

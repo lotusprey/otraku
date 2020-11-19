@@ -5,12 +5,14 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/page_entry.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
+import 'package:otraku/tools/layouts/result_grid.dart';
 import 'package:otraku/tools/media_indexer.dart';
-import 'package:otraku/tools/layouts/custom_grid_tile.dart';
-import 'package:otraku/tools/overlays/media_sort_sheet.dart';
+import 'package:otraku/tools/layouts/large_grid_tile.dart';
+import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StudioPage extends StatelessWidget {
   final int id;
@@ -30,7 +32,7 @@ class StudioPage extends StatelessWidget {
           builder: (studio) {
             return NotificationListener(
               onNotification: (notification) {
-                if (studio.groups.hasNextPage &&
+                if (studio.media.hasNextPage &&
                     notification is ScrollNotification &&
                     notification.metrics.extentAfter <= 50 &&
                     notification.metrics.maxScrollExtent > extentOnLastCall) {
@@ -39,99 +41,102 @@ class StudioPage extends StatelessWidget {
                 }
                 return false;
               },
-              child: _OrderedGroups(studio, textTag),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                semanticChildCount:
+                    studio.media != null ? studio.media.mediaCount : null,
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _StudioHeader(studio.company, textTag),
+                  ),
+                  if (studio.company != null) ...[
+                    SliverToBoxAdapter(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                            ),
+                            onPressed: () => showModalBottomSheet(
+                              context: context,
+                              builder: (_) => MediaSortSheet(
+                                studio.sort,
+                                (sort) => studio.sort = sort,
+                              ),
+                              backgroundColor: Colors.transparent,
+                              isScrollControlled: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (studio.sort == MediaSort.START_DATE ||
+                        studio.sort == MediaSort.START_DATE_DESC ||
+                        studio.sort == MediaSort.END_DATE ||
+                        studio.sort == MediaSort.END_DATE_DESC) ...[
+                      for (int i = 0;
+                          i < studio.media.categories.length;
+                          i++) ...[
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: AppConfig.PADDING,
+                            child: Text(
+                              studio.media.categories[i],
+                              style: Theme.of(context).textTheme.headline3,
+                            ),
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: AppConfig.PADDING,
+                          sliver: SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                              (_, index) => MediaIndexer(
+                                itemType: Browsable.anime,
+                                id: studio.media.split[i][index].id,
+                                tag: studio.media.split[i][index].imageUrl,
+                                child: LargeGridTile(
+                                  mediaId: studio.media.split[i][index].id,
+                                  text: studio.media.split[i][index].title,
+                                  imageUrl:
+                                      studio.media.split[i][index].imageUrl,
+                                ),
+                              ),
+                              childCount: studio.media.split[i].length,
+                              semanticIndexOffset:
+                                  i * studio.media.split[i].length,
+                            ),
+                            gridDelegate:
+                                SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent:
+                                  AppConfig.tileConfig.tileWidth,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              childAspectRatio:
+                                  AppConfig.tileConfig.tileWHRatio,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ] else
+                      LargeGrid(studio.media.joined, studio.fetchPage),
+                    if (studio.media != null && studio.media.hasNextPage)
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Center(
+                            child: const BlossomLoader(),
+                          ),
+                        ),
+                      ),
+                  ],
+                ],
+              ),
             );
           },
         ),
       ),
-    );
-  }
-}
-
-class _OrderedGroups extends StatelessWidget {
-  final Studio studio;
-  final String textTag;
-
-  _OrderedGroups(this.studio, this.textTag);
-
-  @override
-  Widget build(BuildContext context) {
-    final groups = studio.groups;
-
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      semanticChildCount: groups != null ? groups.mediaCount : null,
-      slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _StudioHeader(studio.company, textTag),
-        ),
-        if (studio.company != null) ...[
-          SliverToBoxAdapter(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                  ),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    builder: (ctx) => MediaSortSheet(),
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          for (int i = 0; i < groups.categories.length; i++) ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: AppConfig.PADDING,
-                child: Text(
-                  groups.categories[i],
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ),
-            ),
-            SliverPadding(
-              padding: AppConfig.PADDING,
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (_, index) => MediaIndexer(
-                    itemType: Browsable.anime,
-                    id: groups.media[i][index].id,
-                    tag: groups.media[i][index].imageUrl,
-                    child: CustomGridTile(
-                      mediaId: groups.media[i][index].id,
-                      text: groups.media[i][index].title,
-                      imageUrl: groups.media[i][index].imageUrl,
-                    ),
-                  ),
-                  childCount: groups.media[i].length,
-                  semanticIndexOffset: i * groups.media[i].length,
-                ),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: AppConfig.tileConfig.tileWidth,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: AppConfig.tileConfig.tileWHRatio,
-                ),
-              ),
-            ),
-          ],
-          if (groups != null && groups.hasNextPage)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Center(
-                  child: const BlossomLoader(),
-                ),
-              ),
-            ),
-        ],
-      ],
     );
   }
 }
@@ -166,7 +171,7 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
         fit: StackFit.expand,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
+            padding: const EdgeInsets.symmetric(horizontal: 45),
             child: Align(
               alignment: Alignment.center,
               child: Hero(
@@ -201,7 +206,7 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 140;
+  double get maxExtent => 120;
 
   @override
   double get minExtent => 60;

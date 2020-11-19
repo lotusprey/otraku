@@ -33,12 +33,12 @@ class Studio extends GetxController {
   ''';
 
   final _company = Rx<PageEntry>();
-  final _groups = Rx<StudioConnectionList>();
+  final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
   PageEntry get company => _company();
 
-  StudioConnectionList get groups => _groups();
+  StudioConnectionList get media => _media();
 
   MediaSort get sort => _sort;
 
@@ -83,7 +83,7 @@ class Studio extends GetxController {
       _studioQuery,
       {
         'id': _company().id,
-        'page': _groups().nextPage,
+        'page': _media().nextPage,
         'sort': describeEnum(_sort),
       },
     );
@@ -111,7 +111,7 @@ class Studio extends GetxController {
       ));
     }
 
-    _groups.update((m) => m.append(
+    _media.update((m) => m.append(
           categories,
           results,
           data['pageInfo']['hasNextPage'],
@@ -121,7 +121,7 @@ class Studio extends GetxController {
   void _initLists(Map<String, dynamic> data) {
     final List<dynamic> nodes = data['nodes'];
     if (nodes.isEmpty) {
-      _groups(StudioConnectionList([], [], false));
+      _media(StudioConnectionList([], [], false));
       return;
     }
 
@@ -144,10 +144,10 @@ class Studio extends GetxController {
       ));
     }
 
-    _groups(StudioConnectionList(
+    _media(StudioConnectionList(
       categories,
       results,
-      data['media']['pageInfo']['hasNextPage'],
+      data['pageInfo']['hasNextPage'],
     ));
   }
 }

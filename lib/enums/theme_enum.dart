@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 enum Themes {
   navy,
@@ -85,6 +85,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: theme['primary'],
     systemNavigationBarIconBrightness: brightness,
+    statusBarBrightness: theme['brightness'],
     statusBarIconBrightness: brightness,
   ));
 
@@ -115,7 +116,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     ),
     buttonTheme: ButtonThemeData(
       shape: RoundedRectangleBorder(
-        borderRadius: AppConfig.BORDER_RADIUS,
+        borderRadius: Config.BORDER_RADIUS,
       ),
       buttonColor: theme['accent'],
     ),

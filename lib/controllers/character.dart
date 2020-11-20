@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/connection_list.dart';
 import 'package:otraku/models/page_data/person.dart';
 import 'package:otraku/models/sample_data/connection.dart';
@@ -49,6 +51,7 @@ class Character extends GetxController {
   final _anime = Rx<ConnectionList>();
   final _manga = Rx<ConnectionList>();
   final _onAnime = true.obs;
+  MediaSort _sort = MediaSort.TRENDING_DESC;
 
   Person get person => _person();
 
@@ -60,13 +63,23 @@ class Character extends GetxController {
 
   set onAnime(bool value) => _onAnime.value = value;
 
-  Future<void> fetchCharacter(int id) async {
-    final body = await NetworkService.request(
-      _characterQuery,
-      {'id': id, 'withPerson': true, 'withAnime': true, 'withManga': true},
-    );
+  MediaSort get sort => _sort;
 
-    if (body == null) return null;
+  set sort(MediaSort value) {
+    _sort = value;
+    refetch();
+  }
+
+  Future<void> fetchCharacter(int id) async {
+    final body = await NetworkService.request(_characterQuery, {
+      'id': id,
+      'withPerson': true,
+      'withAnime': true,
+      'withManga': true,
+      'sort': describeEnum(_sort),
+    });
+
+    if (body == null) return;
 
     final data = body['Character'];
 
@@ -88,49 +101,20 @@ class Character extends GetxController {
           data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
     ));
 
-    List<Connection> connections = [];
-    for (final connection in data['anime']['edges']) {
-      final List<Connection> voiceActors = [];
+    _initLists(data);
+  }
 
-      for (final va in connection['voiceActors']) {
-        voiceActors.add(Connection(
-          id: va['id'],
-          title: va['name']['full'],
-          imageUrl: va['image']['large'],
-          browsable: Browsable.staff,
-          subtitle: clarifyEnum(va['language']),
-        ));
-      }
+  Future<void> refetch() async {
+    final body = await NetworkService.request(_characterQuery, {
+      'id': _person().id,
+      'withAnime': true,
+      'withManga': true,
+      'sort': describeEnum(_sort),
+    });
 
-      connections.add(Connection(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
-        browsable: Browsable.anime,
-        subtitle: clarifyEnum(connection['characterRole']),
-        others: voiceActors,
-      ));
-    }
+    if (body == null) return;
 
-    _anime(ConnectionList(
-      connections,
-      data['anime']['pageInfo']['hasNextPage'],
-    ));
-
-    connections = [];
-    for (final connection in data['manga']['edges'])
-      connections.add(Connection(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
-        browsable: Browsable.manga,
-        subtitle: clarifyEnum(connection['characterRole']),
-      ));
-
-    _manga(ConnectionList(
-      connections,
-      data['manga']['pageInfo']['hasNextPage'],
-    ));
+    _initLists(body['Character']);
   }
 
   Future<void> fetchPage() async {
@@ -140,9 +124,10 @@ class Character extends GetxController {
       'withManga': !_onAnime(),
       'animePage': _anime().nextPage,
       'mangaPage': _manga().nextPage,
+      'sort': describeEnum(_sort)
     });
 
-    if (body == null) return null;
+    if (body == null) return;
 
     final data = body['Character'];
 
@@ -188,5 +173,51 @@ class Character extends GetxController {
         media.append(connections, data['manga']['pageInfo']['hasNextPage']);
       });
     }
+  }
+
+  void _initLists(Map<String, dynamic> data) {
+    List<Connection> connections = [];
+    for (final connection in data['anime']['edges']) {
+      final List<Connection> voiceActors = [];
+
+      for (final va in connection['voiceActors']) {
+        voiceActors.add(Connection(
+          id: va['id'],
+          title: va['name']['full'],
+          imageUrl: va['image']['large'],
+          browsable: Browsable.staff,
+          subtitle: clarifyEnum(va['language']),
+        ));
+      }
+
+      connections.add(Connection(
+        id: connection['node']['id'],
+        title: connection['node']['title']['userPreferred'],
+        imageUrl: connection['node']['coverImage']['large'],
+        browsable: Browsable.anime,
+        subtitle: clarifyEnum(connection['characterRole']),
+        others: voiceActors,
+      ));
+    }
+
+    _anime(ConnectionList(
+      connections,
+      data['anime']['pageInfo']['hasNextPage'],
+    ));
+
+    connections = [];
+    for (final connection in data['manga']['edges'])
+      connections.add(Connection(
+        id: connection['node']['id'],
+        title: connection['node']['title']['userPreferred'],
+        imageUrl: connection['node']['coverImage']['large'],
+        browsable: Browsable.manga,
+        subtitle: clarifyEnum(connection['characterRole']),
+      ));
+
+    _manga(ConnectionList(
+      connections,
+      data['manga']['pageInfo']['hasNextPage'],
+    ));
   }
 }

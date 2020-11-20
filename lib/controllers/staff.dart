@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/connection_list.dart';
 import 'package:otraku/models/page_data/person.dart';
 import 'package:otraku/models/sample_data/connection.dart';
@@ -56,6 +58,7 @@ class Staff extends GetxController {
   final _characterList = Rx<ConnectionList>();
   final _roleList = Rx<ConnectionList>();
   final _onCharacters = true.obs;
+  MediaSort _sort = MediaSort.TRENDING_DESC;
 
   Person get person => _person();
 
@@ -67,15 +70,23 @@ class Staff extends GetxController {
 
   set onCharacters(bool value) => _onCharacters.value = value;
 
+  MediaSort get sort => _sort;
+
+  set sort(MediaSort value) {
+    _sort = value;
+    refetch();
+  }
+
   Future<void> fetchStaff(int id) async {
     final body = await NetworkService.request(_staffQuery, {
       'id': id,
       'withPerson': true,
       'withCharacters': true,
       'withStaff': true,
+      'sort': describeEnum(_sort),
     });
 
-    if (body == null) return null;
+    if (body == null) return;
 
     final data = body['Staff'];
 
@@ -97,50 +108,20 @@ class Staff extends GetxController {
           data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
     ));
 
-    List<Connection> connections = [];
-    for (final connection in data['characterMedia']['edges']) {
-      for (final char in connection['characters']) {
-        connections.add(Connection(
-            id: char['id'],
-            title: char['name']['full'],
-            imageUrl: char['image']['large'],
-            browsable: Browsable.characters,
-            subtitle: clarifyEnum(connection['characterRole']),
-            others: [
-              Connection(
-                id: connection['node']['id'],
-                title: connection['node']['title']['userPreferred'],
-                imageUrl: connection['node']['coverImage']['large'],
-                browsable: connection['node']['type'] == 'ANIME'
-                    ? Browsable.anime
-                    : Browsable.manga,
-              ),
-            ]));
-      }
-    }
+    _initLists(data);
+  }
 
-    _characterList(ConnectionList(
-      connections,
-      data['characterMedia']['pageInfo']['hasNextPage'],
-    ));
+  Future<void> refetch() async {
+    final body = await NetworkService.request(_staffQuery, {
+      'id': _person().id,
+      'withCharacters': true,
+      'withStaff': true,
+      'sort': describeEnum(_sort),
+    });
 
-    connections = [];
-    for (final connection in data['staffMedia']['edges']) {
-      connections.add(Connection(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
-        browsable: connection['node']['type'] == 'ANIME'
-            ? Browsable.anime
-            : Browsable.manga,
-        subtitle: clarifyEnum(connection['staffRole']),
-      ));
-    }
+    if (body == null) return;
 
-    _roleList(ConnectionList(
-      connections,
-      data['staffMedia']['pageInfo']['hasNextPage'],
-    ));
+    _initLists(body['Staff']);
   }
 
   Future<void> fetchPage() async {
@@ -150,9 +131,10 @@ class Staff extends GetxController {
       'withStaff': !_onCharacters(),
       'characterPage': _characterList().nextPage,
       'staffPage': _roleList().nextPage,
+      'sort': describeEnum(_sort),
     });
 
-    if (body == null) return null;
+    if (body == null) return;
 
     final data = body['Staff'];
 
@@ -197,5 +179,52 @@ class Staff extends GetxController {
       _roleList.update((list) => list.append(
           connections, data['staffMedia']['pageInfo']['hasNextPage']));
     }
+  }
+
+  void _initLists(Map<String, dynamic> data) {
+    List<Connection> connections = [];
+    for (final connection in data['characterMedia']['edges']) {
+      for (final char in connection['characters']) {
+        connections.add(Connection(
+            id: char['id'],
+            title: char['name']['full'],
+            imageUrl: char['image']['large'],
+            browsable: Browsable.characters,
+            subtitle: clarifyEnum(connection['characterRole']),
+            others: [
+              Connection(
+                id: connection['node']['id'],
+                title: connection['node']['title']['userPreferred'],
+                imageUrl: connection['node']['coverImage']['large'],
+                browsable: connection['node']['type'] == 'ANIME'
+                    ? Browsable.anime
+                    : Browsable.manga,
+              ),
+            ]));
+      }
+    }
+
+    _characterList(ConnectionList(
+      connections,
+      data['characterMedia']['pageInfo']['hasNextPage'],
+    ));
+
+    connections = [];
+    for (final connection in data['staffMedia']['edges']) {
+      connections.add(Connection(
+        id: connection['node']['id'],
+        title: connection['node']['title']['userPreferred'],
+        imageUrl: connection['node']['coverImage']['large'],
+        browsable: connection['node']['type'] == 'ANIME'
+            ? Browsable.anime
+            : Browsable.manga,
+        subtitle: clarifyEnum(connection['staffRole']),
+      ));
+    }
+
+    _roleList(ConnectionList(
+      connections,
+      data['staffMedia']['pageInfo']['hasNextPage'],
+    ));
   }
 }

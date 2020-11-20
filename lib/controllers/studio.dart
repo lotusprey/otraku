@@ -53,7 +53,7 @@ class Studio extends GetxController {
       {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
 
-    if (body == null) return null;
+    if (body == null) return;
 
     final data = body['Studio'];
 
@@ -73,7 +73,7 @@ class Studio extends GetxController {
       {'id': _company().id, 'sort': describeEnum(_sort)},
     );
 
-    if (body == null) return null;
+    if (body == null) return;
 
     _initLists(body['Studio']['media']);
   }
@@ -88,7 +88,7 @@ class Studio extends GetxController {
       },
     );
 
-    if (body == null) return null;
+    if (body == null) return;
 
     final data = body['Studio']['media'];
 

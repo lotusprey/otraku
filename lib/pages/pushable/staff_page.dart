@@ -1,9 +1,11 @@
+import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/person_header.dart';
 import 'package:otraku/tools/layouts/media_connection_grid.dart';
+import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StaffPage extends StatelessWidget {
   final int id;
@@ -35,7 +37,7 @@ class StaffPage extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 15),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         if (staff.characterList.connections.isNotEmpty &&
                             staff.roleList.connections.isNotEmpty)
@@ -48,6 +50,20 @@ class StaffPage extends StatelessWidget {
                             minimised: true,
                             shrinkWrap: true,
                           ),
+                        IconButton(
+                          icon: const Icon(
+                            FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                          ),
+                          onPressed: () => showModalBottomSheet(
+                            context: context,
+                            builder: (_) => MediaSortSheet(
+                              staff.sort,
+                              (sort) => staff.sort = sort,
+                            ),
+                            backgroundColor: Colors.transparent,
+                            isScrollControlled: true,
+                          ),
+                        ),
                       ],
                     ),
                   ),

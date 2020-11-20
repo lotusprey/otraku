@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/layouts/large_grid_tile.dart';
@@ -33,10 +33,10 @@ class LargeGrid extends StatelessWidget {
           childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: AppConfig.tileConfig.tileWidth,
+          maxCrossAxisExtent: Config.tileConfig.tileWidth,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: AppConfig.tileConfig.tileWHRatio,
+          childAspectRatio: Config.tileConfig.tileWHRatio,
         ),
       ),
     );

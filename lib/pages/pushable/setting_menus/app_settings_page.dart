@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 
@@ -22,7 +22,7 @@ class AppSettingsPage extends StatelessWidget {
         children: [
           _RadioGrid(
             title: 'Startup Page',
-            initialValue: box.read(AppConfig.STARTUP_PAGE),
+            initialValue: box.read(Config.STARTUP_PAGE),
             options: [
               'Inbox',
               'Anime List',
@@ -30,17 +30,17 @@ class AppSettingsPage extends StatelessWidget {
               'Explore',
               'Profile',
             ],
-            onChanged: (val) => box.write(AppConfig.STARTUP_PAGE, val),
+            onChanged: (val) => box.write(Config.STARTUP_PAGE, val),
           ),
           _RadioGrid(
             title: 'Theme',
-            initialValue: box.read(AppConfig.THEME),
+            initialValue: box.read(Config.THEME),
             options: Themes.values
                 .map((t) => clarifyEnum(describeEnum(Themes.values[t.index])))
                 .toList(),
             onChanged: (val) {
               Get.changeTheme(Themes.values[val].themeData);
-              box.write(AppConfig.THEME, val);
+              box.write(Config.THEME, val);
             },
           ),
         ],

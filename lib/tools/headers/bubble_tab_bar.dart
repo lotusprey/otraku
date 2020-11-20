@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class BubbleTabBar<T> extends StatefulWidget {
   final List<String> options;
@@ -32,7 +32,7 @@ class _BubbleTabBarState extends State<BubbleTabBar> {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
+        height: Config.CONTROL_HEADER_ICON_HEIGHT,
         child: ListView.builder(
           shrinkWrap: widget.shrinkWrap,
           scrollDirection: Axis.horizontal,
@@ -55,7 +55,7 @@ class _BubbleTabBarState extends State<BubbleTabBar> {
                 color: index != _index
                     ? Colors.transparent
                     : Theme.of(context).accentColor,
-                borderRadius: AppConfig.BORDER_RADIUS,
+                borderRadius: Config.BORDER_RADIUS,
               ),
               child: Text(
                 widget.options[index],

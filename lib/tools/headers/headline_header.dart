@@ -1,7 +1,7 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class HeadlineHeader extends StatelessWidget {
   final String headline;
@@ -31,7 +31,7 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
     @required this.isPushed,
     @required BuildContext context,
   }) {
-    _height = AppConfig.MATERIAL_TAP_TARGET_SIZE;
+    _height = Config.MATERIAL_TAP_TARGET_SIZE;
   }
 
   @override

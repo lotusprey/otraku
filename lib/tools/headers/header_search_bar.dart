@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/controllers/explorable.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class ExploreSearchBar extends StatelessWidget {
   final String initialValue;
@@ -23,9 +23,9 @@ class ExploreSearchBar extends StatelessWidget {
       return AnimatedContainer(
         width: totalWidth -
             (type == Browsable.anime || type == Browsable.manga
-                ? AppConfig.MATERIAL_TAP_TARGET_SIZE * 2
+                ? Config.MATERIAL_TAP_TARGET_SIZE * 2
                 : 0),
-        height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+        height: Config.MATERIAL_TAP_TARGET_SIZE,
         duration: const Duration(milliseconds: 100),
         child: Center(
           child: _HeaderSearchBar(
@@ -47,9 +47,9 @@ class CollectionSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+      height: Config.MATERIAL_TAP_TARGET_SIZE,
       width: MediaQuery.of(context).size.width -
-          AppConfig.MATERIAL_TAP_TARGET_SIZE -
+          Config.MATERIAL_TAP_TARGET_SIZE -
           20,
       child: Center(child: _HeaderSearchBar(initialValue, onChanged)),
     );
@@ -74,7 +74,7 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
+      height: Config.CONTROL_HEADER_ICON_HEIGHT,
       child: TextField(
         focusNode: _focus,
         controller: _controller,
@@ -88,7 +88,7 @@ class __HeaderSearchBarState extends State<_HeaderSearchBar> {
           filled: true,
           fillColor: Theme.of(context).primaryColor,
           border: OutlineInputBorder(
-            borderRadius: AppConfig.BORDER_RADIUS,
+            borderRadius: Config.BORDER_RADIUS,
             borderSide: BorderSide.none,
           ),
           prefixIcon: Icon(

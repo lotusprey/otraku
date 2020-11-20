@@ -12,7 +12,7 @@ import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/controllers/explorable.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
@@ -213,10 +213,10 @@ class __FilterButtonState extends State<_FilterButton> {
         setState(() => _active = false);
       },
       child: Container(
-        width: AppConfig.MATERIAL_TAP_TARGET_SIZE,
-        height: AppConfig.CONTROL_HEADER_ICON_HEIGHT,
+        width: Config.MATERIAL_TAP_TARGET_SIZE,
+        height: Config.CONTROL_HEADER_ICON_HEIGHT,
         decoration: BoxDecoration(
-          borderRadius: AppConfig.BORDER_RADIUS,
+          borderRadius: Config.BORDER_RADIUS,
           color: Theme.of(context).accentColor,
         ),
         child: const Icon(

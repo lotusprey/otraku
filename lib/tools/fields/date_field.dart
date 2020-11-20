@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class DateField extends StatefulWidget {
   final DateTime date;
@@ -48,7 +48,7 @@ class _DateFieldState extends State<DateField> {
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
-          borderRadius: AppConfig.BORDER_RADIUS,
+          borderRadius: Config.BORDER_RADIUS,
         ),
         child: date != null
             ? Row(

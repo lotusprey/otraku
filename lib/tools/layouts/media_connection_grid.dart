@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/sample_data/connection.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/media_indexer.dart';
 
 class MediaConnectionGrid extends StatefulWidget {
@@ -39,7 +39,7 @@ class _MediaConnectionTile extends StatelessWidget {
         child: Container(
           height: 100,
           decoration: BoxDecoration(
-            borderRadius: AppConfig.BORDER_RADIUS,
+            borderRadius: Config.BORDER_RADIUS,
             color: Theme.of(context).primaryColor,
           ),
           child: Row(
@@ -61,7 +61,7 @@ class _MediaConnectionTile extends StatelessWidget {
                           child: ClipRRect(
                             child: Image.network(media.imageUrl,
                                 fit: BoxFit.cover),
-                            borderRadius: AppConfig.BORDER_RADIUS,
+                            borderRadius: Config.BORDER_RADIUS,
                           ),
                         ),
                         Expanded(
@@ -137,7 +137,7 @@ class _MediaConnectionTile extends StatelessWidget {
                                 media.others[0].imageUrl,
                                 fit: BoxFit.cover,
                               ),
-                              borderRadius: AppConfig.BORDER_RADIUS,
+                              borderRadius: Config.BORDER_RADIUS,
                             ),
                           ),
                         ],

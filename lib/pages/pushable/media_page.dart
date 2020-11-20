@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/controllers/media_item.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 import 'package:otraku/tools/layouts/info_grid.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -52,7 +52,7 @@ class _MediaPageState extends State<MediaPage> {
                     ),
                     if (_media.description != null)
                       SliverPadding(
-                        padding: AppConfig.PADDING,
+                        padding: Config.PADDING,
                         sliver: SliverList(
                           delegate: SliverChildListDelegate(
                             [
@@ -66,7 +66,7 @@ class _MediaPageState extends State<MediaPage> {
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor,
-                                    borderRadius: AppConfig.BORDER_RADIUS,
+                                    borderRadius: Config.BORDER_RADIUS,
                                   ),
                                   child: Text(
                                     _media.description,
@@ -119,7 +119,7 @@ class _MediaPageState extends State<MediaPage> {
                             child: Hero(
                               tag: widget.tagImageUrl,
                               child: ClipRRect(
-                                borderRadius: AppConfig.BORDER_RADIUS,
+                                borderRadius: Config.BORDER_RADIUS,
                                 child: Image.network(
                                   widget.tagImageUrl,
                                   fit: BoxFit.cover,
@@ -155,7 +155,7 @@ class _MediaPageState extends State<MediaPage> {
     if (!_didChangeDependencies) {
       _coverWidth = MediaQuery.of(context).size.width * 0.35;
       _coverHeight = _coverWidth / 0.7;
-      _bannerHeight = _coverHeight + AppConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+      _bannerHeight = _coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
       _didChangeDependencies = true;
     }
   }

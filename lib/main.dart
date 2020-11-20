@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/load_app_page.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
@@ -23,7 +23,7 @@ class Otraku extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
-      theme: Themes.values[GetStorage().read(AppConfig.THEME) ?? 0].themeData,
+      theme: Themes.values[GetStorage().read(Config.THEME) ?? 0].themeData,
       home: LoadAppPage(),
     );
   }

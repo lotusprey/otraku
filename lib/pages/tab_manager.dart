@@ -6,7 +6,7 @@ import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/user_tab.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class TabManager extends StatefulWidget {
   static const int INBOX = 0;
@@ -54,18 +54,18 @@ class _TabManagerState extends State<TabManager> {
               BottomNavigationBar(
                 type: BottomNavigationBarType.fixed,
                 selectedFontSize: 0,
-                currentIndex: AppConfig.pageIndex.value,
+                currentIndex: Config.pageIndex.value,
                 items: _tabItems,
-                onTap: (index) => AppConfig.pageIndex = index,
+                onTap: (index) => Config.pageIndex = index,
               ),
             ],
           ),
         ),
-        drawer: _drawers[AppConfig.pageIndex.value],
+        drawer: _drawers[Config.pageIndex.value],
         body: SafeArea(
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            child: _tabs[AppConfig.pageIndex.value],
+            child: _tabs[Config.pageIndex.value],
           ),
         ),
       ),

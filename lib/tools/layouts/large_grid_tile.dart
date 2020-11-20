@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class LargeGridTile extends StatelessWidget {
   final int mediaId;
@@ -15,17 +15,17 @@ class LargeGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: AppConfig.tileConfig.tileWidth,
-      height: AppConfig.tileConfig.tileHeight,
+      width: Config.tileConfig.tileWidth,
+      height: Config.tileConfig.tileHeight,
       child: Column(
         children: [
           Hero(
             tag: imageUrl,
             child: ClipRRect(
-              borderRadius: AppConfig.BORDER_RADIUS,
+              borderRadius: Config.BORDER_RADIUS,
               child: Container(
-                height: AppConfig.tileConfig.tileImgHeight,
-                width: AppConfig.tileConfig.tileWidth,
+                height: Config.tileConfig.tileImgHeight,
+                width: Config.tileConfig.tileWidth,
                 color: Theme.of(context).primaryColor,
                 child: Image.network(
                   imageUrl,

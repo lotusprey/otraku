@@ -7,7 +7,7 @@ import 'package:otraku/models/user.dart';
 import 'package:otraku/pages/pushable/setting_menus/settings_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/controllers/users.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class UserTab extends StatelessWidget {
@@ -48,7 +48,7 @@ class UserTab extends StatelessWidget {
                           ],
                         ),
                         onPressed: () => id == null
-                            ? AppConfig.pageIndex = TabManager.ANIME_LIST
+                            ? Config.pageIndex = TabManager.ANIME_LIST
                             : print('TODO'),
                       ),
                     ),
@@ -68,7 +68,7 @@ class UserTab extends StatelessWidget {
                           ],
                         ),
                         onPressed: () => id == null
-                            ? AppConfig.pageIndex = TabManager.MANGA_LIST
+                            ? Config.pageIndex = TabManager.MANGA_LIST
                             : print('TODO'),
                       ),
                     ),
@@ -122,7 +122,7 @@ class _Header implements SliverPersistentHeaderDelegate {
               ),
             Container(
               padding: const EdgeInsets.only(
-                top: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+                top: Config.MATERIAL_TAP_TARGET_SIZE,
                 left: 10,
                 right: 10,
               ),
@@ -142,7 +142,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: user.avatar,
                       child: ClipRRect(
-                        borderRadius: AppConfig.BORDER_RADIUS,
+                        borderRadius: Config.BORDER_RADIUS,
                         child: Container(
                           height: 150,
                           width: 150,

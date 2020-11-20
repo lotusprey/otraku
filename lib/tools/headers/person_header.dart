@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/models/page_data/person.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
@@ -58,7 +58,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
         children: [
           Padding(
             padding: const EdgeInsets.only(
-              top: AppConfig.MATERIAL_TAP_TARGET_SIZE + 10,
+              top: Config.MATERIAL_TAP_TARGET_SIZE + 10,
               left: 10,
               right: 10,
             ),
@@ -70,7 +70,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: imageUrlTag,
                       child: ClipRRect(
-                        borderRadius: AppConfig.BORDER_RADIUS,
+                        borderRadius: Config.BORDER_RADIUS,
                         child: Container(
                           width: coverWidth,
                           height: coverHeight,
@@ -136,10 +136,10 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => coverHeight + AppConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+  double get maxExtent => coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
 
   @override
-  double get minExtent => AppConfig.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -168,7 +168,7 @@ class PersonInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: AppConfig.PADDING,
+        padding: Config.PADDING,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -190,7 +190,7 @@ class PersonInfo extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      borderRadius: AppConfig.BORDER_RADIUS,
+                      borderRadius: Config.BORDER_RADIUS,
                     ),
                     child: Text(
                       person.description,

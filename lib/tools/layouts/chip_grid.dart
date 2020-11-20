@@ -1,7 +1,7 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
 import 'package:otraku/tools/fields/three_state_field.dart';
 
@@ -103,7 +103,7 @@ class _ChipGridState extends State<ChipGrid> {
                       ),
                 )
               : SizedBox(
-                  height: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+                  height: Config.MATERIAL_TAP_TARGET_SIZE,
                   child: Center(
                     child: Text(
                       'No selected items',
@@ -143,7 +143,7 @@ class _OptionSheet extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
-        borderRadius: AppConfig.BORDER_RADIUS,
+        borderRadius: Config.BORDER_RADIUS,
       ),
       child: Column(
         children: [

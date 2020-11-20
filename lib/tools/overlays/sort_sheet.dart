@@ -2,7 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/enums/enum_helper.dart';
@@ -25,12 +25,12 @@ class SortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: options.length * AppConfig.MATERIAL_TAP_TARGET_SIZE + 50.0,
+      height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
-        borderRadius: AppConfig.BORDER_RADIUS,
+        borderRadius: Config.BORDER_RADIUS,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

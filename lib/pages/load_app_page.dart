@@ -6,7 +6,7 @@ import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/controllers/users.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 
 class LoadAppPage extends StatelessWidget {
@@ -18,7 +18,7 @@ class LoadAppPage extends StatelessWidget {
         return;
       }
 
-      AppConfig.init(context);
+      Config.init(context);
 
       final Future<void> Function() fetchAnimeCollection =
           Get.find<Collections>().fetchMyAnime;
@@ -29,7 +29,7 @@ class LoadAppPage extends StatelessWidget {
       final Future<void> Function() fetchViewer = Get.find<Users>().fetchViewer;
 
       NetworkService.initViewerId().then((_) {
-        switch (AppConfig.pageIndex.value) {
+        switch (Config.pageIndex.value) {
           case TabManager.ANIME_LIST:
             fetchAnimeCollection().then((_) => _goToTabManager());
             fetchMangaCollection();

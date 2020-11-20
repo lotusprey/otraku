@@ -7,7 +7,7 @@ import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -56,7 +56,7 @@ class MediaList extends StatelessWidget {
         }
 
         return SliverPadding(
-          padding: AppConfig.PADDING,
+          padding: Config.PADDING,
           sliver: SliverFixedExtentList(
             delegate: SliverChildBuilderDelegate(
               (_, index) =>
@@ -93,7 +93,7 @@ class _MediaListTile extends StatelessWidget {
                 width: 95,
                 child: ClipRRect(
                   child: Image.network(media.cover, fit: BoxFit.cover),
-                  borderRadius: AppConfig.BORDER_RADIUS,
+                  borderRadius: Config.BORDER_RADIUS,
                 ),
               ),
             ),

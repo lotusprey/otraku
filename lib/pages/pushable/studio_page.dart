@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/page_entry.dart';
 import 'package:otraku/tools/blossom_loader.dart';
@@ -81,7 +81,7 @@ class StudioPage extends StatelessWidget {
                           i++) ...[
                         SliverToBoxAdapter(
                           child: Padding(
-                            padding: AppConfig.PADDING,
+                            padding: Config.PADDING,
                             child: Text(
                               studio.media.categories[i],
                               style: Theme.of(context).textTheme.headline3,
@@ -89,7 +89,7 @@ class StudioPage extends StatelessWidget {
                           ),
                         ),
                         SliverPadding(
-                          padding: AppConfig.PADDING,
+                          padding: Config.PADDING,
                           sliver: SliverGrid(
                             delegate: SliverChildBuilderDelegate(
                               (_, index) => MediaIndexer(
@@ -109,12 +109,10 @@ class StudioPage extends StatelessWidget {
                             ),
                             gridDelegate:
                                 SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent:
-                                  AppConfig.tileConfig.tileWidth,
+                              maxCrossAxisExtent: Config.tileConfig.tileWidth,
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
-                              childAspectRatio:
-                                  AppConfig.tileConfig.tileWHRatio,
+                              childAspectRatio: Config.tileConfig.tileWHRatio,
                             ),
                           ),
                         ),

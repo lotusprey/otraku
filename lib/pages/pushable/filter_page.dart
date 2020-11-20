@@ -8,7 +8,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/controllers/explorable.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 import 'package:otraku/tools/layouts/filter_grid.dart';
@@ -89,7 +89,7 @@ class FilterPage extends StatelessWidget {
       ),
       body: ListView(
         physics: const BouncingScrollPhysics(),
-        padding: AppConfig.PADDING,
+        padding: Config.PADDING,
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),

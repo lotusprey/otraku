@@ -5,7 +5,7 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/page_data/media.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
-import 'package:otraku/controllers/app_config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
@@ -16,7 +16,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
   //Output settings
   final double coverWidth;
   final double coverHeight;
-  final double minHeight = AppConfig.MATERIAL_TAP_TARGET_SIZE + 10;
+  final double minHeight = Config.MATERIAL_TAP_TARGET_SIZE + 10;
   final double maxHeight;
   final String tagImageUrl;
 
@@ -58,7 +58,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
           if (media.banner != null) media.banner,
           Container(
             padding: const EdgeInsets.only(
-              top: AppConfig.MATERIAL_TAP_TARGET_SIZE,
+              top: Config.MATERIAL_TAP_TARGET_SIZE,
               left: 10,
               right: 10,
             ),
@@ -81,7 +81,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: tagImageUrl,
                       child: ClipRRect(
-                        borderRadius: AppConfig.BORDER_RADIUS,
+                        borderRadius: Config.BORDER_RADIUS,
                         child: Container(
                           height: coverHeight,
                           width: coverWidth,
@@ -207,7 +207,7 @@ class __StatusButtonState extends State<_StatusButton> {
       child: RaisedButton(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(
-          borderRadius: AppConfig.BORDER_RADIUS,
+          borderRadius: Config.BORDER_RADIUS,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

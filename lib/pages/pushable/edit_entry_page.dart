@@ -1,10 +1,10 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/media_item.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -31,7 +31,6 @@ class _EditEntryPageState extends State<EditEntryPage> {
 
   EditEntry _oldData;
   EditEntry _newData;
-  String _scoreFormat;
 
   Widget _row(Widget child1, Widget child2) {
     return Row(
@@ -178,7 +177,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     ),
                     InputFieldStructure(
                       title: 'Score',
-                      body: ScorePicker(_newData, _scoreFormat),
+                      body: ScorePicker(_newData),
                     ),
                     InputFieldStructure(
                       title: 'Notes',
@@ -262,13 +261,12 @@ class _EditEntryPageState extends State<EditEntryPage> {
   @override
   void initState() {
     super.initState();
-    MediaItem.fetchUserData(widget.mediaId).then((data) {
-      if (data == null) return;
+    Entry.fetchUserData(widget.mediaId).then((entry) {
+      if (entry == null) return;
       if (mounted) {
         setState(() {
-          _oldData = data.item1;
+          _oldData = entry;
           _newData = _oldData.clone();
-          _scoreFormat = data.item2;
         });
       }
     });

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/models/page_data/media.dart';
+import 'package:otraku/models/page_data/media_data_old.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/favourite_button.dart';
@@ -11,7 +11,7 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 
 class MediaPageHeader implements SliverPersistentHeaderDelegate {
   //Data
-  final Media media;
+  final MediaDataOld media;
 
   //Output settings
   final double coverWidth;
@@ -190,7 +190,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
 }
 
 class _StatusButton extends StatefulWidget {
-  final Media media;
+  final MediaDataOld media;
   final double width;
 
   _StatusButton(this.media, this.width);

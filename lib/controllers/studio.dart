@@ -4,7 +4,7 @@ import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/page_data/page_entry.dart';
+import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/models/page_data/studio_connection_list.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 
@@ -32,11 +32,11 @@ class Studio extends GetxController {
     }
   ''';
 
-  final _company = Rx<PageEntry>();
+  final _company = Rx<PageObject>();
   final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
-  PageEntry get company => _company();
+  PageObject get company => _company();
 
   StudioConnectionList get media => _media();
 
@@ -57,7 +57,7 @@ class Studio extends GetxController {
 
     final data = body['Studio'];
 
-    _company(PageEntry(
+    _company(PageObject(
       id: id,
       browsable: Browsable.studios,
       isFavourite: data['isFavourite'],

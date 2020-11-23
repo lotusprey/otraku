@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/models/page_data/page_entry.dart';
+import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 
-class Media extends PageEntry {
+class MediaDataOld extends PageObject {
   String type;
   String title;
   int nextEpisode;
@@ -17,7 +17,7 @@ class Media extends PageEntry {
   String description;
   List<Tuple> info = [];
 
-  Media(int id, Map<String, dynamic> data)
+  MediaDataOld(int id, Map<String, dynamic> data)
       : super(
           id: id,
           isFavourite: data['isFavourite'],

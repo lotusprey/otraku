@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/page_data/page_entry.dart';
+import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/controllers/page_item.dart';
 
 class FavoriteButton extends StatefulWidget {
-  final PageEntry data;
+  final PageObject data;
   final double shrinkPercentage;
 
   FavoriteButton(this.data, this.shrinkPercentage);

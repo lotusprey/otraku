@@ -6,7 +6,7 @@ import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/page_data/page_entry.dart';
+import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/layouts/result_grid.dart';
@@ -140,7 +140,7 @@ class StudioPage extends StatelessWidget {
 }
 
 class _StudioHeader implements SliverPersistentHeaderDelegate {
-  final PageEntry company;
+  final PageObject company;
   final String textTag;
 
   _StudioHeader(this.company, this.textTag);

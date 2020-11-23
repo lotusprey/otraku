@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-import 'page_entry.dart';
+import 'page_object.dart';
 
-class Person extends PageEntry {
+class Person extends PageObject {
   final String fullName;
   final List<String> altNames;
   final String imageUrl;

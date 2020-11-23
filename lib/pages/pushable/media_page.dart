@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/models/page_data/media.dart';
-import 'package:otraku/controllers/media_item.dart';
+import 'package:otraku/models/page_data/media_data_old.dart';
+import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 import 'package:otraku/tools/layouts/info_grid.dart';
@@ -19,7 +19,7 @@ class MediaPage extends StatefulWidget {
 
 class _MediaPageState extends State<MediaPage> {
   //Data
-  Media _media;
+  MediaDataOld _media;
 
   //Output settings
   bool _didChangeDependencies = false;
@@ -140,7 +140,7 @@ class _MediaPageState extends State<MediaPage> {
   @override
   void initState() {
     super.initState();
-    MediaItem.fetchItemData(widget.id).then((media) {
+    Media.fetchItemData(widget.id).then((media) {
       if (media == null) return;
       _media = media;
       precacheImage(_media.cover.image, context).then((_) {

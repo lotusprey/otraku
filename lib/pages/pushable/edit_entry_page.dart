@@ -14,6 +14,7 @@ import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 import 'package:otraku/tools/fields/score_picker.dart';
+import 'package:otraku/tools/overlays/dialogs.dart';
 
 class EditEntryPage extends StatefulWidget {
   final int mediaId;
@@ -85,33 +86,35 @@ class _EditEntryPageState extends State<EditEntryPage> {
                 color: Theme.of(context).dividerColor,
                 onPressed: () => showDialog(
                   context: context,
-                  builder: (_) => AlertDialog(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    title: Text(
-                      'Remove entry?',
-                      style: Theme.of(context).textTheme.bodyText1,
+                  builder: (_) => PopUpAnimation(
+                    AlertDialog(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      title: Text(
+                        'Remove entry?',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      actions: [
+                        FlatButton(
+                          child: Text(
+                            'No',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        FlatButton(
+                          child: Text(
+                            'Yes',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                          onPressed: () {
+                            Get.find<Collections>().removeEntry(_oldData);
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            widget.update(null);
+                          },
+                        ),
+                      ],
                     ),
-                    actions: [
-                      FlatButton(
-                        child: Text(
-                          'No',
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      FlatButton(
-                        child: Text(
-                          'Yes',
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                        onPressed: () {
-                          Get.find<Collections>().removeEntry(_oldData);
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                          widget.update(null);
-                        },
-                      ),
-                    ],
                   ),
                 ),
               ),

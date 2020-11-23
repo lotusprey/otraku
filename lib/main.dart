@@ -23,7 +23,7 @@ class Otraku extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
-      theme: Themes.values[GetStorage().read(Config.THEME) ?? 0].themeData,
+      theme: Themes.values[Config.storage.read(Config.THEME) ?? 0].themeData,
       home: LoadAppPage(),
     );
   }

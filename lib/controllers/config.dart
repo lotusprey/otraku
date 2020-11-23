@@ -14,6 +14,7 @@ class Config {
   static const STARTUP_PAGE = 'startupPage';
   static const THEME = 'theme';
 
+  static final storage = GetStorage();
   static RxInt _pageIndex;
   static LargeTileConfig _largeTileConfig;
   static bool _hasInit = false;
@@ -22,7 +23,7 @@ class Config {
     if (_hasInit) return;
 
     _pageIndex =
-        (GetStorage().read(STARTUP_PAGE) as int ?? TabManager.ANIME_LIST).obs;
+        (storage.read(STARTUP_PAGE) as int ?? TabManager.ANIME_LIST).obs;
 
     final tileWidth = (Get.mediaQuery.size.width - 40) / 3;
     _largeTileConfig = LargeTileConfig(
@@ -40,7 +41,7 @@ class Config {
   static set pageIndex(int index) => _pageIndex.value = index;
 
   static set initialPage(int index) {
-    if (index >= 0 && index < 5) GetStorage()..write(STARTUP_PAGE, index);
+    if (index >= 0 && index < 5) storage..write(STARTUP_PAGE, index);
   }
 
   static LargeTileConfig get tileConfig => _largeTileConfig;

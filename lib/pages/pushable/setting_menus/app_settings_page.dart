@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/controllers/config.dart';
@@ -10,43 +9,40 @@ import 'package:otraku/tools/headers/custom_app_bar.dart';
 
 class AppSettingsPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    final box = GetStorage();
-
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'App',
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        children: [
-          _RadioGrid(
-            title: 'Startup Page',
-            initialValue: box.read(Config.STARTUP_PAGE),
-            options: [
-              'Inbox',
-              'Anime List',
-              'Manga List',
-              'Explore',
-              'Profile',
-            ],
-            onChanged: (val) => box.write(Config.STARTUP_PAGE, val),
-          ),
-          _RadioGrid(
-            title: 'Theme',
-            initialValue: box.read(Config.THEME),
-            options: Themes.values
-                .map((t) => clarifyEnum(describeEnum(Themes.values[t.index])))
-                .toList(),
-            onChanged: (val) {
-              Get.changeTheme(Themes.values[val].themeData);
-              box.write(Config.THEME, val);
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        appBar: CustomAppBar(
+          title: 'App',
+        ),
+        body: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          children: [
+            _RadioGrid(
+              title: 'Startup Page',
+              initialValue: Config.storage.read(Config.STARTUP_PAGE),
+              options: [
+                'Inbox',
+                'Anime List',
+                'Manga List',
+                'Explore',
+                'Profile',
+              ],
+              onChanged: (val) =>
+                  Config.storage.write(Config.STARTUP_PAGE, val),
+            ),
+            _RadioGrid(
+              title: 'Theme',
+              initialValue: Config.storage.read(Config.THEME),
+              options: Themes.values
+                  .map((t) => clarifyEnum(describeEnum(Themes.values[t.index])))
+                  .toList(),
+              onChanged: (val) {
+                Get.changeTheme(Themes.values[val].themeData);
+                Config.storage.write(Config.THEME, val);
+              },
+            ),
+          ],
+        ),
+      );
 }
 
 class _RadioGrid extends StatefulWidget {

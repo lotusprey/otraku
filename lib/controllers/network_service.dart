@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/auth_page.dart';
 
 class NetworkService {
@@ -38,7 +38,7 @@ class NetworkService {
   }
 
   static Future<void> initViewerId() async {
-    _viewerId = GetStorage().read('viewerId');
+    _viewerId = Config.storage.read('viewerId');
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnError: false);
       if (data != null) _viewerId = data['Viewer']['id'];

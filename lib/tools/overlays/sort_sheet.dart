@@ -52,7 +52,9 @@ class SortSheet extends StatelessWidget {
                 dense: true,
                 title: Text(
                   options[i],
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: i != index
+                      ? Theme.of(context).textTheme.bodyText1
+                      : Theme.of(context).textTheme.bodyText2,
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,

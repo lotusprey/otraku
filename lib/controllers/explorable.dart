@@ -96,6 +96,7 @@ class Explorable extends GetxController {
   final _hasNextPage = true.obs;
   final _results = List<BrowseResult>().obs;
   final _type = Browsable.anime.obs;
+  final _search = ''.obs;
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
@@ -115,6 +116,8 @@ class Explorable extends GetxController {
 
   Browsable get type => _type();
 
+  String get search => _search();
+
   List<BrowseResult> get results => [..._results()];
 
   List<String> get genres => [..._genres];
@@ -124,6 +127,13 @@ class Explorable extends GetxController {
   // ***************************************************************************
   // FUNCTIONS CONTROLLING QUERY VARIABLES
   // ***************************************************************************
+
+  @override
+  void onInit() {
+    super.onInit();
+    debounce(_search, (_) => fetchData(),
+        time: const Duration(milliseconds: 600));
+  }
 
   set type(Browsable value) {
     if (value == null) return;
@@ -135,6 +145,14 @@ class Explorable extends GetxController {
     _filters.remove(FORMAT_IN);
     _filters.remove(FORMAT_NOT_IN);
     fetchData();
+  }
+
+  set search(String value) {
+    if (value == null) {
+      _search.value = '';
+    } else {
+      _search.value = value.trim();
+    }
   }
 
   dynamic getFilterWithKey(String key) => _filters[key];
@@ -193,7 +211,7 @@ class Explorable extends GetxController {
 
     if (currentType == Browsable.anime || currentType == Browsable.manga) {
       query = _mediaQuery;
-      variables = _filters;
+      variables = {..._filters};
     } else {
       variables = {
         PAGE: _filters[PAGE],
@@ -209,6 +227,8 @@ class Explorable extends GetxController {
         query = _studiosQuery;
       }
     }
+
+    if (_search() != null && _search() != '') variables['search'] = _search();
 
     final data = await NetworkService.request(
       query,

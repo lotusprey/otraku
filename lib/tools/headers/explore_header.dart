@@ -88,12 +88,8 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       ExploreSearchBar(
-                        explorable.getFilterWithKey(Explorable.SEARCH),
-                        (value) => explorable.setFilterWithKey(
-                          Explorable.SEARCH,
-                          value: value,
-                          refetch: true,
-                        ),
+                        explorable.search,
+                        (value) => explorable.search = value,
                       ),
                       Flexible(child: _FilterButton()),
                       Flexible(

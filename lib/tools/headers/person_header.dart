@@ -116,11 +116,16 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                   ),
                   if (person != null) ...[
                     if (shrinkPercentage > 0.5)
-                      Opacity(
-                        opacity: 1 < shrinkPercentage ? 1 : shrinkPercentage,
-                        child: Text(
-                          person.fullName,
-                          style: Theme.of(context).textTheme.headline3,
+                      Flexible(
+                        child: Opacity(
+                          opacity: 1 < shrinkPercentage ? 1 : shrinkPercentage,
+                          child: Text(
+                            person.fullName,
+                            style: Theme.of(context).textTheme.headline3,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     FavoriteButton(person, shrinkPercentage),
@@ -176,10 +181,12 @@ class PersonInfo extends StatelessWidget {
             Text(
               person.fullName,
               style: Theme.of(context).textTheme.headline2,
+              textAlign: TextAlign.center,
             ),
             Text(
               person.altNames.join(', '),
               style: Theme.of(context).textTheme.bodyText1,
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             if (person.description != null && person.description != '')

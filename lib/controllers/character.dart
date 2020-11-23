@@ -31,7 +31,7 @@ class Character extends GetxController {
       pageInfo {hasNextPage}
       edges {
         characterRole
-        voiceActors {
+        voiceActors(sort: [LANGUAGE]) {
           id
           name {full}
           image {large}
@@ -51,6 +51,8 @@ class Character extends GetxController {
   final _anime = Rx<ConnectionList>();
   final _manga = Rx<ConnectionList>();
   final _onAnime = true.obs;
+  final _staffLanguage = 'Japanese'.obs;
+  final List<String> _availableLanguages = [];
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
   Person get person => _person();
@@ -62,6 +64,18 @@ class Character extends GetxController {
   bool get onAnime => _onAnime();
 
   set onAnime(bool value) => _onAnime.value = value;
+
+  String get staffLanguage => _staffLanguage();
+
+  set staffLanguage(String value) => _staffLanguage.value = value;
+
+  int get languageIndex {
+    final index = _availableLanguages.indexOf(_staffLanguage());
+    if (index != -1) return index;
+    return 0;
+  }
+
+  List<String> get availableLanguages => [..._availableLanguages];
 
   MediaSort get sort => _sort;
 
@@ -176,17 +190,23 @@ class Character extends GetxController {
   }
 
   void _initLists(Map<String, dynamic> data) {
+    _availableLanguages.clear();
+
     List<Connection> connections = [];
     for (final connection in data['anime']['edges']) {
       final List<Connection> voiceActors = [];
 
       for (final va in connection['voiceActors']) {
+        final language = clarifyEnum(va['language']);
+        if (!_availableLanguages.contains(language))
+          _availableLanguages.add(language);
+
         voiceActors.add(Connection(
           id: va['id'],
           title: va['name']['full'],
           imageUrl: va['image']['large'],
           browsable: Browsable.staff,
-          subtitle: clarifyEnum(va['language']),
+          subtitle: language,
         ));
       }
 
@@ -199,6 +219,9 @@ class Character extends GetxController {
         others: voiceActors,
       ));
     }
+
+    if (!_availableLanguages.contains(_staffLanguage()))
+      _staffLanguage.value = 'Japanese';
 
     _anime(ConnectionList(
       connections,

@@ -5,6 +5,7 @@ import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/person_header.dart';
 import 'package:otraku/controllers/character.dart';
 import 'package:otraku/tools/layouts/media_connection_grid.dart';
+import 'package:otraku/tools/overlays/option_sheet.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class CharacterPage extends StatelessWidget {
@@ -50,20 +51,41 @@ class CharacterPage extends StatelessWidget {
                             onSameValue: (_) {},
                             minimised: true,
                             shrinkWrap: true,
-                          ),
-                        IconButton(
-                          icon: const Icon(
-                            FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                          ),
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            builder: (_) => MediaSortSheet(
-                              character.sort,
-                              (sort) => character.sort = sort,
+                          )
+                        else
+                          const SizedBox(),
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.language),
+                              onPressed: () => showModalBottomSheet(
+                                context: context,
+                                builder: (_) => OptionSheet(
+                                  title: 'Language',
+                                  options: character.availableLanguages,
+                                  index: character.languageIndex,
+                                  onTap: (index) => character.staffLanguage =
+                                      character.availableLanguages[index],
+                                ),
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                              ),
                             ),
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                          ),
+                            IconButton(
+                              icon: const Icon(
+                                FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                              ),
+                              onPressed: () => showModalBottomSheet(
+                                context: context,
+                                builder: (_) => MediaSortSheet(
+                                  character.sort,
+                                  (sort) => character.sort = sort,
+                                ),
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -86,6 +108,7 @@ class CharacterPage extends StatelessWidget {
                     () {
                       if (connectionList.hasNextPage) character.fetchPage();
                     },
+                    preferredSubtitle: character.staffLanguage,
                   ),
                 );
               }),

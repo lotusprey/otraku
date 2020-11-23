@@ -65,7 +65,11 @@ class _ConditionalLoader extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
-          child: Get.find<Explorable>().hasNextPage ? BlossomLoader() : null,
+          child: Obx(
+            () => Get.find<Explorable>().hasNextPage
+                ? BlossomLoader()
+                : const SizedBox(),
+          ),
         ),
       ),
     );

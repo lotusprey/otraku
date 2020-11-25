@@ -9,6 +9,7 @@ import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:otraku/tools/page_transition.dart';
 
 class UserTab extends StatelessWidget {
   static const _space = SizedBox(width: 10);
@@ -185,10 +186,9 @@ class _Header implements SliverPersistentHeaderDelegate {
                         FluentSystemIcons.ic_fluent_settings_regular),
                     color: Theme.of(context).dividerColor,
                     onPressed: () => Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (ctx) => SettingsPage(),
-                        )),
+                      context,
+                      PageTransition.route(builder: SettingsPage()),
+                    ),
                   ),
                 ] else ...[
                   IconButton(

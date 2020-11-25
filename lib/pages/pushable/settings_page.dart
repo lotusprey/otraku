@@ -10,6 +10,7 @@ import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
+import 'package:otraku/tools/page_transition.dart';
 
 class SettingsPage extends StatelessWidget {
   static const padding = const EdgeInsets.symmetric(horizontal: 5);
@@ -58,10 +59,9 @@ class SettingsPage extends StatelessWidget {
               ),
               title: Text('App', style: Theme.of(context).textTheme.bodyText1),
               onTap: () => Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (ctx) => AppSettingsPage(),
-                  )),
+                context,
+                PageTransition.route(builder: AppSettingsPage()),
+              ),
             ),
             ListTile(
               contentPadding: padding,
@@ -72,10 +72,9 @@ class SettingsPage extends StatelessWidget {
               title:
                   Text('Media', style: Theme.of(context).textTheme.bodyText1),
               onTap: () => Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (ctx) => MediaSettingsPage(changes),
-                  )),
+                context,
+                PageTransition.route(builder: MediaSettingsPage(changes)),
+              ),
             ),
             ListTile(
               contentPadding: padding,
@@ -86,10 +85,9 @@ class SettingsPage extends StatelessWidget {
               title:
                   Text('Lists', style: Theme.of(context).textTheme.bodyText1),
               onTap: () => Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (ctx) => ListSettingsPage(changes),
-                  )),
+                context,
+                PageTransition.route(builder: ListSettingsPage(changes)),
+              ),
             ),
             ListTile(
               contentPadding: padding,
@@ -102,10 +100,10 @@ class SettingsPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyText1,
               ),
               onTap: () => Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                    builder: (ctx) => NotificationSettingsPage(changes),
-                  )),
+                context,
+                PageTransition.route(
+                    builder: NotificationSettingsPage(changes)),
+              ),
             ),
           ],
         ),

@@ -16,6 +16,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/header_search_bar.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
+import 'package:otraku/tools/page_transition.dart';
 
 class ExploreHeader extends StatelessWidget {
   final ScrollController scrollCtrl;
@@ -166,9 +167,10 @@ class __FilterButtonState extends State<_FilterButton> {
     if (!_active) {
       return IconButton(
         icon: const Icon(Icons.filter_alt),
-        onPressed: () => Navigator.of(context).push(
-          CupertinoPageRoute(
-            builder: (_) => FilterPage((filterActivity) {
+        onPressed: () => Navigator.push(
+          context,
+          PageTransition.route(
+            builder: FilterPage((filterActivity) {
               if (filterActivity == null) {
                 setState(() => _active = _checkIfActive(explorable));
               } else if (!filterActivity) {
@@ -183,9 +185,10 @@ class __FilterButtonState extends State<_FilterButton> {
     }
 
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        CupertinoPageRoute(
-          builder: (_) => FilterPage((filterActivity) {
+      onTap: () => Navigator.push(
+        context,
+        PageTransition.route(
+          builder: FilterPage((filterActivity) {
             if (filterActivity == null) {
               setState(() => _active = _checkIfActive(explorable));
             } else if (!filterActivity) {

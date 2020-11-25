@@ -6,6 +6,7 @@ import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
+import 'package:otraku/tools/page_transition.dart';
 
 class MediaIndexer extends StatelessWidget {
   final Browsable itemType;
@@ -26,25 +27,24 @@ class MediaIndexer extends StatelessWidget {
     @required int id,
     @required String tag,
   }) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) {
-          switch (type) {
-            case Browsable.anime:
-            case Browsable.manga:
-              return MediaPage(id, tag);
-            case Browsable.characters:
-              return CharacterPage(id, tag);
-            case Browsable.staff:
-              return StaffPage(id, tag);
-            // case Browsable.studios:
-            //   return StudioPage(id, tag ?? id, heroTitle);
-            default:
-              return StudioPage(id, tag);
-          }
-        },
-      ),
-    );
+    Widget page;
+    switch (type) {
+      case Browsable.anime:
+      case Browsable.manga:
+        page = MediaPage(id, tag);
+        break;
+      case Browsable.characters:
+        page = CharacterPage(id, tag);
+        break;
+      case Browsable.staff:
+        page = StaffPage(id, tag);
+        break;
+      default:
+        page = StudioPage(id, tag);
+        break;
+    }
+
+    Navigator.push(context, PageTransition.route(builder: page));
   }
 
   @override
@@ -59,10 +59,9 @@ class MediaIndexer extends StatelessWidget {
       ),
       onLongPress: () {
         if (itemType == Browsable.anime || itemType == Browsable.manga)
-          Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (_) => EditEntryPage(id, (_) {}),
-            ),
+          Navigator.push(
+            context,
+            PageTransition.route(builder: EditEntryPage(id, (_) {})),
           );
       },
       child: child,

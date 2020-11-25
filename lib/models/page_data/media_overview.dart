@@ -4,23 +4,24 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/page_data/page_object.dart';
 
-class MediaMain extends PageObject {
+class MediaOverview extends PageObject {
   final String preferredTitle;
   final String romajiTitle;
   final String englishTitle;
   final String nativeTitle;
   final List<String> synonyms;
-  final Image cover;
-  final Image banner;
+  final String cover;
+  final String banner;
   final String description;
   final String format;
   final String status;
-  final MediaListStatus entryStatus;
+  MediaListStatus entryStatus;
   final int nextEpisode;
   final String timeUntilAiring;
-  final int parts;
-  final int volumes;
+  final int episodes;
   final String duration;
+  final int chapters;
+  final int volumes;
   final String startDate;
   final String endDate;
   final String season;
@@ -31,10 +32,10 @@ class MediaMain extends PageObject {
   final List<String> studios;
   final List<String> producers;
   final String source;
-  final Link hashtag;
+  final String hashtag;
   final String countryOfOrigin;
 
-  MediaMain({
+  MediaOverview({
     @required int id,
     @required Browsable browsable,
     @required bool isFavourite,
@@ -52,9 +53,10 @@ class MediaMain extends PageObject {
     @required this.entryStatus,
     @required this.nextEpisode,
     @required this.timeUntilAiring,
-    @required this.parts,
-    @required this.volumes,
+    @required this.episodes,
     @required this.duration,
+    @required this.chapters,
+    @required this.volumes,
     @required this.startDate,
     @required this.endDate,
     @required this.season,
@@ -73,11 +75,4 @@ class MediaMain extends PageObject {
           isFavourite: isFavourite,
           favourites: favourites,
         );
-}
-
-class Link {
-  final String name;
-  final String url;
-
-  Link(this.name, this.url);
 }

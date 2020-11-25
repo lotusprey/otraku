@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/user.dart';
-import 'package:otraku/pages/pushable/setting_menus/settings_page.dart';
+import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';

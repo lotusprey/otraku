@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/models/page_data/media_data_old.dart';
+import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:otraku/tools/transparent_image.dart';
 
 class MediaPageHeader implements SliverPersistentHeaderDelegate {
-  //Data
-  final MediaDataOld media;
-
-  //Output settings
+  final MediaOverview media;
   final double coverWidth;
   final double coverHeight;
   final double minHeight = Config.MATERIAL_TAP_TARGET_SIZE + 10;
@@ -55,7 +54,13 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (media.banner != null) media.banner,
+          if (media != null && media.banner != null)
+            FadeInImage.memoryNetwork(
+              image: media.banner,
+              placeholder: transparentImage,
+              fadeInDuration: const Duration(milliseconds: 100),
+              fit: BoxFit.cover,
+            ),
           Container(
             padding: const EdgeInsets.only(
               top: Config.MATERIAL_TAP_TARGET_SIZE,
@@ -77,52 +82,66 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    child: Hero(
-                      tag: tagImageUrl,
+                  Hero(
+                    tag: tagImageUrl,
+                    child: Container(
+                      height: coverHeight,
+                      width: coverWidth,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
-                        child: Container(
-                          height: coverHeight,
-                          width: coverWidth,
-                          child: media.cover,
-                        ),
-                      ),
-                    ),
-                    onTap: () => showDialog(
-                      context: context,
-                      builder: (ctx) => PopUpAnimation(
-                        ImageTextDialog(
-                          text: media.title,
-                          image: media.cover,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.network(tagImageUrl, fit: BoxFit.cover),
+                            if (media != null)
+                              GestureDetector(
+                                child: Image.network(
+                                  media.cover,
+                                  fit: BoxFit.cover,
+                                ),
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (ctx) => PopUpAnimation(
+                                    ImageTextDialog(
+                                      text: media.preferredTitle,
+                                      image: Image.network(
+                                        media.cover,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            media.title,
-                            style: Theme.of(context).textTheme.headline3,
-                            overflow: TextOverflow.fade,
-                          ),
-                        ),
-                        if (media.nextEpisode != null)
+                  if (media != null)
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
                           Flexible(
                             child: Text(
-                              'Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
-                              style: Theme.of(context).textTheme.bodyText2,
+                              media.preferredTitle,
+                              style: Theme.of(context).textTheme.headline3,
+                              overflow: TextOverflow.fade,
                             ),
                           ),
-                        const Flexible(child: SizedBox(height: 40)),
-                      ],
+                          if (media.nextEpisode != null)
+                            Flexible(
+                              child: Text(
+                                'Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                            ),
+                          const Flexible(child: SizedBox(height: 40)),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -149,18 +168,21 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                   ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                FavoriteButton(media, shrinkPercentage),
+                media != null
+                    ? FavoriteButton(media, shrinkPercentage)
+                    : const SizedBox(),
               ],
             ),
           ),
-          Positioned(
-            right: shrinkPercentage * 40 + 10,
-            bottom: shrinkPercentage * 7 + 10,
-            child: _StatusButton(
-              media,
-              buttonMinWidth + addition * shrinkPercentage,
+          if (media != null)
+            Positioned(
+              right: shrinkPercentage * 40 + 10,
+              bottom: shrinkPercentage * 7 + 10,
+              child: _StatusButton(
+                media,
+                buttonMinWidth + addition * shrinkPercentage,
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -190,7 +212,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
 }
 
 class _StatusButton extends StatefulWidget {
-  final MediaDataOld media;
+  final MediaOverview media;
   final double width;
 
   _StatusButton(this.media, this.width);
@@ -201,42 +223,40 @@ class _StatusButton extends StatefulWidget {
 
 class __StatusButtonState extends State<_StatusButton> {
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width,
-      child: RaisedButton(
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shape: RoundedRectangleBorder(
-          borderRadius: Config.BORDER_RADIUS,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              widget.media.status == null ? Icons.add : Icons.edit,
-              size: Styles.ICON_SMALL,
-              color: Theme.of(context).backgroundColor,
-            ),
-            const SizedBox(width: 10),
-            Text(
-                widget.media.status == null
-                    ? 'Add'
-                    : listStatusSpecification(
-                        widget.media.status,
-                        widget.media.type == 'ANIME',
-                      ),
-                style: Theme.of(context).textTheme.button),
-          ],
-        ),
-        onPressed: () => Navigator.of(context).push(
-          CupertinoPageRoute(
-            builder: (_) => EditEntryPage(
-              widget.media.id,
-              (status) => setState(() => widget.media.status = status),
+  Widget build(BuildContext context) => SizedBox(
+        width: widget.width,
+        child: RaisedButton(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(
+            borderRadius: Config.BORDER_RADIUS,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                widget.media.status == null ? Icons.add : Icons.edit,
+                size: Styles.ICON_SMALL,
+                color: Theme.of(context).backgroundColor,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                  widget.media.entryStatus == null
+                      ? 'Add'
+                      : listStatusSpecification(
+                          widget.media.entryStatus,
+                          widget.media.browsable == Browsable.anime,
+                        ),
+                  style: Theme.of(context).textTheme.button),
+            ],
+          ),
+          onPressed: () => Navigator.of(context).push(
+            CupertinoPageRoute(
+              builder: (_) => EditEntryPage(
+                widget.media.id,
+                (status) => setState(() => widget.media.entryStatus = status),
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }

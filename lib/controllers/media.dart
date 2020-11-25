@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/models/page_data/media_data_old.dart';
+import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/controllers/network_service.dart';
-import 'package:otraku/models/page_data/media_main.dart';
+import 'package:otraku/models/page_data/media_overview.dart';
 
 class Media extends GetxController {
   static const _mediaQuery = r'''
@@ -15,9 +17,8 @@ class Media extends GetxController {
         bannerImage
         isFavourite
         favourites
-        popularity
-        nextAiringEpisode {episode timeUntilAiring}
         mediaListEntry {status}
+        nextAiringEpisode {episode timeUntilAiring}
         description
         format
         status(version: 2)
@@ -29,6 +30,7 @@ class Media extends GetxController {
         seasonYear
         averageScore
         meanScore
+        popularity
         startDate {year month day}
         endDate {year month day}
         genres
@@ -40,34 +42,103 @@ class Media extends GetxController {
     }
   ''';
 
-  final _main = Rx<MediaMain>();
+  static const OVERVIEW = 0;
+  static const RELATIONS = 1;
+  static const SOCIAL = 2;
 
-  MediaMain get main => _main();
+  final _currentTab = OVERVIEW.obs;
+  final _overview = Rx<MediaOverview>();
 
-  Future<void> fetchMain(int id) async {
+  int get currentTab => _currentTab();
+
+  set currentTab(int value) => _currentTab.value = value;
+
+  MediaOverview get overview => _overview();
+
+  Future<void> fetchOverview(int id) async {
     final result = await NetworkService.request(_mediaQuery, {'id': id});
 
     if (result == null) return null;
     final data = result['Media'];
 
-    _main(MediaMain(
+    String duration;
+    if (data['duration'] != null) {
+      int time = data['duration'];
+      int hours = time ~/ 60;
+      int minutes = time % 60;
+      duration = (hours != 0 ? '$hours hours, ' : '') + '$minutes mins';
+    }
+
+    String season;
+    if (data['season'] != null) {
+      season = data['season'];
+      season = season[0] + season.substring(1).toLowerCase();
+      if (data['seasonYear'] != null) {
+        season += ' ${data["seasonYear"]}';
+      }
+    }
+
+    List<String> studios = [];
+    List<String> producers = [];
+    if (data['studios'] != null) {
+      final List<dynamic> companies = data['studios']['edges'];
+      for (final company in companies) {
+        if (company['isMain']) {
+          studios.add(company['node']['name']);
+        } else {
+          producers.add(company['node']['name']);
+        }
+      }
+    }
+
+    _overview(MediaOverview(
       id: id,
       browsable: data['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
       isFavourite: data['isFavourite'],
       favourites: data['favourites'],
       preferredTitle: data['title']['userPreferred'],
       romajiTitle: data['title']['romaji'],
-      endDate: data['title']['english'],
+      englishTitle: data['title']['english'],
       nativeTitle: data['title']['native'],
-      synonyms: data['synonyms'],
+      synonyms: List<String>.from(data['synonyms']),
+      cover: data['coverImage']['extraLarge'] ?? data['coverImage']['large'],
+      banner: data['bannerImage'],
+      description: data['description'] != null
+          ? data['description'].replaceAll(RegExp(r'<[^>]*>'), '')
+          : null,
+      format: data['format'] != null ? clarifyEnum(data['format']) : null,
+      status: data['status'] != null ? clarifyEnum(data['status']) : null,
+      entryStatus: data['mediaListEntry'] != null
+          ? stringToEnum(
+              data['mediaListEntry']['status'].toString(),
+              MediaListStatus.values,
+            )
+          : null,
+      nextEpisode: data['nextAiringEpisode'] != null
+          ? data['nextAiringEpisode']['episode']
+          : null,
+      timeUntilAiring: data['nextAiringEpisode'] != null
+          ? secondsToTime(data['nextAiringEpisode']['timeUntilAiring'])
+          : null,
+      episodes: data['episodes'],
+      duration: duration,
+      chapters: data['chapters'],
+      volumes: data['volumes'],
+      startDate:
+          data['startDate'] != null ? mapToDateString(data['startDate']) : null,
+      endDate:
+          data['endDate'] != null ? mapToDateString(data['endDate']) : null,
+      season: season,
+      averageScore:
+          data['averageScore'] != null ? '${data["averageScore"]}%' : null,
+      meanScore: data['meanScore'] != null ? '${data["meanScore"]}%' : null,
+      popularity: data['popularity'],
+      genres: List<String>.from(data['genres']),
+      studios: studios,
+      producers: producers,
+      source: clarifyEnum(data['source']),
+      hashtag: data['hashtag'],
+      countryOfOrigin: data['countryOfOrigin'],
     ));
-  }
-
-  static Future<MediaDataOld> fetchItemData(int id) async {
-    final data = await NetworkService.request(_mediaQuery, {'id': id});
-
-    if (data == null) return null;
-
-    return MediaDataOld(id, data['Media']);
   }
 }

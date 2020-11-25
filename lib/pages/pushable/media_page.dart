@@ -1,162 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/models/page_data/media_data_old.dart';
+import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/pages/pushable/media_fragments/overview_fragment.dart';
+import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
-import 'package:otraku/tools/layouts/info_grid.dart';
-import 'package:otraku/tools/overlays/dialogs.dart';
 
-class MediaPage extends StatefulWidget {
+class MediaPage extends StatelessWidget {
   final int id;
   final String tagImageUrl;
 
   MediaPage(this.id, this.tagImageUrl);
 
   @override
-  _MediaPageState createState() => _MediaPageState();
-}
-
-class _MediaPageState extends State<MediaPage> {
-  //Data
-  MediaDataOld _media;
-
-  //Output settings
-  bool _didChangeDependencies = false;
-  double _coverWidth;
-  double _coverHeight;
-  double _bannerHeight;
-
-  @override
   Widget build(BuildContext context) {
+    double coverWidth = MediaQuery.of(context).size.width * 0.35;
+    double coverHeight = coverWidth / 0.7;
+    double bannerHeight = coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+
     return Scaffold(
       body: SafeArea(
         child: Container(
           width: double.infinity,
           height: double.infinity,
           color: Theme.of(context).backgroundColor,
-          child: _media != null
-              ? CustomScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  slivers: [
-                    SliverPersistentHeader(
-                      pinned: true,
-                      floating: false,
-                      delegate: MediaPageHeader(
-                        media: _media,
-                        coverWidth: _coverWidth,
-                        coverHeight: _coverHeight,
-                        maxHeight: _bannerHeight,
-                        tagImageUrl: widget.tagImageUrl,
-                      ),
-                    ),
-                    if (_media.description != null)
-                      SliverPadding(
-                        padding: Config.PADDING,
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate(
-                            [
-                              Text(
-                                'Description',
-                                style: Theme.of(context).textTheme.subtitle1,
-                              ),
-                              const SizedBox(height: 10),
-                              GestureDetector(
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).primaryColor,
-                                    borderRadius: Config.BORDER_RADIUS,
-                                  ),
-                                  child: Text(
-                                    _media.description,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                    overflow: TextOverflow.fade,
-                                    maxLines: 5,
-                                  ),
-                                ),
-                                onTap: () => showDialog(
-                                  context: context,
-                                  builder: (_) => PopUpAnimation(
-                                    TextDialog(
-                                      title: 'Description',
-                                      text: _media.description,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    SliverToBoxAdapter(child: InfoGrid(_media)),
-                    const SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 500,
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Theme.of(context).dividerColor,
-                      ),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: _coverWidth,
-                            height: _coverHeight,
-                            child: Hero(
-                              tag: widget.tagImageUrl,
-                              child: ClipRRect(
-                                borderRadius: Config.BORDER_RADIUS,
-                                child: Image.network(
-                                  widget.tagImageUrl,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              GetX<Media>(
+                init: Media(),
+                initState: (_) => Get.find<Media>().fetchOverview(id),
+                builder: (media) => SliverPersistentHeader(
+                  pinned: true,
+                  floating: false,
+                  delegate: MediaPageHeader(
+                    media: media.overview,
+                    coverWidth: coverWidth,
+                    coverHeight: coverHeight,
+                    maxHeight: bannerHeight,
+                    tagImageUrl: tagImageUrl,
+                  ),
                 ),
+              ),
+              Obx(() {
+                final media = Get.find<Media>();
+                return SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: BubbleTabBar(
+                      options: ['Overview', 'Relations', 'Social'],
+                      values: [Media.OVERVIEW, Media.RELATIONS, Media.SOCIAL],
+                      initial: media.currentTab,
+                      onNewValue: (_) {},
+                      onSameValue: (_) {},
+                    ),
+                  ),
+                );
+              }),
+              SliverPadding(
+                padding: const EdgeInsets.all(10),
+                sliver: Obx(() {
+                  final media = Get.find<Media>();
+                  if (media.currentTab == Media.OVERVIEW) {
+                    final overview = media.overview;
+                    if (overview == null) return SliverToBoxAdapter();
+                    return OverviewFragment();
+                  }
+                  return SliverToBoxAdapter();
+                }),
+              ),
+              // SliverToBoxAdapter(child: InfoGrid(_media)),
+              const SliverToBoxAdapter(
+                child: SizedBox(
+                  height: 500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Media.fetchItemData(widget.id).then((media) {
-      if (media == null) return;
-      _media = media;
-      precacheImage(_media.cover.image, context).then((_) {
-        if (mounted) setState(() {});
-      });
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_didChangeDependencies) {
-      _coverWidth = MediaQuery.of(context).size.width * 0.35;
-      _coverHeight = _coverWidth / 0.7;
-      _bannerHeight = _coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
-      _didChangeDependencies = true;
-    }
   }
 }

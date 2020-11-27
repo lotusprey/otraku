@@ -7,28 +7,24 @@ import 'package:otraku/tools/headers/explore_header.dart';
 import 'package:otraku/tools/layouts/result_grid.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 
-class ExploreTab extends StatefulWidget {
-  final ScrollController scrollCtrl;
-
-  ExploreTab(this.scrollCtrl);
-
-  @override
-  _ExploreTabState createState() => _ExploreTabState();
-}
-
-class _ExploreTabState extends State<ExploreTab> {
+class ExploreTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final scrollCtrl = ScrollController();
+
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
-      controller: widget.scrollCtrl,
+      controller: scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        ExploreHeader(widget.scrollCtrl),
+        ExploreHeader(scrollCtrl),
         _ExploreGrid(),
         _ConditionalLoader(),
+        SliverToBoxAdapter(
+          child: const SizedBox(height: 50),
+        ),
       ],
     );
   }

@@ -10,10 +10,10 @@ import 'package:otraku/controllers/users.dart';
 
 Future<void> main() async {
   await GetStorage.init();
-  runApp(Otraku());
+  runApp(App());
 }
 
-class Otraku extends StatelessWidget {
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(Collections());

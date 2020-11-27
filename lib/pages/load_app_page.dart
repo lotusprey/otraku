@@ -29,7 +29,7 @@ class LoadAppPage extends StatelessWidget {
       final Future<void> Function() fetchViewer = Get.find<Users>().fetchViewer;
 
       NetworkService.initViewerId().then((_) {
-        switch (Config.pageIndex.value) {
+        switch (Config.pageIndex) {
           case TabManager.ANIME_LIST:
             fetchAnimeCollection().then((_) => _goToTabManager());
             fetchMangaCollection();

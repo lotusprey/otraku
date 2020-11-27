@@ -8,6 +8,7 @@ import 'package:otraku/controllers/users.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
+import 'package:otraku/enums/theme_enum.dart';
 
 class SortSheet extends StatelessWidget {
   final List<String> options;
@@ -68,8 +69,10 @@ class SortSheet extends StatelessWidget {
                             : Theme.of(context).accentColor,
                       ),
                       child: IconButton(
+                        padding: const EdgeInsets.all(0),
                         icon: const Icon(
                           FluentSystemIcons.ic_fluent_arrow_down_filled,
+                          size: Styles.ICON_SMALLER,
                         ),
                         color: Theme.of(context).backgroundColor,
                         onPressed: () {
@@ -87,8 +90,10 @@ class SortSheet extends StatelessWidget {
                             : Theme.of(context).accentColor,
                       ),
                       child: IconButton(
+                        padding: const EdgeInsets.all(0),
                         icon: const Icon(
                           FluentSystemIcons.ic_fluent_arrow_up_filled,
+                          size: Styles.ICON_SMALLER,
                         ),
                         color: Theme.of(context).backgroundColor,
                         onPressed: () {

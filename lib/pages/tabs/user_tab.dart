@@ -10,6 +10,7 @@ import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/tools/page_transition.dart';
+import 'package:otraku/tools/transparent_image.dart';
 
 class UserTab extends StatelessWidget {
   static const _space = SizedBox(width: 10);
@@ -77,6 +78,9 @@ class UserTab extends StatelessWidget {
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+              child: const SizedBox(height: 60),
+            ),
           ],
         );
       });
@@ -117,8 +121,10 @@ class _Header implements SliverPersistentHeaderDelegate {
         children: [
           if (user != null) ...[
             if (user.banner != null)
-              Image.network(
-                user.banner,
+              FadeInImage.memoryNetwork(
+                image: user.banner,
+                placeholder: transparentImage,
+                fadeInDuration: const Duration(milliseconds: 100),
                 fit: BoxFit.cover,
               ),
             Container(

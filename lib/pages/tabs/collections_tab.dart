@@ -5,39 +5,36 @@ import 'package:otraku/tools/headers/collection_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 
-class CollectionsTab extends StatefulWidget {
-  final ScrollController scrollCtrl;
+class CollectionsTab extends StatelessWidget {
   final int otherUserId;
   final bool ofAnime;
 
   CollectionsTab({
-    @required this.scrollCtrl,
     @required this.otherUserId,
     @required this.ofAnime,
     @required key,
   }) : super(key: key);
 
   @override
-  _CollectionsTabState createState() => _CollectionsTabState();
-}
-
-class _CollectionsTabState extends State<CollectionsTab> {
-  @override
   Widget build(BuildContext context) {
     Get.find<Collections>().assignCollection(
-      widget.ofAnime,
-      widget.otherUserId,
+      ofAnime,
+      otherUserId,
     );
+    final scrollCtrl = ScrollController();
 
     return CustomScrollView(
-      controller: widget.scrollCtrl,
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
+      controller: scrollCtrl,
       slivers: [
-        HeadlineHeader('${widget.ofAnime ? 'Anime' : 'Manga'} List', false),
-        CollectionHeader(widget.scrollCtrl),
-        MediaList(widget.ofAnime),
+        HeadlineHeader('${ofAnime ? 'Anime' : 'Manga'} List', false),
+        CollectionHeader(scrollCtrl),
+        MediaList(ofAnime),
+        SliverToBoxAdapter(
+          child: const SizedBox(height: 50),
+        ),
       ],
     );
   }

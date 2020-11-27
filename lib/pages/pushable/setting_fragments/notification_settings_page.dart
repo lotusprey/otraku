@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
-import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 
 class NotificationSettingsPage extends StatelessWidget {
@@ -56,43 +55,34 @@ class NotificationSettingsPage extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Notifications',
       ),
-      body: ListView(
+      body: ListView.builder(
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        children: [
-          InputFieldStructure(
-            enforceHeight: false,
-            title: 'Notify me on',
-            body: ListView.builder(
-              shrinkWrap: true,
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 15),
-              itemBuilder: (_, index) => CheckboxField(
-                title: _notificationNames[index],
-                initialValue: values[index],
-                onChanged: (value) {
-                  values[index] = value;
-                  const key = 'notificationOptions';
+        itemBuilder: (_, index) => CheckboxField(
+          title: _notificationNames[index],
+          initialValue: values[index],
+          onChanged: (value) {
+            values[index] = value;
+            const key = 'notificationOptions';
 
-                  if (changes.containsKey(key)) {
-                    for (int i = 0; i < values.length; i++) {
-                      changes[key][i]['enabled'] = values[i];
-                    }
-                  } else {
-                    final List<dynamic> newOptions = [];
-                    for (int i = 0; i < values.length; i++) {
-                      newOptions.add({
-                        'type': _notificationTypes[i],
-                        'enabled': values[i],
-                      });
-                    }
-                    changes[key] = newOptions;
-                  }
-                },
-              ),
-              itemCount: _notificationNames.length,
-            ),
-          ),
-        ],
+            if (changes.containsKey(key)) {
+              for (int i = 0; i < values.length; i++) {
+                changes[key][i]['enabled'] = values[i];
+              }
+            } else {
+              final List<dynamic> newOptions = [];
+              for (int i = 0; i < values.length; i++) {
+                newOptions.add({
+                  'type': _notificationTypes[i],
+                  'enabled': values[i],
+                });
+              }
+              changes[key] = newOptions;
+            }
+          },
+        ),
+        itemCount: _notificationNames.length,
       ),
     );
   }

@@ -121,10 +121,11 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                   if (media != null)
                     Expanded(
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Flexible(
+                            flex: 2,
                             child: Text(
                               media.preferredTitle,
                               style: Theme.of(context).textTheme.headline3,
@@ -138,7 +139,9 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                                 style: Theme.of(context).textTheme.bodyText2,
                               ),
                             ),
-                          const Flexible(child: SizedBox(height: 40)),
+                          const Flexible(
+                            child: SizedBox(height: 60),
+                          ),
                         ],
                       ),
                     ),

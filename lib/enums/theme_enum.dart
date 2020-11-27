@@ -3,10 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:otraku/controllers/config.dart';
 
 enum Themes {
+  gold,
+  light_blue,
   navy,
   cyber,
   night,
-  frost,
   amethyst,
 }
 
@@ -22,6 +23,26 @@ extension Styles on Themes {
   static const double FONT_SMALLER = 13;
 
   static const _themes = {
+    Themes.gold: {
+      'background': Color(0xFFFFC71F),
+      'primary': Color(0xFFFFD147),
+      'translucent': Color(0xBBFFC71F),
+      'accent': Color(0xFFFFF7E0),
+      'error': Color(0xFFE84A67),
+      'faded': Color(0xFF5F5B44),
+      'contrast': Color(0xFF140F00),
+      'brightness': Brightness.light,
+    },
+    Themes.light_blue: {
+      'background': Color(0xFFFFFEFF),
+      'primary': Color(0xFFE3E5E8),
+      'translucent': Color(0xBBFFFEFF),
+      'accent': Color(0xFF54B2F1),
+      'error': Color(0xFFE32749),
+      'faded': Color(0xFF8F97A3),
+      'contrast': Color(0xFF141F29),
+      'brightness': Brightness.light,
+    },
     Themes.navy: {
       'background': Color(0xFF0F171E),
       'primary': Color(0xFF1D2835),
@@ -51,16 +72,6 @@ extension Styles on Themes {
       'faded': Color(0xFF6B80DB),
       'contrast': Color(0xFFEBFFFA),
       'brightness': Brightness.dark,
-    },
-    Themes.frost: {
-      'background': Color(0xFFF5F5F5),
-      'primary': Color(0xFFE1E5F2),
-      'translucent': Color(0xBBF5F5F5),
-      'accent': Color(0xFF28A0B8),
-      'error': Color(0xFFE88E5F),
-      'faded': Color(0xFF045876),
-      'contrast': Color(0xFF022B3A),
-      'brightness': Brightness.light,
     },
     Themes.amethyst: {
       'background': Color(0xFF1E1E3F),

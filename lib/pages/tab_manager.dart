@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
@@ -22,50 +23,37 @@ class TabManager extends StatefulWidget {
 }
 
 class _TabManagerState extends State<TabManager> {
-  static ScrollController _scrollCtrl;
   List<Widget> _drawers;
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _tabItems;
-  ValueNotifier<bool> _navBarVisibility;
-
-  void _scrollDirection() {
-    if (_scrollCtrl.position.userScrollDirection == ScrollDirection.reverse) {
-      if (_navBarVisibility.value) _navBarVisibility.value = false;
-    } else if (_scrollCtrl.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (!_navBarVisibility.value) _navBarVisibility.value = true;
-    }
-  }
 
   int counter = 0;
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => Scaffold(
-        bottomNavigationBar: ValueListenableBuilder(
-          valueListenable: _navBarVisibility,
-          builder: (_, value, child) => AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            height: value ? 56 : 0,
-            child: child,
-          ),
-          child: Wrap(
-            children: [
-              BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                selectedFontSize: 0,
-                currentIndex: Config.pageIndex.value,
-                items: _tabItems,
-                onTap: (index) => Config.pageIndex = index,
-              ),
-            ],
+        extendBody: true,
+        drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
+        bottomNavigationBar: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: BottomNavigationBar(
+              backgroundColor: Theme.of(context).cardColor,
+              elevation: 0,
+              type: BottomNavigationBarType.fixed,
+              selectedFontSize: 0,
+              currentIndex: Config.pageIndex,
+              items: _tabItems,
+              onTap: (index) => Config.pageIndex = index,
+            ),
           ),
         ),
-        drawer: _drawers[Config.pageIndex.value],
+        drawer: _drawers[Config.pageIndex],
         body: SafeArea(
+          bottom: false,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            child: _tabs[Config.pageIndex.value],
+            child: _tabs[Config.pageIndex],
           ),
         ),
       ),
@@ -75,10 +63,6 @@ class _TabManagerState extends State<TabManager> {
   @override
   void initState() {
     super.initState();
-    _navBarVisibility = ValueNotifier(true);
-    _scrollCtrl = ScrollController();
-    _scrollCtrl.addListener(_scrollDirection);
-
     _drawers = [
       const SizedBox(),
       CollectionDrawer(),
@@ -92,16 +76,14 @@ class _TabManagerState extends State<TabManager> {
       CollectionsTab(
         ofAnime: true,
         otherUserId: null,
-        scrollCtrl: _scrollCtrl,
         key: UniqueKey(),
       ),
       CollectionsTab(
         ofAnime: false,
         otherUserId: null,
-        scrollCtrl: _scrollCtrl,
         key: UniqueKey(),
       ),
-      ExploreTab(_scrollCtrl),
+      ExploreTab(),
       UserTab(null),
     ];
 
@@ -127,13 +109,5 @@ class _TabManagerState extends State<TabManager> {
         label: '',
       ),
     ];
-  }
-
-  @override
-  void dispose() {
-    if (_scrollCtrl.hasClients) {
-      _scrollCtrl.dispose();
-    }
-    super.dispose();
   }
 }

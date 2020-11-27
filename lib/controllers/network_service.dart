@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -50,14 +51,18 @@ class NetworkService {
     Map<String, dynamic> variables, {
     bool popOnError = true,
   }) async {
+    bool erred = false;
+
     final response = await post(
       _url,
       body: json.encode({'query': request, 'variables': variables}),
       headers: _headers,
     ).catchError((err) {
-      _handleError(popOnError, [err.toString()], false);
-      return null;
+      _handleError(popOnError, ioErr: err as IOException);
+      erred = true;
     });
+
+    if (erred) return null;
 
     final Map<String, dynamic> body = json.decode(response.body);
 
@@ -66,7 +71,7 @@ class NetworkService {
           .map((e) => e['message'].toString())
           .toList();
 
-      _handleError(popOnError, messages, true);
+      _handleError(popOnError, apiErr: messages);
 
       return null;
     }
@@ -75,26 +80,44 @@ class NetworkService {
   }
 
   static void _handleError(
-    bool popOnError,
-    List<String> errors,
-    bool onQuery,
-  ) {
-    if (errors.contains('Unauthorized.') || errors.contains('Invalid token')) {
+    bool popOnError, {
+    IOException ioErr,
+    List<String> apiErr,
+  }) {
+    if (popOnError) Get.back();
+
+    if (ioErr != null && ioErr is SocketException) {
+      Get.defaultDialog(
+        radius: 5,
+        backgroundColor: Get.theme.backgroundColor,
+        titleStyle: Get.theme.textTheme.headline3,
+        title: 'Internet connection problem',
+        content: Text(ioErr.toString(), style: Get.theme.textTheme.bodyText1),
+        actions: [
+          FlatButton(
+            child: Text('OK', style: Get.theme.textTheme.bodyText2),
+            onPressed: Get.back,
+          ),
+        ],
+      );
+      return;
+    }
+
+    if (!apiErr.isNull &&
+        (apiErr.contains('Unauthorized.') ||
+            apiErr.contains('Invalid token'))) {
       Get.offAll(AuthPage());
       return;
     }
 
-    if (popOnError) Get.back();
+    final text = !ioErr.isNull ? ioErr.toString() : apiErr.join('\n');
 
     Get.defaultDialog(
       radius: 5,
       backgroundColor: Get.theme.backgroundColor,
       titleStyle: Get.theme.textTheme.headline3,
-      title: onQuery ? 'A query error occured' : 'A request error occured',
-      content: Text(
-        errors.join('\n'),
-        style: Get.theme.textTheme.bodyText1,
-      ),
+      title: ioErr.isNull ? 'A query error occured' : 'A request error occured',
+      content: Text(text, style: Get.theme.textTheme.bodyText1),
       actions: [
         FlatButton(
           child: Text('OK', style: Get.theme.textTheme.bodyText2),

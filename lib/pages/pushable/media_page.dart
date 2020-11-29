@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/pages/pushable/media_fragments/overview_fragment.dart';
+import 'package:otraku/pages/pushable/media_tabs/overview_tab.dart';
 import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 
@@ -29,8 +29,13 @@ class MediaPage extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             slivers: [
               GetX<Media>(
-                init: Media(),
-                initState: (_) => Get.find<Media>().fetchOverview(id),
+                init: !Get.isRegistered<Media>(tag: id.toString())
+                    ? Media()
+                    : null,
+                tag: id.toString(),
+                initState: (_) {
+                  Get.find<Media>(tag: id.toString()).fetchOverview(id);
+                },
                 builder: (media) => SliverPersistentHeader(
                   pinned: true,
                   floating: false,
@@ -44,7 +49,7 @@ class MediaPage extends StatelessWidget {
                 ),
               ),
               Obx(() {
-                final media = Get.find<Media>();
+                final media = Get.find<Media>(tag: id.toString());
                 return SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -54,6 +59,7 @@ class MediaPage extends StatelessWidget {
                       initial: media.currentTab,
                       onNewValue: (_) {},
                       onSameValue: (_) {},
+                      minimised: true,
                     ),
                   ),
                 );
@@ -61,20 +67,16 @@ class MediaPage extends StatelessWidget {
               SliverPadding(
                 padding: const EdgeInsets.all(10),
                 sliver: Obx(() {
-                  final media = Get.find<Media>();
+                  final media = Get.find<Media>(tag: id.toString());
+
                   if (media.currentTab == Media.OVERVIEW) {
                     final overview = media.overview;
                     if (overview == null) return SliverToBoxAdapter();
-                    return OverviewFragment();
+                    return OverviewTab(overview);
                   }
+
                   return SliverToBoxAdapter();
                 }),
-              ),
-              // SliverToBoxAdapter(child: InfoGrid(_media)),
-              const SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 500,
-                ),
               ),
             ],
           ),

@@ -5,6 +5,7 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
+import 'package:otraku/models/tuple.dart';
 
 class Media extends GetxController {
   static const _mediaQuery = r'''
@@ -34,7 +35,7 @@ class Media extends GetxController {
         startDate {year month day}
         endDate {year month day}
         genres
-        studios {edges {isMain node {name}}}
+        studios {edges {isMain node {id name}}}
         source
         hashtag
         countryOfOrigin
@@ -56,6 +57,8 @@ class Media extends GetxController {
   MediaOverview get overview => _overview();
 
   Future<void> fetchOverview(int id) async {
+    if (_overview.value != null) return;
+
     final result = await NetworkService.request(_mediaQuery, {'id': id});
 
     if (result == null) return null;
@@ -78,15 +81,19 @@ class Media extends GetxController {
       }
     }
 
-    List<String> studios = [];
-    List<String> producers = [];
+    List<int> studioId = [];
+    List<String> studioName = [];
+    List<int> producerId = [];
+    List<String> producerName = [];
     if (data['studios'] != null) {
       final List<dynamic> companies = data['studios']['edges'];
       for (final company in companies) {
         if (company['isMain']) {
-          studios.add(company['node']['name']);
+          studioId.add(company['node']['id']);
+          studioName.add(company['node']['name']);
         } else {
-          producers.add(company['node']['name']);
+          producerId.add(company['node']['id']);
+          producerName.add(company['node']['name']);
         }
       }
     }
@@ -134,8 +141,8 @@ class Media extends GetxController {
       meanScore: data['meanScore'] != null ? '${data["meanScore"]}%' : null,
       popularity: data['popularity'],
       genres: List<String>.from(data['genres']),
-      studios: studios,
-      producers: producers,
+      studios: Tuple(studioId, studioName),
+      producers: Tuple(producerId, producerName),
       source: clarifyEnum(data['source']),
       hashtag: data['hashtag'],
       countryOfOrigin: data['countryOfOrigin'],

@@ -1,4 +1,5 @@
-//The TITLE values must be at the end
+// The TITLE values must be at the end
+// because of how the MediaSortSheet works
 enum MediaSort {
   TRENDING,
   TRENDING_DESC,

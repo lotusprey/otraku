@@ -11,6 +11,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:otraku/tools/transparent_image.dart';
 
 class MediaList extends StatelessWidget {
   final bool isAnime;
@@ -92,7 +93,15 @@ class _MediaListTile extends StatelessWidget {
                 height: 140,
                 width: 95,
                 child: ClipRRect(
-                  child: Image.network(media.cover, fit: BoxFit.cover),
+                  child: Container(
+                    color: Theme.of(context).primaryColor,
+                    child: FadeInImage.memoryNetwork(
+                      placeholder: transparentImage,
+                      fadeInDuration: Config.FADE_DURATION,
+                      image: media.cover,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                   borderRadius: Config.BORDER_RADIUS,
                 ),
               ),

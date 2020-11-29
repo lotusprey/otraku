@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/tools/transparent_image.dart';
 
 class LargeGridTile extends StatelessWidget {
   final int mediaId;
@@ -25,10 +26,11 @@ class LargeGridTile extends StatelessWidget {
               borderRadius: Config.BORDER_RADIUS,
               child: Container(
                 height: Config.tileConfig.tileImgHeight,
-                width: Config.tileConfig.tileWidth,
                 color: Theme.of(context).primaryColor,
-                child: Image.network(
-                  imageUrl,
+                child: FadeInImage.memoryNetwork(
+                  placeholder: transparentImage,
+                  image: imageUrl,
+                  fadeInDuration: Config.FADE_DURATION,
                   fit: BoxFit.cover,
                 ),
               ),

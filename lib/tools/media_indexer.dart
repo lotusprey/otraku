@@ -44,7 +44,7 @@ class MediaIndexer extends StatelessWidget {
         break;
     }
 
-    Navigator.push(context, PageTransition.route(builder: page));
+    Navigator.push(context, PageTransition.to(page));
   }
 
   @override
@@ -59,10 +59,7 @@ class MediaIndexer extends StatelessWidget {
       ),
       onLongPress: () {
         if (itemType == Browsable.anime || itemType == Browsable.manga)
-          Navigator.push(
-            context,
-            PageTransition.route(builder: EditEntryPage(id, (_) {})),
-          );
+          Navigator.push(context, PageTransition.to(EditEntryPage(id, (_) {})));
       },
       child: child,
     );

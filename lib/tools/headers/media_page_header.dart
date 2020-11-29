@@ -54,11 +54,11 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (media != null && media.banner != null)
+          if (media?.banner != null)
             FadeInImage.memoryNetwork(
               image: media.banner,
               placeholder: transparentImage,
-              fadeInDuration: const Duration(milliseconds: 100),
+              fadeInDuration: Config.FADE_DURATION,
               fit: BoxFit.cover,
             ),
           Container(

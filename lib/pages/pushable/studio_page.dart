@@ -9,7 +9,7 @@ import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
-import 'package:otraku/tools/layouts/result_grid.dart';
+import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/layouts/large_grid_tile.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';

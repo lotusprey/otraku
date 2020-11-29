@@ -48,6 +48,8 @@ class Studio extends GetxController {
   }
 
   Future<void> fetchStudio(int id) async {
+    if (_company.value != null) return;
+
     final body = await NetworkService.request(
       _studioQuery,
       {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},

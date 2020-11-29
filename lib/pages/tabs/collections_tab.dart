@@ -41,6 +41,8 @@ class CollectionsTab extends StatelessWidget {
 }
 
 class CollectionDrawer extends StatelessWidget {
+  const CollectionDrawer();
+
   @override
   Widget build(BuildContext context) {
     final collection = Get.find<Collections>().collection;
@@ -71,7 +73,7 @@ class CollectionDrawer extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline4,
               ),
             ),
-            for (int i = 0; i < names.length; i++) ...[
+            for (int i = 0; i < names.length; i++)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: GestureDetector(
@@ -95,7 +97,6 @@ class CollectionDrawer extends StatelessWidget {
                   ),
                 ),
               ),
-            ]
           ],
         ),
       ),

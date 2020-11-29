@@ -85,6 +85,8 @@ class Character extends GetxController {
   }
 
   Future<void> fetchCharacter(int id) async {
+    if (_person.value != null) return;
+
     final body = await NetworkService.request(_characterQuery, {
       'id': id,
       'withPerson': true,

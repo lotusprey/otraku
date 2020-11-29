@@ -4,10 +4,12 @@ import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/tools/blossom_loader.dart';
 import 'package:otraku/tools/headers/explore_header.dart';
-import 'package:otraku/tools/layouts/result_grid.dart';
+import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 
 class ExploreTab extends StatelessWidget {
+  const ExploreTab();
+
   @override
   Widget build(BuildContext context) {
     final scrollCtrl = ScrollController();

@@ -17,7 +17,7 @@ class UserTab extends StatelessWidget {
 
   final int id;
 
-  UserTab(this.id);
+  const UserTab(this.id);
 
   @override
   Widget build(BuildContext context) => Obx(() {
@@ -124,7 +124,7 @@ class _Header implements SliverPersistentHeaderDelegate {
               FadeInImage.memoryNetwork(
                 image: user.banner,
                 placeholder: transparentImage,
-                fadeInDuration: const Duration(milliseconds: 100),
+                fadeInDuration: Config.FADE_DURATION,
                 fit: BoxFit.cover,
               ),
             Container(
@@ -193,7 +193,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                     color: Theme.of(context).dividerColor,
                     onPressed: () => Navigator.push(
                       context,
-                      PageTransition.route(builder: SettingsPage()),
+                      PageTransition.to(SettingsPage()),
                     ),
                   ),
                 ] else ...[

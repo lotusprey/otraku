@@ -15,7 +15,7 @@ class ExploreSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalWidth = MediaQuery.of(context).size.width - 20;
+    final totalWidth = MediaQuery.of(context).size.width - 30;
 
     return Obx(() {
       final type = Get.find<Explorable>().type;

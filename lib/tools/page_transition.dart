@@ -3,18 +3,15 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 
 class PageTransition extends PageRouteBuilder {
-  static Route route({
-    @required Widget builder,
-    RouteSettings settings,
-  }) {
+  static Route to(Widget page, {RouteSettings settings}) {
     if (Platform.isAndroid || Platform.isFuchsia)
       return PageTransition(
-        pageBuilder: (_, __, ___) => builder,
+        pageBuilder: (_, __, ___) => page,
         settings: settings,
       );
 
     return CupertinoPageRoute(
-      builder: (_) => builder,
+      builder: (_) => page,
       settings: settings,
     );
   }

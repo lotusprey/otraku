@@ -4,6 +4,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/pages/tab_manager.dart';
 
+// Holds constants and configurations that
+// are utilised throughout the whole app.
 class Config {
   Config._();
 
@@ -12,19 +14,20 @@ class Config {
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = Radius.circular(5);
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
+  static const FADE_DURATION = Duration(milliseconds: 300);
 
   static const STARTUP_PAGE = 'startupPage';
   static const THEME = 'theme';
 
   static final storage = GetStorage();
-  static final _pageIndex = RxInt();
+  static final _pageIndex = RxInt(storage.read(STARTUP_PAGE));
   static LargeTileConfig _largeTileConfig;
   static bool _hasInit = false;
 
   static void init(BuildContext context) {
     if (_hasInit) return;
 
-    _pageIndex.value = storage.read(STARTUP_PAGE) ?? TabManager.ANIME_LIST;
+    _pageIndex.value ??= TabManager.ANIME_LIST;
 
     final tileWidth = (Get.mediaQuery.size.width - 40) / 3;
     _largeTileConfig = LargeTileConfig(

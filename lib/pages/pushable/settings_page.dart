@@ -2,10 +2,10 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/pages/pushable/setting_fragments/app_settings_page.dart';
-import 'package:otraku/pages/pushable/setting_fragments/list_settings_page.dart';
-import 'package:otraku/pages/pushable/setting_fragments/media_settings_page.dart';
-import 'package:otraku/pages/pushable/setting_fragments/notification_settings_page.dart';
+import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
+import 'package:otraku/pages/pushable/setting_tabs/list_settings_page.dart';
+import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
+import 'package:otraku/pages/pushable/setting_tabs/notification_settings_page.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/users.dart';
@@ -60,7 +60,7 @@ class SettingsPage extends StatelessWidget {
               title: Text('App', style: Theme.of(context).textTheme.bodyText1),
               onTap: () => Navigator.push(
                 context,
-                PageTransition.route(builder: AppSettingsPage()),
+                PageTransition.to(AppSettingsPage()),
               ),
             ),
             ListTile(
@@ -73,7 +73,7 @@ class SettingsPage extends StatelessWidget {
                   Text('Media', style: Theme.of(context).textTheme.bodyText1),
               onTap: () => Navigator.push(
                 context,
-                PageTransition.route(builder: MediaSettingsPage(changes)),
+                PageTransition.to(MediaSettingsPage(changes)),
               ),
             ),
             ListTile(
@@ -86,7 +86,7 @@ class SettingsPage extends StatelessWidget {
                   Text('Lists', style: Theme.of(context).textTheme.bodyText1),
               onTap: () => Navigator.push(
                 context,
-                PageTransition.route(builder: ListSettingsPage(changes)),
+                PageTransition.to(ListSettingsPage(changes)),
               ),
             ),
             ListTile(
@@ -101,8 +101,7 @@ class SettingsPage extends StatelessWidget {
               ),
               onTap: () => Navigator.push(
                 context,
-                PageTransition.route(
-                    builder: NotificationSettingsPage(changes)),
+                PageTransition.to(NotificationSettingsPage(changes)),
               ),
             ),
           ],

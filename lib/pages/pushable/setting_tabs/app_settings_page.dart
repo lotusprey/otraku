@@ -77,7 +77,7 @@ class __RadioGridState extends State<_RadioGrid> {
         childAspectRatio: 5,
         shrinkWrap: true,
         children: [
-          for (int i = 0; i < widget.options.length; i++) ...[
+          for (int i = 0; i < widget.options.length; i++)
             RadioListTile(
               value: i,
               groupValue: current,
@@ -92,7 +92,6 @@ class __RadioGridState extends State<_RadioGrid> {
               activeColor: Theme.of(context).accentColor,
               dense: true,
             ),
-          ],
         ],
       ),
     );

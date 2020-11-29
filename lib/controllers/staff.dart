@@ -78,6 +78,8 @@ class Staff extends GetxController {
   }
 
   Future<void> fetchStaff(int id) async {
+    if (_person.value != null) return;
+
     final body = await NetworkService.request(_staffQuery, {
       'id': id,
       'withPerson': true,

@@ -94,29 +94,31 @@ class _ExploreHeaderDelegate implements SliverPersistentHeaderDelegate {
                       ),
                       Flexible(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            _FilterButton(),
-                            IconButton(
-                              icon: const Icon(
-                                FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                              ),
-                              onPressed: () => showModalBottomSheet(
-                                context: context,
-                                builder: (ctx) => MediaSortSheet(
-                                  stringToEnum(
-                                    explorable
-                                        .getFilterWithKey(Explorable.SORT),
-                                    MediaSort.values,
-                                  ),
-                                  (sort) => explorable.setFilterWithKey(
-                                    Explorable.SORT,
-                                    value: describeEnum(sort),
-                                    refetch: true,
-                                  ),
+                            Flexible(child: _FilterButton()),
+                            Flexible(
+                              child: IconButton(
+                                icon: const Icon(
+                                  FluentSystemIcons.ic_fluent_arrow_sort_filled,
                                 ),
-                                backgroundColor: Colors.transparent,
-                                isScrollControlled: true,
+                                onPressed: () => showModalBottomSheet(
+                                  context: context,
+                                  builder: (ctx) => MediaSortSheet(
+                                    stringToEnum(
+                                      explorable
+                                          .getFilterWithKey(Explorable.SORT),
+                                      MediaSort.values,
+                                    ),
+                                    (sort) => explorable.setFilterWithKey(
+                                      Explorable.SORT,
+                                      value: describeEnum(sort),
+                                      refetch: true,
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.transparent,
+                                  isScrollControlled: true,
+                                ),
                               ),
                             ),
                           ],
@@ -218,6 +220,7 @@ class __FilterButtonState extends State<_FilterButton> {
         setState(() => _active = false);
       },
       child: Container(
+        clipBehavior: Clip.hardEdge,
         width: Config.MATERIAL_TAP_TARGET_SIZE,
         height: Config.CONTROL_HEADER_ICON_HEIGHT,
         decoration: BoxDecoration(

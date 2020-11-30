@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/transparent_image.dart';
 
 class MediaConnectionGrid extends StatefulWidget {
   final List<Connection> media;
@@ -70,8 +71,12 @@ class _MediaConnectionTile extends StatelessWidget {
                         width: 65,
                         height: 100,
                         child: ClipRRect(
-                          child:
-                              Image.network(media.imageUrl, fit: BoxFit.cover),
+                          child: FadeInImage.memoryNetwork(
+                            image: media.imageUrl,
+                            placeholder: transparentImage,
+                            fadeInDuration: Config.FADE_DURATION,
+                            fit: BoxFit.cover,
+                          ),
                           borderRadius: Config.BORDER_RADIUS,
                         ),
                       ),
@@ -141,8 +146,10 @@ class _MediaConnectionTile extends StatelessWidget {
                           width: 65,
                           height: 100,
                           child: ClipRRect(
-                            child: Image.network(
-                              media.others[index].imageUrl,
+                            child: FadeInImage.memoryNetwork(
+                              image: media.others[index].imageUrl,
+                              placeholder: transparentImage,
+                              fadeInDuration: Config.FADE_DURATION,
                               fit: BoxFit.cover,
                             ),
                             borderRadius: Config.BORDER_RADIUS,

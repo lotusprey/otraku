@@ -15,7 +15,7 @@ class ExploreSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalWidth = MediaQuery.of(context).size.width - 30;
+    final totalWidth = MediaQuery.of(context).size.width - 20;
 
     return Obx(() {
       final type = Get.find<Explorable>().type;
@@ -23,7 +23,7 @@ class ExploreSearchBar extends StatelessWidget {
       return AnimatedContainer(
         width: totalWidth -
             (type == Browsable.anime || type == Browsable.manga
-                ? Config.MATERIAL_TAP_TARGET_SIZE * 2
+                ? Config.MATERIAL_TAP_TARGET_SIZE * 2 + 10
                 : 0),
         height: Config.MATERIAL_TAP_TARGET_SIZE,
         duration: const Duration(milliseconds: 100),

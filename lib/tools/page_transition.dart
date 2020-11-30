@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class PageTransition extends PageRouteBuilder {
   static Route to(Widget page, {RouteSettings settings}) {
@@ -22,8 +23,8 @@ class PageTransition extends PageRouteBuilder {
   }) : super(
           pageBuilder: pageBuilder,
           settings: settings,
-          transitionDuration: const Duration(milliseconds: 400),
-          reverseTransitionDuration: const Duration(milliseconds: 400),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
         );
 
   @override

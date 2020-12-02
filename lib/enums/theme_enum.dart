@@ -85,8 +85,9 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     systemNavigationBarColor: theme['primary'],
     systemNavigationBarIconBrightness: brightness,
-    statusBarBrightness: theme['brightness'],
+    statusBarColor: theme['background'],
     statusBarIconBrightness: brightness,
+    statusBarBrightness: theme['brightness'],
   ));
 
   return ThemeData(

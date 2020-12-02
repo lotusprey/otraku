@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/large_tile_configuration.dart';
 import 'package:otraku/pages/tab_manager.dart';
 
@@ -44,6 +45,32 @@ class Config {
     );
 
     _hasInit = true;
+  }
+
+  // The first time it is called should be before the
+  // app initialisation. Whenever it is called, the
+  // theme is updated to the current configuration.
+  static void updateTheme() {
+    final themeMode = storage.read(Config.THEME_MODE) ?? 0;
+    if (themeMode == 0) {
+      if (Get.isPlatformDarkMode) {
+        Get.changeTheme(
+          Themes.values[storage.read(Config.DARK_THEME) ?? 0].themeData,
+        );
+      } else {
+        Get.changeTheme(
+          Themes.values[storage.read(Config.LIGHT_THEME) ?? 0].themeData,
+        );
+      }
+    } else if (themeMode == 1) {
+      Get.changeTheme(
+        Themes.values[storage.read(Config.LIGHT_THEME) ?? 0].themeData,
+      );
+    } else {
+      Get.changeTheme(
+        Themes.values[storage.read(Config.DARK_THEME) ?? 0].themeData,
+      );
+    }
   }
 
   static get pageIndex => _pageIndex.value;

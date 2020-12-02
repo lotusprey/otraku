@@ -1,12 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 
 class AppSettingsPage extends StatelessWidget {
@@ -26,9 +24,9 @@ class AppSettingsPage extends StatelessWidget {
                     title: 'Theme',
                     initialValue: Config.storage.read(Config.THEME_MODE) ?? 0,
                     items: {'Auto': 0, 'Light': 1, 'Dark': 2},
-                    onChanged: (val) {
-                      Config.storage.write(Config.THEME_MODE, val);
-                      _updateTheme();
+                    onChanged: (value) {
+                      Config.storage.write(Config.THEME_MODE, value);
+                      Config.updateTheme();
                     },
                   ),
                 ),
@@ -69,47 +67,18 @@ class AppSettingsPage extends StatelessWidget {
                   .toList(),
               leftValue: Config.storage.read(Config.LIGHT_THEME) ?? 0,
               rightValue: Config.storage.read(Config.DARK_THEME) ?? 0,
-              onChangedLeft: (val) => _switchTheme(val, false),
-              onChangedRight: (val) => _switchTheme(val, true),
+              onChangedLeft: (value) {
+                Config.storage.write(Config.LIGHT_THEME, value);
+                Config.updateTheme();
+              },
+              onChangedRight: (value) {
+                Config.storage.write(Config.DARK_THEME, value);
+                Config.updateTheme();
+              },
             ),
           ],
         ),
       );
-
-  void _switchTheme(int value, bool isDark) {
-    if (isDark) {
-      Config.storage.write(Config.DARK_THEME, value);
-    } else {
-      Config.storage.write(Config.LIGHT_THEME, value);
-    }
-
-    _updateTheme();
-  }
-
-  void _updateTheme() {
-    final themeMode = Config.storage.read(Config.THEME_MODE) ?? 0;
-    if (themeMode == 0) {
-      if (Get.isPlatformDarkMode) {
-        Get.changeTheme(
-          Themes.values[Config.storage.read(Config.DARK_THEME) ?? 0].themeData,
-        );
-      } else {
-        Get.changeTheme(
-          Themes.values[Config.storage.read(Config.LIGHT_THEME) ?? 0].themeData,
-        );
-      }
-    } else {
-      if (themeMode == 1) {
-        Get.changeTheme(
-          Themes.values[Config.storage.read(Config.LIGHT_THEME) ?? 0].themeData,
-        );
-      } else {
-        Get.changeTheme(
-          Themes.values[Config.storage.read(Config.DARK_THEME) ?? 0].themeData,
-        );
-      }
-    }
-  }
 }
 
 class _Radio extends StatefulWidget {

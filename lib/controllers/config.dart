@@ -14,16 +14,22 @@ class Config {
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = Radius.circular(5);
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
+  static const PHYSICS = BouncingScrollPhysics();
   static const FADE_DURATION = Duration(milliseconds: 300);
 
+  // Storage keys
   static const STARTUP_PAGE = 'startupPage';
-  static const THEME = 'theme';
+  static const THEME_MODE = 'themeMode';
+  static const LIGHT_THEME = 'theme1';
+  static const DARK_THEME = 'theme2';
 
   static final storage = GetStorage();
   static final _pageIndex = RxInt(storage.read(STARTUP_PAGE));
   static LargeTileConfig _largeTileConfig;
   static bool _hasInit = false;
 
+  // Should be called as soon as possible,
+  // but with proper context.
   static void init(BuildContext context) {
     if (_hasInit) return;
 
@@ -43,10 +49,6 @@ class Config {
   static get pageIndex => _pageIndex.value;
 
   static set pageIndex(int index) => _pageIndex.value = index;
-
-  static set initialPage(int index) {
-    if (index >= 0 && index < 5) storage..write(STARTUP_PAGE, index);
-  }
 
   static LargeTileConfig get tileConfig => _largeTileConfig;
 }

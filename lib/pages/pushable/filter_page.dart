@@ -88,7 +88,7 @@ class FilterPage extends StatelessWidget {
         ],
       ),
       body: ListView(
-        physics: const BouncingScrollPhysics(),
+        physics: Config.PHYSICS,
         padding: Config.PADDING,
         children: [
           Padding(

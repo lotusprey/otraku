@@ -149,7 +149,7 @@ class _OptionSheet extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
+              physics: Config.PHYSICS,
               itemBuilder: (_, index) => ThreeStateField(
                 title: options[index],
                 initialState: inclusive.contains(options[index])

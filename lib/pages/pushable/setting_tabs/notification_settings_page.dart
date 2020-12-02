@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
@@ -57,7 +58,7 @@ class NotificationSettingsPage extends StatelessWidget {
       ),
       body: ListView.builder(
         shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
+        physics: Config.PHYSICS,
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         itemBuilder: (_, index) => CheckboxField(
           title: _notificationNames[index],

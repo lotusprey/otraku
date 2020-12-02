@@ -42,7 +42,7 @@ class StudioPage extends StatelessWidget {
                 return false;
               },
               child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
+                physics: Config.PHYSICS,
                 semanticChildCount:
                     studio.media != null ? studio.media.mediaCount : null,
                 slivers: [

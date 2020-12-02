@@ -25,7 +25,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
           borderRadius: Config.BORDER_RADIUS,
         ),
         child: TextField(
-          scrollPhysics: const BouncingScrollPhysics(),
+          scrollPhysics: Config.PHYSICS,
           controller: _controller,
           onChanged: (text) => widget.onChanged(text),
           minLines: 1,

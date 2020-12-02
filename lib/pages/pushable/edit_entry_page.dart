@@ -131,7 +131,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
         body: _oldData != null
             ? LayoutBuilder(
                 builder: (_, constraints) => ListView(
-                  physics: const BouncingScrollPhysics(),
+                  physics: Config.PHYSICS,
                   padding: Config.PADDING,
                   children: [
                     _row(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/collection_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
@@ -63,7 +64,7 @@ class CollectionDrawer extends StatelessWidget {
           ),
         ),
         child: ListView(
-          physics: const BouncingScrollPhysics(),
+          physics: Config.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 35),
           children: [
             Padding(

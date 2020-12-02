@@ -48,7 +48,7 @@ class SortSheet extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
+              physics: Config.PHYSICS,
               itemBuilder: (_, i) => ListTile(
                 dense: true,
                 title: Text(

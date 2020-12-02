@@ -25,7 +25,7 @@ class UserTab extends StatelessWidget {
         final user = id == null ? users.me : users.them(id);
 
         return CustomScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: Config.PHYSICS,
           slivers: [
             SliverPersistentHeader(
               delegate: _Header(user.id == null ? null : user, id == null),

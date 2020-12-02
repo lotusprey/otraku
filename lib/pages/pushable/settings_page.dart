@@ -2,6 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/list_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
@@ -49,6 +50,7 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         body: ListView(
+          physics: Config.PHYSICS,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           children: [
             ListTile(

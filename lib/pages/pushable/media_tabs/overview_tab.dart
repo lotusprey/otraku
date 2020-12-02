@@ -240,7 +240,7 @@ class _ScrollTile extends StatelessWidget {
         title: title,
         body: Flexible(
           child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
+            physics: Config.PHYSICS,
             scrollDirection: Axis.horizontal,
             itemBuilder: (_, index) {
               if (index % 2 == 0) {

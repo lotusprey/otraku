@@ -36,7 +36,7 @@ class _BubbleTabBarState extends State<BubbleTabBar> {
         child: ListView.builder(
           shrinkWrap: widget.shrinkWrap,
           scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
+          physics: Config.PHYSICS,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           itemBuilder: (_, index) => GestureDetector(
             onTap: () {

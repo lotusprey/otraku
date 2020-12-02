@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class FilterGrid extends StatelessWidget {
@@ -26,7 +27,7 @@ class FilterGrid extends StatelessWidget {
       height: rows * 30.0 + (rows - 1) * 10 + 20,
       child: GridView.builder(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        physics: const BouncingScrollPhysics(),
+        physics: Config.PHYSICS,
         scrollDirection: Axis.horizontal,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: rows,

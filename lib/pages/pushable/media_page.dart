@@ -26,7 +26,7 @@ class MediaPage extends StatelessWidget {
           height: double.infinity,
           color: Theme.of(context).backgroundColor,
           child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
+            physics: Config.PHYSICS,
             slivers: [
               GetX<Media>(
                 init: !Get.isRegistered<Media>(tag: id.toString())

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
@@ -16,6 +17,7 @@ class MediaSettingsPage extends StatelessWidget {
           title: 'Media',
         ),
         body: ListView(
+          physics: Config.PHYSICS,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           children: [
             DropDownField(

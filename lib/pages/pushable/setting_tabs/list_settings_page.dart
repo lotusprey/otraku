@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
@@ -20,6 +21,7 @@ class ListSettingsPage extends StatelessWidget {
           title: 'Lists',
         ),
         body: ListView(
+          physics: Config.PHYSICS,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           children: [
             DropDownField(

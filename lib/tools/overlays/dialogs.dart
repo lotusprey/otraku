@@ -82,7 +82,7 @@ class TextDialog extends StatelessWidget {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+                physics: Config.PHYSICS,
                 child: Text(text, style: Theme.of(context).textTheme.bodyText1),
               ),
             ),

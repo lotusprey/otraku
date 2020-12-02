@@ -1,6 +1,7 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/bubble_tab_bar.dart';
 import 'package:otraku/tools/headers/person_header.dart';
 import 'package:otraku/controllers/character.dart';
@@ -18,7 +19,7 @@ class CharacterPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
           child: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
+            physics: Config.PHYSICS,
             slivers: [
               GetX<Character>(
                 init: Character(),

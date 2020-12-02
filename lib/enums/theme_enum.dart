@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:otraku/controllers/config.dart';
 
 enum Themes {
-  gold,
   light_blue,
   navy,
   cyber,
@@ -23,24 +22,14 @@ extension Styles on Themes {
   static const double FONT_SMALLER = 13;
 
   static const _themes = {
-    Themes.gold: {
-      'background': Color(0xFFFFC71F),
-      'primary': Color(0xFFFFD147),
-      'translucent': Color(0xBBFFC71F),
-      'accent': Color(0xFFFFF7E0),
-      'error': Color(0xFFE84A67),
-      'faded': Color(0xFF5F5B44),
-      'contrast': Color(0xFF140F00),
-      'brightness': Brightness.light,
-    },
     Themes.light_blue: {
       'background': Color(0xFFFFFEFF),
-      'primary': Color(0xFFE3E5E8),
+      'primary': Color(0xFFF4F5F6),
       'translucent': Color(0xBBFFFEFF),
       'accent': Color(0xFF54B2F1),
       'error': Color(0xFFE32749),
-      'faded': Color(0xFF8F97A3),
-      'contrast': Color(0xFF141F29),
+      'faded': Color(0xFF3D5D7B),
+      'contrast': Color(0xFF1B2937),
       'brightness': Brightness.light,
     },
     Themes.navy: {

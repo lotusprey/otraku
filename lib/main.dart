@@ -23,7 +23,11 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
-      theme: Themes.values[Config.storage.read(Config.THEME) ?? 0].themeData,
+      themeMode: ThemeMode.values[Config.storage.read(Config.THEME_MODE) ?? 0],
+      theme:
+          Themes.values[Config.storage.read(Config.LIGHT_THEME) ?? 0].themeData,
+      darkTheme:
+          Themes.values[Config.storage.read(Config.DARK_THEME) ?? 0].themeData,
       home: LoadAppPage(),
     );
   }

@@ -3,25 +3,36 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/tools/blossom_loader.dart';
-import 'package:otraku/tools/headers/explore_header.dart';
+import 'package:otraku/tools/headers/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
 
-class ExploreTab extends StatelessWidget {
+class ExploreTab extends StatefulWidget {
   const ExploreTab();
 
   @override
-  Widget build(BuildContext context) {
-    final scrollCtrl = ScrollController();
+  _ExploreTabState createState() => _ExploreTabState();
+}
 
+class _ExploreTabState extends State<ExploreTab> {
+  final _ctrl = ScrollController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
-      controller: scrollCtrl,
+      controller: _ctrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        ExploreHeader(scrollCtrl),
+        ControlHeader(false, _ctrl),
         _ExploreGrid(),
         _ConditionalLoader(),
         SliverToBoxAdapter(

@@ -8,6 +8,7 @@ import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/user_tab.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/tools/custom_drawer.dart';
 
 class TabManager extends StatelessWidget {
   static const int INBOX = 0;
@@ -38,7 +39,7 @@ class TabManager extends StatelessWidget {
       const SizedBox(),
       const CollectionDrawer(),
       const CollectionDrawer(),
-      const SizedBox(),
+      const ExploreDrawer(),
       const SizedBox(),
     ];
 

@@ -2,18 +2,23 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
 import 'package:otraku/tools/fields/three_state_field.dart';
 
-class ChipGrid extends StatefulWidget {
+class ChipGrid<T> extends StatefulWidget {
   final String title;
+  final String placeholder;
   final List<String> options;
-  final List<String> inclusive;
-  final List<String> exclusive;
+  final List<T> values;
+  final List<T> inclusive;
+  final List<T> exclusive;
 
   ChipGrid({
     @required this.title,
+    @required this.placeholder,
     @required this.options,
+    @required this.values,
     @required this.inclusive,
     @required this.exclusive,
   });
@@ -37,14 +42,17 @@ class _ChipGridState extends State<ChipGrid> {
                   context: context,
                   builder: (_) => _OptionSheet(
                     options: widget.options,
+                    values: widget.values,
                     inclusive: [...widget.inclusive],
                     exclusive: [...widget.exclusive],
-                    onDone: (inclusive, exclusive) => setState(() {
-                      widget.inclusive
-                          .replaceRange(0, widget.inclusive.length, inclusive);
-                      widget.exclusive
-                          .replaceRange(0, widget.exclusive.length, exclusive);
-                    }),
+                    onDone: (inclusive, exclusive) {
+                      setState(() {
+                        widget.inclusive.clear();
+                        widget.exclusive.clear();
+                        for (final i in inclusive) widget.inclusive.add(i);
+                        for (final e in exclusive) widget.exclusive.add(e);
+                      });
+                    },
                   ),
                   backgroundColor: Colors.transparent,
                   isScrollControlled: true,
@@ -63,7 +71,7 @@ class _ChipGridState extends State<ChipGrid> {
 
                           return ChipField(
                             key: UniqueKey(),
-                            title: value,
+                            title: clarifyEnum(value),
                             initiallyPositive: true,
                             onChanged: (changed) {
                               if (changed) {
@@ -85,7 +93,8 @@ class _ChipGridState extends State<ChipGrid> {
                           String value = widget.exclusive[index];
 
                           return ChipField(
-                            title: value,
+                            key: UniqueKey(),
+                            title: clarifyEnum(value),
                             initiallyPositive: false,
                             onChanged: (changed) {
                               if (changed) {
@@ -106,7 +115,7 @@ class _ChipGridState extends State<ChipGrid> {
                   height: Config.MATERIAL_TAP_TARGET_SIZE,
                   child: Center(
                     child: Text(
-                      'No selected items',
+                      'No selected ${widget.placeholder}',
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                   ),
@@ -115,14 +124,16 @@ class _ChipGridState extends State<ChipGrid> {
       );
 }
 
-class _OptionSheet extends StatelessWidget {
+class _OptionSheet<T> extends StatelessWidget {
   final List<String> options;
-  final List<String> inclusive;
-  final List<String> exclusive;
-  final Function(List<String>, List<String>) onDone;
+  final List<T> values;
+  final List<T> inclusive;
+  final List<T> exclusive;
+  final Function(List<T>, List<T>) onDone;
 
   _OptionSheet({
     @required this.options,
+    @required this.values,
     @required this.inclusive,
     @required this.exclusive,
     @required this.onDone,
@@ -152,19 +163,19 @@ class _OptionSheet extends StatelessWidget {
               physics: Config.PHYSICS,
               itemBuilder: (_, index) => ThreeStateField(
                 title: options[index],
-                initialState: inclusive.contains(options[index])
+                initialState: inclusive.contains(values[index])
                     ? 1
-                    : exclusive.contains(options[index])
+                    : exclusive.contains(values[index])
                         ? 2
                         : 0,
                 onChanged: (state) {
                   if (state == 0) {
-                    exclusive.remove(options[index]);
+                    exclusive.remove(values[index]);
                   } else if (state == 1) {
-                    inclusive.add(options[index]);
+                    inclusive.add(values[index]);
                   } else {
-                    inclusive.remove(options[index]);
-                    exclusive.add(options[index]);
+                    inclusive.remove(values[index]);
+                    exclusive.add(values[index]);
                   }
                 },
               ),

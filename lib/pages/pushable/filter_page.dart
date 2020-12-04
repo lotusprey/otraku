@@ -11,7 +11,6 @@ import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/headers/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
-import 'package:otraku/tools/layouts/filter_grid.dart';
 
 class FilterPage extends StatelessWidget {
   final Function(bool) onUpdate;
@@ -91,25 +90,19 @@ class FilterPage extends StatelessWidget {
         physics: Config.PHYSICS,
         padding: Config.PADDING,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text('Status', style: Theme.of(context).textTheme.subtitle1),
-          ),
-          FilterGrid(
+          ChipGrid(
+            title: 'Status',
+            placeholder: 'statuses',
             options: MediaStatus.values
                 .map((s) => clarifyEnum(describeEnum(s)))
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
-            optionIn: statusIn,
-            optionNotIn: statusNotIn,
-            rows: 1,
-            whRatio: 0.2,
+            inclusive: statusIn,
+            exclusive: statusNotIn,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text('Format', style: Theme.of(context).textTheme.subtitle1),
-          ),
-          FilterGrid(
+          ChipGrid(
+            title: 'Format',
+            placeholder: 'formats',
             options: explorable.type == Browsable.anime
                 ? AnimeFormat.values
                     .map((f) => clarifyEnum(describeEnum(f)))
@@ -120,20 +113,22 @@ class FilterPage extends StatelessWidget {
             values: explorable.type == Browsable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
                 : MangaFormat.values.map((f) => describeEnum(f)).toList(),
-            optionIn: formatIn,
-            optionNotIn: formatNotIn,
-            rows: 1,
-            whRatio: 0.3,
+            inclusive: formatIn,
+            exclusive: formatNotIn,
           ),
           ChipGrid(
             title: 'Genres',
+            placeholder: 'genres',
             options: explorable.genres,
+            values: explorable.genres,
             inclusive: genreIn,
             exclusive: genreNotIn,
           ),
           ChipGrid(
             title: 'Tags',
+            placeholder: 'tags',
             options: explorable.tags.item1,
+            values: explorable.tags.item1,
             inclusive: tagIn,
             exclusive: tagNotIn,
           ),

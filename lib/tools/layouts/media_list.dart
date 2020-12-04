@@ -84,146 +84,143 @@ class _MediaListTile extends StatelessWidget {
       id: media.mediaId,
       itemType: Browsable.anime,
       tag: media.cover,
-      child: Container(
-        child: Row(
-          children: [
-            Hero(
-              tag: media.cover,
-              child: SizedBox(
-                height: 140,
-                width: 95,
-                child: ClipRRect(
-                  child: Container(
-                    color: Theme.of(context).primaryColor,
-                    child: FadeInImage.memoryNetwork(
-                      placeholder: transparentImage,
-                      fadeInDuration: Config.FADE_DURATION,
-                      image: media.cover,
-                      fit: BoxFit.cover,
-                    ),
+      child: Row(
+        children: [
+          Hero(
+            tag: media.cover,
+            child: SizedBox(
+              height: 140,
+              width: 95,
+              child: ClipRRect(
+                child: Container(
+                  color: Theme.of(context).primaryColor,
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: transparentImage,
+                    fadeInDuration: Config.FADE_DURATION,
+                    image: media.cover,
+                    fit: BoxFit.cover,
                   ),
-                  borderRadius: Config.BORDER_RADIUS,
                 ),
+                borderRadius: Config.BORDER_RADIUS,
               ),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            media.title,
-                            style: Theme.of(context).textTheme.bodyText1,
-                            overflow: TextOverflow.fade,
-                          ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          media.title,
+                          style: Theme.of(context).textTheme.bodyText1,
+                          overflow: TextOverflow.fade,
                         ),
-                        _space,
-                        RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.subtitle2,
-                            children: [
+                      ),
+                      _space,
+                      RichText(
+                        text: TextSpan(
+                          style: Theme.of(context).textTheme.subtitle2,
+                          children: [
+                            TextSpan(
+                              text: clarifyEnum(media.format),
+                            ),
+                            if (media.timeUntilAiring != null)
                               TextSpan(
-                                text: clarifyEnum(media.format),
+                                text:
+                                    ' • Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                                style: TextStyle(
+                                  color: Theme.of(context).accentColor,
+                                ),
                               ),
-                              if (media.timeUntilAiring != null)
-                                TextSpan(
-                                  text:
-                                      ' • Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
-                                  style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                  ),
+                            if (media.nextEpisode != null &&
+                                media.nextEpisode - 1 > media.progress)
+                              TextSpan(
+                                text:
+                                    ' • ${media.nextEpisode - 1 - media.progress} ep behind',
+                                style: TextStyle(
+                                  color: Theme.of(context).errorColor,
                                 ),
-                              if (media.nextEpisode != null &&
-                                  media.nextEpisode - 1 > media.progress)
-                                TextSpan(
-                                  text:
-                                      ' • ${media.nextEpisode - 1 - media.progress} ep behind',
-                                  style: TextStyle(
-                                    color: Theme.of(context).errorColor,
-                                  ),
-                                ),
-                            ],
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Center(
+                          child: Text(
+                            media.progress != media.progressMax
+                                ? '${media.progress} / ${media.progressMax ?? '?'}'
+                                : media.progress.toString(),
+                            style: Theme.of(context).textTheme.subtitle2,
                           ),
                         ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Center(
-                            child: Text(
-                              media.progress != media.progressMax
-                                  ? '${media.progress} / ${media.progressMax ?? '?'}'
-                                  : media.progress.toString(),
-                              style: Theme.of(context).textTheme.subtitle2,
-                            ),
+                      ),
+                      Flexible(
+                        child: Center(
+                          child: getWidgetFormScoreFormat(
+                            context,
+                            scoreFormat,
+                            media.score,
                           ),
                         ),
-                        Flexible(
-                          child: Center(
-                            child: getWidgetFormScoreFormat(
-                              context,
-                              scoreFormat,
-                              media.score,
-                            ),
-                          ),
+                      ),
+                      Flexible(
+                        child: Center(
+                          child: media.repeat > 0
+                              ? Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      FluentSystemIcons
+                                          .ic_fluent_arrow_repeat_all_filled,
+                                      size: Styles.ICON_SMALLER,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      media.repeat.toString(),
+                                      style:
+                                          Theme.of(context).textTheme.subtitle1,
+                                    ),
+                                  ],
+                                )
+                              : null,
                         ),
-                        Flexible(
-                          child: Center(
-                            child: media.repeat > 0
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        FluentSystemIcons
-                                            .ic_fluent_arrow_repeat_all_filled,
-                                        size: Styles.ICON_SMALLER,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        media.repeat.toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                      ),
-                                    ],
-                                  )
-                                : null,
-                          ),
-                        ),
-                        Flexible(
-                          child: Center(
-                            child: media.notes != null
-                                ? IconButton(
-                                    icon: const Icon(Icons.comment),
-                                    onPressed: () => showDialog(
-                                      context: context,
-                                      builder: (_) => PopUpAnimation(
-                                        TextDialog(
-                                          title: 'Comment',
-                                          text: media.notes,
-                                        ),
+                      ),
+                      Flexible(
+                        child: Center(
+                          child: media.notes != null
+                              ? IconButton(
+                                  icon: const Icon(Icons.comment),
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (_) => PopUpAnimation(
+                                      TextDialog(
+                                        title: 'Comment',
+                                        text: media.notes,
                                       ),
                                     ),
-                                  )
-                                : null,
-                          ),
+                                  ),
+                                )
+                              : null,
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -68,6 +68,10 @@ class Collection {
     return counts;
   }
 
+  String get currentListName => lists[_listIndex].name;
+
+  int get currentEntryCount => lists[_listIndex].entries.length;
+
   int get totalEntryCount {
     int count = 0;
     for (final list in lists)

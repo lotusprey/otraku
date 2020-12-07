@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/pages/load_app_page.dart';
+import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:uni_links/uni_links.dart';
@@ -37,7 +37,7 @@ class _AuthPageState extends State<AuthPage> {
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
         NetworkService.accessToken = accessToken;
-        Get.offAll(LoadAppPage());
+        Get.offAll(LoadingPage());
       },
       onError: (error) => print('error: $error'),
     );

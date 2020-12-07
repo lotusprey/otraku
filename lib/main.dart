@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:otraku/pages/load_app_page.dart';
+import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorable.dart';
@@ -24,7 +24,7 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
-      home: LoadAppPage(),
+      home: LoadingPage(),
     );
   }
 }

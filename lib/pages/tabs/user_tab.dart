@@ -10,7 +10,7 @@ import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/tools/page_transition.dart';
-import 'package:otraku/tools/transparent_image.dart';
+import 'package:otraku/models/transparent_image.dart';
 
 class UserTab extends StatelessWidget {
   static const _space = SizedBox(width: 10);

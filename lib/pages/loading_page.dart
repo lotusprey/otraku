@@ -9,7 +9,7 @@ import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
 
-class LoadAppPage extends StatelessWidget {
+class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     NetworkService.logIn().then((loggedIn) {

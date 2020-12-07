@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/transparent_image.dart';
+import 'package:otraku/models/transparent_image.dart';
 
 class LargeGridTile extends StatelessWidget {
   final int mediaId;

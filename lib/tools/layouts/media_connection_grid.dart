@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/media_indexer.dart';
-import 'package:otraku/tools/transparent_image.dart';
+import 'package:otraku/models/transparent_image.dart';
 
 class MediaConnectionGrid extends StatefulWidget {
   final List<Connection> media;
@@ -40,11 +40,14 @@ class _MediaConnectionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int index;
-    for (int i = 0; i < media.others.length; i++)
-      if (media.others[i].subtitle == preferredSubtitle) {
-        index = i;
-        break;
-      }
+    if (preferredSubtitle == null)
+      index = 0;
+    else
+      for (int i = 0; i < media.others.length; i++)
+        if (media.others[i].subtitle == preferredSubtitle) {
+          index = i;
+          break;
+        }
 
     return Align(
       alignment: Alignment.topCenter,
@@ -107,7 +110,7 @@ class _MediaConnectionTile extends StatelessWidget {
                 ),
               ),
             ),
-            if (index != null)
+            if (index != null && media.others.length > index)
               Expanded(
                 child: MediaIndexer(
                   id: media.others[index].id,

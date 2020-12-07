@@ -9,7 +9,7 @@ import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/tools/transparent_image.dart';
+import 'package:otraku/models/transparent_image.dart';
 
 class MediaPageHeader implements SliverPersistentHeaderDelegate {
   final MediaOverview media;

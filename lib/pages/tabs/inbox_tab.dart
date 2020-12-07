@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/loader.dart';
 
 class InboxTab extends StatelessWidget {
   const InboxTab();
@@ -7,7 +7,7 @@ class InboxTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: BlossomLoader(),
+      child: Loader(),
     );
   }
 }

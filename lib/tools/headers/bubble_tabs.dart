@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 
-class BubbleTabBar<T> extends StatefulWidget {
+class BubbleTabs<T> extends StatefulWidget {
   final List<String> options;
   final List<T> values;
   final T initial;
   final Function(T) onNewValue;
   final Function(T) onSameValue;
-  final bool minimised;
   final bool shrinkWrap;
 
-  const BubbleTabBar({
+  const BubbleTabs({
     @required this.options,
     @required this.values,
     @required this.initial,
     @required this.onNewValue,
     @required this.onSameValue,
-    this.minimised = false,
-    this.shrinkWrap = false,
+    this.shrinkWrap = true,
   });
 
   @override
-  _BubbleTabBarState createState() => _BubbleTabBarState();
+  _BubbleTabsState createState() => _BubbleTabsState();
 }
 
-class _BubbleTabBarState extends State<BubbleTabBar> {
+class _BubbleTabsState extends State<BubbleTabs> {
   int _index;
-  TextStyle _selected;
-  TextStyle _unselected;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -59,7 +54,12 @@ class _BubbleTabBarState extends State<BubbleTabBar> {
               ),
               child: Text(
                 widget.options[index],
-                style: index != _index ? _unselected : _selected,
+                style: index != _index
+                    ? Theme.of(context).textTheme.headline6
+                    : Theme.of(context)
+                        .textTheme
+                        .headline6
+                        .copyWith(color: Theme.of(context).backgroundColor),
               ),
             ),
           ),
@@ -70,16 +70,7 @@ class _BubbleTabBarState extends State<BubbleTabBar> {
   @override
   void initState() {
     super.initState();
-    for (int i = 0; i < widget.values.length; i++) {
-      if (widget.values[i] == widget.initial) {
-        _index = i;
-        break;
-      }
-    }
-
-    _unselected = widget.minimised
-        ? Get.theme.textTheme.headline6
-        : Get.theme.textTheme.headline3;
-    _selected = _unselected.copyWith(color: Get.theme.backgroundColor);
+    _index = widget.values.indexOf(widget.initial);
+    if (_index == -1) _index = 0;
   }
 }

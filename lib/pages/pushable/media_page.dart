@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/pushable/media_tabs/overview_tab.dart';
-import 'package:otraku/tools/headers/bubble_tab_bar.dart';
+import 'package:otraku/tools/headers/bubble_tabs.dart';
 import 'package:otraku/tools/headers/media_page_header.dart';
 
 class MediaPage extends StatelessWidget {
@@ -53,13 +53,13 @@ class MediaPage extends StatelessWidget {
                 return SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: BubbleTabBar(
+                    child: BubbleTabs(
                       options: ['Overview', 'Relations', 'Social'],
                       values: [Media.OVERVIEW, Media.RELATIONS, Media.SOCIAL],
                       initial: media.currentTab,
                       onNewValue: (_) {},
                       onSameValue: (_) {},
-                      minimised: true,
+                      shrinkWrap: false,
                     ),
                   ),
                 );

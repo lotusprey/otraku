@@ -8,7 +8,7 @@ import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/media_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/tools/transparent_image.dart';
@@ -25,7 +25,7 @@ class MediaList extends StatelessWidget {
 
         if (collection == null) {
           if (controller.fetching) {
-            return const SliverFillRemaining(child: BlossomLoader());
+            return const SliverFillRemaining(child: Loader());
           }
 
           return SliverFillRemaining(

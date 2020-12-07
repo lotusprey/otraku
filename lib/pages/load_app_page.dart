@@ -7,7 +7,7 @@ import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/loader.dart';
 
 class LoadAppPage extends StatelessWidget {
   @override
@@ -59,7 +59,7 @@ class LoadAppPage extends StatelessWidget {
     });
 
     return Scaffold(
-      body: const Center(child: BlossomLoader()),
+      body: const Center(child: Loader()),
     );
   }
 

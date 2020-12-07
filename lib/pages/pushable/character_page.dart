@@ -2,7 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/headers/bubble_tab_bar.dart';
+import 'package:otraku/tools/headers/bubble_tabs.dart';
 import 'package:otraku/tools/headers/person_header.dart';
 import 'package:otraku/controllers/character.dart';
 import 'package:otraku/tools/layouts/media_connection_grid.dart';
@@ -44,14 +44,12 @@ class CharacterPage extends StatelessWidget {
                       children: [
                         if (character.anime.connections.isNotEmpty &&
                             character.manga.connections.isNotEmpty)
-                          BubbleTabBar(
+                          BubbleTabs(
                             options: const ['Anime', 'Manga'],
                             values: const [true, false],
                             initial: true,
                             onNewValue: (value) => character.onAnime = value,
                             onSameValue: (_) {},
-                            minimised: true,
-                            shrinkWrap: true,
                           )
                         else
                           const SizedBox(),

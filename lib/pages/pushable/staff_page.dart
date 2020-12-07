@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/staff.dart';
-import 'package:otraku/tools/headers/bubble_tab_bar.dart';
+import 'package:otraku/tools/headers/bubble_tabs.dart';
 import 'package:otraku/tools/headers/person_header.dart';
 import 'package:otraku/tools/layouts/media_connection_grid.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
@@ -42,14 +42,12 @@ class StaffPage extends StatelessWidget {
                       children: [
                         if (staff.characterList.connections.isNotEmpty &&
                             staff.roleList.connections.isNotEmpty)
-                          BubbleTabBar(
+                          BubbleTabs(
                             options: const ['Characters', 'Staff Roles'],
                             values: const [true, false],
                             initial: true,
                             onNewValue: (value) => staff.onCharacters = value,
                             onSameValue: (_) {},
-                            minimised: true,
-                            shrinkWrap: true,
                           ),
                         IconButton(
                           icon: const Icon(

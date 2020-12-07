@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/tools/blossom_loader.dart';
+import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/headers/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/headers/headline_header.dart';
@@ -34,7 +34,7 @@ class _ExploreTabState extends State<ExploreTab> {
         const HeadlineHeader('Explore', false),
         ControlHeader(false, _ctrl),
         _ExploreGrid(),
-        _ConditionalLoader(),
+        _EndOfListLoader(),
         SliverToBoxAdapter(
           child: const SizedBox(height: 50),
         ),
@@ -52,22 +52,29 @@ class _ExploreGrid extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Obx(() {
-        final results = Get.find<Explorable>().results;
+  Widget build(BuildContext context) {
+    final explorable = Get.find<Explorable>();
 
-        if (results.length == 0) {
-          return NoResults();
-        }
+    return Obx(() {
+      if (explorable.isLoading)
+        return const SliverFillRemaining(
+          child: Center(child: Loader()),
+        );
 
-        if (results[0].browsable == Browsable.studios) {
-          return TitleList(results, _loadMore);
-        }
+      final results = explorable.results;
+      if (results.length == 0) {
+        return NoResults();
+      }
 
-        return LargeGrid(results, _loadMore);
-      });
+      if (results[0].browsable == Browsable.studios)
+        return TitleList(results, _loadMore);
+
+      return LargeGrid(results, _loadMore);
+    });
+  }
 }
 
-class _ConditionalLoader extends StatelessWidget {
+class _EndOfListLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -75,8 +82,9 @@ class _ConditionalLoader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Obx(
-            () => Get.find<Explorable>().hasNextPage
-                ? BlossomLoader()
+            () => Get.find<Explorable>().hasNextPage &&
+                    !Get.find<Explorable>().isLoading
+                ? Loader()
                 : const SizedBox(),
           ),
         ),

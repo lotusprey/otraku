@@ -1,8 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
+import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/tools/page_transition.dart';
@@ -120,6 +126,15 @@ class OverviewTab extends StatelessWidget {
                   ),
             ],
           ),
+          if (overview.genres != null && overview.genres.isNotEmpty) ...[
+            _space,
+            _ScrollTile(
+              title: 'Genres',
+              builder: (index) =>
+                  _GenreLink(overview.genres[index], overview.browsable),
+              itemCount: overview.genres.length,
+            ),
+          ],
           if (overview.studios != null &&
               overview.studios.item1.isNotEmpty) ...[
             _space,
@@ -252,6 +267,34 @@ class _ScrollTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _GenreLink extends StatelessWidget {
+  final String name;
+  final Browsable type;
+
+  _GenreLink(this.name, this.type);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        final explorable = Get.find<Explorable>();
+        explorable.search = null;
+        explorable.clearAllFilters(fetch: false);
+        explorable.setFilterWithKey(
+          Explorable.SORT,
+          value: describeEnum(MediaSort.TRENDING_DESC),
+        );
+        explorable.setFilterWithKey(Explorable.GENRE_IN, value: [name]);
+        explorable.type = type;
+        Config.pageIndex = TabManager.EXPLORE;
+        Get.until((route) => route.isFirst);
+      },
+      onLongPress: () => Clipboard.setData(ClipboardData(text: name)),
+      child: Text(name, style: Theme.of(context).textTheme.bodyText2),
     );
   }
 }

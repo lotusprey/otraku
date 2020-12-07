@@ -97,6 +97,7 @@ class Explorable extends GetxController {
   final _results = List<BrowseResult>().obs;
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
+  int _concurrentFetches = 0;
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
@@ -163,8 +164,8 @@ class Explorable extends GetxController {
     bool refetch = false,
   }) {
     if (value == null ||
-        (value is List && value.length == 0) ||
-        (value is String && value.trim() == '')) {
+        (value is List && value.isEmpty) ||
+        (value is String && value.trim().isEmpty)) {
       _filters.remove(key);
     } else {
       _filters[key] = value;
@@ -173,12 +174,23 @@ class Explorable extends GetxController {
     if (refetch) fetchData();
   }
 
-  void clearFiltersWithKeys(List<String> keys) {
+  void clearAllFilters({bool fetch = true}) => clearFiltersWithKeys([
+        STATUS_IN,
+        STATUS_NOT_IN,
+        FORMAT_IN,
+        FORMAT_NOT_IN,
+        GENRE_IN,
+        GENRE_NOT_IN,
+        TAG_IN,
+        TAG_NOT_IN,
+      ], fetch: fetch);
+
+  void clearFiltersWithKeys(List<String> keys, {bool fetch = true}) {
     for (final key in keys) {
       _filters.remove(key);
     }
 
-    fetchData();
+    if (fetch) fetchData();
   }
 
   bool anyActiveFilterFrom(List<String> keys) {
@@ -198,9 +210,10 @@ class Explorable extends GetxController {
   // ***************************************************************************
 
   Future<void> fetchData({bool clean = true}) async {
-    _isLoading.value = true;
+    _concurrentFetches++;
 
     if (clean) {
+      _isLoading.value = true;
       _filters[ID_NOT_IN] = [];
       _filters[PAGE] = 1;
     }
@@ -236,7 +249,8 @@ class Explorable extends GetxController {
       popOnError: false,
     );
 
-    if (data == null) return null;
+    _concurrentFetches--;
+    if (data == null || _concurrentFetches > 0) return;
 
     _hasNextPage.value = data['Page']['pageInfo']['hasNextPage'];
 
@@ -285,11 +299,10 @@ class Explorable extends GetxController {
 
     if (clean) {
       _results.assignAll(loaded);
+      _isLoading.value = false;
     } else {
       _results.addAll(loaded);
     }
-
-    _isLoading.value = false;
   }
 
   //Fetches genres, tags and initial media

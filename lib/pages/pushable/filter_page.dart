@@ -46,16 +46,7 @@ class FilterPage extends StatelessWidget {
             icon: const Icon(Icons.close),
             color: Theme.of(context).accentColor,
             onPressed: () {
-              explorable.clearFiltersWithKeys([
-                Explorable.STATUS_IN,
-                Explorable.STATUS_NOT_IN,
-                Explorable.FORMAT_IN,
-                Explorable.FORMAT_NOT_IN,
-                Explorable.GENRE_IN,
-                Explorable.GENRE_NOT_IN,
-                Explorable.TAG_IN,
-                Explorable.TAG_NOT_IN,
-              ]);
+              explorable.clearAllFilters();
               onUpdate(false);
               Navigator.of(context).pop();
             },

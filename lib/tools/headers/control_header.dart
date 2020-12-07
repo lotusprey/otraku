@@ -359,7 +359,10 @@ class __FilterState extends State<_Filter> {
 
     return GestureDetector(
       onTap: () => _pushPage(context),
-      onLongPress: _clearFilters,
+      onLongPress: () {
+        Get.find<Explorable>().clearAllFilters();
+        setState(() => _active = false);
+      },
       child: Container(
         width: Config.MATERIAL_TAP_TARGET_SIZE,
         decoration: BoxDecoration(
@@ -386,19 +389,6 @@ class __FilterState extends State<_Filter> {
           }),
         ),
       );
-
-  void _clearFilters() {
-    final explorable = Get.find<Explorable>();
-    explorable.setFilterWithKey(Explorable.STATUS_NOT_IN, value: null);
-    explorable.setFilterWithKey(Explorable.STATUS_IN, value: null);
-    explorable.setFilterWithKey(Explorable.FORMAT_NOT_IN, value: null);
-    explorable.setFilterWithKey(Explorable.FORMAT_IN, value: null);
-    explorable.setFilterWithKey(Explorable.GENRE_NOT_IN, value: null);
-    explorable.setFilterWithKey(Explorable.GENRE_IN, value: null);
-    explorable.setFilterWithKey(Explorable.TAG_NOT_IN, value: null);
-    explorable.setFilterWithKey(Explorable.TAG_IN, value: null, refetch: true);
-    setState(() => _active = false);
-  }
 
   bool _checkIfActive() => Get.find<Explorable>().anyActiveFilterFrom([
         Explorable.STATUS_IN,

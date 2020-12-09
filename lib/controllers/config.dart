@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/models/large_tile_configuration.dart';
+import 'package:otraku/models/tile_config.dart';
 import 'package:otraku/pages/tab_manager.dart';
 
 // Holds constants and configurations that
@@ -26,7 +26,7 @@ class Config {
 
   static final storage = GetStorage();
   static final _pageIndex = RxInt(storage.read(STARTUP_PAGE));
-  static LargeTileConfig _largeTileConfig;
+  static TileConfig _tileConfig;
   static bool _hasInit = false;
 
   // Should be called as soon as possible,
@@ -36,12 +36,13 @@ class Config {
 
     _pageIndex.value ??= TabManager.ANIME_LIST;
 
-    final tileWidth = (Get.mediaQuery.size.width - 40) / 3;
-    _largeTileConfig = LargeTileConfig(
-      tileWHRatio: 0.5,
-      tileWidth: tileWidth,
-      tileHeight: tileWidth * 2,
-      tileImgHeight: tileWidth * 1.5,
+    double tileWidth = (Get.mediaQuery.size.width - 40) / 3;
+    if (tileWidth > 150) tileWidth = 150;
+    final imgHeight = tileWidth * 1.5;
+    _tileConfig = TileConfig(
+      width: tileWidth,
+      fullHeight: imgHeight + 45,
+      imgHeight: imgHeight,
     );
 
     _hasInit = true;
@@ -77,5 +78,5 @@ class Config {
 
   static set pageIndex(int index) => _pageIndex.value = index;
 
-  static LargeTileConfig get tileConfig => _largeTileConfig;
+  static TileConfig get tileConfig => _tileConfig;
 }

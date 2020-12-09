@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/tools/headers/control_header.dart';
+import 'package:otraku/tools/navigators/control_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
-import 'package:otraku/tools/headers/headline_header.dart';
+import 'package:otraku/tools/navigators/headline_header.dart';
 
 class CollectionsTab extends StatefulWidget {
   final int otherUserId;

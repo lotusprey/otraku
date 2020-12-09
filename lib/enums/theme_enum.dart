@@ -106,11 +106,6 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     unselectedWidgetColor: theme['faded'],
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: theme['primary'],
-      selectedItemColor: theme['accent'],
-      unselectedItemColor: theme['faded'],
-    ),
     iconTheme: IconThemeData(
       color: theme['faded'],
       size: Styles.ICON_MEDIUM,

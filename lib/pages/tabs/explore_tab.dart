@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/headers/control_header.dart';
+import 'package:otraku/tools/navigators/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
-import 'package:otraku/tools/headers/headline_header.dart';
+import 'package:otraku/tools/navigators/headline_header.dart';
 
 class ExploreTab extends StatefulWidget {
   const ExploreTab();
@@ -66,7 +66,7 @@ class _ExploreGrid extends StatelessWidget {
         return NoResults();
       }
 
-      if (results[0].browsable == Browsable.studios)
+      if (results[0].browsable == Browsable.studio)
         return TitleList(results, _loadMore);
 
       return LargeGrid(results, _loadMore);

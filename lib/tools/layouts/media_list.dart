@@ -71,7 +71,7 @@ class MediaList extends StatelessWidget {
 }
 
 class _MediaListTile extends StatelessWidget {
-  static const _space = SizedBox(height: 5);
+  final _space = const SizedBox(height: 5);
 
   final MediaEntry media;
   final String scoreFormat;

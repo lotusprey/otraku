@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
-import 'package:otraku/tools/headers/custom_app_bar.dart';
+import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
 class NotificationSettingsPage extends StatelessWidget {
   static const List<String> _notificationNames = const [

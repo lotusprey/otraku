@@ -61,7 +61,7 @@ class Studio extends GetxController {
 
     _company(PageObject(
       id: id,
-      browsable: Browsable.studios,
+      browsable: Browsable.studio,
       isFavourite: data['isFavourite'],
       favourites: data['favourites'],
     ));

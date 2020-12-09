@@ -107,7 +107,7 @@ class Character extends GetxController {
 
     _person(Person(
       id: id,
-      browsable: Browsable.characters,
+      browsable: Browsable.character,
       isFavourite: data['isFavourite'],
       favourites: data['favourites'],
       fullName: data['name']['full'],

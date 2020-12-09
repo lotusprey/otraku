@@ -14,7 +14,7 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/tools/page_transition.dart';
 
 class OverviewTab extends StatelessWidget {
-  static const _space = SizedBox(height: 10);
+  final _space = const SizedBox(height: 10);
 
   final MediaOverview overview;
 
@@ -96,6 +96,7 @@ class OverviewTab extends StatelessWidget {
           const SizedBox(height: 5),
           GridView.count(
             shrinkWrap: true,
+            padding: const EdgeInsets.all(0),
             physics: NeverScrollableScrollPhysics(),
             semanticChildCount: infoTitles.length,
             crossAxisCount: tileCount,

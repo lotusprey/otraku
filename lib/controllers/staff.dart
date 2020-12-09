@@ -148,7 +148,7 @@ class Staff extends GetxController {
               id: char['id'],
               title: char['name']['full'],
               imageUrl: char['image']['large'],
-              browsable: Browsable.characters,
+              browsable: Browsable.character,
               subtitle: clarifyEnum(connection['characterRole']),
               others: [
                 Connection(
@@ -191,7 +191,7 @@ class Staff extends GetxController {
             id: char['id'],
             title: char['name']['full'],
             imageUrl: char['image']['large'],
-            browsable: Browsable.characters,
+            browsable: Browsable.character,
             subtitle: clarifyEnum(connection['characterRole']),
             others: [
               Connection(

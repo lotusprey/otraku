@@ -4,7 +4,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
-import 'package:otraku/tools/headers/custom_app_bar.dart';
+import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
 class MediaSettingsPage extends StatelessWidget {
   final Map<String, dynamic> changes;

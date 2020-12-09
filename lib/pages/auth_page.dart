@@ -16,13 +16,12 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  static const String _redirectUrl =
-      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
-
   bool _triedConnecting = false;
   StreamSubscription _subscription;
 
   Future<void> _authenticate() async {
+    const String _redirectUrl =
+        'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
     if (await canLaunch(_redirectUrl)) {
       await launch(_redirectUrl);
     } else {

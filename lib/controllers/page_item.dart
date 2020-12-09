@@ -6,17 +6,17 @@ class PageItem {
     String idName = const {
       Browsable.anime: 'anime',
       Browsable.manga: 'manga',
-      Browsable.characters: 'character',
+      Browsable.character: 'character',
       Browsable.staff: 'staff',
-      Browsable.studios: 'studio',
+      Browsable.studio: 'studio',
     }[browsable];
 
     String pageName = const {
       Browsable.anime: 'anime',
       Browsable.manga: 'manga',
-      Browsable.characters: 'characters',
+      Browsable.character: 'characters',
       Browsable.staff: 'staff',
-      Browsable.studios: 'studios',
+      Browsable.studio: 'studios',
     }[browsable];
 
     final query = '''

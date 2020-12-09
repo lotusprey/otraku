@@ -16,8 +16,7 @@ class LargeGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: Config.tileConfig.tileWidth,
-      height: Config.tileConfig.tileHeight,
+      height: Config.tileConfig.fullHeight,
       child: Column(
         children: [
           Hero(
@@ -25,7 +24,8 @@ class LargeGridTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: Config.BORDER_RADIUS,
               child: Container(
-                height: Config.tileConfig.tileImgHeight,
+                width: Config.tileConfig.width,
+                height: Config.tileConfig.imgHeight,
                 color: Theme.of(context).primaryColor,
                 child: FadeInImage.memoryNetwork(
                   placeholder: transparentImage,
@@ -36,15 +36,13 @@ class LargeGridTile extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 5),
           Flexible(
-            child: Hero(
-              tag: text,
-              child: Text(
-                text,
-                overflow: TextOverflow.fade,
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
+            child: Text(
+              text,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
         ],

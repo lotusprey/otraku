@@ -10,7 +10,7 @@ import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/expandable_field.dart';
-import 'package:otraku/tools/headers/custom_app_bar.dart';
+import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 import 'package:otraku/tools/fields/score_picker.dart';
@@ -27,7 +27,7 @@ class EditEntryPage extends StatefulWidget {
 }
 
 class _EditEntryPageState extends State<EditEntryPage> {
-  static const _box = SizedBox(width: 10, height: 10);
+  final _box = const SizedBox(width: 10, height: 10);
 
   EditEntry _oldData;
   EditEntry _newData;

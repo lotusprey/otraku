@@ -5,7 +5,7 @@ import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/headers/custom_app_bar.dart';
+import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
 class AppSettingsPage extends StatelessWidget {
   @override

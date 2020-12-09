@@ -9,7 +9,7 @@ import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/headers/custom_app_bar.dart';
+import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 
 class FilterPage extends StatelessWidget {

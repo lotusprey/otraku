@@ -13,7 +13,7 @@ import 'package:otraku/tools/page_transition.dart';
 import 'package:otraku/models/transparent_image.dart';
 
 class UserTab extends StatelessWidget {
-  static const _space = SizedBox(width: 10);
+  final _space = const SizedBox(width: 10);
 
   final int id;
 

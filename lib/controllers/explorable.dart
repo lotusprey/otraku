@@ -232,7 +232,7 @@ class Explorable extends GetxController {
         ID_NOT_IN: _filters[ID_NOT_IN],
       };
 
-      if (currentType == Browsable.characters) {
+      if (currentType == Browsable.character) {
         query = _charactersQuery;
       } else if (currentType == Browsable.staff) {
         query = _staffQuery;
@@ -266,7 +266,7 @@ class Explorable extends GetxController {
         ));
         (_filters[ID_NOT_IN] as List<dynamic>).add(m['id']);
       }
-    } else if (currentType == Browsable.characters) {
+    } else if (currentType == Browsable.character) {
       for (final c in data['Page']['characters'] as List<dynamic>) {
         loaded.add(BrowseResult(
           id: c['id'],

@@ -96,7 +96,7 @@ class CollectionDrawer extends StatelessWidget {
 }
 
 class ExploreDrawer extends StatelessWidget {
-  static const _space = SizedBox(width: 10);
+  final _space = const SizedBox(width: 10);
 
   const ExploreDrawer();
 

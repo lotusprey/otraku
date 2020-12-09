@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class InputFieldStructure extends StatelessWidget {
-  static const _space = SizedBox(height: 5);
+  final _space = const SizedBox(height: 5);
 
   final String title;
   final Widget body;

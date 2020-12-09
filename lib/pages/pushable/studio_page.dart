@@ -109,10 +109,11 @@ class StudioPage extends StatelessWidget {
                             ),
                             gridDelegate:
                                 SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: Config.tileConfig.tileWidth,
+                              maxCrossAxisExtent: Config.tileConfig.width,
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
-                              childAspectRatio: Config.tileConfig.tileWHRatio,
+                              childAspectRatio: Config.tileConfig.width /
+                                  Config.tileConfig.fullHeight,
                             ),
                           ),
                         ),

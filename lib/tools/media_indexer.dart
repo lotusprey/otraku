@@ -33,7 +33,7 @@ class MediaIndexer extends StatelessWidget {
       case Browsable.manga:
         page = MediaPage(id, tag);
         break;
-      case Browsable.characters:
+      case Browsable.character:
         page = CharacterPage(id, tag);
         break;
       case Browsable.staff:

@@ -5,6 +5,7 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
+import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/models/tuple.dart';
 
 class Media extends GetxController {
@@ -39,6 +40,19 @@ class Media extends GetxController {
         source
         hashtag
         countryOfOrigin
+        relations {
+          edges {
+            relationType(version: 2)
+            node {
+              id
+              type
+              format
+              title {userPreferred} 
+              status(version: 2)
+              coverImage {large}
+            }
+          }
+        }
       }
     }
   ''';
@@ -46,15 +60,26 @@ class Media extends GetxController {
   static const OVERVIEW = 0;
   static const RELATIONS = 1;
   static const SOCIAL = 2;
+  static const REL_MEDIA = 0;
+  static const REL_CHARACTERS = 1;
+  static const REL_STAFF = 2;
 
-  final _currentTab = OVERVIEW.obs;
+  final _tab = OVERVIEW.obs;
+  final _relationsTab = REL_MEDIA.obs;
   final _overview = Rx<MediaOverview>();
+  final _mediaRelations = List<Connection>().obs;
 
-  int get currentTab => _currentTab();
+  int get tab => _tab();
 
-  set currentTab(int value) => _currentTab.value = value;
+  set tab(int value) => _tab.value = value;
+
+  int get relationsTab => _relationsTab();
+
+  set relationsTab(int value) => _relationsTab.value = value;
 
   MediaOverview get overview => _overview();
+
+  List<Connection> get mediaRelations => _mediaRelations();
 
   Future<void> fetchOverview(int id) async {
     if (_overview.value != null) return;
@@ -147,5 +172,21 @@ class Media extends GetxController {
       hashtag: data['hashtag'],
       countryOfOrigin: data['countryOfOrigin'],
     ));
+
+    List<Connection> mediaRel = [];
+    for (final relation in data['relations']['edges']) {
+      mediaRel.add(Connection(
+        id: relation['node']['id'],
+        title: relation['node']['title']['userPreferred'],
+        subtitle: relation['relationType'],
+        caption: relation['node']['format'],
+        imageUrl: relation['node']['coverImage']['large'],
+        browsable: relation['node']['type'] == 'ANIME'
+            ? Browsable.anime
+            : Browsable.manga,
+      ));
+    }
+
+    _mediaRelations.addAll(mediaRel);
   }
 }

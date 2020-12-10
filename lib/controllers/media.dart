@@ -5,7 +5,7 @@ import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
-import 'package:otraku/models/sample_data/connection.dart';
+import 'package:otraku/models/sample_data/related_media.dart';
 import 'package:otraku/models/tuple.dart';
 
 class Media extends GetxController {
@@ -67,7 +67,7 @@ class Media extends GetxController {
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
   final _overview = Rx<MediaOverview>();
-  final _mediaRelations = List<Connection>().obs;
+  final _mediaRelations = List<RelatedMedia>().obs;
 
   int get tab => _tab();
 
@@ -79,7 +79,7 @@ class Media extends GetxController {
 
   MediaOverview get overview => _overview();
 
-  List<Connection> get mediaRelations => _mediaRelations();
+  List<RelatedMedia> get mediaRelations => _mediaRelations();
 
   Future<void> fetchOverview(int id) async {
     if (_overview.value != null) return;
@@ -138,8 +138,8 @@ class Media extends GetxController {
       description: data['description'] != null
           ? data['description'].replaceAll(RegExp(r'<[^>]*>'), '')
           : null,
-      format: data['format'] != null ? clarifyEnum(data['format']) : null,
-      status: data['status'] != null ? clarifyEnum(data['status']) : null,
+      format: clarifyEnum(data['format']),
+      status: clarifyEnum(data['status']),
       entryStatus: data['mediaListEntry'] != null
           ? stringToEnum(
               data['mediaListEntry']['status'].toString(),
@@ -173,13 +173,14 @@ class Media extends GetxController {
       countryOfOrigin: data['countryOfOrigin'],
     ));
 
-    List<Connection> mediaRel = [];
+    List<RelatedMedia> mediaRel = [];
     for (final relation in data['relations']['edges']) {
-      mediaRel.add(Connection(
+      mediaRel.add(RelatedMedia(
         id: relation['node']['id'],
         title: relation['node']['title']['userPreferred'],
-        subtitle: relation['relationType'],
-        caption: relation['node']['format'],
+        relationType: clarifyEnum(relation['relationType']),
+        format: clarifyEnum(relation['node']['format']),
+        status: clarifyEnum(relation['node']['status']),
         imageUrl: relation['node']['coverImage']['large'],
         browsable: relation['node']['type'] == 'ANIME'
             ? Browsable.anime

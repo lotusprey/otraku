@@ -1,11 +1,11 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/pushable/media_tabs/overview_tab.dart';
 import 'package:otraku/pages/pushable/media_tabs/relations_tab.dart';
+import 'package:otraku/tools/navigators/bubble_tabs.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 import 'package:otraku/tools/navigators/media_page_header.dart';
 
@@ -17,9 +17,11 @@ class MediaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const placeholder = const SliverToBoxAdapter(child: SizedBox());
     double coverWidth = MediaQuery.of(context).size.width * 0.35;
     double coverHeight = coverWidth / 0.7;
     double bannerHeight = coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+    Media media;
 
     return Scaffold(
       extendBody: true,
@@ -45,9 +47,10 @@ class MediaPage extends StatelessWidget {
                     ? Media()
                     : null,
                 tag: id.toString(),
-                initState: (_) {
-                  Get.find<Media>(tag: id.toString()).fetchOverview(id);
-                },
+                didUpdateWidget: (_, __) =>
+                    media = Get.find<Media>(tag: id.toString()),
+                initState: (_) => media = Get.find<Media>(tag: id.toString())
+                  ..fetchOverview(id),
                 builder: (media) => SliverPersistentHeader(
                   pinned: true,
                   floating: false,
@@ -60,25 +63,36 @@ class MediaPage extends StatelessWidget {
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.all(10),
-                sliver: Obx(() {
-                  final media = Get.find<Media>(tag: id.toString());
-
-                  if (media.tab == Media.OVERVIEW) {
-                    if (media.overview == null) return SliverToBoxAdapter();
-                    return OverviewTab(media.overview);
-                  }
-
-                  if (media.tab == Media.RELATIONS) {
-                    return RelationsTab(media);
-                  }
-
-                  if (media.tab == Media.SOCIAL) {}
-
-                  return SliverToBoxAdapter();
-                }),
+              Obx(
+                () => media.tab == Media.OVERVIEW && media.overview != null
+                    ? OverviewTab(media.overview)
+                    : placeholder,
               ),
+              Obx(() => media.tab == Media.RELATIONS
+                  ? SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: BubbleTabs(
+                          options: ['Media', 'Characters', 'Staff'],
+                          values: [
+                            Media.REL_MEDIA,
+                            Media.REL_CHARACTERS,
+                            Media.REL_CHARACTERS,
+                          ],
+                          initial: media.relationsTab,
+                          onNewValue: (val) => media.relationsTab = val,
+                          onSameValue: (_) {},
+                          shrinkWrap: false,
+                        ),
+                      ),
+                    )
+                  : placeholder),
+              Obx(
+                () => media.tab == Media.RELATIONS
+                    ? RelationsTab(media)
+                    : placeholder,
+              ),
+              SliverToBoxAdapter(child: const SizedBox(height: 60)),
             ],
           ),
         ),

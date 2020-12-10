@@ -10,7 +10,7 @@ import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
-import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/large_grid_tile.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
@@ -92,8 +92,8 @@ class StudioPage extends StatelessWidget {
                           padding: Config.PADDING,
                           sliver: SliverGrid(
                             delegate: SliverChildBuilderDelegate(
-                              (_, index) => MediaIndexer(
-                                itemType: Browsable.anime,
+                              (_, index) => BrowseIndexer(
+                                browsable: Browsable.anime,
                                 id: studio.media.split[i][index].id,
                                 tag: studio.media.split[i][index].imageUrl,
                                 child: LargeGridTile(
@@ -109,11 +109,11 @@ class StudioPage extends StatelessWidget {
                             ),
                             gridDelegate:
                                 SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: Config.tileConfig.width,
+                              maxCrossAxisExtent: Config.tile.width,
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
-                              childAspectRatio: Config.tileConfig.width /
-                                  Config.tileConfig.fullHeight,
+                              childAspectRatio:
+                                  Config.tile.width / Config.tile.fullHeight,
                             ),
                           ),
                         ),

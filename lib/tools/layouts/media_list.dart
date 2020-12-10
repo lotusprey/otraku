@@ -9,7 +9,7 @@ import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 
@@ -80,9 +80,9 @@ class _MediaListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MediaIndexer(
+    return BrowseIndexer(
       id: media.mediaId,
-      itemType: Browsable.anime,
+      browsable: Browsable.anime,
       tag: media.cover,
       child: Row(
         children: [

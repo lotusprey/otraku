@@ -6,6 +6,7 @@ start with an upper case letter and continue with
 lower case ones.
 */
 String clarifyEnum(String str) {
+  if (str == null) return null;
   return str.splitMapJoin(
     '_',
     onMatch: (_) => ' ',

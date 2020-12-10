@@ -16,7 +16,7 @@ class LargeGridTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Config.tileConfig.fullHeight,
+      height: Config.tile.fullHeight,
       child: Column(
         children: [
           Hero(
@@ -24,8 +24,8 @@ class LargeGridTile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: Config.BORDER_RADIUS,
               child: Container(
-                width: Config.tileConfig.width,
-                height: Config.tileConfig.imgHeight,
+                width: Config.tile.width,
+                height: Config.tile.imgHeight,
                 color: Theme.of(context).primaryColor,
                 child: FadeInImage.memoryNetwork(
                   placeholder: transparentImage,

@@ -8,14 +8,14 @@ import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
 import 'package:otraku/tools/page_transition.dart';
 
-class MediaIndexer extends StatelessWidget {
-  final Browsable itemType;
+class BrowseIndexer extends StatelessWidget {
+  final Browsable browsable;
   final int id;
   final String tag;
   final Widget child;
 
-  MediaIndexer({
-    @required this.itemType,
+  BrowseIndexer({
+    @required this.browsable,
     @required this.id,
     @required this.tag,
     @required this.child,
@@ -51,14 +51,14 @@ class MediaIndexer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => MediaIndexer.pushMedia(
+      onTap: () => BrowseIndexer.pushMedia(
         context: context,
-        type: itemType,
+        type: browsable,
         id: id,
         tag: tag,
       ),
       onLongPress: () {
-        if (itemType == Browsable.anime || itemType == Browsable.manga)
+        if (browsable == Browsable.anime || browsable == Browsable.manga)
           Navigator.push(context, PageTransition.to(EditEntryPage(id, (_) {})));
       },
       child: child,

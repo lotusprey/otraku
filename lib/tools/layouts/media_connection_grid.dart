@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/models/transparent_image.dart';
 
 class MediaConnectionGrid extends StatefulWidget {
@@ -61,9 +61,9 @@ class _MediaConnectionTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
-              child: MediaIndexer(
+              child: BrowseIndexer(
                 id: media.id,
-                itemType: media.browsable,
+                browsable: media.browsable,
                 tag: media.imageUrl,
                 child: Container(
                   color: Colors.transparent,
@@ -112,9 +112,9 @@ class _MediaConnectionTile extends StatelessWidget {
             ),
             if (index != null && media.others.length > index)
               Expanded(
-                child: MediaIndexer(
+                child: BrowseIndexer(
                   id: media.others[index].id,
-                  itemType: media.others[index].browsable,
+                  browsable: media.others[index].browsable,
                   tag: media.others[index].imageUrl,
                   child: Container(
                     color: Colors.transparent,

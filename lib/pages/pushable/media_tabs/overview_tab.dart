@@ -60,171 +60,174 @@ class OverviewTab extends StatelessWidget {
       overview.countryOfOrigin,
     ];
 
-    return SliverList(
-      delegate: SliverChildListDelegate(
-        [
-          if (overview.description != null)
-            InputFieldStructure(
-              enforceHeight: false,
-              title: 'Description',
-              body: GestureDetector(
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: Config.BORDER_RADIUS,
-                  ),
-                  child: Text(
-                    overview.description,
-                    style: Theme.of(context).textTheme.bodyText1,
-                    overflow: TextOverflow.fade,
-                    maxLines: 5,
-                  ),
-                ),
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (_) => PopUpAnimation(
-                    TextDialog(
-                      title: 'Description',
-                      text: overview.description,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          Text('Info', style: Theme.of(context).textTheme.subtitle1),
-          const SizedBox(height: 5),
-          GridView.count(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(0),
-            physics: NeverScrollableScrollPhysics(),
-            semanticChildCount: infoTitles.length,
-            crossAxisCount: tileCount,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: tileAspectRatio,
-            children: [
-              for (int i = 0; i < infoChildren.length; i++)
-                if (infoChildren[i] != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
+    return SliverPadding(
+      padding: Config.PADDING,
+      sliver: SliverList(
+        delegate: SliverChildListDelegate(
+          [
+            if (overview.description != null)
+              InputFieldStructure(
+                enforceHeight: false,
+                title: 'Description',
+                body: GestureDetector(
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      borderRadius: Config.BORDER_RADIUS,
                       color: Theme.of(context).primaryColor,
+                      borderRadius: Config.BORDER_RADIUS,
                     ),
-                    child: InputFieldStructure(
-                      enforceHeight: false,
-                      enforcePadding: false,
-                      title: infoTitles[i],
-                      body: Text(
-                        infoChildren[i].toString(),
-                        style: Theme.of(context).textTheme.bodyText1,
+                    child: Text(
+                      overview.description,
+                      style: Theme.of(context).textTheme.bodyText1,
+                      overflow: TextOverflow.fade,
+                      maxLines: 5,
+                    ),
+                  ),
+                  onTap: () => showDialog(
+                    context: context,
+                    builder: (_) => PopUpAnimation(
+                      TextDialog(
+                        title: 'Description',
+                        text: overview.description,
                       ),
                     ),
                   ),
+                ),
+              ),
+            Text('Info', style: Theme.of(context).textTheme.subtitle1),
+            const SizedBox(height: 5),
+            GridView.count(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(0),
+              physics: NeverScrollableScrollPhysics(),
+              semanticChildCount: infoTitles.length,
+              crossAxisCount: tileCount,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: tileAspectRatio,
+              children: [
+                for (int i = 0; i < infoChildren.length; i++)
+                  if (infoChildren[i] != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: Config.BORDER_RADIUS,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      child: InputFieldStructure(
+                        enforceHeight: false,
+                        enforcePadding: false,
+                        title: infoTitles[i],
+                        body: Text(
+                          infoChildren[i].toString(),
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      ),
+                    ),
+              ],
+            ),
+            if (overview.genres != null && overview.genres.isNotEmpty) ...[
+              _space,
+              _ScrollTile(
+                title: 'Genres',
+                builder: (index) =>
+                    _GenreLink(overview.genres[index], overview.browsable),
+                itemCount: overview.genres.length,
+              ),
             ],
-          ),
-          if (overview.genres != null && overview.genres.isNotEmpty) ...[
-            _space,
-            _ScrollTile(
-              title: 'Genres',
-              builder: (index) =>
-                  _GenreLink(overview.genres[index], overview.browsable),
-              itemCount: overview.genres.length,
-            ),
-          ],
-          if (overview.studios != null &&
-              overview.studios.item1.isNotEmpty) ...[
-            _space,
-            _ScrollTile(
-              title: 'Studios',
-              builder: (index) => _StudioLink(
-                overview.studios.item1[index],
-                overview.studios.item2[index],
+            if (overview.studios != null &&
+                overview.studios.item1.isNotEmpty) ...[
+              _space,
+              _ScrollTile(
+                title: 'Studios',
+                builder: (index) => _StudioLink(
+                  overview.studios.item1[index],
+                  overview.studios.item2[index],
+                ),
+                itemCount: overview.studios.item1.length,
               ),
-              itemCount: overview.studios.item1.length,
-            ),
-          ],
-          if (overview.producers != null &&
-              overview.producers.item1.isNotEmpty) ...[
-            _space,
-            _ScrollTile(
-              title: 'Producers',
-              builder: (index) => _StudioLink(
-                overview.producers.item1[index],
-                overview.producers.item2[index],
+            ],
+            if (overview.producers != null &&
+                overview.producers.item1.isNotEmpty) ...[
+              _space,
+              _ScrollTile(
+                title: 'Producers',
+                builder: (index) => _StudioLink(
+                  overview.producers.item1[index],
+                  overview.producers.item2[index],
+                ),
+                itemCount: overview.producers.item1.length,
               ),
-              itemCount: overview.producers.item1.length,
-            ),
-          ],
-          if (overview.romajiTitle != null) ...[
-            _space,
-            _ScrollTile(
-              title: 'Romaji',
-              builder: (_) => GestureDetector(
-                child: Text(
-                  overview.romajiTitle,
-                  style: Theme.of(context).textTheme.bodyText1,
+            ],
+            if (overview.romajiTitle != null) ...[
+              _space,
+              _ScrollTile(
+                title: 'Romaji',
+                builder: (_) => GestureDetector(
+                  child: Text(
+                    overview.romajiTitle,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  onLongPress: () => Clipboard.setData(
+                    ClipboardData(text: overview.romajiTitle),
+                  ),
                 ),
-                onLongPress: () => Clipboard.setData(
-                  ClipboardData(text: overview.romajiTitle),
-                ),
+                itemCount: 1,
               ),
-              itemCount: 1,
-            ),
-          ],
-          if (overview.englishTitle != null) ...[
-            _space,
-            _ScrollTile(
-              title: 'English',
-              builder: (_) => GestureDetector(
-                child: Text(
-                  overview.englishTitle,
-                  style: Theme.of(context).textTheme.bodyText1,
+            ],
+            if (overview.englishTitle != null) ...[
+              _space,
+              _ScrollTile(
+                title: 'English',
+                builder: (_) => GestureDetector(
+                  child: Text(
+                    overview.englishTitle,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  onLongPress: () => Clipboard.setData(
+                    ClipboardData(text: overview.englishTitle),
+                  ),
                 ),
-                onLongPress: () => Clipboard.setData(
-                  ClipboardData(text: overview.englishTitle),
-                ),
+                itemCount: 1,
               ),
-              itemCount: 1,
-            ),
-          ],
-          if (overview.nativeTitle != null) ...[
-            _space,
-            _ScrollTile(
-              title: 'Native',
-              builder: (_) => GestureDetector(
-                child: Text(
-                  overview.nativeTitle,
-                  style: Theme.of(context).textTheme.bodyText1,
+            ],
+            if (overview.nativeTitle != null) ...[
+              _space,
+              _ScrollTile(
+                title: 'Native',
+                builder: (_) => GestureDetector(
+                  child: Text(
+                    overview.nativeTitle,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  onLongPress: () => Clipboard.setData(
+                    ClipboardData(text: overview.nativeTitle),
+                  ),
                 ),
-                onLongPress: () => Clipboard.setData(
-                  ClipboardData(text: overview.nativeTitle),
-                ),
+                itemCount: 1,
               ),
-              itemCount: 1,
-            ),
-          ],
-          if (overview.synonyms != null && overview.synonyms.isNotEmpty) ...[
-            _space,
-            _ScrollTile(
-              title: 'Synonyms',
-              builder: (index) => GestureDetector(
-                child: Text(
-                  overview.synonyms[index],
-                  style: Theme.of(context).textTheme.bodyText1,
+            ],
+            if (overview.synonyms != null && overview.synonyms.isNotEmpty) ...[
+              _space,
+              _ScrollTile(
+                title: 'Synonyms',
+                builder: (index) => GestureDetector(
+                  child: Text(
+                    overview.synonyms[index],
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  onLongPress: () => Clipboard.setData(
+                    ClipboardData(text: overview.synonyms[index]),
+                  ),
                 ),
-                onLongPress: () => Clipboard.setData(
-                  ClipboardData(text: overview.synonyms[index]),
-                ),
+                itemCount: overview.synonyms.length,
               ),
-              itemCount: overview.synonyms.length,
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

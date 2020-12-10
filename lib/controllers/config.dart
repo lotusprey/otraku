@@ -26,7 +26,7 @@ class Config {
 
   static final storage = GetStorage();
   static final _pageIndex = RxInt(storage.read(STARTUP_PAGE));
-  static TileConfig _tileConfig;
+  static TileConfig _tile;
   static bool _hasInit = false;
 
   // Should be called as soon as possible,
@@ -36,11 +36,11 @@ class Config {
 
     _pageIndex.value ??= TabManager.ANIME_LIST;
 
-    double tileWidth = (Get.mediaQuery.size.width - 40) / 3;
-    if (tileWidth > 150) tileWidth = 150;
-    final imgHeight = tileWidth * 1.5;
-    _tileConfig = TileConfig(
-      width: tileWidth,
+    double width = (Get.mediaQuery.size.width - 40) / 3;
+    if (width > 150) width = 150;
+    final imgHeight = width * 1.5;
+    _tile = TileConfig(
+      width: width,
       fullHeight: imgHeight + 45,
       imgHeight: imgHeight,
     );
@@ -78,5 +78,5 @@ class Config {
 
   static set pageIndex(int index) => _pageIndex.value = index;
 
-  static TileConfig get tileConfig => _tileConfig;
+  static TileConfig get tile => _tile;
 }

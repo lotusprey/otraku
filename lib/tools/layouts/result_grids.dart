@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
-import 'package:otraku/tools/media_indexer.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/large_grid_tile.dart';
 
 class LargeGrid extends StatelessWidget {
@@ -19,8 +19,8 @@ class LargeGrid extends StatelessWidget {
           (_, index) {
             if (index == results.length - 6) loadMore();
 
-            return MediaIndexer(
-              itemType: results[index].browsable,
+            return BrowseIndexer(
+              browsable: results[index].browsable,
               id: results[index].id,
               tag: results[index].imageUrl,
               child: LargeGridTile(
@@ -33,11 +33,10 @@ class LargeGrid extends StatelessWidget {
           childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: Config.tileConfig.width,
+          maxCrossAxisExtent: Config.tile.width,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio:
-              Config.tileConfig.width / Config.tileConfig.fullHeight,
+          childAspectRatio: Config.tile.width / Config.tile.fullHeight,
         ),
       ),
     );
@@ -59,8 +58,8 @@ class TitleList extends StatelessWidget {
           (_, index) {
             if (index == results.length - 6) loadMore();
 
-            return MediaIndexer(
-              itemType: results[index].browsable,
+            return BrowseIndexer(
+              browsable: results[index].browsable,
               id: results[index].id,
               tag: results[index].title,
               child: Hero(

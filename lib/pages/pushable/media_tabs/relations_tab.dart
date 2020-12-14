@@ -4,6 +4,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/models/transparent_image.dart';
 import 'package:otraku/tools/browse_indexer.dart';
+import 'package:otraku/tools/layouts/connections_grid.dart';
 
 class RelationsTab extends StatelessWidget {
   final Media media;
@@ -16,7 +17,7 @@ class RelationsTab extends StatelessWidget {
       padding: const EdgeInsets.only(top: 20, bottom: 10, left: 10, right: 10),
       sliver: Obx(() {
         if (media.relationsTab == Media.REL_MEDIA &&
-            media.mediaRelations.isNotEmpty)
+            media.otherMedia.isNotEmpty)
           return SliverGrid(
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 450,
@@ -26,9 +27,9 @@ class RelationsTab extends StatelessWidget {
             ),
             delegate: SliverChildBuilderDelegate(
               (_, index) => BrowseIndexer(
-                id: media.mediaRelations[index].id,
-                tag: media.mediaRelations[index].imageUrl,
-                browsable: media.mediaRelations[index].browsable,
+                id: media.otherMedia[index].id,
+                tag: media.otherMedia[index].imageUrl,
+                browsable: media.otherMedia[index].browsable,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -41,7 +42,7 @@ class RelationsTab extends StatelessWidget {
                           height: double.infinity,
                           fit: BoxFit.cover,
                           placeholder: transparentImage,
-                          image: media.mediaRelations[index].imageUrl,
+                          image: media.otherMedia[index].imageUrl,
                           fadeInDuration: Config.FADE_DURATION,
                         ),
                       ),
@@ -56,15 +57,14 @@ class RelationsTab extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (media.mediaRelations[index].relationType !=
-                                  null)
+                              if (media.otherMedia[index].relationType != null)
                                 Text(
-                                  media.mediaRelations[index].relationType,
+                                  media.otherMedia[index].relationType,
                                   style: Theme.of(context).textTheme.bodyText2,
                                 ),
                               Flexible(
                                 child: Text(
-                                  media.mediaRelations[index].title,
+                                  media.otherMedia[index].title,
                                   style: Theme.of(context).textTheme.bodyText1,
                                   overflow: TextOverflow.fade,
                                 ),
@@ -75,14 +75,14 @@ class RelationsTab extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (media.mediaRelations[index].format != null)
+                              if (media.otherMedia[index].format != null)
                                 Text(
-                                  media.mediaRelations[index].format,
+                                  media.otherMedia[index].format,
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
-                              if (media.mediaRelations[index].status != null)
+                              if (media.otherMedia[index].status != null)
                                 Text(
-                                  media.mediaRelations[index].status,
+                                  media.otherMedia[index].status,
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
                             ],
@@ -93,14 +93,34 @@ class RelationsTab extends StatelessWidget {
                   ],
                 ),
               ),
-              childCount: media.mediaRelations.length,
+              childCount: media.otherMedia.length,
             ),
           );
 
-        if (media.relationsTab == Media.REL_CHARACTERS) {}
-        if (media.relationsTab == Media.REL_STAFF) {}
+        if (media.relationsTab == Media.REL_CHARACTERS &&
+            media.characters != null &&
+            media.characters.connections.isNotEmpty) {
+          return ConnectionsGrid(
+            connections: media.characters.connections,
+            loadMore: () {
+              if (media.characters.hasNextPage) media.fetchRelationPage(true);
+            },
+            preferredSubtitle: media.staffLanguage,
+          );
+        }
 
-        return const SizedBox();
+        if (media.relationsTab == Media.REL_STAFF &&
+            media.staff != null &&
+            media.staff.connections.isNotEmpty) {
+          return ConnectionsGrid(
+            connections: media.staff.connections,
+            loadMore: () {
+              if (media.staff.hasNextPage) media.fetchRelationPage(false);
+            },
+          );
+        }
+
+        return const SliverToBoxAdapter(child: SizedBox());
       }),
     );
   }

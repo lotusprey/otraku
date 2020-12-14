@@ -4,28 +4,32 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/models/transparent_image.dart';
 
-class MediaConnectionGrid extends StatefulWidget {
-  final List<Connection> media;
+class ConnectionsGrid extends StatefulWidget {
+  final List<Connection> connections;
   final Function loadMore;
   final String preferredSubtitle;
 
-  MediaConnectionGrid(this.media, this.loadMore, {this.preferredSubtitle});
+  ConnectionsGrid({
+    @required this.connections,
+    @required this.loadMore,
+    this.preferredSubtitle,
+  });
 
   @override
-  _MediaConnectionGridState createState() => _MediaConnectionGridState();
+  _ConnectionsGridState createState() => _ConnectionsGridState();
 }
 
-class _MediaConnectionGridState extends State<MediaConnectionGrid> {
+class _ConnectionsGridState extends State<ConnectionsGrid> {
   @override
   Widget build(BuildContext context) => SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
           (_, index) {
-            if (index == widget.media.length - 5) widget.loadMore();
+            if (index == widget.connections.length - 5) widget.loadMore();
 
             return _MediaConnectionTile(
-                widget.media[index], widget.preferredSubtitle);
+                widget.connections[index], widget.preferredSubtitle);
           },
-          childCount: widget.media.length,
+          childCount: widget.connections.length,
         ),
         itemExtent: 110,
       );

@@ -206,6 +206,8 @@ class Staff extends GetxController {
       }
     }
 
+    if (connections.isEmpty) _onCharacters.value = false;
+
     _characterList(ConnectionList(
       connections,
       data['characterMedia']['pageInfo']['hasNextPage'],

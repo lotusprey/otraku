@@ -5,7 +5,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/navigators/bubble_tabs.dart';
 import 'package:otraku/tools/navigators/person_header.dart';
 import 'package:otraku/controllers/character.dart';
-import 'package:otraku/tools/layouts/media_connection_grid.dart';
+import 'package:otraku/tools/layouts/connections_grid.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
@@ -102,9 +102,9 @@ class CharacterPage extends StatelessWidget {
 
                 return SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  sliver: MediaConnectionGrid(
-                    connectionList.connections,
-                    () {
+                  sliver: ConnectionsGrid(
+                    connections: connectionList.connections,
+                    loadMore: () {
                       if (connectionList.hasNextPage) character.fetchPage();
                     },
                     preferredSubtitle: character.staffLanguage,

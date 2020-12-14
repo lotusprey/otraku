@@ -77,7 +77,7 @@ class MediaPage extends StatelessWidget {
                           values: [
                             Media.REL_MEDIA,
                             Media.REL_CHARACTERS,
-                            Media.REL_CHARACTERS,
+                            Media.REL_STAFF,
                           ],
                           initial: media.relationsTab,
                           onNewValue: (val) => media.relationsTab = val,

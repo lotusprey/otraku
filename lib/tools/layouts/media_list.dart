@@ -83,7 +83,7 @@ class _MediaListTile extends StatelessWidget {
     return BrowseIndexer(
       id: media.mediaId,
       browsable: Browsable.anime,
-      tag: media.cover,
+      image: media.cover,
       child: Row(
         children: [
           Hero(

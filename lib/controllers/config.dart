@@ -26,7 +26,8 @@ class Config {
 
   static final storage = GetStorage();
   static final _pageIndex = RxInt(storage.read(STARTUP_PAGE));
-  static TileConfig _tile;
+  static TileConfig _highTile;
+  static TileConfig _squareTile;
   static bool _hasInit = false;
 
   // Should be called as soon as possible,
@@ -38,11 +39,21 @@ class Config {
 
     double width = (Get.mediaQuery.size.width - 40) / 3;
     if (width > 150) width = 150;
-    final imgHeight = width * 1.5;
-    _tile = TileConfig(
+
+    _highTile = TileConfig(
       width: width,
-      fullHeight: imgHeight + 45,
-      imgHeight: imgHeight,
+      imgHeight: width * 1.5,
+      fullHeight: width * 1.5 + 45,
+      fit: BoxFit.cover,
+      needsBackground: true,
+    );
+
+    _squareTile = TileConfig(
+      width: width,
+      imgHeight: width,
+      fullHeight: width + 40,
+      fit: BoxFit.contain,
+      needsBackground: false,
     );
 
     _hasInit = true;
@@ -78,5 +89,7 @@ class Config {
 
   static set pageIndex(int index) => _pageIndex.value = index;
 
-  static TileConfig get tile => _tile;
+  static TileConfig get highTile => _highTile;
+
+  static TileConfig get squareTile => _squareTile;
 }

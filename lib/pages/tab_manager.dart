@@ -31,7 +31,7 @@ class TabManager extends StatelessWidget {
         key: UniqueKey(),
       ),
       const ExploreTab(),
-      const UserTab(null),
+      const UserTab(null, null),
     ];
 
     const drawers = const [

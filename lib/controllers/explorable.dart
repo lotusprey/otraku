@@ -88,6 +88,19 @@ class Explorable extends GetxController {
     }
   ''';
 
+  static const _usersQuery = r'''
+    query Users($page: Int, $search: String) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        users(search: $search) {
+          id
+          name
+          avatar {large}
+        }
+      }
+    }
+  ''';
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -236,8 +249,10 @@ class Explorable extends GetxController {
         query = _charactersQuery;
       } else if (currentType == Browsable.staff) {
         query = _staffQuery;
-      } else {
+      } else if (currentType == Browsable.studio) {
         query = _studiosQuery;
+      } else {
+        query = _usersQuery;
       }
     }
 
@@ -286,7 +301,7 @@ class Explorable extends GetxController {
         ));
         (_filters[ID_NOT_IN] as List<dynamic>).add(c['id']);
       }
-    } else {
+    } else if (currentType == Browsable.studio) {
       for (final s in data['Page']['studios'] as List<dynamic>) {
         loaded.add(BrowseResult(
           id: s['id'],
@@ -294,6 +309,15 @@ class Explorable extends GetxController {
           browsable: currentType,
         ));
         (_filters[ID_NOT_IN] as List<dynamic>).add(s['id']);
+      }
+    } else {
+      for (final u in data['Page']['users'] as List<dynamic>) {
+        loaded.add(BrowseResult(
+          id: u['id'],
+          title: u['name'],
+          imageUrl: u['avatar']['large'],
+          browsable: currentType,
+        ));
       }
     }
 

@@ -88,7 +88,10 @@ class Users extends GetxController {
   User get me => _me();
 
   User them(int id) {
-    if (_them().id != id) fetchUser(id);
+    if (_them().id != id) {
+      fetchUser(id);
+      return _them(User());
+    }
     return _them();
   }
 

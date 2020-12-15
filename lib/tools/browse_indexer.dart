@@ -6,18 +6,19 @@ import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
+import 'package:otraku/pages/tabs/user_tab.dart';
 import 'package:otraku/tools/page_transition.dart';
 
 class BrowseIndexer extends StatelessWidget {
   final Browsable browsable;
   final int id;
-  final String tag;
+  final String image;
   final Widget child;
 
   BrowseIndexer({
     @required this.browsable,
     @required this.id,
-    @required this.tag,
+    @required this.image,
     @required this.child,
   });
 
@@ -39,9 +40,14 @@ class BrowseIndexer extends StatelessWidget {
       case Browsable.staff:
         page = StaffPage(id, tag);
         break;
-      default:
+      case Browsable.studio:
         page = StudioPage(id, tag);
         break;
+      case Browsable.user:
+        page = Scaffold(body: SafeArea(child: UserTab(id, tag)));
+        break;
+      default:
+        return;
     }
 
     Navigator.push(context, PageTransition.to(page));
@@ -55,7 +61,7 @@ class BrowseIndexer extends StatelessWidget {
         context: context,
         type: browsable,
         id: id,
-        tag: tag,
+        tag: image,
       ),
       onLongPress: () {
         if (browsable == Browsable.anime || browsable == Browsable.manga)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorable.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/tools/loader.dart';
@@ -62,14 +63,25 @@ class _ExploreGrid extends StatelessWidget {
         );
 
       final results = explorable.results;
-      if (results.length == 0) {
+      if (results.isEmpty) {
         return NoResults();
       }
 
       if (results[0].browsable == Browsable.studio)
         return TitleList(results, _loadMore);
 
-      return LargeGrid(results, _loadMore);
+      if (results[0].browsable == Browsable.user)
+        return TileGrid(
+          results: results,
+          loadMore: _loadMore,
+          tile: Config.squareTile,
+        );
+
+      return TileGrid(
+        results: results,
+        loadMore: _loadMore,
+        tile: Config.highTile,
+      );
     });
   }
 }

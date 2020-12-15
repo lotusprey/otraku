@@ -16,8 +16,9 @@ class UserTab extends StatelessWidget {
   final _space = const SizedBox(width: 10);
 
   final int id;
+  final String avatarUrl;
 
-  const UserTab(this.id);
+  const UserTab(this.id, this.avatarUrl);
 
   @override
   Widget build(BuildContext context) => Obx(() {
@@ -28,7 +29,12 @@ class UserTab extends StatelessWidget {
           physics: Config.PHYSICS,
           slivers: [
             SliverPersistentHeader(
-              delegate: _Header(user.id == null ? null : user, id == null),
+              delegate: _Header(
+                id: id,
+                user: user,
+                isMe: id == null,
+                avatarUrl: avatarUrl,
+              ),
             ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -87,10 +93,17 @@ class UserTab extends StatelessWidget {
 }
 
 class _Header implements SliverPersistentHeaderDelegate {
+  final int id;
   final User user;
   final bool isMe;
+  final String avatarUrl;
 
-  _Header(this.user, this.isMe);
+  _Header({
+    @required this.id,
+    @required this.user,
+    @required this.isMe,
+    @required this.avatarUrl,
+  });
 
   @override
   Widget build(
@@ -98,11 +111,8 @@ class _Header implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    if (user == null) return const SizedBox();
-
     final shrinkPercentage = shrinkOffset / (maxExtent - minExtent);
-    final avatar =
-        user != null ? Image.network(user.avatar, fit: BoxFit.cover) : null;
+    final avatar = avatarUrl ?? user?.avatar;
 
     return Container(
       height: maxExtent,
@@ -119,65 +129,65 @@ class _Header implements SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (user != null) ...[
-            if (user.banner != null)
-              FadeInImage.memoryNetwork(
-                image: user.banner,
-                placeholder: transparentImage,
-                fadeInDuration: Config.FADE_DURATION,
-                fit: BoxFit.cover,
+          if (user?.banner != null)
+            FadeInImage.memoryNetwork(
+              image: user.banner,
+              placeholder: transparentImage,
+              fadeInDuration: Config.FADE_DURATION,
+              fit: BoxFit.cover,
+            ),
+          Container(
+            padding: const EdgeInsets.only(
+              top: Config.MATERIAL_TAP_TARGET_SIZE,
+              left: 10,
+              right: 10,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Theme.of(context).backgroundColor.withAlpha(70),
+                  Theme.of(context).backgroundColor,
+                ],
               ),
-            Container(
-              padding: const EdgeInsets.only(
-                top: Config.MATERIAL_TAP_TARGET_SIZE,
-                left: 10,
-                right: 10,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(context).backgroundColor.withAlpha(70),
-                    Theme.of(context).backgroundColor,
-                  ],
-                ),
-              ),
-              child: Column(
-                children: [
+            ),
+            child: Column(
+              children: [
+                if (avatar != null)
                   GestureDetector(
                     child: Hero(
-                      tag: user.avatar,
+                      tag: id.toString(),
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
                         child: Container(
                           height: 150,
                           width: 150,
-                          child: avatar,
+                          child: Image.network(avatar, fit: BoxFit.cover),
                         ),
                       ),
                     ),
                     onTap: () => showDialog(
                       context: context,
                       builder: (_) => PopUpAnimation(
-                        ImageDialog(avatar),
+                        Image.network(avatar, fit: BoxFit.cover),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                const SizedBox(height: 10),
+                if (user?.name != null)
                   Text(user.name, style: Theme.of(context).textTheme.headline3),
-                ],
-              ),
+              ],
             ),
-            if (shrinkOffset > 0)
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                color: Theme.of(context)
-                    .backgroundColor
-                    .withAlpha((shrinkPercentage * 255).round()),
-              ),
-          ],
+          ),
+          if (shrinkOffset > 0)
+            Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Theme.of(context)
+                  .backgroundColor
+                  .withAlpha((shrinkPercentage * 255).round()),
+            ),
           Positioned(
             top: 0,
             left: 0,
@@ -198,10 +208,8 @@ class _Header implements SliverPersistentHeaderDelegate {
                   ),
                 ] else ...[
                   IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: Theme.of(context).dividerColor,
-                    ),
+                    icon: const Icon(Icons.close),
+                    color: Theme.of(context).dividerColor,
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   const SizedBox(),

@@ -11,7 +11,7 @@ import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/layouts/large_grid_tile.dart';
+import 'package:otraku/tools/layouts/browse_tile.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StudioPage extends StatelessWidget {
@@ -95,12 +95,13 @@ class StudioPage extends StatelessWidget {
                               (_, index) => BrowseIndexer(
                                 browsable: Browsable.anime,
                                 id: studio.media.split[i][index].id,
-                                tag: studio.media.split[i][index].imageUrl,
-                                child: LargeGridTile(
-                                  mediaId: studio.media.split[i][index].id,
+                                image: studio.media.split[i][index].imageUrl,
+                                child: BrowseTile(
+                                  id: studio.media.split[i][index].id,
                                   text: studio.media.split[i][index].title,
                                   imageUrl:
                                       studio.media.split[i][index].imageUrl,
+                                  tile: Config.highTile,
                                 ),
                               ),
                               childCount: studio.media.split[i].length,
@@ -109,17 +110,21 @@ class StudioPage extends StatelessWidget {
                             ),
                             gridDelegate:
                                 SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: Config.tile.width,
+                              maxCrossAxisExtent: Config.highTile.width,
                               mainAxisSpacing: 10,
                               crossAxisSpacing: 10,
-                              childAspectRatio:
-                                  Config.tile.width / Config.tile.fullHeight,
+                              childAspectRatio: Config.highTile.width /
+                                  Config.highTile.fullHeight,
                             ),
                           ),
                         ),
                       ],
                     ] else
-                      LargeGrid(studio.media.joined, studio.fetchPage),
+                      TileGrid(
+                        results: studio.media.joined,
+                        loadMore: studio.fetchPage,
+                        tile: Config.highTile,
+                      ),
                     if (studio.media != null && studio.media.hasNextPage)
                       SliverToBoxAdapter(
                         child: Padding(

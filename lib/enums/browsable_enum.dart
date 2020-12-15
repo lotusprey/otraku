@@ -7,6 +7,7 @@ enum Browsable {
   character,
   staff,
   studio,
+  user,
 }
 
 extension BrowsableExtension on Browsable {
@@ -16,6 +17,7 @@ extension BrowsableExtension on Browsable {
     Browsable.character: FluentSystemIcons.ic_fluent_accessibility_regular,
     Browsable.staff: FluentSystemIcons.ic_fluent_mic_on_regular,
     Browsable.studio: FluentSystemIcons.ic_fluent_building_regular,
+    Browsable.user: FluentSystemIcons.ic_fluent_person_regular,
   };
 
   IconData get icon => _icons[this];

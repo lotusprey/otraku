@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
+import 'package:otraku/models/tile_config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/layouts/large_grid_tile.dart';
+import 'package:otraku/tools/layouts/browse_tile.dart';
 
-class LargeGrid extends StatelessWidget {
+class TileGrid extends StatelessWidget {
   final List<BrowseResult> results;
   final Function loadMore;
+  final TileConfig tile;
 
-  LargeGrid(this.results, this.loadMore);
+  TileGrid({
+    @required this.results,
+    @required this.loadMore,
+    @required this.tile,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final preferIdTag = results[0].browsable == Browsable.user;
+
     return SliverPadding(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
       sliver: SliverGrid(
@@ -22,21 +30,23 @@ class LargeGrid extends StatelessWidget {
             return BrowseIndexer(
               browsable: results[index].browsable,
               id: results[index].id,
-              tag: results[index].imageUrl,
-              child: LargeGridTile(
-                mediaId: results[index].id,
+              image: results[index].imageUrl,
+              child: BrowseTile(
+                id: results[index].id,
                 text: results[index].title,
                 imageUrl: results[index].imageUrl,
+                tile: tile,
+                preferIdTag: preferIdTag,
               ),
             );
           },
           childCount: results.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: Config.tile.width,
+          maxCrossAxisExtent: tile.width,
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: Config.tile.width / Config.tile.fullHeight,
+          childAspectRatio: tile.width / tile.fullHeight,
         ),
       ),
     );
@@ -61,7 +71,7 @@ class TitleList extends StatelessWidget {
             return BrowseIndexer(
               browsable: results[index].browsable,
               id: results[index].id,
-              tag: results[index].title,
+              image: results[index].title,
               child: Hero(
                 tag: results[index].title,
                 child: Container(

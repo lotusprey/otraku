@@ -5,7 +5,6 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/pushable/media_tabs/overview_tab.dart';
 import 'package:otraku/pages/pushable/media_tabs/relations_tab.dart';
-import 'package:otraku/tools/navigators/bubble_tabs.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 import 'package:otraku/tools/navigators/media_page_header.dart';
 
@@ -68,28 +67,14 @@ class MediaPage extends StatelessWidget {
                     ? OverviewTab(media.overview)
                     : placeholder,
               ),
-              Obx(() => media.tab == Media.RELATIONS
-                  ? SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: BubbleTabs(
-                          options: ['Media', 'Characters', 'Staff'],
-                          values: [
-                            Media.REL_MEDIA,
-                            Media.REL_CHARACTERS,
-                            Media.REL_STAFF,
-                          ],
-                          initial: media.relationsTab,
-                          onNewValue: (val) => media.relationsTab = val,
-                          onSameValue: (_) {},
-                          shrinkWrap: false,
-                        ),
-                      ),
-                    )
-                  : placeholder),
               Obx(
                 () => media.tab == Media.RELATIONS
-                    ? RelationsTab(media)
+                    ? RelationControls(media)
+                    : placeholder,
+              ),
+              Obx(
+                () => media.tab == Media.RELATIONS
+                    ? RelationList(media)
                     : placeholder,
               ),
               SliverToBoxAdapter(child: const SizedBox(height: 60)),

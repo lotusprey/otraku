@@ -5,16 +5,18 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/models/transparent_image.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
+import 'package:otraku/tools/navigators/bubble_tabs.dart';
+import 'package:otraku/tools/overlays/option_sheet.dart';
 
-class RelationsTab extends StatelessWidget {
+class RelationList extends StatelessWidget {
   final Media media;
 
-  RelationsTab(this.media);
+  RelationList(this.media);
 
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 20, bottom: 10, left: 10, right: 10),
+      padding: const EdgeInsets.only(top: 5, bottom: 10, left: 10, right: 10),
       sliver: Obx(() {
         if (media.relationsTab == Media.REL_MEDIA &&
             media.otherMedia.isNotEmpty)
@@ -122,6 +124,59 @@ class RelationsTab extends StatelessWidget {
 
         return const SliverToBoxAdapter(child: SizedBox());
       }),
+    );
+  }
+}
+
+class RelationControls extends StatelessWidget {
+  final Media media;
+
+  RelationControls(this.media);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: SizedBox(
+          height: Config.MATERIAL_TAP_TARGET_SIZE,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              BubbleTabs(
+                options: ['Media', 'Characters', 'Staff'],
+                values: [
+                  Media.REL_MEDIA,
+                  Media.REL_CHARACTERS,
+                  Media.REL_STAFF,
+                ],
+                initial: media.relationsTab,
+                onNewValue: (val) => media.relationsTab = val,
+                onSameValue: (_) {},
+              ),
+              Obx(() {
+                if (media.relationsTab == Media.REL_CHARACTERS)
+                  return IconButton(
+                    icon: const Icon(Icons.language),
+                    onPressed: () => showModalBottomSheet(
+                      context: context,
+                      builder: (_) => OptionSheet(
+                        title: 'Language',
+                        options: media.availableLanguages,
+                        index: media.languageIndex,
+                        onTap: (index) => media.staffLanguage =
+                            media.availableLanguages[index],
+                      ),
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                    ),
+                  );
+                return const SizedBox();
+              }),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -5,9 +5,12 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/user.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
+import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/pages/tabs/collections_tab.dart';
+import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/tools/page_transition.dart';
 import 'package:otraku/models/transparent_image.dart';
@@ -37,7 +40,7 @@ class UserTab extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
               sliver: SliverToBoxAdapter(
                 child: Row(
                   children: [
@@ -57,7 +60,19 @@ class UserTab extends StatelessWidget {
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = TabManager.ANIME_LIST
-                            : print('TODO'),
+                            : Navigator.push(
+                                context,
+                                PageTransition.to(
+                                  TabPage(
+                                    CollectionsTab(
+                                      otherUserId: id,
+                                      ofAnime: true,
+                                      key: null,
+                                    ),
+                                    drawer: CollectionDrawer(),
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                     _space,
@@ -77,7 +92,19 @@ class UserTab extends StatelessWidget {
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = TabManager.MANGA_LIST
-                            : print('TODO'),
+                            : Navigator.push(
+                                context,
+                                PageTransition.to(
+                                  TabPage(
+                                    CollectionsTab(
+                                      otherUserId: id,
+                                      ofAnime: false,
+                                      key: null,
+                                    ),
+                                    drawer: CollectionDrawer(),
+                                  ),
+                                ),
+                              ),
                       ),
                     ),
                   ],

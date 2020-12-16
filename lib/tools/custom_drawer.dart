@@ -48,6 +48,7 @@ class CustomDrawer extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTap: () {
                     Navigator.pop(context);
                     if (i != index) onChanged(i);
@@ -106,12 +107,18 @@ class ExploreDrawer extends StatelessWidget {
     final selected = explorable.type.index;
 
     return CustomDrawer(
-      length: Browsable.values.length,
+      heading: 'Looking for:',
       index: selected,
+      length: Browsable.values.length,
       titleBuilder: (int i) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Browsable.values[i].icon, color: Theme.of(context).accentColor),
+          Icon(
+            Browsable.values[i].icon,
+            color: i != selected
+                ? Theme.of(context).dividerColor
+                : Theme.of(context).accentColor,
+          ),
           _space,
           Text(
             clarifyEnum(describeEnum(Browsable.values[i])),

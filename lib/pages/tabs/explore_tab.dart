@@ -33,7 +33,7 @@ class _ExploreTabState extends State<ExploreTab> {
       controller: _ctrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        ControlHeader(false, _ctrl),
+        ExploreControlHeader(_ctrl),
         _ExploreGrid(),
         _EndOfListLoader(),
         SliverToBoxAdapter(

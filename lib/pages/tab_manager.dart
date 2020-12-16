@@ -42,23 +42,24 @@ class TabManager extends StatelessWidget {
       const SizedBox(),
     ];
 
-    return Scaffold(
-      extendBody: true,
-      drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
-      bottomNavigationBar: CustomNavBar(
-        icons: const [
-          FluentSystemIcons.ic_fluent_mail_inbox_regular,
-          FluentSystemIcons.ic_fluent_movies_and_tv_regular,
-          FluentSystemIcons.ic_fluent_bookmark_regular,
-          Icons.explore_outlined,
-          FluentSystemIcons.ic_fluent_person_regular,
-        ],
-        onChanged: (page) => Config.pageIndex = page,
-        initial: Config.pageIndex,
-      ),
-      drawer: Obx(() => drawers[Config.pageIndex]),
-      body: Obx(
-        () => SafeArea(
+    return Obx(
+      () => Scaffold(
+        extendBody: true,
+        drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
+        bottomNavigationBar: CustomNavBar(
+          icons: const [
+            FluentSystemIcons.ic_fluent_mail_inbox_regular,
+            FluentSystemIcons.ic_fluent_movies_and_tv_regular,
+            FluentSystemIcons.ic_fluent_bookmark_regular,
+            Icons.explore_outlined,
+            FluentSystemIcons.ic_fluent_person_regular,
+          ],
+          onChanged: (page) => Config.pageIndex = page,
+          initial: Config.pageIndex,
+          getIndex: () => Config.pageIndex,
+        ),
+        drawer: drawers[Config.pageIndex],
+        body: SafeArea(
           bottom: false,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),

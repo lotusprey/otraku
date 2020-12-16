@@ -6,11 +6,13 @@ import 'package:otraku/enums/theme_enum.dart';
 class CustomNavBar extends StatefulWidget {
   final List<IconData> icons;
   final Function(int) onChanged;
+  final int Function() getIndex;
   final int initial;
 
   CustomNavBar({
     @required this.icons,
     @required this.onChanged,
+    this.getIndex,
     this.initial = 0,
   });
 
@@ -29,6 +31,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.getIndex != null) _index = widget.getIndex();
+
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

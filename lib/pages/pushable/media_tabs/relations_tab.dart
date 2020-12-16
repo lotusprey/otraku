@@ -25,7 +25,7 @@ class RelationList extends StatelessWidget {
               maxCrossAxisExtent: 450,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: 2.8,
+              childAspectRatio: 2.7,
             ),
             delegate: SliverChildBuilderDelegate(
               (_, index) => BrowseIndexer(
@@ -35,22 +35,26 @@ class RelationList extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    ClipRRect(
-                      borderRadius: Config.BORDER_RADIUS,
-                      child: Container(
-                        color: Theme.of(context).primaryColor,
-                        child: FadeInImage.memoryNetwork(
-                          width: 100,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                          placeholder: transparentImage,
-                          image: media.otherMedia[index].imageUrl,
-                          fadeInDuration: Config.FADE_DURATION,
+                    Flexible(
+                      flex: 1,
+                      child: ClipRRect(
+                        borderRadius: Config.BORDER_RADIUS,
+                        child: Container(
+                          color: Theme.of(context).primaryColor,
+                          child: FadeInImage.memoryNetwork(
+                            height: double.infinity,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            placeholder: transparentImage,
+                            image: media.otherMedia[index].imageUrl,
+                            fadeInDuration: Config.FADE_DURATION,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 15),
                     Expanded(
+                      flex: 3,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,

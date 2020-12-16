@@ -15,21 +15,38 @@ import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/tools/page_transition.dart';
 
-class ControlHeader extends StatelessWidget {
-  final bool ofCollection;
+class CollectionControlHeader extends StatelessWidget {
   final ScrollController ctrl;
 
-  const ControlHeader(this.ofCollection, this.ctrl);
+  const CollectionControlHeader(this.ctrl);
 
   @override
   Widget build(BuildContext context) {
-    if (ofCollection && Get.find<Collections>().collection == null)
-      return const SliverToBoxAdapter();
+    return GetBuilder<Collections>(builder: (collections) {
+      if (collections.collection == null) return const SliverToBoxAdapter();
 
+      return SliverPersistentHeader(
+        pinned: true,
+        delegate: _ControlHeaderDelegate(
+          ofCollection: true,
+          ctrl: ctrl,
+        ),
+      );
+    });
+  }
+}
+
+class ExploreControlHeader extends StatelessWidget {
+  final ScrollController ctrl;
+
+  const ExploreControlHeader(this.ctrl);
+
+  @override
+  Widget build(BuildContext context) {
     return SliverPersistentHeader(
       pinned: true,
       delegate: _ControlHeaderDelegate(
-        ofCollection: ofCollection,
+        ofCollection: false,
         ctrl: ctrl,
       ),
     );
@@ -77,9 +94,13 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          collection.currentListName,
-                          style: Theme.of(context).textTheme.headline2,
+                        Flexible(
+                          child: Text(
+                            collection.currentListName,
+                            style: Theme.of(context).textTheme.headline2,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         Text(
                           ' ${collection.currentEntryCount}',
@@ -111,9 +132,13 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                           size: Styles.ICON_SMALL,
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          clarifyEnum(describeEnum(explorable.type)),
-                          style: Theme.of(context).textTheme.headline2,
+                        Flexible(
+                          child: Text(
+                            clarifyEnum(describeEnum(explorable.type)),
+                            style: Theme.of(context).textTheme.headline2,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),

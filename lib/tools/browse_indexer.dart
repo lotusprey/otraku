@@ -6,6 +6,7 @@ import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
+import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/tabs/user_tab.dart';
 import 'package:otraku/tools/page_transition.dart';
 
@@ -44,7 +45,7 @@ class BrowseIndexer extends StatelessWidget {
         page = StudioPage(id, tag);
         break;
       case Browsable.user:
-        page = Scaffold(body: SafeArea(child: UserTab(id, tag)));
+        page = TabPage(UserTab(id, tag));
         break;
       default:
         return;

@@ -64,7 +64,7 @@ class Media extends GetxController {
       }
     }
     fragment characters on Media {
-      characters(page: $characterPage) {
+      characters(page: $characterPage, sort: [ROLE, ID]) {
         pageInfo {hasNextPage}
         edges {
           role

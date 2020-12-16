@@ -132,8 +132,12 @@ class Collections extends GetxController {
         _currentCollection = _MY_MANGA;
       }
     } else {
-      if (_other == null || _other.userId != userId)
+      if (_other == null ||
+          _other.userId != userId ||
+          _other.ofAnime != ofAnime) {
+        _other = null;
         fetchUserCollection(ofAnime, userId);
+      }
 
       _currentCollection = _OTHER;
     }

@@ -41,8 +41,11 @@ class _CollectionsTabState extends State<CollectionsTab> {
       ),
       controller: _ctrl,
       slivers: [
-        HeadlineHeader('${widget.ofAnime ? 'Anime' : 'Manga'} List', false),
-        ControlHeader(true, _ctrl),
+        HeadlineHeader(
+          '${widget.ofAnime ? 'Anime' : 'Manga'} List',
+          widget.otherUserId != null,
+        ),
+        CollectionControlHeader(_ctrl),
         MediaList(widget.ofAnime),
         SliverToBoxAdapter(
           child: const SizedBox(height: 50),

@@ -88,6 +88,9 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
               if (ofCollection)
                 GetBuilder<Collections>(builder: (collections) {
                   final collection = collections.collection;
+                  if (collection.lists.isEmpty)
+                    return const Expanded(child: SizedBox());
+
                   return _Navigation(
                     ctrl: ctrl,
                     swipe: (int offset) => collection.listIndex += offset,
@@ -405,7 +408,7 @@ class __FilterState extends State<_Filter> {
   void _pushPage(BuildContext context) => Navigator.push(
         context,
         PageTransition.to(
-          FilterPage((newActive) {
+          FilterPage(widget.ofCollection, (newActive) {
             if (newActive == null) {
               setState(() => _active = _checkIfActive());
             } else {

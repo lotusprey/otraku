@@ -190,7 +190,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                         child: Container(
                           height: 150,
                           width: 150,
-                          child: Image.network(avatar, fit: BoxFit.cover),
+                          child: Image.network(avatar, fit: BoxFit.contain),
                         ),
                       ),
                     ),

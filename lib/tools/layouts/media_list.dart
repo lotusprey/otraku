@@ -23,7 +23,7 @@ class MediaList extends StatelessWidget {
       GetBuilder<Collections>(builder: (controller) {
         final collection = controller.collection;
 
-        if (collection == null) {
+        if (collection == null || collection.lists.isEmpty) {
           if (controller.fetching) {
             return const SliverFillRemaining(child: Center(child: Loader()));
           }

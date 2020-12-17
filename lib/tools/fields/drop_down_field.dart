@@ -45,18 +45,22 @@ class _DropDownFieldState<T> extends State<DropDownField> {
           color: Theme.of(context).primaryColor,
           borderRadius: Config.BORDER_RADIUS,
         ),
-        child: DropdownButton(
-          value: value,
-          items: menuItems,
-          onChanged: (val) {
-            setState(() => value = val);
-            widget.onChanged(val);
-          },
-          hint: Text('Choose', style: Theme.of(context).textTheme.subtitle1),
-          iconEnabledColor: Theme.of(context).disabledColor,
-          dropdownColor: Theme.of(context).primaryColor,
-          underline: const SizedBox(),
-          isExpanded: true,
+        child: Theme(
+          data: Theme.of(context)
+              .copyWith(highlightColor: Theme.of(context).accentColor),
+          child: DropdownButton(
+            value: value,
+            items: menuItems,
+            onChanged: (val) {
+              setState(() => value = val);
+              widget.onChanged(val);
+            },
+            hint: Text('Choose', style: Theme.of(context).textTheme.subtitle1),
+            iconEnabledColor: Theme.of(context).disabledColor,
+            dropdownColor: Theme.of(context).primaryColor,
+            underline: const SizedBox(),
+            isExpanded: true,
+          ),
         ),
       ),
     );

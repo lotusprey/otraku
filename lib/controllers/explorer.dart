@@ -2,30 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
+import 'package:otraku/controllers/filterable.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/controllers/network_service.dart';
 
 //Manages all browsable media, genres, tags and all the filters
-class Explorable extends GetxController {
+class Explorer extends GetxController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
-
-  static const STATUS_IN = 'status_in';
-  static const STATUS_NOT_IN = 'status_not_in';
-  static const FORMAT_IN = 'format_in';
-  static const FORMAT_NOT_IN = 'format_not_in';
-  static const ID_NOT_IN = 'id_not_in';
-  static const GENRE_IN = 'genre_in';
-  static const GENRE_NOT_IN = 'genre_not_in';
-  static const TAG_IN = 'tag_in';
-  static const TAG_NOT_IN = 'tag_not_in';
-  static const IS_ADULT = 'isAdult';
-  static const SEARCH = 'search';
-  static const TYPE = 'type';
-  static const SORT = 'sort';
-  static const PAGE = 'page';
 
   static const _mediaQuery = r'''
     query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
@@ -114,10 +100,10 @@ class Explorable extends GetxController {
   List<String> _genres;
   Tuple<List<String>, List<String>> _tags;
   Map<String, dynamic> _filters = {
-    PAGE: 1,
-    TYPE: 'ANIME',
-    SORT: describeEnum(MediaSort.TRENDING_DESC),
-    ID_NOT_IN: [],
+    Filterable.PAGE: 1,
+    Filterable.TYPE: 'ANIME',
+    Filterable.SORT: describeEnum(MediaSort.TRENDING_DESC),
+    Filterable.ID_NOT_IN: [],
   };
 
   // ***************************************************************************
@@ -153,11 +139,11 @@ class Explorable extends GetxController {
     if (value == null) return;
     _type.value = value;
 
-    if (value == Browsable.anime) _filters[TYPE] = 'ANIME';
-    if (value == Browsable.manga) _filters[TYPE] = 'MANGA';
+    if (value == Browsable.anime) _filters[Filterable.TYPE] = 'ANIME';
+    if (value == Browsable.manga) _filters[Filterable.TYPE] = 'MANGA';
 
-    _filters.remove(FORMAT_IN);
-    _filters.remove(FORMAT_NOT_IN);
+    _filters.remove(Filterable.FORMAT_IN);
+    _filters.remove(Filterable.FORMAT_NOT_IN);
     fetchData();
   }
 
@@ -169,12 +155,14 @@ class Explorable extends GetxController {
     }
   }
 
+  @override
   dynamic getFilterWithKey(String key) => _filters[key];
 
+  @override
   void setFilterWithKey(
     String key, {
     dynamic value,
-    bool refetch = false,
+    bool update = false,
   }) {
     if (value == null ||
         (value is List && value.isEmpty) ||
@@ -184,28 +172,32 @@ class Explorable extends GetxController {
       _filters[key] = value;
     }
 
-    if (refetch) fetchData();
+    if (update) fetchData();
   }
 
-  void clearAllFilters({bool fetch = true}) => clearFiltersWithKeys([
-        STATUS_IN,
-        STATUS_NOT_IN,
-        FORMAT_IN,
-        FORMAT_NOT_IN,
-        GENRE_IN,
-        GENRE_NOT_IN,
-        TAG_IN,
-        TAG_NOT_IN,
-      ], fetch: fetch);
+  @override
+  void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
+        Filterable.STATUS_IN,
+        Filterable.STATUS_NOT_IN,
+        Filterable.FORMAT_IN,
+        Filterable.FORMAT_NOT_IN,
+        Filterable.GENRE_IN,
+        Filterable.GENRE_NOT_IN,
+        Filterable.TAG_IN,
+        Filterable.TAG_NOT_IN,
+        Filterable.ON_LIST,
+      ], update: update);
 
-  void clearFiltersWithKeys(List<String> keys, {bool fetch = true}) {
+  @override
+  void clearFiltersWithKeys(List<String> keys, {bool update = true}) {
     for (final key in keys) {
       _filters.remove(key);
     }
 
-    if (fetch) fetchData();
+    if (update) fetchData();
   }
 
+  @override
   bool anyActiveFilterFrom(List<String> keys) {
     for (final key in keys) {
       if (_filters.containsKey(key)) return true;
@@ -214,7 +206,7 @@ class Explorable extends GetxController {
   }
 
   void loadMore() {
-    _filters[PAGE]++;
+    _filters[Filterable.PAGE]++;
     fetchData(clean: false);
   }
 
@@ -227,8 +219,8 @@ class Explorable extends GetxController {
 
     if (clean) {
       _isLoading.value = true;
-      _filters[ID_NOT_IN] = [];
-      _filters[PAGE] = 1;
+      _filters[Filterable.ID_NOT_IN] = [];
+      _filters[Filterable.PAGE] = 1;
     }
 
     final currentType = _type.value;
@@ -240,9 +232,9 @@ class Explorable extends GetxController {
       variables = {..._filters};
     } else {
       variables = {
-        PAGE: _filters[PAGE],
-        SEARCH: _filters[SEARCH],
-        ID_NOT_IN: _filters[ID_NOT_IN],
+        Filterable.PAGE: _filters[Filterable.PAGE],
+        Filterable.SEARCH: _filters[Filterable.SEARCH],
+        Filterable.ID_NOT_IN: _filters[Filterable.ID_NOT_IN],
       };
 
       if (currentType == Browsable.character) {
@@ -279,7 +271,7 @@ class Explorable extends GetxController {
           imageUrl: m['coverImage']['large'],
           browsable: currentType,
         ));
-        (_filters[ID_NOT_IN] as List<dynamic>).add(m['id']);
+        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(m['id']);
       }
     } else if (currentType == Browsable.character) {
       for (final c in data['Page']['characters'] as List<dynamic>) {
@@ -289,7 +281,7 @@ class Explorable extends GetxController {
           imageUrl: c['image']['large'],
           browsable: currentType,
         ));
-        (_filters[ID_NOT_IN] as List<dynamic>).add(c['id']);
+        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(c['id']);
       }
     } else if (currentType == Browsable.staff) {
       for (final c in data['Page']['staff'] as List<dynamic>) {
@@ -299,7 +291,7 @@ class Explorable extends GetxController {
           imageUrl: c['image']['large'],
           browsable: currentType,
         ));
-        (_filters[ID_NOT_IN] as List<dynamic>).add(c['id']);
+        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(c['id']);
       }
     } else if (currentType == Browsable.studio) {
       for (final s in data['Page']['studios'] as List<dynamic>) {
@@ -308,7 +300,7 @@ class Explorable extends GetxController {
           title: s['name'],
           browsable: currentType,
         ));
-        (_filters[ID_NOT_IN] as List<dynamic>).add(s['id']);
+        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(s['id']);
       }
     } else {
       for (final u in data['Page']['users'] as List<dynamic>) {
@@ -353,7 +345,7 @@ class Explorable extends GetxController {
     if (data == null) return;
 
     if (!data['Viewer']['options']['displayAdultContent'])
-      _filters[IS_ADULT] = false;
+      _filters[Filterable.IS_ADULT] = false;
 
     _genres = (data['GenreCollection'] as List<dynamic>)
         .map((g) => g.toString())
@@ -374,7 +366,7 @@ class Explorable extends GetxController {
         imageUrl: m['coverImage']['large'],
         browsable: Browsable.anime,
       ));
-      (_filters[ID_NOT_IN] as List<dynamic>).add(m['id']);
+      (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(m['id']);
     }
 
     _results.assignAll(loaded);

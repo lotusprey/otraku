@@ -2,41 +2,68 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/enums/anime_format_enum.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/manga_format_enum.dart';
+import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
-import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/controllers/filterable.dart';
+import 'package:otraku/models/collection.dart';
+import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 
 class FilterPage extends StatelessWidget {
+  final bool ofCollection;
   final Function(bool) onUpdate;
+  final Map<String, dynamic> changes = {};
 
-  FilterPage(this.onUpdate);
+  FilterPage(this.ofCollection, this.onUpdate);
 
   @override
   Widget build(BuildContext context) {
-    final explorable = Get.find<Explorable>();
+    final explorable = Get.find<Explorer>();
+    final filterable =
+        ofCollection ? Get.find<Collections>().collection : explorable;
 
-    List<String> statusIn =
-        List.from(explorable.getFilterWithKey(Explorable.STATUS_IN) ?? []);
-    List<String> statusNotIn =
-        List.from(explorable.getFilterWithKey(Explorable.STATUS_NOT_IN) ?? []);
-    List<String> formatIn =
-        List.from(explorable.getFilterWithKey(Explorable.FORMAT_IN) ?? []);
-    List<String> formatNotIn =
-        List.from(explorable.getFilterWithKey(Explorable.FORMAT_NOT_IN) ?? []);
-    List<String> genreIn =
-        List.from(explorable.getFilterWithKey(Explorable.GENRE_IN) ?? []);
-    List<String> genreNotIn =
-        List.from(explorable.getFilterWithKey(Explorable.GENRE_NOT_IN) ?? []);
-    List<String> tagIn =
-        List.from(explorable.getFilterWithKey(Explorable.TAG_IN) ?? []);
-    List<String> tagNotIn =
-        List.from(explorable.getFilterWithKey(Explorable.TAG_NOT_IN) ?? []);
+    final browsable = ofCollection
+        ? (filterable as Collection).ofAnime
+            ? Browsable.anime
+            : Browsable.manga
+        : explorable.type;
+
+    changes[Filterable.STATUS_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.STATUS_IN) ?? [],
+    );
+    changes[Filterable.STATUS_NOT_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.STATUS_NOT_IN) ?? [],
+    );
+    changes[Filterable.FORMAT_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.FORMAT_IN) ?? [],
+    );
+    changes[Filterable.FORMAT_NOT_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.FORMAT_NOT_IN) ?? [],
+    );
+    changes[Filterable.GENRE_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.GENRE_IN) ?? [],
+    );
+    changes[Filterable.GENRE_NOT_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.GENRE_NOT_IN) ?? [],
+    );
+    changes[Filterable.TAG_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.TAG_IN) ?? [],
+    );
+    changes[Filterable.TAG_NOT_IN] = List<String>.from(
+      filterable.getFilterWithKey(Filterable.TAG_NOT_IN) ?? [],
+    );
+    changes[Filterable.SORT] = filterable.getFilterWithKey(Filterable.SORT);
+    changes[Filterable.ON_LIST] =
+        filterable.getFilterWithKey(Filterable.ON_LIST);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -46,7 +73,7 @@ class FilterPage extends StatelessWidget {
             icon: const Icon(Icons.close),
             color: Theme.of(context).accentColor,
             onPressed: () {
-              explorable.clearAllFilters();
+              filterable.clearAllFilters();
               onUpdate(false);
               Navigator.of(context).pop();
             },
@@ -57,20 +84,14 @@ class FilterPage extends StatelessWidget {
               color: Theme.of(context).accentColor,
             ),
             onPressed: () {
-              explorable.setFilterWithKey(Explorable.STATUS_IN,
-                  value: statusIn);
-              explorable.setFilterWithKey(Explorable.STATUS_NOT_IN,
-                  value: statusNotIn);
-              explorable.setFilterWithKey(Explorable.FORMAT_IN,
-                  value: formatIn);
-              explorable.setFilterWithKey(Explorable.FORMAT_NOT_IN,
-                  value: formatNotIn);
-              explorable.setFilterWithKey(Explorable.GENRE_IN, value: genreIn);
-              explorable.setFilterWithKey(Explorable.GENRE_NOT_IN,
-                  value: genreNotIn);
-              explorable.setFilterWithKey(Explorable.TAG_IN, value: tagIn);
-              explorable.setFilterWithKey(Explorable.TAG_NOT_IN,
-                  value: tagNotIn, refetch: true);
+              for (final key in changes.keys)
+                filterable.setFilterWithKey(key, value: changes[key]);
+
+              if (ofCollection)
+                (filterable as Collection).sort();
+              else
+                explorable.fetchData();
+
               onUpdate(null);
               Navigator.of(context).pop();
             },
@@ -81,6 +102,50 @@ class FilterPage extends StatelessWidget {
         physics: Config.PHYSICS,
         padding: Config.PADDING,
         children: [
+          Row(
+            children: [
+              if (ofCollection)
+                Expanded(
+                  child: DropDownField(
+                    title: 'Sort',
+                    initialValue: changes[Filterable.SORT],
+                    items: Map.fromIterable(
+                      ListSort.values,
+                      key: (v) => clarifyEnum(describeEnum(v)),
+                      value: (v) => v,
+                    ),
+                    onChanged: (value) => changes[Filterable.SORT] = value,
+                  ),
+                )
+              else ...[
+                Expanded(
+                  child: DropDownField(
+                    title: 'Sort',
+                    initialValue: changes[Filterable.SORT],
+                    items: Map.fromIterable(
+                      MediaSort.values,
+                      key: (v) => clarifyEnum(describeEnum(v)),
+                      value: (v) => describeEnum(v),
+                    ),
+                    onChanged: (value) => changes[Filterable.SORT] = value,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropDownField(
+                    title: 'List Filter',
+                    initialValue: changes[Filterable.ON_LIST],
+                    items: {
+                      'Everything': null,
+                      'In My List': true,
+                      'Not In My List': false,
+                    },
+                    onChanged: (value) => changes[Filterable.ON_LIST] = value,
+                  ),
+                ),
+              ],
+            ],
+          ),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
@@ -88,41 +153,42 @@ class FilterPage extends StatelessWidget {
                 .map((s) => clarifyEnum(describeEnum(s)))
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
-            inclusive: statusIn,
-            exclusive: statusNotIn,
+            inclusive: changes[Filterable.STATUS_IN],
+            exclusive: changes[Filterable.STATUS_NOT_IN],
           ),
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            options: explorable.type == Browsable.anime
+            options: browsable == Browsable.anime
                 ? AnimeFormat.values
                     .map((f) => clarifyEnum(describeEnum(f)))
                     .toList()
                 : MangaFormat.values
                     .map((f) => clarifyEnum(describeEnum(f)))
                     .toList(),
-            values: explorable.type == Browsable.anime
+            values: browsable == Browsable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
                 : MangaFormat.values.map((f) => describeEnum(f)).toList(),
-            inclusive: formatIn,
-            exclusive: formatNotIn,
+            inclusive: changes[Filterable.FORMAT_IN],
+            exclusive: changes[Filterable.FORMAT_NOT_IN],
           ),
           ChipGrid(
             title: 'Genres',
             placeholder: 'genres',
             options: explorable.genres,
             values: explorable.genres,
-            inclusive: genreIn,
-            exclusive: genreNotIn,
+            inclusive: changes[Filterable.GENRE_IN],
+            exclusive: changes[Filterable.GENRE_NOT_IN],
           ),
-          ChipGrid(
-            title: 'Tags',
-            placeholder: 'tags',
-            options: explorable.tags.item1,
-            values: explorable.tags.item1,
-            inclusive: tagIn,
-            exclusive: tagNotIn,
-          ),
+          if (!ofCollection)
+            ChipGrid(
+              title: 'Tags',
+              placeholder: 'tags',
+              options: explorable.tags.item1,
+              values: explorable.tags.item1,
+              inclusive: changes[Filterable.TAG_IN],
+              exclusive: changes[Filterable.TAG_NOT_IN],
+            ),
         ],
       ),
     );

@@ -1,10 +1,11 @@
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/controllers/filterable.dart';
 import 'package:otraku/models/entry_list.dart';
 import 'package:otraku/models/page_data/edit_entry.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 
-class Collection {
+class Collection implements Filterable {
   final Function updateHandle;
   final Function fetchHandle;
   final int userId;
@@ -12,9 +13,11 @@ class Collection {
   final bool completedListIsSplit;
   final String scoreFormat;
   final List<EntryList> lists;
-  ListSort _sort;
+  final Map<String, dynamic> _filters = {
+    Filterable.SEARCH: null,
+    Filterable.SORT: null,
+  };
   int _listIndex = 0;
-  String _search;
 
   Collection({
     this.updateHandle,
@@ -24,9 +27,10 @@ class Collection {
     this.completedListIsSplit,
     this.scoreFormat,
     this.lists,
-    initialSort,
+    sort,
   }) {
-    sort = initialSort;
+    _filters[Filterable.SORT] = sort;
+    _sortLists(lists, sort);
   }
 
   int get listIndex => _listIndex;
@@ -37,23 +41,44 @@ class Collection {
     updateHandle();
   }
 
-  String get search => _search;
+  @override
+  dynamic getFilterWithKey(String key) => _filters[key];
 
-  set search(String value) {
-    if (value == null || value.trim() == '') {
-      _search = null;
+  @override
+  void setFilterWithKey(String key, {dynamic value, bool update = false}) {
+    if (value == null ||
+        (value is List && value.isEmpty) ||
+        (value is String && value.trim().isEmpty)) {
+      _filters.remove(key);
     } else {
-      _search = value.trim();
+      _filters[key] = value;
     }
-    updateHandle();
+
+    if (update) updateHandle();
   }
 
-  ListSort get sort => _sort;
+  @override
+  void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
+        Filterable.STATUS_IN,
+        Filterable.STATUS_NOT_IN,
+        Filterable.FORMAT_IN,
+        Filterable.FORMAT_NOT_IN,
+        Filterable.GENRE_IN,
+        Filterable.GENRE_NOT_IN,
+      ], update: update);
 
-  set sort(ListSort value) {
-    _sort = value;
-    sortLists(lists, _sort);
-    updateHandle();
+  @override
+  void clearFiltersWithKeys(List<String> keys, {bool update = true}) {
+    for (final key in keys) {
+      _filters.remove(key);
+    }
+
+    if (update) updateHandle();
+  }
+
+  @override
+  bool anyActiveFilterFrom(List<String> keys) {
+    return false;
   }
 
   List<String> get listNames {
@@ -80,12 +105,40 @@ class Collection {
   }
 
   List<MediaEntry> get entries {
-    if (_search == null) return [...lists[_listIndex].entries];
+    final list = lists[_listIndex].entries;
+
+    String search = _filters[Filterable.SEARCH];
+    if (search != null) search = search.toLowerCase();
+    final formatIn = _filters[Filterable.FORMAT_IN];
+    final formatNotIn = _filters[Filterable.FORMAT_NOT_IN];
 
     List<MediaEntry> entries = [];
-    for (final entry in lists[_listIndex].entries) {
-      if (entry.title.toLowerCase().contains(search.toLowerCase()))
-        entries.add(entry);
+
+    for (final entry in list) {
+      if (search != null && !entry.title.toLowerCase().contains(search))
+        continue;
+
+      if (formatIn != null) {
+        bool isIn = false;
+        for (final format in formatIn)
+          if (entry.format == format) {
+            isIn = true;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (formatNotIn != null) {
+        bool isIn = false;
+        for (final format in formatNotIn)
+          if (entry.format == format) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      entries.add(entry);
     }
 
     return entries;
@@ -150,7 +203,7 @@ class Collection {
       }
     }
 
-    sortLists(updatedLists, _sort);
+    _sortLists(updatedLists, _filters[Filterable.SORT]);
 
     updateHandle();
   }
@@ -190,7 +243,12 @@ class Collection {
     }
   }
 
-  static void sortLists(List<EntryList> entryLists, ListSort sorting) {
+  void sort() {
+    _sortLists(lists, _filters[Filterable.SORT]);
+    updateHandle();
+  }
+
+  static void _sortLists(List<EntryList> entryLists, ListSort sorting) {
     switch (sorting) {
       case ListSort.TITLE:
         for (final list in entryLists)

@@ -8,10 +8,11 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/controllers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/tools/page_transition.dart';
 
@@ -112,13 +113,17 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                       ],
                     ),
                     hint: collection.currentListName,
-                    searchValue: collection.search,
-                    search: (search) => collection.search = search,
+                    searchValue: collection.getFilterWithKey(Filterable.SEARCH),
+                    search: (search) => collection.setFilterWithKey(
+                      Filterable.SEARCH,
+                      value: search,
+                      update: true,
+                    ),
                   );
                 })
               else
                 Obx(() {
-                  final explorable = Get.find<Explorable>();
+                  final explorable = Get.find<Explorer>();
                   return _Navigation(
                     ctrl: ctrl,
                     swipe: (int offset) {
@@ -152,7 +157,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 }),
               if (!ofCollection)
                 Obx(() {
-                  final type = Get.find<Explorable>().type;
+                  final type = Get.find<Explorer>().type;
                   if (type == Browsable.anime || type == Browsable.manga)
                     return _Filter(false);
                   return const SizedBox();
@@ -388,7 +393,7 @@ class __FilterState extends State<_Filter> {
     return GestureDetector(
       onTap: () => _pushPage(context),
       onLongPress: () {
-        Get.find<Explorable>().clearAllFilters();
+        Get.find<Explorer>().clearAllFilters();
         setState(() => _active = false);
       },
       child: Container(
@@ -418,14 +423,14 @@ class __FilterState extends State<_Filter> {
         ),
       );
 
-  bool _checkIfActive() => Get.find<Explorable>().anyActiveFilterFrom([
-        Explorable.STATUS_IN,
-        Explorable.STATUS_NOT_IN,
-        Explorable.FORMAT_IN,
-        Explorable.FORMAT_NOT_IN,
-        Explorable.GENRE_IN,
-        Explorable.GENRE_NOT_IN,
-        Explorable.TAG_IN,
-        Explorable.TAG_NOT_IN,
+  bool _checkIfActive() => Get.find<Explorer>().anyActiveFilterFrom([
+        Filterable.STATUS_IN,
+        Filterable.STATUS_NOT_IN,
+        Filterable.FORMAT_IN,
+        Filterable.FORMAT_NOT_IN,
+        Filterable.GENRE_IN,
+        Filterable.GENRE_NOT_IN,
+        Filterable.TAG_IN,
+        Filterable.TAG_NOT_IN,
       ]);
 }

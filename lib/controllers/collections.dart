@@ -219,7 +219,7 @@ class Collections extends GetxController {
       completedListIsSplit: metaData['splitCompletedSectionByFormat'],
       scoreFormat: data['user']['mediaListOptions']['scoreFormat'],
       lists: lists,
-      initialSort:
+      sort:
           ListSortHelper.getEnum(data['user']['mediaListOptions']['rowOrder']),
     );
   }

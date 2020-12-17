@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 
@@ -103,7 +103,7 @@ class ExploreDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorable = Get.find<Explorable>();
+    final explorable = Get.find<Explorer>();
     final selected = explorable.type.index;
 
     return CustomDrawer(

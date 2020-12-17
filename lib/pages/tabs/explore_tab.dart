@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigators/control_header.dart';
@@ -46,7 +46,7 @@ class _ExploreTabState extends State<ExploreTab> {
 
 class _ExploreGrid extends StatelessWidget {
   void _loadMore() {
-    final explorable = Get.find<Explorable>();
+    final explorable = Get.find<Explorer>();
     if (explorable.hasNextPage && !explorable.isLoading) {
       explorable.loadMore();
     }
@@ -54,7 +54,7 @@ class _ExploreGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorable = Get.find<Explorable>();
+    final explorable = Get.find<Explorer>();
 
     return Obx(() {
       if (explorable.isLoading)
@@ -94,8 +94,8 @@ class _EndOfListLoader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Obx(
-            () => Get.find<Explorable>().hasNextPage &&
-                    !Get.find<Explorable>().isLoading
+            () => Get.find<Explorer>().hasNextPage &&
+                    !Get.find<Explorer>().isLoading
                 ? Loader()
                 : const SizedBox(),
           ),

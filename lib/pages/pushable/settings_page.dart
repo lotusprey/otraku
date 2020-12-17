@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/controllers/filterable.dart';
 import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/list_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/notification_settings_page.dart';
 import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/page_transition.dart';
@@ -26,11 +27,10 @@ class SettingsPage extends StatelessWidget {
               Get.find<Users>().updateSettings(changes).then((_) {
                 if (changes.containsKey('displayAdultContent')) {
                   if (changes['displayAdultContent']) {
-                    Get.find<Explorable>()
-                        .setFilterWithKey(Explorable.IS_ADULT);
+                    Get.find<Explorer>().setFilterWithKey(Filterable.IS_ADULT);
                   } else {
-                    Get.find<Explorable>()
-                        .setFilterWithKey(Explorable.IS_ADULT, value: false);
+                    Get.find<Explorer>()
+                        .setFilterWithKey(Filterable.IS_ADULT, value: false);
                   }
                 }
                 if (changes.containsKey('scoreFormat') ||

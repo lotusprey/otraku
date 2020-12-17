@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/explorable.dart';
+import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/network_service.dart';
 import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
@@ -25,7 +25,7 @@ class LoadingPage extends StatelessWidget {
       final Future<void> Function() fetchMangaCollection =
           Get.find<Collections>().fetchMyManga;
       final Future<void> Function() fetchExplorableMedia =
-          Get.find<Explorable>().fetchInitial;
+          Get.find<Explorer>().fetchInitial;
       final Future<void> Function() fetchViewer = Get.find<Users>().fetchViewer;
 
       NetworkService.initViewerId().then((_) {

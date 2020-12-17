@@ -9,6 +9,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/controllers/filterable.dart';
 
 class SortSheet extends StatelessWidget {
   final List<String> options;
@@ -119,7 +120,7 @@ class CollectionSortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final collection = Get.find<Collections>().collection;
 
-    final mediaSort = collection.sort;
+    final mediaSort = collection.getFilterWithKey(Filterable.SORT);
     final currentIndex = mediaSort.index ~/ 2;
     final currentlyDesc = mediaSort.index % 2 == 0 ? false : true;
 
@@ -133,11 +134,13 @@ class CollectionSortSheet extends StatelessWidget {
       index: currentIndex,
       desc: currentlyDesc,
       onTap: (int index, bool desc) {
-        if (desc) {
-          collection.sort = ListSort.values[index * 2 + 1];
-        } else {
-          collection.sort = ListSort.values[index * 2];
-        }
+        collection.setFilterWithKey(
+          Filterable.SORT,
+          value: desc
+              ? ListSort.values[index * 2 + 1]
+              : ListSort.values[index * 2],
+          update: true,
+        );
       },
     );
   }

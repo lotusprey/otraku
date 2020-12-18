@@ -319,6 +319,7 @@ class Collections extends GetxController {
               )
             : null,
         format: entry['media']['format'],
+        status: entry['media']['status'],
         progress: entry['progress'],
         progressMax: entry['media']['episodes'] ?? entry['media']['chapters'],
         progressVolumes: entry['progressVolumes'],

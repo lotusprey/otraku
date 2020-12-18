@@ -105,16 +105,16 @@ class Collection implements Filterable {
   }
 
   List<MediaEntry> get entries {
-    final list = lists[_listIndex].entries;
-
-    String search = _filters[Filterable.SEARCH];
-    if (search != null) search = search.toLowerCase();
+    final search = (_filters[Filterable.SEARCH] as String)?.toLowerCase();
     final formatIn = _filters[Filterable.FORMAT_IN];
     final formatNotIn = _filters[Filterable.FORMAT_NOT_IN];
+    final statusIn = _filters[Filterable.STATUS_IN];
+    final statusNotIn = _filters[Filterable.STATUS_NOT_IN];
 
-    List<MediaEntry> entries = [];
+    final list = lists[_listIndex];
+    final List<MediaEntry> entries = [];
 
-    for (final entry in list) {
+    for (final entry in list.entries) {
       if (search != null && !entry.title.toLowerCase().contains(search))
         continue;
 
@@ -132,6 +132,26 @@ class Collection implements Filterable {
         bool isIn = false;
         for (final format in formatNotIn)
           if (entry.format == format) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      if (statusIn != null) {
+        bool isIn = false;
+        for (final status in statusIn)
+          if (entry.status == status) {
+            isIn = true;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (statusNotIn != null) {
+        bool isIn = false;
+        for (final status in statusNotIn)
+          if (entry.status == status) {
             isIn = true;
             break;
           }

@@ -5,6 +5,7 @@ class MediaEntry {
   final String title;
   final String cover;
   final String format;
+  final String status;
   final int nextEpisode;
   final String timeUntilAiring;
   final int createdAt;
@@ -24,6 +25,7 @@ class MediaEntry {
     @required this.title,
     @required this.cover,
     @required this.format,
+    @required this.status,
     @required this.nextEpisode,
     @required this.timeUntilAiring,
     @required this.createdAt,

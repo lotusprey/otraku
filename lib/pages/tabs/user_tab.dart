@@ -3,16 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:otraku/models/user.dart';
+import 'package:otraku/controllers/user.dart';
+import 'package:otraku/models/user_data.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
-import 'package:otraku/controllers/users.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/tools/page_transition.dart';
 import 'package:otraku/models/transparent_image.dart';
 
 class UserTab extends StatelessWidget {
@@ -24,17 +23,15 @@ class UserTab extends StatelessWidget {
   const UserTab(this.id, this.avatarUrl);
 
   @override
-  Widget build(BuildContext context) => Obx(() {
-        final users = Get.find<Users>();
-        final user = id == null ? users.me : users.them(id);
-
-        return CustomScrollView(
+  Widget build(BuildContext context) => GetBuilder<User>(
+        tag: id?.toString() ?? User.ME,
+        builder: (user) => CustomScrollView(
           physics: Config.PHYSICS,
           slivers: [
             SliverPersistentHeader(
               delegate: _Header(
                 id: id,
-                user: user,
+                user: user.data,
                 isMe: id == null,
                 avatarUrl: avatarUrl,
               ),
@@ -60,19 +57,14 @@ class UserTab extends StatelessWidget {
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = TabManager.ANIME_LIST
-                            : Navigator.push(
-                                context,
-                                PageTransition.to(
-                                  TabPage(
-                                    CollectionsTab(
-                                      otherUserId: id,
-                                      ofAnime: true,
-                                      key: null,
-                                    ),
-                                    drawer: CollectionDrawer(),
-                                  ),
+                            : Get.to(TabPage(
+                                CollectionsTab(
+                                  otherUserId: id,
+                                  ofAnime: true,
+                                  key: null,
                                 ),
-                              ),
+                                drawer: CollectionDrawer(),
+                              )),
                       ),
                     ),
                     _space,
@@ -92,19 +84,14 @@ class UserTab extends StatelessWidget {
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = TabManager.MANGA_LIST
-                            : Navigator.push(
-                                context,
-                                PageTransition.to(
-                                  TabPage(
-                                    CollectionsTab(
-                                      otherUserId: id,
-                                      ofAnime: false,
-                                      key: null,
-                                    ),
-                                    drawer: CollectionDrawer(),
-                                  ),
+                            : Get.to(TabPage(
+                                CollectionsTab(
+                                  otherUserId: id,
+                                  ofAnime: false,
+                                  key: null,
                                 ),
-                              ),
+                                drawer: CollectionDrawer(),
+                              )),
                       ),
                     ),
                   ],
@@ -115,13 +102,13 @@ class UserTab extends StatelessWidget {
               child: const SizedBox(height: 60),
             ),
           ],
-        );
-      });
+        ),
+      );
 }
 
 class _Header implements SliverPersistentHeaderDelegate {
   final int id;
-  final User user;
+  final UserData user;
   final bool isMe;
   final String avatarUrl;
 
@@ -190,7 +177,12 @@ class _Header implements SliverPersistentHeaderDelegate {
                         child: Container(
                           height: 150,
                           width: 150,
-                          child: Image.network(avatar, fit: BoxFit.contain),
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: transparentImage,
+                            image: avatar,
+                            fit: BoxFit.contain,
+                            fadeInDuration: Config.FADE_DURATION,
+                          ),
                         ),
                       ),
                     ),
@@ -228,10 +220,7 @@ class _Header implements SliverPersistentHeaderDelegate {
                     icon: const Icon(
                         FluentSystemIcons.ic_fluent_settings_regular),
                     color: Theme.of(context).dividerColor,
-                    onPressed: () => Navigator.push(
-                      context,
-                      PageTransition.to(SettingsPage()),
-                    ),
+                    onPressed: () => Get.to(SettingsPage()),
                   ),
                 ] else ...[
                   IconButton(

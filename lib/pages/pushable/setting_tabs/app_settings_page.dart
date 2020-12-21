@@ -34,7 +34,8 @@ class AppSettingsPage extends StatelessWidget {
                 Flexible(
                   child: DropDownField(
                     title: 'Startup Page',
-                    initialValue: Config.storage.read(Config.STARTUP_PAGE),
+                    initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
+                        TabManager.ANIME_LIST,
                     items: {
                       'Inbox': TabManager.INBOX,
                       'Anime List': TabManager.ANIME_LIST,

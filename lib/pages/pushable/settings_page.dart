@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/filterable.dart';
+import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/list_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/notification_settings_page.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
-import 'package:otraku/tools/page_transition.dart';
 
 class SettingsPage extends StatelessWidget {
   final padding = const EdgeInsets.symmetric(horizontal: 5);
@@ -24,7 +23,7 @@ class SettingsPage extends StatelessWidget {
           title: 'Settings',
           callOnPop: () {
             if (changes.keys.length > 0) {
-              Get.find<Users>().updateSettings(changes).then((_) {
+              Get.find<UserSettings>().updateSettings(changes).then((_) {
                 if (changes.containsKey('displayAdultContent')) {
                   if (changes['displayAdultContent']) {
                     Get.find<Explorer>().setFilterWithKey(Filterable.IS_ADULT);
@@ -60,10 +59,7 @@ class SettingsPage extends StatelessWidget {
                 color: Theme.of(context).dividerColor,
               ),
               title: Text('App', style: Theme.of(context).textTheme.bodyText1),
-              onTap: () => Navigator.push(
-                context,
-                PageTransition.to(AppSettingsPage()),
-              ),
+              onTap: () => Get.to(AppSettingsPage()),
             ),
             ListTile(
               contentPadding: padding,
@@ -73,10 +69,7 @@ class SettingsPage extends StatelessWidget {
               ),
               title:
                   Text('Media', style: Theme.of(context).textTheme.bodyText1),
-              onTap: () => Navigator.push(
-                context,
-                PageTransition.to(MediaSettingsPage(changes)),
-              ),
+              onTap: () => Get.to(MediaSettingsPage(changes)),
             ),
             ListTile(
               contentPadding: padding,
@@ -86,10 +79,7 @@ class SettingsPage extends StatelessWidget {
               ),
               title:
                   Text('Lists', style: Theme.of(context).textTheme.bodyText1),
-              onTap: () => Navigator.push(
-                context,
-                PageTransition.to(ListSettingsPage(changes)),
-              ),
+              onTap: () => Get.to(ListSettingsPage(changes)),
             ),
             ListTile(
               contentPadding: padding,
@@ -101,10 +91,7 @@ class SettingsPage extends StatelessWidget {
                 'Notifications',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
-              onTap: () => Navigator.push(
-                context,
-                PageTransition.to(NotificationSettingsPage(changes)),
-              ),
+              onTap: () => Get.to(NotificationSettingsPage(changes)),
             ),
           ],
         ),

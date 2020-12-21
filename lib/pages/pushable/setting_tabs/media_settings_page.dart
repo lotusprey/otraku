@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/users.dart';
+import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
@@ -22,7 +22,7 @@ class MediaSettingsPage extends StatelessWidget {
           children: [
             DropDownField(
               title: 'Title Language',
-              initialValue: Get.find<Users>().settings.titleLanguage,
+              initialValue: Get.find<UserSettings>().settings.titleLanguage,
               items: {
                 'Romaji': 'ROMAJI',
                 'English': 'ENGLISH',
@@ -30,7 +30,7 @@ class MediaSettingsPage extends StatelessWidget {
               },
               onChanged: (value) {
                 const key = 'titleLanguage';
-                if (value == Get.find<Users>().settings.titleLanguage) {
+                if (value == Get.find<UserSettings>().settings.titleLanguage) {
                   changes.remove(key);
                 } else {
                   changes[key] = value;
@@ -39,7 +39,8 @@ class MediaSettingsPage extends StatelessWidget {
             ),
             SwitchTile(
               title: 'Airing Anime Notifications',
-              initialValue: Get.find<Users>().settings.airingNotifications,
+              initialValue:
+                  Get.find<UserSettings>().settings.airingNotifications,
               onChanged: (value) {
                 const notifications = 'airingNotifications';
                 if (changes.containsKey(notifications)) {
@@ -51,7 +52,8 @@ class MediaSettingsPage extends StatelessWidget {
             ),
             SwitchTile(
               title: '18+ Content',
-              initialValue: Get.find<Users>().settings.displayAdultContent,
+              initialValue:
+                  Get.find<UserSettings>().settings.displayAdultContent,
               onChanged: (value) {
                 const adultContent = 'displayAdultContent';
                 if (changes.containsKey(adultContent)) {

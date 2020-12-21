@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/score_format_enum.dart';
-import 'package:otraku/controllers/users.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
@@ -26,7 +26,7 @@ class ListSettingsPage extends StatelessWidget {
           children: [
             DropDownField(
               title: 'Scoring System',
-              initialValue: Get.find<Users>().settings.scoreFormat,
+              initialValue: Get.find<UserSettings>().settings.scoreFormat,
               items: Map.fromIterable(
                 ScoreFormat.values,
                 key: (v) => clarifyEnum(describeEnum(v)),
@@ -34,7 +34,7 @@ class ListSettingsPage extends StatelessWidget {
               ),
               onChanged: (value) {
                 const key = 'scoreFormat';
-                if (value == Get.find<Users>().settings.scoreFormat) {
+                if (value == Get.find<UserSettings>().settings.scoreFormat) {
                   changes.remove(key);
                 } else {
                   changes[key] = describeEnum(value);
@@ -43,14 +43,14 @@ class ListSettingsPage extends StatelessWidget {
             ),
             DropDownField(
               title: 'Default List Order',
-              initialValue: Get.find<Users>().settings.defaultSort,
+              initialValue: Get.find<UserSettings>().settings.defaultSort,
               items: Map.fromIterables(
                 ListSortHelper.defaultStrings,
                 ListSortHelper.defaultEnums,
               ),
               onChanged: (value) {
                 const key = 'rowOrder';
-                if (value == Get.find<Users>().settings.defaultSort) {
+                if (value == Get.find<UserSettings>().settings.defaultSort) {
                   changes.remove(key);
                 } else {
                   changes[key] = (value as ListSort).string;
@@ -59,7 +59,8 @@ class ListSettingsPage extends StatelessWidget {
             ),
             SwitchTile(
               title: 'Split Completed Anime',
-              initialValue: Get.find<Users>().settings.splitCompletedAnime,
+              initialValue:
+                  Get.find<UserSettings>().settings.splitCompletedAnime,
               onChanged: (value) {
                 const splitAnime = 'splitCompletedAnime';
                 if (changes.containsKey(splitAnime)) {
@@ -71,7 +72,8 @@ class ListSettingsPage extends StatelessWidget {
             ),
             SwitchTile(
               title: 'Split Completed Manga',
-              initialValue: Get.find<Users>().settings.splitCompletedManga,
+              initialValue:
+                  Get.find<UserSettings>().settings.splitCompletedManga,
               onChanged: (value) {
                 const splitManga = 'splitCompletedManga';
                 if (changes.containsKey(splitManga)) {

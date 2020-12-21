@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/users.dart';
+import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
@@ -46,7 +46,7 @@ class NotificationSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final options = Get.find<Users>().settings.notificationOptions;
+    final options = Get.find<UserSettings>().settings.notificationOptions;
     List<bool> values = [];
     for (int i = 0; i < _notificationTypes.length; i++) {
       values.add(options[_notificationTypes[i]] ?? false);

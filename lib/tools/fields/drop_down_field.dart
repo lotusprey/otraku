@@ -7,12 +7,14 @@ class DropDownField<T> extends StatefulWidget {
   final T initialValue;
   final Map<String, T> items;
   final Function(T) onChanged;
+  final String hint;
 
   DropDownField({
     @required this.title,
     @required this.initialValue,
     @required this.items,
     @required this.onChanged,
+    this.hint = 'Choose',
   });
 
   @override
@@ -55,7 +57,8 @@ class _DropDownFieldState<T> extends State<DropDownField> {
               setState(() => value = val);
               widget.onChanged(val);
             },
-            hint: Text('Choose', style: Theme.of(context).textTheme.subtitle1),
+            hint:
+                Text(widget.hint, style: Theme.of(context).textTheme.subtitle1),
             iconEnabledColor: Theme.of(context).disabledColor,
             dropdownColor: Theme.of(context).primaryColor,
             underline: const SizedBox(),

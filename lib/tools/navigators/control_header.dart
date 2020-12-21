@@ -14,7 +14,6 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/controllers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
-import 'package:otraku/tools/page_transition.dart';
 
 class CollectionControlHeader extends StatelessWidget {
   final ScrollController ctrl;
@@ -410,18 +409,14 @@ class __FilterState extends State<_Filter> {
     );
   }
 
-  void _pushPage(BuildContext context) => Navigator.push(
-        context,
-        PageTransition.to(
-          FilterPage(widget.ofCollection, (newActive) {
-            if (newActive == null) {
-              setState(() => _active = _checkIfActive());
-            } else {
-              setState(() => _active = newActive);
-            }
-          }),
-        ),
-      );
+  void _pushPage(BuildContext context) =>
+      Get.to(FilterPage(widget.ofCollection, (newActive) {
+        if (newActive == null) {
+          setState(() => _active = _checkIfActive());
+        } else {
+          setState(() => _active = newActive);
+        }
+      }));
 
   bool _checkIfActive() => Get.find<Explorer>().anyActiveFilterFrom([
         Filterable.STATUS_IN,

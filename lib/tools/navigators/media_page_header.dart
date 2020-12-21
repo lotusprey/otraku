@@ -17,14 +17,14 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
   final double coverHeight;
   final double minHeight = Config.MATERIAL_TAP_TARGET_SIZE + 10;
   final double maxHeight;
-  final String tagImageUrl;
+  final String imageUrl;
 
   MediaPageHeader({
     @required this.media,
     @required this.coverWidth,
     @required this.coverHeight,
     @required this.maxHeight,
-    @required this.tagImageUrl,
+    @required this.imageUrl,
   });
 
   @override
@@ -83,7 +83,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Hero(
-                    tag: tagImageUrl,
+                    tag: imageUrl,
                     child: Container(
                       height: coverHeight,
                       width: coverWidth,
@@ -92,7 +92,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            Image.network(tagImageUrl, fit: BoxFit.cover),
+                            Image.network(imageUrl, fit: BoxFit.cover),
                             if (media != null)
                               GestureDetector(
                                 child: Image.network(

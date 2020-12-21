@@ -8,11 +8,10 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/controllers/filterable.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
-import 'package:otraku/pages/pushable/studio_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/tools/page_transition.dart';
 
 class OverviewTab extends StatelessWidget {
   final _space = const SizedBox(height: 10);
@@ -312,10 +311,10 @@ class _StudioLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () =>
-          Navigator.push(context, PageTransition.to(StudioPage(id, name))),
-      onLongPress: () => Clipboard.setData(ClipboardData(text: name)),
+    return BrowseIndexer(
+      id: id,
+      tag: name,
+      browsable: Browsable.studio,
       child: Text(name, style: Theme.of(context).textTheme.bodyText2),
     );
   }

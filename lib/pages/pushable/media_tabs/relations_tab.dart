@@ -30,7 +30,7 @@ class RelationList extends StatelessWidget {
             delegate: SliverChildBuilderDelegate(
               (_, index) => BrowseIndexer(
                 id: media.otherMedia[index].id,
-                image: media.otherMedia[index].imageUrl,
+                tag: media.otherMedia[index].imageUrl,
                 browsable: media.otherMedia[index].browsable,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,

@@ -20,7 +20,7 @@ class MediaPage extends StatelessWidget {
     double coverWidth = MediaQuery.of(context).size.width * 0.35;
     double coverHeight = coverWidth / 0.7;
     double bannerHeight = coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
-    Media media;
+    final media = Get.find<Media>(tag: id.toString());
 
     return Scaffold(
       extendBody: true,
@@ -30,7 +30,7 @@ class MediaPage extends StatelessWidget {
           FluentSystemIcons.ic_fluent_recommended_regular,
           FluentSystemIcons.ic_fluent_people_community_regular,
         ],
-        onChanged: (index) => Get.find<Media>(tag: id.toString()).tab = index,
+        onChanged: (index) => media.tab = index,
       ),
       body: SafeArea(
         bottom: false,
@@ -41,16 +41,8 @@ class MediaPage extends StatelessWidget {
           child: CustomScrollView(
             physics: Config.PHYSICS,
             slivers: [
-              GetX<Media>(
-                init: !Get.isRegistered<Media>(tag: id.toString())
-                    ? Media()
-                    : null,
-                tag: id.toString(),
-                didUpdateWidget: (_, __) =>
-                    media = Get.find<Media>(tag: id.toString()),
-                initState: (_) => media = Get.find<Media>(tag: id.toString())
-                  ..fetchOverview(id),
-                builder: (media) => SliverPersistentHeader(
+              Obx(
+                () => SliverPersistentHeader(
                   pinned: true,
                   floating: false,
                   delegate: MediaPageHeader(
@@ -58,7 +50,7 @@ class MediaPage extends StatelessWidget {
                     coverWidth: coverWidth,
                     coverHeight: coverHeight,
                     maxHeight: bannerHeight,
-                    tagImageUrl: tagImageUrl,
+                    imageUrl: tagImageUrl,
                   ),
                 ),
               ),

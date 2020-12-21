@@ -15,82 +15,78 @@ class StaffPage extends StatelessWidget {
   StaffPage(this.id, this.imageUrlTag);
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          child: CustomScrollView(
-            physics: Config.PHYSICS,
-            slivers: [
-              GetX<Staff>(
-                init: Staff(),
-                initState: (_) => Get.find<Staff>().fetchStaff(id),
-                builder: (staff) => PersonHeader(staff.person, imageUrlTag),
-              ),
-              Obx(() {
-                final person = Get.find<Staff>().person;
-                if (person == null) return const SliverToBoxAdapter();
-                return PersonInfo(person);
-              }),
-              Obx(() {
-                final staff = Get.find<Staff>();
-                if (staff.person == null) return const SliverToBoxAdapter();
+  Widget build(BuildContext context) {
+    final staff = Get.find<Staff>(tag: id.toString());
 
-                return SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (staff.characterList.connections.isNotEmpty &&
-                            staff.roleList.connections.isNotEmpty)
-                          BubbleTabs(
-                            options: const ['Characters', 'Staff Roles'],
-                            values: const [true, false],
-                            initial: true,
-                            onNewValue: (value) => staff.onCharacters = value,
-                            onSameValue: (_) {},
-                          )
-                        else
-                          const SizedBox(),
-                        IconButton(
-                          icon: const Icon(
-                            FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                          ),
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            builder: (_) => MediaSortSheet(
-                              staff.sort,
-                              (sort) => staff.sort = sort,
-                            ),
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                          ),
+    return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          physics: Config.PHYSICS,
+          slivers: [
+            Obx(() => PersonHeader(staff.person, imageUrlTag)),
+            Obx(() {
+              if (staff.person == null) return const SliverToBoxAdapter();
+              return PersonInfo(staff.person);
+            }),
+            Obx(() {
+              if (staff.person == null) return const SliverToBoxAdapter();
+
+              return SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (staff.characterList.connections.isNotEmpty &&
+                          staff.roleList.connections.isNotEmpty)
+                        BubbleTabs(
+                          options: const ['Characters', 'Staff Roles'],
+                          values: const [true, false],
+                          initial: true,
+                          onNewValue: (value) => staff.onCharacters = value,
+                          onSameValue: (_) {},
+                        )
+                      else
+                        const SizedBox(),
+                      IconButton(
+                        icon: const Icon(
+                          FluentSystemIcons.ic_fluent_arrow_sort_filled,
                         ),
-                      ],
-                    ),
+                        onPressed: () => showModalBottomSheet(
+                          context: context,
+                          builder: (_) => MediaSortSheet(
+                            staff.sort,
+                            (sort) => staff.sort = sort,
+                          ),
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              }),
-              Obx(() {
-                final staff = Get.find<Staff>();
-                final connectionList =
-                    staff.onCharacters ? staff.characterList : staff.roleList;
+                ),
+              );
+            }),
+            Obx(() {
+              final connectionList =
+                  staff.onCharacters ? staff.characterList : staff.roleList;
 
-                if (connectionList == null ||
-                    connectionList.connections.isEmpty)
-                  return const SliverToBoxAdapter();
+              if (connectionList == null || connectionList.connections.isEmpty)
+                return const SliverToBoxAdapter();
 
-                return SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  sliver: ConnectionsGrid(
-                    connections: connectionList.connections,
-                    loadMore: () {
-                      if (connectionList.hasNextPage) staff.fetchPage();
-                    },
-                  ),
-                );
-              }),
-            ],
-          ),
+              return SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                sliver: ConnectionsGrid(
+                  connections: connectionList.connections,
+                  loadMore: () {
+                    if (connectionList.hasNextPage) staff.fetchPage();
+                  },
+                ),
+              );
+            }),
+          ],
         ),
-      );
+      ),
+    );
+  }
 }

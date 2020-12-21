@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/users.dart';
+import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
@@ -155,7 +155,7 @@ class MediaSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final length = MediaSort.values.length;
-    final prefTitle = Get.find<Users>().settings.titleLanguage;
+    final prefTitle = Get.find<UserSettings>().settings.titleLanguage;
     MediaSort titleAsc;
     MediaSort titleDesc;
 

@@ -136,6 +136,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   children: [
                     _row(
                       DropDownField(
+                        hint: 'Add',
                         title: 'Status',
                         initialValue: _newData.status,
                         items: Map.fromIterable(

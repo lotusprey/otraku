@@ -6,29 +6,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/controllers/filterable.dart';
+import 'package:otraku/services/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 
 class CollectionControlHeader extends StatelessWidget {
   final ScrollController ctrl;
+  final String collectionTag;
 
-  const CollectionControlHeader(this.ctrl);
+  const CollectionControlHeader(this.ctrl, this.collectionTag);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<Collections>(builder: (collections) {
-      if (collections.collection == null) return const SliverToBoxAdapter();
+    return Obx(() {
+      if (Get.find<Collection>(tag: collectionTag).names.isEmpty)
+        return const SliverToBoxAdapter();
 
       return SliverPersistentHeader(
         pinned: true,
         delegate: _ControlHeaderDelegate(
-          ofCollection: true,
+          collectionTag: collectionTag,
           ctrl: ctrl,
         ),
       );
@@ -46,7 +48,7 @@ class ExploreControlHeader extends StatelessWidget {
     return SliverPersistentHeader(
       pinned: true,
       delegate: _ControlHeaderDelegate(
-        ofCollection: false,
+        collectionTag: null,
         ctrl: ctrl,
       ),
     );
@@ -56,11 +58,11 @@ class ExploreControlHeader extends StatelessWidget {
 class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 58.0;
 
-  final bool ofCollection;
+  final String collectionTag;
   final ScrollController ctrl;
 
   _ControlHeaderDelegate({
-    @required this.ofCollection,
+    @required this.collectionTag,
     @required this.ctrl,
   });
 
@@ -85,10 +87,10 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 icon: const Icon(FluentSystemIcons.ic_fluent_list_regular),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
-              if (ofCollection)
-                GetBuilder<Collections>(builder: (collections) {
-                  final collection = collections.collection;
-                  if (collection.lists.isEmpty)
+              if (collectionTag != null)
+                Obx(() {
+                  final collection = Get.find<Collection>(tag: collectionTag);
+                  if (collection.names.isEmpty)
                     return const Expanded(child: SizedBox());
 
                   return _Navigation(
@@ -99,19 +101,19 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                       children: [
                         Flexible(
                           child: Text(
-                            collection.currentListName,
+                            collection.currentName,
                             style: Theme.of(context).textTheme.headline2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Text(
-                          ' ${collection.currentEntryCount}',
+                          ' ${collection.currentCount}',
                           style: Theme.of(context).textTheme.headline4,
                         ),
                       ],
                     ),
-                    hint: collection.currentListName,
+                    hint: collection.currentName,
                     searchValue: collection.getFilterWithKey(Filterable.SEARCH),
                     search: (search) => collection.setFilterWithKey(
                       Filterable.SEARCH,
@@ -154,15 +156,15 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                     search: (search) => explorable.search = search,
                   );
                 }),
-              if (!ofCollection)
+              if (collectionTag == null)
                 Obx(() {
                   final type = Get.find<Explorer>().type;
                   if (type == Browsable.anime || type == Browsable.manga)
-                    return _Filter(false);
+                    return _Filter(collectionTag);
                   return const SizedBox();
                 })
               else
-                _Filter(true),
+                _Filter(collectionTag),
             ],
           ),
         ),
@@ -357,10 +359,12 @@ class __SearchbarState extends State<_Searchbar> {
   }
 }
 
-class _Filter extends StatefulWidget {
-  final bool ofCollection;
+// TODO finish filter button
 
-  _Filter(this.ofCollection);
+class _Filter extends StatefulWidget {
+  final String collectionTag;
+
+  _Filter(this.collectionTag);
 
   @override
   __FilterState createState() => __FilterState();
@@ -410,7 +414,7 @@ class __FilterState extends State<_Filter> {
   }
 
   void _pushPage(BuildContext context) =>
-      Get.to(FilterPage(widget.ofCollection, (newActive) {
+      Get.to(FilterPage(widget.collectionTag, (newActive) {
         if (newActive == null) {
           setState(() => _active = _checkIfActive());
         } else {

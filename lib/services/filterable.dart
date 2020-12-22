@@ -1,4 +1,6 @@
+// Base class for filterable groups like Explorer and Collection
 abstract class Filterable {
+  // Filter keys. Compatible with the AL API variables.
   static const STATUS_IN = 'status_in';
   static const STATUS_NOT_IN = 'status_not_in';
   static const FORMAT_IN = 'format_in';

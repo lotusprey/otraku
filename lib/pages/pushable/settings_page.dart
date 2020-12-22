@@ -2,14 +2,14 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/filterable.dart';
+import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/services/config.dart';
+import 'package:otraku/services/filterable.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/list_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/notification_settings_page.dart';
-import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
@@ -34,15 +34,15 @@ class SettingsPage extends StatelessWidget {
                 }
                 if (changes.containsKey('scoreFormat') ||
                     changes.containsKey('titleLanguage')) {
-                  Get.find<Collections>().fetchMyAnime();
-                  Get.find<Collections>().fetchMyManga();
+                  Get.find<Collection>(tag: Collection.ANIME).fetch();
+                  Get.find<Collection>(tag: Collection.MANGA).fetch();
                   return;
                 }
                 if (changes.containsKey('splitCompletedAnime')) {
-                  Get.find<Collections>().fetchMyAnime();
+                  Get.find<Collection>(tag: Collection.ANIME).fetch();
                 }
                 if (changes.containsKey('splitCompletedManga')) {
-                  Get.find<Collections>().fetchMyManga();
+                  Get.find<Collection>(tag: Collection.MANGA).fetch();
                 }
               });
             }

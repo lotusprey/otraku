@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
@@ -68,14 +68,16 @@ class CustomDrawer extends StatelessWidget {
 }
 
 class CollectionDrawer extends StatelessWidget {
-  const CollectionDrawer();
+  final String collectionTag;
+
+  const CollectionDrawer(this.collectionTag);
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<Collections>().collection;
+    final collection = Get.find<Collection>(tag: collectionTag);
     final selected = collection.listIndex;
-    final names = collection.listNames;
-    final counts = collection.listEntryCounts;
+    final names = collection.names;
+    final counts = collection.allEntryCounts;
 
     return CustomDrawer(
       heading: '${collection.totalEntryCount} Total',

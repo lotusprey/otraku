@@ -3,7 +3,7 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/models/page_data/connection_list.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/models/sample_data/connection.dart';
@@ -133,7 +133,7 @@ class Media extends GetxController {
   Future<void> fetchOverview(int id) async {
     if (_overview.value != null) return;
 
-    final result = await NetworkService.request(_mediaQuery, {
+    final result = await GraphQl.request(_mediaQuery, {
       'id': id,
       'withMain': true,
     });
@@ -244,7 +244,7 @@ class Media extends GetxController {
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
-    final result = await NetworkService.request(_mediaQuery, {
+    final result = await GraphQl.request(_mediaQuery, {
       'id': overview.id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,

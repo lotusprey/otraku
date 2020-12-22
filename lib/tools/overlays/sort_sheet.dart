@@ -2,14 +2,14 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/controllers/filterable.dart';
+import 'package:otraku/services/filterable.dart';
 
 class SortSheet extends StatelessWidget {
   final List<String> options;
@@ -116,9 +116,13 @@ class SortSheet extends StatelessWidget {
 }
 
 class CollectionSortSheet extends StatelessWidget {
+  final String collectionTag;
+
+  CollectionSortSheet(this.collectionTag);
+
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<Collections>().collection;
+    final collection = Get.find<Collection>(tag: collectionTag);
 
     final mediaSort = collection.getFilterWithKey(Filterable.SORT);
     final currentIndex = mediaSort.index ~/ 2;

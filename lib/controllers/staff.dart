@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
@@ -80,7 +80,7 @@ class Staff extends GetxController {
   Future<void> fetchStaff(int id) async {
     if (_person.value != null) return;
 
-    final body = await NetworkService.request(_staffQuery, {
+    final body = await GraphQl.request(_staffQuery, {
       'id': id,
       'withPerson': true,
       'withCharacters': true,
@@ -114,7 +114,7 @@ class Staff extends GetxController {
   }
 
   Future<void> refetch() async {
-    final body = await NetworkService.request(_staffQuery, {
+    final body = await GraphQl.request(_staffQuery, {
       'id': _person().id,
       'withCharacters': true,
       'withStaff': true,
@@ -127,7 +127,7 @@ class Staff extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    final body = await NetworkService.request(_staffQuery, {
+    final body = await GraphQl.request(_staffQuery, {
       'id': _person().id,
       'withCharacters': _onCharacters(),
       'withStaff': !_onCharacters(),

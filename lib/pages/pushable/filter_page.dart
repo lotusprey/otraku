@@ -2,7 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collections.dart';
+import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/anime_format_enum.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
@@ -11,27 +11,30 @@ import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/filterable.dart';
-import 'package:otraku/models/collection.dart';
+import 'package:otraku/services/config.dart';
+import 'package:otraku/services/filterable.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 
 class FilterPage extends StatelessWidget {
-  final bool ofCollection;
+  final String collectionTag;
   final Function(bool) onUpdate;
   final Map<String, dynamic> changes = {};
 
-  FilterPage(this.ofCollection, this.onUpdate);
+  FilterPage(this.collectionTag, this.onUpdate);
 
   @override
   Widget build(BuildContext context) {
     final explorable = Get.find<Explorer>();
-    final filterable =
-        ofCollection ? Get.find<Collections>().collection : explorable;
 
-    final browsable = ofCollection
+    Filterable filterable;
+    if (collectionTag != null)
+      filterable = Get.find<Collection>(tag: collectionTag);
+    else
+      filterable = explorable;
+
+    final browsable = collectionTag != null
         ? (filterable as Collection).ofAnime
             ? Browsable.anime
             : Browsable.manga
@@ -87,10 +90,10 @@ class FilterPage extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (ofCollection)
-                (filterable as Collection).sort();
-              else
-                explorable.fetchData();
+              // if (collectionTag != null)
+              //   (filterable as Collection).sort();
+              // else
+              //   explorable.fetchData();
 
               onUpdate(null);
               Navigator.of(context).pop();
@@ -104,7 +107,7 @@ class FilterPage extends StatelessWidget {
         children: [
           Row(
             children: [
-              if (ofCollection)
+              if (collectionTag != null)
                 Expanded(
                   child: DropDownField(
                     title: 'Sort',
@@ -180,7 +183,7 @@ class FilterPage extends StatelessWidget {
             inclusive: changes[Filterable.GENRE_IN],
             exclusive: changes[Filterable.GENRE_NOT_IN],
           ),
-          if (!ofCollection)
+          if (collectionTag == null)
             ChipGrid(
               title: 'Tags',
               placeholder: 'tags',

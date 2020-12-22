@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/pages/loading_page.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/services/config.dart';
 
 Future<void> main() async {
   await GetStorage.init();

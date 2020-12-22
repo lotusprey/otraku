@@ -2,12 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/controllers/filterable.dart';
+import 'package:otraku/services/filterable.dart';
 import 'package:otraku/models/sample_data/browse_result.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 
-//Manages all browsable media, genres, tags and all the filters
+// Searches and filters items from the Browsable enum
 class Explorer extends GetxController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
@@ -250,7 +250,7 @@ class Explorer extends GetxController implements Filterable {
 
     if (_search() != null && _search() != '') variables['search'] = _search();
 
-    final data = await NetworkService.request(
+    final data = await GraphQl.request(
       query,
       variables,
       popOnError: false,
@@ -340,7 +340,7 @@ class Explorer extends GetxController implements Filterable {
         }
       ''';
 
-    final data = await NetworkService.request(query, null, popOnError: false);
+    final data = await GraphQl.request(query, null, popOnError: false);
 
     if (data == null) return;
 

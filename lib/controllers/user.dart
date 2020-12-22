@@ -1,10 +1,8 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/models/user_data.dart';
 
 class User extends GetxController {
-  static const ME = 'viewer';
-
   static const _userQuery = r'''
       query User($id: Int) {
         User(id: $id) {
@@ -25,8 +23,8 @@ class User extends GetxController {
   UserData get data => _user;
 
   Future<void> fetchUser(int id) async {
-    final data = await NetworkService.request(_userQuery, {
-      'id': id ?? NetworkService.viewerId,
+    final data = await GraphQl.request(_userQuery, {
+      'id': id ?? GraphQl.viewerId,
     });
 
     if (data == null) return;

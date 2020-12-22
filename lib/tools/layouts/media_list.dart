@@ -1,30 +1,29 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/controllers/collections.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 
 class MediaList extends StatelessWidget {
-  final bool isAnime;
+  final String collectionTag;
 
-  MediaList(this.isAnime);
+  MediaList(this.collectionTag);
 
   @override
-  Widget build(BuildContext context) =>
-      GetBuilder<Collections>(builder: (controller) {
-        final collection = controller.collection;
+  Widget build(BuildContext context) => Obx(() {
+        final collection = Get.find<Collection>(tag: collectionTag);
 
-        if (collection == null || collection.lists.isEmpty) {
-          if (controller.fetching) {
+        if (collection.names.isEmpty) {
+          if (collection.fetching) {
             return const SliverFillRemaining(child: Center(child: Loader()));
           }
 
@@ -34,7 +33,7 @@ class MediaList extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'No ${isAnime ? 'Anime' : 'Manga'}',
+                    'No ${collection.ofAnime ? 'Anime' : 'Manga'}',
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                 ],
@@ -49,7 +48,7 @@ class MediaList extends StatelessWidget {
           return SliverFillRemaining(
             child: Center(
               child: Text(
-                'No ${isAnime ? 'Anime' : 'Manga'} Results',
+                'No ${collection.ofAnime ? 'Anime' : 'Manga'} Results',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
             ),

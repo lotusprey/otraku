@@ -1,7 +1,7 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
 import 'package:otraku/tools/fields/three_state_field.dart';

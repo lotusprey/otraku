@@ -1,11 +1,12 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/pages/tabs/explore_tab.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
 import 'package:otraku/pages/tabs/inbox_tab.dart';
 import 'package:otraku/pages/tabs/user_tab.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 
@@ -23,11 +24,13 @@ class TabManager extends StatelessWidget {
       CollectionsTab(
         ofAnime: true,
         otherUserId: null,
+        collectionTag: Collection.ANIME,
         key: UniqueKey(),
       ),
       CollectionsTab(
         ofAnime: false,
         otherUserId: null,
+        collectionTag: Collection.MANGA,
         key: UniqueKey(),
       ),
       const ExploreTab(),
@@ -36,8 +39,8 @@ class TabManager extends StatelessWidget {
 
     const drawers = const [
       const SizedBox(),
-      const CollectionDrawer(),
-      const CollectionDrawer(),
+      const CollectionDrawer(Collection.ANIME),
+      const CollectionDrawer(Collection.MANGA),
       const ExploreDrawer(),
       const SizedBox(),
     ];

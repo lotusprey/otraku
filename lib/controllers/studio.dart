@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
@@ -50,7 +50,7 @@ class Studio extends GetxController {
   Future<void> fetchStudio(int id) async {
     if (_company.value != null) return;
 
-    final body = await NetworkService.request(
+    final body = await GraphQl.request(
       _studioQuery,
       {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
@@ -70,7 +70,7 @@ class Studio extends GetxController {
   }
 
   Future<void> refetch() async {
-    final body = await NetworkService.request(
+    final body = await GraphQl.request(
       _studioQuery,
       {'id': _company().id, 'sort': describeEnum(_sort)},
     );
@@ -81,7 +81,7 @@ class Studio extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    final body = await NetworkService.request(
+    final body = await GraphQl.request(
       _studioQuery,
       {
         'id': _company().id,

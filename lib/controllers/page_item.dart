@@ -1,5 +1,5 @@
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 
 class PageItem {
   static Future<bool> toggleFavourite(int id, Browsable browsable) async {
@@ -31,7 +31,7 @@ class PageItem {
       }
     ''';
 
-    final result = await NetworkService.request(
+    final result = await GraphQl.request(
       query,
       {'id': id},
       popOnError: false,

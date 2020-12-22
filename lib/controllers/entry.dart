@@ -1,11 +1,8 @@
-import 'package:otraku/controllers/network_service.dart';
-import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/models/page_data/edit_entry.dart';
-import 'package:otraku/models/tuple.dart';
+import 'package:get/get.dart';
+import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 
-class Entry {
+class Entry extends GetxController {
   static const _entryQuery = r'''
     query ItemUserData($id: Int) {
       Media(id: $id) {
@@ -32,49 +29,16 @@ class Entry {
     }
   ''';
 
-  static Future<EditEntry> fetchUserData(int id) async {
-    final data = await NetworkService.request(_entryQuery, {'id': id});
+  EntryData _entry;
 
-    if (data == null) return null;
+  EntryData get data => _entry;
 
-    final body = data['Media'];
+  Future<void> fetchEntry(int id) async {
+    final body = await GraphQl.request(_entryQuery, {'id': id});
 
-    if (body['mediaListEntry'] == null) {
-      return EditEntry(
-        type: body['type'],
-        mediaId: id,
-        progressMax: body['episodes'] ?? body['chapters'],
-        progressVolumesMax: body['voumes'],
-      );
-    }
+    if (body == null) return null;
 
-    final List<Tuple<String, bool>> customLists = [];
-    if (body['mediaListEntry']['customLists'] != null) {
-      for (final key in body['mediaListEntry']['customLists'].keys) {
-        customLists.add(Tuple(key, body['mediaListEntry']['customLists'][key]));
-      }
-    }
-
-    return EditEntry(
-      type: body['type'],
-      mediaId: id,
-      entryId: body['mediaListEntry']['id'],
-      status: stringToEnum(
-        body['mediaListEntry']['status'],
-        MediaListStatus.values,
-      ),
-      progress: body['mediaListEntry']['progress'] ?? 0,
-      progressMax: body['episodes'] ?? body['chapters'],
-      progressVolumes: body['mediaListEntry']['volumes'] ?? 0,
-      progressVolumesMax: body['voumes'],
-      score: body['mediaListEntry']['score'].toDouble(),
-      repeat: body['mediaListEntry']['repeat'],
-      notes: body['mediaListEntry']['notes'],
-      startedAt: mapToDateTime(body['mediaListEntry']['startedAt']),
-      completedAt: mapToDateTime(body['mediaListEntry']['completedAt']),
-      private: body['mediaListEntry']['private'],
-      hiddenFromStatusLists: body['mediaListEntry']['hiddenFromStatusLists'],
-      customLists: customLists,
-    );
+    _entry = EntryData(body['Media']);
+    update();
   }
 }

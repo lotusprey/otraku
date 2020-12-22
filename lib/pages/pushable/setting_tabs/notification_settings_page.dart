@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';

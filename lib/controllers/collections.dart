@@ -1,238 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/collection.dart';
+import 'package:otraku/models/collection_legacy.dart';
 import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/models/entry_list.dart';
-import 'package:otraku/models/page_data/edit_entry.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/controllers/network_service.dart';
+import 'package:otraku/services/graph_ql.dart';
 
 class Collections extends GetxController {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _collectionQuery = r'''
-    query Collection($userId: Int, $type: MediaType) {
-      MediaListCollection(userId: $userId, type: $type) {
-        lists {
-          name
-          isCustomList
-          isSplitCompletedList
-          status
-          entries {
-            mediaId
-            status
-            score
-            progress
-            progressVolumes
-            repeat
-            notes
-            startedAt {year month day}
-            completedAt {year month day}
-            updatedAt
-            createdAt
-            media {
-              title {userPreferred}
-              format
-              status(version: 2)
-              startDate {year month day}
-              endDate {year month day}
-              episodes
-              chapters
-              volumes
-              coverImage {large}
-              nextAiringEpisode {timeUntilAiring episode}
-            }
-          }
-        }
-        user {
-          mediaListOptions {
-            rowOrder
-            scoreFormat
-            animeList {sectionOrder customLists splitCompletedSectionByFormat}
-            mangaList {sectionOrder customLists splitCompletedSectionByFormat}
-          }
-        }
-      }
-    }
-  ''';
-
-  static const _updateEntryMutation = r'''
-    mutation UpdateEntry($entryId: Int, $mediaId: Int, $status: MediaListStatus,
-        $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
-        $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
-        $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
-      SaveMediaListEntry(id: $entryId, mediaId: $mediaId, status: $status,
-        score: $score, progress: $progress, progressVolumes: $progressVolumes,
-        repeat: $repeat, private: $private, notes: $notes, 
-        hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
-        startedAt: $startedAt, completedAt: $completedAt) {
-          mediaId
-          status
-          score
-          progress
-          progressVolumes
-          repeat
-          notes
-          startedAt {year month day}
-          completedAt {year month day}
-          updatedAt
-          createdAt
-          media {
-            title {userPreferred}
-            format
-            status(version: 2)
-            startDate {year month day}
-            endDate {year month day}
-            episodes
-            chapters
-            volumes
-            coverImage {large}
-            nextAiringEpisode {timeUntilAiring episode}
-          }
-        }
-    }
-  ''';
-
-  static const _removeEntryMutation = r'''
-    mutation RemoveEntry($entryId: Int) {
-      DeleteMediaListEntry(id: $entryId) {deleted}
-    }
-  ''';
-
-  static const _MY_ANIME = 0;
-  static const _MY_MANGA = 1;
-  static const _OTHER = 2;
-
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
+  static const _updateEntryMutation = '';
+  static const _removeEntryMutation = '';
   Collection _myAnime;
   Collection _myManga;
-  Collection _other;
-  int _currentCollection;
-  bool _fetching = false;
 
-  // ***************************************************************************
-  // COLLECTION MANAGEMENT
-  // ***************************************************************************
-
-  void assignCollection(bool ofAnime, int userId) {
-    if (userId == null) {
-      if (ofAnime) {
-        if (_myAnime == null) fetchMyAnime();
-        _currentCollection = _MY_ANIME;
-      } else {
-        if (_myManga == null) fetchMyManga();
-        _currentCollection = _MY_MANGA;
-      }
-    } else {
-      if (_other == null ||
-          _other.userId != userId ||
-          _other.ofAnime != ofAnime) {
-        _other = null;
-        fetchUserCollection(ofAnime, userId);
-      }
-
-      _currentCollection = _OTHER;
-    }
-  }
-
-  Collection get collection => _currentCollection == _MY_ANIME
-      ? _myAnime
-      : _currentCollection == _MY_MANGA
-          ? _myManga
-          : _other;
-
-  bool get fetching => _fetching;
-
-  // ***************************************************************************
-  // DATA FETCHING
-  // ***************************************************************************
-
-  Future<void> fetchMyAnime() async {
-    _myAnime = await _fetchCollection(true, NetworkService.viewerId);
-    if (_myAnime != null) update();
-  }
-
-  Future<void> fetchMyManga() async {
-    _myManga = await _fetchCollection(false, NetworkService.viewerId);
-    if (_myManga != null) update();
-  }
-
-  Future<void> fetchUserCollection(bool ofAnime, int userId) async {
-    _other = await _fetchCollection(ofAnime, userId);
-    if (_other != null) update();
-  }
-
-  Future<Collection> _fetchCollection(bool ofAnime, int userId) async {
-    if (userId == null) return null;
-    _fetching = true;
-
-    Map<String, dynamic> data = await NetworkService.request(
-      _collectionQuery,
-      {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
-      popOnError: userId != NetworkService.viewerId,
-    );
-
-    if (data == null) return null;
-
-    data = data['MediaListCollection'];
-
-    final metaData = ofAnime
-        ? data['user']['mediaListOptions']['animeList']
-        : data['user']['mediaListOptions']['mangaList'];
-
-    List<EntryList> lists = [];
-
-    for (final String section in metaData['sectionOrder']) {
-      final lIndex = (data['lists'] as List<dynamic>)
-          .indexWhere((listData) => listData['name'] == section);
-
-      if (lIndex == -1) continue;
-
-      final l = (data['lists'] as List<dynamic>).removeAt(lIndex);
-
-      lists.add(_createList(l, metaData['splitCompletedSectionByFormat']));
-    }
-
-    for (final l in data['lists']) {
-      lists.add(_createList(l, metaData['splitCompletedSectionByFormat']));
-    }
-
-    _fetching = false;
-
-    return Collection(
-      updateHandle: update,
-      fetchHandle: userId == NetworkService.viewerId
-          ? ofAnime
-              ? fetchMyAnime
-              : fetchMyManga
-          : null,
-      userId: userId,
-      ofAnime: ofAnime,
-      completedListIsSplit: metaData['splitCompletedSectionByFormat'],
-      scoreFormat: data['user']['mediaListOptions']['scoreFormat'],
-      lists: lists,
-      sort:
-          ListSortHelper.getEnum(data['user']['mediaListOptions']['rowOrder']),
-    );
-  }
-
-  // ***************************************************************************
-  // ENTRY EDITING
-  // ***************************************************************************
-
-  Future<bool> updateEntry(EditEntry original, EditEntry changed) async {
+  Future<bool> updateEntry(EntryData original, EntryData changed) async {
     final List<String> newCustomLists =
         changed.customLists.where((t) => t.item2).map((t) => t.item1).toList();
 
-    final data = await NetworkService.request(
+    final data = await GraphQl.request(
       _updateEntryMutation,
       {
         'mediaId': changed.mediaId,
@@ -253,7 +37,7 @@ class Collections extends GetxController {
 
     if (data == null) return false;
 
-    MediaEntry entry = _createEntry(data['SaveMediaListEntry']);
+    MediaEntry entry = MediaEntry(data['SaveMediaListEntry']);
 
     if (changed.type == 'ANIME') {
       _myAnime.updateEntry(original, changed, entry, newCustomLists);
@@ -264,8 +48,8 @@ class Collections extends GetxController {
     return true;
   }
 
-  Future<bool> removeEntry(EditEntry entry) async {
-    final data = await NetworkService.request(
+  Future<bool> removeEntry(EntryData entry) async {
+    final data = await GraphQl.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
       popOnError: false,
@@ -282,54 +66,4 @@ class Collections extends GetxController {
 
     return true;
   }
-
-  // ***************************************************************************
-  // HELPER FUNCTIONS FOR CLEANER CODE
-  // ***************************************************************************
-
-  EntryList _createList(Map<String, dynamic> l, bool completedListIsSplit) {
-    List<MediaEntry> entries = [];
-    for (final e in l['entries']) entries.add(_createEntry(e));
-
-    return EntryList(
-      name: l['name'],
-      isCustomList: l['isCustomList'],
-      status: !l['isCustomList']
-          ? stringToEnum(l['status'], MediaListStatus.values)
-          : null,
-      splitCompletedListFormat: completedListIsSplit &&
-              !l['isCustomList'] &&
-              l['status'] == 'COMPLETED'
-          ? l['entries'][0]['media']['format']
-          : null,
-      entries: entries,
-    );
-  }
-
-  MediaEntry _createEntry(Map<String, dynamic> entry) => MediaEntry(
-        mediaId: entry['mediaId'],
-        title: entry['media']['title']['userPreferred'],
-        cover: entry['media']['coverImage']['large'],
-        nextEpisode: entry['media']['nextAiringEpisode'] != null
-            ? entry['media']['nextAiringEpisode']['episode']
-            : null,
-        timeUntilAiring: entry['media']['nextAiringEpisode'] != null
-            ? secondsToTime(
-                entry['media']['nextAiringEpisode']['timeUntilAiring'],
-              )
-            : null,
-        format: entry['media']['format'],
-        status: entry['media']['status'],
-        progress: entry['progress'],
-        progressMax: entry['media']['episodes'] ?? entry['media']['chapters'],
-        progressVolumes: entry['progressVolumes'],
-        progressVolumesMax: entry['media']['volumes'],
-        score: entry['score'].toDouble(),
-        startDate: mapToDateTime(entry['startedAt']),
-        endDate: mapToDateTime(entry['completedAt']),
-        repeat: entry['repeat'],
-        notes: entry['notes'],
-        createdAt: entry['createdAt'],
-        updatedAt: entry['updatedAt'],
-      );
 }

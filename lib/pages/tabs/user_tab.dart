@@ -3,13 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/models/user_data.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/tab_manager.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/services/config.dart';
 import 'package:otraku/pages/tabs/collections_tab.dart';
+import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
@@ -24,7 +26,7 @@ class UserTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GetBuilder<User>(
-        tag: id?.toString() ?? User.ME,
+        tag: id?.toString() ?? GraphQl.viewerId.toString(),
         builder: (user) => CustomScrollView(
           physics: Config.PHYSICS,
           slivers: [
@@ -57,14 +59,7 @@ class UserTab extends StatelessWidget {
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = TabManager.ANIME_LIST
-                            : Get.to(TabPage(
-                                CollectionsTab(
-                                  otherUserId: id,
-                                  ofAnime: true,
-                                  key: null,
-                                ),
-                                drawer: CollectionDrawer(),
-                              )),
+                            : _pushCollection(true),
                       ),
                     ),
                     _space,
@@ -84,14 +79,7 @@ class UserTab extends StatelessWidget {
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = TabManager.MANGA_LIST
-                            : Get.to(TabPage(
-                                CollectionsTab(
-                                  otherUserId: id,
-                                  ofAnime: false,
-                                  key: null,
-                                ),
-                                drawer: CollectionDrawer(),
-                              )),
+                            : _pushCollection(false),
                       ),
                     ),
                   ],
@@ -104,6 +92,26 @@ class UserTab extends StatelessWidget {
           ],
         ),
       );
+
+  void _pushCollection(bool ofAnime) {
+    final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';
+    Get.to(
+      TabPage(
+        CollectionsTab(
+          otherUserId: id,
+          ofAnime: ofAnime,
+          collectionTag: collectionTag,
+          key: null,
+        ),
+        drawer: CollectionDrawer(collectionTag),
+      ),
+      binding: BindingsBuilder(() {
+        if (!Get.isRegistered<Collection>(tag: collectionTag))
+          Get.put(Collection(id, ofAnime), tag: collectionTag).fetch();
+      }),
+      preventDuplicates: false,
+    );
+  }
 }
 
 class _Header implements SliverPersistentHeaderDelegate {

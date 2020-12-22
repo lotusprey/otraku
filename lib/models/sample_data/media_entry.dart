@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:otraku/models/date_time_mapping.dart';
 
 class MediaEntry {
   final int mediaId;
@@ -20,7 +21,7 @@ class MediaEntry {
   DateTime startDate;
   DateTime endDate;
 
-  MediaEntry({
+  MediaEntry._({
     @required this.mediaId,
     @required this.title,
     @required this.cover,
@@ -40,4 +41,30 @@ class MediaEntry {
     this.startDate,
     this.endDate,
   });
+
+  factory MediaEntry(Map<String, dynamic> map) => MediaEntry._(
+        mediaId: map['mediaId'],
+        title: map['media']['title']['userPreferred'],
+        cover: map['media']['coverImage']['large'],
+        nextEpisode: map['media']['nextAiringEpisode'] != null
+            ? map['media']['nextAiringEpisode']['episode']
+            : null,
+        timeUntilAiring: map['media']['nextAiringEpisode'] != null
+            ? secondsToTime(
+                map['media']['nextAiringEpisode']['timeUntilAiring'])
+            : null,
+        format: map['media']['format'],
+        status: map['media']['status'],
+        progress: map['progress'],
+        progressMax: map['media']['episodes'] ?? map['media']['chapters'],
+        progressVolumes: map['progressVolumes'],
+        progressVolumesMax: map['media']['volumes'],
+        score: map['score'].toDouble(),
+        startDate: mapToDateTime(map['startedAt']),
+        endDate: mapToDateTime(map['completedAt']),
+        repeat: map['repeat'],
+        notes: map['notes'],
+        createdAt: map['createdAt'],
+        updatedAt: map['updatedAt'],
+      );
 }

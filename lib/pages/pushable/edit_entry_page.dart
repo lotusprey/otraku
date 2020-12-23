@@ -1,9 +1,9 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
@@ -16,8 +16,6 @@ import 'package:otraku/tools/fields/number_field.dart';
 import 'package:otraku/tools/fields/score_picker.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
-// TODO Fix
-
 class EditEntryPage extends StatefulWidget {
   final int mediaId;
   final Function(MediaListStatus) update;
@@ -29,53 +27,6 @@ class EditEntryPage extends StatefulWidget {
 }
 
 class _EditEntryPageState extends State<EditEntryPage> {
-  final _box = const SizedBox(width: 10, height: 10);
-
-  EntryData _oldData;
-  EntryData _newData;
-
-  Widget _row(Widget child1, Widget child2) {
-    return Row(
-      children: [
-        Expanded(child: child1),
-        _box,
-        Expanded(child: child2 ?? const SizedBox(height: 75)),
-      ],
-    );
-  }
-
-  List<Widget> _rows() {
-    List<Widget> list = [];
-    for (int i = 1; i < _newData.customLists.length; i += 2) {
-      list.add(_row(
-        CheckboxField(
-          title: _newData.customLists[i - 1].item1,
-          initialValue: _newData.customLists[i - 1].item2,
-          onChanged: (boolean) => _newData.customLists[i - 1] =
-              _newData.customLists[i - 1].withItem2(boolean),
-        ),
-        CheckboxField(
-          title: _newData.customLists[i].item1,
-          initialValue: _newData.customLists[i].item2,
-          onChanged: (boolean) => _newData.customLists[i] =
-              _newData.customLists[i].withItem2(boolean),
-        ),
-      ));
-    }
-    if (_newData.customLists.length % 2 != 0) {
-      list.add(_row(
-        CheckboxField(
-          title: _newData.customLists.last.item1,
-          initialValue: _newData.customLists.last.item2,
-          onChanged: (boolean) => _newData.customLists.last =
-              _newData.customLists.last.withItem2(boolean),
-        ),
-        null,
-      ));
-    }
-    return list;
-  }
-
   @override
   Widget build(BuildContext context) => GetBuilder<Entry>(
         builder: (entry) => Scaffold(
@@ -109,7 +60,11 @@ class _EditEntryPageState extends State<EditEntryPage> {
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                             onPressed: () {
-                              Get.find<Collections>().removeEntry(_oldData);
+                              Get.find<Collection>(
+                                      tag: entry.data.type == 'ANIME'
+                                          ? Collection.ANIME
+                                          : Collection.MANGA)
+                                  .removeEntry(entry.oldData);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                               widget.update(null);
@@ -124,71 +79,73 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () {
-                      Get.find<Collections>().updateEntry(_oldData, _newData);
+                      Get.find<Collections>()
+                          .updateEntry(entry.oldData, entry.data);
                       Navigator.of(context).pop();
-                      widget.update(_newData.status);
+                      widget.update(entry.data.status);
                     }),
               ],
             ],
           ),
-          body: _oldData != null
+          body: entry.data != null
               ? LayoutBuilder(
                   builder: (_, constraints) => ListView(
                     physics: Config.PHYSICS,
                     padding: Config.PADDING,
                     children: [
-                      _row(
+                      _Row(
                         DropDownField(
                           hint: 'Add',
                           title: 'Status',
-                          initialValue: _newData.status,
+                          initialValue: entry.data.status,
                           items: Map.fromIterable(
                             MediaListStatus.values,
                             key: (v) => listStatusSpecification(
-                                v, _newData.type == 'ANIME'),
+                                v, entry.data.type == 'ANIME'),
                             value: (v) => v,
                           ),
-                          onChanged: (status) => _newData.status = status,
+                          onChanged: (status) => entry.data.status = status,
                         ),
                         InputFieldStructure(
                           title: 'Progress',
                           body: NumberField(
-                            initialValue: _newData.progress,
-                            maxValue: _newData.progressMax ?? 100000,
-                            update: (progress) => _newData.progress = progress,
+                            initialValue: entry.data.progress,
+                            maxValue: entry.data.progressMax ?? 100000,
+                            update: (progress) =>
+                                entry.data.progress = progress,
                           ),
                         ),
                       ),
-                      _row(
+                      _Row(
                         InputFieldStructure(
                           title: 'Repeat',
                           body: NumberField(
-                            initialValue: _newData.repeat,
-                            update: (repeat) => _newData.repeat = repeat,
+                            initialValue: entry.data.repeat,
+                            update: (repeat) => entry.data.repeat = repeat,
                           ),
                         ),
-                        _oldData.type == 'MANGA'
+                        entry.data.type == 'MANGA'
                             ? InputFieldStructure(
                                 title: 'Progress Volumes',
                                 body: NumberField(
-                                  initialValue: _newData.progressVolumes,
+                                  initialValue: entry.data.progressVolumes,
                                   maxValue:
-                                      _newData.progressVolumesMax ?? 100000,
-                                  update: (progressVolumes) => _newData
-                                      .progressVolumes = progressVolumes,
+                                      entry.data.progressVolumesMax ?? 100000,
+                                  update: (progressVolumes) => entry
+                                      .data.progressVolumes = progressVolumes,
                                 ),
                               )
                             : null,
                       ),
                       InputFieldStructure(
                         title: 'Score',
-                        body: ScorePicker(_newData),
+                        body: ScorePicker(entry.data),
                       ),
                       InputFieldStructure(
                         title: 'Notes',
                         body: ExpandableField(
-                          text: _newData.notes,
-                          onChanged: (notes) => _newData.notes = notes,
+                          text: entry.data.notes,
+                          onChanged: (notes) => entry.data.notes = notes,
                         ),
                         enforceHeight: false,
                       ),
@@ -196,71 +153,128 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         InputFieldStructure(
                           title: 'Start Date',
                           body: DateField(
-                            date: _newData.startedAt,
+                            date: entry.data.startedAt,
                             onChanged: (startDate) =>
-                                _newData.startedAt = startDate,
+                                entry.data.startedAt = startDate,
                             helpText: 'Start Date',
                           ),
                         ),
                         InputFieldStructure(
                           title: 'End Date',
                           body: DateField(
-                            date: _newData.completedAt,
+                            date: entry.data.completedAt,
                             onChanged: (endDate) =>
-                                _newData.completedAt = endDate,
+                                entry.data.completedAt = endDate,
                             helpText: 'End Date',
                           ),
                         ),
                       ] else
-                        _row(
+                        _Row(
                           InputFieldStructure(
                             title: 'Start Date',
                             body: DateField(
-                              date: _newData.startedAt,
+                              date: entry.data.startedAt,
                               onChanged: (startDate) =>
-                                  _newData.startedAt = startDate,
+                                  entry.data.startedAt = startDate,
                               helpText: 'Start Date',
                             ),
                           ),
                           InputFieldStructure(
                             title: 'End Date',
                             body: DateField(
-                              date: _newData.completedAt,
+                              date: entry.data.completedAt,
                               onChanged: (endDate) =>
-                                  _newData.completedAt = endDate,
+                                  entry.data.completedAt = endDate,
                               helpText: 'End Date',
                             ),
                           ),
                         ),
                       InputFieldStructure(
                         title: 'Additional List Settings',
-                        body: _row(
+                        body: _Row(
                           CheckboxField(
                             title: 'Private',
-                            initialValue: _newData.private,
-                            onChanged: (private) => _newData.private = private,
+                            initialValue: entry.data.private,
+                            onChanged: (private) =>
+                                entry.data.private = private,
                           ),
                           CheckboxField(
                             title: 'Hide from status lists',
-                            initialValue: _newData.hiddenFromStatusLists,
-                            onChanged: (hiddenFromStatusLists) => _newData
+                            initialValue: entry.data.hiddenFromStatusLists,
+                            onChanged: (hiddenFromStatusLists) => entry.data
                                 .hiddenFromStatusLists = hiddenFromStatusLists,
                           ),
                         ),
                       ),
-                      if (_oldData.customLists.length > 0)
+                      if (entry.oldData.customLists.length > 0)
                         InputFieldStructure(
                           enforceHeight: false,
                           title: 'Custom Lists',
                           body: Column(
                             mainAxisSize: MainAxisSize.min,
-                            children: _rows(),
+                            children: [
+                              for (int i = 1;
+                                  i < entry.data.customLists.length;
+                                  i += 2) ...[
+                                _Row(
+                                  CheckboxField(
+                                    title: entry.data.customLists[i - 1].item1,
+                                    initialValue:
+                                        entry.data.customLists[i - 1].item2,
+                                    onChanged: (boolean) =>
+                                        entry.data.customLists[i - 1] = entry
+                                            .data.customLists[i - 1]
+                                            .withItem2(boolean),
+                                  ),
+                                  CheckboxField(
+                                    title: entry.data.customLists[i].item1,
+                                    initialValue:
+                                        entry.data.customLists[i].item2,
+                                    onChanged: (boolean) =>
+                                        entry.data.customLists[i] = entry
+                                            .data.customLists[i]
+                                            .withItem2(boolean),
+                                  ),
+                                ),
+                              ],
+                              if (entry.data.customLists.length % 2 != 0)
+                                _Row(
+                                  CheckboxField(
+                                    title: entry.data.customLists.last.item1,
+                                    initialValue:
+                                        entry.data.customLists.last.item2,
+                                    onChanged: (boolean) =>
+                                        entry.data.customLists.last = entry
+                                            .data.customLists.last
+                                            .withItem2(boolean),
+                                  ),
+                                  null,
+                                ),
+                            ],
                           ),
                         ),
                     ],
                   ),
                 )
-              : _box,
+              : const SizedBox(width: 10, height: 10),
         ),
       );
+}
+
+class _Row extends StatelessWidget {
+  final Widget child1;
+  final Widget child2;
+
+  _Row(this.child1, this.child2);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: child1),
+        const SizedBox(width: 10, height: 10),
+        Expanded(child: child2 ?? const SizedBox(height: 75)),
+      ],
+    );
+  }
 }

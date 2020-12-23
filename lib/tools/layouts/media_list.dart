@@ -19,54 +19,55 @@ class MediaList extends StatelessWidget {
   MediaList(this.collectionTag);
 
   @override
-  Widget build(BuildContext context) => Obx(() {
-        final collection = Get.find<Collection>(tag: collectionTag);
-
-        if (collection.names.isEmpty) {
-          if (collection.fetching) {
-            return const SliverFillRemaining(child: Center(child: Loader()));
-          }
-
-          return SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'No ${collection.ofAnime ? 'Anime' : 'Manga'}',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ],
-              ),
-            ),
-          );
+  Widget build(BuildContext context) {
+    final collection = Get.find<Collection>(tag: collectionTag);
+    return Obx(() {
+      if (collection.names.isEmpty) {
+        if (collection.fetching) {
+          return const SliverFillRemaining(child: Center(child: Loader()));
         }
 
-        final entries = collection.entries;
-
-        if (entries.length == 0) {
-          return SliverFillRemaining(
-            child: Center(
-              child: Text(
-                'No ${collection.ofAnime ? 'Anime' : 'Manga'} Results',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
+        return SliverFillRemaining(
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'No ${collection.ofAnime ? 'Anime' : 'Manga'}',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ],
             ),
-          );
-        }
-
-        return SliverPadding(
-          padding: Config.PADDING,
-          sliver: SliverFixedExtentList(
-            delegate: SliverChildBuilderDelegate(
-              (_, index) =>
-                  _MediaListTile(entries[index], collection.scoreFormat),
-              childCount: entries.length,
-            ),
-            itemExtent: 150,
           ),
         );
-      });
+      }
+
+      final entries = collection.entries;
+
+      if (entries.length == 0) {
+        return SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'No ${collection.ofAnime ? 'Anime' : 'Manga'} Results',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ),
+        );
+      }
+
+      return SliverPadding(
+        padding: Config.PADDING,
+        sliver: SliverFixedExtentList(
+          delegate: SliverChildBuilderDelegate(
+            (_, index) =>
+                _MediaListTile(entries[index], collection.scoreFormat),
+            childCount: entries.length,
+          ),
+          itemExtent: 150,
+        ),
+      );
+    });
+  }
 }
 
 class _MediaListTile extends StatelessWidget {

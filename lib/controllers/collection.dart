@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
 import 'package:otraku/models/entry_list.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/services/graph_ql.dart';
@@ -96,9 +97,9 @@ class Collection extends GetxController implements Filterable {
   //   }
   // ''';
 
-  // static const _removeEntryMutation = r'''
-  //   mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
-  // ''';
+  static const _removeEntryMutation = r'''
+    mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
+  ''';
 
   // ***************************************************************************
   // DATA
@@ -106,11 +107,11 @@ class Collection extends GetxController implements Filterable {
 
   final int userId;
   final bool ofAnime;
-  final _lists = List<EntryList>().obs;
+  final _lists = List<EntryList>();
   final _entries = List<MediaEntry>().obs;
   final _listIndex = 0.obs;
   final Map<String, dynamic> _filters = {};
-  bool _fetching = false;
+  final _fetching = false.obs;
   String _scoreFormat;
   ListSort _sort;
 
@@ -120,14 +121,14 @@ class Collection extends GetxController implements Filterable {
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  bool get fetching => _fetching;
+  bool get fetching => _fetching();
 
   int get listIndex => _listIndex();
 
   String get scoreFormat => _scoreFormat;
 
   set listIndex(int value) {
-    if (value < 0 || value >= _lists().length || value == _listIndex()) return;
+    if (value < 0 || value >= _lists.length || value == _listIndex()) return;
     _listIndex.value = value;
     filter();
   }
@@ -137,32 +138,32 @@ class Collection extends GetxController implements Filterable {
   set sort(ListSort val) {
     if (val == _sort) return;
     _sort = val;
-    for (final list in _lists()) list.sort(_sort);
+    for (final list in _lists) list.sort(_sort);
     filter();
   }
 
   List<MediaEntry> get entries => _entries();
 
-  String get currentName => _lists()[_listIndex()].name;
+  String get currentName => _lists[_listIndex()].name;
 
-  int get currentCount => _lists()[_listIndex()].entries.length;
+  int get currentCount => _lists[_listIndex()].entries.length;
 
   int get totalEntryCount {
     int c = 0;
-    for (final list in _lists())
+    for (final list in _lists)
       if (list.status != null) c += list.entries.length;
     return c;
   }
 
   List<String> get names {
     List<String> n = [];
-    for (final list in _lists()) n.add(list.name);
+    for (final list in _lists) n.add(list.name);
     return n;
   }
 
   List<int> get allEntryCounts {
     List<int> c = [];
-    for (final list in _lists()) c.add(list.entries.length);
+    for (final list in _lists) c.add(list.entries.length);
     return c;
   }
 
@@ -171,7 +172,7 @@ class Collection extends GetxController implements Filterable {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    _fetching = true;
+    _fetching.value = true;
     Map<String, dynamic> data = await GraphQl.request(
       _collectionQuery,
       {
@@ -182,7 +183,7 @@ class Collection extends GetxController implements Filterable {
     );
 
     if (data == null) {
-      _fetching = false;
+      _fetching.value = false;
       return null;
     }
 
@@ -198,7 +199,7 @@ class Collection extends GetxController implements Filterable {
       data['user']['mediaListOptions']['rowOrder'],
     );
 
-    final List<EntryList> ls = [];
+    _lists.clear();
     for (final String section in metaData['sectionOrder']) {
       final index = (data['lists'] as List<dynamic>)
           .indexWhere((listData) => listData['name'] == section);
@@ -207,16 +208,65 @@ class Collection extends GetxController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      ls.add(EntryList(l, splitCompleted)..sort(_sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(_sort));
     }
 
     for (final l in data['lists'])
-      ls.add(EntryList(l, splitCompleted)..sort(_sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(_sort));
 
-    _lists.assignAll(ls);
     _listIndex.value = 0;
     filter();
-    _fetching = false;
+    _fetching.value = false;
+  }
+
+  Future<void> updateEntry(EntryData old, EntryData data) async {}
+
+  Future<void> removeEntry(EntryData entry) async {
+    final data = await GraphQl.request(
+      _removeEntryMutation,
+      {'entryId': entry.entryId},
+      popOnError: false,
+    );
+
+    if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
+      return;
+
+    final List<String> customLists = [];
+    for (final tuple in entry.customLists)
+      if (tuple.item2) customLists.add(tuple.item1.toLowerCase());
+
+    for (int i = 0; i < _lists.length; i++) {
+      bool removed = false;
+
+      if (!entry.hiddenFromStatusLists && entry.status == _lists[i].status) {
+        for (int j = 0; j < _lists[i].entries.length; j++) {
+          if (entry.mediaId == _lists[i].entries[j].mediaId) {
+            _lists[i].entries.removeAt(j);
+            removed = true;
+            break;
+          }
+        }
+      } else if (_lists[i].isCustomList &&
+          customLists.contains(_lists[i].name.toLowerCase())) {
+        for (int j = 0; j < _lists[i].entries.length; j++) {
+          if (entry.mediaId == _lists[i].entries[j].mediaId) {
+            _lists[i].entries.removeAt(j);
+            removed = true;
+            break;
+          }
+        }
+      }
+
+      // Remove the lists that have become empty
+      if (removed && _lists[i].entries.isEmpty) {
+        if (i <= _listIndex.value) _listIndex.value--;
+        _lists.removeAt(i);
+        i--;
+      }
+    }
+
+    // TODO this should be avoided... how to trigger get on the entries?
+    filter();
   }
 
   // ***************************************************************************
@@ -230,7 +280,7 @@ class Collection extends GetxController implements Filterable {
     final statusIn = _filters[Filterable.STATUS_IN];
     final statusNotIn = _filters[Filterable.STATUS_NOT_IN];
 
-    final list = _lists()[_listIndex()];
+    final list = _lists[_listIndex()];
     final List<MediaEntry> e = [];
 
     for (final entry in list.entries) {

@@ -90,7 +90,7 @@ class BrowseIndexer extends StatelessWidget {
         if (browsable == Browsable.anime || browsable == Browsable.manga)
           Get.to(
             EditEntryPage(id, (_) {}),
-            binding: BindingsBuilder.put(() => Entry()),
+            binding: BindingsBuilder.put(() => Entry()..fetchEntry(id)),
           );
       },
       child: child,

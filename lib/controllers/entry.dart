@@ -30,8 +30,11 @@ class Entry extends GetxController {
   ''';
 
   EntryData _entry;
+  EntryData _copy;
 
   EntryData get data => _entry;
+
+  EntryData get oldData => _copy;
 
   Future<void> fetchEntry(int id) async {
     final body = await GraphQl.request(_entryQuery, {'id': id});
@@ -39,6 +42,7 @@ class Entry extends GetxController {
     if (body == null) return null;
 
     _entry = EntryData(body['Media']);
+    _copy = EntryData(body['Media']);
     update();
   }
 }

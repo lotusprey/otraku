@@ -24,7 +24,8 @@ class CollectionControlHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      if (Get.find<Collection>(tag: collectionTag).names.isEmpty)
+      final collection = Get.find<Collection>(tag: collectionTag);
+      if (collection.fetching || collection.names.isEmpty)
         return const SliverToBoxAdapter();
 
       return SliverPersistentHeader(

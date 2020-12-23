@@ -21,7 +21,7 @@ class LoadingPage extends StatelessWidget {
       else
         GraphQl.initViewerId().then((_) {
           Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
-          Get.put(Collection(null, true), tag: Collection.MANGA).fetch();
+          Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
           Get.put(User(), tag: GraphQl.viewerId.toString()).fetchUser(null);
           Get.put(Explorer(), tag: '').fetchInitial();
           Get.put(UserSettings(), tag: '').fetchSettings();

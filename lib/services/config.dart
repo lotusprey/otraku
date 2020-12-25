@@ -85,7 +85,7 @@ class Config {
     }
   }
 
-  static get pageIndex => _pageIndex.value;
+  static get pageIndex => _pageIndex();
 
   static set pageIndex(int index) => _pageIndex.value = index;
 

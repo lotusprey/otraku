@@ -25,7 +25,7 @@ class CollectionControlHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final collection = Get.find<Collection>(tag: collectionTag);
-      if (collection.names.isEmpty && collection.fetching)
+      if (collection.fetching && collection.names.isEmpty)
         return const SliverToBoxAdapter();
 
       return SliverPersistentHeader(
@@ -435,5 +435,6 @@ class __FilterState extends State<_Filter> {
         Filterable.GENRE_NOT_IN,
         Filterable.TAG_IN,
         Filterable.TAG_NOT_IN,
+        Filterable.ON_LIST,
       ]);
 }

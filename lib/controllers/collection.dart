@@ -115,7 +115,6 @@ class Collection extends GetxController implements Filterable {
   final Map<String, dynamic> _filters = {};
   final _fetching = false.obs;
   String _scoreFormat;
-  ListSort _sort;
 
   Collection(this.userId, this.ofAnime);
 
@@ -135,12 +134,8 @@ class Collection extends GetxController implements Filterable {
     filter();
   }
 
-  ListSort get sort => _sort;
-
-  set sort(ListSort val) {
-    if (val == _sort) return;
-    _sort = val;
-    for (final list in _lists) list.sort(_sort);
+  void sort() {
+    for (final list in _lists) list.sort(_filters[Filterable.SORT]);
     filter();
   }
 
@@ -197,7 +192,7 @@ class Collection extends GetxController implements Filterable {
     final bool splitCompleted = metaData['splitCompletedSectionByFormat'];
 
     _scoreFormat = data['user']['mediaListOptions']['scoreFormat'];
-    _sort = ListSortHelper.getEnum(
+    _filters[Filterable.SORT] = ListSortHelper.getEnum(
       data['user']['mediaListOptions']['rowOrder'],
     );
 
@@ -210,11 +205,11 @@ class Collection extends GetxController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(EntryList(l, splitCompleted)..sort(_sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(_filters[Filterable.SORT]));
     }
 
     for (final l in data['lists'])
-      _lists.add(EntryList(l, splitCompleted)..sort(_sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
     _listIndex.value = 0;
     filter();
@@ -266,7 +261,7 @@ class Collection extends GetxController implements Filterable {
               }
           } else if (list.status == newEntry.status) {
             list.entries.add(entry);
-            list.sort(_sort);
+            list.sort(_filters[Filterable.SORT]);
             foundNewList = true;
           }
         }
@@ -314,7 +309,7 @@ class Collection extends GetxController implements Filterable {
             }
           else {
             list.entries.add(entry);
-            list.sort(_sort);
+            list.sort(_filters[Filterable.SORT]);
           }
         }
       }

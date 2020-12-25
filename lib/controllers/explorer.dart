@@ -199,9 +199,7 @@ class Explorer extends GetxController implements Filterable {
 
   @override
   bool anyActiveFilterFrom(List<String> keys) {
-    for (final key in keys) {
-      if (_filters.containsKey(key)) return true;
-    }
+    for (final key in keys) if (_filters.containsKey(key)) return true;
     return false;
   }
 

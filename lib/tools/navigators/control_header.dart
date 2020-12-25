@@ -25,7 +25,7 @@ class CollectionControlHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final collection = Get.find<Collection>(tag: collectionTag);
-      if (collection.fetching || collection.names.isEmpty)
+      if (collection.names.isEmpty && collection.fetching)
         return const SliverToBoxAdapter();
 
       return SliverPersistentHeader(
@@ -360,8 +360,6 @@ class __SearchbarState extends State<_Searchbar> {
   }
 }
 
-// TODO finish filter button
-
 class _Filter extends StatefulWidget {
   final String collectionTag;
 
@@ -372,11 +370,16 @@ class _Filter extends StatefulWidget {
 }
 
 class __FilterState extends State<_Filter> {
+  Filterable _filterable;
   bool _active;
 
   @override
   void initState() {
     super.initState();
+    if (widget.collectionTag != null)
+      _filterable = Get.find<Collection>(tag: widget.collectionTag);
+    else
+      _filterable = Get.find<Explorer>();
     _active = _checkIfActive();
   }
 
@@ -397,7 +400,7 @@ class __FilterState extends State<_Filter> {
     return GestureDetector(
       onTap: () => _pushPage(context),
       onLongPress: () {
-        Get.find<Explorer>().clearAllFilters();
+        _filterable.clearAllFilters();
         setState(() => _active = false);
       },
       child: Container(
@@ -423,7 +426,7 @@ class __FilterState extends State<_Filter> {
         }
       }));
 
-  bool _checkIfActive() => Get.find<Explorer>().anyActiveFilterFrom([
+  bool _checkIfActive() => _filterable.anyActiveFilterFrom([
         Filterable.STATUS_IN,
         Filterable.STATUS_NOT_IN,
         Filterable.FORMAT_IN,

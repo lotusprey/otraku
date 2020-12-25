@@ -90,10 +90,12 @@ class FilterPage extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
+              if (filterable is Collection) filterable.fetch();
+              if (filterable is Explorer) filterable.fetchData();
+
+              //TODO sort
               // if (collectionTag != null)
               //   (filterable as Collection).sort();
-              // else
-              //   explorable.fetchData();
 
               onUpdate(null);
               Navigator.of(context).pop();

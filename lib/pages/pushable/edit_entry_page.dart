@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/controllers/collections.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -61,10 +60,10 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             ),
                             onPressed: () {
                               Get.find<Collection>(
-                                      tag: entry.data.type == 'ANIME'
-                                          ? Collection.ANIME
-                                          : Collection.MANGA)
-                                  .removeEntry(entry.oldData);
+                                tag: entry.data.type == 'ANIME'
+                                    ? Collection.ANIME
+                                    : Collection.MANGA,
+                              ).removeEntry(entry.oldData);
                               Navigator.of(context).pop();
                               Navigator.of(context).pop();
                               widget.update(null);
@@ -79,8 +78,11 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () {
-                      Get.find<Collections>()
-                          .updateEntry(entry.oldData, entry.data);
+                      Get.find<Collection>(
+                        tag: entry.data.type == 'ANIME'
+                            ? Collection.ANIME
+                            : Collection.MANGA,
+                      ).updateEntry(entry.oldData, entry.data);
                       Navigator.of(context).pop();
                       widget.update(entry.data.status);
                     }),

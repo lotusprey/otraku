@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
+import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/entry_list.dart';
 import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
@@ -60,42 +62,42 @@ class Collection extends GetxController implements Filterable {
     }
   ''';
 
-  // static const _updateEntryMutation = r'''
-  //   mutation UpdateEntry($entryId: Int, $mediaId: Int, $status: MediaListStatus,
-  //       $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
-  //       $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
-  //       $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
-  //     SaveMediaListEntry(id: $entryId, mediaId: $mediaId, status: $status,
-  //       score: $score, progress: $progress, progressVolumes: $progressVolumes,
-  //       repeat: $repeat, private: $private, notes: $notes,
-  //       hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
-  //       startedAt: $startedAt, completedAt: $completedAt) {
-  //         mediaId
-  //         status
-  //         score
-  //         progress
-  //         progressVolumes
-  //         repeat
-  //         notes
-  //         startedAt {year month day}
-  //         completedAt {year month day}
-  //         updatedAt
-  //         createdAt
-  //         media {
-  //           title {userPreferred}
-  //           format
-  //           status(version: 2)
-  //           startDate {year month day}
-  //           endDate {year month day}
-  //           episodes
-  //           chapters
-  //           volumes
-  //           coverImage {large}
-  //           nextAiringEpisode {timeUntilAiring episode}
-  //         }
-  //       }
-  //   }
-  // ''';
+  static const _updateEntryMutation = r'''
+    mutation UpdateEntry($entryId: Int, $mediaId: Int, $status: MediaListStatus,
+        $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
+        $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
+        $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
+      SaveMediaListEntry(id: $entryId, mediaId: $mediaId, status: $status,
+        score: $score, progress: $progress, progressVolumes: $progressVolumes,
+        repeat: $repeat, private: $private, notes: $notes,
+        hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
+        startedAt: $startedAt, completedAt: $completedAt) {
+          mediaId
+          status
+          score
+          progress
+          progressVolumes
+          repeat
+          notes
+          startedAt {year month day}
+          completedAt {year month day}
+          updatedAt
+          createdAt
+          media {
+            title {userPreferred}
+            format
+            status(version: 2)
+            startDate {year month day}
+            endDate {year month day}
+            episodes
+            chapters
+            volumes
+            coverImage {large}
+            nextAiringEpisode {timeUntilAiring episode}
+          }
+        }
+    }
+  ''';
 
   static const _removeEntryMutation = r'''
     mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
@@ -219,7 +221,118 @@ class Collection extends GetxController implements Filterable {
     _fetching.value = false;
   }
 
-  Future<void> updateEntry(EntryData old, EntryData data) async {}
+  Future<void> updateEntry(EntryData oldEntry, EntryData newEntry) async {
+    // Update database item
+    final List<String> oldCustomLists =
+        oldEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
+    final List<String> newCustomLists =
+        newEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
+
+    final data = await GraphQl.request(
+      _updateEntryMutation,
+      {
+        'mediaId': newEntry.mediaId,
+        'entryId': newEntry.entryId,
+        'status': describeEnum(newEntry.status),
+        'progress': newEntry.progress,
+        'progressVolumes': newEntry.progressVolumes,
+        'score': newEntry.score,
+        'repeat': newEntry.repeat,
+        'notes': newEntry.notes,
+        'startedAt': dateTimeToMap(newEntry.startedAt),
+        'completedAt': dateTimeToMap(newEntry.completedAt),
+        'private': newEntry.private,
+        'hiddenFromStatusLists': newEntry.hiddenFromStatusLists,
+        'customLists': newCustomLists,
+      },
+    );
+
+    if (data == null) return;
+
+    final entry = MediaEntry(data['SaveMediaListEntry']);
+
+    // Update the status lists. If the list in which the
+    // entry was moved to isn't present locally, refetch.
+    if (oldEntry.status != newEntry.status) {
+      bool foundNewList = false;
+
+      for (final list in _lists)
+        if (!list.isCustomList) {
+          if (list.status == oldEntry.status) {
+            for (int i = 0; i < list.entries.length; i++)
+              if (list.entries[i].mediaId == entry.mediaId) {
+                list.entries.removeAt(i);
+                break;
+              }
+          } else if (list.status == newEntry.status) {
+            list.entries.add(entry);
+            list.sort(_sort);
+            foundNewList = true;
+          }
+        }
+
+      if (!foundNewList) {
+        fetch();
+        return;
+      }
+    }
+
+    // Update the custom lists. If a list, in which the
+    // entry was added isn't present locally, refetch.
+    for (int i = 0; i < oldCustomLists.length; i++)
+      oldCustomLists[i] = oldCustomLists[i].toLowerCase();
+    for (int i = 0; i < newCustomLists.length; i++)
+      newCustomLists[i] = newCustomLists[i].toLowerCase();
+
+    for (final list in _lists) {
+      if (list.isCustomList) {
+        final name = list.name.toLowerCase();
+
+        bool wasHolder = false;
+        for (int i = 0; i < oldCustomLists.length; i++)
+          if (oldCustomLists[i] == name) {
+            oldCustomLists.removeAt(i);
+            wasHolder = true;
+            break;
+          }
+
+        bool isHolder = false;
+        for (int i = 0; i < newCustomLists.length; i++)
+          if (newCustomLists[i] == name) {
+            newCustomLists.removeAt(i);
+            isHolder = true;
+            break;
+          }
+
+        if (wasHolder != isHolder) {
+          if (wasHolder)
+            for (int i = 0; i < list.entries.length; i++) {
+              if (list.entries[i].mediaId == entry.mediaId) {
+                list.entries.removeAt(i);
+                break;
+              }
+            }
+          else {
+            list.entries.add(entry);
+            list.sort(_sort);
+          }
+        }
+      }
+    }
+
+    if (newCustomLists.isNotEmpty) {
+      fetch();
+      return;
+    }
+
+    for (int i = 0; i < _lists.length; i++)
+      if (_lists[i].entries.isEmpty) {
+        if (i <= _listIndex.value) _listIndex.value--;
+        _lists.removeAt(i--);
+      }
+
+    filter();
+  }
 
   Future<void> removeEntry(EntryData entry) async {
     final data = await GraphQl.request(
@@ -235,37 +348,28 @@ class Collection extends GetxController implements Filterable {
     for (final tuple in entry.customLists)
       if (tuple.item2) customLists.add(tuple.item1.toLowerCase());
 
-    for (int i = 0; i < _lists.length; i++) {
-      bool removed = false;
-
-      if (!entry.hiddenFromStatusLists && entry.status == _lists[i].status) {
-        for (int j = 0; j < _lists[i].entries.length; j++) {
-          if (entry.mediaId == _lists[i].entries[j].mediaId) {
-            _lists[i].entries.removeAt(j);
-            removed = true;
+    for (final list in _lists)
+      if (!entry.hiddenFromStatusLists && entry.status == list.status) {
+        for (int j = 0; j < list.entries.length; j++)
+          if (entry.mediaId == list.entries[j].mediaId) {
+            list.entries.removeAt(j);
             break;
           }
-        }
-      } else if (_lists[i].isCustomList &&
-          customLists.contains(_lists[i].name.toLowerCase())) {
-        for (int j = 0; j < _lists[i].entries.length; j++) {
-          if (entry.mediaId == _lists[i].entries[j].mediaId) {
-            _lists[i].entries.removeAt(j);
-            removed = true;
+      } else if (list.isCustomList &&
+          customLists.contains(list.name.toLowerCase())) {
+        for (int j = 0; j < list.entries.length; j++)
+          if (entry.mediaId == list.entries[j].mediaId) {
+            list.entries.removeAt(j);
             break;
           }
-        }
       }
 
-      // Remove the lists that have become empty
-      if (removed && _lists[i].entries.isEmpty) {
+    for (int i = 0; i < _lists.length; i++)
+      if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex.value) _listIndex.value--;
-        _lists.removeAt(i);
-        i--;
+        _lists.removeAt(i--);
       }
-    }
 
-    // TODO this should be avoided... how to trigger get on the entries?
     filter();
   }
 

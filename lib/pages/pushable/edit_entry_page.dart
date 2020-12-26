@@ -33,47 +33,48 @@ class _EditEntryPageState extends State<EditEntryPage> {
             title: 'Edit',
             trailing: [
               if (entry.data != null) ...[
-                IconButton(
-                  icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
-                  color: Theme.of(context).dividerColor,
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (_) => PopUpAnimation(
-                      AlertDialog(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        title: Text(
-                          'Remove entry?',
-                          style: Theme.of(context).textTheme.bodyText1,
+                if (entry.data.entryId != null)
+                  IconButton(
+                    icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
+                    color: Theme.of(context).dividerColor,
+                    onPressed: () => showDialog(
+                      context: context,
+                      builder: (_) => PopUpAnimation(
+                        AlertDialog(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          title: Text(
+                            'Remove entry?',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          actions: [
+                            FlatButton(
+                              child: Text(
+                                'No',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            FlatButton(
+                              child: Text(
+                                'Yes',
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              onPressed: () {
+                                Get.find<Collection>(
+                                  tag: entry.data.type == 'ANIME'
+                                      ? Collection.ANIME
+                                      : Collection.MANGA,
+                                ).removeEntry(entry.oldData);
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                widget.update(null);
+                              },
+                            ),
+                          ],
                         ),
-                        actions: [
-                          FlatButton(
-                            child: Text(
-                              'No',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          FlatButton(
-                            child: Text(
-                              'Yes',
-                              style: Theme.of(context).textTheme.bodyText2,
-                            ),
-                            onPressed: () {
-                              Get.find<Collection>(
-                                tag: entry.data.type == 'ANIME'
-                                    ? Collection.ANIME
-                                    : Collection.MANGA,
-                              ).removeEntry(entry.oldData);
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              widget.update(null);
-                            },
-                          ),
-                        ],
                       ),
                     ),
                   ),
-                ),
                 IconButton(
                     icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
                     color: Theme.of(context).dividerColor,
@@ -209,6 +210,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         ),
                       ),
                       if (entry.oldData.customLists.length > 0)
+                        // TODO fix lists
                         InputFieldStructure(
                           enforceHeight: false,
                           title: 'Custom Lists',

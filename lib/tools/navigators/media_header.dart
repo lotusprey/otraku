@@ -1,26 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:get/get.dart';
+import 'package:otraku/controllers/entry.dart';
+import 'package:otraku/controllers/page_item.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/services/config.dart';
-import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 
-class MediaPageHeader implements SliverPersistentHeaderDelegate {
-  final MediaOverview media;
+class MediaHeader implements SliverPersistentHeaderDelegate {
+  final MediaOverview overview;
   final double coverWidth;
   final double coverHeight;
-  final double minHeight = Config.MATERIAL_TAP_TARGET_SIZE + 10;
+  final double minHeight = Config.MATERIAL_TAP_TARGET_SIZE;
   final double maxHeight;
   final String imageUrl;
 
-  MediaPageHeader({
-    @required this.media,
+  MediaHeader({
+    @required this.overview,
     @required this.coverWidth,
     @required this.coverHeight,
     @required this.maxHeight,
@@ -33,11 +32,8 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final transition = maxHeight * 4.0 / 5.0;
     final shrinkPercentage =
-        shrinkOffset < transition ? shrinkOffset / transition : 1.0;
-    final buttonMinWidth = MediaQuery.of(context).size.width - coverWidth - 30;
-    final addition = MediaQuery.of(context).size.width - 100 - buttonMinWidth;
+        shrinkOffset < maxHeight ? shrinkOffset / maxHeight : 1.0;
 
     return Container(
       height: maxHeight,
@@ -54,9 +50,9 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (media?.banner != null)
+          if (overview?.banner != null)
             FadeInImage.memoryNetwork(
-              image: media.banner,
+              image: overview.banner,
               placeholder: transparentImage,
               fadeInDuration: Config.FADE_DURATION,
               fit: BoxFit.cover,
@@ -85,7 +81,6 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                   Hero(
                     tag: imageUrl,
                     child: Container(
-                      height: coverHeight,
                       width: coverWidth,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
@@ -93,19 +88,19 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                           fit: StackFit.expand,
                           children: [
                             Image.network(imageUrl, fit: BoxFit.cover),
-                            if (media != null)
+                            if (overview != null)
                               GestureDetector(
                                 child: Image.network(
-                                  media.cover,
+                                  overview.cover,
                                   fit: BoxFit.cover,
                                 ),
                                 onTap: () => showDialog(
                                   context: context,
                                   builder: (ctx) => PopUpAnimation(
                                     ImageTextDialog(
-                                      text: media.preferredTitle,
+                                      text: overview.preferredTitle,
                                       image: Image.network(
-                                        media.cover,
+                                        overview.cover,
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -118,7 +113,7 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  if (media != null)
+                  if (overview != null)
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -127,20 +122,26 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
                           Flexible(
                             flex: 2,
                             child: Text(
-                              media.preferredTitle,
+                              overview.preferredTitle,
                               style: Theme.of(context).textTheme.headline3,
                               overflow: TextOverflow.fade,
                             ),
                           ),
-                          if (media.nextEpisode != null)
+                          if (overview.nextEpisode != null)
                             Flexible(
                               child: Text(
-                                'Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                                'Ep ${overview.nextEpisode} in ${overview.timeUntilAiring}',
                                 style: Theme.of(context).textTheme.bodyText2,
                               ),
                             ),
-                          const Flexible(
-                            child: SizedBox(height: 60),
+                          Flexible(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                _EditButton(overview, true),
+                                _FavouriteButton(overview, true),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -161,31 +162,40 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: Theme.of(context).dividerColor,
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width - 20,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                media != null
-                    ? FavoriteButton(media, shrinkPercentage)
-                    : const SizedBox(),
-              ],
-            ),
-          ),
-          if (media != null)
-            Positioned(
-              right: shrinkPercentage * 40 + 10,
-              bottom: shrinkPercentage * 7 + 10,
-              child: _StatusButton(
-                media,
-                buttonMinWidth + addition * shrinkPercentage,
+                  if (shrinkPercentage > 0.4)
+                    Expanded(
+                      child: Opacity(
+                        opacity: shrinkPercentage,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                overview.preferredTitle,
+                                style: Theme.of(context).textTheme.headline6,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            _EditButton(overview, false),
+                            _FavouriteButton(overview, false),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
+          ),
         ],
       ),
     );
@@ -214,52 +224,82 @@ class MediaPageHeader implements SliverPersistentHeaderDelegate {
   TickerProvider get vsync => null;
 }
 
-class _StatusButton extends StatefulWidget {
-  final MediaOverview media;
-  final double width;
+class _EditButton extends StatefulWidget {
+  final MediaOverview overview;
+  final bool full;
 
-  _StatusButton(this.media, this.width);
+  _EditButton(this.overview, this.full);
 
   @override
-  __StatusButtonState createState() => __StatusButtonState();
+  __EditButtonState createState() => __EditButtonState();
 }
 
-class __StatusButtonState extends State<_StatusButton> {
+class __EditButtonState extends State<_EditButton> {
   @override
-  Widget build(BuildContext context) => SizedBox(
-        width: widget.width,
-        child: RaisedButton(
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(
-            borderRadius: Config.BORDER_RADIUS,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                widget.media.status == null ? Icons.add : Icons.edit,
-                size: Styles.ICON_SMALL,
-                color: Theme.of(context).backgroundColor,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                  widget.media.entryStatus == null
-                      ? 'Add'
-                      : listStatusSpecification(
-                          widget.media.entryStatus,
-                          widget.media.browsable == Browsable.anime,
-                        ),
-                  style: Theme.of(context).textTheme.button),
-            ],
-          ),
-          onPressed: () => Navigator.of(context).push(
-            CupertinoPageRoute(
-              builder: (_) => EditEntryPage(
-                widget.media.id,
-                (status) => setState(() => widget.media.entryStatus = status),
-              ),
-            ),
-          ),
+  Widget build(BuildContext context) {
+    final icon = Icon(
+      widget.overview.entryStatus == null ? Icons.add : Icons.edit,
+      color: Theme.of(context).dividerColor,
+    );
+
+    return widget.full
+        ? RaisedButton(
+            clipBehavior: Clip.hardEdge,
+            onPressed: onPressed,
+            child: icon,
+          )
+        : IconButton(
+            icon: icon,
+            onPressed: onPressed,
+          );
+  }
+
+  void onPressed() => Get.to(
+        EditEntryPage(
+          widget.overview.id,
+          (status) => setState(() => widget.overview.entryStatus = status),
+        ),
+        binding: BindingsBuilder.put(
+          () => Entry()..fetchEntry(widget.overview.id),
         ),
       );
+}
+
+class _FavouriteButton extends StatefulWidget {
+  final MediaOverview overview;
+  final bool full;
+
+  _FavouriteButton(this.overview, this.full);
+
+  @override
+  __FavouriteButtonState createState() => __FavouriteButtonState();
+}
+
+class __FavouriteButtonState extends State<_FavouriteButton> {
+  @override
+  Widget build(BuildContext context) {
+    final icon = Icon(
+      widget.overview.isFavourite ? Icons.favorite : Icons.favorite_border,
+      color: Theme.of(context).dividerColor,
+    );
+
+    return widget.full
+        ? RaisedButton(
+            color: Theme.of(context).errorColor,
+            clipBehavior: Clip.hardEdge,
+            onPressed: onPressed,
+            child: icon,
+          )
+        : IconButton(icon: icon, onPressed: onPressed);
+  }
+
+  void onPressed() => PageItem.toggleFavourite(
+        widget.overview.id,
+        widget.overview.browsable,
+      ).then((ok) {
+        if (ok)
+          setState(
+            () => widget.overview.isFavourite = !widget.overview.isFavourite,
+          );
+      });
 }

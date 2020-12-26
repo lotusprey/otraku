@@ -23,10 +23,10 @@ class LoadingPage extends StatelessWidget {
           Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
           Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
           Get.put(User(), tag: GraphQl.viewerId.toString()).fetchUser(null);
-          Get.put(Explorer(), tag: '').fetchInitial();
-          Get.put(UserSettings(), tag: '').fetchSettings();
+          Get.put(Explorer()).fetchInitial();
+          Get.put(UserSettings()).fetchSettings();
 
-          Get.offAll(TabManager());
+          Get.offAll(Home());
         });
     });
 

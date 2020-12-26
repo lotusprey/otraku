@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/services/config.dart';
-import 'package:otraku/pages/home.dart';
+import 'package:otraku/pages/tab_manager.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 
 class AppSettingsPage extends StatelessWidget {

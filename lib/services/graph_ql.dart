@@ -9,6 +9,8 @@ import 'package:otraku/services/config.dart';
 import 'package:otraku/pages/auth_page.dart';
 
 class GraphQl {
+  GraphQl._();
+
   static const String _url = 'https://graphql.anilist.co';
 
   static const String _idQuery = 'query Id {Viewer {id}}';

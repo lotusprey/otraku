@@ -35,7 +35,7 @@ class Config {
   static void init(BuildContext context) {
     if (_hasInit) return;
 
-    _pageIndex.value ??= TabManager.ANIME_LIST;
+    _pageIndex.value ??= Home.ANIME_LIST;
 
     double width = (Get.mediaQuery.size.width - 40) / 3;
     if (width > 150) width = 150;

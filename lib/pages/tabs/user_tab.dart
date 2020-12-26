@@ -58,7 +58,7 @@ class UserTab extends StatelessWidget {
                           ],
                         ),
                         onPressed: () => id == null
-                            ? Config.pageIndex = TabManager.ANIME_LIST
+                            ? Config.pageIndex = Home.ANIME_LIST
                             : _pushCollection(true),
                       ),
                     ),
@@ -78,7 +78,7 @@ class UserTab extends StatelessWidget {
                           ],
                         ),
                         onPressed: () => id == null
-                            ? Config.pageIndex = TabManager.MANGA_LIST
+                            ? Config.pageIndex = Home.MANGA_LIST
                             : _pushCollection(false),
                       ),
                     ),

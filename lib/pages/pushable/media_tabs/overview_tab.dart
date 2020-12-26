@@ -294,7 +294,7 @@ class _GenreLink extends StatelessWidget {
         );
         explorable.setFilterWithKey(Filterable.GENRE_IN, value: [name]);
         explorable.type = type;
-        Config.pageIndex = TabManager.EXPLORE;
+        Config.pageIndex = Home.EXPLORE;
         Get.until((route) => route.isFirst);
       },
       onLongPress: () => Clipboard.setData(ClipboardData(text: name)),

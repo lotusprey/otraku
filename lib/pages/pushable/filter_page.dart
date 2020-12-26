@@ -111,16 +111,17 @@ class FilterPage extends StatelessWidget {
         padding: Config.PADDING,
         children: [
           _SortDropdown(collectionTag != null, changes),
-          DropDownField(
-            title: 'List Filter',
-            initialValue: changes[Filterable.ON_LIST],
-            items: {
-              'Everything': null,
-              'In My List': true,
-              'Not In My List': false,
-            },
-            onChanged: (value) => changes[Filterable.ON_LIST] = value,
-          ),
+          if (collectionTag == null)
+            DropDownField(
+              title: 'List Filter',
+              initialValue: changes[Filterable.ON_LIST],
+              items: {
+                'Everything': null,
+                'In My List': true,
+                'Not In My List': false,
+              },
+              onChanged: (value) => changes[Filterable.ON_LIST] = value,
+            ),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',

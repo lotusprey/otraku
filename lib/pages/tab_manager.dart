@@ -10,7 +10,7 @@ import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 
-class TabManager extends StatelessWidget {
+class Home extends StatelessWidget {
   static const int INBOX = 0;
   static const int ANIME_LIST = 1;
   static const int MANGA_LIST = 2;

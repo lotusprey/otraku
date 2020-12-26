@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/services/config.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
@@ -12,15 +11,37 @@ import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
 import 'package:otraku/pages/pushable/setting_tabs/notification_settings_page.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
+import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   final padding = const EdgeInsets.symmetric(horizontal: 5);
 
   final Map<String, dynamic> changes = {};
 
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final tabs = [
+      AppSettingsPage(),
+      MediaSettingsPage(changes),
+      ListSettingsPage(changes),
+      NotificationSettingsPage(changes),
+    ];
+
+    return GetBuilder<UserSettings>(
+      builder: (userSettings) => Scaffold(
+        extendBody: true,
+        bottomNavigationBar: CustomNavBar(
+          icons: const [
+            FluentSystemIcons.ic_fluent_phone_link_setup_regular,
+            Icons.video_settings,
+            Icons.filter_list,
+            Icons.notifications_none,
+          ],
+          onChanged: (page) => userSettings.page = page,
+          initial: userSettings.page,
+          getIndex: () => userSettings.page,
+        ),
         appBar: CustomAppBar(
-          title: 'Settings',
+          title: userSettings.pageName,
           callOnPop: () {
             if (changes.keys.length > 0) {
               Get.find<UserSettings>().updateSettings(changes).then((_) {
@@ -48,52 +69,11 @@ class SettingsPage extends StatelessWidget {
             }
           },
         ),
-        body: ListView(
-          physics: Config.PHYSICS,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          children: [
-            ListTile(
-              contentPadding: padding,
-              leading: Icon(
-                FluentSystemIcons.ic_fluent_phone_link_setup_regular,
-                color: Theme.of(context).dividerColor,
-              ),
-              title: Text('App', style: Theme.of(context).textTheme.bodyText1),
-              onTap: () => Get.to(AppSettingsPage()),
-            ),
-            ListTile(
-              contentPadding: padding,
-              leading: Icon(
-                Icons.video_settings,
-                color: Theme.of(context).dividerColor,
-              ),
-              title:
-                  Text('Media', style: Theme.of(context).textTheme.bodyText1),
-              onTap: () => Get.to(MediaSettingsPage(changes)),
-            ),
-            ListTile(
-              contentPadding: padding,
-              leading: Icon(
-                Icons.filter_list,
-                color: Theme.of(context).dividerColor,
-              ),
-              title:
-                  Text('Lists', style: Theme.of(context).textTheme.bodyText1),
-              onTap: () => Get.to(ListSettingsPage(changes)),
-            ),
-            ListTile(
-              contentPadding: padding,
-              leading: Icon(
-                Icons.notifications_none,
-                color: Theme.of(context).dividerColor,
-              ),
-              title: Text(
-                'Notifications',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              onTap: () => Get.to(NotificationSettingsPage(changes)),
-            ),
-          ],
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: tabs[userSettings.page],
         ),
-      );
+      ),
+    );
+  }
 }

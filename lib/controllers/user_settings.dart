@@ -48,8 +48,23 @@ class UserSettings extends GetxController {
   ''';
 
   Settings _settings;
+  int _page = 0;
 
   Settings get settings => _settings;
+
+  int get page => _page;
+
+  set page(int val) {
+    _page = val;
+    update();
+  }
+
+  String get pageName {
+    if (_page < 1) return 'App Settings';
+    if (_page < 2) return 'Media Settings';
+    if (_page < 3) return 'List Settings';
+    return 'Notification Settings';
+  }
 
   Future<void> fetchSettings() async {
     final data = await GraphQl.request(_settingsQuery, null, popOnError: false);

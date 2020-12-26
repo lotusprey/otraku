@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
-import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
 class NotificationSettingsPage extends StatelessWidget {
   static const List<String> _notificationNames = const [
@@ -52,39 +51,33 @@ class NotificationSettingsPage extends StatelessWidget {
       values.add(options[_notificationTypes[i]] ?? false);
     }
 
-    return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Notifications',
-      ),
-      body: ListView.builder(
-        shrinkWrap: true,
-        physics: Config.PHYSICS,
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-        itemBuilder: (_, index) => CheckboxField(
-          title: _notificationNames[index],
-          initialValue: values[index],
-          onChanged: (value) {
-            values[index] = value;
-            const key = 'notificationOptions';
+    return ListView.builder(
+      physics: Config.PHYSICS,
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      itemBuilder: (_, index) => CheckboxField(
+        title: _notificationNames[index],
+        initialValue: values[index],
+        onChanged: (value) {
+          values[index] = value;
+          const key = 'notificationOptions';
 
-            if (changes.containsKey(key)) {
-              for (int i = 0; i < values.length; i++) {
-                changes[key][i]['enabled'] = values[i];
-              }
-            } else {
-              final List<dynamic> newOptions = [];
-              for (int i = 0; i < values.length; i++) {
-                newOptions.add({
-                  'type': _notificationTypes[i],
-                  'enabled': values[i],
-                });
-              }
-              changes[key] = newOptions;
+          if (changes.containsKey(key)) {
+            for (int i = 0; i < values.length; i++) {
+              changes[key][i]['enabled'] = values[i];
             }
-          },
-        ),
-        itemCount: _notificationNames.length,
+          } else {
+            final List<dynamic> newOptions = [];
+            for (int i = 0; i < values.length; i++) {
+              newOptions.add({
+                'type': _notificationTypes[i],
+                'enabled': values[i],
+              });
+            }
+            changes[key] = newOptions;
+          }
+        },
       ),
+      itemCount: _notificationNames.length,
     );
   }
 }

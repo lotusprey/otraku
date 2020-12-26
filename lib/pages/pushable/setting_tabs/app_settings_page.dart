@@ -3,82 +3,75 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/services/config.dart';
-import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/pages/home.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/navigators/custom_app_bar.dart';
 
 class AppSettingsPage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: CustomAppBar(
-          title: 'App',
-        ),
-        body: ListView(
-          physics: Config.PHYSICS,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          children: [
-            Row(
-              children: [
-                Flexible(
-                  child: DropDownField(
-                    title: 'Theme',
-                    initialValue: Config.storage.read(Config.THEME_MODE) ?? 0,
-                    items: {'Auto': 0, 'Light': 1, 'Dark': 2},
-                    onChanged: (value) {
-                      Config.storage.write(Config.THEME_MODE, value);
-                      Config.updateTheme();
-                    },
-                  ),
+  Widget build(BuildContext context) => ListView(
+        physics: Config.PHYSICS,
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        children: [
+          Row(
+            children: [
+              Flexible(
+                child: DropDownField(
+                  title: 'Theme',
+                  initialValue: Config.storage.read(Config.THEME_MODE) ?? 0,
+                  items: {'Auto': 0, 'Light': 1, 'Dark': 2},
+                  onChanged: (value) {
+                    Config.storage.write(Config.THEME_MODE, value);
+                    Config.updateTheme();
+                  },
                 ),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: DropDownField(
-                    title: 'Startup Page',
-                    initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
-                        TabManager.ANIME_LIST,
-                    items: {
-                      'Inbox': TabManager.INBOX,
-                      'Anime List': TabManager.ANIME_LIST,
-                      'Manga List': TabManager.MANGA_LIST,
-                      'Explore': TabManager.EXPLORE,
-                      'Profile': TabManager.PROFILE,
-                    },
-                    onChanged: (val) =>
-                        Config.storage.write(Config.STARTUP_PAGE, val),
-                  ),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: DropDownField(
+                  title: 'Startup Page',
+                  initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
+                      Home.ANIME_LIST,
+                  items: {
+                    'Inbox': Home.INBOX,
+                    'Anime List': Home.ANIME_LIST,
+                    'Manga List': Home.MANGA_LIST,
+                    'Explore': Home.EXPLORE,
+                    'Profile': Home.PROFILE,
+                  },
+                  onChanged: (val) =>
+                      Config.storage.write(Config.STARTUP_PAGE, val),
                 ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Light Theme',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                Text(
-                  'Dark Theme',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ],
-            ),
-            _Radio(
-              options: Themes.values
-                  .map((t) => clarifyEnum(describeEnum(t)))
-                  .toList(),
-              leftValue: Config.storage.read(Config.LIGHT_THEME) ?? 0,
-              rightValue: Config.storage.read(Config.DARK_THEME) ?? 0,
-              onChangedLeft: (value) {
-                Config.storage.write(Config.LIGHT_THEME, value);
-                Config.updateTheme();
-              },
-              onChangedRight: (value) {
-                Config.storage.write(Config.DARK_THEME, value);
-                Config.updateTheme();
-              },
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Light Theme',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              Text(
+                'Dark Theme',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ],
+          ),
+          _Radio(
+            options:
+                Themes.values.map((t) => clarifyEnum(describeEnum(t))).toList(),
+            leftValue: Config.storage.read(Config.LIGHT_THEME) ?? 0,
+            rightValue: Config.storage.read(Config.DARK_THEME) ?? 0,
+            onChangedLeft: (value) {
+              Config.storage.write(Config.LIGHT_THEME, value);
+              Config.updateTheme();
+            },
+            onChangedRight: (value) {
+              Config.storage.write(Config.DARK_THEME, value);
+              Config.updateTheme();
+            },
+          ),
+        ],
       );
 }
 

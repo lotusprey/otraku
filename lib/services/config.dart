@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/tile_config.dart';
-import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/pages/home_page.dart';
 
 // Holds constants and configurations that
 // are utilised throughout the whole app.
@@ -35,7 +35,7 @@ class Config {
   static void init(BuildContext context) {
     if (_hasInit) return;
 
-    _pageIndex.value ??= Home.ANIME_LIST;
+    _pageIndex.value ??= HomePage.ANIME_LIST;
 
     double width = (Get.mediaQuery.size.width - 40) / 3;
     if (width > 150) width = 150;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/services/config.dart';
-import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 
 class AppSettingsPage extends StatelessWidget {
@@ -30,13 +30,13 @@ class AppSettingsPage extends StatelessWidget {
                 child: DropDownField(
                   title: 'Startup Page',
                   initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
-                      Home.ANIME_LIST,
+                      HomePage.ANIME_LIST,
                   items: {
-                    'Inbox': Home.INBOX,
-                    'Anime List': Home.ANIME_LIST,
-                    'Manga List': Home.MANGA_LIST,
-                    'Explore': Home.EXPLORE,
-                    'Profile': Home.PROFILE,
+                    'Inbox': HomePage.INBOX,
+                    'Anime List': HomePage.ANIME_LIST,
+                    'Manga List': HomePage.MANGA_LIST,
+                    'Explore': HomePage.EXPLORE,
+                    'Profile': HomePage.PROFILE,
                   },
                   onChanged: (val) =>
                       Config.storage.write(Config.STARTUP_PAGE, val),

@@ -3,12 +3,12 @@ import 'package:otraku/tools/navigators/control_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
 import 'package:otraku/tools/navigators/headline_header.dart';
 
-class CollectionsTab extends StatefulWidget {
+class CollectionPage extends StatefulWidget {
   final int otherUserId;
   final bool ofAnime;
   final String collectionTag;
 
-  CollectionsTab({
+  CollectionPage({
     @required this.otherUserId,
     @required this.ofAnime,
     @required this.collectionTag,
@@ -16,10 +16,10 @@ class CollectionsTab extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CollectionsTabState createState() => _CollectionsTabState();
+  _CollectionPageState createState() => _CollectionPageState();
 }
 
-class _CollectionsTabState extends State<CollectionsTab> {
+class _CollectionPageState extends State<CollectionPage> {
   final _ctrl = ScrollController();
 
   @override

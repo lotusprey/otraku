@@ -2,15 +2,15 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/pages/tabs/explore_tab.dart';
-import 'package:otraku/pages/tabs/collections_tab.dart';
-import 'package:otraku/pages/tabs/inbox_tab.dart';
-import 'package:otraku/pages/tabs/user_tab.dart';
+import 'package:otraku/pages/home_pages/explore_page.dart';
+import 'package:otraku/pages/home_pages/collection_page.dart';
+import 'package:otraku/pages/home_pages/inbox_page.dart';
+import 'package:otraku/pages/home_pages/user_page.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 
-class Home extends StatelessWidget {
+class HomePage extends StatelessWidget {
   static const int INBOX = 0;
   static const int ANIME_LIST = 1;
   static const int MANGA_LIST = 2;
@@ -20,21 +20,21 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      const InboxTab(),
-      CollectionsTab(
+      const InboxPage(),
+      CollectionPage(
         ofAnime: true,
         otherUserId: null,
         collectionTag: Collection.ANIME,
         key: UniqueKey(),
       ),
-      CollectionsTab(
+      CollectionPage(
         ofAnime: false,
         otherUserId: null,
         collectionTag: Collection.MANGA,
         key: UniqueKey(),
       ),
-      const ExploreTab(),
-      const UserTab(null, null),
+      const ExplorePage(),
+      const UserPage(null, null),
     ];
 
     const drawers = const [

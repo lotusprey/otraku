@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/services/config.dart';
-import 'package:otraku/pages/pushable/media_tabs/overview_tab.dart';
-import 'package:otraku/pages/pushable/media_tabs/relations_tab.dart';
+import 'package:otraku/pages/media_pages/overview_tab.dart';
+import 'package:otraku/pages/media_pages/relations_tab.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
-import 'package:otraku/tools/navigators/media_page_header.dart';
+import 'package:otraku/tools/navigators/media_header.dart';
 
 class MediaPage extends StatelessWidget {
   final int id;
@@ -20,6 +20,7 @@ class MediaPage extends StatelessWidget {
     double coverWidth = MediaQuery.of(context).size.width * 0.35;
     double coverHeight = coverWidth / 0.7;
     double bannerHeight = coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+
     final media = Get.find<Media>(tag: id.toString());
 
     return Scaffold(
@@ -34,44 +35,39 @@ class MediaPage extends StatelessWidget {
       ),
       body: SafeArea(
         bottom: false,
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Theme.of(context).backgroundColor,
-          child: CustomScrollView(
-            physics: Config.PHYSICS,
-            slivers: [
-              Obx(
-                () => SliverPersistentHeader(
-                  pinned: true,
-                  floating: false,
-                  delegate: MediaPageHeader(
-                    media: media.overview,
-                    coverWidth: coverWidth,
-                    coverHeight: coverHeight,
-                    maxHeight: bannerHeight,
-                    imageUrl: tagImageUrl,
-                  ),
+        child: CustomScrollView(
+          physics: Config.PHYSICS,
+          slivers: [
+            Obx(
+              () => SliverPersistentHeader(
+                pinned: true,
+                floating: false,
+                delegate: MediaHeader(
+                  overview: media.overview,
+                  coverWidth: coverWidth,
+                  coverHeight: coverHeight,
+                  maxHeight: bannerHeight,
+                  imageUrl: tagImageUrl,
                 ),
               ),
-              Obx(
-                () => media.tab == Media.OVERVIEW && media.overview != null
-                    ? OverviewTab(media.overview)
-                    : placeholder,
-              ),
-              Obx(
-                () => media.tab == Media.RELATIONS
-                    ? RelationControls(media)
-                    : placeholder,
-              ),
-              Obx(
-                () => media.tab == Media.RELATIONS
-                    ? RelationList(media)
-                    : placeholder,
-              ),
-              SliverToBoxAdapter(child: const SizedBox(height: 60)),
-            ],
-          ),
+            ),
+            Obx(
+              () => media.tab == Media.OVERVIEW && media.overview != null
+                  ? OverviewTab(media.overview)
+                  : placeholder,
+            ),
+            Obx(
+              () => media.tab == Media.RELATIONS
+                  ? RelationControls(media)
+                  : placeholder,
+            ),
+            Obx(
+              () => media.tab == Media.RELATIONS
+                  ? RelationList(media)
+                  : placeholder,
+            ),
+            SliverToBoxAdapter(child: const SizedBox(height: 60)),
+          ],
         ),
       ),
     );

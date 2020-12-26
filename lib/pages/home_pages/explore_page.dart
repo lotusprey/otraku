@@ -8,14 +8,14 @@ import 'package:otraku/tools/navigators/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/navigators/headline_header.dart';
 
-class ExploreTab extends StatefulWidget {
-  const ExploreTab();
+class ExplorePage extends StatefulWidget {
+  const ExplorePage();
 
   @override
-  _ExploreTabState createState() => _ExploreTabState();
+  _ExplorePageState createState() => _ExplorePageState();
 }
 
-class _ExploreTabState extends State<ExploreTab> {
+class _ExplorePageState extends State<ExplorePage> {
   final _ctrl = ScrollController();
 
   @override

@@ -14,7 +14,7 @@ import 'package:otraku/pages/pushable/media_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
-import 'package:otraku/pages/tabs/user_tab.dart';
+import 'package:otraku/pages/home_pages/user_page.dart';
 
 class BrowseIndexer extends StatelessWidget {
   final Browsable browsable;
@@ -75,7 +75,7 @@ class BrowseIndexer extends StatelessWidget {
             return;
           case Browsable.user:
             Get.to(
-              TabPage(UserTab(id, tag)),
+              TabPage(UserPage(id, tag)),
               binding: BindingsBuilder(() {
                 if (!Get.isRegistered<User>(tag: id.toString()))
                   Get.put(User(), tag: id.toString()).fetchUser(id);

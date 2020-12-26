@@ -36,7 +36,7 @@ class _AuthPageState extends State<AuthPage> {
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
         GraphQl.accessToken = accessToken;
-        Get.offAll(LoadingPage());
+        Get.offAll(LoadingPage(), transition: Transition.fadeIn);
       },
       onError: (error) => print('error: $error'),
     );

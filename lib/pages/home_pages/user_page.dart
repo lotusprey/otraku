@@ -8,21 +8,21 @@ import 'package:otraku/controllers/user.dart';
 import 'package:otraku/models/user_data.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
-import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/services/config.dart';
-import 'package:otraku/pages/tabs/collections_tab.dart';
+import 'package:otraku/pages/home_pages/collection_page.dart';
 import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 
-class UserTab extends StatelessWidget {
+class UserPage extends StatelessWidget {
   final _space = const SizedBox(width: 10);
 
   final int id;
   final String avatarUrl;
 
-  const UserTab(this.id, this.avatarUrl);
+  const UserPage(this.id, this.avatarUrl);
 
   @override
   Widget build(BuildContext context) => GetBuilder<User>(
@@ -58,7 +58,7 @@ class UserTab extends StatelessWidget {
                           ],
                         ),
                         onPressed: () => id == null
-                            ? Config.pageIndex = Home.ANIME_LIST
+                            ? Config.pageIndex = HomePage.ANIME_LIST
                             : _pushCollection(true),
                       ),
                     ),
@@ -78,7 +78,7 @@ class UserTab extends StatelessWidget {
                           ],
                         ),
                         onPressed: () => id == null
-                            ? Config.pageIndex = Home.MANGA_LIST
+                            ? Config.pageIndex = HomePage.MANGA_LIST
                             : _pushCollection(false),
                       ),
                     ),
@@ -97,7 +97,7 @@ class UserTab extends StatelessWidget {
     final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';
     Get.to(
       TabPage(
-        CollectionsTab(
+        CollectionPage(
           otherUserId: id,
           ofAnime: ofAnime,
           collectionTag: collectionTag,

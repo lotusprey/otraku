@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort_enum.dart';
+import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/entry_list.dart';
 import 'package:otraku/models/page_data/entry_data.dart';
@@ -63,11 +64,11 @@ class Collection extends GetxController implements Filterable {
   ''';
 
   static const _updateEntryMutation = r'''
-    mutation UpdateEntry($entryId: Int, $mediaId: Int, $status: MediaListStatus,
+    mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
         $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
         $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
         $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
-      SaveMediaListEntry(id: $entryId, mediaId: $mediaId, status: $status,
+      SaveMediaListEntry(mediaId: $mediaId, status: $status,
         score: $score, progress: $progress, progressVolumes: $progressVolumes,
         repeat: $repeat, private: $private, notes: $notes,
         hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
@@ -222,12 +223,12 @@ class Collection extends GetxController implements Filterable {
         oldEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
     final List<String> newCustomLists =
         newEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
+    newEntry.status ??= MediaListStatus.CURRENT;
 
     final data = await GraphQl.request(
       _updateEntryMutation,
       {
         'mediaId': newEntry.mediaId,
-        'entryId': newEntry.entryId,
         'status': describeEnum(newEntry.status),
         'progress': newEntry.progress,
         'progressVolumes': newEntry.progressVolumes,

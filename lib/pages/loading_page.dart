@@ -4,7 +4,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/pages/auth_page.dart';
-import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/services/config.dart';
@@ -17,7 +17,7 @@ class LoadingPage extends StatelessWidget {
 
     GraphQl.logIn().then((loggedIn) {
       if (!loggedIn)
-        Get.offAll(AuthPage());
+        Get.offAll(AuthPage(), transition: Transition.fadeIn);
       else
         GraphQl.initViewerId().then((_) {
           Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
@@ -26,7 +26,7 @@ class LoadingPage extends StatelessWidget {
           Get.put(Explorer()).fetchInitial();
           Get.put(UserSettings()).fetchSettings();
 
-          Get.offAll(Home());
+          Get.offAll(HomePage(), transition: Transition.fadeIn);
         });
     });
 

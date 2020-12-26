@@ -8,7 +8,7 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
-import 'package:otraku/pages/tab_manager.dart';
+import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -294,7 +294,7 @@ class _GenreLink extends StatelessWidget {
         );
         explorable.setFilterWithKey(Filterable.GENRE_IN, value: [name]);
         explorable.type = type;
-        Config.pageIndex = Home.EXPLORE;
+        Config.pageIndex = HomePage.EXPLORE;
         Get.until((route) => route.isFirst);
       },
       onLongPress: () => Clipboard.setData(ClipboardData(text: name)),

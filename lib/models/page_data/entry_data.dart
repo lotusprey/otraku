@@ -80,32 +80,4 @@ class EntryData {
       customLists: customLists,
     );
   }
-
-  // EntryData clone() {
-  //   List<Tuple<String, bool>> customListsCopy = [];
-  //   for (final tuple in customLists) {
-  //     customListsCopy.add(Tuple(tuple.item1, tuple.item2));
-  //   }
-
-  //   return EntryData(
-  //     mediaId: mediaId,
-  //     type: type,
-  //     entryId: entryId,
-  //     status: status != null ? MediaListStatus.values[status.index] : null,
-  //     progress: progress,
-  //     progressMax: progressMax,
-  //     progressVolumes: progressVolumes,
-  //     progressVolumesMax: progressVolumesMax,
-  //     score: score,
-  //     repeat: repeat,
-  //     notes: notes,
-  //     startedAt:
-  //         startedAt == null ? null : DateTime.parse(startedAt.toString()),
-  //     completedAt:
-  //         completedAt == null ? null : DateTime.parse(completedAt.toString()),
-  //     private: private,
-  //     hiddenFromStatusLists: hiddenFromStatusLists,
-  //     customLists: customListsCopy,
-  //   );
-  // }
 }

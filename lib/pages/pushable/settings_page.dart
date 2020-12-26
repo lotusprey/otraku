@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/controllers/user_settings.dart';
-import 'package:otraku/pages/pushable/setting_tabs/app_settings_page.dart';
-import 'package:otraku/pages/pushable/setting_tabs/list_settings_page.dart';
-import 'package:otraku/pages/pushable/setting_tabs/media_settings_page.dart';
-import 'package:otraku/pages/pushable/setting_tabs/notification_settings_page.dart';
+import 'package:otraku/pages/setting_pages/app_settings_page.dart';
+import 'package:otraku/pages/setting_pages/list_settings_page.dart';
+import 'package:otraku/pages/setting_pages/media_settings_page.dart';
+import 'package:otraku/pages/setting_pages/notification_settings_page.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
@@ -38,7 +38,6 @@ class SettingsPage extends StatelessWidget {
           ],
           onChanged: (page) => userSettings.page = page,
           initial: userSettings.page,
-          getIndex: () => userSettings.page,
         ),
         appBar: CustomAppBar(
           title: userSettings.pageName,

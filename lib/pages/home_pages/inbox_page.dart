@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/tools/loader.dart';
 
-class InboxTab extends StatelessWidget {
-  const InboxTab();
+class InboxPage extends StatelessWidget {
+  const InboxPage();
 
   @override
   Widget build(BuildContext context) {

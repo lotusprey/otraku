@@ -115,6 +115,7 @@ class Collection extends GetxController implements Filterable {
   final _listIndex = 0.obs;
   final Map<String, dynamic> _filters = {};
   final _fetching = false.obs;
+  final List<String> _customListNames = [];
   String _scoreFormat;
 
   Collection(this.userId, this.ofAnime);
@@ -128,6 +129,8 @@ class Collection extends GetxController implements Filterable {
   int get listIndex => _listIndex();
 
   String get scoreFormat => _scoreFormat;
+
+  List<String> get customListNames => [..._customListNames];
 
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
@@ -196,6 +199,9 @@ class Collection extends GetxController implements Filterable {
     _filters[Filterable.SORT] = ListSortHelper.getEnum(
       data['user']['mediaListOptions']['rowOrder'],
     );
+
+    _customListNames.clear();
+    _customListNames.addAll(List.from(metaData['customLists']));
 
     _lists.clear();
     for (final String section in metaData['sectionOrder']) {

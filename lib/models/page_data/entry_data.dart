@@ -38,7 +38,7 @@ class EntryData {
     this.completedAt,
     this.private = false,
     this.hiddenFromStatusLists = false,
-    this.customLists = const [],
+    this.customLists,
   });
 
   factory EntryData(Map<String, dynamic> map) {

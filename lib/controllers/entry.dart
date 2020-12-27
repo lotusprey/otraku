@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/models/tuple.dart';
 import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/models/page_data/entry_data.dart';
 
@@ -39,10 +41,20 @@ class Entry extends GetxController {
   Future<void> fetchEntry(int id) async {
     final body = await GraphQl.request(_entryQuery, {'id': id});
 
-    if (body == null) return null;
+    if (body == null) return;
 
     _entry = EntryData(body['Media']);
     _copy = EntryData(body['Media']);
+
+    if (_entry.customLists == null) {
+      final customLists = Get.find<Collection>(
+        tag: _entry.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
+      ).customListNames.map((e) => Tuple(e, false)).toList();
+
+      _entry.customLists = customLists;
+      _copy.customLists = [...customLists];
+    }
+
     update();
   }
 }

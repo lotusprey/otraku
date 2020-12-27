@@ -33,7 +33,7 @@ class _CheckboxFieldState extends State<CheckboxField> {
         ),
         activeColor: Theme.of(context).accentColor,
         checkColor: Theme.of(context).backgroundColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0),
         dense: true,
       );
 

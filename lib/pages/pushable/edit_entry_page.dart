@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/models/page_data/entry_data.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -209,54 +210,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           ),
                         ),
                       ),
-                      if (entry.oldData.customLists.length > 0)
-                        // TODO fix lists
-                        InputFieldStructure(
-                          enforceHeight: false,
-                          title: 'Custom Lists',
-                          body: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              for (int i = 1;
-                                  i < entry.data.customLists.length;
-                                  i += 2) ...[
-                                _Row(
-                                  CheckboxField(
-                                    title: entry.data.customLists[i - 1].item1,
-                                    initialValue:
-                                        entry.data.customLists[i - 1].item2,
-                                    onChanged: (boolean) =>
-                                        entry.data.customLists[i - 1] = entry
-                                            .data.customLists[i - 1]
-                                            .withItem2(boolean),
-                                  ),
-                                  CheckboxField(
-                                    title: entry.data.customLists[i].item1,
-                                    initialValue:
-                                        entry.data.customLists[i].item2,
-                                    onChanged: (boolean) =>
-                                        entry.data.customLists[i] = entry
-                                            .data.customLists[i]
-                                            .withItem2(boolean),
-                                  ),
-                                ),
-                              ],
-                              if (entry.data.customLists.length % 2 != 0)
-                                _Row(
-                                  CheckboxField(
-                                    title: entry.data.customLists.last.item1,
-                                    initialValue:
-                                        entry.data.customLists.last.item2,
-                                    onChanged: (boolean) =>
-                                        entry.data.customLists.last = entry
-                                            .data.customLists.last
-                                            .withItem2(boolean),
-                                  ),
-                                  null,
-                                ),
-                            ],
-                          ),
-                        ),
+                      _CustomListGrid(entry.data),
                     ],
                   ),
                 )
@@ -279,6 +233,39 @@ class _Row extends StatelessWidget {
         const SizedBox(width: 10, height: 10),
         Expanded(child: child2 ?? const SizedBox(height: 75)),
       ],
+    );
+  }
+}
+
+class _CustomListGrid extends StatelessWidget {
+  final EntryData entry;
+
+  _CustomListGrid(this.entry);
+
+  @override
+  Widget build(BuildContext context) {
+    if (entry.customLists.isEmpty) return const SizedBox();
+
+    return InputFieldStructure(
+      enforceHeight: false,
+      title: 'Custom Lists',
+      body: GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 200,
+          childAspectRatio: 4,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+        ),
+        itemBuilder: (_, index) => CheckboxField(
+          title: entry.customLists[index].item1,
+          initialValue: entry.customLists[index].item2,
+          onChanged: (val) => entry.customLists[index] =
+              entry.customLists[index].withItem2(val),
+        ),
+        itemCount: entry.customLists.length,
+      ),
     );
   }
 }

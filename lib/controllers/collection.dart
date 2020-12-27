@@ -48,6 +48,7 @@ class Collection extends GetxController implements Filterable {
               volumes
               coverImage {large}
               nextAiringEpisode {timeUntilAiring episode}
+              genres
             }
           }
         }
@@ -95,6 +96,7 @@ class Collection extends GetxController implements Filterable {
             volumes
             coverImage {large}
             nextAiringEpisode {timeUntilAiring episode}
+            genres
           }
         }
     }
@@ -385,6 +387,8 @@ class Collection extends GetxController implements Filterable {
     final formatNotIn = _filters[Filterable.FORMAT_NOT_IN];
     final statusIn = _filters[Filterable.STATUS_IN];
     final statusNotIn = _filters[Filterable.STATUS_NOT_IN];
+    final List<String> genreIn = _filters[Filterable.GENRE_IN];
+    final List<String> genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 
     final list = _lists[_listIndex()];
     final List<MediaEntry> e = [];
@@ -427,6 +431,26 @@ class Collection extends GetxController implements Filterable {
         bool isIn = false;
         for (final status in statusNotIn)
           if (entry.status == status) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      if (genreIn != null) {
+        bool isIn = false;
+        for (final genre in entry.genres)
+          if (genreIn.contains(genre)) {
+            isIn = true;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (genreNotIn != null) {
+        bool isIn = false;
+        for (final genre in entry.genres)
+          if (genreNotIn.contains(genre)) {
             isIn = true;
             break;
           }

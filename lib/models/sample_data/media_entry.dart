@@ -11,6 +11,7 @@ class MediaEntry {
   final String timeUntilAiring;
   final int createdAt;
   final int updatedAt;
+  final List<String> genres;
   int progress;
   final int progressMax;
   int progressVolumes;
@@ -31,6 +32,7 @@ class MediaEntry {
     @required this.timeUntilAiring,
     @required this.createdAt,
     @required this.updatedAt,
+    @required this.genres,
     this.progress = 0,
     this.progressMax,
     this.progressVolumes = 0,
@@ -66,5 +68,6 @@ class MediaEntry {
         notes: map['notes'],
         createdAt: map['createdAt'],
         updatedAt: map['updatedAt'],
+        genres: List.from(map['media']['genres']),
       );
 }

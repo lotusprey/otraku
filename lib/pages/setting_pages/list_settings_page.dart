@@ -36,6 +36,7 @@ class ListSettingsPage extends StatelessWidget {
               }
             },
           ),
+          const SizedBox(height: 10),
           DropDownField(
             title: 'Default List Order',
             initialValue: Get.find<UserSettings>().settings.defaultSort,
@@ -76,6 +77,7 @@ class ListSettingsPage extends StatelessWidget {
               }
             },
           ),
+          const SizedBox(height: 50),
         ],
       );
 }

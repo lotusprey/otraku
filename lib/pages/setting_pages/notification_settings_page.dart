@@ -53,7 +53,7 @@ class NotificationSettingsPage extends StatelessWidget {
 
     return ListView.builder(
       physics: Config.PHYSICS,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 50),
       itemBuilder: (_, index) => CheckboxField(
         title: _notificationNames[index],
         initialValue: values[index],

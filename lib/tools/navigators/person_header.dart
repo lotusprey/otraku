@@ -192,7 +192,7 @@ class PersonInfo extends StatelessWidget {
             if (person.description != null && person.description != '')
               InputFieldStructure(
                 title: 'Description',
-                body: GestureDetector(
+                child: GestureDetector(
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -216,7 +216,6 @@ class PersonInfo extends StatelessWidget {
                     ),
                   ),
                 ),
-                enforceHeight: false,
               ),
           ],
         ),

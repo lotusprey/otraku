@@ -4,21 +4,15 @@ class InputFieldStructure extends StatelessWidget {
   final _space = const SizedBox(height: 5);
 
   final String title;
-  final Widget body;
-  final bool enforceHeight;
-  final bool enforcePadding;
+  final Widget child;
 
   InputFieldStructure({
     @required this.title,
-    @required this.body,
-    this.enforceHeight = true,
-    this.enforcePadding = true,
+    @required this.child,
   });
 
   @override
   Widget build(BuildContext context) => Container(
-        height: enforceHeight ? 85 : null,
-        padding: enforcePadding ? const EdgeInsets.only(bottom: 10) : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +22,7 @@ class InputFieldStructure extends StatelessWidget {
               style: Theme.of(context).textTheme.subtitle1,
             ),
             _space,
-            body,
+            child,
           ],
         ),
       );

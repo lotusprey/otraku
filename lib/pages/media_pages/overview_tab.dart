@@ -67,9 +67,8 @@ class OverviewTab extends StatelessWidget {
           [
             if (overview.description != null)
               InputFieldStructure(
-                enforceHeight: false,
                 title: 'Description',
-                body: GestureDetector(
+                child: GestureDetector(
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -94,6 +93,7 @@ class OverviewTab extends StatelessWidget {
                   ),
                 ),
               ),
+            const SizedBox(height: 10),
             Text('Info', style: Theme.of(context).textTheme.subtitle1),
             const SizedBox(height: 5),
             GridView.count(
@@ -118,10 +118,8 @@ class OverviewTab extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                       ),
                       child: InputFieldStructure(
-                        enforceHeight: false,
-                        enforcePadding: false,
                         title: infoTitles[i],
-                        body: Text(
+                        child: Text(
                           infoChildren[i].toString(),
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
@@ -254,10 +252,8 @@ class _ScrollTile extends StatelessWidget {
         color: Theme.of(context).primaryColor,
       ),
       child: InputFieldStructure(
-        enforceHeight: false,
-        enforcePadding: false,
         title: title,
-        body: Flexible(
+        child: Flexible(
           child: ListView.builder(
             physics: Config.PHYSICS,
             scrollDirection: Axis.horizontal,

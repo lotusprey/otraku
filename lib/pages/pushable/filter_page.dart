@@ -111,6 +111,7 @@ class FilterPage extends StatelessWidget {
         padding: Config.PADDING,
         children: [
           _SortDropdown(collectionTag != null, changes),
+          const SizedBox(height: 10),
           if (collectionTag == null)
             DropDownField(
               title: 'List Filter',
@@ -235,7 +236,7 @@ class __SortDropdownState extends State<_SortDropdown> {
           Expanded(
             child: InputFieldStructure(
               title: 'Order',
-              body: SizedBox(
+              child: SizedBox(
                 height: Config.MATERIAL_TAP_TARGET_SIZE,
                 child: BubbleTabs(
                   options: const ['Asc', 'Desc'],

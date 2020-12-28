@@ -44,6 +44,7 @@ class AppSettingsPage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -71,6 +72,7 @@ class AppSettingsPage extends StatelessWidget {
               Config.updateTheme();
             },
           ),
+          const SizedBox(height: 50),
         ],
       );
 }

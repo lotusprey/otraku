@@ -41,7 +41,7 @@ class _DropDownFieldState<T> extends State<DropDownField> {
 
     return InputFieldStructure(
       title: widget.title,
-      body: Container(
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,

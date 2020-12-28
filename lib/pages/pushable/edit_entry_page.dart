@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/page_data/entry_data.dart';
+import 'package:otraku/models/tuple.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -28,13 +28,14 @@ class EditEntryPage extends StatefulWidget {
 
 class _EditEntryPageState extends State<EditEntryPage> {
   @override
-  Widget build(BuildContext context) => GetBuilder<Entry>(
-        builder: (entry) => Scaffold(
+  Widget build(BuildContext context) => GetBuilder<Entry>(builder: (entry) {
+        final data = entry.data;
+        return Scaffold(
           appBar: CustomAppBar(
             title: 'Edit',
             trailing: [
-              if (entry.data != null) ...[
-                if (entry.data.entryId != null)
+              if (data != null) ...[
+                if (data.entryId != null)
                   IconButton(
                     icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
                     color: Theme.of(context).dividerColor,
@@ -62,7 +63,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                               ),
                               onPressed: () {
                                 Get.find<Collection>(
-                                  tag: entry.data.type == 'ANIME'
+                                  tag: data.type == 'ANIME'
                                       ? Collection.ANIME
                                       : Collection.MANGA,
                                 ).removeEntry(entry.oldData);
@@ -81,190 +82,183 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     color: Theme.of(context).dividerColor,
                     onPressed: () {
                       Get.find<Collection>(
-                        tag: entry.data.type == 'ANIME'
+                        tag: data.type == 'ANIME'
                             ? Collection.ANIME
                             : Collection.MANGA,
-                      ).updateEntry(entry.oldData, entry.data);
+                      ).updateEntry(entry.oldData, data);
                       Navigator.of(context).pop();
-                      widget.update(entry.data.status);
+                      widget.update(data.status);
                     }),
               ],
             ],
           ),
-          body: entry.data != null
-              ? LayoutBuilder(
-                  builder: (_, constraints) => ListView(
+          body: data != null
+              ? Padding(
+                  padding: Config.PADDING,
+                  child: CustomScrollView(
                     physics: Config.PHYSICS,
-                    padding: Config.PADDING,
-                    children: [
-                      _Row(
+                    slivers: [
+                      _WidgetGrid([
                         DropDownField(
                           hint: 'Add',
                           title: 'Status',
-                          initialValue: entry.data.status,
+                          initialValue: data.status,
                           items: Map.fromIterable(
                             MediaListStatus.values,
                             key: (v) => listStatusSpecification(
-                                v, entry.data.type == 'ANIME'),
+                                v, data.type == 'ANIME'),
                             value: (v) => v,
                           ),
-                          onChanged: (status) => entry.data.status = status,
+                          onChanged: (status) => data.status = status,
                         ),
                         InputFieldStructure(
                           title: 'Progress',
-                          body: NumberField(
-                            initialValue: entry.data.progress,
-                            maxValue: entry.data.progressMax ?? 100000,
-                            update: (progress) =>
-                                entry.data.progress = progress,
+                          child: NumberField(
+                            initialValue: data.progress,
+                            maxValue: data.progressMax ?? 100000,
+                            update: (progress) => data.progress = progress,
                           ),
                         ),
-                      ),
-                      _Row(
                         InputFieldStructure(
                           title: 'Repeat',
-                          body: NumberField(
-                            initialValue: entry.data.repeat,
-                            update: (repeat) => entry.data.repeat = repeat,
+                          child: NumberField(
+                            initialValue: data.repeat,
+                            update: (repeat) => data.repeat = repeat,
                           ),
                         ),
-                        entry.data.type == 'MANGA'
-                            ? InputFieldStructure(
-                                title: 'Progress Volumes',
-                                body: NumberField(
-                                  initialValue: entry.data.progressVolumes,
-                                  maxValue:
-                                      entry.data.progressVolumesMax ?? 100000,
-                                  update: (progressVolumes) => entry
-                                      .data.progressVolumes = progressVolumes,
-                                ),
-                              )
-                            : null,
-                      ),
-                      InputFieldStructure(
-                        title: 'Score',
-                        body: ScorePicker(entry.data),
-                      ),
-                      InputFieldStructure(
-                        title: 'Notes',
-                        body: ExpandableField(
-                          text: entry.data.notes,
-                          onChanged: (notes) => entry.data.notes = notes,
+                        if (data.type != 'ANIME')
+                          InputFieldStructure(
+                            title: 'Progress Volumes',
+                            child: NumberField(
+                              initialValue: data.progressVolumes,
+                              maxValue: data.progressVolumesMax ?? 100000,
+                              update: (progressVolumes) =>
+                                  data.progressVolumes = progressVolumes,
+                            ),
+                          ),
+                      ]),
+                      const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                      SliverToBoxAdapter(
+                        child: InputFieldStructure(
+                          title: 'Score',
+                          child: ScorePicker(data),
                         ),
-                        enforceHeight: false,
                       ),
-                      if (constraints.maxWidth < 380) ...[
+                      SliverToBoxAdapter(
+                        child: InputFieldStructure(
+                          title: 'Notes',
+                          child: ExpandableField(
+                            text: data.notes,
+                            onChanged: (notes) => data.notes = notes,
+                          ),
+                        ),
+                      ),
+                      const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                      _WidgetGrid([
                         InputFieldStructure(
                           title: 'Start Date',
-                          body: DateField(
-                            date: entry.data.startedAt,
+                          child: DateField(
+                            date: data.startedAt,
                             onChanged: (startDate) =>
-                                entry.data.startedAt = startDate,
+                                data.startedAt = startDate,
                             helpText: 'Start Date',
                           ),
                         ),
                         InputFieldStructure(
                           title: 'End Date',
-                          body: DateField(
-                            date: entry.data.completedAt,
-                            onChanged: (endDate) =>
-                                entry.data.completedAt = endDate,
+                          child: DateField(
+                            date: data.completedAt,
+                            onChanged: (endDate) => data.completedAt = endDate,
                             helpText: 'End Date',
                           ),
                         ),
-                      ] else
-                        _Row(
-                          InputFieldStructure(
-                            title: 'Start Date',
-                            body: DateField(
-                              date: entry.data.startedAt,
-                              onChanged: (startDate) =>
-                                  entry.data.startedAt = startDate,
-                              helpText: 'Start Date',
-                            ),
-                          ),
-                          InputFieldStructure(
-                            title: 'End Date',
-                            body: DateField(
-                              date: entry.data.completedAt,
-                              onChanged: (endDate) =>
-                                  entry.data.completedAt = endDate,
-                              helpText: 'End Date',
-                            ),
-                          ),
-                        ),
-                      InputFieldStructure(
-                        title: 'Additional List Settings',
-                        body: _Row(
-                          CheckboxField(
-                            title: 'Private',
-                            initialValue: entry.data.private,
-                            onChanged: (private) =>
-                                entry.data.private = private,
-                          ),
-                          CheckboxField(
-                            title: 'Hide from status lists',
-                            initialValue: entry.data.hiddenFromStatusLists,
-                            onChanged: (hiddenFromStatusLists) => entry.data
-                                .hiddenFromStatusLists = hiddenFromStatusLists,
-                          ),
-                        ),
+                      ]),
+                      const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                      _Label('Additional Settings'),
+                      _CheckboxGrid(
+                        [
+                          Tuple('Private', data.private),
+                          Tuple(
+                            'Hidden From Status Lists',
+                            data.hiddenFromStatusLists,
+                          )
+                        ],
+                        (i, val) => i == 0
+                            ? data.private = val
+                            : data.hiddenFromStatusLists = val,
                       ),
-                      _CustomListGrid(entry.data),
+                      if (data.customLists.isNotEmpty) ...[
+                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                        _Label('Custom Lists'),
+                        _CheckboxGrid(
+                          data.customLists,
+                          (i, val) => data.customLists[i].item2 = val,
+                        ),
+                      ],
                     ],
                   ),
                 )
-              : const SizedBox(width: 10, height: 10),
-        ),
-      );
+              : const SizedBox(),
+        );
+      });
 }
 
-class _Row extends StatelessWidget {
-  final Widget child1;
-  final Widget child2;
+class _Label extends StatelessWidget {
+  final String label;
 
-  _Row(this.child1, this.child2);
+  _Label(this.label);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: child1),
-        const SizedBox(width: 10, height: 10),
-        Expanded(child: child2 ?? const SizedBox(height: 75)),
-      ],
+    return SliverToBoxAdapter(
+      child: Text(label, style: Theme.of(context).textTheme.subtitle1),
     );
   }
 }
 
-class _CustomListGrid extends StatelessWidget {
-  final EntryData entry;
+class _WidgetGrid extends StatelessWidget {
+  final List<Widget> list;
 
-  _CustomListGrid(this.entry);
+  _WidgetGrid(this.list);
 
   @override
   Widget build(BuildContext context) {
-    if (entry.customLists.isEmpty) return const SizedBox();
+    return SliverGrid(
+      delegate: SliverChildListDelegate.fixed(list),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        childAspectRatio: 2.5,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+      ),
+    );
+  }
+}
 
-    return InputFieldStructure(
-      enforceHeight: false,
-      title: 'Custom Lists',
-      body: GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 200,
-          childAspectRatio: 4,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
+class _CheckboxGrid extends StatelessWidget {
+  final List<Tuple<String, bool>> list;
+  final Function(int, bool) onChanged;
+
+  _CheckboxGrid(this.list, this.onChanged);
+
+  @override
+  Widget build(BuildContext context) {
+    if (list.isEmpty) return const SliverToBoxAdapter();
+
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate(
+        (_, index) => CheckboxField(
+          title: list[index].item1,
+          initialValue: list[index].item2,
+          onChanged: (val) => onChanged(index, val),
         ),
-        itemBuilder: (_, index) => CheckboxField(
-          title: entry.customLists[index].item1,
-          initialValue: entry.customLists[index].item2,
-          onChanged: (val) => entry.customLists[index] =
-              entry.customLists[index].withItem2(val),
-        ),
-        itemCount: entry.customLists.length,
+        childCount: list.length,
+      ),
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        childAspectRatio: 4.5,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
       ),
     );
   }

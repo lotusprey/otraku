@@ -17,6 +17,8 @@ class DateField extends StatefulWidget {
 }
 
 class _DateFieldState extends State<DateField> {
+  final constraints = const BoxConstraints(
+      maxWidth: 30, minHeight: Config.MATERIAL_TAP_TARGET_SIZE);
   DateTime date;
 
   @override
@@ -41,6 +43,8 @@ class _DateFieldState extends State<DateField> {
         setState(() => date = pickedDate);
         widget.onChanged(pickedDate);
       }),
+      padding: const EdgeInsets.all(0),
+      constraints: constraints,
     );
   }
 
@@ -50,6 +54,7 @@ class _DateFieldState extends State<DateField> {
           color: Theme.of(context).primaryColor,
           borderRadius: Config.BORDER_RADIUS,
         ),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: date != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -65,6 +70,8 @@ class _DateFieldState extends State<DateField> {
                       setState(() => date = null);
                       widget.onChanged(null);
                     },
+                    padding: const EdgeInsets.all(0),
+                    constraints: constraints,
                   ),
                 ],
               )

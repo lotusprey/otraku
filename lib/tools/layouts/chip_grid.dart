@@ -1,6 +1,5 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:otraku/services/config.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
@@ -55,7 +54,6 @@ class _ChipGridState extends State<ChipGrid> {
                     },
                   ),
                   backgroundColor: Colors.transparent,
-                  isScrollControlled: true,
                 ),
               ),
             ],
@@ -142,16 +140,12 @@ class _OptionSheet<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Get.mediaQuery.size.height -
-          Get.mediaQuery.viewPadding.top -
-          Get.mediaQuery.viewPadding.bottom -
-          100,
       margin: EdgeInsets.only(
         left: 20,
         right: 20,
         bottom: 10,
       ),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         borderRadius: Config.BORDER_RADIUS,

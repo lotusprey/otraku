@@ -227,7 +227,7 @@ class _WidgetGrid extends StatelessWidget {
       delegate: SliverChildListDelegate.fixed(list),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 200,
-        childAspectRatio: 2.5,
+        childAspectRatio: 170 / 70, //2.4
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
       ),

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/models/user_data.dart';
+import 'package:otraku/pages/favourites_page.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/home_page.dart';
@@ -17,8 +18,6 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 
 class UserPage extends StatelessWidget {
-  final _space = const SizedBox(width: 10);
-
   final int id;
   final String avatarUrl;
 
@@ -41,48 +40,43 @@ class UserPage extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
               sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: RaisedButton(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FluentSystemIcons.ic_fluent_movies_and_tv_regular,
-                              color: Theme.of(context).backgroundColor,
-                            ),
-                            _space,
-                            Text('Anime',
-                                style: Theme.of(context).textTheme.button),
-                          ],
+                child: Container(
+                  height: Config.MATERIAL_TAP_TARGET_SIZE,
+                  width: MediaQuery.of(context).size.width - 20,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: Config.BORDER_RADIUS,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          FluentSystemIcons.ic_fluent_movies_and_tv_filled,
+                          color: Theme.of(context).accentColor,
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = HomePage.ANIME_LIST
                             : _pushCollection(true),
                       ),
-                    ),
-                    _space,
-                    Expanded(
-                      child: RaisedButton(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              FluentSystemIcons.ic_fluent_bookmark_regular,
-                              color: Theme.of(context).backgroundColor,
-                            ),
-                            _space,
-                            Text('Manga',
-                                style: Theme.of(context).textTheme.button),
-                          ],
+                      IconButton(
+                        icon: Icon(
+                          FluentSystemIcons.ic_fluent_bookmark_filled,
+                          color: Theme.of(context).accentColor,
                         ),
                         onPressed: () => id == null
                             ? Config.pageIndex = HomePage.MANGA_LIST
                             : _pushCollection(false),
                       ),
-                    ),
-                  ],
+                      IconButton(
+                        icon: Icon(
+                          FluentSystemIcons.ic_fluent_heart_filled,
+                          color: Theme.of(context).accentColor,
+                        ),
+                        onPressed: () => Get.to(FavouritesPage(id)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

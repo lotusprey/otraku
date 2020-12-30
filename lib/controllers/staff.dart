@@ -4,7 +4,7 @@ import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/page_data/connection_list.dart';
+import 'package:otraku/models/page_data/loadable_list.dart';
 import 'package:otraku/models/page_data/person.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 
@@ -55,16 +55,16 @@ class Staff extends GetxController {
   ''';
 
   final _person = Rx<Person>();
-  final _characterList = Rx<ConnectionList>();
-  final _roleList = Rx<ConnectionList>();
+  final _characterList = Rx<LoadableList<Connection>>();
+  final _roleList = Rx<LoadableList<Connection>>();
   final _onCharacters = true.obs;
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
   Person get person => _person();
 
-  ConnectionList get characterList => _characterList();
+  LoadableList get characterList => _characterList();
 
-  ConnectionList get roleList => _roleList();
+  LoadableList get roleList => _roleList();
 
   bool get onCharacters => _onCharacters();
 
@@ -208,7 +208,7 @@ class Staff extends GetxController {
 
     if (connections.isEmpty) _onCharacters.value = false;
 
-    _characterList(ConnectionList(
+    _characterList(LoadableList(
       connections,
       data['characterMedia']['pageInfo']['hasNextPage'],
     ));
@@ -226,7 +226,7 @@ class Staff extends GetxController {
       ));
     }
 
-    _roleList(ConnectionList(
+    _roleList(LoadableList(
       connections,
       data['staffMedia']['pageInfo']['hasNextPage'],
     ));

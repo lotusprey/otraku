@@ -37,8 +37,8 @@ class StaffPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (staff.characterList.connections.isNotEmpty &&
-                          staff.roleList.connections.isNotEmpty)
+                      if (staff.characterList.items.isNotEmpty &&
+                          staff.roleList.items.isNotEmpty)
                         BubbleTabs(
                           options: const ['Characters', 'Staff Roles'],
                           values: const [true, false],
@@ -71,13 +71,13 @@ class StaffPage extends StatelessWidget {
               final connectionList =
                   staff.onCharacters ? staff.characterList : staff.roleList;
 
-              if (connectionList == null || connectionList.connections.isEmpty)
+              if (connectionList == null || connectionList.items.isEmpty)
                 return const SliverToBoxAdapter();
 
               return SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 sliver: ConnectionsGrid(
-                  connections: connectionList.connections,
+                  connections: connectionList.items,
                   loadMore: () {
                     if (connectionList.hasNextPage) staff.fetchPage();
                   },

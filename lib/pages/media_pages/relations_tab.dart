@@ -116,9 +116,9 @@ class RelationList extends StatelessWidget {
 
         if (media.relationsTab == Media.REL_CHARACTERS &&
             media.characters != null) {
-          return media.characters.connections.isNotEmpty
+          return media.characters.items.isNotEmpty
               ? ConnectionsGrid(
-                  connections: media.characters.connections,
+                  connections: media.characters.items,
                   loadMore: () {
                     if (media.characters.hasNextPage)
                       media.fetchRelationPage(true);
@@ -129,9 +129,9 @@ class RelationList extends StatelessWidget {
         }
 
         if (media.relationsTab == Media.REL_STAFF && media.staff != null) {
-          return media.staff.connections.isNotEmpty
+          return media.staff.items.isNotEmpty
               ? ConnectionsGrid(
-                  connections: media.staff.connections,
+                  connections: media.staff.items,
                   loadMore: () {
                     if (media.staff.hasNextPage) media.fetchRelationPage(false);
                   },
@@ -191,7 +191,7 @@ class RelationControls extends StatelessWidget {
               Obx(() {
                 if (media.relationsTab == Media.REL_CHARACTERS &&
                     media.characters != null &&
-                    media.characters.connections.isNotEmpty)
+                    media.characters.items.isNotEmpty)
                   return IconButton(
                     icon: const Icon(Icons.language),
                     onPressed: () => showModalBottomSheet(

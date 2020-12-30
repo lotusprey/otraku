@@ -4,7 +4,7 @@ import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/page_data/connection_list.dart';
+import 'package:otraku/models/page_data/loadable_list.dart';
 import 'package:otraku/models/page_data/person.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 
@@ -48,8 +48,8 @@ class Character extends GetxController {
   ''';
 
   final _person = Rx<Person>();
-  final _anime = Rx<ConnectionList>();
-  final _manga = Rx<ConnectionList>();
+  final _anime = Rx<LoadableList<Connection>>();
+  final _manga = Rx<LoadableList<Connection>>();
   final _onAnime = true.obs;
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
@@ -57,9 +57,9 @@ class Character extends GetxController {
 
   Person get person => _person();
 
-  ConnectionList get anime => _anime();
+  LoadableList get anime => _anime();
 
-  ConnectionList get manga => _manga();
+  LoadableList get manga => _manga();
 
   bool get onAnime => _onAnime();
 
@@ -225,7 +225,7 @@ class Character extends GetxController {
     if (!_availableLanguages.contains(_staffLanguage()))
       _staffLanguage.value = 'Japanese';
 
-    _anime(ConnectionList(
+    _anime(LoadableList(
       connections,
       data['anime']['pageInfo']['hasNextPage'],
     ));
@@ -240,7 +240,7 @@ class Character extends GetxController {
         subtitle: clarifyEnum(connection['characterRole']),
       ));
 
-    _manga(ConnectionList(
+    _manga(LoadableList(
       connections,
       data['manga']['pageInfo']['hasNextPage'],
     ));

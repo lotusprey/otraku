@@ -4,7 +4,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/models/page_data/connection_list.dart';
+import 'package:otraku/models/page_data/loadable_list.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/models/sample_data/connection.dart';
 import 'package:otraku/models/sample_data/related_media.dart';
@@ -92,8 +92,8 @@ class Media extends GetxController {
   final _relationsTab = REL_MEDIA.obs;
   final _overview = Rx<MediaOverview>();
   final _otherMedia = List<RelatedMedia>().obs;
-  final _characters = Rx<ConnectionList>();
-  final _staff = Rx<ConnectionList>();
+  final _characters = Rx<LoadableList<Connection>>();
+  final _staff = Rx<LoadableList<Connection>>();
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
 
@@ -114,9 +114,9 @@ class Media extends GetxController {
 
   List<RelatedMedia> get otherMedia => _otherMedia();
 
-  ConnectionList get characters => _characters();
+  LoadableList get characters => _characters();
 
-  ConnectionList get staff => _staff();
+  LoadableList get staff => _staff();
 
   String get staffLanguage => _staffLanguage();
 
@@ -286,7 +286,7 @@ class Media extends GetxController {
 
       if (_characters() == null)
         _characters(
-          ConnectionList(items, data['characters']['pageInfo']['hasNextPage']),
+          LoadableList(items, data['characters']['pageInfo']['hasNextPage']),
         );
       else
         _characters.update((list) =>
@@ -304,7 +304,7 @@ class Media extends GetxController {
 
       if (_staff() == null)
         _staff(
-          ConnectionList(items, data['staff']['pageInfo']['hasNextPage']),
+          LoadableList(items, data['staff']['pageInfo']['hasNextPage']),
         );
       else
         _staff.update((list) =>

@@ -28,9 +28,7 @@ class Explorer extends GetxController implements Filterable {
         onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
         startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
         source: $source, season: $season, id_not_in: $id_not_in, sort: $sort) {
-          id
-          title {userPreferred}
-          coverImage {large}
+          id title {userPreferred} coverImage {large}
         }
       }
     }
@@ -41,9 +39,7 @@ class Explorer extends GetxController implements Filterable {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
         characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
-          id
-          name {full}
-          image {large}
+          id name {full} image {large}
         }
       }
     }
@@ -54,9 +50,7 @@ class Explorer extends GetxController implements Filterable {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
         staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
-          id
-          name {full}
-          image {large}
+          id name {full} image {large}
         }
       }
     }
@@ -66,10 +60,7 @@ class Explorer extends GetxController implements Filterable {
     query Studios($page: Int, $search: String, $id_not_in: [Int]) {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
-        studios(search: $search, id_not_in: $id_not_in) {
-          id
-          name
-        }
+        studios(search: $search, id_not_in: $id_not_in) {id name}
       }
     }
   ''';
@@ -78,11 +69,7 @@ class Explorer extends GetxController implements Filterable {
     query Users($page: Int, $search: String) {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
-        users(search: $search) {
-          id
-          name
-          avatar {large}
-        }
+        users(search: $search) {id name avatar {large}}
       }
     }
   ''';

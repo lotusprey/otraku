@@ -7,9 +7,7 @@ import 'package:otraku/pages/home_page.dart';
 
 // Holds constants and configurations that
 // are utilised throughout the whole app.
-class Config {
-  Config._();
-
+class Config extends GetxController {
   static const CONTROL_HEADER_ICON_HEIGHT = 35.0;
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
@@ -25,17 +23,15 @@ class Config {
   static const DARK_THEME = 'theme2';
 
   static final storage = GetStorage();
-  static final _pageIndex = RxInt(storage.read(STARTUP_PAGE));
   static TileConfig _highTile;
   static TileConfig _squareTile;
-  static bool _hasInit = false;
+  int _pageIndex = storage.read(STARTUP_PAGE);
 
-  // Should be called as soon as possible,
-  // but with proper context.
-  static void init(BuildContext context) {
-    if (_hasInit) return;
-
-    _pageIndex.value ??= HomePage.ANIME_LIST;
+  // The dependency should be put as soon as
+  // possible, but with proper context, so
+  // that the MediaQuery can be used.
+  Config() {
+    _pageIndex ??= HomePage.ANIME_LIST;
 
     double width = (Get.mediaQuery.size.width - 40) / 3;
     if (width > 150) width = 150;
@@ -55,8 +51,13 @@ class Config {
       fit: BoxFit.contain,
       needsBackground: false,
     );
+  }
 
-    _hasInit = true;
+  get pageIndex => _pageIndex;
+
+  set pageIndex(int index) {
+    _pageIndex = index;
+    update();
   }
 
   // The first time it is called should be before the
@@ -84,10 +85,6 @@ class Config {
       );
     }
   }
-
-  static get pageIndex => _pageIndex();
-
-  static set pageIndex(int index) => _pageIndex.value = index;
 
   static TileConfig get highTile => _highTile;
 

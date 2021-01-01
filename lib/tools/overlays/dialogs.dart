@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/scrollbar_implementation.dart';
 
 class PopUpAnimation extends StatefulWidget {

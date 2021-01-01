@@ -7,7 +7,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/score_format_enum.dart';
 import 'package:otraku/enums/theme_enum.dart';
 import 'package:otraku/models/sample_data/media_entry.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';

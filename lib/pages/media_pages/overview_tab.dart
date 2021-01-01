@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
@@ -290,7 +290,7 @@ class _GenreLink extends StatelessWidget {
         );
         explorable.setFilterWithKey(Filterable.GENRE_IN, value: [name]);
         explorable.type = type;
-        Config.pageIndex = HomePage.EXPLORE;
+        Get.find<Config>().pageIndex = HomePage.EXPLORE;
         Get.until((route) => route.isFirst);
       },
       onLongPress: () => Clipboard.setData(ClipboardData(text: name)),

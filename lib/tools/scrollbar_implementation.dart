@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 
 class ScrollbarImplementation extends StatelessWidget {
   final Widget child;

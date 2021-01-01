@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/sample_data/connection.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/models/transparent_image.dart';
 

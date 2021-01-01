@@ -6,7 +6,7 @@ import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/controllers/page_item.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 

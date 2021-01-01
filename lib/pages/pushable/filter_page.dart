@@ -11,7 +11,7 @@ import 'package:otraku/enums/manga_format_enum.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/enums/media_status_enum.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';

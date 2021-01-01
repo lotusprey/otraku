@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 
 enum Themes {
   light_blue,

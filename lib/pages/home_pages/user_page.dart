@@ -10,7 +10,7 @@ import 'package:otraku/pages/favourites_page.dart';
 import 'package:otraku/pages/pushable/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/home_page.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home_pages/collection_page.dart';
 import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/tools/custom_drawer.dart';
@@ -56,7 +56,7 @@ class UserPage extends StatelessWidget {
                           color: Theme.of(context).accentColor,
                         ),
                         onPressed: () => id == null
-                            ? Config.pageIndex = HomePage.ANIME_LIST
+                            ? Get.find<Config>().pageIndex = HomePage.ANIME_LIST
                             : _pushCollection(true),
                       ),
                       IconButton(
@@ -65,7 +65,7 @@ class UserPage extends StatelessWidget {
                           color: Theme.of(context).accentColor,
                         ),
                         onPressed: () => id == null
-                            ? Config.pageIndex = HomePage.MANGA_LIST
+                            ? Get.find<Config>().pageIndex = HomePage.MANGA_LIST
                             : _pushCollection(false),
                       ),
                       IconButton(

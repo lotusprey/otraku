@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/tools/loader.dart';

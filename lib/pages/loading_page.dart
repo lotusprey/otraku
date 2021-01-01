@@ -7,13 +7,13 @@ import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
 
 class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Config.init(context);
+    Get.put(Config());
 
     GraphQl.logIn().then((loggedIn) {
       if (!loggedIn)

@@ -2,7 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/media_pages/overview_tab.dart';
 import 'package:otraku/pages/media_pages/relations_tab.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';

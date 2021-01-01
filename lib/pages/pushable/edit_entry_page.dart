@@ -5,7 +5,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/media_list_status_enum.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';

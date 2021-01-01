@@ -6,7 +6,7 @@ import 'package:otraku/pages/home_pages/explore_page.dart';
 import 'package:otraku/pages/home_pages/collection_page.dart';
 import 'package:otraku/pages/home_pages/inbox_page.dart';
 import 'package:otraku/pages/home_pages/user_page.dart';
-import 'package:otraku/services/config.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/custom_drawer.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 
@@ -45,8 +45,8 @@ class HomePage extends StatelessWidget {
       const SizedBox(),
     ];
 
-    return Obx(
-      () => Scaffold(
+    return GetBuilder<Config>(
+      builder: (config) => Scaffold(
         extendBody: true,
         drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
         bottomNavigationBar: CustomNavBar(
@@ -57,16 +57,16 @@ class HomePage extends StatelessWidget {
             Icons.explore_outlined,
             FluentSystemIcons.ic_fluent_person_regular,
           ],
-          onChanged: (page) => Config.pageIndex = page,
-          initial: Config.pageIndex,
-          getIndex: () => Config.pageIndex,
+          onChanged: (page) => config.pageIndex = page,
+          initial: config.pageIndex,
+          getIndex: () => config.pageIndex,
         ),
-        drawer: drawers[Config.pageIndex],
+        drawer: drawers[config.pageIndex],
         body: SafeArea(
           bottom: false,
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            child: tabs[Config.pageIndex],
+            child: tabs[config.pageIndex],
           ),
         ),
       ),

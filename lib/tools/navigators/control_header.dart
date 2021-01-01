@@ -428,9 +428,7 @@ class __FilterState extends State<_Filter> {
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([
         Filterable.STATUS_IN,
-        Filterable.STATUS_NOT_IN,
         Filterable.FORMAT_IN,
-        Filterable.FORMAT_NOT_IN,
         Filterable.GENRE_IN,
         Filterable.GENRE_NOT_IN,
         Filterable.TAG_IN,

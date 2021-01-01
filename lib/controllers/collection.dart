@@ -384,9 +384,7 @@ class Collection extends GetxController implements Filterable {
   void filter() {
     final search = (_filters[Filterable.SEARCH] as String)?.toLowerCase();
     final formatIn = _filters[Filterable.FORMAT_IN];
-    final formatNotIn = _filters[Filterable.FORMAT_NOT_IN];
     final statusIn = _filters[Filterable.STATUS_IN];
-    final statusNotIn = _filters[Filterable.STATUS_NOT_IN];
     final List<String> genreIn = _filters[Filterable.GENRE_IN];
     final List<String> genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 
@@ -407,16 +405,6 @@ class Collection extends GetxController implements Filterable {
         if (!isIn) continue;
       }
 
-      if (formatNotIn != null) {
-        bool isIn = false;
-        for (final format in formatNotIn)
-          if (entry.format == format) {
-            isIn = true;
-            break;
-          }
-        if (isIn) continue;
-      }
-
       if (statusIn != null) {
         bool isIn = false;
         for (final status in statusIn)
@@ -425,16 +413,6 @@ class Collection extends GetxController implements Filterable {
             break;
           }
         if (!isIn) continue;
-      }
-
-      if (statusNotIn != null) {
-        bool isIn = false;
-        for (final status in statusNotIn)
-          if (entry.status == status) {
-            isIn = true;
-            break;
-          }
-        if (isIn) continue;
       }
 
       if (genreIn != null) {
@@ -482,9 +460,7 @@ class Collection extends GetxController implements Filterable {
   @override
   void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
         Filterable.STATUS_IN,
-        Filterable.STATUS_NOT_IN,
         Filterable.FORMAT_IN,
-        Filterable.FORMAT_NOT_IN,
         Filterable.GENRE_IN,
         Filterable.GENRE_NOT_IN,
       ], update: update);

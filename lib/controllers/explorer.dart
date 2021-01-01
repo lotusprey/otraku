@@ -130,7 +130,6 @@ class Explorer extends GetxController implements Filterable {
     if (value == Browsable.manga) _filters[Filterable.TYPE] = 'MANGA';
 
     _filters.remove(Filterable.FORMAT_IN);
-    _filters.remove(Filterable.FORMAT_NOT_IN);
     fetchData();
   }
 
@@ -165,9 +164,7 @@ class Explorer extends GetxController implements Filterable {
   @override
   void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
         Filterable.STATUS_IN,
-        Filterable.STATUS_NOT_IN,
         Filterable.FORMAT_IN,
-        Filterable.FORMAT_NOT_IN,
         Filterable.GENRE_IN,
         Filterable.GENRE_NOT_IN,
         Filterable.TAG_IN,

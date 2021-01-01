@@ -24,6 +24,7 @@ class _ChipFieldState extends State<ChipField> {
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () {
+          if (widget.onChanged == null) return;
           setState(() => _isPositive = !_isPositive);
           widget.onChanged(_isPositive);
         },

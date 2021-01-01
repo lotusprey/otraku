@@ -45,14 +45,8 @@ class FilterPage extends StatelessWidget {
     changes[Filterable.STATUS_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.STATUS_IN) ?? [],
     );
-    changes[Filterable.STATUS_NOT_IN] = List<String>.from(
-      filterable.getFilterWithKey(Filterable.STATUS_NOT_IN) ?? [],
-    );
     changes[Filterable.FORMAT_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.FORMAT_IN) ?? [],
-    );
-    changes[Filterable.FORMAT_NOT_IN] = List<String>.from(
-      filterable.getFilterWithKey(Filterable.FORMAT_NOT_IN) ?? [],
     );
     changes[Filterable.GENRE_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.GENRE_IN) ?? [],
@@ -131,7 +125,6 @@ class FilterPage extends StatelessWidget {
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
             inclusive: changes[Filterable.STATUS_IN],
-            exclusive: changes[Filterable.STATUS_NOT_IN],
           ),
           ChipGrid(
             title: 'Format',
@@ -147,7 +140,6 @@ class FilterPage extends StatelessWidget {
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
                 : MangaFormat.values.map((f) => describeEnum(f)).toList(),
             inclusive: changes[Filterable.FORMAT_IN],
-            exclusive: changes[Filterable.FORMAT_NOT_IN],
           ),
           ChipGrid(
             title: 'Genres',

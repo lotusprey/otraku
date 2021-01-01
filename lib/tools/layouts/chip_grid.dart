@@ -65,29 +65,52 @@ class _ChipGridState extends State<ChipGrid> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(widget.title, style: Theme.of(context).textTheme.subtitle1),
-            IconButton(
-              icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_filled),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                builder: (_) => _OptionSheet(
-                  options: widget.options,
-                  values: widget.values,
-                  inclusive: [...widget.inclusive],
-                  exclusive:
-                      widget.exclusive != null ? [...widget.exclusive] : null,
-                  onDone: (inclusive, exclusive) {
-                    setState(() {
+            Row(
+              children: [
+                if (list.length > 0)
+                  GestureDetector(
+                    onTap: () => setState(() {
                       widget.inclusive.clear();
-                      for (final i in inclusive) widget.inclusive.add(i);
-                      if (widget.exclusive != null) {
-                        widget.exclusive.clear();
-                        for (final e in exclusive) widget.exclusive.add(e);
-                      }
-                    });
-                  },
+                      widget.exclusive?.clear();
+                    }),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).disabledColor,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        color: Theme.of(context).backgroundColor,
+                        size: Styles.ICON_SMALLER,
+                      ),
+                    ),
+                  ),
+                IconButton(
+                  icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_filled),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => _OptionSheet(
+                      options: widget.options,
+                      values: widget.values,
+                      inclusive: [...widget.inclusive],
+                      exclusive: widget.exclusive != null
+                          ? [...widget.exclusive]
+                          : null,
+                      onDone: (inclusive, exclusive) {
+                        setState(() {
+                          widget.inclusive.clear();
+                          for (final i in inclusive) widget.inclusive.add(i);
+                          if (widget.exclusive != null) {
+                            widget.exclusive.clear();
+                            for (final e in exclusive) widget.exclusive.add(e);
+                          }
+                        });
+                      },
+                    ),
+                    backgroundColor: Colors.transparent,
+                  ),
                 ),
-                backgroundColor: Colors.transparent,
-              ),
+              ],
             ),
           ],
         ),

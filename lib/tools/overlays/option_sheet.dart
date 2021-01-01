@@ -43,8 +43,8 @@ class OptionSheet extends StatelessWidget {
                       : Theme.of(context).textTheme.bodyText2,
                 ),
                 trailing: Container(
-                  height: 20,
-                  width: 20,
+                  height: 25,
+                  width: 25,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: i != index

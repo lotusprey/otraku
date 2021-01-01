@@ -99,14 +99,14 @@ packages:
       name: get
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.23.1"
+    version: "3.24.0"
   get_storage:
     dependency: "direct main"
     description:
       name: get_storage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.2"
+    version: "1.4.0"
   http:
     dependency: "direct main"
     description:

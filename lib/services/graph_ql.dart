@@ -105,20 +105,21 @@ class GraphQl {
       return;
     }
 
-    if (!apiErr.isNull &&
+    if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
       Get.offAll(AuthPage());
       return;
     }
 
-    final text = !ioErr.isNull ? ioErr.toString() : apiErr.join('\n');
+    final text = ioErr?.toString() ?? apiErr.join('\n');
 
     Get.defaultDialog(
       radius: 5,
       backgroundColor: Get.theme.backgroundColor,
       titleStyle: Get.theme.textTheme.headline3,
-      title: ioErr.isNull ? 'A query error occured' : 'A request error occured',
+      title:
+          ioErr == null ? 'A query error occured' : 'A request error occured',
       content: Text(text, style: Get.theme.textTheme.bodyText1),
       actions: [
         FlatButton(

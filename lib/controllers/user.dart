@@ -43,6 +43,9 @@ class User extends GetxController {
       fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
     ''';
 
+  static const _toggleFollow =
+      r'''mutation FollowUser($id: Int) {ToggleFollow(userId: $id) {isFollowing}}''';
+
   static const ANIME_FAV = 0;
   static const MANGA_FAV = 1;
   static const CHARACTER_FAV = 2;
@@ -80,6 +83,10 @@ class User extends GetxController {
     if (_favsIndex == STAFF_FAV) return 'Staff';
     return 'Studios';
   }
+
+  // ***************************************************************************
+  // FETCHING
+  // ***************************************************************************
 
   Future<void> fetchUser(int id) async {
     final data = await GraphQl.request(_userQuery, {
@@ -146,6 +153,17 @@ class User extends GetxController {
     _loading = false;
     update();
   }
+
+  Future<void> toggleFollow() async {
+    final data = await GraphQl.request(_toggleFollow, {'id': _user.id});
+    if (data == null) return;
+    _user.toggleFollow(data['ToggleFollow']);
+    update();
+  }
+
+  // ***************************************************************************
+  // HELPER FUNCTIONS
+  // ***************************************************************************
 
   void _appendMediaFavs(
     Map<String, dynamic> data,

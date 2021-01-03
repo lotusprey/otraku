@@ -4,7 +4,7 @@ class UserData {
   final String description;
   final String avatar;
   final String banner;
-  final bool following;
+  bool _following;
   final bool follower;
   final bool blocked;
   final bool isMe;
@@ -15,11 +15,13 @@ class UserData {
     this.description,
     this.avatar,
     this.banner,
-    this.following,
+    amFollowing,
     this.follower,
     this.blocked,
     this.isMe = false,
-  });
+  }) {
+    _following = amFollowing;
+  }
 
   factory UserData(Map<String, dynamic> map, bool me) => UserData._(
         id: map['id'],
@@ -27,9 +29,14 @@ class UserData {
         description: map['about'],
         avatar: map['avatar']['large'],
         banner: map['bannerImage'],
-        following: map['isFollowing'],
+        amFollowing: map['isFollowing'],
         follower: map['isFollower'],
         blocked: map['isBlocked'],
         isMe: me,
       );
+
+  bool get following => _following;
+
+  void toggleFollow(Map<String, dynamic> map) =>
+      _following = map['isFollowing'];
 }

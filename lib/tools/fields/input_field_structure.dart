@@ -12,18 +12,16 @@ class InputFieldStructure extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Container(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            _space,
-            child,
-          ],
-        ),
+  Widget build(BuildContext context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+          _space,
+          child,
+        ],
       );
 }

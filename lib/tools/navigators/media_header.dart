@@ -14,7 +14,6 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
   final MediaOverview overview;
   final double coverWidth;
   final double coverHeight;
-  final double minHeight = Config.MATERIAL_TAP_TARGET_SIZE;
   final double maxHeight;
   final String imageUrl;
 
@@ -205,7 +204,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
   double get maxExtent => maxHeight;
 
   @override
-  double get minExtent => minHeight;
+  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;

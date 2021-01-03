@@ -191,7 +191,8 @@ class RelationControls extends StatelessWidget {
               Obx(() {
                 if (media.relationsTab == Media.REL_CHARACTERS &&
                     media.characters != null &&
-                    media.characters.items.isNotEmpty)
+                    media.characters.items.isNotEmpty &&
+                    media.availableLanguages.length > 1)
                   return IconButton(
                     icon: const Icon(Icons.language),
                     onPressed: () => showModalBottomSheet(

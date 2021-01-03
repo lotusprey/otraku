@@ -5,10 +5,14 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/loadable_list.dart';
-import 'package:otraku/models/page_data/person.dart';
-import 'package:otraku/models/sample_data/connection.dart';
+import 'package:otraku/models/anilist/person.dart';
+import 'package:otraku/models/connection.dart';
 
 class Staff extends GetxController {
+  // ***************************************************************************
+  // CONSTANTS
+  // ***************************************************************************
+
   static const _staffQuery = r'''
     query Staff($id: Int, $sort: [MediaSort], $characterPage: Int = 1, $staffPage: Int = 1, 
         $onList: Boolean, $withPerson: Boolean = false, $withCharacters: Boolean = false, $withStaff: Boolean = false) {
@@ -54,6 +58,18 @@ class Staff extends GetxController {
     }
   ''';
 
+  static const _toggleFavouriteMutation = r'''
+    mutation ToggleFavouriteStaff($id: Int) {
+      ToggleFavourite(staffId: $id) {
+        staff(page: 1, perPage: 1) {pageInfo {currentPage}}
+      }
+    }
+  ''';
+
+  // ***************************************************************************
+  // DATA
+  // ***************************************************************************
+
   final _person = Rx<Person>();
   final _characterList = Rx<LoadableList<Connection>>();
   final _roleList = Rx<LoadableList<Connection>>();
@@ -76,6 +92,10 @@ class Staff extends GetxController {
     _sort = value;
     refetch();
   }
+
+  // ***************************************************************************
+  // FETCHING
+  // ***************************************************************************
 
   Future<void> fetchStaff(int id) async {
     if (_person.value != null) return;
@@ -182,6 +202,18 @@ class Staff extends GetxController {
           connections, data['staffMedia']['pageInfo']['hasNextPage']));
     }
   }
+
+  Future<bool> toggleFavourite() async =>
+      await GraphQl.request(
+        _toggleFavouriteMutation,
+        {'id': _person().id},
+        popOnError: false,
+      ) !=
+      null;
+
+  // ***************************************************************************
+  // HELPER FUNCTIONS
+  // ***************************************************************************
 
   void _initLists(Map<String, dynamic> data) {
     List<Connection> connections = [];

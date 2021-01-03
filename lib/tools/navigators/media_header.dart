@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/entry.dart';
-import 'package:otraku/controllers/page_item.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
@@ -16,6 +15,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
   final double coverHeight;
   final double maxHeight;
   final String imageUrl;
+  final Future<bool> Function() toggleFavourite;
 
   MediaHeader({
     @required this.overview,
@@ -23,6 +23,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
     @required this.coverHeight,
     @required this.maxHeight,
     @required this.imageUrl,
+    @required this.toggleFavourite,
   });
 
   @override
@@ -138,7 +139,11 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 _EditButton(overview, true),
-                                _FavouriteButton(overview, true),
+                                _FavouriteButton(
+                                  overview,
+                                  true,
+                                  toggleFavourite,
+                                ),
                               ],
                             ),
                           ),
@@ -186,7 +191,7 @@ class MediaHeader implements SliverPersistentHeaderDelegate {
                               ),
                             ),
                             _EditButton(overview, false),
-                            _FavouriteButton(overview, false),
+                            _FavouriteButton(overview, false, toggleFavourite),
                           ],
                         ),
                       ),
@@ -267,8 +272,9 @@ class __EditButtonState extends State<_EditButton> {
 class _FavouriteButton extends StatefulWidget {
   final MediaOverview overview;
   final bool full;
+  final Future<bool> Function() toggle;
 
-  _FavouriteButton(this.overview, this.full);
+  _FavouriteButton(this.overview, this.full, this.toggle);
 
   @override
   __FavouriteButtonState createState() => __FavouriteButtonState();
@@ -292,13 +298,9 @@ class __FavouriteButtonState extends State<_FavouriteButton> {
         : IconButton(icon: icon, onPressed: onPressed);
   }
 
-  void onPressed() => PageItem.toggleFavourite(
-        widget.overview.id,
-        widget.overview.browsable,
-      ).then((ok) {
-        if (ok)
-          setState(
-            () => widget.overview.isFavourite = !widget.overview.isFavourite,
-          );
-      });
+  void onPressed() => widget.toggle().then((ok) => ok
+      ? setState(
+          () => widget.overview.isFavourite = !widget.overview.isFavourite,
+        )
+      : null);
 }

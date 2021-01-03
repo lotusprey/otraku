@@ -5,10 +5,14 @@ import 'package:otraku/enums/browsable_enum.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/loadable_list.dart';
-import 'package:otraku/models/page_data/person.dart';
-import 'package:otraku/models/sample_data/connection.dart';
+import 'package:otraku/models/anilist/person.dart';
+import 'package:otraku/models/connection.dart';
 
 class Character extends GetxController {
+  // ***************************************************************************
+  // CONSTANTS
+  // ***************************************************************************
+
   static const _characterQuery = r'''
     query Character($id: Int, $sort: [MediaSort], $animePage: Int = 1, $mangaPage: Int = 1, 
         $onList: Boolean, $withPerson: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
@@ -31,21 +35,23 @@ class Character extends GetxController {
       pageInfo {hasNextPage}
       edges {
         characterRole
-        voiceActors(sort: [LANGUAGE]) {
-          id
-          name {full}
-          image {large}
-          language
-        }
-        node {
-          id
-          type
-          title {userPreferred}
-          coverImage {large}
-        }
+        voiceActors(sort: [LANGUAGE]) {id name {full} image {large} language}
+        node {id type title {userPreferred} coverImage {large}}
       }
     }
   ''';
+
+  static const _toggleFavouriteMutation = r'''
+    mutation ToggleFavouriteCharacter($id: Int) {
+      ToggleFavourite(characterId: $id) {
+        characters(page: 1, perPage: 1) {pageInfo {currentPage}}
+      }
+    }
+  ''';
+
+  // ***************************************************************************
+  // DATA
+  // ***************************************************************************
 
   final _person = Rx<Person>();
   final _anime = Rx<LoadableList<Connection>>();
@@ -83,6 +89,10 @@ class Character extends GetxController {
     _sort = value;
     refetch();
   }
+
+  // ***************************************************************************
+  // FETCHING
+  // ***************************************************************************
 
   Future<void> fetchCharacter(int id) async {
     if (_person.value != null) return;
@@ -190,6 +200,18 @@ class Character extends GetxController {
       });
     }
   }
+
+  Future<bool> toggleFavourite() async =>
+      await GraphQl.request(
+        _toggleFavouriteMutation,
+        {'id': _person().id},
+        popOnError: false,
+      ) !=
+      null;
+
+  // ***************************************************************************
+  // HELPER FUNCTIONS
+  // ***************************************************************************
 
   void _initLists(Map<String, dynamic> data) {
     _availableLanguages.clear();

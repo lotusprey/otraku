@@ -24,7 +24,11 @@ class CharacterPage extends StatelessWidget {
         child: CustomScrollView(
           physics: Config.PHYSICS,
           slivers: [
-            Obx(() => PersonHeader(character.person, imageUrlTag)),
+            Obx(() => PersonHeader(
+                  character.person,
+                  imageUrlTag,
+                  character.toggleFavourite,
+                )),
             Obx(() {
               if (character.person == null) return const SliverToBoxAdapter();
               return PersonInfo(character.person);

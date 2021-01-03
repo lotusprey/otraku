@@ -6,9 +6,13 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort_enum.dart';
 import 'package:otraku/models/page_data/page_object.dart';
 import 'package:otraku/models/page_data/studio_connection_list.dart';
-import 'package:otraku/models/sample_data/browse_result.dart';
+import 'package:otraku/models/tile_data.dart';
 
 class Studio extends GetxController {
+  // ***************************************************************************
+  // CONSTANTS
+  // ***************************************************************************
+
   static const _studioQuery = r'''
     query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $isMain: Boolean, $onList: Boolean, $withStudio: Boolean = false) {
       Studio(id: $id) {
@@ -32,6 +36,18 @@ class Studio extends GetxController {
     }
   ''';
 
+  static const _toggleFavouriteMutation = r'''
+    mutation ToggleFavouriteStudio($id: Int) {
+      ToggleFavourite(studioId: $id) {
+        studios(page: 1, perPage: 1) {pageInfo {currentPage}}
+      }
+    }
+  ''';
+
+  // ***************************************************************************
+  // DATA
+  // ***************************************************************************
+
   final _company = Rx<PageObject>();
   final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
@@ -46,6 +62,10 @@ class Studio extends GetxController {
     _sort = value;
     refetch();
   }
+
+  // ***************************************************************************
+  // FETCHING
+  // ***************************************************************************
 
   Future<void> fetchStudio(int id) async {
     if (_company.value != null) return;
@@ -95,7 +115,7 @@ class Studio extends GetxController {
     final data = body['Studio']['media'];
 
     List<String> categories = [];
-    List<List<BrowseResult>> results = [];
+    List<List<TileData>> results = [];
     for (final node in data['nodes']) {
       final String category =
           (node['startDate']['year'] ?? clarifyEnum(node['status'])).toString();
@@ -105,7 +125,7 @@ class Studio extends GetxController {
         results.add([]);
       }
 
-      results.last.add(BrowseResult(
+      results.last.add(TileData(
         id: node['id'],
         title: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],
@@ -120,6 +140,18 @@ class Studio extends GetxController {
         ));
   }
 
+  Future<bool> toggleFavourite() async =>
+      await GraphQl.request(
+        _toggleFavouriteMutation,
+        {'id': _company().id},
+        popOnError: false,
+      ) !=
+      null;
+
+  // ***************************************************************************
+  // HELPER FUNCTIONS
+  // ***************************************************************************
+
   void _initLists(Map<String, dynamic> data) {
     final List<dynamic> nodes = data['nodes'];
     if (nodes.isEmpty) {
@@ -128,7 +160,7 @@ class Studio extends GetxController {
     }
 
     List<String> categories = [];
-    List<List<BrowseResult>> results = [];
+    List<List<TileData>> results = [];
     for (final node in nodes) {
       final String category =
           (node['startDate']['year'] ?? clarifyEnum(node['status'])).toString();
@@ -138,7 +170,7 @@ class Studio extends GetxController {
         results.add([]);
       }
 
-      results.last.add(BrowseResult(
+      results.last.add(TileData(
         id: node['id'],
         title: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],

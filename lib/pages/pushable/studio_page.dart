@@ -46,7 +46,11 @@ class StudioPage extends StatelessWidget {
               slivers: [
                 SliverPersistentHeader(
                   pinned: true,
-                  delegate: _StudioHeader(studio.company, textTag),
+                  delegate: _StudioHeader(
+                    studio.company,
+                    textTag,
+                    studio.toggleFavourite,
+                  ),
                 ),
                 if (studio.company != null) ...[
                   SliverToBoxAdapter(
@@ -144,8 +148,9 @@ class StudioPage extends StatelessWidget {
 class _StudioHeader implements SliverPersistentHeaderDelegate {
   final PageObject company;
   final String textTag;
+  final Future<bool> Function() toggleFavourite;
 
-  _StudioHeader(this.company, this.textTag);
+  _StudioHeader(this.company, this.textTag, this.toggleFavourite);
 
   @override
   Widget build(
@@ -196,7 +201,12 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
                   color: Theme.of(context).dividerColor,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                if (company != null) FavoriteButton(company, shrinkPercentage)
+                if (company != null)
+                  FavoriteButton(
+                    company,
+                    shrinkPercentage,
+                    toggleFavourite,
+                  )
               ],
             ),
           ),

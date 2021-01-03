@@ -23,7 +23,11 @@ class StaffPage extends StatelessWidget {
         child: CustomScrollView(
           physics: Config.PHYSICS,
           slivers: [
-            Obx(() => PersonHeader(staff.person, imageUrlTag)),
+            Obx(() => PersonHeader(
+                  staff.person,
+                  imageUrlTag,
+                  staff.toggleFavourite,
+                )),
             Obx(() {
               if (staff.person == null) return const SliverToBoxAdapter();
               return PersonInfo(staff.person);

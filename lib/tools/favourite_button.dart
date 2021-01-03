@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/page_data/page_object.dart';
-import 'package:otraku/controllers/page_item.dart';
 
 class FavoriteButton extends StatefulWidget {
   final PageObject data;
   final double shrinkPercentage;
+  final Future<bool> Function() toggle;
 
-  FavoriteButton(this.data, this.shrinkPercentage);
+  FavoriteButton(this.data, this.shrinkPercentage, this.toggle);
 
   @override
   _FavoriteButtonState createState() => _FavoriteButtonState();
@@ -31,13 +31,11 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             widget.data.isFavourite ? Icons.favorite : Icons.favorite_border,
             color: Theme.of(context).dividerColor,
           ),
-          onPressed: () =>
-              PageItem.toggleFavourite(widget.data.id, widget.data.browsable)
-                  .then((ok) {
-            if (ok)
-              setState(
-                  () => widget.data.isFavourite = !widget.data.isFavourite);
-          }),
+          onPressed: () => widget.toggle().then((ok) => ok
+              ? setState(
+                  () => widget.data.isFavourite = !widget.data.isFavourite,
+                )
+              : null),
         ),
       ],
     );

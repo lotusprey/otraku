@@ -41,13 +41,13 @@ class MediaPage extends StatelessWidget {
             Obx(
               () => SliverPersistentHeader(
                 pinned: true,
-                floating: false,
                 delegate: MediaHeader(
                   overview: media.overview,
                   coverWidth: coverWidth,
                   coverHeight: coverHeight,
                   maxHeight: bannerHeight,
                   imageUrl: tagImageUrl,
+                  toggleFavourite: media.toggleFavourite,
                 ),
               ),
             ),

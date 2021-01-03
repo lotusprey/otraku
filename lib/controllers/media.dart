@@ -6,11 +6,15 @@ import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/services/graph_ql.dart';
 import 'package:otraku/models/page_data/loadable_list.dart';
 import 'package:otraku/models/page_data/media_overview.dart';
-import 'package:otraku/models/sample_data/connection.dart';
-import 'package:otraku/models/sample_data/related_media.dart';
+import 'package:otraku/models/connection.dart';
+import 'package:otraku/models/anilist/related_media.dart';
 import 'package:otraku/models/tuple.dart';
 
 class Media extends GetxController {
+  // ***************************************************************************
+  // CONSTANTS
+  // ***************************************************************************
+
   static const _mediaQuery = r'''
     query Media($id: Int, $withMain: Boolean = false, $withCharacters: Boolean = false, 
         $withStaff: Boolean = false, $characterPage: Int = 1, $staffPage: Int = 1) {
@@ -81,12 +85,32 @@ class Media extends GetxController {
     }
   ''';
 
+  static const _toggleFavouriteAnimeMutation = r'''
+    mutation ToggleFavouriteAnime($id: Int) {
+      ToggleFavourite(animeId: $id) {
+        anime(page: 1, perPage: 1) {pageInfo {currentPage}}
+      }
+    }
+  ''';
+
+  static const _toggleFavouriteMangaMutation = r'''
+    mutation ToggleFavouriteManga($id: Int) {
+      ToggleFavourite(mangaId: $id) {
+        manga(page: 1, perPage: 1) {pageInfo {currentPage}}
+      }
+    }
+  ''';
+
   static const OVERVIEW = 0;
   static const RELATIONS = 1;
   static const SOCIAL = 2;
   static const REL_MEDIA = 0;
   static const REL_CHARACTERS = 1;
   static const REL_STAFF = 2;
+
+  // ***************************************************************************
+  // DATA
+  // ***************************************************************************
 
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
@@ -129,6 +153,10 @@ class Media extends GetxController {
   }
 
   List<String> get availableLanguages => [..._availableLanguages];
+
+  // ***************************************************************************
+  // FETCHING
+  // ***************************************************************************
 
   Future<void> fetchOverview(int id) async {
     if (_overview.value != null) return;
@@ -311,4 +339,14 @@ class Media extends GetxController {
             list.append(items, data['staff']['pageInfo']['hasNextPage']));
     }
   }
+
+  Future<bool> toggleFavourite() async =>
+      await GraphQl.request(
+        _overview().browsable == Browsable.anime
+            ? _toggleFavouriteAnimeMutation
+            : _toggleFavouriteMangaMutation,
+        {'id': _overview().id},
+        popOnError: false,
+      ) !=
+      null;
 }

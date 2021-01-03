@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/models/page_data/person.dart';
+import 'package:otraku/models/anilist/person.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -9,8 +9,9 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 class PersonHeader extends StatelessWidget {
   final Person person;
   final String imageUrlTag;
+  final Future<bool> Function() toggleFavourite;
 
-  PersonHeader(this.person, this.imageUrlTag);
+  PersonHeader(this.person, this.imageUrlTag, this.toggleFavourite);
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +19,12 @@ class PersonHeader extends StatelessWidget {
 
     return SliverPersistentHeader(
       pinned: true,
-      floating: false,
       delegate: _PersonHeader(
         person: person,
         coverWidth: coverWidth,
         coverHeight: coverWidth / 0.7,
         imageUrlTag: imageUrlTag,
+        toggleFavourite: toggleFavourite,
       ),
     );
   }
@@ -34,12 +35,14 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
   final double coverWidth;
   final double coverHeight;
   final String imageUrlTag;
+  final Future<bool> Function() toggleFavourite;
 
   _PersonHeader({
     @required this.person,
     @required this.coverWidth,
     @required this.coverHeight,
     @required this.imageUrlTag,
+    @required this.toggleFavourite,
   });
 
   @override
@@ -128,7 +131,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                           ),
                         ),
                       ),
-                    FavoriteButton(person, shrinkPercentage),
+                    FavoriteButton(person, shrinkPercentage, toggleFavourite),
                   ] else
                     const SizedBox(),
                 ],

@@ -2,11 +2,11 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/score_format_enum.dart';
-import 'package:otraku/enums/theme_enum.dart';
-import 'package:otraku/models/sample_data/media_entry.dart';
+import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/enums/themes.dart';
+import 'package:otraku/models/anilist/media_list_data.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/browse_indexer.dart';
@@ -73,7 +73,7 @@ class MediaList extends StatelessWidget {
 class _MediaListTile extends StatelessWidget {
   final _space = const SizedBox(height: 5);
 
-  final MediaEntry media;
+  final MediaListData media;
   final String scoreFormat;
 
   _MediaListTile(this.media, this.scoreFormat);

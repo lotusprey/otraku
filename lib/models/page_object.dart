@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 
 class PageObject {
   final int id;

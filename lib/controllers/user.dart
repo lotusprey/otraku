@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/models/page_data/loadable_list.dart';
-import 'package:otraku/models/sample_data/browse_result.dart';
+import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/tile_data.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/models/user_data.dart';
+import 'package:otraku/models/anilist/user_data.dart';
 
 class User extends GetxController {
   static const _userQuery = r'''
@@ -56,16 +56,16 @@ class User extends GetxController {
   int _favsIndex = ANIME_FAV;
   bool _loading = true;
   final _favourites = [
-    LoadableList<BrowseResult>([], true),
-    LoadableList<BrowseResult>([], true),
-    LoadableList<BrowseResult>([], true),
-    LoadableList<BrowseResult>([], true),
-    LoadableList<BrowseResult>([], true),
+    LoadableList<TileData>([], true),
+    LoadableList<TileData>([], true),
+    LoadableList<TileData>([], true),
+    LoadableList<TileData>([], true),
+    LoadableList<TileData>([], true),
   ];
 
   UserData get data => _user;
 
-  List<BrowseResult> get favourites => _favourites[_favsIndex].items;
+  List<TileData> get favourites => _favourites[_favsIndex].items;
 
   int get favsIndex => _favsIndex;
 
@@ -170,9 +170,9 @@ class User extends GetxController {
     int page,
     Browsable browsable,
   ) {
-    final List<BrowseResult> items = [];
+    final List<TileData> items = [];
     for (final node in data['nodes'])
-      items.add(BrowseResult(
+      items.add(TileData(
         id: node['id'],
         title: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],
@@ -186,9 +186,9 @@ class User extends GetxController {
     int page,
     Browsable browsable,
   ) {
-    final List<BrowseResult> items = [];
+    final List<TileData> items = [];
     for (final node in data['nodes'])
-      items.add(BrowseResult(
+      items.add(TileData(
         id: node['id'],
         title: node['name']['full'],
         imageUrl: node['image']['large'],
@@ -198,9 +198,9 @@ class User extends GetxController {
   }
 
   void _appendStudioFavs(Map<String, dynamic> data) {
-    final List<BrowseResult> items = [];
+    final List<TileData> items = [];
     for (final node in data['nodes'])
-      items.add(BrowseResult(
+      items.add(TileData(
         id: node['id'],
         title: node['name'],
         browsable: Browsable.studio,

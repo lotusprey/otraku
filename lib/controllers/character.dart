@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/page_data/loadable_list.dart';
+import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/anilist/person.dart';
 import 'package:otraku/models/connection.dart';
 

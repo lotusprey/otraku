@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/models/page_data/entry_data.dart';
+import 'package:otraku/models/anilist/media_entry_data.dart';
 
 class Entry extends GetxController {
   static const _entryQuery = r'''
@@ -31,20 +31,20 @@ class Entry extends GetxController {
     }
   ''';
 
-  EntryData _entry;
-  EntryData _copy;
+  MediaEntryData _entry;
+  MediaEntryData _copy;
 
-  EntryData get data => _entry;
+  MediaEntryData get data => _entry;
 
-  EntryData get oldData => _copy;
+  MediaEntryData get oldData => _copy;
 
   Future<void> fetchEntry(int id) async {
     final body = await GraphQl.request(_entryQuery, {'id': id});
 
     if (body == null) return;
 
-    _entry = EntryData(body['Media']);
-    _copy = EntryData(body['Media']);
+    _entry = MediaEntryData(body['Media']);
+    _copy = MediaEntryData(body['Media']);
 
     if (_entry.customLists == null) {
       final customLists = Get.find<Collection>(

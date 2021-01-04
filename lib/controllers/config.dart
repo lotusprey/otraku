@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tile_config.dart';
 import 'package:otraku/pages/home_page.dart';
 

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/models/tuple.dart';
 
-class EntryData {
+class MediaEntryData {
   final int mediaId;
   final int entryId;
   final String type;
-  MediaListStatus status;
+  ListStatus status;
   int progress;
   final int progressMax;
   int progressVolumes;
@@ -22,7 +22,7 @@ class EntryData {
   bool hiddenFromStatusLists;
   List<Tuple<String, bool>> customLists;
 
-  EntryData._({
+  MediaEntryData._({
     @required this.mediaId,
     @required this.type,
     this.entryId,
@@ -41,9 +41,9 @@ class EntryData {
     this.customLists,
   });
 
-  factory EntryData(Map<String, dynamic> map) {
+  factory MediaEntryData(Map<String, dynamic> map) {
     if (map['mediaListEntry'] == null) {
-      return EntryData._(
+      return MediaEntryData._(
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
@@ -58,13 +58,13 @@ class EntryData {
       }
     }
 
-    return EntryData._(
+    return MediaEntryData._(
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
       status: stringToEnum(
         map['mediaListEntry']['status'],
-        MediaListStatus.values,
+        ListStatus.values,
       ),
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],

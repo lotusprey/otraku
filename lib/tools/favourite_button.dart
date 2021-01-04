@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/page_data/page_object.dart';
+import 'package:otraku/models/page_object.dart';
 
 class FavoriteButton extends StatefulWidget {
   final PageObject data;

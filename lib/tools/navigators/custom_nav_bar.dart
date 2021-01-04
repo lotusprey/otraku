@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/enums/themes.dart';
 
 class CustomNavBar extends StatefulWidget {
   final List<IconData> icons;

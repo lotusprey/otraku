@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/models/sample_data/browse_result.dart';
+import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/models/tile_data.dart';
 import 'package:otraku/models/tile_config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/browse_tile.dart';
 
 class TileGrid extends StatelessWidget {
-  final List<BrowseResult> results;
+  final List<TileData> results;
   final Function loadMore;
   final TileConfig tile;
 
@@ -54,7 +54,7 @@ class TileGrid extends StatelessWidget {
 }
 
 class TitleList extends StatelessWidget {
-  final List<BrowseResult> results;
+  final List<TileData> results;
   final Function loadMore;
 
   TitleList(this.results, this.loadMore);

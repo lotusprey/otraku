@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 
-class BrowseResult {
+class TileData {
   final int id;
   final String title;
   final String imageUrl;
   final Browsable browsable;
 
-  BrowseResult({
+  TileData({
     @required this.id,
     @required this.title,
     @required this.browsable,

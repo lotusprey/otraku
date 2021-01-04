@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/models/page_data/loadable_list.dart';
-import 'package:otraku/models/page_data/media_overview.dart';
+import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/models/anilist/related_media.dart';
 import 'package:otraku/models/tuple.dart';
@@ -223,7 +223,7 @@ class Media extends GetxController {
       entryStatus: data['mediaListEntry'] != null
           ? stringToEnum(
               data['mediaListEntry']['status'].toString(),
-              MediaListStatus.values,
+              ListStatus.values,
             )
           : null,
       nextEpisode: data['nextAiringEpisode'] != null

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/page_data/page_object.dart';
+import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/models/page_object.dart';
 import 'package:otraku/models/tuple.dart';
 
 class MediaOverview extends PageObject {
@@ -16,7 +16,7 @@ class MediaOverview extends PageObject {
   final String description;
   final String format;
   final String status;
-  MediaListStatus entryStatus;
+  ListStatus entryStatus;
   final int nextEpisode;
   final String timeUntilAiring;
   final int episodes;

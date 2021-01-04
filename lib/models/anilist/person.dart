@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import 'page_object.dart';
+import '../page_object.dart';
 
 class Person extends PageObject {
   final String fullName;

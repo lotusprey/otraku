@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/enums/themes.dart';
 
 enum ScoreFormat {
   POINT_100,

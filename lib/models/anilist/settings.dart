@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/enums/score_format_enum.dart';
+import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/score_format.dart';
 
 class Settings {
   final ScoreFormat scoreFormat;

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/models/settings.dart';
+import 'package:otraku/models/anilist/settings.dart';
 
 class UserSettings extends GetxController {
   static const _settingsQuery = r'''

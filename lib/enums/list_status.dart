@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-enum MediaListStatus {
+enum ListStatus {
   CURRENT,
   PLANNING,
   COMPLETED,
@@ -10,15 +10,15 @@ enum MediaListStatus {
 }
 
 //An enum clarification function
-String listStatusSpecification(MediaListStatus status, bool isAnime) {
-  if (status == MediaListStatus.CURRENT) {
+String listStatusSpecification(ListStatus status, bool isAnime) {
+  if (status == ListStatus.CURRENT) {
     if (isAnime) {
       return 'Watching';
     }
     return 'Reading';
   }
 
-  if (status == MediaListStatus.REPEATING) {
+  if (status == ListStatus.REPEATING) {
     if (isAnime) {
       return 'Rewatching';
     }

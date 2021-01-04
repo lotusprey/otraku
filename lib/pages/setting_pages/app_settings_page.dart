@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';

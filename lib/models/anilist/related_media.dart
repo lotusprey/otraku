@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/enums/browsable_enum.dart';
-import 'package:otraku/models/sample_data/browse_result.dart';
+import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/models/tile_data.dart';
 
-class RelatedMedia extends BrowseResult {
+class RelatedMedia extends TileData {
   final String relationType;
   final String format;
   final String status;

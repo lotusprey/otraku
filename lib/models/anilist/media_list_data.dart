@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/models/date_time_mapping.dart';
 
-class MediaEntry {
+class MediaListData {
   final int mediaId;
   final String title;
   final String cover;
@@ -22,7 +22,7 @@ class MediaEntry {
   DateTime startDate;
   DateTime endDate;
 
-  MediaEntry._({
+  MediaListData._({
     @required this.mediaId,
     @required this.title,
     @required this.cover,
@@ -44,7 +44,7 @@ class MediaEntry {
     this.endDate,
   });
 
-  factory MediaEntry(Map<String, dynamic> map) => MediaEntry._(
+  factory MediaListData(Map<String, dynamic> map) => MediaListData._(
         mediaId: map['mediaId'],
         title: map['media']['title']['userPreferred'],
         cover: map['media']['coverImage']['large'],

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/entry.dart';
-import 'package:otraku/models/page_data/media_overview.dart';
+import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';

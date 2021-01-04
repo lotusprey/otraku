@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/enums/score_format_enum.dart';
+import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
 

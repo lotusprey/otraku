@@ -1,6 +1,6 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';

@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/services/graph_ql.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/models/page_data/page_object.dart';
-import 'package:otraku/models/page_data/studio_connection_list.dart';
+import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/models/page_object.dart';
+import 'package:otraku/models/studio_connection_list.dart';
 import 'package:otraku/models/tile_data.dart';
 
 class Studio extends GetxController {

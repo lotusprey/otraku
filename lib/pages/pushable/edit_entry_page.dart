@@ -4,7 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/tuple.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
@@ -19,7 +19,7 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 
 class EditEntryPage extends StatefulWidget {
   final int mediaId;
-  final Function(MediaListStatus) update;
+  final Function(ListStatus) update;
 
   EditEntryPage(this.mediaId, this.update);
 
@@ -105,7 +105,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                           title: 'Status',
                           initialValue: data.status,
                           items: Map.fromIterable(
-                            MediaListStatus.values,
+                            ListStatus.values,
                             key: (v) => listStatusSpecification(
                                 v, data.type == 'ANIME'),
                             value: (v) => v,

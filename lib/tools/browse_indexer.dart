@@ -7,7 +7,7 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/enums/browsable_enum.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/media_page.dart';

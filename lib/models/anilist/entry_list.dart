@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
-import 'package:otraku/models/sample_data/media_entry.dart';
+import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/models/anilist/media_list_data.dart';
 
 class EntryList {
   final String name;
-  final MediaListStatus status;
+  final ListStatus status;
   final bool isCustomList;
   final String splitCompletedListFormat;
-  final List<MediaEntry> entries;
+  final List<MediaListData> entries;
 
   EntryList._({
     @required this.name,
@@ -20,14 +20,14 @@ class EntryList {
   });
 
   factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
-    List<MediaEntry> entries = [];
-    for (final e in map['entries']) entries.add(MediaEntry(e));
+    List<MediaListData> entries = [];
+    for (final e in map['entries']) entries.add(MediaListData(e));
 
     return EntryList._(
       name: map['name'],
       isCustomList: map['isCustomList'],
       status: !map['isCustomList']
-          ? stringToEnum(map['status'], MediaListStatus.values)
+          ? stringToEnum(map['status'], ListStatus.values)
           : null,
       splitCompletedListFormat:
           splitCompleted && !map['isCustomList'] && map['status'] == 'COMPLETED'
@@ -38,7 +38,7 @@ class EntryList {
   }
 
   void sort(final ListSort sorting) {
-    int Function(MediaEntry, MediaEntry) fn;
+    int Function(MediaListData, MediaListData) fn;
 
     switch (sorting) {
       case ListSort.TITLE:

@@ -6,9 +6,9 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/enums/media_sort_enum.dart';
-import 'package:otraku/enums/theme_enum.dart';
+import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/services/filterable.dart';
 
 class SortSheet extends StatelessWidget {

@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/list_sort_enum.dart';
-import 'package:otraku/enums/media_list_status_enum.dart';
+import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/models/entry_list.dart';
-import 'package:otraku/models/page_data/entry_data.dart';
-import 'package:otraku/models/sample_data/media_entry.dart';
+import 'package:otraku/models/anilist/entry_list.dart';
+import 'package:otraku/models/anilist/media_entry_data.dart';
+import 'package:otraku/models/anilist/media_list_data.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/services/graph_ql.dart';
 
@@ -65,7 +65,7 @@ class Collection extends GetxController implements Filterable {
   ''';
 
   static const _updateEntryMutation = r'''
-    mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
+    mutation UpdateEntry($mediaId: Int, $status: ListStatus,
         $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
         $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
         $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
@@ -113,7 +113,7 @@ class Collection extends GetxController implements Filterable {
   final int userId;
   final bool ofAnime;
   final _lists = List<EntryList>();
-  final _entries = List<MediaEntry>().obs;
+  final _entries = List<MediaListData>().obs;
   final _listIndex = 0.obs;
   final Map<String, dynamic> _filters = {};
   final _fetching = false.obs;
@@ -145,7 +145,7 @@ class Collection extends GetxController implements Filterable {
     filter();
   }
 
-  List<MediaEntry> get entries => _entries();
+  List<MediaListData> get entries => _entries();
 
   String get currentName => _lists[_listIndex()].name;
 
@@ -171,7 +171,7 @@ class Collection extends GetxController implements Filterable {
   }
 
   // ***************************************************************************
-  // DATA FETCHING
+  // FETCHING
   // ***************************************************************************
 
   Future<void> fetch() async {
@@ -225,13 +225,14 @@ class Collection extends GetxController implements Filterable {
     _fetching.value = false;
   }
 
-  Future<void> updateEntry(EntryData oldEntry, EntryData newEntry) async {
+  Future<void> updateEntry(
+      MediaEntryData oldEntry, MediaEntryData newEntry) async {
     // Update database item
     final List<String> oldCustomLists =
         oldEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
     final List<String> newCustomLists =
         newEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
-    newEntry.status ??= MediaListStatus.CURRENT;
+    newEntry.status ??= ListStatus.CURRENT;
 
     final data = await GraphQl.request(
       _updateEntryMutation,
@@ -253,7 +254,7 @@ class Collection extends GetxController implements Filterable {
 
     if (data == null) return;
 
-    final entry = MediaEntry(data['SaveMediaListEntry']);
+    final entry = MediaListData(data['SaveMediaListEntry']);
 
     // Update the status lists. If the list in which the
     // entry was moved to isn't present locally, refetch.
@@ -338,7 +339,7 @@ class Collection extends GetxController implements Filterable {
     filter();
   }
 
-  Future<void> removeEntry(EntryData entry) async {
+  Future<void> removeEntry(MediaEntryData entry) async {
     final data = await GraphQl.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
@@ -389,7 +390,7 @@ class Collection extends GetxController implements Filterable {
     final List<String> genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 
     final list = _lists[_listIndex()];
-    final List<MediaEntry> e = [];
+    final List<MediaListData> e = [];
 
     for (final entry in list.entries) {
       if (search != null && !entry.title.toLowerCase().contains(search))

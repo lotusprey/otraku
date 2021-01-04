@@ -7,7 +7,7 @@ import 'package:otraku/models/anilist/entry_list.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 import 'package:otraku/models/anilist/media_list_data.dart';
 import 'package:otraku/services/filterable.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 
 class Collection extends GetxController implements Filterable {
   // ***************************************************************************
@@ -176,10 +176,10 @@ class Collection extends GetxController implements Filterable {
 
   Future<void> fetch() async {
     _fetching.value = true;
-    Map<String, dynamic> data = await GraphQl.request(
+    Map<String, dynamic> data = await Network.request(
       _collectionQuery,
       {
-        'userId': userId ?? GraphQl.viewerId,
+        'userId': userId ?? Network.viewerId,
         'type': ofAnime ? 'ANIME' : 'MANGA',
       },
       popOnError: userId != null,
@@ -234,7 +234,7 @@ class Collection extends GetxController implements Filterable {
         newEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
     newEntry.status ??= ListStatus.CURRENT;
 
-    final data = await GraphQl.request(
+    final data = await Network.request(
       _updateEntryMutation,
       {
         'mediaId': newEntry.mediaId,
@@ -340,7 +340,7 @@ class Collection extends GetxController implements Filterable {
   }
 
   Future<void> removeEntry(MediaEntryData entry) async {
-    final data = await GraphQl.request(
+    final data = await Network.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
       popOnError: false,

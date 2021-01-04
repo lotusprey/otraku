@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -35,7 +35,7 @@ class _AuthPageState extends State<AuthPage> {
         final String accessToken = link.substring(start, end);
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
-        GraphQl.accessToken = accessToken;
+        Network.accessToken = accessToken;
         Get.offAll(LoadingPage(), transition: Transition.fadeIn);
       },
       onError: (error) => print('error: $error'),

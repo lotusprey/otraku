@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
@@ -16,7 +16,7 @@ class FavouritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<User>(
-      tag: id?.toString() ?? GraphQl.viewerId.toString(),
+      tag: id?.toString() ?? Network.viewerId.toString(),
       builder: (user) => Scaffold(
         extendBody: true,
         bottomNavigationBar: CustomNavBar(
@@ -51,6 +51,7 @@ class FavouritesPage extends StatelessWidget {
                         style: Theme.of(context).textTheme.subtitle1),
                   ),
                 ),
+              const SliverToBoxAdapter(child: SizedBox(height: 60)),
             ],
           ),
         ),

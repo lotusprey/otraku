@@ -39,6 +39,7 @@ class BrowseTile extends StatelessWidget {
                   image: imageUrl,
                   fadeInDuration: Config.FADE_DURATION,
                   fit: tile.fit,
+                  imageErrorBuilder: (_, err, stackTrace) => const SizedBox(),
                 ),
               ),
             ),

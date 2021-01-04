@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:otraku/models/anilist/settings.dart';
 
 class UserSettings extends GetxController {
@@ -67,7 +67,7 @@ class UserSettings extends GetxController {
   }
 
   Future<void> fetchSettings() async {
-    final data = await GraphQl.request(_settingsQuery, null, popOnError: false);
+    final data = await Network.request(_settingsQuery, null, popOnError: false);
 
     if (data == null) return;
 
@@ -76,7 +76,7 @@ class UserSettings extends GetxController {
   }
 
   Future<Settings> updateSettings(Map<String, dynamic> variables) async {
-    final data = await GraphQl.request(_settingsMutation, variables);
+    final data = await Network.request(_settingsMutation, variables);
 
     if (data == null) return null;
 

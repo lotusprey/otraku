@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/models/tuple.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 
 class Entry extends GetxController {
@@ -39,7 +39,7 @@ class Entry extends GetxController {
   MediaEntryData get oldData => _copy;
 
   Future<void> fetchEntry(int id) async {
-    final body = await GraphQl.request(_entryQuery, {'id': id});
+    final body = await Network.request(_entryQuery, {'id': id});
 
     if (body == null) return;
 

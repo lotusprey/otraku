@@ -6,7 +6,7 @@ import 'package:otraku/controllers/user_settings.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
 
@@ -15,14 +15,14 @@ class LoadingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(Config());
 
-    GraphQl.logIn().then((loggedIn) {
+    Network.logIn().then((loggedIn) {
       if (!loggedIn)
         Get.offAll(AuthPage(), transition: Transition.fadeIn);
       else
-        GraphQl.initViewerId().then((_) {
+        Network.initViewerId().then((_) {
           Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
           Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
-          Get.put(User(), tag: GraphQl.viewerId.toString()).fetchUser(null);
+          Get.put(User(), tag: Network.viewerId.toString()).fetchUser(null);
           Get.put(Explorer()).fetchInitial();
           Get.put(UserSettings()).fetchSettings();
 

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
@@ -97,7 +97,7 @@ class Character extends GetxController {
   Future<void> fetchCharacter(int id) async {
     if (_person.value != null) return;
 
-    final body = await GraphQl.request(_characterQuery, {
+    final body = await Network.request(_characterQuery, {
       'id': id,
       'withPerson': true,
       'withAnime': true,
@@ -131,7 +131,7 @@ class Character extends GetxController {
   }
 
   Future<void> refetch() async {
-    final body = await GraphQl.request(_characterQuery, {
+    final body = await Network.request(_characterQuery, {
       'id': _person().id,
       'withAnime': true,
       'withManga': true,
@@ -144,7 +144,7 @@ class Character extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    final body = await GraphQl.request(_characterQuery, {
+    final body = await Network.request(_characterQuery, {
       'id': _person().id,
       'withAnime': _onAnime(),
       'withManga': !_onAnime(),
@@ -202,7 +202,7 @@ class Character extends GetxController {
   }
 
   Future<bool> toggleFavourite() async =>
-      await GraphQl.request(
+      await Network.request(
         _toggleFavouriteMutation,
         {'id': _person().id},
         popOnError: false,

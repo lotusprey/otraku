@@ -8,7 +8,6 @@ import 'package:otraku/pages/home_page.dart';
 // Holds constants and configurations that
 // are utilised throughout the whole app.
 class Config extends GetxController {
-  static const CONTROL_HEADER_ICON_HEIGHT = 35.0;
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = Radius.circular(5);

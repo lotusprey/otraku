@@ -7,7 +7,7 @@ import 'package:otraku/pages/home_pages/collection_page.dart';
 import 'package:otraku/pages/home_pages/inbox_page.dart';
 import 'package:otraku/pages/home_pages/user_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/custom_drawer.dart';
+import 'package:otraku/tools/navigators/custom_drawer.dart';
 import 'package:otraku/tools/navigators/custom_nav_bar.dart';
 
 class HomePage extends StatelessWidget {

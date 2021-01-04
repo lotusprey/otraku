@@ -29,7 +29,7 @@ class _BubbleTabsState extends State<BubbleTabs> {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: Config.CONTROL_HEADER_ICON_HEIGHT,
+        height: 35,
         child: ListView.builder(
           shrinkWrap: widget.shrinkWrap,
           scrollDirection: Axis.horizontal,

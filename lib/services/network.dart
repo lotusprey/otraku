@@ -8,8 +8,8 @@ import 'package:http/http.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/auth_page.dart';
 
-class GraphQl {
-  GraphQl._();
+class Network {
+  Network._();
 
   static const String _url = 'https://graphql.anilist.co';
 
@@ -123,7 +123,7 @@ class GraphQl {
       content: Text(text, style: Get.theme.textTheme.bodyText1),
       actions: [
         FlatButton(
-          child: Text('OK', style: Get.theme.textTheme.bodyText2),
+          child: Text('SAD', style: Get.theme.textTheme.bodyText2),
           onPressed: Get.back,
         ),
       ],

@@ -29,63 +29,69 @@ class BrowseIndexer extends StatelessWidget {
     @required this.child,
   });
 
+  static void openPage({
+    @required int id,
+    @required String tag,
+    @required Browsable browsable,
+  }) {
+    switch (browsable) {
+      case Browsable.anime:
+      case Browsable.manga:
+        Get.to(
+          MediaPage(id, tag),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<Media>(tag: id.toString()))
+              Get.put(Media(), tag: id.toString()).fetchOverview(id);
+          }),
+          preventDuplicates: false,
+        );
+        return;
+      case Browsable.character:
+        Get.to(
+          CharacterPage(id, tag),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<Character>(tag: id.toString()))
+              Get.put(Character(), tag: id.toString()).fetchCharacter(id);
+          }),
+        );
+        return;
+      case Browsable.staff:
+        Get.to(
+          StaffPage(id, tag),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<Staff>(tag: id.toString()))
+              Get.put(Staff(), tag: id.toString()).fetchStaff(id);
+          }),
+        );
+        return;
+      case Browsable.studio:
+        Get.to(
+          StudioPage(id, tag),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<Studio>(tag: id.toString()))
+              Get.put(Studio(), tag: id.toString()).fetchStudio(id);
+          }),
+        );
+        return;
+      case Browsable.user:
+        Get.to(
+          TabPage(UserPage(id, tag)),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<User>(tag: id.toString()))
+              Get.put(User(), tag: id.toString()).fetchUser(id);
+          }),
+        );
+        return;
+      default:
+        return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () {
-        switch (browsable) {
-          case Browsable.anime:
-          case Browsable.manga:
-            Get.to(
-              MediaPage(id, tag),
-              binding: BindingsBuilder(() {
-                if (!Get.isRegistered<Media>(tag: id.toString()))
-                  Get.put(Media(), tag: id.toString()).fetchOverview(id);
-              }),
-              preventDuplicates: false,
-            );
-            return;
-          case Browsable.character:
-            Get.to(
-              CharacterPage(id, tag),
-              binding: BindingsBuilder(() {
-                if (!Get.isRegistered<Character>(tag: id.toString()))
-                  Get.put(Character(), tag: id.toString()).fetchCharacter(id);
-              }),
-            );
-            return;
-          case Browsable.staff:
-            Get.to(
-              StaffPage(id, tag),
-              binding: BindingsBuilder(() {
-                if (!Get.isRegistered<Staff>(tag: id.toString()))
-                  Get.put(Staff(), tag: id.toString()).fetchStaff(id);
-              }),
-            );
-            return;
-          case Browsable.studio:
-            Get.to(
-              StudioPage(id, tag),
-              binding: BindingsBuilder(() {
-                if (!Get.isRegistered<Studio>(tag: id.toString()))
-                  Get.put(Studio(), tag: id.toString()).fetchStudio(id);
-              }),
-            );
-            return;
-          case Browsable.user:
-            Get.to(
-              TabPage(UserPage(id, tag)),
-              binding: BindingsBuilder(() {
-                if (!Get.isRegistered<User>(tag: id.toString()))
-                  Get.put(User(), tag: id.toString()).fetchUser(id);
-              }),
-            );
-            return;
-          default:
-            return;
-        }
-      },
+      onTap: () => openPage(id: id, tag: tag, browsable: browsable),
       onLongPress: () {
         if (browsable == Browsable.anime || browsable == Browsable.manga)
           Get.to(

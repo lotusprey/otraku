@@ -14,8 +14,6 @@ import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class OverviewTab extends StatelessWidget {
-  final _space = const SizedBox(height: 10);
-
   final MediaOverview overview;
 
   OverviewTab(this.overview);
@@ -60,13 +58,13 @@ class OverviewTab extends StatelessWidget {
       overview.countryOfOrigin,
     ];
 
-    return SliverPadding(
-      padding: Config.PADDING,
-      sliver: SliverList(
-        delegate: SliverChildListDelegate(
-          [
-            if (overview.description != null)
-              InputFieldStructure(
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [
+          if (overview.description != null)
+            Padding(
+              padding: Config.PADDING,
+              child: InputFieldStructure(
                 title: 'Description',
                 child: GestureDetector(
                   child: Container(
@@ -93,225 +91,196 @@ class OverviewTab extends StatelessWidget {
                   ),
                 ),
               ),
-            const SizedBox(height: 10),
-            Text('Info', style: Theme.of(context).textTheme.subtitle1),
-            const SizedBox(height: 5),
-            GridView.count(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(0),
-              physics: NeverScrollableScrollPhysics(),
-              semanticChildCount: infoTitles.length,
-              crossAxisCount: tileCount,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: tileAspectRatio,
-              children: [
-                for (int i = 0; i < infoChildren.length; i++)
-                  if (infoChildren[i] != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: Config.BORDER_RADIUS,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      child: InputFieldStructure(
-                        title: infoTitles[i],
-                        child: Text(
-                          infoChildren[i].toString(),
-                          style: Theme.of(context).textTheme.bodyText1,
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: InputFieldStructure(
+              title: 'Info',
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(0),
+                semanticChildCount: infoTitles.length,
+                crossAxisCount: tileCount,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                childAspectRatio: tileAspectRatio,
+                children: [
+                  for (int i = 0; i < infoChildren.length; i++)
+                    if (infoChildren[i] != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: Config.BORDER_RADIUS,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        child: InputFieldStructure(
+                          title: infoTitles[i],
+                          child: Text(
+                            infoChildren[i].toString(),
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
                         ),
                       ),
-                    ),
-              ],
+                ],
+              ),
             ),
-            if (overview.genres != null && overview.genres.isNotEmpty) ...[
-              _space,
-              _ScrollTile(
-                title: 'Genres',
-                builder: (index) =>
-                    _GenreLink(overview.genres[index], overview.browsable),
-                itemCount: overview.genres.length,
+          ),
+          if (overview.genres != null && overview.genres.isNotEmpty)
+            _ScrollCards(
+              title: 'Genres',
+              items: overview.genres,
+              onTap: (index) {
+                final explorable = Get.find<Explorer>();
+                explorable.search = null;
+                explorable.clearAllFilters(update: false);
+                explorable.setFilterWithKey(
+                  Filterable.SORT,
+                  value: describeEnum(MediaSort.TRENDING_DESC),
+                );
+                explorable.setFilterWithKey(
+                  Filterable.GENRE_IN,
+                  value: [overview.genres[index]],
+                );
+                explorable.type = overview.browsable;
+                Get.find<Config>().pageIndex = HomePage.EXPLORE;
+                Get.until((route) => route.isFirst);
+              },
+              onLongTap: (index) => Clipboard.setData(
+                ClipboardData(text: overview.genres[index]),
               ),
-            ],
-            if (overview.studios != null &&
-                overview.studios.item1.isNotEmpty) ...[
-              _space,
-              _ScrollTile(
-                title: 'Studios',
-                builder: (index) => _StudioLink(
-                  overview.studios.item1[index],
-                  overview.studios.item2[index],
-                ),
-                itemCount: overview.studios.item1.length,
+            ),
+          if (overview.studios != null && overview.studios.isNotEmpty)
+            _ScrollCards(
+              title: 'Studios',
+              items: overview.studios.keys.toList(),
+              onTap: (index) => BrowseIndexer.openPage(
+                id: overview.studios[overview.studios.keys.elementAt(index)],
+                tag: overview.studios.keys.elementAt(index),
+                browsable: Browsable.studio,
               ),
-            ],
-            if (overview.producers != null &&
-                overview.producers.item1.isNotEmpty) ...[
-              _space,
-              _ScrollTile(
-                title: 'Producers',
-                builder: (index) => _StudioLink(
-                  overview.producers.item1[index],
-                  overview.producers.item2[index],
-                ),
-                itemCount: overview.producers.item1.length,
+            ),
+          if (overview.producers != null && overview.producers.isNotEmpty)
+            _ScrollCards(
+              title: 'Producers',
+              items: overview.producers.keys.toList(),
+              onTap: (index) => BrowseIndexer.openPage(
+                id: overview
+                    .producers[overview.producers.keys.elementAt(index)],
+                tag: overview.producers.keys.elementAt(index),
+                browsable: Browsable.studio,
               ),
-            ],
-            if (overview.romajiTitle != null) ...[
-              _space,
-              _ScrollTile(
-                title: 'Romaji',
-                builder: (_) => GestureDetector(
-                  child: Text(
-                    overview.romajiTitle,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  onLongPress: () => Clipboard.setData(
-                    ClipboardData(text: overview.romajiTitle),
-                  ),
-                ),
-                itemCount: 1,
-              ),
-            ],
-            if (overview.englishTitle != null) ...[
-              _space,
-              _ScrollTile(
-                title: 'English',
-                builder: (_) => GestureDetector(
-                  child: Text(
-                    overview.englishTitle,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  onLongPress: () => Clipboard.setData(
-                    ClipboardData(text: overview.englishTitle),
-                  ),
-                ),
-                itemCount: 1,
-              ),
-            ],
-            if (overview.nativeTitle != null) ...[
-              _space,
-              _ScrollTile(
-                title: 'Native',
-                builder: (_) => GestureDetector(
-                  child: Text(
-                    overview.nativeTitle,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  onLongPress: () => Clipboard.setData(
-                    ClipboardData(text: overview.nativeTitle),
-                  ),
-                ),
-                itemCount: 1,
-              ),
-            ],
-            if (overview.synonyms != null && overview.synonyms.isNotEmpty) ...[
-              _space,
-              _ScrollTile(
-                title: 'Synonyms',
-                builder: (index) => GestureDetector(
-                  child: Text(
-                    overview.synonyms[index],
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  onLongPress: () => Clipboard.setData(
-                    ClipboardData(text: overview.synonyms[index]),
-                  ),
-                ),
-                itemCount: overview.synonyms.length,
-              ),
-            ],
-          ],
-        ),
+            ),
+          const SizedBox(height: 10),
+          if (overview.romajiTitle != null)
+            _Tiles('Romaji', [overview.romajiTitle]),
+          if (overview.englishTitle != null)
+            _Tiles('English', [overview.englishTitle]),
+          if (overview.nativeTitle != null)
+            _Tiles('Native', [overview.nativeTitle]),
+          if (overview.synonyms != null && overview.synonyms.isNotEmpty)
+            _Tiles('Synonyms', overview.synonyms),
+        ],
       ),
     );
   }
 }
 
-class _ScrollTile extends StatelessWidget {
+class _ScrollCards extends StatelessWidget {
   final String title;
-  final Widget Function(int) builder;
-  final int itemCount;
+  final List<String> items;
+  final Function(int) onTap;
+  final Function(int) onLongTap;
 
-  _ScrollTile({
+  _ScrollCards({
     @required this.title,
-    @required this.builder,
-    @required this.itemCount,
+    @required this.items,
+    @required this.onTap,
+    this.onLongTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 55,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: Config.BORDER_RADIUS,
-        color: Theme.of(context).primaryColor,
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ),
+          SizedBox(
+            height: 40,
+            child: ListView.builder(
+              padding: const EdgeInsets.only(left: 10),
+              physics: Config.PHYSICS,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (_, index) => GestureDetector(
+                onTap: () => onTap(index),
+                onLongPress: () => onLongTap?.call(index),
+                child: Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  padding: Config.PADDING,
+                  decoration: BoxDecoration(
+                    borderRadius: Config.BORDER_RADIUS,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  child: Text(
+                    items[index],
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                ),
+              ),
+              itemCount: items.length,
+            ),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _Tiles extends StatelessWidget {
+  final String title;
+  final List<String> items;
+
+  _Tiles(this.title, this.items);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: InputFieldStructure(
         title: title,
-        child: Flexible(
-          child: ListView.builder(
-            physics: Config.PHYSICS,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (_, index) {
-              if (index % 2 == 0) {
-                return builder(index ~/ 2);
-              }
-              return Text(', ', style: Theme.of(context).textTheme.bodyText1);
-            },
-            itemCount: itemCount * 2 - 1,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(0),
+          shrinkWrap: true,
+          physics: Config.PHYSICS,
+          itemBuilder: (_, index) => GestureDetector(
+            onTap: () => Clipboard.setData(ClipboardData(text: items[index])),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: Config.PADDING,
+              decoration: BoxDecoration(
+                borderRadius: Config.BORDER_RADIUS,
+                color: Theme.of(context).primaryColor,
+              ),
+              child: Text(
+                items[index],
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
           ),
+          itemCount: items.length,
         ),
       ),
-    );
-  }
-}
-
-class _GenreLink extends StatelessWidget {
-  final String name;
-  final Browsable type;
-
-  _GenreLink(this.name, this.type);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        final explorable = Get.find<Explorer>();
-        explorable.search = null;
-        explorable.clearAllFilters(update: false);
-        explorable.setFilterWithKey(
-          Filterable.SORT,
-          value: describeEnum(MediaSort.TRENDING_DESC),
-        );
-        explorable.setFilterWithKey(Filterable.GENRE_IN, value: [name]);
-        explorable.type = type;
-        Get.find<Config>().pageIndex = HomePage.EXPLORE;
-        Get.until((route) => route.isFirst);
-      },
-      onLongPress: () => Clipboard.setData(ClipboardData(text: name)),
-      child: Text(name, style: Theme.of(context).textTheme.bodyText2),
-    );
-  }
-}
-
-class _StudioLink extends StatelessWidget {
-  final int id;
-  final String name;
-
-  _StudioLink(this.id, this.name);
-
-  @override
-  Widget build(BuildContext context) {
-    return BrowseIndexer(
-      id: id,
-      tag: name,
-      browsable: Browsable.studio,
-      child: Text(name, style: Theme.of(context).textTheme.bodyText2),
     );
   }
 }

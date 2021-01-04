@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/page_object.dart';
-import 'package:otraku/models/tuple.dart';
 
 class MediaOverview extends PageObject {
   final String preferredTitle;
@@ -30,8 +29,8 @@ class MediaOverview extends PageObject {
   final String meanScore;
   final int popularity;
   final List<String> genres;
-  final Tuple<List<int>, List<String>> studios;
-  final Tuple<List<int>, List<String>> producers;
+  final Map<String, int> studios;
+  final Map<String, int> producers;
   final String source;
   final String hashtag;
   final String countryOfOrigin;

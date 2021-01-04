@@ -3,12 +3,11 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/services/graph_ql.dart';
+import 'package:otraku/services/network.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/models/anilist/related_media.dart';
-import 'package:otraku/models/tuple.dart';
 
 class Media extends GetxController {
   // ***************************************************************************
@@ -161,7 +160,7 @@ class Media extends GetxController {
   Future<void> fetchOverview(int id) async {
     if (_overview.value != null) return;
 
-    final result = await GraphQl.request(_mediaQuery, {
+    final result = await Network.request(_mediaQuery, {
       'id': id,
       'withMain': true,
     });
@@ -186,21 +185,15 @@ class Media extends GetxController {
       }
     }
 
-    List<int> studioId = [];
-    List<String> studioName = [];
-    List<int> producerId = [];
-    List<String> producerName = [];
+    Map<String, int> studios = {};
+    Map<String, int> producers = {};
     if (data['studios'] != null) {
       final List<dynamic> companies = data['studios']['edges'];
-      for (final company in companies) {
-        if (company['isMain']) {
-          studioId.add(company['node']['id']);
-          studioName.add(company['node']['name']);
-        } else {
-          producerId.add(company['node']['id']);
-          producerName.add(company['node']['name']);
-        }
-      }
+      for (final company in companies)
+        if (company['isMain'])
+          studios[company['node']['name']] = company['node']['id'];
+        else
+          producers[company['node']['name']] = company['node']['id'];
     }
 
     _overview(MediaOverview(
@@ -246,8 +239,8 @@ class Media extends GetxController {
       meanScore: data['meanScore'] != null ? '${data["meanScore"]}%' : null,
       popularity: data['popularity'],
       genres: List<String>.from(data['genres']),
-      studios: Tuple(studioId, studioName),
-      producers: Tuple(producerId, producerName),
+      studios: studios,
+      producers: producers,
       source: clarifyEnum(data['source']),
       hashtag: data['hashtag'],
       countryOfOrigin: data['countryOfOrigin'],
@@ -272,7 +265,7 @@ class Media extends GetxController {
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
-    final result = await GraphQl.request(_mediaQuery, {
+    final result = await Network.request(_mediaQuery, {
       'id': overview.id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
@@ -341,7 +334,7 @@ class Media extends GetxController {
   }
 
   Future<bool> toggleFavourite() async =>
-      await GraphQl.request(
+      await Network.request(
         _overview().browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,

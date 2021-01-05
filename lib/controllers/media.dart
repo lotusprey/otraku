@@ -1,8 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/date_time_mapping.dart';
 import 'package:otraku/services/network.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/media_overview.dart';
@@ -24,6 +22,7 @@ class Media extends GetxController {
       }
     }
     fragment main on Media {
+      id
       type
       title {userPreferred english romaji native}
       synonyms
@@ -166,100 +165,13 @@ class Media extends GetxController {
     });
 
     if (result == null) return null;
+
     final data = result['Media'];
+    _overview(MediaOverview(data));
 
-    String duration;
-    if (data['duration'] != null) {
-      int time = data['duration'];
-      int hours = time ~/ 60;
-      int minutes = time % 60;
-      duration = (hours != 0 ? '$hours hours, ' : '') + '$minutes mins';
-    }
-
-    String season;
-    if (data['season'] != null) {
-      season = data['season'];
-      season = season[0] + season.substring(1).toLowerCase();
-      if (data['seasonYear'] != null) {
-        season += ' ${data["seasonYear"]}';
-      }
-    }
-
-    Map<String, int> studios = {};
-    Map<String, int> producers = {};
-    if (data['studios'] != null) {
-      final List<dynamic> companies = data['studios']['edges'];
-      for (final company in companies)
-        if (company['isMain'])
-          studios[company['node']['name']] = company['node']['id'];
-        else
-          producers[company['node']['name']] = company['node']['id'];
-    }
-
-    _overview(MediaOverview(
-      id: id,
-      browsable: data['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-      preferredTitle: data['title']['userPreferred'],
-      romajiTitle: data['title']['romaji'],
-      englishTitle: data['title']['english'],
-      nativeTitle: data['title']['native'],
-      synonyms: List<String>.from(data['synonyms']),
-      cover: data['coverImage']['extraLarge'] ?? data['coverImage']['large'],
-      banner: data['bannerImage'],
-      description: data['description'] != null
-          ? data['description'].replaceAll(RegExp(r'<[^>]*>'), '')
-          : null,
-      format: clarifyEnum(data['format']),
-      status: clarifyEnum(data['status']),
-      entryStatus: data['mediaListEntry'] != null
-          ? stringToEnum(
-              data['mediaListEntry']['status'].toString(),
-              ListStatus.values,
-            )
-          : null,
-      nextEpisode: data['nextAiringEpisode'] != null
-          ? data['nextAiringEpisode']['episode']
-          : null,
-      timeUntilAiring: data['nextAiringEpisode'] != null
-          ? secondsToTime(data['nextAiringEpisode']['timeUntilAiring'])
-          : null,
-      episodes: data['episodes'],
-      duration: duration,
-      chapters: data['chapters'],
-      volumes: data['volumes'],
-      startDate:
-          data['startDate'] != null ? mapToDateString(data['startDate']) : null,
-      endDate:
-          data['endDate'] != null ? mapToDateString(data['endDate']) : null,
-      season: season,
-      averageScore:
-          data['averageScore'] != null ? '${data["averageScore"]}%' : null,
-      meanScore: data['meanScore'] != null ? '${data["meanScore"]}%' : null,
-      popularity: data['popularity'],
-      genres: List<String>.from(data['genres']),
-      studios: studios,
-      producers: producers,
-      source: clarifyEnum(data['source']),
-      hashtag: data['hashtag'],
-      countryOfOrigin: data['countryOfOrigin'],
-    ));
-
-    List<RelatedMedia> mediaRel = [];
-    for (final relation in data['relations']['edges']) {
-      mediaRel.add(RelatedMedia(
-        id: relation['node']['id'],
-        title: relation['node']['title']['userPreferred'],
-        relationType: clarifyEnum(relation['relationType']),
-        format: clarifyEnum(relation['node']['format']),
-        status: clarifyEnum(relation['node']['status']),
-        imageUrl: relation['node']['coverImage']['large'],
-        browsable: relation['node']['type'] == 'ANIME'
-            ? Browsable.anime
-            : Browsable.manga,
-      ));
-    }
+    final List<RelatedMedia> mediaRel = [];
+    for (final relation in data['relations']['edges'])
+      mediaRel.add(RelatedMedia(relation));
 
     _otherMedia.addAll(mediaRel);
   }
@@ -313,7 +225,7 @@ class Media extends GetxController {
         _characters.update((list) =>
             list.append(items, data['characters']['pageInfo']['hasNextPage']));
     } else {
-      for (final connection in data['staff']['edges']) {
+      for (final connection in data['staff']['edges'])
         items.add(Connection(
           id: connection['node']['id'],
           title: connection['node']['name']['full'],
@@ -321,7 +233,6 @@ class Media extends GetxController {
           imageUrl: connection['node']['image']['large'],
           browsable: Browsable.staff,
         ));
-      }
 
       if (_staff() == null)
         _staff(
@@ -339,7 +250,7 @@ class Media extends GetxController {
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': _overview().id},
-        popOnError: false,
+        popOnErr: false,
       ) !=
       null;
 }

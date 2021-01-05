@@ -112,23 +112,7 @@ class Staff extends GetxController {
 
     final data = body['Staff'];
 
-    List<String> altNames = (data['name']['alternative'] as List<dynamic>)
-        .map((a) => a.toString())
-        .toList();
-    if (data['name']['native'] != null)
-      altNames.insert(0, data['name']['native']);
-
-    _person(Person(
-      id: id,
-      browsable: Browsable.staff,
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-      fullName: data['name']['full'],
-      altNames: altNames,
-      imageUrl: data['image']['large'],
-      description:
-          data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
-    ));
+    _person(Person(data, id, Browsable.staff));
 
     _initLists(data);
   }
@@ -162,8 +146,8 @@ class Staff extends GetxController {
 
     List<Connection> connections = [];
     if (_onCharacters()) {
-      for (final connection in data['characterMedia']['edges']) {
-        for (final char in connection['characters']) {
+      for (final connection in data['characterMedia']['edges'])
+        for (final char in connection['characters'])
           connections.add(Connection(
               id: char['id'],
               title: char['name']['full'],
@@ -180,13 +164,11 @@ class Staff extends GetxController {
                       : Browsable.manga,
                 ),
               ]));
-        }
-      }
 
       _characterList.update((list) => list.append(
           connections, data['characterMedia']['pageInfo']['hasNextPage']));
     } else {
-      for (final connection in data['staffMedia']['edges']) {
+      for (final connection in data['staffMedia']['edges'])
         connections.add(Connection(
           id: connection['node']['id'],
           title: connection['node']['title']['userPreferred'],
@@ -196,7 +178,6 @@ class Staff extends GetxController {
               : Browsable.manga,
           subtitle: clarifyEnum(connection['staffRole']),
         ));
-      }
 
       _roleList.update((list) => list.append(
           connections, data['staffMedia']['pageInfo']['hasNextPage']));
@@ -207,7 +188,7 @@ class Staff extends GetxController {
       await Network.request(
         _toggleFavouriteMutation,
         {'id': _person().id},
-        popOnError: false,
+        popOnErr: false,
       ) !=
       null;
 
@@ -217,8 +198,8 @@ class Staff extends GetxController {
 
   void _initLists(Map<String, dynamic> data) {
     List<Connection> connections = [];
-    for (final connection in data['characterMedia']['edges']) {
-      for (final char in connection['characters']) {
+    for (final connection in data['characterMedia']['edges'])
+      for (final char in connection['characters'])
         connections.add(Connection(
             id: char['id'],
             title: char['name']['full'],
@@ -235,8 +216,6 @@ class Staff extends GetxController {
                     : Browsable.manga,
               ),
             ]));
-      }
-    }
 
     if (connections.isEmpty) _onCharacters.value = false;
 
@@ -246,7 +225,7 @@ class Staff extends GetxController {
     ));
 
     connections = [];
-    for (final connection in data['staffMedia']['edges']) {
+    for (final connection in data['staffMedia']['edges'])
       connections.add(Connection(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
@@ -256,7 +235,6 @@ class Staff extends GetxController {
             : Browsable.manga,
         subtitle: clarifyEnum(connection['staffRole']),
       ));
-    }
 
     _roleList(LoadableList(
       connections,

@@ -79,12 +79,7 @@ class Studio extends GetxController {
 
     final data = body['Studio'];
 
-    _company(PageObject(
-      id: id,
-      browsable: Browsable.studio,
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-    ));
+    _company(PageObject.studio(data, id));
 
     _initLists(data['media']);
   }
@@ -144,7 +139,7 @@ class Studio extends GetxController {
       await Network.request(
         _toggleFavouriteMutation,
         {'id': _company().id},
-        popOnError: false,
+        popOnErr: false,
       ) !=
       null;
 

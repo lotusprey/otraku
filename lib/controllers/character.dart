@@ -109,23 +109,7 @@ class Character extends GetxController {
 
     final data = body['Character'];
 
-    List<String> altNames = (data['name']['alternative'] as List<dynamic>)
-        .map((a) => a.toString())
-        .toList();
-    if (data['name']['native'] != null)
-      altNames.insert(0, data['name']['native']);
-
-    _person(Person(
-      id: id,
-      browsable: Browsable.character,
-      isFavourite: data['isFavourite'],
-      favourites: data['favourites'],
-      fullName: data['name']['full'],
-      altNames: altNames,
-      imageUrl: data['image']['large'],
-      description:
-          data['description'].toString().replaceAll(RegExp(r'<[^>]*>'), ''),
-    ));
+    _person(Person(data, id, Browsable.character));
 
     _initLists(data);
   }
@@ -162,7 +146,7 @@ class Character extends GetxController {
       for (final connection in data['anime']['edges']) {
         final List<Connection> voiceActors = [];
 
-        for (final va in connection['voiceActors']) {
+        for (final va in connection['voiceActors'])
           voiceActors.add(Connection(
             id: va['id'],
             title: va['name']['full'],
@@ -170,7 +154,6 @@ class Character extends GetxController {
             browsable: Browsable.staff,
             subtitle: clarifyEnum(va['language']),
           ));
-        }
 
         connections.add(Connection(
           id: connection['node']['id'],
@@ -205,7 +188,7 @@ class Character extends GetxController {
       await Network.request(
         _toggleFavouriteMutation,
         {'id': _person().id},
-        popOnError: false,
+        popOnErr: false,
       ) !=
       null;
 

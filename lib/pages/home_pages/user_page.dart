@@ -127,29 +127,56 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const avatarSize = 150.0;
+    final bannerHeight = MediaQuery.of(context).size.width * 0.6;
+    final height = bannerHeight + avatarSize * 0.5;
     final avatar = avatarUrl ?? user?.avatar;
 
     return SliverAppBar(
       pinned: true,
       stretch: true,
       leadingWidth: 40,
-      expandedHeight: 300,
+      expandedHeight: height,
       automaticallyImplyLeading: false,
       backgroundColor: Theme.of(context).backgroundColor,
       leading: !isMe
-          ? IconButton(
-              icon: const Icon(Icons.close),
-              color: Theme.of(context).dividerColor,
-              onPressed: () => Navigator.of(context).pop(),
-              padding: const EdgeInsets.all(0),
+          ? Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).backgroundColor,
+                    blurRadius: 10,
+                    spreadRadius: -10,
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                color: Theme.of(context).dividerColor,
+                onPressed: () => Navigator.of(context).pop(),
+                padding: const EdgeInsets.all(0),
+              ),
             )
           : null,
       actions: [
         if (isMe)
-          IconButton(
-            icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
-            color: Theme.of(context).dividerColor,
-            onPressed: () => Get.to(SettingsPage()),
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).backgroundColor,
+                  blurRadius: 10,
+                  spreadRadius: -10,
+                ),
+              ],
+            ),
+            child: IconButton(
+              icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
+              color: Theme.of(context).dividerColor,
+              onPressed: () => Get.to(SettingsPage()),
+            ),
           )
         else if (user != null)
           Padding(
@@ -174,26 +201,44 @@ class _Header extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            if (user?.banner != null)
-              FadeInImage.memoryNetwork(
-                image: user.banner,
-                placeholder: transparentImage,
-                fadeInDuration: Config.FADE_DURATION,
-                fit: BoxFit.cover,
+            if (user?.banner != null) ...[
+              Column(
+                children: [
+                  Expanded(
+                    child: FadeInImage.memoryNetwork(
+                      image: user.banner,
+                      placeholder: transparentImage,
+                      fadeInDuration: Config.FADE_DURATION,
+                      fit: BoxFit.cover,
+                      height: bannerHeight,
+                      width: double.infinity,
+                    ),
+                  ),
+                  SizedBox(height: height - bannerHeight),
+                ],
               ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Theme.of(context).backgroundColor,
-                  ],
+              Positioned.fill(
+                bottom: height - bannerHeight - 1,
+                child: Container(
+                  height: bannerHeight,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Theme.of(context).backgroundColor,
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+            ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   GestureDetector(
                     child: avatar != null
@@ -202,8 +247,8 @@ class _Header extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: Container(
-                                height: 150,
-                                width: 150,
+                                height: avatarSize,
+                                width: avatarSize,
                                 child: FadeInImage.memoryNetwork(
                                   placeholder: transparentImage,
                                   image: avatar,
@@ -221,10 +266,12 @@ class _Header extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(
-                    user?.name ?? '',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
+                  const SizedBox(width: 10),
+                  if (user?.name != null)
+                    Text(
+                      user.name,
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
                 ],
               ),
             ),
@@ -234,200 +281,3 @@ class _Header extends StatelessWidget {
     );
   }
 }
-
-// class _Header implements SliverPersistentHeaderDelegate {
-//   final int id;
-//   final UserData user;
-//   final bool isMe;
-//   final String avatarUrl;
-//   double _height;
-
-//   _Header({
-//     @required this.id,
-//     @required this.user,
-//     @required this.isMe,
-//     @required this.avatarUrl,
-//     @required width,
-//   }) {
-//     _height = width * 0.6 + 100;
-//     if (_height < 200) _height = 200;
-//   }
-
-//   @override
-//   Widget build(
-//     BuildContext context,
-//     double shrinkOffset,
-//     bool overlapsContent,
-//   ) {
-//     final shrinkPercentage =
-//         shrinkOffset < _height ? shrinkOffset / _height : 1.0;
-//     final avatar = avatarUrl ?? user?.avatar;
-
-//     return Container(
-//       height: maxExtent,
-//       decoration: BoxDecoration(
-//         color: Theme.of(context).primaryColor,
-//         boxShadow: [
-//           BoxShadow(
-//             color: Theme.of(context).backgroundColor,
-//             blurRadius: 7,
-//             offset: const Offset(0, 3),
-//           )
-//         ],
-//       ),
-//       child: Stack(
-//         fit: StackFit.expand,
-//         children: [
-//           if (user?.banner != null)
-//             Align(
-//               alignment: Alignment.topCenter,
-//               child: FadeInImage.memoryNetwork(
-//                 image: user.banner,
-//                 placeholder: transparentImage,
-//                 fadeInDuration: Config.FADE_DURATION,
-//                 fit: BoxFit.cover,
-//                 height: _height - 100,
-//                 width: double.infinity,
-//               ),
-//             ),
-//           Container(
-//             padding: const EdgeInsets.only(
-//               top: Config.MATERIAL_TAP_TARGET_SIZE,
-//               left: 10,
-//               right: 10,
-//             ),
-//             decoration: BoxDecoration(
-//               gradient: LinearGradient(
-//                 begin: Alignment.topCenter,
-//                 end: Alignment.bottomCenter,
-//                 colors: [
-//                   Theme.of(context).backgroundColor.withAlpha(70),
-//                   Theme.of(context).backgroundColor,
-//                 ],
-//                 stops: [0, (_height - 100) / _height],
-//               ),
-//             ),
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.end,
-//               children: [
-//                 Flexible(
-//                   flex: 8,
-//                   child: GestureDetector(
-//                     child: avatar != null
-//                         ? Hero(
-//                             tag: id.toString(),
-//                             child: ClipRRect(
-//                               borderRadius: Config.BORDER_RADIUS,
-//                               child: Container(
-//                                 height: 150,
-//                                 width: 150,
-//                                 child: FadeInImage.memoryNetwork(
-//                                   placeholder: transparentImage,
-//                                   image: avatar,
-//                                   fit: BoxFit.contain,
-//                                   fadeInDuration: Config.FADE_DURATION,
-//                                 ),
-//                               ),
-//                             ),
-//                           )
-//                         : null,
-//                     onTap: () => showDialog(
-//                       context: context,
-//                       builder: (_) => PopUpAnimation(
-//                         Image.network(avatar, fit: BoxFit.cover),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Flexible(
-//                   flex: 2,
-//                   child: Padding(
-//                     padding: const EdgeInsets.only(top: 10),
-//                     child: Text(
-//                       user?.name ?? '',
-//                       style: Theme.of(context).textTheme.headline3,
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           if (shrinkOffset > 0)
-//             Container(
-//               height: double.infinity,
-//               width: double.infinity,
-//               color: Theme.of(context)
-//                   .backgroundColor
-//                   .withAlpha((shrinkPercentage * 255).round()),
-//             ),
-//           Positioned(
-//             top: 0,
-//             left: 0,
-//             right: 0,
-//             child: Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 if (isMe) ...[
-//                   const SizedBox(),
-//                   IconButton(
-//                     icon: const Icon(
-//                         FluentSystemIcons.ic_fluent_settings_regular),
-//                     color: Theme.of(context).dividerColor,
-//                     onPressed: () => Get.to(SettingsPage()),
-//                   ),
-//                 ] else ...[
-//                   IconButton(
-//                     icon: const Icon(Icons.close),
-//                     color: Theme.of(context).dividerColor,
-//                     onPressed: () => Navigator.of(context).pop(),
-//                   ),
-//                   Padding(
-//                     padding: const EdgeInsets.only(right: 10),
-//                     child: user != null
-//                         ? FlatButton(
-//                             child: Text(
-//                               user.following ? 'Unfollow' : 'Follow',
-//                               style: Theme.of(context)
-//                                   .textTheme
-//                                   .button
-//                                   .copyWith(fontSize: Styles.FONT_SMALL),
-//                             ),
-//                             color: Theme.of(context).accentColor,
-//                             onPressed:
-//                                 Get.find<User>(tag: id.toString()).toggleFollow,
-//                             visualDensity: VisualDensity.compact,
-//                           )
-//                         : null,
-//                   ),
-//                 ],
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   @override
-//   double get maxExtent => _height;
-
-//   @override
-//   double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
-
-//   @override
-//   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-//       true;
-
-//   @override
-//   PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
-//       null;
-
-//   @override
-//   FloatingHeaderSnapConfiguration get snapConfiguration => null;
-
-//   @override
-//   OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
-
-//   @override
-//   TickerProvider get vsync => null;
-// }

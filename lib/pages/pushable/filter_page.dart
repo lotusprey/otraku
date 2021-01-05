@@ -28,19 +28,19 @@ class FilterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorable = Get.find<Explorer>();
+    final explorer = Get.find<Explorer>();
 
     Filterable filterable;
     if (collectionTag != null)
       filterable = Get.find<Collection>(tag: collectionTag);
     else
-      filterable = explorable;
+      filterable = explorer;
 
     final browsable = collectionTag != null
         ? (filterable as Collection).ofAnime
             ? Browsable.anime
             : Browsable.manga
-        : explorable.type;
+        : explorer.type;
 
     changes[Filterable.STATUS_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.STATUS_IN) ?? [],
@@ -144,8 +144,8 @@ class FilterPage extends StatelessWidget {
           ChipGrid(
             title: 'Genres',
             placeholder: 'genres',
-            options: explorable.genres,
-            values: explorable.genres,
+            options: explorer.genres,
+            values: explorer.genres,
             inclusive: changes[Filterable.GENRE_IN],
             exclusive: changes[Filterable.GENRE_NOT_IN],
           ),
@@ -153,8 +153,8 @@ class FilterPage extends StatelessWidget {
             ChipGrid(
               title: 'Tags',
               placeholder: 'tags',
-              options: explorable.tags.item1,
-              values: explorable.tags.item1,
+              options: explorer.tags.item1,
+              values: explorer.tags.item1,
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
             ),

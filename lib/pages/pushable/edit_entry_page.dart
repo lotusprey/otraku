@@ -137,7 +137,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                   data.progressVolumes = progressVolumes,
                             ),
                           ),
-                      ]),
+                      ], minHeight: 140),
                       const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       SliverToBoxAdapter(
                         child: InputFieldStructure(
@@ -173,7 +173,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             helpText: 'End Date',
                           ),
                         ),
-                      ]),
+                      ], minHeight: 165),
                       const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       _Label('Additional Settings'),
                       _CheckboxGrid(
@@ -219,14 +219,15 @@ class _Label extends StatelessWidget {
 
 class _FieldGrid extends StatelessWidget {
   final List<Widget> list;
+  final double minHeight;
 
-  _FieldGrid(this.list);
+  _FieldGrid(this.list, {@required this.minHeight});
 
   @override
   Widget build(BuildContext context) {
     final count =
         (MediaQuery.of(context).size.width - (list.length - 1) * 10 - 20) ~/
-            170;
+            minHeight;
     return SliverGrid(
       delegate: SliverChildListDelegate.fixed(list),
       gridDelegate: _SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
@@ -250,7 +251,7 @@ class _CheckboxGrid extends StatelessWidget {
     if (list.isEmpty) return const SliverToBoxAdapter();
     final count =
         (MediaQuery.of(context).size.width - (list.length - 1) * 10 - 20) ~/
-            195;
+            190;
 
     return SliverGrid(
       delegate: SliverChildBuilderDelegate(

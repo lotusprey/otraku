@@ -55,21 +55,22 @@ class CharacterPage extends StatelessWidget {
                         const SizedBox(),
                       Row(
                         children: [
-                          IconButton(
-                            icon: const Icon(Icons.language),
-                            onPressed: () => showModalBottomSheet(
-                              context: context,
-                              builder: (_) => OptionSheet(
-                                title: 'Language',
-                                options: character.availableLanguages,
-                                index: character.languageIndex,
-                                onTap: (index) => character.staffLanguage =
-                                    character.availableLanguages[index],
+                          if (character.availableLanguages.length > 1)
+                            IconButton(
+                              icon: const Icon(Icons.language),
+                              onPressed: () => showModalBottomSheet(
+                                context: context,
+                                builder: (_) => OptionSheet(
+                                  title: 'Language',
+                                  options: character.availableLanguages,
+                                  index: character.languageIndex,
+                                  onTap: (index) => character.staffLanguage =
+                                      character.availableLanguages[index],
+                                ),
+                                backgroundColor: Colors.transparent,
+                                isScrollControlled: true,
                               ),
-                              backgroundColor: Colors.transparent,
-                              isScrollControlled: true,
                             ),
-                          ),
                           IconButton(
                             icon: const Icon(
                               FluentSystemIcons.ic_fluent_arrow_sort_filled,

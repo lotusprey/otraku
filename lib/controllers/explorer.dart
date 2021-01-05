@@ -78,7 +78,7 @@ class Explorer extends GetxController implements Filterable {
   // DATA
   // ***************************************************************************
 
-  final _isLoading = false.obs;
+  final _isLoading = true.obs;
   final _hasNextPage = true.obs;
   final _results = List<TileData>().obs;
   final _type = Browsable.anime.obs;
@@ -235,7 +235,7 @@ class Explorer extends GetxController implements Filterable {
     final data = await Network.request(
       query,
       variables,
-      popOnError: false,
+      popOnErr: false,
     );
 
     _concurrentFetches--;
@@ -322,7 +322,7 @@ class Explorer extends GetxController implements Filterable {
         }
       ''';
 
-    final data = await Network.request(query, null, popOnError: false);
+    final data = await Network.request(query, null, popOnErr: false);
 
     if (data == null) return;
 

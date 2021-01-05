@@ -30,6 +30,8 @@ class User extends GetxController {
         isFollowing
         isFollower
         isBlocked
+        donatorBadge
+        moderatorStatus
       }
       fragment media on MediaConnection {
         pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}
@@ -89,15 +91,19 @@ class User extends GetxController {
   // ***************************************************************************
 
   Future<void> fetchUser(int id) async {
-    final data = await Network.request(_userQuery, {
-      'id': id ?? Network.viewerId,
-      'withMain': true,
-      'withAnime': true,
-      'withManga': true,
-      'withCharacters': true,
-      'withStaff': true,
-      'withStudios': true,
-    });
+    final data = await Network.request(
+      _userQuery,
+      {
+        'id': id ?? Network.viewerId,
+        'withMain': true,
+        'withAnime': true,
+        'withManga': true,
+        'withCharacters': true,
+        'withStaff': true,
+        'withStudios': true,
+      },
+      popOnErr: id != null,
+    );
 
     if (data == null) return;
 

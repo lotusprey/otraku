@@ -182,7 +182,7 @@ class Collection extends GetxController implements Filterable {
         'userId': userId ?? Network.viewerId,
         'type': ofAnime ? 'ANIME' : 'MANGA',
       },
-      popOnError: userId != null,
+      popOnErr: userId != null,
     );
 
     if (data == null) {
@@ -343,7 +343,7 @@ class Collection extends GetxController implements Filterable {
     final data = await Network.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
-      popOnError: false,
+      popOnErr: false,
     );
 
     if (data == null || data['DeleteMediaListEntry']['deleted'] == false)

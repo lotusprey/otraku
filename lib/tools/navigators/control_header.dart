@@ -125,26 +125,26 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 })
               else
                 Obx(() {
-                  final explorable = Get.find<Explorer>();
+                  final explorer = Get.find<Explorer>();
                   return _Navigation(
                     ctrl: ctrl,
                     swipe: (int offset) {
-                      final index = explorable.type.index + offset;
+                      final index = explorer.type.index + offset;
                       if (index >= 0 && index < Browsable.values.length)
-                        explorable.type = Browsable.values[index];
+                        explorer.type = Browsable.values[index];
                     },
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          explorable.type.icon,
+                          explorer.type.icon,
                           color: Theme.of(context).accentColor,
                           size: Styles.ICON_SMALL,
                         ),
                         const SizedBox(width: 10),
                         Flexible(
                           child: Text(
-                            clarifyEnum(describeEnum(explorable.type)),
+                            clarifyEnum(describeEnum(explorer.type)),
                             style: Theme.of(context).textTheme.headline2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -152,9 +152,9 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         ),
                       ],
                     ),
-                    hint: clarifyEnum(describeEnum(explorable.type)),
-                    searchValue: explorable.search,
-                    search: (search) => explorable.search = search,
+                    hint: clarifyEnum(describeEnum(explorer.type)),
+                    searchValue: explorer.search,
+                    search: (search) => explorer.search = search,
                   );
                 }),
               if (collectionTag == null)

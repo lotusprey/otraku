@@ -54,15 +54,15 @@ class _ExploreGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorable = Get.find<Explorer>();
+    final explorer = Get.find<Explorer>();
 
     return Obx(() {
-      if (explorable.isLoading)
+      if (explorer.isLoading)
         return const SliverFillRemaining(
           child: Center(child: Loader()),
         );
 
-      final results = explorable.results;
+      final results = explorer.results;
       if (results.isEmpty) {
         return NoResults();
       }

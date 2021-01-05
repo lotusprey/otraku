@@ -7,6 +7,8 @@ class UserData {
   bool _following;
   final bool follower;
   final bool blocked;
+  final String donatorBadge;
+  final String moderatorStatus;
   final bool isMe;
 
   UserData._({
@@ -18,6 +20,8 @@ class UserData {
     amFollowing,
     this.follower,
     this.blocked,
+    this.donatorBadge,
+    this.moderatorStatus,
     this.isMe = false,
   }) {
     _following = amFollowing;
@@ -32,6 +36,8 @@ class UserData {
         amFollowing: map['isFollowing'],
         follower: map['isFollower'],
         blocked: map['isBlocked'],
+        donatorBadge: map['donatorBadge'],
+        moderatorStatus: map['moderatorStatus'],
         isMe: me,
       );
 

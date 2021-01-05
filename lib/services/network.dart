@@ -43,7 +43,7 @@ class Network {
   static Future<void> initViewerId() async {
     _viewerId = Config.storage.read('viewerId');
     if (_viewerId == null) {
-      final data = await request(_idQuery, null, popOnError: false);
+      final data = await request(_idQuery, null, popOnErr: false);
       if (data != null) _viewerId = data['Viewer']['id'];
     }
   }
@@ -51,7 +51,7 @@ class Network {
   static Future<Map<String, dynamic>> request(
     String request,
     Map<String, dynamic> variables, {
-    bool popOnError = true,
+    bool popOnErr = true,
   }) async {
     bool erred = false;
 
@@ -60,7 +60,7 @@ class Network {
       body: json.encode({'query': request, 'variables': variables}),
       headers: _headers,
     ).catchError((err) {
-      _handleError(popOnError, ioErr: err as IOException);
+      _handleError(popOnErr, ioErr: err as IOException);
       erred = true;
     });
 
@@ -73,7 +73,7 @@ class Network {
           .map((e) => e['message'].toString())
           .toList();
 
-      _handleError(popOnError, apiErr: messages);
+      _handleError(popOnErr, apiErr: messages);
 
       return null;
     }

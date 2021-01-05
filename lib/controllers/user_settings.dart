@@ -67,7 +67,7 @@ class UserSettings extends GetxController {
   }
 
   Future<void> fetchSettings() async {
-    final data = await Network.request(_settingsQuery, null, popOnError: false);
+    final data = await Network.request(_settingsQuery, null, popOnErr: false);
 
     if (data == null) return;
 

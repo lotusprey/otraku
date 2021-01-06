@@ -17,10 +17,6 @@ class MediaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const placeholder = const SliverToBoxAdapter(child: SizedBox());
-    double coverWidth = MediaQuery.of(context).size.width * 0.35;
-    double coverHeight = coverWidth / 0.7;
-    double bannerHeight = coverHeight + Config.MATERIAL_TAP_TARGET_SIZE + 10;
-
     final media = Get.find<Media>(tag: id.toString());
 
     return Scaffold(
@@ -39,16 +35,10 @@ class MediaPage extends StatelessWidget {
           physics: Config.PHYSICS,
           slivers: [
             Obx(
-              () => SliverPersistentHeader(
-                pinned: true,
-                delegate: MediaHeader(
-                  overview: media.overview,
-                  coverWidth: coverWidth,
-                  coverHeight: coverHeight,
-                  maxHeight: bannerHeight,
-                  imageUrl: tagImageUrl,
-                  toggleFavourite: media.toggleFavourite,
-                ),
+              () => MediaHeader(
+                overview: media.overview,
+                imageUrl: tagImageUrl,
+                toggleFavourite: media.toggleFavourite,
               ),
             ),
             Obx(

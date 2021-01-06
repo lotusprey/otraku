@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/models/transparent_image.dart';
+import 'package:otraku/models/model_helpers.dart';
 
 class ConnectionsGrid extends StatefulWidget {
   final List<Connection> connections;

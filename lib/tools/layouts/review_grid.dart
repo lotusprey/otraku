@@ -3,7 +3,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tile_data.dart';
-import 'package:otraku/models/transparent_image.dart';
+import 'package:otraku/models/model_helpers.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 

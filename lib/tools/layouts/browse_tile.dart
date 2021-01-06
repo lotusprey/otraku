@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/models/tile_config.dart';
-import 'package:otraku/models/transparent_image.dart';
+import 'package:otraku/models/model_helpers.dart';
 
 class BrowseTile extends StatelessWidget {
   final int id;

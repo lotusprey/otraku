@@ -11,7 +11,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/models/transparent_image.dart';
+import 'package:otraku/models/model_helpers.dart';
 
 class MediaList extends StatelessWidget {
   final String collectionTag;

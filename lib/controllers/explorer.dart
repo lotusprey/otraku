@@ -74,6 +74,23 @@ class Explorer extends GetxController implements Filterable {
     }
   ''';
 
+  static const _reviewsQuery = r'''
+    query Reviews($page: Int) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        reviews(sort: CREATED_AT_DESC) {
+          id
+          summary 
+          body(asHtml: true)
+          rating
+          ratingAmount
+          media {id type title{userPreferred} bannerImage}
+          user {id name}
+        }
+      }
+    }
+  ''';
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -225,8 +242,10 @@ class Explorer extends GetxController implements Filterable {
         query = _staffQuery;
       } else if (currentType == Browsable.studio) {
         query = _studiosQuery;
-      } else {
+      } else if (currentType == Browsable.user) {
         query = _usersQuery;
+      } else {
+        query = _reviewsQuery;
       }
     }
 
@@ -284,15 +303,25 @@ class Explorer extends GetxController implements Filterable {
         ));
         (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(s['id']);
       }
-    } else {
-      for (final u in data['Page']['users'] as List<dynamic>) {
+    } else if (currentType == Browsable.user) {
+      for (final u in data['Page']['users'] as List<dynamic>)
         loaded.add(TileData(
           id: u['id'],
           title: u['name'],
           imageUrl: u['avatar']['large'],
           browsable: currentType,
         ));
-      }
+    } else {
+      for (final r in data['Page']['reviews'] as List<dynamic>)
+        loaded.add(TileData(
+          id: r['id'],
+          title:
+              'Review of ${r['media']['title']['userPreferred']} by ${r['user']['name']}',
+          subtitle: r['summary'],
+          caption: '${r['rating']}/${r['ratingAmount']}',
+          imageUrl: r['media']['bannerImage'],
+          browsable: currentType,
+        ));
     }
 
     if (clean) {

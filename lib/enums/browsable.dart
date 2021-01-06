@@ -1,5 +1,6 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 enum Browsable {
   anime,
@@ -8,6 +9,7 @@ enum Browsable {
   staff,
   studio,
   user,
+  review,
 }
 
 extension BrowsableExtension on Browsable {
@@ -18,6 +20,7 @@ extension BrowsableExtension on Browsable {
     Browsable.staff: FluentSystemIcons.ic_fluent_mic_on_regular,
     Browsable.studio: FluentSystemIcons.ic_fluent_building_regular,
     Browsable.user: FluentSystemIcons.ic_fluent_person_regular,
+    Browsable.review: Icons.rate_review_outlined,
   };
 
   IconData get icon => _icons[this];

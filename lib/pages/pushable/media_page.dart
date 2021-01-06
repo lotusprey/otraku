@@ -5,8 +5,8 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/media_pages/overview_tab.dart';
 import 'package:otraku/pages/media_pages/relations_tab.dart';
-import 'package:otraku/tools/navigators/custom_nav_bar.dart';
-import 'package:otraku/tools/navigators/media_header.dart';
+import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/media_header.dart';
 
 class MediaPage extends StatelessWidget {
   final int id;

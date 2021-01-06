@@ -6,7 +6,7 @@ import 'package:otraku/models/transparent_image.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
 import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigators/bubble_tabs.dart';
+import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
 
 class RelationList extends StatelessWidget {

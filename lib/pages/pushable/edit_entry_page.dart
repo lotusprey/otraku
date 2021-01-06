@@ -11,7 +11,7 @@ import 'package:otraku/tools/fields/date_field.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/expandable_field.dart';
 import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
-import 'package:otraku/tools/navigators/custom_app_bar.dart';
+import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/fields/number_field.dart';
 import 'package:otraku/tools/fields/score_picker.dart';

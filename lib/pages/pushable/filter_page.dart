@@ -15,8 +15,8 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
-import 'package:otraku/tools/navigators/bubble_tabs.dart';
-import 'package:otraku/tools/navigators/custom_app_bar.dart';
+import 'package:otraku/tools/navigation/bubble_tabs.dart';
+import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 
 class FilterPage extends StatelessWidget {

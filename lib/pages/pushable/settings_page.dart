@@ -10,8 +10,8 @@ import 'package:otraku/pages/setting_pages/list_settings_page.dart';
 import 'package:otraku/pages/setting_pages/media_settings_page.dart';
 import 'package:otraku/pages/setting_pages/notification_settings_page.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/tools/navigators/custom_app_bar.dart';
-import 'package:otraku/tools/navigators/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/custom_app_bar.dart';
+import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   final padding = const EdgeInsets.symmetric(horizontal: 5);

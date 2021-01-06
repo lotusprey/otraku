@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/tools/navigators/control_header.dart';
+import 'package:otraku/tools/navigation/control_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
-import 'package:otraku/tools/navigators/headline_header.dart';
+import 'package:otraku/tools/navigation/headline_header.dart';
 
 class CollectionPage extends StatefulWidget {
   final int otherUserId;

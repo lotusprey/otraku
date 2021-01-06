@@ -1,3 +1,8 @@
+String clearHtml(String str) {
+  if (str == null) return null;
+  return str.replaceAll(RegExp(r'<[^>]*>'), '');
+}
+
 String mapToDateString(Map<String, dynamic> map) {
   if (map['year'] == null) {
     return null;

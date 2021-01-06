@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/date_time_mapping.dart';
+import 'package:otraku/models/model_helpers.dart';
 import 'package:otraku/models/anilist/entry_list.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 import 'package:otraku/models/anilist/media_list_data.dart';

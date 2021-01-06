@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/date_time_mapping.dart';
+import 'package:otraku/models/model_helpers.dart';
 
 class MediaListData {
   final int mediaId;

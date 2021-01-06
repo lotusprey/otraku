@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/date_time_mapping.dart';
+import 'package:otraku/models/model_helpers.dart';
 import 'package:otraku/models/tuple.dart';
 
 class MediaEntryData {

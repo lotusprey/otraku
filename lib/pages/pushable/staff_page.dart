@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/staff.dart';
-import 'package:otraku/tools/navigators/bubble_tabs.dart';
-import 'package:otraku/tools/navigators/person_header.dart';
+import 'package:otraku/tools/navigation/bubble_tabs.dart';
+import 'package:otraku/tools/navigation/person_header.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 

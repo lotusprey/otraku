@@ -4,7 +4,7 @@ import 'package:otraku/services/network.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/page_object.dart';
+import 'package:otraku/models/anilist/company.dart';
 import 'package:otraku/models/studio_connection_list.dart';
 import 'package:otraku/models/tile_data.dart';
 
@@ -48,11 +48,11 @@ class Studio extends GetxController {
   // DATA
   // ***************************************************************************
 
-  final _company = Rx<PageObject>();
+  final _company = Rx<Company>();
   final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
-  PageObject get company => _company();
+  Company get company => _company();
 
   StudioConnectionList get media => _media();
 
@@ -74,12 +74,11 @@ class Studio extends GetxController {
       _studioQuery,
       {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
-
     if (body == null) return;
 
     final data = body['Studio'];
 
-    _company(PageObject.studio(data, id));
+    _company(Company.studio(data, id));
 
     _initLists(data['media']);
   }

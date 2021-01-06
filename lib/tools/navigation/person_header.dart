@@ -131,7 +131,12 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                           ),
                         ),
                       ),
-                    FavoriteButton(person, shrinkPercentage, toggleFavourite),
+                    FavoriteButton(
+                      favourites: person.favourites,
+                      isFavourite: person.isFavourite,
+                      shrinkPercentage: shrinkPercentage,
+                      toggle: toggleFavourite,
+                    ),
                   ] else
                     const SizedBox(),
                 ],

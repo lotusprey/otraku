@@ -3,10 +3,11 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/tools/layouts/review_grid.dart';
 import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigators/control_header.dart';
+import 'package:otraku/tools/navigation/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
-import 'package:otraku/tools/navigators/headline_header.dart';
+import 'package:otraku/tools/navigation/headline_header.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage();
@@ -76,6 +77,9 @@ class _ExploreGrid extends StatelessWidget {
           loadMore: _loadMore,
           tile: Config.squareTile,
         );
+
+      if (results[0].browsable == Browsable.review)
+        return ReviewGrid(results, _loadMore);
 
       return TileGrid(
         results: results,

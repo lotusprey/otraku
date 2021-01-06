@@ -14,7 +14,7 @@ import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home_pages/collection_page.dart';
 import 'package:otraku/services/network.dart';
-import 'package:otraku/tools/navigators/custom_drawer.dart';
+import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/models/transparent_image.dart';
 
@@ -136,6 +136,7 @@ class _Header extends StatelessWidget {
       pinned: true,
       stretch: true,
       leadingWidth: 40,
+      toolbarHeight: Config.MATERIAL_TAP_TARGET_SIZE,
       expandedHeight: height,
       automaticallyImplyLeading: false,
       backgroundColor: Theme.of(context).backgroundColor,
@@ -180,7 +181,7 @@ class _Header extends StatelessWidget {
           )
         else if (user != null)
           Padding(
-            padding: const EdgeInsets.only(right: 10, top: 12, bottom: 12),
+            padding: const EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: FlatButton(
               child: Text(
                 user.following ? 'Unfollow' : 'Follow',

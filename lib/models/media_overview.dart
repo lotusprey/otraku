@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/date_time_mapping.dart';
-import 'package:otraku/models/page_object.dart';
+import 'package:otraku/models/model_helpers.dart';
 
-class MediaOverview extends PageObject {
+class MediaOverview {
+  final int id;
+  final Browsable browsable;
+  final int favourites;
+  bool isFavourite;
   final String preferredTitle;
   final String romajiTitle;
   final String englishTitle;
@@ -38,10 +41,10 @@ class MediaOverview extends PageObject {
   final String countryOfOrigin;
 
   MediaOverview._({
-    @required int id,
-    @required Browsable browsable,
-    @required bool isFavourite,
-    @required int favourites,
+    @required this.id,
+    @required this.browsable,
+    @required this.favourites,
+    @required this.isFavourite,
     @required this.preferredTitle,
     @required this.romajiTitle,
     @required this.englishTitle,
@@ -71,12 +74,7 @@ class MediaOverview extends PageObject {
     @required this.source,
     @required this.hashtag,
     @required this.countryOfOrigin,
-  }) : super(
-          id: id,
-          browsable: browsable,
-          isFavourite: isFavourite,
-          favourites: favourites,
-        );
+  });
 
   factory MediaOverview(Map<String, dynamic> map) {
     String duration;
@@ -117,9 +115,7 @@ class MediaOverview extends PageObject {
       synonyms: List<String>.from(map['synonyms']),
       cover: map['coverImage']['extraLarge'] ?? map['coverImage']['large'],
       banner: map['bannerImage'],
-      description: map['description'] != null
-          ? map['description'].replaceAll(RegExp(r'<[^>]*>'), '')
-          : null,
+      description: clearHtml(map['description']),
       format: clarifyEnum(map['format']),
       status: clarifyEnum(map['status']),
       entryStatus: map['mediaListEntry'] != null

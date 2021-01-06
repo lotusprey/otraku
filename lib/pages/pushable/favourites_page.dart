@@ -5,8 +5,8 @@ import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/services/network.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
-import 'package:otraku/tools/navigators/custom_app_bar.dart';
-import 'package:otraku/tools/navigators/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/custom_app_bar.dart';
+import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 
 class FavouritesPage extends StatelessWidget {
   final int id;

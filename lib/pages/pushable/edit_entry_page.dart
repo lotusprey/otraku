@@ -1,6 +1,5 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
@@ -11,6 +10,7 @@ import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/expandable_field.dart';
+import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 import 'package:otraku/tools/navigators/custom_app_bar.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/fields/number_field.dart';
@@ -137,7 +137,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                   data.progressVolumes = progressVolumes,
                             ),
                           ),
-                      ], minHeight: 140),
+                      ], minWidth: 140),
                       const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       SliverToBoxAdapter(
                         child: InputFieldStructure(
@@ -173,7 +173,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             helpText: 'End Date',
                           ),
                         ),
-                      ], minHeight: 165),
+                      ], minWidth: 165),
                       const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       _Label('Additional Settings'),
                       _CheckboxGrid(
@@ -219,22 +219,17 @@ class _Label extends StatelessWidget {
 
 class _FieldGrid extends StatelessWidget {
   final List<Widget> list;
-  final double minHeight;
+  final double minWidth;
 
-  _FieldGrid(this.list, {@required this.minHeight});
+  _FieldGrid(this.list, {@required this.minWidth});
 
   @override
   Widget build(BuildContext context) {
-    final count =
-        (MediaQuery.of(context).size.width - (list.length - 1) * 10 - 20) ~/
-            minHeight;
     return SliverGrid(
       delegate: SliverChildListDelegate.fixed(list),
-      gridDelegate: _SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-        crossAxisCount: count,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+        minWidth: minWidth,
         height: 71,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
       ),
     );
   }
@@ -249,9 +244,6 @@ class _CheckboxGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (list.isEmpty) return const SliverToBoxAdapter();
-    final count =
-        (MediaQuery.of(context).size.width - (list.length - 1) * 10 - 20) ~/
-            190;
 
     return SliverGrid(
       delegate: SliverChildBuilderDelegate(
@@ -262,64 +254,11 @@ class _CheckboxGrid extends StatelessWidget {
         ),
         childCount: list.length,
       ),
-      gridDelegate: _SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
-        crossAxisCount: count,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+        minWidth: 190,
         height: Config.MATERIAL_TAP_TARGET_SIZE,
         mainAxisSpacing: 0,
-        crossAxisSpacing: 10,
       ),
     );
   }
-}
-
-class _SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight
-    extends SliverGridDelegate {
-  const _SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight({
-    @required this.crossAxisCount,
-    @required this.height,
-    this.mainAxisSpacing = 0.0,
-    this.crossAxisSpacing = 0.0,
-  })  : assert(crossAxisCount != null && crossAxisCount > 0),
-        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0);
-
-  final int crossAxisCount;
-  final double height;
-  final double mainAxisSpacing;
-  final double crossAxisSpacing;
-
-  bool _debugAssertIsValid() {
-    assert(crossAxisCount > 0);
-    assert(mainAxisSpacing >= 0.0);
-    assert(crossAxisSpacing >= 0.0);
-    assert(height > 0.0);
-    return true;
-  }
-
-  @override
-  SliverGridLayout getLayout(SliverConstraints constraints) {
-    assert(_debugAssertIsValid());
-    double usableCrossAxisExtent =
-        constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
-    if (usableCrossAxisExtent < 0) usableCrossAxisExtent = 0;
-    final double childCrossAxisExtent = usableCrossAxisExtent / crossAxisCount;
-    // final double childMainAxisExtent = childCrossAxisExtent / childAspectRatio;
-    return SliverGridRegularTileLayout(
-      crossAxisCount: crossAxisCount,
-      mainAxisStride: height + mainAxisSpacing,
-      crossAxisStride: childCrossAxisExtent + crossAxisSpacing,
-      childMainAxisExtent: height,
-      childCrossAxisExtent: childCrossAxisExtent,
-      reverseCrossAxis: axisDirectionIsReversed(constraints.crossAxisDirection),
-    );
-  }
-
-  @override
-  bool shouldRelayout(
-    _SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight oldDelegate,
-  ) =>
-      oldDelegate.crossAxisCount != crossAxisCount ||
-      oldDelegate.mainAxisSpacing != mainAxisSpacing ||
-      oldDelegate.crossAxisSpacing != crossAxisSpacing ||
-      oldDelegate.height != height;
 }

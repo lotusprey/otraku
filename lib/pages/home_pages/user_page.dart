@@ -15,8 +15,9 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home_pages/collection_page.dart';
 import 'package:otraku/services/network.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
+import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/models/transparent_image.dart';
+import 'package:otraku/models/model_helpers.dart';
 
 class UserPage extends StatelessWidget {
   final int id;
@@ -132,53 +133,18 @@ class _Header extends StatelessWidget {
     final height = bannerHeight + avatarSize * 0.5;
     final avatar = avatarUrl ?? user?.avatar;
 
-    return SliverAppBar(
-      pinned: true,
-      stretch: true,
-      leadingWidth: 40,
-      toolbarHeight: Config.MATERIAL_TAP_TARGET_SIZE,
-      expandedHeight: height,
-      automaticallyImplyLeading: false,
-      backgroundColor: Theme.of(context).backgroundColor,
-      leading: !isMe
-          ? Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).backgroundColor,
-                    blurRadius: 10,
-                    spreadRadius: -10,
-                  ),
-                ],
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                color: Theme.of(context).dividerColor,
-                onPressed: () => Navigator.of(context).pop(),
-                padding: const EdgeInsets.all(0),
-              ),
-            )
-          : null,
+    return CustomSliverHeader(
+      height: height,
+      implyLeading: !isMe,
+      actionsScrollFadeIn: false,
+      title: user?.name,
       actions: [
         if (isMe)
-          Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).backgroundColor,
-                  blurRadius: 10,
-                  spreadRadius: -10,
-                ),
-              ],
-            ),
-            child: IconButton(
-              icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
-              color: Theme.of(context).dividerColor,
-              onPressed: () => Get.to(SettingsPage()),
-            ),
-          )
+          IconShade(IconButton(
+            icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
+            color: Theme.of(context).dividerColor,
+            onPressed: () => Get.to(SettingsPage()),
+          ))
         else if (user != null)
           Padding(
             padding: const EdgeInsets.only(right: 10, top: 8, bottom: 8),
@@ -192,90 +158,85 @@ class _Header extends StatelessWidget {
               ),
               color: Theme.of(context).accentColor,
               onPressed: Get.find<User>(tag: id.toString()).toggleFollow,
-              visualDensity: VisualDensity.compact,
             ),
           )
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.pin,
-        stretchModes: [StretchMode.zoomBackground],
-        background: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (user?.banner != null) ...[
-              Column(
-                children: [
-                  Expanded(
-                    child: FadeInImage.memoryNetwork(
-                      image: user.banner,
-                      placeholder: transparentImage,
-                      fadeInDuration: Config.FADE_DURATION,
-                      fit: BoxFit.cover,
-                      height: bannerHeight,
-                      width: double.infinity,
-                    ),
-                  ),
-                  SizedBox(height: height - bannerHeight),
-                ],
+      background: Stack(
+        fit: StackFit.expand,
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: user?.banner != null
+                    ? FadeInImage.memoryNetwork(
+                        image: user.banner,
+                        placeholder: transparentImage,
+                        fadeInDuration: Config.FADE_DURATION,
+                        fit: BoxFit.cover,
+                        height: bannerHeight,
+                        width: double.infinity,
+                      )
+                    : Container(color: Theme.of(context).primaryColor),
               ),
-              Positioned.fill(
-                bottom: height - bannerHeight - 1,
-                child: Container(
-                  height: bannerHeight,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Theme.of(context).backgroundColor,
-                      ],
-                    ),
-                  ),
+              SizedBox(height: height - bannerHeight),
+            ],
+          ),
+          Positioned.fill(
+            bottom: height - bannerHeight - 1,
+            child: Container(
+              height: bannerHeight,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Theme.of(context).backgroundColor,
+                  ],
                 ),
               ),
-            ],
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    child: avatar != null
-                        ? Hero(
-                            tag: id.toString(),
-                            child: ClipRRect(
-                              borderRadius: Config.BORDER_RADIUS,
-                              child: Container(
-                                height: avatarSize,
-                                width: avatarSize,
-                                child: FadeInImage.memoryNetwork(
-                                  placeholder: transparentImage,
-                                  image: avatar,
-                                  fit: BoxFit.contain,
-                                  fadeInDuration: Config.FADE_DURATION,
-                                ),
-                              ),
-                            ),
-                          )
-                        : const SizedBox(),
+            ),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            avatar != null
+                ? GestureDetector(
+                    child: Hero(
+                      tag: id.toString(),
+                      child: ClipRRect(
+                        borderRadius: Config.BORDER_RADIUS,
+                        child: Container(
+                          height: avatarSize,
+                          width: avatarSize,
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: transparentImage,
+                            image: avatar,
+                            fit: BoxFit.contain,
+                            fadeInDuration: Config.FADE_DURATION,
+                          ),
+                        ),
+                      ),
+                    ),
                     onTap: () => showDialog(
                       context: context,
                       builder: (_) => PopUpAnimation(
                         Image.network(avatar, fit: BoxFit.cover),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  if (user?.name != null)
-                    Text(
-                      user.name,
-                      style: Theme.of(context).textTheme.headline3,
-                    ),
-                ],
+                  )
+                : SizedBox(width: avatarSize),
+            const SizedBox(width: 10),
+            if (user?.name != null)
+              Text(
+                user.name,
+                style: Theme.of(context).textTheme.headline3,
               ),
-            ),
           ],
         ),
       ),

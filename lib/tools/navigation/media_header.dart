@@ -6,226 +6,165 @@ import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/models/transparent_image.dart';
+import 'package:otraku/models/model_helpers.dart';
 
-class MediaHeader implements SliverPersistentHeaderDelegate {
+class MediaHeader extends StatelessWidget {
   final MediaOverview overview;
-  final double coverWidth;
-  final double coverHeight;
-  final double maxHeight;
   final String imageUrl;
   final Future<bool> Function() toggleFavourite;
 
   MediaHeader({
     @required this.overview,
-    @required this.coverWidth,
-    @required this.coverHeight,
-    @required this.maxHeight,
     @required this.imageUrl,
     @required this.toggleFavourite,
   });
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    final shrinkPercentage =
-        shrinkOffset < maxHeight ? shrinkOffset / maxHeight : 1.0;
+  Widget build(BuildContext context) {
+    final coverWidth = MediaQuery.of(context).size.width < 430.0
+        ? MediaQuery.of(context).size.width * 0.35
+        : 150;
+    final coverHeight = coverWidth / 0.7;
+    final bannerHeight =
+        coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+    final height = bannerHeight + coverHeight * 0.6;
 
-    return Container(
-      height: maxHeight,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).backgroundColor,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          )
-        ],
-      ),
-      child: Stack(
+    return CustomSliverHeader(
+      height: height,
+      title: overview?.preferredTitle,
+      actions: overview != null
+          ? [
+              _EditButton(overview, false),
+              _FavouriteButton(overview, false, toggleFavourite),
+            ]
+          : null,
+      background: Stack(
         fit: StackFit.expand,
         children: [
-          if (overview?.banner != null)
-            FadeInImage.memoryNetwork(
-              image: overview.banner,
-              placeholder: transparentImage,
-              fadeInDuration: Config.FADE_DURATION,
-              fit: BoxFit.cover,
-            ),
-          Container(
-            padding: const EdgeInsets.only(
-              top: Config.MATERIAL_TAP_TARGET_SIZE,
-              left: 10,
-              right: 10,
-            ),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Theme.of(context).backgroundColor.withAlpha(130),
-                  Theme.of(context).backgroundColor,
-                ],
+          Column(
+            children: [
+              Expanded(
+                child: overview?.banner != null
+                    ? FadeInImage.memoryNetwork(
+                        image: overview.banner,
+                        placeholder: transparentImage,
+                        fadeInDuration: Config.FADE_DURATION,
+                        fit: BoxFit.cover,
+                        height: bannerHeight,
+                        width: double.infinity,
+                      )
+                    : Container(color: Theme.of(context).primaryColor),
+              ),
+              SizedBox(height: height - bannerHeight),
+            ],
+          ),
+          Positioned.fill(
+            bottom: height - bannerHeight - 1,
+            child: Container(
+              height: bannerHeight - Config.MATERIAL_TAP_TARGET_SIZE,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Theme.of(context).backgroundColor,
+                  ],
+                ),
               ),
             ),
-            child: Container(
-              height: coverHeight,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Hero(
-                    tag: imageUrl,
-                    child: Container(
-                      width: coverWidth,
-                      child: ClipRRect(
-                        borderRadius: Config.BORDER_RADIUS,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image.network(imageUrl, fit: BoxFit.cover),
-                            if (overview != null)
-                              GestureDetector(
-                                child: Image.network(
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Hero(
+              tag: imageUrl,
+              child: Container(
+                height: coverHeight,
+                width: coverWidth,
+                child: ClipRRect(
+                  borderRadius: Config.BORDER_RADIUS,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(imageUrl, fit: BoxFit.cover),
+                      if (overview != null)
+                        GestureDetector(
+                          child: Image.network(
+                            overview.cover,
+                            fit: BoxFit.cover,
+                          ),
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (ctx) => PopUpAnimation(
+                              ImageTextDialog(
+                                text: overview.preferredTitle,
+                                image: Image.network(
                                   overview.cover,
                                   fit: BoxFit.cover,
                                 ),
-                                onTap: () => showDialog(
-                                  context: context,
-                                  builder: (ctx) => PopUpAnimation(
-                                    ImageTextDialog(
-                                      text: overview.preferredTitle,
-                                      image: Image.network(
-                                        overview.cover,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ),
-                          ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  if (overview != null)
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Flexible(
-                            flex: 2,
-                            child: Text(
-                              overview.preferredTitle,
-                              style: Theme.of(context).textTheme.headline3,
-                              overflow: TextOverflow.fade,
-                            ),
-                          ),
-                          if (overview.nextEpisode != null)
-                            Flexible(
-                              child: Text(
-                                'Ep ${overview.nextEpisode} in ${overview.timeUntilAiring}',
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
-                            ),
-                          Flexible(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _EditButton(overview, true),
-                                _FavouriteButton(
-                                  overview,
-                                  true,
-                                  toggleFavourite,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+                ),
               ),
             ),
-          ),
-          if (shrinkOffset > 0)
-            Container(
-              height: double.infinity,
-              width: double.infinity,
-              color: Theme.of(context)
-                  .backgroundColor
-                  .withAlpha((shrinkPercentage * 255).round()),
-            ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width - 20,
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: Theme.of(context).dividerColor,
+            const SizedBox(width: 10),
+            if (overview != null)
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: Text(
+                        overview.preferredTitle,
+                        style: Theme.of(context).textTheme.headline3,
+                        overflow: TextOverflow.fade,
+                      ),
                     ),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  if (shrinkPercentage > 0.4)
-                    Expanded(
-                      child: Opacity(
-                        opacity: shrinkPercentage,
+                    if (overview.nextEpisode != null)
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            'Ep ${overview.nextEpisode} in ${overview.timeUntilAiring}',
+                            style: Theme.of(context).textTheme.bodyText2,
+                          ),
+                        ),
+                      ),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Expanded(
-                              child: Text(
-                                overview.preferredTitle,
-                                style: Theme.of(context).textTheme.headline6,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            _EditButton(overview, false),
-                            _FavouriteButton(overview, false, toggleFavourite),
+                            _EditButton(overview, true),
+                            const SizedBox(width: 10),
+                            _FavouriteButton(overview, true, toggleFavourite),
                           ],
                         ),
                       ),
                     ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
-  @override
-  double get maxExtent => maxHeight;
-
-  @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
-
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
-
-  @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
-
-  @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
-
-  @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
-      null;
-
-  @override
-  TickerProvider get vsync => null;
 }
 
 class _EditButton extends StatefulWidget {
@@ -248,6 +187,7 @@ class __EditButtonState extends State<_EditButton> {
 
     return widget.full
         ? RaisedButton(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             clipBehavior: Clip.hardEdge,
             onPressed: onPressed,
             child: icon,
@@ -290,6 +230,7 @@ class __FavouriteButtonState extends State<_FavouriteButton> {
 
     return widget.full
         ? RaisedButton(
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             color: Theme.of(context).errorColor,
             clipBehavior: Clip.hardEdge,
             onPressed: onPressed,

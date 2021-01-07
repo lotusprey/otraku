@@ -23,6 +23,7 @@ abstract class Filterable extends GetxController {
   ScrollController get scrollCtrl => _scrollCtrl;
 
   void scrollToTop() {
+    if (!_scrollCtrl.hasClients) return;
     if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
     _scrollCtrl.animateTo(
       0,

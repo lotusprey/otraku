@@ -325,6 +325,7 @@ class Explorer extends Filterable {
     }
 
     if (clean) {
+      scrollToTop();
       _results.assignAll(loaded);
       _isLoading.value = false;
     } else {

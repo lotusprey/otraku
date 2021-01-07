@@ -153,6 +153,8 @@ class Collection extends Filterable {
 
   bool get isEmpty => _entries.isEmpty;
 
+  bool get isFullyEmpty => _lists.isEmpty;
+
   int get totalEntryCount {
     int c = 0;
     for (final list in _lists)
@@ -443,6 +445,7 @@ class Collection extends Filterable {
       e.add(entry);
     }
 
+    scrollToTop();
     _entries.assignAll(e);
   }
 

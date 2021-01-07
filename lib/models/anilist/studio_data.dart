@@ -1,22 +1,18 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/enums/browsable.dart';
 
-class Company {
+class StudioData {
   final int id;
-  final Browsable browsable;
   final int favourites;
   final bool isFavourite;
 
-  Company({
+  StudioData({
     @required this.id,
     @required this.isFavourite,
     @required this.favourites,
-    @required this.browsable,
   });
 
-  factory Company.studio(Map<String, dynamic> map, int id) => Company(
+  factory StudioData.studio(Map<String, dynamic> map, int id) => StudioData(
         id: id,
-        browsable: Browsable.studio,
         isFavourite: map['isFavourite'],
         favourites: map['favourites'],
       );

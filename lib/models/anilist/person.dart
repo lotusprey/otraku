@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/models/model_helpers.dart';
 
 class Person {
   final int id;
-  final Browsable browsable;
   final String fullName;
   final List<String> altNames;
   final String imageUrl;
@@ -14,7 +12,6 @@ class Person {
 
   Person._({
     @required this.id,
-    @required this.browsable,
     @required this.fullName,
     @required this.altNames,
     @required this.imageUrl,
@@ -23,7 +20,7 @@ class Person {
     @required this.favourites,
   });
 
-  factory Person(Map<String, dynamic> map, int id, Browsable browsable) {
+  factory Person(Map<String, dynamic> map, int id) {
     List<String> altNames = (map['name']['alternative'] as List<dynamic>)
         .map((a) => a.toString())
         .toList();
@@ -32,7 +29,6 @@ class Person {
 
     return Person._(
       id: id,
-      browsable: Browsable.staff,
       isFavourite: map['isFavourite'],
       favourites: map['favourites'],
       fullName: map['name']['full'],

@@ -6,7 +6,7 @@ import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/anilist/company.dart';
+import 'package:otraku/models/anilist/studio_data.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
@@ -146,7 +146,7 @@ class StudioPage extends StatelessWidget {
 }
 
 class _StudioHeader implements SliverPersistentHeaderDelegate {
-  final Company company;
+  final StudioData company;
   final String textTag;
   final Future<bool> Function() toggleFavourite;
 

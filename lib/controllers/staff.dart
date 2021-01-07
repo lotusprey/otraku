@@ -112,7 +112,7 @@ class Staff extends GetxController {
 
     final data = body['Staff'];
 
-    _person(Person(data, id, Browsable.staff));
+    _person(Person(data, id));
 
     _initLists(data);
   }

@@ -109,7 +109,7 @@ class Character extends GetxController {
 
     final data = body['Character'];
 
-    _person(Person(data, id, Browsable.character));
+    _person(Person(data, id));
 
     _initLists(data);
   }

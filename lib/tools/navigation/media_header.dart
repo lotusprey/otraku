@@ -182,7 +182,7 @@ class __EditButtonState extends State<_EditButton> {
   Widget build(BuildContext context) {
     final icon = Icon(
       widget.overview.entryStatus == null ? Icons.add : Icons.edit,
-      color: Theme.of(context).dividerColor,
+      color: Theme.of(context).backgroundColor,
     );
 
     return widget.full
@@ -225,7 +225,7 @@ class __FavouriteButtonState extends State<_FavouriteButton> {
   Widget build(BuildContext context) {
     final icon = Icon(
       widget.overview.isFavourite ? Icons.favorite : Icons.favorite_border,
-      color: Theme.of(context).dividerColor,
+      color: Theme.of(context).backgroundColor,
     );
 
     return widget.full

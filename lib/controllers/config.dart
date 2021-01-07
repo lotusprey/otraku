@@ -10,7 +10,7 @@ import 'package:otraku/pages/home_page.dart';
 class Config extends GetxController {
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
-  static const RADIUS = Radius.circular(5);
+  static const RADIUS = Radius.circular(10);
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
   static const PHYSICS = BouncingScrollPhysics();
   static const FADE_DURATION = Duration(milliseconds: 300);

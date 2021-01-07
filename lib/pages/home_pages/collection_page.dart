@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/tools/navigation/control_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class CollectionPage extends StatefulWidget {
+class CollectionPage extends StatelessWidget {
   final int otherUserId;
   final bool ofAnime;
   final String collectionTag;
@@ -16,31 +18,18 @@ class CollectionPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CollectionPageState createState() => _CollectionPageState();
-}
-
-class _CollectionPageState extends State<CollectionPage> {
-  final _ctrl = ScrollController();
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) => CustomScrollView(
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        controller: _ctrl,
+        controller: Get.find<Collection>(tag: collectionTag).scrollCtrl,
         slivers: [
           HeadlineHeader(
-            '${widget.ofAnime ? 'Anime' : 'Manga'} List',
-            widget.otherUserId != null,
+            '${ofAnime ? 'Anime' : 'Manga'} List',
+            otherUserId != null,
           ),
-          CollectionControlHeader(_ctrl, widget.collectionTag),
-          MediaList(widget.collectionTag),
+          ControlHeader(collectionTag),
+          MediaList(collectionTag),
           SliverToBoxAdapter(
             child: const SizedBox(height: 50),
           ),

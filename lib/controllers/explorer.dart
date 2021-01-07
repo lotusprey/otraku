@@ -8,7 +8,7 @@ import 'package:otraku/models/tuple.dart';
 import 'package:otraku/services/network.dart';
 
 // Searches and filters items from the Browsable enum
-class Explorer extends GetxController implements Filterable {
+class Explorer extends Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

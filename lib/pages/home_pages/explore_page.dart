@@ -9,21 +9,8 @@ import 'package:otraku/tools/navigation/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class ExplorePage extends StatefulWidget {
+class ExplorePage extends StatelessWidget {
   const ExplorePage();
-
-  @override
-  _ExplorePageState createState() => _ExplorePageState();
-}
-
-class _ExplorePageState extends State<ExplorePage> {
-  final _ctrl = ScrollController();
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +18,10 @@ class _ExplorePageState extends State<ExplorePage> {
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
-      controller: _ctrl,
+      controller: Get.find<Explorer>().scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        ExploreControlHeader(_ctrl),
+        ControlHeader(),
         _ExploreGrid(),
         _EndOfListLoader(),
         SliverToBoxAdapter(

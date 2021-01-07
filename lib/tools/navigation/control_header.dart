@@ -15,14 +15,19 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 
-class CollectionControlHeader extends StatelessWidget {
-  final ScrollController ctrl;
+class ControlHeader extends StatelessWidget {
   final String collectionTag;
 
-  const CollectionControlHeader(this.ctrl, this.collectionTag);
+  const ControlHeader([this.collectionTag]);
 
   @override
   Widget build(BuildContext context) {
+    if (collectionTag == null)
+      return SliverPersistentHeader(
+        pinned: true,
+        delegate: _ControlHeaderDelegate(null),
+      );
+
     return Obx(() {
       final collection = Get.find<Collection>(tag: collectionTag);
       if (collection.fetching && collection.names.isEmpty)
@@ -30,29 +35,9 @@ class CollectionControlHeader extends StatelessWidget {
 
       return SliverPersistentHeader(
         pinned: true,
-        delegate: _ControlHeaderDelegate(
-          collectionTag: collectionTag,
-          ctrl: ctrl,
-        ),
+        delegate: _ControlHeaderDelegate(collectionTag),
       );
     });
-  }
-}
-
-class ExploreControlHeader extends StatelessWidget {
-  final ScrollController ctrl;
-
-  const ExploreControlHeader(this.ctrl);
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: _ControlHeaderDelegate(
-        collectionTag: null,
-        ctrl: ctrl,
-      ),
-    );
   }
 }
 
@@ -60,12 +45,8 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 58.0;
 
   final String collectionTag;
-  final ScrollController ctrl;
 
-  _ControlHeaderDelegate({
-    @required this.collectionTag,
-    @required this.ctrl,
-  });
+  _ControlHeaderDelegate(this.collectionTag);
 
   @override
   Widget build(
@@ -91,11 +72,11 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
               if (collectionTag != null)
                 Obx(() {
                   final collection = Get.find<Collection>(tag: collectionTag);
-                  if (collection.names.isEmpty)
+                  if (collection.isEmpty)
                     return const Expanded(child: SizedBox());
 
                   return _Navigation(
-                    ctrl: ctrl,
+                    scrollToTop: collection.scrollToTop,
                     swipe: (int offset) => collection.listIndex += offset,
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -127,7 +108,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 Obx(() {
                   final explorer = Get.find<Explorer>();
                   return _Navigation(
-                    ctrl: ctrl,
+                    scrollToTop: explorer.scrollToTop,
                     swipe: (int offset) {
                       final index = explorer.type.index + offset;
                       if (index >= 0 && index < Browsable.values.length)
@@ -197,7 +178,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
 }
 
 class _Navigation extends StatefulWidget {
-  final ScrollController ctrl;
+  final Function scrollToTop;
   final Function(int) swipe;
   final Widget title;
   final String hint;
@@ -205,7 +186,7 @@ class _Navigation extends StatefulWidget {
   final Function(String) search;
 
   _Navigation({
-    @required this.ctrl,
+    @required this.scrollToTop,
     @required this.swipe,
     @required this.title,
     @required this.hint,
@@ -240,12 +221,7 @@ class __NavigationState extends State<_Navigation> {
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  if (widget.ctrl.offset > 100) widget.ctrl.jumpTo(100);
-                  widget.ctrl.animateTo(0,
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.decelerate);
-                },
+                onTap: widget.scrollToTop,
                 onHorizontalDragStart: (details) => dragStart = details,
                 onHorizontalDragUpdate: (details) => dragUpdate = details,
                 onHorizontalDragEnd: (_) {

@@ -9,7 +9,7 @@ import 'package:otraku/models/anilist/media_list_data.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/services/network.dart';
 
-class Collection extends GetxController implements Filterable {
+class Collection extends Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -150,6 +150,8 @@ class Collection extends GetxController implements Filterable {
   String get currentName => _lists[_listIndex()].name;
 
   int get currentCount => _lists[_listIndex()].entries.length;
+
+  bool get isEmpty => _entries.isEmpty;
 
   int get totalEntryCount {
     int c = 0;
@@ -383,6 +385,8 @@ class Collection extends GetxController implements Filterable {
   // ***************************************************************************
 
   void filter() {
+    if (_lists.isEmpty) return;
+
     final search = (_filters[Filterable.SEARCH] as String)?.toLowerCase();
     final formatIn = _filters[Filterable.FORMAT_IN];
     final statusIn = _filters[Filterable.STATUS_IN];

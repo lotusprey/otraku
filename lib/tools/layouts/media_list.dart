@@ -22,10 +22,9 @@ class MediaList extends StatelessWidget {
   Widget build(BuildContext context) {
     final collection = Get.find<Collection>(tag: collectionTag);
     return Obx(() {
-      if (collection.names.isEmpty) {
-        if (collection.fetching) {
+      if (collection.isFullyEmpty) {
+        if (collection.fetching)
           return const SliverFillRemaining(child: Center(child: Loader()));
-        }
 
         return SliverFillRemaining(
           child: Center(
@@ -42,9 +41,7 @@ class MediaList extends StatelessWidget {
         );
       }
 
-      final entries = collection.entries;
-
-      if (entries.length == 0) {
+      if (collection.isEmpty)
         return SliverFillRemaining(
           child: Center(
             child: Text(
@@ -53,10 +50,10 @@ class MediaList extends StatelessWidget {
             ),
           ),
         );
-      }
 
+      final entries = collection.entries;
       return SliverPadding(
-        padding: Config.PADDING,
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
             (_, index) =>
@@ -85,6 +82,7 @@ class _MediaListTile extends StatelessWidget {
       browsable: Browsable.anime,
       tag: media.cover,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Hero(
             tag: media.cover,

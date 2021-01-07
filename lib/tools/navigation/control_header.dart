@@ -30,7 +30,7 @@ class ControlHeader extends StatelessWidget {
 
     return Obx(() {
       final collection = Get.find<Collection>(tag: collectionTag);
-      if (collection.fetching && collection.names.isEmpty)
+      if (collection.fetching || collection.isFullyEmpty)
         return const SliverToBoxAdapter();
 
       return SliverPersistentHeader(
@@ -72,9 +72,6 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
               if (collectionTag != null)
                 Obx(() {
                   final collection = Get.find<Collection>(tag: collectionTag);
-                  if (collection.isEmpty)
-                    return const Expanded(child: SizedBox());
-
                   return _Navigation(
                     scrollToTop: collection.scrollToTop,
                     swipe: (int offset) => collection.listIndex += offset,

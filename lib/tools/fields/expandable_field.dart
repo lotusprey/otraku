@@ -19,7 +19,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           borderRadius: Config.BORDER_RADIUS,

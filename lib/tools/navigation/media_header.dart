@@ -179,24 +179,23 @@ class _EditButton extends StatefulWidget {
 
 class __EditButtonState extends State<_EditButton> {
   @override
-  Widget build(BuildContext context) {
-    final icon = Icon(
-      widget.overview.entryStatus == null ? Icons.add : Icons.edit,
-      color: Theme.of(context).backgroundColor,
-    );
-
-    return widget.full
-        ? RaisedButton(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            clipBehavior: Clip.hardEdge,
-            onPressed: onPressed,
-            child: icon,
-          )
-        : IconButton(
-            icon: icon,
-            onPressed: onPressed,
-          );
-  }
+  Widget build(BuildContext context) => widget.full
+      ? RaisedButton(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          clipBehavior: Clip.hardEdge,
+          onPressed: onPressed,
+          child: Icon(
+            widget.overview.entryStatus == null ? Icons.add : Icons.edit,
+            color: Theme.of(context).backgroundColor,
+          ),
+        )
+      : IconButton(
+          onPressed: onPressed,
+          icon: Icon(
+            widget.overview.entryStatus == null ? Icons.add : Icons.edit,
+            color: Theme.of(context).dividerColor,
+          ),
+        );
 
   void onPressed() => Get.to(
         EditEntryPage(
@@ -222,22 +221,28 @@ class _FavouriteButton extends StatefulWidget {
 
 class __FavouriteButtonState extends State<_FavouriteButton> {
   @override
-  Widget build(BuildContext context) {
-    final icon = Icon(
-      widget.overview.isFavourite ? Icons.favorite : Icons.favorite_border,
-      color: Theme.of(context).backgroundColor,
-    );
-
-    return widget.full
-        ? RaisedButton(
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            color: Theme.of(context).errorColor,
-            clipBehavior: Clip.hardEdge,
-            onPressed: onPressed,
-            child: icon,
-          )
-        : IconButton(icon: icon, onPressed: onPressed);
-  }
+  Widget build(BuildContext context) => widget.full
+      ? RaisedButton(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          color: Theme.of(context).errorColor,
+          clipBehavior: Clip.hardEdge,
+          onPressed: onPressed,
+          child: Icon(
+            widget.overview.isFavourite
+                ? Icons.favorite
+                : Icons.favorite_border,
+            color: Theme.of(context).backgroundColor,
+          ),
+        )
+      : IconButton(
+          onPressed: onPressed,
+          icon: Icon(
+            widget.overview.isFavourite
+                ? Icons.favorite
+                : Icons.favorite_border,
+            color: Theme.of(context).dividerColor,
+          ),
+        );
 
   void onPressed() => widget.toggle().then((ok) => ok
       ? setState(

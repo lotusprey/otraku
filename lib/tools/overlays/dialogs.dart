@@ -68,7 +68,7 @@ class TextDialog extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+              borderRadius: BorderRadius.vertical(top: Config.RADIUS),
               color: Theme.of(context).backgroundColor,
             ),
             padding: Config.PADDING,
@@ -78,7 +78,7 @@ class TextDialog extends StatelessWidget {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(5)),
+                borderRadius: BorderRadius.vertical(bottom: Config.RADIUS),
                 color: Theme.of(context).primaryColor,
               ),
               child: ScrollbarImplementation(

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 import 'package:otraku/tools/fields/date_field.dart';
@@ -177,14 +176,12 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       _Label('Additional Settings'),
                       _CheckboxGrid(
-                        [
-                          Tuple('Private', data.private),
-                          Tuple(
-                            'Hidden From Status Lists',
-                            data.hiddenFromStatusLists,
-                          )
-                        ],
-                        (i, val) => i == 0
+                        {
+                          'Private': data.private,
+                          'Hidden From Status Lists':
+                              data.hiddenFromStatusLists,
+                        },
+                        (key, val) => key == 'Private'
                             ? data.private = val
                             : data.hiddenFromStatusLists = val,
                       ),
@@ -193,7 +190,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         _Label('Custom Lists'),
                         _CheckboxGrid(
                           data.customLists,
-                          (i, val) => data.customLists[i].item2 = val,
+                          (key, val) => data.customLists[key] = val,
                         ),
                       ],
                     ],
@@ -236,23 +233,23 @@ class _FieldGrid extends StatelessWidget {
 }
 
 class _CheckboxGrid extends StatelessWidget {
-  final List<Tuple<String, bool>> list;
-  final Function(int, bool) onChanged;
+  final Map<String, bool> map;
+  final Function(String, bool) onChanged;
 
-  _CheckboxGrid(this.list, this.onChanged);
+  _CheckboxGrid(this.map, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
-    if (list.isEmpty) return const SliverToBoxAdapter();
+    if (map.isEmpty) return const SliverToBoxAdapter();
 
     return SliverGrid(
       delegate: SliverChildBuilderDelegate(
         (_, index) => CheckboxField(
-          title: list[index].item1,
-          initialValue: list[index].item2,
-          onChanged: (val) => onChanged(index, val),
+          title: map.entries.elementAt(index).key,
+          initialValue: map.entries.elementAt(index).value,
+          onChanged: (val) => onChanged(map.entries.elementAt(index).key, val),
         ),
-        childCount: list.length,
+        childCount: map.length,
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
         minWidth: 190,

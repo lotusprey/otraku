@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:otraku/services/network.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 
@@ -47,12 +46,16 @@ class Entry extends GetxController {
     _copy = MediaEntryData(body['Media']);
 
     if (_entry.customLists == null) {
-      final customLists = Get.find<Collection>(
-        tag: _entry.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
-      ).customListNames.map((e) => Tuple(e, false)).toList();
+      final customLists = Map.fromIterable(
+        Get.find<Collection>(
+          tag: _entry.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
+        ).customListNames,
+        key: (k) => k.toString(),
+        value: (_) => false,
+      );
 
       _entry.customLists = customLists;
-      _copy.customLists = [...customLists];
+      _copy.customLists = {...customLists};
     }
 
     update();

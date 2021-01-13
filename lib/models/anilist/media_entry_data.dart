@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/model_helpers.dart';
-import 'package:otraku/models/tuple.dart';
 
 class MediaEntryData {
   final int mediaId;
@@ -20,7 +19,7 @@ class MediaEntryData {
   DateTime completedAt;
   bool private;
   bool hiddenFromStatusLists;
-  List<Tuple<String, bool>> customLists;
+  Map<String, bool> customLists;
 
   MediaEntryData._({
     @required this.mediaId,
@@ -51,12 +50,10 @@ class MediaEntryData {
       );
     }
 
-    final List<Tuple<String, bool>> customLists = [];
-    if (map['mediaListEntry']['customLists'] != null) {
-      for (final key in map['mediaListEntry']['customLists'].keys) {
-        customLists.add(Tuple(key, map['mediaListEntry']['customLists'][key]));
-      }
-    }
+    final Map<String, bool> customLists = {};
+    if (map['mediaListEntry']['customLists'] != null)
+      for (final key in map['mediaListEntry']['customLists'].keys)
+        customLists[key] = map['mediaListEntry']['customLists'][key];
 
     return MediaEntryData._(
       type: map['type'],

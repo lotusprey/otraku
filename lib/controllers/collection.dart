@@ -65,7 +65,7 @@ class Collection extends Filterable {
   ''';
 
   static const _updateEntryMutation = r'''
-    mutation UpdateEntry($mediaId: Int, $status: ListStatus,
+    mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
         $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
         $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
         $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
@@ -230,12 +230,19 @@ class Collection extends Filterable {
   }
 
   Future<void> updateEntry(
-      MediaEntryData oldEntry, MediaEntryData newEntry) async {
+    MediaEntryData oldEntry,
+    MediaEntryData newEntry,
+  ) async {
     // Update database item
-    final List<String> oldCustomLists =
-        oldEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
-    final List<String> newCustomLists =
-        newEntry.customLists.where((t) => t.item2).map((t) => t.item1).toList();
+    final List<String> oldCustomLists = oldEntry.customLists.entries
+        .where((e) => e.value)
+        .map((e) => e.key)
+        .toList();
+    final List<String> newCustomLists = newEntry.customLists.entries
+        .where((e) => e.value)
+        .map((e) => e.key)
+        .toList();
+
     newEntry.status ??= ListStatus.CURRENT;
 
     final data = await Network.request(
@@ -263,8 +270,8 @@ class Collection extends Filterable {
     // Update the status lists. If the list in which the
     // entry was moved to isn't present locally, refetch.
     if (oldEntry.status != newEntry.status) {
+      // Case 1: The media list status has been changed.
       bool foundNewList = false;
-
       for (final list in _lists)
         if (!list.isCustomList) {
           if (list.status == oldEntry.status) {
@@ -284,6 +291,37 @@ class Collection extends Filterable {
         fetch();
         return;
       }
+    } else if (oldEntry.hiddenFromStatusLists !=
+        newEntry.hiddenFromStatusLists) {
+      // Case 2: The @hiddenFromStatusLists property is changed.
+      for (final list in _lists)
+        if (!list.isCustomList) {
+          if (list.status == newEntry.status) {
+            for (int i = 0; i < list.entries.length; i++)
+              if (list.entries[i].mediaId == entry.mediaId) {
+                if (oldEntry.hiddenFromStatusLists) {
+                  list.entries.add(entry);
+                  list.sort(_filters[Filterable.SORT]);
+                } else
+                  list.entries.removeAt(i);
+                break;
+              }
+            break;
+          }
+        }
+    } else {
+      // Case 3: The entry is in the same status list.
+      for (final list in _lists)
+        if (!list.isCustomList) {
+          if (list.status == newEntry.status) {
+            for (int i = 0; i < list.entries.length; i++)
+              if (list.entries[i].mediaId == entry.mediaId) {
+                list.entries[i] = entry;
+                break;
+              }
+            break;
+          }
+        }
     }
 
     // Update the custom lists. If a list, in which the
@@ -313,18 +351,21 @@ class Collection extends Filterable {
             break;
           }
 
-        if (wasHolder != isHolder) {
-          if (wasHolder)
-            for (int i = 0; i < list.entries.length; i++) {
-              if (list.entries[i].mediaId == entry.mediaId) {
-                list.entries.removeAt(i);
-                break;
-              }
+        if (wasHolder && isHolder) {
+          for (int i = 0; i < list.entries.length; i++)
+            if (list.entries[i].mediaId == entry.mediaId) {
+              list.entries[i] = entry;
+              break;
             }
-          else {
-            list.entries.add(entry);
-            list.sort(_filters[Filterable.SORT]);
-          }
+        } else if (wasHolder) {
+          for (int i = 0; i < list.entries.length; i++)
+            if (list.entries[i].mediaId == entry.mediaId) {
+              list.entries.removeAt(i);
+              break;
+            }
+        } else if (isHolder) {
+          list.entries.add(entry);
+          list.sort(_filters[Filterable.SORT]);
         }
       }
     }
@@ -354,8 +395,8 @@ class Collection extends Filterable {
       return;
 
     final List<String> customLists = [];
-    for (final tuple in entry.customLists)
-      if (tuple.item2) customLists.add(tuple.item1.toLowerCase());
+    for (final cl in entry.customLists.entries)
+      if (cl.value) customLists.add(cl.key.toLowerCase());
 
     for (final list in _lists)
       if (!entry.hiddenFromStatusLists && entry.status == list.status) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/user_data.dart';
@@ -143,7 +144,10 @@ class _Header extends StatelessWidget {
           IconShade(IconButton(
             icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
             color: Theme.of(context).dividerColor,
-            onPressed: () => Get.to(SettingsPage()),
+            onPressed: () => Get.to(
+              SettingsPage(),
+              binding: BindingsBuilder.put(() => Settings()),
+            ),
           ))
         else if (user != null)
           Padding(

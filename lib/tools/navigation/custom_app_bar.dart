@@ -7,14 +7,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData leading;
   final String title;
   final List<Widget> trailing;
-  final Function callOnPop;
   final bool wrapTrailing;
 
   CustomAppBar({
     this.leading = FluentSystemIcons.ic_fluent_arrow_left_filled,
     this.title = '',
     this.trailing,
-    this.callOnPop,
     this.wrapTrailing = true,
   });
 
@@ -42,10 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: AppBarIcon(IconButton(
                 icon: Icon(leading),
                 color: Theme.of(context).accentColor,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  if (callOnPop != null) callOnPop();
-                },
+                onPressed: () => Navigator.of(context).pop(),
               )),
             ),
             if (trailing != null)

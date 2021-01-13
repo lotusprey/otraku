@@ -3,7 +3,7 @@ import 'package:otraku/enums/enum_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 
-class Settings {
+class SettingsData {
   final ScoreFormat scoreFormat;
   final ListSort defaultSort;
   final String titleLanguage;
@@ -13,7 +13,7 @@ class Settings {
   final bool airingNotifications;
   final Map<String, bool> notificationOptions;
 
-  Settings._({
+  SettingsData._({
     @required this.scoreFormat,
     @required this.defaultSort,
     @required this.titleLanguage,
@@ -24,7 +24,7 @@ class Settings {
     @required this.notificationOptions,
   });
 
-  factory Settings(Map<String, dynamic> map) => Settings._(
+  factory SettingsData(Map<String, dynamic> map) => SettingsData._(
         scoreFormat: stringToEnum(
           map['mediaListOptions']['scoreFormat'],
           ScoreFormat.values,

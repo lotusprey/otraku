@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/controllers/user_settings.dart';
+import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/controllers/explorer.dart';
@@ -24,7 +24,7 @@ class LoadingPage extends StatelessWidget {
           Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
           Get.put(User(), tag: Network.viewerId.toString()).fetchUser(null);
           Get.put(Explorer()).fetchInitial();
-          Get.put(UserSettings()).fetchSettings();
+          Get.put(Viewer()).fetchData();
 
           Get.offAll(HomePage(), transition: Transition.fadeIn);
         });

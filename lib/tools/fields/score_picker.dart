@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user_settings.dart';
+import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/fields/number_field.dart';
@@ -13,7 +13,7 @@ class ScorePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (describeEnum(Get.find<UserSettings>().settings.scoreFormat)) {
+    switch (describeEnum(Get.find<Viewer>().settings.scoreFormat)) {
       case 'POINT_3':
         return _SmileyScorePicker(data);
       case 'POINT_5':

@@ -4,7 +4,6 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/services/filterable.dart';
 import 'package:otraku/models/tile_data.dart';
-import 'package:otraku/models/tuple.dart';
 import 'package:otraku/services/network.dart';
 
 // Searches and filters items from the Browsable enum
@@ -102,7 +101,7 @@ class Explorer extends Filterable {
   final _search = ''.obs;
   int _concurrentFetches = 0;
   List<String> _genres;
-  Tuple<List<String>, List<String>> _tags;
+  Map<String, String> _tags;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
@@ -126,7 +125,7 @@ class Explorer extends Filterable {
 
   List<String> get genres => [..._genres];
 
-  Tuple<List<String>, List<String>> get tags => _tags;
+  Map<String, String> get tags => _tags;
 
   // ***************************************************************************
   // FUNCTIONS CONTROLLING QUERY VARIABLES
@@ -363,11 +362,9 @@ class Explorer extends Filterable {
         .map((g) => g.toString())
         .toList();
 
-    _tags = Tuple([], []);
-    for (final tag in data['MediaTagCollection']) {
-      _tags.item1.add(tag['name']);
-      _tags.item2.add(tag['description']);
-    }
+    _tags = {};
+    for (final tag in data['MediaTagCollection'])
+      _tags[tag['name']] = tag['description'];
 
     List<TileData> loaded = [];
 

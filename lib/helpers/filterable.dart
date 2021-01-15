@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 // Base class for filterable groups like Explorer and Collection
@@ -17,26 +16,6 @@ abstract class Filterable extends GetxController {
   static const TYPE = 'type';
   static const SORT = 'sort';
   static const PAGE = 'page';
-
-  final _scrollCtrl = ScrollController();
-
-  ScrollController get scrollCtrl => _scrollCtrl;
-
-  void scrollToTop() {
-    if (!_scrollCtrl.hasClients) return;
-    if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
-    _scrollCtrl.animateTo(
-      0,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.decelerate,
-    );
-  }
-
-  @override
-  void onClose() {
-    _scrollCtrl.dispose();
-    super.onClose();
-  }
 
   dynamic getFilterWithKey(String key);
 

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/anilist/media_list_data.dart';
@@ -27,7 +27,7 @@ class EntryList {
       name: map['name'],
       isCustomList: map['isCustomList'],
       status: !map['isCustomList']
-          ? stringToEnum(map['status'], ListStatus.values)
+          ? EnumHelper.stringToEnum(map['status'], ListStatus.values)
           : null,
       splitCompletedListFormat:
           splitCompleted && !map['isCustomList'] && map['status'] == 'COMPLETED'

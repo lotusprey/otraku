@@ -5,14 +5,14 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/anime_format.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/media_status.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/services/filterable.dart';
+import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
@@ -121,7 +121,7 @@ class FilterPage extends StatelessWidget {
             title: 'Status',
             placeholder: 'statuses',
             options: MediaStatus.values
-                .map((s) => clarifyEnum(describeEnum(s)))
+                .map((s) => EnumHelper.clarifyEnum(describeEnum(s)))
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
             inclusive: changes[Filterable.STATUS_IN],
@@ -131,10 +131,10 @@ class FilterPage extends StatelessWidget {
             placeholder: 'formats',
             options: browsable == Browsable.anime
                 ? AnimeFormat.values
-                    .map((f) => clarifyEnum(describeEnum(f)))
+                    .map((f) => EnumHelper.clarifyEnum(describeEnum(f)))
                     .toList()
                 : MangaFormat.values
-                    .map((f) => clarifyEnum(describeEnum(f)))
+                    .map((f) => EnumHelper.clarifyEnum(describeEnum(f)))
                     .toList(),
             values: browsable == Browsable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
@@ -188,9 +188,10 @@ class __SortDropdownState extends State<_SortDropdown> {
       _asc = val.index % 2;
 
       for (int i = 1; i < ListSort.values.length; i += 2)
-        _items[clarifyEnum(describeEnum(ListSort.values[i - 1]))] = i ~/ 2;
+        _items[EnumHelper.clarifyEnum(describeEnum(ListSort.values[i - 1]))] =
+            i ~/ 2;
     } else {
-      final val = stringToEnum(
+      final val = EnumHelper.stringToEnum(
         widget.changes[Filterable.SORT],
         MediaSort.values,
       );
@@ -198,7 +199,8 @@ class __SortDropdownState extends State<_SortDropdown> {
       _asc = val.index % 2;
 
       for (int i = 1; i < MediaSort.values.length; i += 2)
-        _items[clarifyEnum(describeEnum(MediaSort.values[i - 1]))] = i ~/ 2;
+        _items[EnumHelper.clarifyEnum(describeEnum(MediaSort.values[i - 1]))] =
+            i ~/ 2;
     }
   }
 

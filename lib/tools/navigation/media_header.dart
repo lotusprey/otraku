@@ -8,7 +8,7 @@ import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/models/model_helpers.dart';
+import 'package:otraku/helpers/model_helper.dart';
 
 class MediaHeader extends StatelessWidget {
   final MediaOverview overview;
@@ -49,7 +49,7 @@ class MediaHeader extends StatelessWidget {
                 child: overview?.banner != null
                     ? FadeInImage.memoryNetwork(
                         image: overview.banner,
-                        placeholder: transparentImage,
+                        placeholder: ModelHelper.transparentImage,
                         fadeInDuration: Config.FADE_DURATION,
                         fit: BoxFit.cover,
                         height: bannerHeight,

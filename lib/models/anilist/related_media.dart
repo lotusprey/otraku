@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/models/tile_data.dart';
 
 class RelatedMedia extends TileData {
@@ -21,9 +21,9 @@ class RelatedMedia extends TileData {
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        relationType: clarifyEnum(map['mapType']),
-        format: clarifyEnum(map['node']['format']),
-        status: clarifyEnum(map['node']['status']),
+        relationType: EnumHelper.clarifyEnum(map['mapType']),
+        format: EnumHelper.clarifyEnum(map['node']['format']),
+        status: EnumHelper.clarifyEnum(map['node']['status']),
         imageUrl: map['node']['coverImage']['large'],
         browsable:
             map['node']['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,

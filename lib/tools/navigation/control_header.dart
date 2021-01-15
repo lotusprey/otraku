@@ -10,9 +10,9 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/services/filterable.dart';
+import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 
 class ControlHeader extends StatelessWidget {
@@ -122,7 +122,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         const SizedBox(width: 10),
                         Flexible(
                           child: Text(
-                            clarifyEnum(describeEnum(explorer.type)),
+                            EnumHelper.clarifyEnum(describeEnum(explorer.type)),
                             style: Theme.of(context).textTheme.headline2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -130,7 +130,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         ),
                       ],
                     ),
-                    hint: clarifyEnum(describeEnum(explorer.type)),
+                    hint: EnumHelper.clarifyEnum(describeEnum(explorer.type)),
                     searchValue: explorer.search,
                     search: (search) => explorer.search = search,
                   );

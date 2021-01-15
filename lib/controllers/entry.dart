@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 
 class Entry extends GetxController {

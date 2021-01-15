@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/anilist/person.dart';
@@ -153,7 +153,7 @@ class Staff extends GetxController {
               title: char['name']['full'],
               imageUrl: char['image']['large'],
               browsable: Browsable.character,
-              subtitle: clarifyEnum(connection['characterRole']),
+              subtitle: EnumHelper.clarifyEnum(connection['characterRole']),
               others: [
                 Connection(
                   id: connection['node']['id'],
@@ -176,7 +176,7 @@ class Staff extends GetxController {
           browsable: connection['node']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
-          subtitle: clarifyEnum(connection['staffRole']),
+          subtitle: EnumHelper.clarifyEnum(connection['staffRole']),
         ));
 
       _roleList.update((list) => list.append(
@@ -205,7 +205,7 @@ class Staff extends GetxController {
             title: char['name']['full'],
             imageUrl: char['image']['large'],
             browsable: Browsable.character,
-            subtitle: clarifyEnum(connection['characterRole']),
+            subtitle: EnumHelper.clarifyEnum(connection['characterRole']),
             others: [
               Connection(
                 id: connection['node']['id'],
@@ -233,7 +233,7 @@ class Staff extends GetxController {
         browsable: connection['node']['type'] == 'ANIME'
             ? Browsable.anime
             : Browsable.manga,
-        subtitle: clarifyEnum(connection['staffRole']),
+        subtitle: EnumHelper.clarifyEnum(connection['staffRole']),
       ));
 
     _roleList(LoadableList(

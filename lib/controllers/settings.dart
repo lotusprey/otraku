@@ -3,7 +3,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/models/anilist/settings_data.dart';
-import 'package:otraku/services/filterable.dart';
+import 'package:otraku/helpers/filterable.dart';
 
 class Settings extends GetxController {
   final Map<String, dynamic> _changes = {};

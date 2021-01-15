@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/model_helpers.dart';
+import 'package:otraku/helpers/model_helper.dart';
 
 class MediaOverview {
   final int id;
@@ -115,11 +115,11 @@ class MediaOverview {
       synonyms: List<String>.from(map['synonyms']),
       cover: map['coverImage']['extraLarge'] ?? map['coverImage']['large'],
       banner: map['bannerImage'],
-      description: clearHtml(map['description']),
-      format: clarifyEnum(map['format']),
-      status: clarifyEnum(map['status']),
+      description: ModelHelper.clearHtml(map['description']),
+      format: EnumHelper.clarifyEnum(map['format']),
+      status: EnumHelper.clarifyEnum(map['status']),
       entryStatus: map['mediaListEntry'] != null
-          ? stringToEnum(
+          ? EnumHelper.stringToEnum(
               map['mediaListEntry']['status'].toString(),
               ListStatus.values,
             )
@@ -128,15 +128,19 @@ class MediaOverview {
           ? map['nextAiringEpisode']['episode']
           : null,
       timeUntilAiring: map['nextAiringEpisode'] != null
-          ? secondsToTime(map['nextAiringEpisode']['timeUntilAiring'])
+          ? ModelHelper.secondsToShortString(
+              map['nextAiringEpisode']['timeUntilAiring'])
           : null,
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate:
-          map['startDate'] != null ? mapToDateString(map['startDate']) : null,
-      endDate: map['endDate'] != null ? mapToDateString(map['endDate']) : null,
+      startDate: map['startDate'] != null
+          ? ModelHelper.mapToDateString(map['startDate'])
+          : null,
+      endDate: map['endDate'] != null
+          ? ModelHelper.mapToDateString(map['endDate'])
+          : null,
       season: season,
       averageScore:
           map['averageScore'] != null ? '${map["averageScore"]}%' : null,
@@ -145,7 +149,7 @@ class MediaOverview {
       genres: List<String>.from(map['genres']),
       studios: studios,
       producers: producers,
-      source: clarifyEnum(map['source']),
+      source: EnumHelper.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
       countryOfOrigin: map['countryOfOrigin'],
     );

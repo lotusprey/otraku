@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/anilist/studio_data.dart';
 import 'package:otraku/models/studio_connection_list.dart';
@@ -112,7 +112,8 @@ class Studio extends GetxController {
     List<List<TileData>> results = [];
     for (final node in data['nodes']) {
       final String category =
-          (node['startDate']['year'] ?? clarifyEnum(node['status'])).toString();
+          (node['startDate']['year'] ?? EnumHelper.clarifyEnum(node['status']))
+              .toString();
 
       if (categories.isEmpty || categories.last != category) {
         categories.add(category);
@@ -157,7 +158,8 @@ class Studio extends GetxController {
     List<List<TileData>> results = [];
     for (final node in nodes) {
       final String category =
-          (node['startDate']['year'] ?? clarifyEnum(node['status'])).toString();
+          (node['startDate']['year'] ?? EnumHelper.clarifyEnum(node['status']))
+              .toString();
 
       if (categories.isEmpty || categories.last != category) {
         categories.add(category);

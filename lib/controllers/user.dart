@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/tile_data.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:otraku/models/anilist/user_data.dart';
 
 class User extends GetxController {

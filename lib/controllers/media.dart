@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/models/connection.dart';
@@ -194,7 +194,7 @@ class Media extends GetxController {
         final List<Connection> voiceActors = [];
 
         for (final va in connection['voiceActors']) {
-          final language = clarifyEnum(va['language']);
+          final language = EnumHelper.clarifyEnum(va['language']);
           if (!_availableLanguages.contains(language))
             _availableLanguages.add(language);
 
@@ -210,7 +210,7 @@ class Media extends GetxController {
         items.add(Connection(
           id: connection['node']['id'],
           title: connection['node']['name']['full'],
-          subtitle: clarifyEnum(connection['role']),
+          subtitle: EnumHelper.clarifyEnum(connection['role']),
           imageUrl: connection['node']['image']['large'],
           others: voiceActors,
           browsable: Browsable.character,

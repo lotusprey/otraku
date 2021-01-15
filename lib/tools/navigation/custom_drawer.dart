@@ -5,7 +5,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/enum_helper.dart';
+import 'package:otraku/helpers/enum_helper.dart';
 
 class CustomDrawer extends StatelessWidget {
   final String heading;
@@ -123,7 +123,7 @@ class ExploreDrawer extends StatelessWidget {
           ),
           _space,
           Text(
-            clarifyEnum(describeEnum(Browsable.values[i])),
+            EnumHelper.clarifyEnum(describeEnum(Browsable.values[i])),
             style: i != selected
                 ? Theme.of(context).textTheme.headline3
                 : Theme.of(context).textTheme.headline2,

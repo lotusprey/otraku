@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/anilist/review_data.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/network.dart';
 
 class Review extends GetxController {
   // ***************************************************************************

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/services/network.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 

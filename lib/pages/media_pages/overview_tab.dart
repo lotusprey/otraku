@@ -6,7 +6,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/services/filterable.dart';
+import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/pages/home_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';

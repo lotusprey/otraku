@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/review.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
+import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 
 class ReviewPage extends StatelessWidget {
   final int id;
@@ -22,42 +25,15 @@ class ReviewPage extends StatelessWidget {
                 return CustomScrollView(
                   physics: Config.PHYSICS,
                   slivers: [
-                    SliverAppBar(
-                      pinned: true,
-                      stretch: true,
-                      leadingWidth: 40,
-                      expandedHeight: 150,
-                      automaticallyImplyLeading: false,
-                      backgroundColor: Theme.of(context).backgroundColor,
-                      leading: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Theme.of(context).backgroundColor,
-                              blurRadius: 10,
-                              spreadRadius: -10,
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.close),
-                          color: Theme.of(context).dividerColor,
-                          onPressed: () => Navigator.of(context).pop(),
-                          padding: const EdgeInsets.all(0),
-                        ),
-                      ),
-                      flexibleSpace: FlexibleSpaceBar(
-                        collapseMode: CollapseMode.pin,
-                        stretchModes: [StretchMode.zoomBackground],
-                        background: Hero(
-                          tag: bannerUrl,
-                          child: FadeInImage.memoryNetwork(
-                            image: bannerUrl,
-                            placeholder: FnHelper.transparentImage,
-                            fadeInDuration: Config.FADE_DURATION,
-                            fit: BoxFit.cover,
-                          ),
+                    CustomSliverHeader(
+                      height: 150,
+                      background: Hero(
+                        tag: bannerUrl,
+                        child: FadeInImage.memoryNetwork(
+                          image: bannerUrl,
+                          placeholder: FnHelper.transparentImage,
+                          fadeInDuration: Config.FADE_DURATION,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -108,9 +84,13 @@ class ReviewPage extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                            Text(
-                              data.text,
-                              style: Theme.of(context).textTheme.bodyText1,
+                            Html(
+                              data: data.text,
+                              style: {
+                                '*': Style.fromTextStyle(
+                                  Theme.of(context).textTheme.bodyText1,
+                                )
+                              },
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),

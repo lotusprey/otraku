@@ -14,7 +14,7 @@ class CustomSliverHeader extends StatelessWidget {
 
   CustomSliverHeader({
     @required this.height,
-    @required this.child,
+    this.child,
     this.background,
     this.title,
     this.actions = const [],
@@ -107,11 +107,12 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 stretchModes: [StretchMode.zoomBackground],
                 background: background,
               ),
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: Config.MATERIAL_TAP_TARGET_SIZE),
-              child: child,
-            ),
+            if (child != null)
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: Config.MATERIAL_TAP_TARGET_SIZE),
+                child: child,
+              ),
             if (headerOpacity > 0.001)
               Positioned.fill(
                 child: DecoratedBox(

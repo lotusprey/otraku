@@ -49,7 +49,7 @@ class ReviewData {
         mediaCover: map['media']['coverImage']['large'],
         banner: map['media']['bannerImage'],
         summary: map['summary'],
-        text: FnHelper.clearHtml(map['body']),
+        text: map['body'],
         createdAt: FnHelper.millisecondsToDateString(map['createdAt']),
         score: map['score'],
         rating: map['rating'],

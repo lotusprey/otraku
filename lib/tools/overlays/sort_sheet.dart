@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
@@ -130,7 +130,7 @@ class CollectionSortSheet extends StatelessWidget {
 
     List<String> options = [];
     for (int i = 0; i < ListSort.values.length; i += 2) {
-      options.add(EnumHelper.clarifyEnum(describeEnum(ListSort.values[i])));
+      options.add(FnHelper.clarifyEnum(describeEnum(ListSort.values[i])));
     }
 
     return SortSheet(
@@ -183,7 +183,7 @@ class MediaSortSheet extends StatelessWidget {
 
     List<String> options = [];
     for (int i = 0; i < length - 6; i += 2) {
-      options.add(EnumHelper.clarifyEnum(describeEnum(MediaSort.values[i])));
+      options.add(FnHelper.clarifyEnum(describeEnum(MediaSort.values[i])));
     }
     options.add('Title');
 

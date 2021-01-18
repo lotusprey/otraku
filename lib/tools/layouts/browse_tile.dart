@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/models/tile_config.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class BrowseTile extends StatelessWidget {
   final int id;
@@ -35,7 +35,7 @@ class BrowseTile extends StatelessWidget {
                     ? Theme.of(context).primaryColor
                     : null,
                 child: FadeInImage.memoryNetwork(
-                  placeholder: ModelHelper.transparentImage,
+                  placeholder: FnHelper.transparentImage,
                   image: imageUrl,
                   fadeInDuration: Config.FADE_DURATION,
                   fit: tile.fit,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class ConnectionsGrid extends StatefulWidget {
   final List<Connection> connections;
@@ -78,7 +78,7 @@ class _MediaConnectionTile extends StatelessWidget {
                         child: ClipRRect(
                           child: FadeInImage.memoryNetwork(
                             image: media.imageUrl,
-                            placeholder: ModelHelper.transparentImage,
+                            placeholder: FnHelper.transparentImage,
                             fadeInDuration: Config.FADE_DURATION,
                             fit: BoxFit.cover,
                           ),
@@ -154,7 +154,7 @@ class _MediaConnectionTile extends StatelessWidget {
                           child: ClipRRect(
                             child: FadeInImage.memoryNetwork(
                               image: media.others[index].imageUrl,
-                              placeholder: ModelHelper.transparentImage,
+                              placeholder: FnHelper.transparentImage,
                               fadeInDuration: Config.FADE_DURATION,
                               fit: BoxFit.cover,
                             ),

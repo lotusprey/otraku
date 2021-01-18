@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/models/anilist/entry_list.dart';
 import 'package:otraku/models/anilist/media_entry_data.dart';
 import 'package:otraku/models/anilist/media_list_data.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/helpers/network.dart';
-import 'package:otraku/helpers/scrollable_controller.dart';
+import 'package:otraku/helpers/scroll_x_controller.dart';
 
-class Collection extends ScrollableController implements Filterable {
+class Collection extends ScrollxController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -256,8 +256,8 @@ class Collection extends ScrollableController implements Filterable {
         'score': newEntry.score,
         'repeat': newEntry.repeat,
         'notes': newEntry.notes,
-        'startedAt': ModelHelper.dateTimeToMap(newEntry.startedAt),
-        'completedAt': ModelHelper.dateTimeToMap(newEntry.completedAt),
+        'startedAt': FnHelper.dateTimeToMap(newEntry.startedAt),
+        'completedAt': FnHelper.dateTimeToMap(newEntry.completedAt),
         'private': newEntry.private,
         'hiddenFromStatusLists': newEntry.hiddenFromStatusLists,
         'customLists': newCustomLists,

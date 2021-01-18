@@ -3,9 +3,9 @@ import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/models/anilist/notification_data.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/helpers/network.dart';
-import 'package:otraku/helpers/scrollable_controller.dart';
+import 'package:otraku/helpers/scroll_x_controller.dart';
 
-class Notifications extends ScrollableController {
+class Notifications extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

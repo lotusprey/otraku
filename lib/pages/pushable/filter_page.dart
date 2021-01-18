@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/anime_format.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_sort.dart';
@@ -121,7 +121,7 @@ class FilterPage extends StatelessWidget {
             title: 'Status',
             placeholder: 'statuses',
             options: MediaStatus.values
-                .map((s) => EnumHelper.clarifyEnum(describeEnum(s)))
+                .map((s) => FnHelper.clarifyEnum(describeEnum(s)))
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
             inclusive: changes[Filterable.STATUS_IN],
@@ -131,10 +131,10 @@ class FilterPage extends StatelessWidget {
             placeholder: 'formats',
             options: browsable == Browsable.anime
                 ? AnimeFormat.values
-                    .map((f) => EnumHelper.clarifyEnum(describeEnum(f)))
+                    .map((f) => FnHelper.clarifyEnum(describeEnum(f)))
                     .toList()
                 : MangaFormat.values
-                    .map((f) => EnumHelper.clarifyEnum(describeEnum(f)))
+                    .map((f) => FnHelper.clarifyEnum(describeEnum(f)))
                     .toList(),
             values: browsable == Browsable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
@@ -188,10 +188,10 @@ class __SortDropdownState extends State<_SortDropdown> {
       _asc = val.index % 2;
 
       for (int i = 1; i < ListSort.values.length; i += 2)
-        _items[EnumHelper.clarifyEnum(describeEnum(ListSort.values[i - 1]))] =
+        _items[FnHelper.clarifyEnum(describeEnum(ListSort.values[i - 1]))] =
             i ~/ 2;
     } else {
-      final val = EnumHelper.stringToEnum(
+      final val = FnHelper.stringToEnum(
         widget.changes[Filterable.SORT],
         MediaSort.values,
       );
@@ -199,7 +199,7 @@ class __SortDropdownState extends State<_SortDropdown> {
       _asc = val.index % 2;
 
       for (int i = 1; i < MediaSort.values.length; i += 2)
-        _items[EnumHelper.clarifyEnum(describeEnum(MediaSort.values[i - 1]))] =
+        _items[FnHelper.clarifyEnum(describeEnum(MediaSort.values[i - 1]))] =
             i ~/ 2;
     }
   }

@@ -5,10 +5,10 @@ import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/models/tile_data.dart';
 import 'package:otraku/helpers/network.dart';
-import 'package:otraku/helpers/scrollable_controller.dart';
+import 'package:otraku/helpers/scroll_x_controller.dart';
 
 // Searches and filters items from the Browsable enum
-class Explorer extends ScrollableController implements Filterable {
+class Explorer extends ScrollxController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

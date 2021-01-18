@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/helpers/model_helper.dart';
 
 class MediaOverview {
   final int id;
@@ -115,11 +114,11 @@ class MediaOverview {
       synonyms: List<String>.from(map['synonyms']),
       cover: map['coverImage']['extraLarge'] ?? map['coverImage']['large'],
       banner: map['bannerImage'],
-      description: ModelHelper.clearHtml(map['description']),
-      format: EnumHelper.clarifyEnum(map['format']),
-      status: EnumHelper.clarifyEnum(map['status']),
+      description: FnHelper.clearHtml(map['description']),
+      format: FnHelper.clarifyEnum(map['format']),
+      status: FnHelper.clarifyEnum(map['status']),
       entryStatus: map['mediaListEntry'] != null
-          ? EnumHelper.stringToEnum(
+          ? FnHelper.stringToEnum(
               map['mediaListEntry']['status'].toString(),
               ListStatus.values,
             )
@@ -128,7 +127,7 @@ class MediaOverview {
           ? map['nextAiringEpisode']['episode']
           : null,
       timeUntilAiring: map['nextAiringEpisode'] != null
-          ? ModelHelper.secondsToShortString(
+          ? FnHelper.secondsToShortString(
               map['nextAiringEpisode']['timeUntilAiring'])
           : null,
       episodes: map['episodes'],
@@ -136,10 +135,10 @@ class MediaOverview {
       chapters: map['chapters'],
       volumes: map['volumes'],
       startDate: map['startDate'] != null
-          ? ModelHelper.mapToDateString(map['startDate'])
+          ? FnHelper.mapToDateString(map['startDate'])
           : null,
       endDate: map['endDate'] != null
-          ? ModelHelper.mapToDateString(map['endDate'])
+          ? FnHelper.mapToDateString(map['endDate'])
           : null,
       season: season,
       averageScore:
@@ -149,7 +148,7 @@ class MediaOverview {
       genres: List<String>.from(map['genres']),
       studios: studios,
       producers: producers,
-      source: EnumHelper.clarifyEnum(map['source']),
+      source: FnHelper.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
       countryOfOrigin: map['countryOfOrigin'],
     );

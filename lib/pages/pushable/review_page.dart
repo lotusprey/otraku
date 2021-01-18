@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/review.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class ReviewPage extends StatelessWidget {
   final int id;
@@ -52,7 +52,7 @@ class ReviewPage extends StatelessWidget {
                           tag: bannerUrl,
                           child: FadeInImage.memoryNetwork(
                             image: bannerUrl,
-                            placeholder: ModelHelper.transparentImage,
+                            placeholder: FnHelper.transparentImage,
                             fadeInDuration: Config.FADE_DURATION,
                             fit: BoxFit.cover,
                           ),

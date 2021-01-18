@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class MediaListData {
   final int mediaId;
@@ -52,7 +52,7 @@ class MediaListData {
             ? map['media']['nextAiringEpisode']['episode']
             : null,
         timeUntilAiring: map['media']['nextAiringEpisode'] != null
-            ? ModelHelper.secondsToShortString(
+            ? FnHelper.secondsToShortString(
                 map['media']['nextAiringEpisode']['timeUntilAiring'])
             : null,
         format: map['media']['format'],
@@ -62,8 +62,8 @@ class MediaListData {
         progressVolumes: map['progressVolumes'],
         progressVolumesMax: map['media']['volumes'],
         score: map['score'].toDouble(),
-        startDate: ModelHelper.mapToDateTime(map['startedAt']),
-        endDate: ModelHelper.mapToDateTime(map['completedAt']),
+        startDate: FnHelper.mapToDateTime(map['startedAt']),
+        endDate: FnHelper.mapToDateTime(map['completedAt']),
         repeat: map['repeat'],
         notes: map['notes'],
         createdAt: map['createdAt'],

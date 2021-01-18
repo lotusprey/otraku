@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
@@ -23,7 +23,7 @@ class ListSettingsPage extends StatelessWidget {
           initialValue: Get.find<Viewer>().settings.scoreFormat,
           items: Map.fromIterable(
             ScoreFormat.values,
-            key: (v) => EnumHelper.clarifyEnum(describeEnum(v)),
+            key: (v) => FnHelper.clarifyEnum(describeEnum(v)),
             value: (v) => v,
           ),
           onChanged: (value) {

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home_page.dart';
@@ -60,7 +60,7 @@ class AppSettingsPage extends StatelessWidget {
           ),
           _Radio(
             options: Themes.values
-                .map((t) => EnumHelper.clarifyEnum(describeEnum(t)))
+                .map((t) => FnHelper.clarifyEnum(describeEnum(t)))
                 .toList(),
             leftValue: Config.storage.read(Config.LIGHT_THEME) ?? 0,
             rightValue: Config.storage.read(Config.DARK_THEME) ?? 0,

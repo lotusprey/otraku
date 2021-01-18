@@ -2,7 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
 
 class ChipGrid<T> extends StatefulWidget {
@@ -36,7 +36,7 @@ class _ChipGridState extends State<ChipGrid> {
           : widget.exclusive[index - widget.inclusive.length];
       return ChipField(
         key: UniqueKey(),
-        title: EnumHelper.clarifyEnum(value),
+        title: FnHelper.clarifyEnum(value),
         initiallyPositive: index < widget.inclusive.length,
         onChanged: widget.exclusive == null
             ? null

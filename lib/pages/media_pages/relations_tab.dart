@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/media.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
 import 'package:otraku/tools/loader.dart';
@@ -46,7 +46,7 @@ class RelationList extends StatelessWidget {
                                   height: double.infinity,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  placeholder: ModelHelper.transparentImage,
+                                  placeholder: FnHelper.transparentImage,
                                   image: media.otherMedia[index].imageUrl,
                                   fadeInDuration: Config.FADE_DURATION,
                                 ),

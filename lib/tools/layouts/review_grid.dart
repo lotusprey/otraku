@@ -3,7 +3,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tile_data.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 
@@ -43,7 +43,7 @@ class ReviewGrid extends StatelessWidget {
                           child: Hero(
                             tag: results[index].imageUrl,
                             child: FadeInImage.memoryNetwork(
-                              placeholder: ModelHelper.transparentImage,
+                              placeholder: FnHelper.transparentImage,
                               image: results[index].imageUrl,
                               fadeInDuration: Config.FADE_DURATION,
                               fit: BoxFit.cover,

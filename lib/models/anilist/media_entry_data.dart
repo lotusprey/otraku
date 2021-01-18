@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/enum_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/helpers/model_helper.dart';
 
 class MediaEntryData {
   final int mediaId;
@@ -59,7 +58,7 @@ class MediaEntryData {
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
-      status: EnumHelper.stringToEnum(
+      status: FnHelper.stringToEnum(
         map['mediaListEntry']['status'],
         ListStatus.values,
       ),
@@ -70,9 +69,8 @@ class MediaEntryData {
       score: map['mediaListEntry']['score'].toDouble(),
       repeat: map['mediaListEntry']['repeat'],
       notes: map['mediaListEntry']['notes'],
-      startedAt: ModelHelper.mapToDateTime(map['mediaListEntry']['startedAt']),
-      completedAt:
-          ModelHelper.mapToDateTime(map['mediaListEntry']['completedAt']),
+      startedAt: FnHelper.mapToDateTime(map['mediaListEntry']['startedAt']),
+      completedAt: FnHelper.mapToDateTime(map['mediaListEntry']['completedAt']),
       private: map['mediaListEntry']['private'],
       hiddenFromStatusLists: map['mediaListEntry']['hiddenFromStatusLists'],
       customLists: customLists,

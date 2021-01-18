@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class ReviewData {
   final int id;
@@ -41,7 +41,7 @@ class ReviewData {
         mediaType: map['media']['type'],
         banner: map['media']['bannerImage'],
         summary: map['summary'],
-        text: ModelHelper.clearHtml(map['body']),
+        text: FnHelper.clearHtml(map['body']),
         score: map['score'],
         rating: map['rating'],
         totalRating: map['ratingAmount'],

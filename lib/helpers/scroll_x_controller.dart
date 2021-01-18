@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ScrollableController extends GetxController {
+class ScrollxController extends GetxController {
   final _scrollCtrl = ScrollController();
 
   ScrollController get scrollCtrl => _scrollCtrl;

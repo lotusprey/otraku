@@ -18,7 +18,7 @@ import 'package:otraku/helpers/network.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/helpers/model_helper.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class UserPage extends StatelessWidget {
   final int id;
@@ -174,7 +174,7 @@ class _Header extends StatelessWidget {
                 child: user?.banner != null
                     ? FadeInImage.memoryNetwork(
                         image: user.banner,
-                        placeholder: ModelHelper.transparentImage,
+                        placeholder: FnHelper.transparentImage,
                         fadeInDuration: Config.FADE_DURATION,
                         fit: BoxFit.cover,
                         height: bannerHeight,
@@ -219,7 +219,7 @@ class _Header extends StatelessWidget {
                           height: avatarSize,
                           width: avatarSize,
                           child: FadeInImage.memoryNetwork(
-                            placeholder: ModelHelper.transparentImage,
+                            placeholder: FnHelper.transparentImage,
                             image: avatar,
                             fit: BoxFit.contain,
                             fadeInDuration: Config.FADE_DURATION,

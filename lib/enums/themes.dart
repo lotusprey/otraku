@@ -133,7 +133,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         fontWeight: FontWeight.w500,
       ),
       headline4: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Styles.FONT_SMALL,
         color: theme['faded'],
         fontWeight: FontWeight.w500,
       ),

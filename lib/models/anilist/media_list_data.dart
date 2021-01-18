@@ -52,7 +52,7 @@ class MediaListData {
             ? map['media']['nextAiringEpisode']['episode']
             : null,
         timeUntilAiring: map['media']['nextAiringEpisode'] != null
-            ? FnHelper.secondsToShortString(
+            ? FnHelper.secondsToTimeString(
                 map['media']['nextAiringEpisode']['timeUntilAiring'])
             : null,
         format: map['media']['format'],

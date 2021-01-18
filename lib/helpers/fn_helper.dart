@@ -50,12 +50,17 @@ abstract class FnHelper {
     return {'year': date.year, 'month': date.month, 'day': date.day};
   }
 
-  static String dateTimeToString(DateTime date) {
-    if (date == null) return null;
+  static String millisecondsToDateString(int millis) {
+    final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
+    return '${_months[date.month]} ${date.day}, ${date.year}';
+  }
+
+  static String millisecondsToTimeString(int millis) {
+    final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
     return '${_weekDays[date.weekday - 1]}, ${date.day} ${_months[date.month]} ${date.year}, ${date.hour}:${date.minute}';
   }
 
-  static String secondsToShortString(int seconds) {
+  static String secondsToTimeString(int seconds) {
     int minutes = seconds ~/ 60;
     int hours = minutes ~/ 60;
     minutes %= 60;

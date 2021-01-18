@@ -25,7 +25,6 @@ class NotificationData {
   });
 
   factory NotificationData(Map<String, dynamic> data) {
-    final date = DateTime.fromMillisecondsSinceEpoch(data['createdAt'] * 1000);
     switch (data['type']) {
       case 'FOLLOWING':
         return NotificationData._(
@@ -35,7 +34,7 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [data['user']['name'], ' followed you.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
           browsable: Browsable.user,
         );
       case 'ACTIVITY_MESSAGE':
@@ -46,7 +45,7 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [data['user']['name'], ' sent you a message.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'ACTIVITY_REPLY':
         return NotificationData._(
@@ -56,7 +55,7 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [data['user']['name'], ' replied to your activity.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'ACTIVITY_REPLY_SUBSCRIBED':
         return NotificationData._(
@@ -69,7 +68,7 @@ class NotificationData {
             ' replied to activity you are subscribed to.',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'THREAD_COMMENT_REPLY':
         return NotificationData._(
@@ -86,7 +85,7 @@ class NotificationData {
               ' replied to your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'ACTIVITY_MENTION':
         return NotificationData._(
@@ -96,7 +95,7 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [data['user']['name'], ' mentioned you in an activity.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'THREAD_COMMENT_MENTION':
         return NotificationData._(
@@ -113,7 +112,7 @@ class NotificationData {
               ' mentioned you in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'THREAD_SUBSCRIBED':
         return NotificationData._(
@@ -130,7 +129,7 @@ class NotificationData {
               ' commented in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'ACTIVITY_LIKE':
         return NotificationData._(
@@ -140,7 +139,7 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [data['user']['name'], ' liked your activity.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'ACTIVITY_REPLY_LIKE':
         return NotificationData._(
@@ -150,7 +149,7 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [data['user']['name'], ' liked your reply.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'THREAD_LIKE':
         return NotificationData._(
@@ -164,7 +163,7 @@ class NotificationData {
             if (data['thread'] != null) data['thread']['title'],
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'THREAD_COMMENT_LIKE':
         return NotificationData._(
@@ -181,7 +180,7 @@ class NotificationData {
               ' liked your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
         );
       case 'AIRING':
         return NotificationData._(
@@ -197,7 +196,7 @@ class NotificationData {
             ' aired.',
           ],
           markTextOnEvenIndex: false,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
           browsable: data['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
@@ -213,7 +212,7 @@ class NotificationData {
             ' was added to the site.',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.dateTimeToString(date),
+          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
           browsable: data['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,

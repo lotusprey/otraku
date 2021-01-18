@@ -18,8 +18,8 @@ class Review extends GetxController {
         ratingAmount
         userRating
         createdAt
-        media {id type title {userPreferred} bannerImage}
-        user {id name}
+        media {id type title {userPreferred} coverImage {large} bannerImage}
+        user {id name avatar {large}}
       }
     }
   ''';

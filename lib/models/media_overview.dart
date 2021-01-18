@@ -127,7 +127,7 @@ class MediaOverview {
           ? map['nextAiringEpisode']['episode']
           : null,
       timeUntilAiring: map['nextAiringEpisode'] != null
-          ? FnHelper.secondsToShortString(
+          ? FnHelper.secondsToTimeString(
               map['nextAiringEpisode']['timeUntilAiring'])
           : null,
       episodes: map['episodes'],

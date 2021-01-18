@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/notifications.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/model_helper.dart';
 import 'package:otraku/models/anilist/notification_data.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
 
@@ -71,7 +73,11 @@ class _NotificationWidget extends StatelessWidget {
         child: Row(
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: () => BrowseIndexer.openPage(
+                id: notification.headId,
+                imageUrl: notification.imageUrl,
+                browsable: notification.browsable ?? Browsable.user,
+              ),
               child: ClipRRect(
                 child: FadeInImage.memoryNetwork(
                   image: notification.imageUrl,
@@ -86,7 +92,15 @@ class _NotificationWidget extends StatelessWidget {
             ),
             Flexible(
               child: GestureDetector(
-                onTap: () {},
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  if (notification.browsable != null)
+                    BrowseIndexer.openPage(
+                      id: notification.bodyId,
+                      imageUrl: notification.imageUrl,
+                      browsable: notification.browsable,
+                    );
+                },
                 child: Padding(
                   padding: Config.PADDING,
                   child: Column(

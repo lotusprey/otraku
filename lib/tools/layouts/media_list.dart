@@ -80,7 +80,7 @@ class _MediaListTile extends StatelessWidget {
     return BrowseIndexer(
       id: media.mediaId,
       browsable: Browsable.anime,
-      tag: media.cover,
+      imageUrl: media.cover,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

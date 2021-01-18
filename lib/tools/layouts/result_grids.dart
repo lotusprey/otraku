@@ -30,7 +30,7 @@ class TileGrid extends StatelessWidget {
             return BrowseIndexer(
               browsable: results[index].browsable,
               id: results[index].id,
-              tag: results[index].imageUrl,
+              imageUrl: results[index].imageUrl,
               child: BrowseTile(
                 id: results[index].id,
                 text: results[index].title,
@@ -71,7 +71,7 @@ class TitleList extends StatelessWidget {
             return BrowseIndexer(
               browsable: results[index].browsable,
               id: results[index].id,
-              tag: results[index].title,
+              imageUrl: results[index].title,
               child: Hero(
                 tag: results[index].title,
                 child: Container(

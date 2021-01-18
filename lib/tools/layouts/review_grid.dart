@@ -24,7 +24,7 @@ class ReviewGrid extends StatelessWidget {
 
             return BrowseIndexer(
               id: results[index].id,
-              tag: results[index].imageUrl,
+              imageUrl: results[index].imageUrl,
               browsable: Browsable.review,
               child: Container(
                 decoration: BoxDecoration(

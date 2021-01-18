@@ -10,9 +10,9 @@ import 'package:otraku/tools/navigation/media_header.dart';
 
 class MediaPage extends StatelessWidget {
   final int id;
-  final String tagImageUrl;
+  final String coverUrl;
 
-  MediaPage(this.id, this.tagImageUrl);
+  MediaPage(this.id, this.coverUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class MediaPage extends StatelessWidget {
             Obx(
               () => MediaHeader(
                 overview: media.overview,
-                imageUrl: tagImageUrl,
+                imageUrl: coverUrl,
                 toggleFavourite: media.toggleFavourite,
               ),
             ),

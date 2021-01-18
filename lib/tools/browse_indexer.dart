@@ -21,55 +21,55 @@ import 'package:otraku/pages/home_pages/user_page.dart';
 class BrowseIndexer extends StatelessWidget {
   final Browsable browsable;
   final int id;
-  final String tag;
+  final String imageUrl;
   final Widget child;
 
   BrowseIndexer({
     @required this.browsable,
     @required this.id,
-    @required this.tag,
+    @required this.imageUrl,
     @required this.child,
   });
 
   static void openPage({
     @required int id,
-    @required String tag,
+    @required String imageUrl,
     @required Browsable browsable,
   }) {
     switch (browsable) {
       case Browsable.anime:
       case Browsable.manga:
-        Get.to(MediaPage(id, tag), binding: BindingsBuilder(() {
+        Get.to(MediaPage(id, imageUrl), binding: BindingsBuilder(() {
           if (!Get.isRegistered<Media>(tag: id.toString()))
             Get.put(Media(), tag: id.toString()).fetchOverview(id);
         }), preventDuplicates: false);
         return;
       case Browsable.character:
-        Get.to(CharacterPage(id, tag), binding: BindingsBuilder(() {
+        Get.to(CharacterPage(id, imageUrl), binding: BindingsBuilder(() {
           if (!Get.isRegistered<Character>(tag: id.toString()))
             Get.put(Character(), tag: id.toString()).fetchCharacter(id);
         }));
         return;
       case Browsable.staff:
-        Get.to(StaffPage(id, tag), binding: BindingsBuilder(() {
+        Get.to(StaffPage(id, imageUrl), binding: BindingsBuilder(() {
           if (!Get.isRegistered<Staff>(tag: id.toString()))
             Get.put(Staff(), tag: id.toString()).fetchStaff(id);
         }));
         return;
       case Browsable.studio:
-        Get.to(StudioPage(id, tag), binding: BindingsBuilder(() {
+        Get.to(StudioPage(id, imageUrl), binding: BindingsBuilder(() {
           if (!Get.isRegistered<Studio>(tag: id.toString()))
             Get.put(Studio(), tag: id.toString()).fetchStudio(id);
         }));
         return;
       case Browsable.user:
-        Get.to(TabPage(UserPage(id, tag)), binding: BindingsBuilder(() {
+        Get.to(TabPage(UserPage(id, imageUrl)), binding: BindingsBuilder(() {
           if (!Get.isRegistered<User>(tag: id.toString()))
             Get.put(User(), tag: id.toString()).fetchUser(id);
         }));
         return;
       case Browsable.review:
-        Get.to(ReviewPage(id, tag), binding: BindingsBuilder(() {
+        Get.to(ReviewPage(id, imageUrl), binding: BindingsBuilder(() {
           if (!Get.isRegistered<Review>(tag: id.toString())) {}
           Get.put(Review(), tag: id.toString()).fetchReview(id);
         }));
@@ -83,7 +83,7 @@ class BrowseIndexer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => openPage(id: id, tag: tag, browsable: browsable),
+      onTap: () => openPage(id: id, imageUrl: imageUrl, browsable: browsable),
       onLongPress: () {
         if (browsable == Browsable.anime || browsable == Browsable.manga)
           Get.to(

@@ -159,7 +159,7 @@ class OverviewTab extends StatelessWidget {
               items: overview.studios.keys.toList(),
               onTap: (index) => BrowseIndexer.openPage(
                 id: overview.studios[overview.studios.keys.elementAt(index)],
-                tag: overview.studios.keys.elementAt(index),
+                imageUrl: overview.studios.keys.elementAt(index),
                 browsable: Browsable.studio,
               ),
             ),
@@ -170,7 +170,7 @@ class OverviewTab extends StatelessWidget {
               onTap: (index) => BrowseIndexer.openPage(
                 id: overview
                     .producers[overview.producers.keys.elementAt(index)],
-                tag: overview.producers.keys.elementAt(index),
+                imageUrl: overview.producers.keys.elementAt(index),
                 browsable: Browsable.studio,
               ),
             ),

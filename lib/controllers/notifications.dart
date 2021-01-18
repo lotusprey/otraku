@@ -15,7 +15,7 @@ class Notifications extends ScrollableController {
       Viewer {unreadNotificationCount}
       Page(page: $page) {
         pageInfo {hasNextPage}
-        notifications(type_in: $filter, resetNotificationCount: false) {
+        notifications(type_in: $filter, resetNotificationCount: true) {
           ... on FollowingNotification {
             type
             user {id name avatar {large}}
@@ -164,7 +164,7 @@ class Notifications extends ScrollableController {
     );
     if (data == null) return;
 
-    _unreadCount = data['Viewer']['unreadNotificationCount'];
+    _unreadCount = _filter == 0 ? data['Viewer']['unreadNotificationCount'] : 0;
     data = data['Page'];
 
     final List<NotificationData> nl = [];

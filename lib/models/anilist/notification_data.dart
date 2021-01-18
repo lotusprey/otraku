@@ -11,7 +11,7 @@ class NotificationData {
   final List<String> texts;
   final bool markTextOnEvenIndex;
   final String timestamp;
-  final Browsable mediaType;
+  final Browsable browsable;
 
   NotificationData._({
     @required this.type,
@@ -21,7 +21,7 @@ class NotificationData {
     @required this.texts,
     @required this.markTextOnEvenIndex,
     @required this.timestamp,
-    this.mediaType,
+    this.browsable,
   });
 
   factory NotificationData(Map<String, dynamic> data) {
@@ -36,6 +36,7 @@ class NotificationData {
           texts: [data['user']['name'], ' followed you.'],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
+          browsable: Browsable.user,
         );
       case 'ACTIVITY_MESSAGE':
         return NotificationData._(
@@ -78,8 +79,11 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [
             data['user']['name'],
-            ' replied to your comment in ',
-            data['thread']['title'],
+            if (data['thread'] != null) ...[
+              ' replied to your comment in ',
+              data['thread']['title']
+            ] else
+              ' replied to your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
@@ -102,8 +106,11 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [
             data['user']['name'],
-            ' mentioned you in ',
-            data['thread']['title'],
+            if (data['thread'] != null) ...[
+              ' mentioned you in ',
+              data['thread']['title']
+            ] else
+              ' mentioned you in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
@@ -116,8 +123,11 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [
             data['user']['name'],
-            ' commented in ',
-            data['thread']['title'],
+            if (data['thread'] != null) ...[
+              ' commented in ',
+              data['thread']['title']
+            ] else
+              ' commented in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
@@ -151,7 +161,7 @@ class NotificationData {
           texts: [
             data['user']['name'],
             ' like your thread ',
-            data['thread']['title'],
+            if (data['thread'] != null) data['thread']['title'],
           ],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
@@ -164,8 +174,11 @@ class NotificationData {
           imageUrl: data['user']['avatar']['large'],
           texts: [
             data['user']['name'],
-            ' liked your comment in ',
-            data['thread']['title'],
+            if (data['thread'] != null) ...[
+              ' liked your comment in ',
+              data['thread']['title']
+            ] else
+              ' liked your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
@@ -185,7 +198,7 @@ class NotificationData {
           ],
           markTextOnEvenIndex: false,
           timestamp: ModelHelper.dateTimeToString(date),
-          mediaType: data['media']['type'] == 'ANIME'
+          browsable: data['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
         );
@@ -201,7 +214,7 @@ class NotificationData {
           ],
           markTextOnEvenIndex: true,
           timestamp: ModelHelper.dateTimeToString(date),
-          mediaType: data['media']['type'] == 'ANIME'
+          browsable: data['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
         );

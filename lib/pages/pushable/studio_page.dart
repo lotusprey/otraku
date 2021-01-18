@@ -97,7 +97,7 @@ class StudioPage extends StatelessWidget {
                             (_, index) => BrowseIndexer(
                               browsable: Browsable.anime,
                               id: studio.media.split[i][index].id,
-                              tag: studio.media.split[i][index].imageUrl,
+                              imageUrl: studio.media.split[i][index].imageUrl,
                               child: BrowseTile(
                                 id: studio.media.split[i][index].id,
                                 text: studio.media.split[i][index].title,

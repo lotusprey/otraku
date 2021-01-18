@@ -6,9 +6,9 @@ import 'package:otraku/helpers/model_helper.dart';
 
 class ReviewPage extends StatelessWidget {
   final int id;
-  final String imageUrlTag;
+  final String bannerUrl;
 
-  ReviewPage(this.id, this.imageUrlTag);
+  ReviewPage(this.id, this.bannerUrl);
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -49,9 +49,9 @@ class ReviewPage extends StatelessWidget {
                         collapseMode: CollapseMode.pin,
                         stretchModes: [StretchMode.zoomBackground],
                         background: Hero(
-                          tag: imageUrlTag,
+                          tag: bannerUrl,
                           child: FadeInImage.memoryNetwork(
-                            image: imageUrlTag,
+                            image: bannerUrl,
                             placeholder: ModelHelper.transparentImage,
                             fadeInDuration: Config.FADE_DURATION,
                             fit: BoxFit.cover,

@@ -10,9 +10,9 @@ import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StaffPage extends StatelessWidget {
   final int id;
-  final String imageUrlTag;
+  final String imageUrl;
 
-  StaffPage(this.id, this.imageUrlTag);
+  StaffPage(this.id, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class StaffPage extends StatelessWidget {
           slivers: [
             Obx(() => PersonHeader(
                   staff.person,
-                  imageUrlTag,
+                  imageUrl,
                   staff.toggleFavourite,
                 )),
             Obx(() {

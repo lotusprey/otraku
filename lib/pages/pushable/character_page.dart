@@ -11,9 +11,9 @@ import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class CharacterPage extends StatelessWidget {
   final int id;
-  final String imageUrlTag;
+  final String imageUrl;
 
-  CharacterPage(this.id, this.imageUrlTag);
+  CharacterPage(this.id, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class CharacterPage extends StatelessWidget {
           slivers: [
             Obx(() => PersonHeader(
                   character.person,
-                  imageUrlTag,
+                  imageUrl,
                   character.toggleFavourite,
                 )),
             Obx(() {

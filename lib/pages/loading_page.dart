@@ -4,7 +4,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/auth_page.dart';
-import 'package:otraku/pages/home_page.dart';
+import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/controllers/config.dart';

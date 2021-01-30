@@ -6,6 +6,7 @@ import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/helpers/fn_helper.dart';
@@ -197,14 +198,9 @@ class __EditButtonState extends State<_EditButton> {
           ),
         );
 
-  void onPressed() => Get.to(
-        EditEntryPage(
-          widget.overview.id,
-          (status) => setState(() => widget.overview.entryStatus = status),
-        ),
-        binding: BindingsBuilder.put(
-          () => Entry()..fetchEntry(widget.overview.id),
-        ),
+  void onPressed() => BrowseIndexer.openEditPage(
+        widget.overview.id,
+        (status) => setState(() => widget.overview.entryStatus = status),
       );
 }
 

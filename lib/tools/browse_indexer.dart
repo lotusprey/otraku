@@ -9,14 +9,15 @@ import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
-import 'package:otraku/pages/pushable/media_page.dart';
+import 'package:otraku/pages/media/media_page.dart';
 import 'package:otraku/pages/pushable/review_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
-import 'package:otraku/pages/home_pages/user_page.dart';
+import 'package:otraku/pages/home/user_tab.dart';
 
 class BrowseIndexer extends StatelessWidget {
   final Browsable browsable;
@@ -63,7 +64,7 @@ class BrowseIndexer extends StatelessWidget {
         }));
         return;
       case Browsable.user:
-        Get.to(TabPage(UserPage(id, imageUrl)), binding: BindingsBuilder(() {
+        Get.to(TabPage(UserTab(id, imageUrl)), binding: BindingsBuilder(() {
           if (!Get.isRegistered<User>(tag: id.toString()))
             Get.put(User(), tag: id.toString()).fetchUser(id);
         }));
@@ -79,6 +80,11 @@ class BrowseIndexer extends StatelessWidget {
     }
   }
 
+  static void openEditPage(int id, [Function(ListStatus) fn]) => Get.to(
+        EditEntryPage(id, fn ?? (_) {}),
+        binding: BindingsBuilder.put(() => Entry()..fetchEntry(id)),
+      );
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -86,10 +92,7 @@ class BrowseIndexer extends StatelessWidget {
       onTap: () => openPage(id: id, imageUrl: imageUrl, browsable: browsable),
       onLongPress: () {
         if (browsable == Browsable.anime || browsable == Browsable.manga)
-          Get.to(
-            EditEntryPage(id, (_) {}),
-            binding: BindingsBuilder.put(() => Entry()..fetchEntry(id)),
-          );
+          openEditPage(id);
       },
       child: child,
     );

@@ -2,10 +2,10 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/pages/home_pages/explore_page.dart';
-import 'package:otraku/pages/home_pages/collection_page.dart';
-import 'package:otraku/pages/home_pages/inbox_page.dart';
-import 'package:otraku/pages/home_pages/user_page.dart';
+import 'package:otraku/pages/home/explore_tab.dart';
+import 'package:otraku/pages/home/collection_tab.dart';
+import 'package:otraku/pages/home/inbox_tab.dart';
+import 'package:otraku/pages/home/user_tab.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
@@ -20,21 +20,21 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      const InboxPage(),
-      CollectionPage(
+      const InboxTab(),
+      CollectionTab(
         ofAnime: true,
         otherUserId: null,
         collectionTag: Collection.ANIME,
         key: UniqueKey(),
       ),
-      CollectionPage(
+      CollectionTab(
         ofAnime: false,
         otherUserId: null,
         collectionTag: Collection.MANGA,
         key: UniqueKey(),
       ),
-      const ExplorePage(),
-      const UserPage(null, null),
+      const ExploreTab(),
+      const UserTab(null, null),
     ];
 
     const drawers = const [

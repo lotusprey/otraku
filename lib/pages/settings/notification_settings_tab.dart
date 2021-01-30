@@ -6,7 +6,7 @@ import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
 
-class NotificationSettingsPage extends StatelessWidget {
+class NotificationSettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<Settings>();

@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/pages/home_page.dart';
+import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 
-class AppSettingsPage extends StatelessWidget {
+class AppSettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView(
         physics: Config.PHYSICS,

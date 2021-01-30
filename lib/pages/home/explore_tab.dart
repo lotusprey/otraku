@@ -9,8 +9,8 @@ import 'package:otraku/tools/navigation/control_header.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class ExplorePage extends StatelessWidget {
-  const ExplorePage();
+class ExploreTab extends StatelessWidget {
+  const ExploreTab();
 
   @override
   Widget build(BuildContext context) {

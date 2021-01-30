@@ -5,12 +5,12 @@ import 'package:otraku/tools/navigation/control_header.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class CollectionPage extends StatelessWidget {
+class CollectionTab extends StatelessWidget {
   final int otherUserId;
   final bool ofAnime;
   final String collectionTag;
 
-  CollectionPage({
+  CollectionTab({
     @required this.otherUserId,
     @required this.ofAnime,
     @required this.collectionTag,

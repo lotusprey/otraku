@@ -78,6 +78,11 @@ class _NotificationWidget extends StatelessWidget {
                 imageUrl: notification.imageUrl,
                 browsable: notification.browsable ?? Browsable.user,
               ),
+              onLongPress: () {
+                if (notification.browsable == Browsable.anime ||
+                    notification.browsable == Browsable.manga)
+                  BrowseIndexer.openEditPage(notification.headId);
+              },
               child: ClipRRect(
                 child: FadeInImage.memoryNetwork(
                   image: notification.imageUrl,
@@ -100,6 +105,11 @@ class _NotificationWidget extends StatelessWidget {
                       imageUrl: notification.imageUrl,
                       browsable: notification.browsable,
                     );
+                },
+                onLongPress: () {
+                  if (notification.browsable == Browsable.anime ||
+                      notification.browsable == Browsable.manga)
+                    BrowseIndexer.openEditPage(notification.headId);
                 },
                 child: Padding(
                   padding: Config.PADDING,

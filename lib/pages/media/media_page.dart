@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/pages/media_pages/overview_tab.dart';
-import 'package:otraku/pages/media_pages/relations_tab.dart';
+import 'package:otraku/pages/media/overview_tab.dart';
+import 'package:otraku/pages/media/relations_tab.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/media_header.dart';
 

@@ -7,8 +7,8 @@ import 'package:otraku/pages/pushable/notifications_page.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class InboxPage extends StatelessWidget {
-  const InboxPage();
+class InboxTab extends StatelessWidget {
+  const InboxTab();
 
   @override
   Widget build(BuildContext context) {

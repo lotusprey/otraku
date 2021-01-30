@@ -9,22 +9,22 @@ import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/user_data.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
-import 'package:otraku/pages/pushable/settings_page.dart';
+import 'package:otraku/pages/settings/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
-import 'package:otraku/pages/home_page.dart';
+import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/pages/home_pages/collection_page.dart';
+import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
-class UserPage extends StatelessWidget {
+class UserTab extends StatelessWidget {
   final int id;
   final String avatarUrl;
 
-  const UserPage(this.id, this.avatarUrl);
+  const UserTab(this.id, this.avatarUrl);
 
   @override
   Widget build(BuildContext context) => GetBuilder<User>(
@@ -97,7 +97,7 @@ class UserPage extends StatelessWidget {
     final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';
     Get.to(
       TabPage(
-        CollectionPage(
+        CollectionTab(
           otherUserId: id,
           ofAnime: ofAnime,
           collectionTag: collectionTag,

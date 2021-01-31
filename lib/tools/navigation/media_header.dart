@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:get/get.dart';
-import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/models/media_overview.dart';
-import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';

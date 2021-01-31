@@ -132,7 +132,9 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                     ),
                     hint: FnHelper.clarifyEnum(describeEnum(explorer.type)),
                     searchValue: explorer.search,
-                    search: (search) => explorer.search = search,
+                    search: explorer.type != Browsable.review
+                        ? (search) => explorer.search = search
+                        : null,
                   );
                 }),
               if (collectionTag == null)
@@ -235,20 +237,21 @@ class __NavigationState extends State<_Navigation> {
             )
           else
             _Searchbar(widget.hint, widget.searchValue, widget.search),
-          if (!_searchMode)
-            IconButton(
-              icon: const Icon(FluentSystemIcons.ic_fluent_search_regular),
-              onPressed: () => setState(() => _searchMode = true),
-            )
-          else
-            IconButton(
-              icon:
-                  const Icon(FluentSystemIcons.ic_fluent_chevron_right_filled),
-              onPressed: () {
-                widget.search(null);
-                setState(() => _searchMode = false);
-              },
-            )
+          if (widget.search != null)
+            if (!_searchMode)
+              IconButton(
+                icon: const Icon(FluentSystemIcons.ic_fluent_search_regular),
+                onPressed: () => setState(() => _searchMode = true),
+              )
+            else
+              IconButton(
+                icon: const Icon(
+                    FluentSystemIcons.ic_fluent_chevron_right_filled),
+                onPressed: () {
+                  widget.search(null);
+                  setState(() => _searchMode = false);
+                },
+              )
         ],
       ),
     );

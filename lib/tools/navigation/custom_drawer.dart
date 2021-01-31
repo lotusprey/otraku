@@ -5,6 +5,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -42,7 +43,13 @@ class CustomDrawer extends StatelessWidget {
           physics: Config.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 52),
           children: [
-            Text(heading, style: Theme.of(context).textTheme.headline4),
+            Text(
+              heading,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline4
+                  .copyWith(fontSize: Styles.FONT_MEDIUM),
+            ),
             const SizedBox(height: 20),
             for (int i = 0; i < length; i++)
               Padding(

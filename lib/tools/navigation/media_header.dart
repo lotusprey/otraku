@@ -23,7 +23,7 @@ class MediaHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final coverWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.35
-        : 150;
+        : 150.0;
     final coverHeight = coverWidth / 0.7;
     final bannerHeight =
         coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
@@ -68,6 +68,7 @@ class MediaHeader extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
+                    Colors.transparent,
                     Colors.transparent,
                     Theme.of(context).backgroundColor,
                   ],

@@ -19,7 +19,9 @@ class LoadingPage extends StatelessWidget {
       if (!loggedIn)
         Get.offAll(AuthPage(), transition: Transition.fadeIn);
       else
-        Network.initViewerId().then((_) {
+        Network.initViewerId().then((ok) {
+          if (!ok) return;
+
           Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
           Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
           Get.put(User(), tag: Network.viewerId.toString()).fetchUser(null);

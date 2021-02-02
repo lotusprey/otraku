@@ -130,7 +130,8 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const avatarSize = 150.0;
-    final bannerHeight = MediaQuery.of(context).size.width * 0.6;
+    double bannerHeight = MediaQuery.of(context).size.width * 0.6;
+    if (bannerHeight > 400) bannerHeight = 400;
     final height = bannerHeight + avatarSize * 0.5;
     final avatar = avatarUrl ?? user?.avatar;
 
@@ -195,6 +196,7 @@ class _Header extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
+                    Colors.transparent,
                     Colors.transparent,
                     Theme.of(context).backgroundColor,
                   ],

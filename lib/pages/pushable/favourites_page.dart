@@ -40,7 +40,7 @@ class FavouritesPage extends StatelessWidget {
                 user.favsIndex == User.STUDIO_FAV
                     ? TitleList(user.favourites, user.fetchFavourites)
                     : TileGrid(
-                        results: user.favourites,
+                        tileData: user.favourites,
                         loadMore: user.fetchFavourites,
                         tile: Config.highTile,
                       )

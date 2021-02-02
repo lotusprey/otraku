@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:otraku/controllers/config.dart';
 
 enum Themes {
-  light_blue,
   navy,
   cyber,
   night,
   amethyst,
+  light_blue,
 }
 
 extension Styles on Themes {
@@ -22,16 +22,6 @@ extension Styles on Themes {
   static const double FONT_SMALLER = 13;
 
   static const _themes = {
-    Themes.light_blue: {
-      'background': Color(0xFFFFFEFF),
-      'primary': Color(0xFFF4F5F6),
-      'translucent': Color(0xBBFFFEFF),
-      'accent': Color(0xFF54B2F1),
-      'error': Color(0xFFE32749),
-      'faded': Color(0xFF3D5D7B),
-      'contrast': Color(0xFF1B2937),
-      'brightness': Brightness.light,
-    },
     Themes.navy: {
       'background': Color(0xFF0F171E),
       'primary': Color(0xFF1D2835),
@@ -71,6 +61,16 @@ extension Styles on Themes {
       'faded': Color(0xFFA7A0F8),
       'contrast': Color(0xFFE8D9FC),
       'brightness': Brightness.dark,
+    },
+    Themes.light_blue: {
+      'background': Color(0xFFFFFEFF),
+      'primary': Color(0xFFF4F5F6),
+      'translucent': Color(0xBBFFFEFF),
+      'accent': Color(0xFF54B2F1),
+      'error': Color(0xFFE32749),
+      'faded': Color(0xFF3D5D7B),
+      'contrast': Color(0xFF1B2937),
+      'brightness': Brightness.light,
     },
   };
 

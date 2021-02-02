@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/pages/loading_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/network.dart';
@@ -20,13 +21,13 @@ class _AuthPageState extends State<AuthPage> {
   StreamSubscription _subscription;
 
   Future<void> _authenticate() async {
-    const String _redirectUrl =
+    const _redirectUrl =
         'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
-    if (await canLaunch(_redirectUrl)) {
+
+    if (await canLaunch(_redirectUrl))
       await launch(_redirectUrl);
-    } else {
+    else
       throw 'Could not launch authentication url';
-    }
 
     _subscription = getLinksStream().listen(
       (final String link) {
@@ -38,7 +39,20 @@ class _AuthPageState extends State<AuthPage> {
         Network.accessToken = accessToken;
         Get.offAll(LoadingPage(), transition: Transition.fadeIn);
       },
-      onError: (error) => print('error: $error'),
+      onError: (error) => Get.defaultDialog(
+        radius: 5,
+        backgroundColor: Get.theme.backgroundColor,
+        titleStyle: Get.theme.textTheme.headline3,
+        title: 'Could not connect to AniList',
+        content: Text(error.toString(), style: Get.theme.textTheme.bodyText1),
+        actions: [
+          FlatButton(
+            child: Text('Oh No', style: Get.theme.textTheme.bodyText2),
+            onPressed: Get.back,
+          ),
+        ],
+      ),
+      //print('error: $error'),
     );
 
     setState(() => _triedConnecting = true);
@@ -49,13 +63,36 @@ class _AuthPageState extends State<AuthPage> {
     return Scaffold(
       body: Center(
         child: !_triedConnecting
-            ? RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: Config.BORDER_RADIUS,
+            ? SafeArea(
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 300),
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Text(
+                          'An unofficial AniList app.',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline2
+                              .copyWith(fontSize: Styles.FONT_BIG),
+                        ),
+                      ),
+                      RaisedButton(
+                        padding: Config.PADDING,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: Config.BORDER_RADIUS,
+                        ),
+                        color: Theme.of(context).accentColor,
+                        child: Text('Connect to AniList'),
+                        onPressed: _authenticate,
+                      ),
+                    ],
+                  ),
                 ),
-                color: Theme.of(context).accentColor,
-                child: Text('Connect'),
-                onPressed: _authenticate,
               )
             : const SizedBox(),
       ),

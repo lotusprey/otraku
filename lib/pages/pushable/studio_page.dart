@@ -122,7 +122,7 @@ class StudioPage extends StatelessWidget {
                     ],
                   ] else
                     TileGrid(
-                      results: studio.media.joined,
+                      tileData: studio.media.joined,
                       loadMore: studio.fetchPage,
                       tile: Config.highTile,
                     ),

@@ -40,12 +40,17 @@ class Network {
     return true;
   }
 
-  static Future<void> initViewerId() async {
+  static Future<bool> initViewerId() async {
     _viewerId = Config.storage.read('viewerId');
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnErr: false);
-      if (data != null) _viewerId = data['Viewer']['id'];
+      if (data != null) {
+        _viewerId = data['Viewer']['id'];
+        return true;
+      } else
+        return false;
     }
+    return true;
   }
 
   static Future<Map<String, dynamic>> request(

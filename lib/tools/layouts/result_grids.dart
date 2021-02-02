@@ -4,49 +4,48 @@ import 'package:otraku/models/tile_data.dart';
 import 'package:otraku/models/tile_config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/browse_tile.dart';
+import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 
 class TileGrid extends StatelessWidget {
-  final List<TileData> results;
+  final List<TileData> tileData;
   final Function loadMore;
   final TileConfig tile;
 
   TileGrid({
-    @required this.results,
+    @required this.tileData,
     @required this.loadMore,
     @required this.tile,
   });
 
   @override
   Widget build(BuildContext context) {
-    final preferIdTag = results[0].browsable == Browsable.user;
+    final preferIdTag = tileData[0].browsable == Browsable.user;
 
     return SliverPadding(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, index) {
-            if (index == results.length - 6) loadMore();
+            if (index == tileData.length - 6) loadMore();
 
             return BrowseIndexer(
-              browsable: results[index].browsable,
-              id: results[index].id,
-              imageUrl: results[index].imageUrl,
+              browsable: tileData[index].browsable,
+              id: tileData[index].id,
+              imageUrl: tileData[index].imageUrl,
               child: BrowseTile(
-                id: results[index].id,
-                text: results[index].title,
-                imageUrl: results[index].imageUrl,
+                id: tileData[index].id,
+                text: tileData[index].title,
+                imageUrl: tileData[index].imageUrl,
                 tile: tile,
                 preferIdTag: preferIdTag,
               ),
             );
           },
-          childCount: results.length,
+          childCount: tileData.length,
         ),
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: tile.width,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          childAspectRatio: tile.width / tile.fullHeight,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+          minWidth: tile.width,
+          height: tile.fullHeight,
         ),
       ),
     );

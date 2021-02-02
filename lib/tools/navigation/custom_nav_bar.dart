@@ -37,7 +37,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          height: 50,
+          height: MediaQuery.of(context).viewPadding.bottom + 50,
           width: double.infinity,
           color: Theme.of(context).cardColor,
           child: Row(

@@ -135,6 +135,7 @@ class Explorer extends ScrollxController implements Filterable {
   @override
   void onInit() {
     super.onInit();
+    _search.firstRebuild = false;
     debounce(_search, (_) => fetchData(),
         time: const Duration(milliseconds: 600));
   }

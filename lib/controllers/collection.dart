@@ -180,7 +180,6 @@ class Collection extends ScrollxController implements Filterable {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    print('fetch');
     _fetching.value = true;
     Map<String, dynamic> data = await Network.request(
       _collectionQuery,

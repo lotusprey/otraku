@@ -180,6 +180,7 @@ class Collection extends ScrollxController implements Filterable {
   // ***************************************************************************
 
   Future<void> fetch() async {
+    print('fetch');
     _fetching.value = true;
     Map<String, dynamic> data = await Network.request(
       _collectionQuery,
@@ -237,7 +238,7 @@ class Collection extends ScrollxController implements Filterable {
     // Update database item
     final List<String> oldCustomLists = oldEntry.customLists.entries
         .where((e) => e.value)
-        .map((e) => e.key)
+        .map((e) => e.key.toLowerCase())
         .toList();
     final List<String> newCustomLists = newEntry.customLists.entries
         .where((e) => e.value)
@@ -268,114 +269,63 @@ class Collection extends ScrollxController implements Filterable {
 
     final entry = MediaListData(data['SaveMediaListEntry']);
 
-    // Update the status lists. If the list in which the
-    // entry was moved to isn't present locally, refetch.
-    if (oldEntry.status != newEntry.status) {
-      // Case 1: The media list status has been changed.
-      bool foundNewList = false;
-      for (final list in _lists)
-        if (!list.isCustomList) {
-          if (list.status == oldEntry.status) {
-            for (int i = 0; i < list.entries.length; i++)
-              if (list.entries[i].mediaId == entry.mediaId) {
-                list.entries.removeAt(i);
-                break;
-              }
-          } else if (list.status == newEntry.status) {
-            list.entries.add(entry);
-            list.sort(_filters[Filterable.SORT]);
-            foundNewList = true;
-          }
-        }
-
-      if (!foundNewList) {
-        fetch();
-        return;
-      }
-    } else if (oldEntry.hiddenFromStatusLists !=
-        newEntry.hiddenFromStatusLists) {
-      // Case 2: The @hiddenFromStatusLists property is changed.
-      for (final list in _lists)
-        if (!list.isCustomList) {
-          if (list.status == newEntry.status) {
-            for (int i = 0; i < list.entries.length; i++)
-              if (list.entries[i].mediaId == entry.mediaId) {
-                if (oldEntry.hiddenFromStatusLists) {
-                  list.entries.add(entry);
-                  list.sort(_filters[Filterable.SORT]);
-                } else
-                  list.entries.removeAt(i);
-                break;
-              }
-            break;
-          }
-        }
-    } else {
-      // Case 3: The entry is in the same status list.
-      for (final list in _lists)
-        if (!list.isCustomList) {
-          if (list.status == newEntry.status) {
-            for (int i = 0; i < list.entries.length; i++)
-              if (list.entries[i].mediaId == entry.mediaId) {
-                list.entries[i] = entry;
-                break;
-              }
-            break;
-          }
-        }
-    }
-
-    // Update the custom lists. If a list, in which the
-    // entry was added isn't present locally, refetch.
-    for (int i = 0; i < oldCustomLists.length; i++)
-      oldCustomLists[i] = oldCustomLists[i].toLowerCase();
     for (int i = 0; i < newCustomLists.length; i++)
       newCustomLists[i] = newCustomLists[i].toLowerCase();
 
-    for (final list in _lists) {
-      if (list.isCustomList) {
-        final name = list.name.toLowerCase();
-
-        bool wasHolder = false;
-        for (int i = 0; i < oldCustomLists.length; i++)
-          if (oldCustomLists[i] == name) {
-            oldCustomLists.removeAt(i);
-            wasHolder = true;
-            break;
-          }
-
-        bool isHolder = false;
-        for (int i = 0; i < newCustomLists.length; i++)
-          if (newCustomLists[i] == name) {
-            newCustomLists.removeAt(i);
-            isHolder = true;
-            break;
-          }
-
-        if (wasHolder && isHolder) {
-          for (int i = 0; i < list.entries.length; i++)
-            if (list.entries[i].mediaId == entry.mediaId) {
-              list.entries[i] = entry;
-              break;
-            }
-        } else if (wasHolder) {
-          for (int i = 0; i < list.entries.length; i++)
-            if (list.entries[i].mediaId == entry.mediaId) {
-              list.entries.removeAt(i);
-              break;
-            }
-        } else if (isHolder) {
-          list.entries.add(entry);
-          list.sort(_filters[Filterable.SORT]);
+    // Remove from old status list
+    if (!oldEntry.hiddenFromStatusLists)
+      for (final list in _lists)
+        if (oldEntry.status != null &&
+            oldEntry.status == list.status &&
+            (list.splitCompletedListFormat == null ||
+                list.splitCompletedListFormat == entry.format)) {
+          list.removeByMediaId(entry.mediaId);
+          break;
         }
+
+    // Remove from old custom lists
+    if (oldCustomLists.isNotEmpty)
+      for (final list in _lists)
+        for (int i = 0; i < oldCustomLists.length; i++)
+          if (oldCustomLists[i] == list.name.toLowerCase()) {
+            list.removeByMediaId(entry.mediaId);
+            oldCustomLists.removeAt(i);
+            break;
+          }
+
+    // Add to new status list
+    if (!newEntry.hiddenFromStatusLists) {
+      bool added = false;
+      for (final list in _lists)
+        if (newEntry.status == list.status &&
+            (list.splitCompletedListFormat == null ||
+                list.splitCompletedListFormat == entry.format)) {
+          list.insertSorted(entry, _filters[Filterable.SORT]);
+          added = true;
+          break;
+        }
+      if (!added) {
+        fetch();
+        return;
       }
     }
 
+    // Add to new custom lists
     if (newCustomLists.isNotEmpty) {
-      fetch();
-      return;
+      for (final list in _lists)
+        for (int i = 0; i < newCustomLists.length; i++)
+          if (newCustomLists[i] == list.name.toLowerCase()) {
+            list.insertSorted(entry, _filters[Filterable.SORT]);
+            newCustomLists.removeAt(i);
+            break;
+          }
+      if (newCustomLists.isNotEmpty) {
+        fetch();
+        return;
+      }
     }
 
+    // Remove empty lists
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex.value) _listIndex.value--;
@@ -400,20 +350,11 @@ class Collection extends ScrollxController implements Filterable {
       if (cl.value) customLists.add(cl.key.toLowerCase());
 
     for (final list in _lists)
-      if (!entry.hiddenFromStatusLists && entry.status == list.status) {
-        for (int j = 0; j < list.entries.length; j++)
-          if (entry.mediaId == list.entries[j].mediaId) {
-            list.entries.removeAt(j);
-            break;
-          }
-      } else if (list.isCustomList &&
-          customLists.contains(list.name.toLowerCase())) {
-        for (int j = 0; j < list.entries.length; j++)
-          if (entry.mediaId == list.entries[j].mediaId) {
-            list.entries.removeAt(j);
-            break;
-          }
-      }
+      if ((!entry.hiddenFromStatusLists &&
+              entry.status == list.status &&
+              !list.isCustomList) ||
+          (list.isCustomList && customLists.contains(list.name.toLowerCase())))
+        list.removeByMediaId(entry.mediaId);
 
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {

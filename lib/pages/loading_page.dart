@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/user.dart';
-import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/loader.dart';
@@ -20,15 +16,7 @@ class LoadingPage extends StatelessWidget {
         Get.offAll(AuthPage(), transition: Transition.fadeIn);
       else
         Network.initViewerId().then((ok) {
-          if (!ok) return;
-
-          Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
-          Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
-          Get.put(User(), tag: Network.viewerId.toString()).fetchUser(null);
-          Get.put(Explorer()).fetchInitial();
-          Get.put(Viewer()).fetchData();
-
-          Get.offAll(HomePage(), transition: Transition.fadeIn);
+          if (ok) Get.offAll(HomePage(), transition: Transition.fadeIn);
         });
     });
 

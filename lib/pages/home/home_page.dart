@@ -2,6 +2,10 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/helpers/network.dart';
 import 'package:otraku/pages/home/explore_tab.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/pages/home/inbox_tab.dart';
@@ -19,6 +23,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(Collection(null, true), tag: Collection.ANIME).fetch();
+    Get.put(Collection(null, false), tag: Collection.MANGA).fetch();
+    Get.put(User(), tag: Network.viewerId.toString()).fetchUser(null);
+    Get.put(Explorer()).fetchInitial();
+    Get.put(Viewer()).fetchData();
+
     final tabs = [
       const InboxTab(),
       CollectionTab(

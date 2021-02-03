@@ -40,6 +40,14 @@ class Network {
     return true;
   }
 
+  static Future<void> logOut() async {
+    await FlutterSecureStorage().deleteAll();
+    Config.storage.erase();
+    _accessToken = null;
+    _viewerId = null;
+    Get.offAll(AuthPage());
+  }
+
   static Future<bool> initViewerId() async {
     _viewerId = Config.storage.read('viewerId');
     if (_viewerId == null) {

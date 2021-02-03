@@ -52,7 +52,6 @@ class _AuthPageState extends State<AuthPage> {
           ),
         ],
       ),
-      //print('error: $error'),
     );
 
     setState(() => _triedConnecting = true);
@@ -83,7 +82,7 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                       RaisedButton(
                         padding: Config.PADDING,
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                           borderRadius: Config.BORDER_RADIUS,
                         ),
                         color: Theme.of(context).accentColor,

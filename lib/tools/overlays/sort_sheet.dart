@@ -143,8 +143,8 @@ class CollectionSortSheet extends StatelessWidget {
           value: desc
               ? ListSort.values[index * 2 + 1]
               : ListSort.values[index * 2],
-          update: true,
         );
+        collection.sort();
       },
     );
   }

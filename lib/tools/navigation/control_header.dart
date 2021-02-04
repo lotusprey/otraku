@@ -10,10 +10,12 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
+import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class ControlHeader extends StatelessWidget {
   final String collectionTag;
@@ -137,15 +139,48 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         : null,
                   );
                 }),
-              if (collectionTag == null)
+              if (collectionTag == null) ...[
+                IconButton(
+                  icon: const Icon(
+                    FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                  ),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => MediaSortSheet(
+                      FnHelper.stringToEnum(
+                        Get.find<Explorer>().getFilterWithKey(Filterable.SORT),
+                        MediaSort.values,
+                      ),
+                      (sort) => Get.find<Explorer>().setFilterWithKey(
+                        Filterable.SORT,
+                        value: describeEnum(sort),
+                        update: true,
+                      ),
+                    ),
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                  ),
+                ),
                 Obx(() {
                   final type = Get.find<Explorer>().type;
                   if (type == Browsable.anime || type == Browsable.manga)
                     return _Filter(collectionTag);
                   return const SizedBox();
-                })
-              else
+                }),
+              ] else ...[
+                IconButton(
+                  icon: const Icon(
+                    FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                  ),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    builder: (_) => CollectionSortSheet(collectionTag),
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                  ),
+                ),
                 _Filter(collectionTag),
+              ],
             ],
           ),
         ),
@@ -198,13 +233,24 @@ class _Navigation extends StatefulWidget {
 }
 
 class __NavigationState extends State<_Navigation> {
+  bool _empty;
   bool _searchMode;
+  TextEditingController _ctrl;
+  FocusNode _focus = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    final val = widget.searchValue;
-    _searchMode = val != null && val != '';
+    _searchMode = widget.searchValue != null && widget.searchValue != '';
+    _ctrl = TextEditingController(text: widget.searchValue ?? '');
+    _empty = _ctrl.text.length == 0;
+  }
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    _ctrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -216,7 +262,7 @@ class __NavigationState extends State<_Navigation> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!_searchMode)
+          if (!_searchMode) ...[
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -234,100 +280,70 @@ class __NavigationState extends State<_Navigation> {
                 },
                 child: widget.title,
               ),
-            )
-          else
-            _Searchbar(widget.hint, widget.searchValue, widget.search),
-          if (widget.search != null)
-            if (!_searchMode)
+            ),
+            if (widget.search != null)
               IconButton(
                 icon: const Icon(FluentSystemIcons.ic_fluent_search_regular),
                 onPressed: () => setState(() => _searchMode = true),
-              )
-            else
-              IconButton(
-                icon: const Icon(
-                    FluentSystemIcons.ic_fluent_chevron_right_filled),
-                onPressed: () {
-                  widget.search(null);
-                  setState(() => _searchMode = false);
-                },
-              )
-        ],
-      ),
-    );
-  }
-}
-
-class _Searchbar extends StatefulWidget {
-  final String hint;
-  final String searchValue;
-  final Function(String) onChanged;
-
-  _Searchbar(this.hint, this.searchValue, this.onChanged);
-
-  @override
-  __SearchbarState createState() => __SearchbarState();
-}
-
-class __SearchbarState extends State<_Searchbar> {
-  TextEditingController _ctrl;
-  bool _empty;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = TextEditingController(text: widget.searchValue ?? '');
-    _empty = _ctrl.text.length == 0;
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: SizedBox(
-        height: 35,
-        child: TextField(
-          controller: _ctrl,
-          cursorColor: Theme.of(context).accentColor,
-          style: Theme.of(context).textTheme.headline6,
-          inputFormatters: [
-            LengthLimitingTextInputFormatter(30),
-          ],
-          textAlignVertical: TextAlignVertical.bottom,
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            hintStyle: Theme.of(context).textTheme.subtitle1,
-            filled: true,
-            fillColor: Theme.of(context).primaryColor,
-            border: OutlineInputBorder(
-              borderRadius: Config.BORDER_RADIUS,
-              borderSide: BorderSide.none,
-            ),
-            isDense: true,
-            suffixIcon: _empty
-                ? null
-                : IconButton(
-                    padding: const EdgeInsets.all(0),
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      _ctrl.clear();
-                      _update('');
-                    },
+              ),
+          ] else
+            Expanded(
+              child: SizedBox(
+                height: 35,
+                child: TextField(
+                  controller: _ctrl,
+                  focusNode: _focus,
+                  autofocus: true,
+                  cursorColor: Theme.of(context).accentColor,
+                  style: Theme.of(context).textTheme.headline6,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(30),
+                  ],
+                  textAlignVertical: TextAlignVertical.bottom,
+                  decoration: InputDecoration(
+                    hintText: widget.hint,
+                    hintStyle: Theme.of(context).textTheme.subtitle1,
+                    filled: true,
+                    fillColor: Theme.of(context).primaryColor,
+                    border: OutlineInputBorder(
+                      borderRadius: Config.BORDER_RADIUS,
+                      borderSide: BorderSide.none,
+                    ),
+                    isDense: true,
+                    suffixIcon: _empty
+                        ? IconButton(
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(
+                              FluentSystemIcons.ic_fluent_chevron_right_filled,
+                            ),
+                            color: Theme.of(context).disabledColor,
+                            onPressed: () {
+                              _focus.canRequestFocus = false;
+                              widget.search(null);
+                              setState(() => _searchMode = false);
+                            },
+                          )
+                        : IconButton(
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Icons.close),
+                            color: Theme.of(context).disabledColor,
+                            onPressed: () {
+                              _ctrl.clear();
+                              _update('');
+                            },
+                          ),
                   ),
-          ),
-          onChanged: (text) => _update(text),
-        ),
+                  onChanged: (text) => _update(text),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 
   void _update(String text) {
-    widget.onChanged(text);
+    widget.search(text);
     if (text.length > 0) {
       if (_empty) setState(() => _empty = false);
     } else {

@@ -6,16 +6,12 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/anime_format.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/manga_format.dart';
-import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/media_status.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/fields/input_field_structure.dart';
-import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 
@@ -60,7 +56,6 @@ class FilterPage extends StatelessWidget {
     changes[Filterable.TAG_NOT_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.TAG_NOT_IN) ?? [],
     );
-    changes[Filterable.SORT] = filterable.getFilterWithKey(Filterable.SORT);
     changes[Filterable.ON_LIST] =
         filterable.getFilterWithKey(Filterable.ON_LIST);
 
@@ -104,8 +99,6 @@ class FilterPage extends StatelessWidget {
         physics: Config.PHYSICS,
         padding: Config.PADDING,
         children: [
-          _SortDropdown(collectionTag != null, changes),
-          const SizedBox(height: 10),
           if (collectionTag == null)
             DropDownField(
               title: 'List Filter',
@@ -162,90 +155,4 @@ class FilterPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class _SortDropdown extends StatefulWidget {
-  final bool ofCollection;
-  final Map<String, dynamic> changes;
-
-  _SortDropdown(this.ofCollection, this.changes);
-
-  @override
-  __SortDropdownState createState() => __SortDropdownState();
-}
-
-class __SortDropdownState extends State<_SortDropdown> {
-  Map<String, int> _items = {};
-  int _index;
-  int _asc;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.ofCollection) {
-      final ListSort val = widget.changes[Filterable.SORT];
-      _index = val.index ~/ 2;
-      _asc = val.index % 2;
-
-      for (int i = 1; i < ListSort.values.length; i += 2)
-        _items[FnHelper.clarifyEnum(describeEnum(ListSort.values[i - 1]))] =
-            i ~/ 2;
-    } else {
-      final val = FnHelper.stringToEnum(
-        widget.changes[Filterable.SORT],
-        MediaSort.values,
-      );
-      _index = val.index ~/ 2;
-      _asc = val.index % 2;
-
-      for (int i = 1; i < MediaSort.values.length; i += 2)
-        _items[FnHelper.clarifyEnum(describeEnum(MediaSort.values[i - 1]))] =
-            i ~/ 2;
-    }
-  }
-
-  void _assign() {
-    if (widget.ofCollection)
-      widget.changes[Filterable.SORT] = ListSort.values[_index * 2 + _asc];
-    else
-      widget.changes[Filterable.SORT] =
-          describeEnum(MediaSort.values[_index * 2 + _asc]);
-  }
-
-  @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(
-            child: DropDownField(
-              title: 'Sort',
-              initialValue: _index,
-              items: _items,
-              onChanged: (val) {
-                _index = val;
-                _assign();
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: InputFieldStructure(
-              title: 'Order',
-              child: SizedBox(
-                height: Config.MATERIAL_TAP_TARGET_SIZE,
-                child: BubbleTabs(
-                  options: const ['Asc', 'Desc'],
-                  values: const [0, 1],
-                  initial: _asc,
-                  onNewValue: (val) {
-                    _asc = val;
-                    _assign();
-                  },
-                  onSameValue: (_) {},
-                  padding: false,
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
 }

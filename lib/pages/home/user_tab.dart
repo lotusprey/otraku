@@ -232,7 +232,7 @@ class _Header extends StatelessWidget {
                     onTap: () => showDialog(
                       context: context,
                       builder: (_) => PopUpAnimation(
-                        Image.network(avatar, fit: BoxFit.cover),
+                        ImageDialog(Image.network(avatar, fit: BoxFit.cover)),
                       ),
                     ),
                   )

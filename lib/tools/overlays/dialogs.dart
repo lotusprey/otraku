@@ -22,14 +22,11 @@ class _PopUpAnimationState extends State<PopUpAnimation>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-      duration: const Duration(
-        milliseconds: 150,
-      ),
+      duration: const Duration(milliseconds: 150),
       vsync: this,
       value: 0.1,
     );
     _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-
     _ctrl.forward();
   }
 
@@ -40,12 +37,10 @@ class _PopUpAnimationState extends State<PopUpAnimation>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ScaleTransition(
-      scale: _anim,
-      child: widget.child,
-    );
-  }
+  Widget build(BuildContext context) => ScaleTransition(
+        scale: _anim,
+        child: widget.child,
+      );
 }
 
 class TextDialog extends StatelessWidget {
@@ -58,40 +53,43 @@ class TextDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
       backgroundColor: Theme.of(context).backgroundColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: Config.BORDER_RADIUS,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Config.RADIUS),
-              color: Theme.of(context).backgroundColor,
-            ),
-            padding: Config.PADDING,
-            child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-          ),
-          Flexible(
-            child: Container(
+      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 1000),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.vertical(bottom: Config.RADIUS),
-                color: Theme.of(context).primaryColor,
+                borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
+                color: Theme.of(context).backgroundColor,
               ),
-              child: ScrollbarImplementation(
-                SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  child:
-                      Text(text, style: Theme.of(context).textTheme.bodyText1),
+              padding: Config.PADDING,
+              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+            ),
+            Flexible(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      const BorderRadius.vertical(bottom: Config.RADIUS),
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: ScrollbarImplementation(
+                  SingleChildScrollView(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    child: Text(text,
+                        style: Theme.of(context).textTheme.bodyText1),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -105,12 +103,11 @@ class ImageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.transparent,
       elevation: 0,
-      child: ClipRRect(
-        borderRadius: Config.BORDER_RADIUS,
-        child: image,
-      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+      backgroundColor: Colors.transparent,
+      child: ClipRRect(borderRadius: Config.BORDER_RADIUS, child: image),
     );
   }
 }
@@ -128,17 +125,13 @@ class ImageTextDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: Config.BORDER_RADIUS,
-      ),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       backgroundColor: Theme.of(context).primaryColor,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          ClipRRect(
-            borderRadius: Config.BORDER_RADIUS,
-            child: image,
-          ),
+          ClipRRect(borderRadius: Config.BORDER_RADIUS, child: image),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             child: SelectableText(

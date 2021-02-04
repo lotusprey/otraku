@@ -83,9 +83,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                     ),
                     onTap: () => showDialog(
                       context: context,
-                      builder: (ctx) => PopUpAnimation(
-                        ImageDialog(image),
-                      ),
+                      builder: (ctx) => PopUpAnimation(ImageDialog(image)),
                     ),
                   ),
                 ),

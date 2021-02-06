@@ -2,6 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/settings.dart';
@@ -27,25 +28,33 @@ class UserTab extends StatelessWidget {
   const UserTab(this.id, this.avatarUrl);
 
   @override
-  Widget build(BuildContext context) => GetBuilder<User>(
-        tag: id?.toString() ?? Network.viewerId.toString(),
-        builder: (user) => CustomScrollView(
-          physics: Config.PHYSICS,
-          slivers: [
-            _Header(
-              id: id ?? Network.viewerId,
-              user: user.data,
-              isMe: id == null,
-              avatarUrl: avatarUrl,
+  Widget build(BuildContext context) {
+    final sidePadding = MediaQuery.of(context).size.width > 515
+        ? (MediaQuery.of(context).size.width - 500) / 2.0
+        : 10.0;
+
+    return GetBuilder<User>(
+      tag: id?.toString() ?? Network.viewerId.toString(),
+      builder: (user) => CustomScrollView(
+        physics: Config.PHYSICS,
+        slivers: [
+          _Header(
+            id: id ?? Network.viewerId,
+            user: user.person,
+            isMe: id == null,
+            avatarUrl: avatarUrl,
+          ),
+          SliverPadding(
+            padding: EdgeInsets.only(
+              left: sidePadding,
+              right: sidePadding,
+              top: 15,
             ),
-            SliverPadding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-              sliver: SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Container(
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed(
+                [
+                  Container(
                     height: Config.MATERIAL_TAP_TARGET_SIZE,
-                    width: MediaQuery.of(context).size.width - 20,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius: Config.BORDER_RADIUS,
@@ -83,15 +92,31 @@ class UserTab extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  if (user.person?.description != null)
+                    Container(
+                      padding: Config.PADDING,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: Config.BORDER_RADIUS,
+                      ),
+                      child: HtmlWidget(
+                        user.person.description,
+                        textStyle: TextStyle(
+                          color: Theme.of(context).textTheme.bodyText1.color,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 50),
+                ],
               ),
             ),
-            SliverToBoxAdapter(
-              child: const SizedBox(height: 1000),
-            ),
-          ],
-        ),
-      );
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 1000)),
+        ],
+      ),
+    );
+  }
 
   void _pushCollection(bool ofAnime) {
     final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';

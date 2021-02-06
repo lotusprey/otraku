@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_html/style.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/review.dart';
@@ -28,13 +27,15 @@ class ReviewPage extends StatelessWidget {
                     CustomSliverHeader(
                       height: 150,
                       background: Hero(
-                        tag: bannerUrl,
-                        child: FadeInImage.memoryNetwork(
-                          image: bannerUrl,
-                          placeholder: FnHelper.transparentImage,
-                          fadeInDuration: Config.FADE_DURATION,
-                          fit: BoxFit.cover,
-                        ),
+                        tag: id,
+                        child: bannerUrl != null
+                            ? FadeInImage.memoryNetwork(
+                                image: bannerUrl,
+                                placeholder: FnHelper.transparentImage,
+                                fadeInDuration: Config.FADE_DURATION,
+                                fit: BoxFit.cover,
+                              )
+                            : const SizedBox(),
                       ),
                     ),
                     if (data != null)
@@ -84,13 +85,12 @@ class ReviewPage extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                            Html(
-                              data: data.text,
-                              style: {
-                                '*': Style.fromTextStyle(
-                                  Theme.of(context).textTheme.bodyText1,
-                                )
-                              },
+                            HtmlWidget(
+                              data.text,
+                              textStyle: TextStyle(
+                                color:
+                                    Theme.of(context).textTheme.bodyText1.color,
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),

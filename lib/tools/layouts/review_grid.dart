@@ -41,7 +41,7 @@ class ReviewGrid extends StatelessWidget {
                           borderRadius:
                               BorderRadius.vertical(top: Config.RADIUS),
                           child: Hero(
-                            tag: results[index].imageUrl,
+                            tag: results[index].id,
                             child: FadeInImage.memoryNetwork(
                               placeholder: FnHelper.transparentImage,
                               image: results[index].imageUrl,

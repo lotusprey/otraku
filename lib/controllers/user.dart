@@ -65,7 +65,7 @@ class User extends GetxController {
     LoadableList<TileData>([], true),
   ];
 
-  UserData get data => _user;
+  UserData get person => _user;
 
   List<TileData> get favourites => _favourites[_favsIndex].items;
 

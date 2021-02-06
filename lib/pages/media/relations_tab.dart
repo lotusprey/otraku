@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/media.dart';
@@ -164,56 +165,107 @@ class _Empty extends StatelessWidget {
 
 class RelationControls extends StatelessWidget {
   final Media media;
+  final Function scrollUp;
 
-  RelationControls(this.media);
+  RelationControls(this.media, this.scrollUp);
 
   @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: SizedBox(
-          height: Config.MATERIAL_TAP_TARGET_SIZE,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              BubbleTabs(
-                options: ['Media', 'Characters', 'Staff'],
-                values: [
-                  Media.REL_MEDIA,
-                  Media.REL_CHARACTERS,
-                  Media.REL_STAFF,
-                ],
-                initial: media.relationsTab,
-                onNewValue: (val) => media.relationsTab = val,
-                onSameValue: (_) {},
-              ),
-              Obx(() {
-                if (media.relationsTab == Media.REL_CHARACTERS &&
-                    media.characters != null &&
-                    media.characters.items.isNotEmpty &&
-                    media.availableLanguages.length > 1)
-                  return IconButton(
-                    icon: const Icon(Icons.language),
-                    onPressed: () => showModalBottomSheet(
-                      context: context,
-                      builder: (_) => OptionSheet(
-                        title: 'Language',
-                        options: media.availableLanguages,
-                        index: media.languageIndex,
-                        onTap: (index) => media.staffLanguage =
-                            media.availableLanguages[index],
-                      ),
-                      backgroundColor: Colors.transparent,
-                      isScrollControlled: true,
-                    ),
-                  );
-                return const SizedBox();
-              }),
+  Widget build(BuildContext context) => SliverPersistentHeader(
+        delegate: _RelationControlsDelegate(media, scrollUp),
+        pinned: true,
+      );
+}
+
+class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
+  static const _height = Config.MATERIAL_TAP_TARGET_SIZE + 5;
+
+  final Media media;
+  final Function scrollUp;
+
+  _RelationControlsDelegate(this.media, this.scrollUp);
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(
+      height: _height,
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).backgroundColor,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          )
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BubbleTabs(
+            options: ['Media', 'Characters', 'Staff'],
+            values: [
+              Media.REL_MEDIA,
+              Media.REL_CHARACTERS,
+              Media.REL_STAFF,
             ],
+            initial: media.relationsTab,
+            onNewValue: (val) {
+              scrollUp();
+              media.relationsTab = val;
+            },
+            onSameValue: (_) => scrollUp(),
           ),
-        ),
+          Obx(() {
+            if (media.relationsTab == Media.REL_CHARACTERS &&
+                media.characters != null &&
+                media.characters.items.isNotEmpty &&
+                media.availableLanguages.length > 1)
+              return IconButton(
+                icon: const Icon(Icons.language),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  builder: (_) => OptionSheet(
+                    title: 'Language',
+                    options: media.availableLanguages,
+                    index: media.languageIndex,
+                    onTap: (index) =>
+                        media.staffLanguage = media.availableLanguages[index],
+                  ),
+                  backgroundColor: Colors.transparent,
+                  isScrollControlled: true,
+                ),
+              );
+            return const SizedBox();
+          }),
+        ],
       ),
     );
   }
+
+  @override
+  double get maxExtent => _height;
+
+  @override
+  double get minExtent => _height;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
+
+  @override
+  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+      null;
+
+  @override
+  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+
+  @override
+  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+
+  @override
+  TickerProvider get vsync => null;
 }

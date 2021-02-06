@@ -6,7 +6,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/media/overview_tab.dart';
 import 'package:otraku/pages/media/relations_tab.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
-import 'package:otraku/tools/navigation/media_header.dart';
+import 'package:otraku/pages/media/media_header.dart';
 
 class MediaPage extends StatelessWidget {
   final int id;
@@ -18,6 +18,14 @@ class MediaPage extends StatelessWidget {
   Widget build(BuildContext context) {
     const placeholder = const SliverToBoxAdapter(child: SizedBox());
     final media = Get.find<Media>(tag: id.toString());
+
+    final coverWidth = MediaQuery.of(context).size.width < 430.0
+        ? MediaQuery.of(context).size.width * 0.35
+        : 150.0;
+    final coverHeight = coverWidth / 0.7;
+    final bannerHeight =
+        coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+    final headerHeight = bannerHeight + coverHeight * 0.6;
 
     return Scaffold(
       extendBody: true,
@@ -33,13 +41,15 @@ class MediaPage extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
+          controller: media.scrollCtrl,
           slivers: [
-            Obx(
-              () => MediaHeader(
-                overview: media.overview,
-                imageUrl: coverUrl,
-                toggleFavourite: media.toggleFavourite,
-              ),
+            MediaHeader(
+              media: media,
+              imageUrl: coverUrl,
+              coverWidth: coverWidth,
+              coverHeight: coverHeight,
+              bannerHeight: bannerHeight,
+              height: headerHeight,
             ),
             Obx(
               () => media.tab == Media.OVERVIEW && media.overview != null
@@ -48,7 +58,12 @@ class MediaPage extends StatelessWidget {
             ),
             Obx(
               () => media.tab == Media.RELATIONS
-                  ? RelationControls(media)
+                  ? RelationControls(
+                      media,
+                      () => media.scrollTo(
+                        headerHeight - Config.MATERIAL_TAP_TARGET_SIZE,
+                      ),
+                    )
                   : placeholder,
             ),
             Obx(
@@ -56,7 +71,7 @@ class MediaPage extends StatelessWidget {
                   ? RelationList(media)
                   : placeholder,
             ),
-            SliverToBoxAdapter(child: const SizedBox(height: 60)),
+            SliverToBoxAdapter(child: const SizedBox(height: 50)),
           ],
         ),
       ),

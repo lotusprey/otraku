@@ -2,12 +2,13 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/scroll_x_controller.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/models/anilist/related_media.dart';
 
-class Media extends GetxController {
+class Media extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

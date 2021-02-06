@@ -6,11 +6,13 @@ class ScrollxController extends GetxController {
 
   ScrollController get scrollCtrl => _scrollCtrl;
 
-  void scrollToTop() {
+  void scrollToTop() => scrollTo(0);
+
+  void scrollTo(double offset) {
     if (!_scrollCtrl.hasClients) return;
-    if (_scrollCtrl.offset > 100) _scrollCtrl.jumpTo(100);
+    if (_scrollCtrl.offset > offset + 100) _scrollCtrl.jumpTo(offset + 100);
     _scrollCtrl.animateTo(
-      0,
+      offset,
       duration: const Duration(milliseconds: 200),
       curve: Curves.decelerate,
     );

@@ -72,10 +72,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final currentExtent = maxExtent - shrinkOffset;
-    final titleOpacity = !titleScrollFadeIn || currentExtent < minExtent
+    final titleOpacity = !titleScrollFadeIn || currentExtent <= minExtent
         ? 1.0
         : 1.0 - currentExtent / maxExtent;
-    final actionOpacity = !actionsScrollFadeIn || currentExtent < minExtent
+    final actionOpacity = !actionsScrollFadeIn || currentExtent <= minExtent
         ? 1.0
         : 1.0 - currentExtent / maxExtent;
     final headerOpacity = currentExtent >= _middleExtent

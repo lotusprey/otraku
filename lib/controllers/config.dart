@@ -32,7 +32,7 @@ class Config extends GetxController {
   Config() {
     _pageIndex ??= HomePage.ANIME_LIST;
 
-    double width = (Get.mediaQuery.size.width - 40) / 3;
+    double width = Get.mediaQuery.size.width / 3;
     if (width > 150) width = 150;
 
     _highTile = TileConfig(

@@ -7,6 +7,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/anilist/studio_data.dart';
+import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/layouts/result_grids.dart';
@@ -27,6 +28,7 @@ class StudioPage extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Obx(
           () => NotificationListener(
             onNotification: (notification) {
@@ -110,12 +112,9 @@ class StudioPage extends StatelessWidget {
                                 i * studio.media.split[i].length,
                           ),
                           gridDelegate:
-                              SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: Config.highTile.width,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 10,
-                            childAspectRatio: Config.highTile.width /
-                                Config.highTile.fullHeight,
+                              SliverGridDelegateWithMinWidthAndFixedHeight(
+                            minWidth: Config.highTile.width,
+                            height: Config.highTile.fullHeight,
                           ),
                         ),
                       ),
@@ -135,6 +134,11 @@ class StudioPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).viewPadding.bottom,
+                    ),
+                  ),
                 ],
               ],
             ),

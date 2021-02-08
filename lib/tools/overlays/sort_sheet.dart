@@ -26,98 +26,97 @@ class SortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        width: MediaQuery.of(context).size.width > 420 ? 400 : null,
-        height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
-        margin: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          bottom: MediaQuery.of(context).viewPadding.bottom + 10,
-        ),
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).backgroundColor,
-          borderRadius: Config.BORDER_RADIUS,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16, right: 46, bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Sort', style: Theme.of(context).textTheme.subtitle1),
-                  Text('Order', style: Theme.of(context).textTheme.subtitle1),
-                ],
-              ),
+    final sideMargin = MediaQuery.of(context).size.width > 420
+        ? (MediaQuery.of(context).size.width - 400) / 2
+        : 20;
+    return Container(
+      height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
+      margin: EdgeInsets.only(
+        left: sideMargin,
+        right: sideMargin,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+      ),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).backgroundColor,
+        borderRadius: Config.BORDER_RADIUS,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, right: 46, bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Sort', style: Theme.of(context).textTheme.subtitle1),
+                Text('Order', style: Theme.of(context).textTheme.subtitle1),
+              ],
             ),
-            Expanded(
-              child: ListView.builder(
-                physics: Config.PHYSICS,
-                itemBuilder: (_, i) => ListTile(
-                  dense: true,
-                  title: Text(
-                    options[i],
-                    style: i != index
-                        ? Theme.of(context).textTheme.bodyText1
-                        : Theme.of(context).textTheme.bodyText2,
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i != index || !desc
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).accentColor,
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(
-                            FluentSystemIcons.ic_fluent_arrow_down_filled,
-                            size: Styles.ICON_SMALLER,
-                          ),
-                          color: Theme.of(context).backgroundColor,
-                          onPressed: () {
-                            onTap(i, true);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      Container(
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i != index || desc
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).accentColor,
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(
-                            FluentSystemIcons.ic_fluent_arrow_up_filled,
-                            size: Styles.ICON_SMALLER,
-                          ),
-                          color: Theme.of(context).backgroundColor,
-                          onPressed: () {
-                            onTap(i, false);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (_, i) => ListTile(
+                dense: true,
+                title: Text(
+                  options[i],
+                  style: i != index
+                      ? Theme.of(context).textTheme.bodyText1
+                      : Theme.of(context).textTheme.bodyText2,
                 ),
-                itemCount: options.length,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: 35,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: i != index || !desc
+                            ? Theme.of(context).primaryColor
+                            : Theme.of(context).accentColor,
+                      ),
+                      child: IconButton(
+                        padding: const EdgeInsets.all(0),
+                        icon: const Icon(
+                          FluentSystemIcons.ic_fluent_arrow_down_filled,
+                          size: Styles.ICON_SMALLER,
+                        ),
+                        color: Theme.of(context).backgroundColor,
+                        onPressed: () {
+                          onTap(i, true);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    Container(
+                      height: 35,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: i != index || desc
+                            ? Theme.of(context).primaryColor
+                            : Theme.of(context).accentColor,
+                      ),
+                      child: IconButton(
+                        padding: const EdgeInsets.all(0),
+                        icon: const Icon(
+                          FluentSystemIcons.ic_fluent_arrow_up_filled,
+                          size: Styles.ICON_SMALLER,
+                        ),
+                        color: Theme.of(context).backgroundColor,
+                        onPressed: () {
+                          onTap(i, false);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              itemCount: options.length,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

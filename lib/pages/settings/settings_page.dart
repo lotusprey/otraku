@@ -40,12 +40,9 @@ class SettingsPage extends StatelessWidget {
           initial: settings.pageIndex,
         ),
         appBar: CustomAppBar(title: _pageNames[settings.pageIndex]),
-        body: Padding(
-          padding: const EdgeInsets.only(bottom: 50),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            child: tabs[settings.pageIndex],
-          ),
+        body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: tabs[settings.pageIndex],
         ),
       ),
     );

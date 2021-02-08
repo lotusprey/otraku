@@ -75,7 +75,9 @@ class MediaPage extends StatelessWidget {
             Obx(
               () => media.tab == Media.SOCIAL ? SocialTab(media) : placeholder,
             ),
-            SliverToBoxAdapter(child: const SizedBox(height: 50)),
+            SliverToBoxAdapter(
+              child: SizedBox(height: CustomNavBar.offset(context)),
+            ),
           ],
         ),
       ),

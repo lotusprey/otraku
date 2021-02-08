@@ -6,6 +6,7 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
+import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
@@ -23,11 +24,9 @@ class RelationsTab extends StatelessWidget {
         if (media.relationsTab == Media.REL_MEDIA)
           return media.otherMedia.isNotEmpty
               ? SliverGrid(
-                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 450,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
-                    childAspectRatio: 2.7,
+                  gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+                    minWidth: 300,
+                    height: Config.highTile.imgHeight * 0.8,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => BrowseIndexer(
@@ -37,26 +36,22 @@ class RelationsTab extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Flexible(
-                            flex: 1,
-                            child: ClipRRect(
-                              borderRadius: Config.BORDER_RADIUS,
-                              child: Container(
-                                color: Theme.of(context).primaryColor,
-                                child: FadeInImage.memoryNetwork(
-                                  height: double.infinity,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  placeholder: FnHelper.transparentImage,
-                                  image: media.otherMedia[index].imageUrl,
-                                  fadeInDuration: Config.FADE_DURATION,
-                                ),
+                          ClipRRect(
+                            borderRadius: Config.BORDER_RADIUS,
+                            child: Container(
+                              color: Theme.of(context).primaryColor,
+                              child: FadeInImage.memoryNetwork(
+                                height: double.infinity,
+                                width: Config.highTile.width * 0.8,
+                                fit: BoxFit.cover,
+                                placeholder: FnHelper.transparentImage,
+                                image: media.otherMedia[index].imageUrl,
+                                fadeInDuration: Config.FADE_DURATION,
                               ),
                             ),
                           ),
                           const SizedBox(width: 15),
                           Expanded(
-                            flex: 3,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,14 +60,11 @@ class RelationsTab extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (media.otherMedia[index].relationType !=
-                                        null)
-                                      Text(
-                                        media.otherMedia[index].relationType,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText2,
-                                      ),
+                                    Text(
+                                      media.otherMedia[index].relationType,
+                                      style:
+                                          Theme.of(context).textTheme.bodyText2,
+                                    ),
                                     Flexible(
                                       child: Text(
                                         media.otherMedia[index].title,
@@ -120,10 +112,7 @@ class RelationsTab extends StatelessWidget {
           return media.characters.items.isNotEmpty
               ? ConnectionsGrid(
                   connections: media.characters.items,
-                  loadMore: () {
-                    if (media.characters.hasNextPage)
-                      media.fetchRelationPage(true);
-                  },
+                  loadMore: () => media.fetchRelationPage(true),
                   preferredSubtitle: media.staffLanguage,
                 )
               : _Empty('No Characters');
@@ -133,9 +122,7 @@ class RelationsTab extends StatelessWidget {
           return media.staff.items.isNotEmpty
               ? ConnectionsGrid(
                   connections: media.staff.items,
-                  loadMore: () {
-                    if (media.staff.hasNextPage) media.fetchRelationPage(false);
-                  },
+                  loadMore: () => media.fetchRelationPage(false),
                 )
               : _Empty('No Staff');
         }

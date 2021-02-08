@@ -17,6 +17,7 @@ class ReviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
+          bottom: false,
           child: GetBuilder<Review>(
               tag: id.toString(),
               builder: (review) {
@@ -40,7 +41,13 @@ class ReviewPage extends StatelessWidget {
                     ),
                     if (data != null)
                       SliverPadding(
-                        padding: const EdgeInsets.all(15),
+                        padding: EdgeInsets.only(
+                          top: 15,
+                          left: 10,
+                          right: 10,
+                          bottom:
+                              MediaQuery.of(context).viewPadding.bottom + 10,
+                        ),
                         sliver: SliverList(
                           delegate: SliverChildListDelegate.fixed([
                             GestureDetector(

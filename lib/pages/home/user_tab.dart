@@ -17,6 +17,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
+import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 import 'package:otraku/helpers/fn_helper.dart';
@@ -107,6 +108,9 @@ class UserTab extends StatelessWidget {
                         ),
                       ),
                     ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: CustomNavBar.offset(context)),
+                  ),
                 ],
               ),
             ),

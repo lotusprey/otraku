@@ -18,6 +18,9 @@ class CustomNavBar extends StatefulWidget {
 
   @override
   _CustomNavBarState createState() => _CustomNavBarState();
+
+  static double offset(BuildContext ctx) =>
+      MediaQuery.of(ctx).viewPadding.bottom + 60;
 }
 
 class _CustomNavBarState extends State<CustomNavBar> {
@@ -38,6 +41,9 @@ class _CustomNavBarState extends State<CustomNavBar> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           height: MediaQuery.of(context).viewPadding.bottom + 50,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom,
+          ),
           width: double.infinity,
           color: Theme.of(context).cardColor,
           child: Row(

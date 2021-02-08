@@ -201,8 +201,8 @@ class Media extends ScrollxController {
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
-    if (ofCharacters && !_characters().hasNextPage) return;
-    if (!ofCharacters && !_staff().hasNextPage) return;
+    if (ofCharacters && !(_characters()?.hasNextPage ?? true)) return;
+    if (!ofCharacters && !(_staff()?.hasNextPage ?? true)) return;
 
     final result = await Network.request(_mediaQuery, {
       'id': overview.id,

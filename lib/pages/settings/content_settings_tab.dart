@@ -9,6 +9,7 @@ import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
 import 'package:otraku/tools/fields/switch_tile.dart';
+import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 
 class ContentSettingsTab extends StatelessWidget {
   @override
@@ -117,6 +118,7 @@ class ContentSettingsTab extends StatelessWidget {
             }
           },
         ),
+        SizedBox(height: CustomNavBar.offset(context)),
       ],
     );
   }

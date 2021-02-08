@@ -16,9 +16,16 @@ class OptionSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sideMargin = MediaQuery.of(context).size.width > 420
+        ? (MediaQuery.of(context).size.width - 400) / 2
+        : 20;
     return Container(
       height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
-      margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+      margin: EdgeInsets.only(
+        left: sideMargin,
+        right: sideMargin,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+      ),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
@@ -33,7 +40,7 @@ class OptionSheet extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              physics: Config.PHYSICS,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (_, i) => ListTile(
                 dense: true,
                 title: Text(

@@ -19,6 +19,7 @@ class TileGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: @preferIdTag is weird. Why did I do that?
     final preferIdTag = tileData[0].browsable == Browsable.user;
 
     return SliverPadding(

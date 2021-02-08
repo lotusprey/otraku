@@ -21,7 +21,7 @@ class RelatedMedia extends TileData {
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        relationType: FnHelper.clarifyEnum(map['mapType']),
+        relationType: FnHelper.clarifyEnum(map['relationType']),
         format: FnHelper.clarifyEnum(map['node']['format']),
         status: FnHelper.clarifyEnum(map['node']['status']),
         imageUrl: map['node']['coverImage']['large'],

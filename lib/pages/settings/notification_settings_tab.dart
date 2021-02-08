@@ -5,6 +5,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/tools/fields/checkbox_field.dart';
+import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 
 class NotificationSettingsTab extends StatelessWidget {
   @override
@@ -17,7 +18,11 @@ class NotificationSettingsTab extends StatelessWidget {
 
     return ListView.builder(
       physics: Config.PHYSICS,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: EdgeInsets.only(
+        left: 10,
+        right: 10,
+        bottom: CustomNavBar.offset(context),
+      ),
       itemBuilder: (_, index) => CheckboxField(
         title: NotificationType.values[index].text,
         initialValue: values[index],

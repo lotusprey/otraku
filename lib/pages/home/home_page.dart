@@ -74,12 +74,9 @@ class HomePage extends StatelessWidget {
         drawer: drawers[config.pageIndex],
         body: SafeArea(
           bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 50),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: tabs[config.pageIndex],
-            ),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: tabs[config.pageIndex],
           ),
         ),
       ),

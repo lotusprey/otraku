@@ -20,6 +20,7 @@ class StaffPage extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
           slivers: [
@@ -79,7 +80,11 @@ class StaffPage extends StatelessWidget {
                 return const SliverToBoxAdapter();
 
               return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                  bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+                ),
                 sliver: ConnectionsGrid(
                   connections: connectionList.items,
                   loadMore: staff.fetchPage,

@@ -3,6 +3,7 @@ import 'package:otraku/models/connection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 
 class ConnectionsGrid extends StatefulWidget {
   final List<Connection> connections;
@@ -21,7 +22,7 @@ class ConnectionsGrid extends StatefulWidget {
 
 class _ConnectionsGridState extends State<ConnectionsGrid> {
   @override
-  Widget build(BuildContext context) => SliverFixedExtentList(
+  Widget build(BuildContext context) => SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, index) {
             if (index == widget.connections.length - 5) widget.loadMore();
@@ -30,15 +31,18 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
           },
           childCount: widget.connections.length,
         ),
-        itemExtent: 110,
+        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 350,
+          height: 110,
+        ),
       );
 }
 
 class _MediaConnectionTile extends StatelessWidget {
-  final Connection media;
+  final Connection item;
   final String preferredSubtitle;
 
-  _MediaConnectionTile(this.media, this.preferredSubtitle);
+  _MediaConnectionTile(this.item, this.preferredSubtitle);
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +50,15 @@ class _MediaConnectionTile extends StatelessWidget {
     if (preferredSubtitle == null)
       index = 0;
     else
-      for (int i = 0; i < media.others.length; i++)
-        if (media.others[i].subtitle == preferredSubtitle) {
+      for (int i = 0; i < item.others.length; i++)
+        if (item.others[i].subtitle == preferredSubtitle) {
           index = i;
           break;
         }
 
     return Align(
       alignment: Alignment.topCenter,
-      child: Container(
-        height: 100,
+      child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
           color: Theme.of(context).primaryColor,
@@ -64,27 +67,25 @@ class _MediaConnectionTile extends StatelessWidget {
           children: [
             Expanded(
               child: BrowseIndexer(
-                id: media.id,
-                browsable: media.browsable,
-                imageUrl: media.imageUrl,
+                id: item.id,
+                browsable: item.browsable,
+                imageUrl: item.imageUrl,
                 child: Container(
                   color: Colors.transparent,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: 65,
-                        height: 100,
-                        child: ClipRRect(
-                          child: FadeInImage.memoryNetwork(
-                            image: media.imageUrl,
-                            placeholder: FnHelper.transparentImage,
-                            fadeInDuration: Config.FADE_DURATION,
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius:
-                              BorderRadius.horizontal(left: Config.RADIUS),
+                      ClipRRect(
+                        child: FadeInImage.memoryNetwork(
+                          image: item.imageUrl,
+                          placeholder: FnHelper.transparentImage,
+                          fadeInDuration: Config.FADE_DURATION,
+                          fit: BoxFit.cover,
+                          height: double.infinity,
+                          width: 75,
                         ),
+                        borderRadius:
+                            BorderRadius.horizontal(left: Config.RADIUS),
                       ),
                       Expanded(
                         child: Padding(
@@ -93,16 +94,19 @@ class _MediaConnectionTile extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Flexible(
+                              Expanded(
                                 child: Text(
-                                  media.title,
+                                  item.title,
                                   overflow: TextOverflow.fade,
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
-                              Text(
-                                media.subtitle,
-                                style: Theme.of(context).textTheme.subtitle2,
+                              Flexible(
+                                child: Text(
+                                  item.subtitle,
+                                  overflow: TextOverflow.fade,
+                                  style: Theme.of(context).textTheme.subtitle2,
+                                ),
                               ),
                             ],
                           ),
@@ -113,12 +117,12 @@ class _MediaConnectionTile extends StatelessWidget {
                 ),
               ),
             ),
-            if (index != null && media.others.length > index)
+            if (index != null && item.others.length > index)
               Expanded(
                 child: BrowseIndexer(
-                  id: media.others[index].id,
-                  browsable: media.others[index].browsable,
-                  imageUrl: media.others[index].imageUrl,
+                  id: item.others[index].id,
+                  browsable: item.others[index].browsable,
+                  imageUrl: item.others[index].imageUrl,
                   child: Container(
                     color: Colors.transparent,
                     child: Row(
@@ -133,7 +137,7 @@ class _MediaConnectionTile extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    media.others[index].title,
+                                    item.others[index].title,
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.end,
                                     style:
@@ -141,26 +145,24 @@ class _MediaConnectionTile extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  media.others[index].subtitle,
+                                  item.others[index].subtitle,
                                   style: Theme.of(context).textTheme.subtitle2,
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 65,
-                          height: 100,
-                          child: ClipRRect(
-                            child: FadeInImage.memoryNetwork(
-                              image: media.others[index].imageUrl,
-                              placeholder: FnHelper.transparentImage,
-                              fadeInDuration: Config.FADE_DURATION,
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius:
-                                BorderRadius.horizontal(right: Config.RADIUS),
+                        ClipRRect(
+                          child: FadeInImage.memoryNetwork(
+                            image: item.others[index].imageUrl,
+                            placeholder: FnHelper.transparentImage,
+                            fadeInDuration: Config.FADE_DURATION,
+                            fit: BoxFit.cover,
+                            height: double.infinity,
+                            width: 75,
                           ),
+                          borderRadius:
+                              BorderRadius.horizontal(right: Config.RADIUS),
                         ),
                       ],
                     ),

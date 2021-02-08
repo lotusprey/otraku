@@ -24,7 +24,6 @@ class ExploreTab extends StatelessWidget {
         ControlHeader(),
         _ExploreGrid(),
         _EndOfListLoader(),
-        const SliverToBoxAdapter(child: SizedBox(height: 50)),
       ],
     );
   }

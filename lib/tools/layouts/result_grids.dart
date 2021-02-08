@@ -43,7 +43,7 @@ class TileGrid extends StatelessWidget {
           },
           childCount: tileData.length,
         ),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
           minWidth: tile.width,
           height: tile.fullHeight,
         ),

@@ -145,7 +145,7 @@ class Notifications extends ScrollxController {
   set filter(int val) {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
-    scrollToTop();
+    scrollTo(0);
     fetchData();
   }
 

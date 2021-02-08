@@ -103,9 +103,7 @@ class CharacterPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 sliver: ConnectionsGrid(
                   connections: connectionList.items,
-                  loadMore: () {
-                    if (connectionList.hasNextPage) character.fetchPage();
-                  },
+                  loadMore: character.fetchPage,
                   preferredSubtitle: character.staffLanguage,
                 ),
               );

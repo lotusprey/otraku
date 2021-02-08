@@ -53,7 +53,7 @@ class TextDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       backgroundColor: Theme.of(context).backgroundColor,
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       child: ConstrainedBox(
@@ -104,7 +104,7 @@ class ImageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       backgroundColor: Colors.transparent,
       child: ClipRRect(borderRadius: Config.BORDER_RADIUS, child: image),
@@ -125,7 +125,7 @@ class ImageTextDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 50),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       backgroundColor: Theme.of(context).primaryColor,
       child: Column(

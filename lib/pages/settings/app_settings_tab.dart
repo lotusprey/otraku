@@ -73,7 +73,6 @@ class AppSettingsTab extends StatelessWidget {
               Config.updateTheme();
             },
           ),
-          const SizedBox(height: 50),
         ],
       );
 }

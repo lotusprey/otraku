@@ -75,7 +75,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 Obx(() {
                   final collection = Get.find<Collection>(tag: collectionTag);
                   return _Navigation(
-                    scrollToTop: collection.scrollToTop,
+                    scrollToTop: () => collection.scrollTo(0),
                     swipe: (int offset) => collection.listIndex += offset,
                     title: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -107,7 +107,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 Obx(() {
                   final explorer = Get.find<Explorer>();
                   return _Navigation(
-                    scrollToTop: explorer.scrollToTop,
+                    scrollToTop: () => explorer.scrollTo(0),
                     swipe: (int offset) {
                       final index = explorer.type.index + offset;
                       if (index >= 0 && index < Browsable.values.length)

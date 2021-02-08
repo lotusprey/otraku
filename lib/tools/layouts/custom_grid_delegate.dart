@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight
-    extends SliverGridDelegate {
-  const SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight({
+class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
+  const SliverGridDelegateWithMinWidthAndFixedHeight({
     @required this.minWidth,
     @required this.height,
     this.mainAxisSpacing = 10.0,
@@ -46,7 +45,7 @@ class SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight
 
   @override
   bool shouldRelayout(
-    SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight oldDelegate,
+    SliverGridDelegateWithMinWidthAndFixedHeight oldDelegate,
   ) =>
       oldDelegate.height != height ||
       oldDelegate.minWidth != minWidth ||

@@ -128,6 +128,9 @@ class Character extends GetxController {
   }
 
   Future<void> fetchPage() async {
+    if (_onAnime() && !_anime().hasNextPage) return;
+    if (!_onAnime() && !_manga().hasNextPage) return;
+
     final body = await Network.request(_characterQuery, {
       'id': _person().id,
       'withAnime': _onAnime(),

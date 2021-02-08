@@ -326,7 +326,7 @@ class Explorer extends ScrollxController implements Filterable {
     }
 
     if (clean) {
-      scrollToTop();
+      scrollTo(0);
       _results.assignAll(loaded);
       _isLoading.value = false;
     } else {

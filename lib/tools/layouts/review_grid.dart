@@ -109,7 +109,7 @@ class ReviewGrid extends StatelessWidget {
           },
           childCount: results.length,
         ),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
           minWidth: 300,
           height: 200,
         ),

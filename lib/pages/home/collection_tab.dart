@@ -30,7 +30,6 @@ class CollectionTab extends StatelessWidget {
           ),
           ControlHeader(collectionTag),
           MediaList(collectionTag),
-          const SliverToBoxAdapter(child: SizedBox(height: 50)),
         ],
       );
 }

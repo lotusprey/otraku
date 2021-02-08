@@ -131,6 +131,9 @@ class Staff extends GetxController {
   }
 
   Future<void> fetchPage() async {
+    if (_onCharacters() && !_characterList().hasNextPage) return;
+    if (!_onCharacters() && !_roleList().hasNextPage) return;
+
     final body = await Network.request(_staffQuery, {
       'id': _person().id,
       'withCharacters': _onCharacters(),

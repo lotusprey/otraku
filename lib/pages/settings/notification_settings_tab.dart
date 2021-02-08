@@ -17,7 +17,7 @@ class NotificationSettingsTab extends StatelessWidget {
 
     return ListView.builder(
       physics: Config.PHYSICS,
-      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 50),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       itemBuilder: (_, index) => CheckboxField(
         title: NotificationType.values[index].text,
         initialValue: values[index],

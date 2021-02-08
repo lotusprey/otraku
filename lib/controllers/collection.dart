@@ -427,7 +427,7 @@ class Collection extends ScrollxController implements Filterable {
       e.add(entry);
     }
 
-    scrollToTop();
+    scrollTo(0);
     _entries.assignAll(e);
   }
 

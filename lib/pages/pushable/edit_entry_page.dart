@@ -224,7 +224,7 @@ class _FieldGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverGrid(
       delegate: SliverChildListDelegate.fixed(list),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: minWidth,
         height: 71,
       ),
@@ -251,7 +251,7 @@ class _CheckboxGrid extends StatelessWidget {
         ),
         childCount: map.length,
       ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCountAndFixedHeight(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 190,
         height: Config.MATERIAL_TAP_TARGET_SIZE,
         mainAxisSpacing: 0,

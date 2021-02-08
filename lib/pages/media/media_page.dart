@@ -5,6 +5,7 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/media/overview_tab.dart';
 import 'package:otraku/pages/media/relations_tab.dart';
+import 'package:otraku/pages/media/social_tab.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/pages/media/media_header.dart';
 
@@ -68,8 +69,11 @@ class MediaPage extends StatelessWidget {
             ),
             Obx(
               () => media.tab == Media.RELATIONS
-                  ? RelationList(media)
+                  ? RelationsTab(media)
                   : placeholder,
+            ),
+            Obx(
+              () => media.tab == Media.SOCIAL ? SocialTab(media) : placeholder,
             ),
             SliverToBoxAdapter(child: const SizedBox(height: 50)),
           ],

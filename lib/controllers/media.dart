@@ -3,6 +3,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
+import 'package:otraku/models/anilist/review_tile_data.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/models/connection.dart';
@@ -15,9 +16,11 @@ class Media extends ScrollxController {
 
   static const _mediaQuery = r'''
     query Media($id: Int, $withMain: Boolean = false, $withCharacters: Boolean = false, 
-        $withStaff: Boolean = false, $characterPage: Int = 1, $staffPage: Int = 1) {
+        $withStaff: Boolean = false, $withReviews: Boolean = false, 
+        $characterPage: Int = 1, $staffPage: Int = 1, $reviewPage: Int = 1) {
       Media(id: $id) {
         ...main @include(if: $withMain)
+        ...reviews @include(if: $withReviews)
         ...characters @include(if: $withCharacters)
         ...staff @include(if: $withStaff)
       }
@@ -82,6 +85,18 @@ class Media extends ScrollxController {
         edges {role node {id name{full} image{large}}}
       }
     }
+    fragment reviews on Media {
+      reviews(sort: RATING_DESC, page: $reviewPage) {
+        pageInfo {hasNextPage}
+        nodes {
+          id
+          summary
+          rating
+          ratingAmount
+          user {id name avatar{large}}
+        }
+      }
+    }
   ''';
 
   static const _toggleFavouriteAnimeMutation = r'''
@@ -117,6 +132,7 @@ class Media extends ScrollxController {
   final _otherMedia = List<RelatedMedia>().obs;
   final _characters = Rx<LoadableList<Connection>>();
   final _staff = Rx<LoadableList<Connection>>();
+  final _reviews = Rx<LoadableList<ReviewTileData>>();
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
 
@@ -141,6 +157,8 @@ class Media extends ScrollxController {
 
   LoadableList get staff => _staff();
 
+  LoadableList<ReviewTileData> get reviews => _reviews();
+
   String get staffLanguage => _staffLanguage();
 
   set staffLanguage(String value) => _staffLanguage.value = value;
@@ -163,6 +181,7 @@ class Media extends ScrollxController {
     final result = await Network.request(_mediaQuery, {
       'id': id,
       'withMain': true,
+      'withReviews': true,
     });
 
     if (result == null) return null;
@@ -175,9 +194,16 @@ class Media extends ScrollxController {
       mediaRel.add(RelatedMedia(relation));
 
     _otherMedia.addAll(mediaRel);
+
+    final List<ReviewTileData> revs = [];
+    for (final r in data['reviews']['nodes']) revs.add(ReviewTileData(r));
+    _reviews(LoadableList(revs, data['reviews']['pageInfo']['hasNextPage']));
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
+    if (ofCharacters && !_characters().hasNextPage) return;
+    if (!ofCharacters && !_staff().hasNextPage) return;
+
     final result = await Network.request(_mediaQuery, {
       'id': overview.id,
       'withCharacters': ofCharacters,
@@ -186,10 +212,10 @@ class Media extends ScrollxController {
       'staffPage': _staff()?.nextPage,
     });
 
-    if (result == null) return null;
+    if (result == null) return;
     final data = result['Media'];
 
-    List<Connection> items = [];
+    final List<Connection> items = [];
     if (ofCharacters) {
       for (final connection in data['characters']['edges']) {
         final List<Connection> voiceActors = [];
@@ -223,8 +249,9 @@ class Media extends ScrollxController {
           LoadableList(items, data['characters']['pageInfo']['hasNextPage']),
         );
       else
-        _characters.update((list) =>
-            list.append(items, data['characters']['pageInfo']['hasNextPage']));
+        _characters.update(
+          (c) => c.append(items, data['characters']['pageInfo']['hasNextPage']),
+        );
     } else {
       for (final connection in data['staff']['edges'])
         items.add(Connection(
@@ -240,9 +267,28 @@ class Media extends ScrollxController {
           LoadableList(items, data['staff']['pageInfo']['hasNextPage']),
         );
       else
-        _staff.update((list) =>
-            list.append(items, data['staff']['pageInfo']['hasNextPage']));
+        _staff.update(
+          (s) => s.append(items, data['staff']['pageInfo']['hasNextPage']),
+        );
     }
+  }
+
+  Future<void> fetchReviewPage() async {
+    if (!_reviews().hasNextPage) return;
+
+    final result = await Network.request(_mediaQuery, {
+      'id': overview.id,
+      'withReviews': true,
+      'reviewPage': _reviews()?.nextPage,
+    });
+
+    if (result == null) return;
+
+    final List<ReviewTileData> items = [];
+    for (final r in result['reviews']['nodes']) items.add(ReviewTileData(r));
+    _reviews.update(
+      (r) => r.append(items, result['reviews']['pageInfo']['hasNextPage']),
+    );
   }
 
   Future<bool> toggleFavourite() async =>

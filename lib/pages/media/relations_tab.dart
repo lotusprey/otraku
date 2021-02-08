@@ -10,15 +10,15 @@ import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
 
-class RelationList extends StatelessWidget {
+class RelationsTab extends StatelessWidget {
   final Media media;
 
-  RelationList(this.media);
+  RelationsTab(this.media);
 
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 5, bottom: 10, left: 10, right: 10),
+      padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
       sliver: Obx(() {
         if (media.relationsTab == Media.REL_MEDIA)
           return media.otherMedia.isNotEmpty

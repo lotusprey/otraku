@@ -32,7 +32,7 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
           childCount: widget.connections.length,
         ),
         gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 350,
+          minWidth: 300,
           height: 110,
         ),
       );

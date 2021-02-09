@@ -12,7 +12,7 @@ class ProfileSettingsTab extends StatelessWidget {
           borderRadius: Config.BORDER_RADIUS,
         ),
         color: Theme.of(context).accentColor,
-        child: Text('Log Out'),
+        child: Text('Log Out', style: Theme.of(context).textTheme.button),
         onPressed: Network.logOut,
       ),
     );

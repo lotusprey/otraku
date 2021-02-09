@@ -121,7 +121,10 @@ class _AuthPageState extends State<AuthPage> {
                           borderRadius: Config.BORDER_RADIUS,
                         ),
                         color: Theme.of(context).accentColor,
-                        child: Text('Connect to AniList'),
+                        child: Text(
+                          'Connect to AniList',
+                          style: Theme.of(context).textTheme.button,
+                        ),
                         onPressed: _requestAccessToken,
                       ),
                     ],

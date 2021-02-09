@@ -65,7 +65,7 @@ class TileGrid extends StatelessWidget {
             childCount: tileData.length,
           ),
           gridDelegate: SliverGridDelegateWithMaxWidthAndAddedHeight(
-            maxCrossAxisExtent: tileModel.maxWidth,
+            maxWidth: tileModel.maxWidth,
             additionalHeight: tileModel.textHeight,
             rawWHRatio: tileModel.imgWHRatio,
           ),

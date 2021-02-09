@@ -85,7 +85,7 @@ class _MediaListTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Hero(
-            tag: media.cover,
+            tag: media.mediaId,
             child: SizedBox(
               height: 140,
               width: 95,

@@ -37,13 +37,16 @@ class RelationsTab extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                            borderRadius: Config.BORDER_RADIUS,
-                            child: Container(
-                              color: Theme.of(context).primaryColor,
-                              child: FadeImage(
-                                media.otherMedia[index].imageUrl,
-                                width: Config.highTile.maxWidth,
+                          Hero(
+                            tag: media.otherMedia[index].id,
+                            child: ClipRRect(
+                              borderRadius: Config.BORDER_RADIUS,
+                              child: Container(
+                                color: Theme.of(context).primaryColor,
+                                child: FadeImage(
+                                  media.otherMedia[index].imageUrl,
+                                  width: Config.highTile.maxWidth,
+                                ),
                               ),
                             ),
                           ),

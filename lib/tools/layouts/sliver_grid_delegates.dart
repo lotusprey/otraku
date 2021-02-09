@@ -27,11 +27,12 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid());
-    final crossAxisCount = (constraints.crossAxisExtent + crossAxisSpacing) ~/
-        (minWidth + crossAxisSpacing);
-    final crossAxisExtent =
-        (constraints.crossAxisExtent + crossAxisSpacing) / (crossAxisCount) -
-            crossAxisSpacing;
+    final crossAxisCount =
+        constraints.crossAxisExtent ~/ (minWidth + crossAxisSpacing);
+    double usableCrossAxisExtent =
+        constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
+    if (usableCrossAxisExtent < 0.0) usableCrossAxisExtent = 0.0;
+    final crossAxisExtent = usableCrossAxisExtent / crossAxisCount;
 
     return SliverGridRegularTileLayout(
       crossAxisCount: crossAxisCount,
@@ -55,18 +56,18 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
 
 class SliverGridDelegateWithMaxWidthAndAddedHeight extends SliverGridDelegate {
   const SliverGridDelegateWithMaxWidthAndAddedHeight({
-    @required this.maxCrossAxisExtent,
+    @required this.maxWidth,
     this.mainAxisSpacing = 10.0,
     this.crossAxisSpacing = 10.0,
     this.additionalHeight = 0.0,
     this.rawWHRatio = 1.0,
-  })  : assert(maxCrossAxisExtent != null && maxCrossAxisExtent >= 0),
+  })  : assert(maxWidth != null && maxWidth >= 0),
         assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
         assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
         assert(additionalHeight != null && additionalHeight >= 0),
         assert(rawWHRatio != null && rawWHRatio > 0);
 
-  final double maxCrossAxisExtent;
+  final double maxWidth;
   final double mainAxisSpacing;
   final double crossAxisSpacing;
   final double additionalHeight;
@@ -74,7 +75,7 @@ class SliverGridDelegateWithMaxWidthAndAddedHeight extends SliverGridDelegate {
 
   bool _debugAssertIsValid(double crossAxisExtent) {
     assert(crossAxisExtent > 0.0);
-    assert(maxCrossAxisExtent > 0.0);
+    assert(maxWidth > 0.0);
     assert(mainAxisSpacing >= 0.0);
     assert(crossAxisSpacing >= 0.0);
     assert(additionalHeight >= 0.0);
@@ -87,7 +88,7 @@ class SliverGridDelegateWithMaxWidthAndAddedHeight extends SliverGridDelegate {
     assert(_debugAssertIsValid(constraints.crossAxisExtent));
 
     final crossAxisCount =
-        constraints.crossAxisExtent ~/ (maxCrossAxisExtent + crossAxisSpacing);
+        (constraints.crossAxisExtent / (maxWidth + crossAxisSpacing)).ceil();
     double usableCrossAxisExtent =
         constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
     if (usableCrossAxisExtent < 0.0) usableCrossAxisExtent = 0.0;
@@ -108,7 +109,7 @@ class SliverGridDelegateWithMaxWidthAndAddedHeight extends SliverGridDelegate {
   @override
   bool shouldRelayout(
       SliverGridDelegateWithMaxWidthAndAddedHeight oldDelegate) {
-    return oldDelegate.maxCrossAxisExtent != maxCrossAxisExtent ||
+    return oldDelegate.maxWidth != maxWidth ||
         oldDelegate.mainAxisSpacing != mainAxisSpacing ||
         oldDelegate.crossAxisSpacing != crossAxisSpacing ||
         oldDelegate.additionalHeight != additionalHeight ||

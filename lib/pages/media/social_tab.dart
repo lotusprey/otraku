@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
+import 'package:otraku/tools/fade_image.dart';
+import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/tools/triangle_clip.dart';
 
 class SocialTab extends StatelessWidget {
@@ -52,11 +52,8 @@ class SocialTab extends StatelessWidget {
                           tag: items[index].userId.toString(),
                           child: ClipRRect(
                             borderRadius: Config.BORDER_RADIUS,
-                            child: FadeInImage.memoryNetwork(
-                              image: items[index].avatar,
-                              placeholder: FnHelper.transparentImage,
-                              fadeInDuration: Config.FADE_DURATION,
-                              fit: BoxFit.cover,
+                            child: FadeImage(
+                              items[index].avatar,
                               height: 50,
                               width: 50,
                             ),

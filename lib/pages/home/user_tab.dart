@@ -16,11 +16,11 @@ import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/helpers/network.dart';
+import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 
 class UserTab extends StatelessWidget {
   final int id;
@@ -198,16 +198,14 @@ class _Header extends StatelessWidget {
           Column(
             children: [
               Expanded(
-                child: user?.banner != null
-                    ? FadeInImage.memoryNetwork(
-                        image: user.banner,
-                        placeholder: FnHelper.transparentImage,
-                        fadeInDuration: Config.FADE_DURATION,
-                        fit: BoxFit.cover,
-                        height: bannerHeight,
-                        width: double.infinity,
-                      )
-                    : Container(color: Theme.of(context).primaryColor),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(color: Theme.of(context).primaryColor),
+                    if (user?.banner != null)
+                      FadeImage(user.banner, height: bannerHeight)
+                  ],
+                ),
               ),
               SizedBox(height: height - bannerHeight),
             ],
@@ -246,12 +244,7 @@ class _Header extends StatelessWidget {
                         child: Container(
                           height: avatarSize,
                           width: avatarSize,
-                          child: FadeInImage.memoryNetwork(
-                            placeholder: FnHelper.transparentImage,
-                            image: avatar,
-                            fit: BoxFit.contain,
-                            fadeInDuration: Config.FADE_DURATION,
-                          ),
+                          child: FadeImage(avatar, fit: BoxFit.contain),
                         ),
                       ),
                     ),

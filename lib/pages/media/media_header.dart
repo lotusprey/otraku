@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
+import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 
 class MediaHeader extends StatefulWidget {
   final Media media;
@@ -67,16 +67,17 @@ class _MediaHeaderState extends State<MediaHeader> {
             Column(
               children: [
                 Expanded(
-                  child: widget.media.overview?.banner != null
-                      ? FadeInImage.memoryNetwork(
-                          image: widget.media.overview.banner,
-                          placeholder: FnHelper.transparentImage,
-                          fadeInDuration: Config.FADE_DURATION,
-                          fit: BoxFit.cover,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Container(color: Theme.of(context).primaryColor),
+                      if (widget.media.overview?.banner != null)
+                        FadeImage(
+                          widget.media.overview.banner,
                           height: widget.bannerHeight,
-                          width: double.infinity,
-                        )
-                      : Container(color: Theme.of(context).primaryColor),
+                        ),
+                    ],
+                  ),
                 ),
                 SizedBox(height: widget.height - widget.bannerHeight),
               ],

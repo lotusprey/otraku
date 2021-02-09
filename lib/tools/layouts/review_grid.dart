@@ -3,9 +3,9 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tile_data.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
+import 'package:otraku/tools/fade_image.dart';
+import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
   final List<TileData> results;
@@ -42,12 +42,7 @@ class ReviewGrid extends StatelessWidget {
                               BorderRadius.vertical(top: Config.RADIUS),
                           child: Hero(
                             tag: results[index].id,
-                            child: FadeInImage.memoryNetwork(
-                              placeholder: FnHelper.transparentImage,
-                              image: results[index].imageUrl,
-                              fadeInDuration: Config.FADE_DURATION,
-                              fit: BoxFit.cover,
-                            ),
+                            child: FadeImage(results[index].imageUrl),
                           ),
                         ),
                       ),

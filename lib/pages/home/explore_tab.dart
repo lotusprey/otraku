@@ -4,9 +4,10 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/tools/layouts/review_grid.dart';
+import 'package:otraku/tools/layouts/title_list.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/control_header.dart';
-import 'package:otraku/tools/layouts/result_grids.dart';
+import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
@@ -53,7 +54,14 @@ class _ExploreGrid extends StatelessWidget {
 
       final results = explorer.results;
       if (results.isEmpty) {
-        return NoResults();
+        return SliverFillRemaining(
+          child: Center(
+            child: Text(
+              'No results',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ),
+        );
       }
 
       if (results[0].browsable == Browsable.studio)
@@ -63,7 +71,7 @@ class _ExploreGrid extends StatelessWidget {
         return TileGrid(
           tileData: results,
           loadMore: _loadMore,
-          tile: Config.squareTile,
+          tileModel: Config.squareTile,
         );
 
       if (results[0].browsable == Browsable.review)
@@ -72,7 +80,7 @@ class _ExploreGrid extends StatelessWidget {
       return TileGrid(
         tileData: results,
         loadMore: _loadMore,
-        tile: Config.highTile,
+        tileModel: Config.highTile,
       );
     });
   }

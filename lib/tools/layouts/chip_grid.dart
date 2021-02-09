@@ -193,6 +193,7 @@ class _OptionSheet<T> extends StatelessWidget {
                       },
                     ),
               itemCount: options.length,
+              itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
             ),
           ),
           FlatButton.icon(

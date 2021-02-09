@@ -4,7 +4,8 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/network.dart';
-import 'package:otraku/tools/layouts/result_grids.dart';
+import 'package:otraku/tools/layouts/tile_grid.dart';
+import 'package:otraku/tools/layouts/title_list.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 
@@ -42,7 +43,7 @@ class FavouritesPage extends StatelessWidget {
                     : TileGrid(
                         tileData: user.favourites,
                         loadMore: user.fetchFavourites,
-                        tile: Config.highTile,
+                        tileModel: Config.highTile,
                       )
               else
                 SliverFillRemaining(

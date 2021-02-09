@@ -3,10 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/media.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
+import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
-import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
+import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
@@ -26,7 +26,8 @@ class RelationsTab extends StatelessWidget {
               ? SliverGrid(
                   gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
                     minWidth: 300,
-                    height: Config.highTile.imgHeight * 0.8,
+                    height:
+                        Config.highTile.maxWidth / Config.highTile.imgWHRatio,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => BrowseIndexer(
@@ -40,13 +41,9 @@ class RelationsTab extends StatelessWidget {
                             borderRadius: Config.BORDER_RADIUS,
                             child: Container(
                               color: Theme.of(context).primaryColor,
-                              child: FadeInImage.memoryNetwork(
-                                height: double.infinity,
-                                width: Config.highTile.width * 0.8,
-                                fit: BoxFit.cover,
-                                placeholder: FnHelper.transparentImage,
-                                image: media.otherMedia[index].imageUrl,
-                                fadeInDuration: Config.FADE_DURATION,
+                              child: FadeImage(
+                                media.otherMedia[index].imageUrl,
+                                width: Config.highTile.maxWidth,
                               ),
                             ),
                           ),

@@ -8,6 +8,7 @@ import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/media_list_data.dart';
 import 'package:otraku/controllers/config.dart';
+import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
@@ -91,12 +92,7 @@ class _MediaListTile extends StatelessWidget {
               child: ClipRRect(
                 child: Container(
                   color: Theme.of(context).primaryColor,
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: FnHelper.transparentImage,
-                    fadeInDuration: Config.FADE_DURATION,
-                    image: media.cover,
-                    fit: BoxFit.cover,
-                  ),
+                  child: FadeImage(media.cover),
                 ),
                 borderRadius: Config.BORDER_RADIUS,
               ),

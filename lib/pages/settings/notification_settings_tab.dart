@@ -45,6 +45,7 @@ class NotificationSettingsTab extends StatelessWidget {
         },
       ),
       itemCount: NotificationType.values.length - 2,
+      itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
     );
   }
 }

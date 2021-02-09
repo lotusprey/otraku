@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/models/tile_config.dart';
+import 'package:otraku/models/tile_model.dart';
 import 'package:otraku/pages/home/home_page.dart';
 
 // Holds constants and configurations that
@@ -22,8 +22,8 @@ class Config extends GetxController {
   static const DARK_THEME = 'theme2';
 
   static final storage = GetStorage();
-  static TileConfig _highTile;
-  static TileConfig _squareTile;
+  static TileModel _highTile;
+  static TileModel _squareTile;
   int _pageIndex = storage.read(STARTUP_PAGE);
 
   // The dependency should be put as soon as
@@ -32,21 +32,18 @@ class Config extends GetxController {
   Config() {
     _pageIndex ??= HomePage.ANIME_LIST;
 
-    double width = (Get.mediaQuery.size.width - 40) / 3;
-    if (width > 150) width = 150;
-
-    _highTile = TileConfig(
-      width: width,
-      imgHeight: width * 1.5,
-      fullHeight: width * 1.5 + 45,
+    _highTile = TileModel(
+      maxWidth: 120,
+      imgWHRatio: 0.65,
+      textHeight: 40,
       fit: BoxFit.cover,
       needsBackground: true,
     );
 
-    _squareTile = TileConfig(
-      width: width,
-      imgHeight: width,
-      fullHeight: width + 40,
+    _squareTile = TileModel(
+      maxWidth: 120,
+      imgWHRatio: 1,
+      textHeight: 40,
       fit: BoxFit.contain,
       needsBackground: false,
     );
@@ -85,7 +82,7 @@ class Config extends GetxController {
     }
   }
 
-  static TileConfig get highTile => _highTile;
+  static TileModel get highTile => _highTile;
 
-  static TileConfig get squareTile => _squareTile;
+  static TileModel get squareTile => _squareTile;
 }

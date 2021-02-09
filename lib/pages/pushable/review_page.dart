@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/review.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/browse_indexer.dart';
+import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 
 class ReviewPage extends StatelessWidget {
@@ -30,12 +30,7 @@ class ReviewPage extends StatelessWidget {
                       background: Hero(
                         tag: id,
                         child: bannerUrl != null
-                            ? FadeInImage.memoryNetwork(
-                                image: bannerUrl,
-                                placeholder: FnHelper.transparentImage,
-                                fadeInDuration: Config.FADE_DURATION,
-                                fit: BoxFit.cover,
-                              )
+                            ? FadeImage(bannerUrl)
                             : const SizedBox(),
                       ),
                     ),

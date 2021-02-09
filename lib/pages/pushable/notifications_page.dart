@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/models/anilist/notification_data.dart';
 import 'package:otraku/tools/browse_indexer.dart';
+import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
 
@@ -84,14 +84,7 @@ class _NotificationWidget extends StatelessWidget {
                   BrowseIndexer.openEditPage(notification.headId);
               },
               child: ClipRRect(
-                child: FadeInImage.memoryNetwork(
-                  image: notification.imageUrl,
-                  placeholder: FnHelper.transparentImage,
-                  fadeInDuration: Config.FADE_DURATION,
-                  fit: BoxFit.cover,
-                  height: double.infinity,
-                  width: 75,
-                ),
+                child: FadeImage(notification.imageUrl, width: 70),
                 borderRadius: BorderRadius.horizontal(left: Config.RADIUS),
               ),
             ),

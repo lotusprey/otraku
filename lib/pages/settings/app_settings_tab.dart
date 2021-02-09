@@ -135,6 +135,7 @@ class __RadioState extends State<_Radio> {
         ],
       ),
       itemCount: widget.options.length,
+      itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
     );
   }
 

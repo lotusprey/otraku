@@ -114,6 +114,7 @@ class SortSheet extends StatelessWidget {
                 ),
               ),
               itemCount: options.length,
+              itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
             ),
           ),
         ],

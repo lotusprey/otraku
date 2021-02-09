@@ -3,16 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
-import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/anilist/studio_data.dart';
-import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
-import 'package:otraku/tools/layouts/result_grids.dart';
-import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/layouts/browse_tile.dart';
+import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StudioPage extends StatelessWidget {
@@ -93,38 +89,17 @@ class StudioPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SliverPadding(
-                        padding: Config.PADDING,
-                        sliver: SliverGrid(
-                          delegate: SliverChildBuilderDelegate(
-                            (_, index) => BrowseIndexer(
-                              browsable: Browsable.anime,
-                              id: studio.media.split[i][index].id,
-                              imageUrl: studio.media.split[i][index].imageUrl,
-                              child: BrowseTile(
-                                id: studio.media.split[i][index].id,
-                                text: studio.media.split[i][index].title,
-                                imageUrl: studio.media.split[i][index].imageUrl,
-                                tile: Config.highTile,
-                              ),
-                            ),
-                            childCount: studio.media.split[i].length,
-                            semanticIndexOffset:
-                                i * studio.media.split[i].length,
-                          ),
-                          gridDelegate:
-                              SliverGridDelegateWithMinWidthAndFixedHeight(
-                            minWidth: Config.highTile.width,
-                            height: Config.highTile.fullHeight,
-                          ),
-                        ),
+                      TileGrid(
+                        tileData: studio.media.split[i],
+                        tileModel: Config.highTile,
+                        loadMore: null,
                       ),
                     ],
                   ] else
                     TileGrid(
                       tileData: studio.media.joined,
                       loadMore: studio.fetchPage,
-                      tile: Config.highTile,
+                      tileModel: Config.highTile,
                     ),
                   if (studio.media != null && studio.media.hasNextPage)
                     SliverToBoxAdapter(

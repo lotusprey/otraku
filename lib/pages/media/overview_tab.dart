@@ -279,6 +279,7 @@ class _Tiles extends StatelessWidget {
             ),
           ),
           itemCount: items.length,
+          itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
         ),
       ),
     );

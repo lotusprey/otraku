@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/tools/layouts/custom_grid_delegate.dart';
+import 'package:otraku/tools/fade_image.dart';
+import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
 
 class ConnectionsGrid extends StatefulWidget {
   final List<Connection> connections;
@@ -76,14 +76,7 @@ class _MediaConnectionTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ClipRRect(
-                        child: FadeInImage.memoryNetwork(
-                          image: item.imageUrl,
-                          placeholder: FnHelper.transparentImage,
-                          fadeInDuration: Config.FADE_DURATION,
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                          width: 75,
-                        ),
+                        child: FadeImage(item.imageUrl, width: 75),
                         borderRadius:
                             BorderRadius.horizontal(left: Config.RADIUS),
                       ),
@@ -152,12 +145,8 @@ class _MediaConnectionTile extends StatelessWidget {
                           ),
                         ),
                         ClipRRect(
-                          child: FadeInImage.memoryNetwork(
-                            image: item.others[index].imageUrl,
-                            placeholder: FnHelper.transparentImage,
-                            fadeInDuration: Config.FADE_DURATION,
-                            fit: BoxFit.cover,
-                            height: double.infinity,
+                          child: FadeImage(
+                            item.others[index].imageUrl,
                             width: 75,
                           ),
                           borderRadius:

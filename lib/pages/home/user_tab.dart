@@ -108,9 +108,7 @@ class UserTab extends StatelessWidget {
                         ),
                       ),
                     ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: CustomNavBar.offset(context)),
-                  ),
+                  SizedBox(height: CustomNavBar.offset(context)),
                 ],
               ),
             ),
@@ -242,7 +240,7 @@ class _Header extends StatelessWidget {
             avatar != null
                 ? GestureDetector(
                     child: Hero(
-                      tag: id.toString(),
+                      tag: id,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
                         child: Container(

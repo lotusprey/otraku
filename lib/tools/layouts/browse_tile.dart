@@ -8,14 +8,12 @@ class BrowseTile extends StatelessWidget {
   final String text;
   final String imageUrl;
   final TileConfig tile;
-  final bool preferIdTag;
 
   BrowseTile({
     @required this.id,
     @required this.text,
     @required this.imageUrl,
     @required this.tile,
-    this.preferIdTag = false,
   });
 
   @override
@@ -25,11 +23,11 @@ class BrowseTile extends StatelessWidget {
       child: Column(
         children: [
           Hero(
-            tag: preferIdTag ? id.toString() : imageUrl,
+            tag: id,
             child: ClipRRect(
               borderRadius: Config.BORDER_RADIUS,
               child: Container(
-                width: tile.width,
+                width: double.infinity,
                 height: tile.imgHeight,
                 color: tile.needsBackground
                     ? Theme.of(context).primaryColor

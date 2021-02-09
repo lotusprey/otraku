@@ -8,10 +8,16 @@ import 'package:otraku/tools/overlays/dialogs.dart';
 
 class PersonHeader extends StatelessWidget {
   final Person person;
-  final String imageUrlTag;
+  final int personId;
+  final String imageUrl;
   final Future<bool> Function() toggleFavourite;
 
-  PersonHeader(this.person, this.imageUrlTag, this.toggleFavourite);
+  PersonHeader({
+    this.person,
+    this.personId,
+    this.imageUrl,
+    this.toggleFavourite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +27,10 @@ class PersonHeader extends StatelessWidget {
       pinned: true,
       delegate: _PersonHeader(
         person: person,
+        personId: personId,
         coverWidth: coverWidth,
         coverHeight: coverWidth / 0.7,
-        imageUrlTag: imageUrlTag,
+        imageUrl: imageUrl,
         toggleFavourite: toggleFavourite,
       ),
     );
@@ -32,16 +39,18 @@ class PersonHeader extends StatelessWidget {
 
 class _PersonHeader implements SliverPersistentHeaderDelegate {
   final Person person;
+  final int personId;
   final double coverWidth;
   final double coverHeight;
-  final String imageUrlTag;
+  final String imageUrl;
   final Future<bool> Function() toggleFavourite;
 
   _PersonHeader({
     @required this.person,
+    @required this.personId,
     @required this.coverWidth,
     @required this.coverHeight,
-    @required this.imageUrlTag,
+    @required this.imageUrl,
     @required this.toggleFavourite,
   });
 
@@ -52,7 +61,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final shrinkPercentage = shrinkOffset / (maxExtent - minExtent);
-    final image = Image.network(imageUrlTag, fit: BoxFit.cover);
+    final image = Image.network(imageUrl, fit: BoxFit.cover);
 
     return Container(
       height: maxExtent,
@@ -71,7 +80,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                 Flexible(
                   child: GestureDetector(
                     child: Hero(
-                      tag: imageUrlTag,
+                      tag: personId,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
                         child: Container(

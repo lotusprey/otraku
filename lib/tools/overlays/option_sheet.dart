@@ -18,7 +18,7 @@ class OptionSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final sideMargin = MediaQuery.of(context).size.width > 420
         ? (MediaQuery.of(context).size.width - 400) / 2
-        : 20;
+        : 20.0;
     return Container(
       height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
       margin: EdgeInsets.only(

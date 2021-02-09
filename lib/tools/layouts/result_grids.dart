@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/models/tile_data.dart';
 import 'package:otraku/models/tile_config.dart';
 import 'package:otraku/tools/browse_indexer.dart';
@@ -18,39 +17,33 @@ class TileGrid extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: @preferIdTag is weird. Why did I do that?
-    final preferIdTag = tileData[0].browsable == Browsable.user;
+  Widget build(BuildContext context) => SliverPadding(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+        sliver: SliverGrid(
+          delegate: SliverChildBuilderDelegate(
+            (_, index) {
+              if (index == tileData.length - 6) loadMore();
 
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
-      sliver: SliverGrid(
-        delegate: SliverChildBuilderDelegate(
-          (_, index) {
-            if (index == tileData.length - 6) loadMore();
-
-            return BrowseIndexer(
-              browsable: tileData[index].browsable,
-              id: tileData[index].id,
-              imageUrl: tileData[index].imageUrl,
-              child: BrowseTile(
+              return BrowseIndexer(
+                browsable: tileData[index].browsable,
                 id: tileData[index].id,
-                text: tileData[index].title,
                 imageUrl: tileData[index].imageUrl,
-                tile: tile,
-                preferIdTag: preferIdTag,
-              ),
-            );
-          },
-          childCount: tileData.length,
+                child: BrowseTile(
+                  id: tileData[index].id,
+                  text: tileData[index].title,
+                  imageUrl: tileData[index].imageUrl,
+                  tile: tile,
+                ),
+              );
+            },
+            childCount: tileData.length,
+          ),
+          gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+            minWidth: tile.width,
+            height: tile.fullHeight,
+          ),
         ),
-        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: tile.width,
-          height: tile.fullHeight,
-        ),
-      ),
-    );
-  }
+      );
 }
 
 class TitleList extends StatelessWidget {
@@ -60,48 +53,44 @@ class TitleList extends StatelessWidget {
   TitleList(this.results, this.loadMore);
 
   @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
-      sliver: SliverFixedExtentList(
-        delegate: SliverChildBuilderDelegate(
-          (_, index) {
-            if (index == results.length - 6) loadMore();
+  Widget build(BuildContext context) => SliverPadding(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+        sliver: SliverFixedExtentList(
+          delegate: SliverChildBuilderDelegate(
+            (_, index) {
+              if (index == results.length - 6) loadMore();
 
-            return BrowseIndexer(
-              browsable: results[index].browsable,
-              id: results[index].id,
-              imageUrl: results[index].title,
-              child: Hero(
-                tag: results[index].title,
-                child: Container(
-                  child: Text(
-                    results[index].title,
-                    style: Theme.of(context).textTheme.headline3,
-                    maxLines: 2,
+              return BrowseIndexer(
+                browsable: results[index].browsable,
+                id: results[index].id,
+                imageUrl: results[index].title,
+                child: Hero(
+                  tag: results[index].id,
+                  child: Container(
+                    child: Text(
+                      results[index].title,
+                      style: Theme.of(context).textTheme.headline3,
+                      maxLines: 2,
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-          childCount: results.length,
+              );
+            },
+            childCount: results.length,
+          ),
+          itemExtent: 60,
         ),
-        itemExtent: 60,
-      ),
-    );
-  }
+      );
 }
 
 class NoResults extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: Center(
-        child: Text(
-          'No results',
-          style: Theme.of(context).textTheme.subtitle1,
+  Widget build(BuildContext context) => SliverFillRemaining(
+        child: Center(
+          child: Text(
+            'No results',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

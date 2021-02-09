@@ -11,6 +11,7 @@ import 'package:otraku/helpers/fn_helper.dart';
 
 class MediaHeader extends StatefulWidget {
   final Media media;
+  final int mediaId;
   final String imageUrl;
   final double coverWidth;
   final double coverHeight;
@@ -19,6 +20,7 @@ class MediaHeader extends StatefulWidget {
 
   MediaHeader({
     @required this.media,
+    @required this.mediaId,
     @required this.imageUrl,
     @required this.coverWidth,
     @required this.coverHeight,
@@ -105,7 +107,7 @@ class _MediaHeaderState extends State<MediaHeader> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Hero(
-                tag: widget.imageUrl,
+                tag: widget.mediaId,
                 child: Container(
                   height: widget.coverHeight,
                   width: widget.coverWidth,

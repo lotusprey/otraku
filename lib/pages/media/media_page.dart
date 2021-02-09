@@ -46,6 +46,7 @@ class MediaPage extends StatelessWidget {
           slivers: [
             MediaHeader(
               media: media,
+              mediaId: id,
               imageUrl: coverUrl,
               coverWidth: coverWidth,
               coverHeight: coverHeight,

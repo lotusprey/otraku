@@ -25,9 +25,10 @@ class StaffPage extends StatelessWidget {
           physics: Config.PHYSICS,
           slivers: [
             Obx(() => PersonHeader(
-                  staff.person,
-                  imageUrl,
-                  staff.toggleFavourite,
+                  person: staff.person,
+                  personId: id,
+                  imageUrl: imageUrl,
+                  toggleFavourite: staff.toggleFavourite,
                 )),
             Obx(() {
               if (staff.person == null) return const SliverToBoxAdapter();

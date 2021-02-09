@@ -17,9 +17,9 @@ import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StudioPage extends StatelessWidget {
   final int id;
-  final String textTag;
+  final String name;
 
-  StudioPage(this.id, this.textTag);
+  StudioPage(this.id, this.name);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,8 @@ class StudioPage extends StatelessWidget {
                   pinned: true,
                   delegate: _StudioHeader(
                     studio.company,
-                    textTag,
+                    id,
+                    name,
                     studio.toggleFavourite,
                   ),
                 ),
@@ -151,10 +152,11 @@ class StudioPage extends StatelessWidget {
 
 class _StudioHeader implements SliverPersistentHeaderDelegate {
   final StudioData company;
-  final String textTag;
+  final int companyId;
+  final String name;
   final Future<bool> Function() toggleFavourite;
 
-  _StudioHeader(this.company, this.textTag, this.toggleFavourite);
+  _StudioHeader(this.company, this.companyId, this.name, this.toggleFavourite);
 
   @override
   Widget build(
@@ -184,9 +186,9 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
             child: Align(
               alignment: Alignment.center,
               child: Hero(
-                tag: textTag,
+                tag: companyId,
                 child: Text(
-                  textTag,
+                  name,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headline1,
                 ),

@@ -26,9 +26,10 @@ class CharacterPage extends StatelessWidget {
           physics: Config.PHYSICS,
           slivers: [
             Obx(() => PersonHeader(
-                  character.person,
-                  imageUrl,
-                  character.toggleFavourite,
+                  person: character.person,
+                  personId: id,
+                  imageUrl: imageUrl,
+                  toggleFavourite: character.toggleFavourite,
                 )),
             Obx(() {
               if (character.person == null) return const SliverToBoxAdapter();

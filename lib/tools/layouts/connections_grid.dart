@@ -101,12 +101,11 @@ class _MediaConnectionTile extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
-                              Flexible(
-                                child: Text(
-                                  item.subtitle,
-                                  overflow: TextOverflow.fade,
-                                  style: Theme.of(context).textTheme.subtitle2,
-                                ),
+                              Text(
+                                item.subtitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.fade,
+                                style: Theme.of(context).textTheme.subtitle2,
                               ),
                             ],
                           ),

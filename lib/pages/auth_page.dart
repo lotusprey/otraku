@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/pages/loading_page.dart';
+import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/network.dart';
+import 'package:otraku/tools/loader.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthPage extends StatefulWidget {
+  static const ROUTE = '/auth';
+
   const AuthPage();
 
   @override
@@ -17,17 +20,47 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  bool _triedConnecting = false;
+  bool _loading = true;
   StreamSubscription _subscription;
 
-  Future<void> _authenticate() async {
+  void _verify() => Network.logIn().then((loggedIn) {
+        if (loggedIn) {
+          Network.initViewerId().then((ok) {
+            if (ok) Get.offAllNamed(HomePage.ROUTE);
+          });
+        } else {
+          setState(() => _loading = false);
+        }
+      });
+
+  Future<void> _requestAccessToken() async {
+    setState(() => _loading = true);
+
     const _redirectUrl =
         'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
 
-    if (await canLaunch(_redirectUrl))
+    if (await canLaunch(_redirectUrl)) {
       await launch(_redirectUrl);
-    else
-      throw 'Could not launch authentication url';
+    } else {
+      Get.defaultDialog(
+        radius: 5,
+        backgroundColor: Get.theme.backgroundColor,
+        titleStyle: Get.theme.textTheme.headline3,
+        title: 'Could not connect to AniList',
+        content: Text(
+          'Could not launch authentication url',
+          style: Get.theme.textTheme.bodyText1,
+        ),
+        actions: [
+          FlatButton(
+            child: Text('Oh No', style: Get.theme.textTheme.bodyText2),
+            onPressed: Get.back,
+          ),
+        ],
+      );
+      setState(() => _loading = false);
+      return;
+    }
 
     _subscription = getLinksStream().listen(
       (final String link) {
@@ -37,32 +70,34 @@ class _AuthPageState extends State<AuthPage> {
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
         Network.accessToken = accessToken;
-        Get.offAll(LoadingPage(), transition: Transition.fadeIn);
+        _verify();
       },
-      onError: (error) => Get.defaultDialog(
-        radius: 5,
-        backgroundColor: Get.theme.backgroundColor,
-        titleStyle: Get.theme.textTheme.headline3,
-        title: 'Could not connect to AniList',
-        content: Text(error.toString(), style: Get.theme.textTheme.bodyText1),
-        actions: [
-          FlatButton(
-            child: Text('Oh No', style: Get.theme.textTheme.bodyText2),
-            onPressed: Get.back,
-          ),
-        ],
-      ),
+      onError: (error) {
+        setState(() => _loading = false);
+        Get.defaultDialog(
+          radius: 5,
+          backgroundColor: Get.theme.backgroundColor,
+          titleStyle: Get.theme.textTheme.headline3,
+          title: 'Could not connect to AniList',
+          content: Text(error.toString(), style: Get.theme.textTheme.bodyText1),
+          actions: [
+            FlatButton(
+              child: Text('Oh No', style: Get.theme.textTheme.bodyText2),
+              onPressed: Get.back,
+            ),
+          ],
+        );
+      },
     );
-
-    setState(() => _triedConnecting = true);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: !_triedConnecting
-            ? SafeArea(
+        child: _loading
+            ? const Loader()
+            : SafeArea(
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 300),
                   padding: const EdgeInsets.only(bottom: 50),
@@ -87,20 +122,25 @@ class _AuthPageState extends State<AuthPage> {
                         ),
                         color: Theme.of(context).accentColor,
                         child: Text('Connect to AniList'),
-                        onPressed: _authenticate,
+                        onPressed: _requestAccessToken,
                       ),
                     ],
                   ),
                 ),
-              )
-            : const SizedBox(),
+              ),
       ),
     );
   }
 
   @override
+  void initState() {
+    super.initState();
+    _verify();
+  }
+
+  @override
   void dispose() {
-    _subscription.cancel();
+    _subscription?.cancel();
     super.dispose();
   }
 }

@@ -22,32 +22,8 @@ class Config extends GetxController {
   static const DARK_THEME = 'theme2';
 
   static final storage = GetStorage();
-  static TileModel _highTile;
-  static TileModel _squareTile;
-  int _pageIndex = storage.read(STARTUP_PAGE);
 
-  // The dependency should be put as soon as
-  // possible, but with proper context, so
-  // that the MediaQuery can be used.
-  Config() {
-    _pageIndex ??= HomePage.ANIME_LIST;
-
-    _highTile = TileModel(
-      maxWidth: 120,
-      imgWHRatio: 0.65,
-      textHeight: 40,
-      fit: BoxFit.cover,
-      needsBackground: true,
-    );
-
-    _squareTile = TileModel(
-      maxWidth: 120,
-      imgWHRatio: 1,
-      textHeight: 40,
-      fit: BoxFit.contain,
-      needsBackground: false,
-    );
-  }
+  int _pageIndex = storage.read(STARTUP_PAGE) ?? HomePage.ANIME_LIST;
 
   get pageIndex => _pageIndex;
 
@@ -82,7 +58,19 @@ class Config extends GetxController {
     }
   }
 
-  static TileModel get highTile => _highTile;
+  static final highTile = TileModel(
+    maxWidth: 120,
+    imgWHRatio: 0.65,
+    textHeight: 40,
+    fit: BoxFit.cover,
+    needsBackground: true,
+  );
 
-  static TileModel get squareTile => _squareTile;
+  static final squareTile = TileModel(
+    maxWidth: 120,
+    imgWHRatio: 1,
+    textHeight: 40,
+    fit: BoxFit.contain,
+    needsBackground: false,
+  );
 }

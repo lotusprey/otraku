@@ -17,10 +17,10 @@ import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
-class ControlHeader extends StatelessWidget {
+class MediaControls extends StatelessWidget {
   final String collectionTag;
 
-  const ControlHeader([this.collectionTag]);
+  const MediaControls([this.collectionTag]);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,6 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           height: _height,
-          width: double.infinity,
           color: Theme.of(context).cardColor,
           padding: const EdgeInsets.only(right: 10),
           child: Row(

@@ -58,16 +58,16 @@ class Config extends GetxController {
     }
   }
 
-  static final highTile = TileModel(
-    maxWidth: 120,
+  static const highTile = TileModel(
+    maxWidth: 125,
     imgWHRatio: 0.65,
     textHeight: 40,
     fit: BoxFit.cover,
     needsBackground: true,
   );
 
-  static final squareTile = TileModel(
-    maxWidth: 120,
+  static const squareTile = TileModel(
+    maxWidth: 125,
     imgWHRatio: 1,
     textHeight: 40,
     fit: BoxFit.contain,

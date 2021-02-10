@@ -26,7 +26,7 @@ class OptionSheet extends StatelessWidget {
         right: sideMargin,
         bottom: MediaQuery.of(context).viewPadding.bottom + 10,
       ),
-      padding: const EdgeInsets.all(10),
+      padding: Config.PADDING,
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         borderRadius: Config.BORDER_RADIUS,

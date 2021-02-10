@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/pages/home/explore_tab.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
-import 'package:otraku/pages/home/inbox_tab.dart';
+import 'package:otraku/pages/home/feed_tab.dart';
 import 'package:otraku/pages/home/user_tab.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
@@ -13,7 +13,7 @@ import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 class HomePage extends StatelessWidget {
   static const ROUTE = '/home';
 
-  static const INBOX = 0;
+  static const FEED = 0;
   static const ANIME_LIST = 1;
   static const MANGA_LIST = 2;
   static const EXPLORE = 3;
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      const InboxTab(),
+      const FeedTab(),
       CollectionTab(
         ofAnime: true,
         otherUserId: null,

@@ -27,8 +27,9 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid());
-    final crossAxisCount =
+    int crossAxisCount =
         constraints.crossAxisExtent ~/ (minWidth + crossAxisSpacing);
+    if (crossAxisCount == 0) crossAxisCount++;
     double usableCrossAxisExtent =
         constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
     if (usableCrossAxisExtent < 0.0) usableCrossAxisExtent = 0.0;

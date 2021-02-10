@@ -33,7 +33,7 @@ class AppSettingsTab extends StatelessWidget {
                   initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
                       HomePage.ANIME_LIST,
                   items: {
-                    'Inbox': HomePage.INBOX,
+                    'Feed': HomePage.FEED,
                     'Anime List': HomePage.ANIME_LIST,
                     'Manga List': HomePage.MANGA_LIST,
                     'Explore': HomePage.EXPLORE,

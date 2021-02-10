@@ -24,196 +24,196 @@ class NotificationData {
     this.browsable,
   });
 
-  factory NotificationData(Map<String, dynamic> data) {
-    switch (data['type']) {
+  factory NotificationData(final Map<String, dynamic> map) {
+    switch (map['type']) {
       case 'FOLLOWING':
         return NotificationData._(
           type: NotificationType.FOLLOWING,
-          headId: data['user']['id'],
-          bodyId: data['user']['id'],
-          imageUrl: data['user']['avatar']['large'],
-          texts: [data['user']['name'], ' followed you.'],
+          headId: map['user']['id'],
+          bodyId: map['user']['id'],
+          imageUrl: map['user']['avatar']['large'],
+          texts: [map['user']['name'], ' followed you.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
           browsable: Browsable.user,
         );
       case 'ACTIVITY_MESSAGE':
         return NotificationData._(
           type: NotificationType.ACTIVITY_MESSAGE,
-          headId: data['user']['id'],
-          bodyId: data['activityId'],
-          imageUrl: data['user']['avatar']['large'],
-          texts: [data['user']['name'], ' sent you a message.'],
+          headId: map['user']['id'],
+          bodyId: map['activityId'],
+          imageUrl: map['user']['avatar']['large'],
+          texts: [map['user']['name'], ' sent you a message.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_REPLY':
         return NotificationData._(
           type: NotificationType.ACTIVITY_REPLY,
-          headId: data['user']['id'],
-          bodyId: data['activityId'],
-          imageUrl: data['user']['avatar']['large'],
-          texts: [data['user']['name'], ' replied to your activity.'],
+          headId: map['user']['id'],
+          bodyId: map['activityId'],
+          imageUrl: map['user']['avatar']['large'],
+          texts: [map['user']['name'], ' replied to your activity.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_SUBSCRIBED':
         return NotificationData._(
           type: NotificationType.ACTIVITY_REPLY_SUBSCRIBED,
-          headId: data['user']['id'],
-          bodyId: data['activityId'],
-          imageUrl: data['user']['avatar']['large'],
+          headId: map['user']['id'],
+          bodyId: map['activityId'],
+          imageUrl: map['user']['avatar']['large'],
           texts: [
-            data['user']['name'],
+            map['user']['name'],
             ' replied to activity you are subscribed to.',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_COMMENT_REPLY':
         return NotificationData._(
           type: NotificationType.THREAD_COMMENT_REPLY,
-          headId: data['user']['id'],
-          bodyId: data['commentId'],
-          imageUrl: data['user']['avatar']['large'],
+          headId: map['user']['id'],
+          bodyId: map['commentId'],
+          imageUrl: map['user']['avatar']['large'],
           texts: [
-            data['user']['name'],
-            if (data['thread'] != null) ...[
+            map['user']['name'],
+            if (map['thread'] != null) ...[
               ' replied to your comment in ',
-              data['thread']['title']
+              map['thread']['title']
             ] else
               ' replied to your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_MENTION':
         return NotificationData._(
           type: NotificationType.ACTIVITY_MENTION,
-          headId: data['user']['id'],
-          bodyId: data['activityId'],
-          imageUrl: data['user']['avatar']['large'],
-          texts: [data['user']['name'], ' mentioned you in an activity.'],
+          headId: map['user']['id'],
+          bodyId: map['activityId'],
+          imageUrl: map['user']['avatar']['large'],
+          texts: [map['user']['name'], ' mentioned you in an activity.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_COMMENT_MENTION':
         return NotificationData._(
           type: NotificationType.THREAD_COMMENT_MENTION,
-          headId: data['user']['id'],
-          bodyId: data['commentId'],
-          imageUrl: data['user']['avatar']['large'],
+          headId: map['user']['id'],
+          bodyId: map['commentId'],
+          imageUrl: map['user']['avatar']['large'],
           texts: [
-            data['user']['name'],
-            if (data['thread'] != null) ...[
+            map['user']['name'],
+            if (map['thread'] != null) ...[
               ' mentioned you in ',
-              data['thread']['title']
+              map['thread']['title']
             ] else
               ' mentioned you in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_SUBSCRIBED':
         return NotificationData._(
           type: NotificationType.THREAD_SUBSCRIBED,
-          headId: data['user']['id'],
-          bodyId: data['commentId'],
-          imageUrl: data['user']['avatar']['large'],
+          headId: map['user']['id'],
+          bodyId: map['commentId'],
+          imageUrl: map['user']['avatar']['large'],
           texts: [
-            data['user']['name'],
-            if (data['thread'] != null) ...[
+            map['user']['name'],
+            if (map['thread'] != null) ...[
               ' commented in ',
-              data['thread']['title']
+              map['thread']['title']
             ] else
               ' commented in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_LIKE':
         return NotificationData._(
           type: NotificationType.ACTIVITY_LIKE,
-          headId: data['user']['id'],
-          bodyId: data['activityId'],
-          imageUrl: data['user']['avatar']['large'],
-          texts: [data['user']['name'], ' liked your activity.'],
+          headId: map['user']['id'],
+          bodyId: map['activityId'],
+          imageUrl: map['user']['avatar']['large'],
+          texts: [map['user']['name'], ' liked your activity.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_LIKE':
         return NotificationData._(
           type: NotificationType.ACTIVITY_REPLY_LIKE,
-          headId: data['user']['id'],
-          bodyId: data['activityId'],
-          imageUrl: data['user']['avatar']['large'],
-          texts: [data['user']['name'], ' liked your reply.'],
+          headId: map['user']['id'],
+          bodyId: map['activityId'],
+          imageUrl: map['user']['avatar']['large'],
+          texts: [map['user']['name'], ' liked your reply.'],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_LIKE':
         return NotificationData._(
           type: NotificationType.THREAD_LIKE,
-          headId: data['user']['id'],
-          bodyId: data['threadId'],
-          imageUrl: data['user']['avatar']['large'],
+          headId: map['user']['id'],
+          bodyId: map['threadId'],
+          imageUrl: map['user']['avatar']['large'],
           texts: [
-            data['user']['name'],
+            map['user']['name'],
             ' like your thread ',
-            if (data['thread'] != null) data['thread']['title'],
+            if (map['thread'] != null) map['thread']['title'],
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_COMMENT_LIKE':
         return NotificationData._(
           type: NotificationType.THREAD_COMMENT_LIKE,
-          headId: data['user']['id'],
-          bodyId: data['commentId'],
-          imageUrl: data['user']['avatar']['large'],
+          headId: map['user']['id'],
+          bodyId: map['commentId'],
+          imageUrl: map['user']['avatar']['large'],
           texts: [
-            data['user']['name'],
-            if (data['thread'] != null) ...[
+            map['user']['name'],
+            if (map['thread'] != null) ...[
               ' liked your comment in ',
-              data['thread']['title']
+              map['thread']['title']
             ] else
               ' liked your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'AIRING':
         return NotificationData._(
           type: NotificationType.AIRING,
-          headId: data['media']['id'],
-          bodyId: data['media']['id'],
-          imageUrl: data['media']['coverImage']['large'],
+          headId: map['media']['id'],
+          bodyId: map['media']['id'],
+          imageUrl: map['media']['coverImage']['large'],
           texts: [
             'Episode ',
-            data['episode'].toString(),
+            map['episode'].toString(),
             ' of ',
-            data['media']['title']['userPreferred'],
+            map['media']['title']['userPreferred'],
             ' aired.',
           ],
           markTextOnEvenIndex: false,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
-          browsable: data['media']['type'] == 'ANIME'
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
+          browsable: map['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
         );
       case 'RELATED_MEDIA_ADDITION':
         return NotificationData._(
           type: NotificationType.RELATED_MEDIA_ADDITION,
-          headId: data['media']['id'],
-          bodyId: data['media']['id'],
-          imageUrl: data['media']['coverImage']['large'],
+          headId: map['media']['id'],
+          bodyId: map['media']['id'],
+          imageUrl: map['media']['coverImage']['large'],
           texts: [
-            data['media']['title']['userPreferred'],
+            map['media']['title']['userPreferred'],
             ' was added to the site.',
           ],
           markTextOnEvenIndex: true,
-          timestamp: FnHelper.millisecondsToTimeString(data['createdAt']),
-          browsable: data['media']['type'] == 'ANIME'
+          timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
+          browsable: map['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
         );

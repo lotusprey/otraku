@@ -133,7 +133,7 @@ class Notifications extends ScrollxController {
   // DATA & GETTERS & SETTERS
   // ***************************************************************************
 
-  bool fetching = false;
+  bool _fetching = false;
   int _unreadCount = 0;
   int _filter = 0;
   LoadableList<NotificationData> _entries;
@@ -145,8 +145,8 @@ class Notifications extends ScrollxController {
   set filter(int val) {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
-    scrollTo(0);
     fetchData();
+    scrollTo(0);
   }
 
   List<NotificationData> get entries => _entries?.items;
@@ -156,7 +156,7 @@ class Notifications extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetchData() async {
-    fetching = true;
+    _fetching = true;
     Map<String, dynamic> data = await Network.request(
       _notificationQuery,
       _filter != 0 ? {'filter': _filters[_filter]} : null,
@@ -172,12 +172,12 @@ class Notifications extends ScrollxController {
 
     _entries = LoadableList(nl, data['pageInfo']['hasNextPage']);
     update();
-    fetching = false;
+    _fetching = false;
   }
 
   Future<void> fetchPage() async {
-    if (fetching) return;
-    fetching = true;
+    if (_fetching || !_entries.hasNextPage) return;
+    _fetching = true;
 
     Map<String, dynamic> data = await Network.request(
       _notificationQuery,
@@ -197,7 +197,7 @@ class Notifications extends ScrollxController {
 
     _entries.append(nl, data['pageInfo']['hasNextPage']);
     update();
-    fetching = false;
+    _fetching = false;
   }
 
   @override

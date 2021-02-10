@@ -15,7 +15,15 @@ class SocialTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clipper = TriangleClip();
+    final clipper = ClipPath(
+      clipper: TriangleClip(),
+      child: Container(
+        width: 50,
+        height: 10,
+        color: Theme.of(context).primaryColor,
+      ),
+    );
+
     return SliverPadding(
       padding: Config.PADDING,
       sliver: Obx(() {
@@ -46,10 +54,9 @@ class SocialTab extends StatelessWidget {
                     imageUrl: items[index].avatar,
                     browsable: Browsable.user,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Hero(
-                          tag: items[index].userId.toString(),
+                          tag: items[index].userId,
                           child: ClipRRect(
                             borderRadius: Config.BORDER_RADIUS,
                             child: FadeImage(
@@ -68,14 +75,7 @@ class SocialTab extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  ClipPath(
-                    clipper: clipper,
-                    child: Container(
-                      width: 50,
-                      height: 10,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
+                  clipper,
                   Expanded(
                     child: BrowseIndexer(
                       id: items[index].reviewId,

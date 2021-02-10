@@ -7,7 +7,7 @@ class TileModel {
   final BoxFit fit;
   final bool needsBackground;
 
-  TileModel({
+  const TileModel({
     @required this.maxWidth,
     @required this.imgWHRatio,
     @required this.textHeight,

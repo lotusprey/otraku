@@ -6,7 +6,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/tools/layouts/review_grid.dart';
 import 'package:otraku/tools/layouts/title_list.dart';
 import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigation/control_header.dart';
+import 'package:otraku/pages/home/media_controls.dart';
 import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
@@ -23,7 +23,7 @@ class ExploreTab extends StatelessWidget {
       controller: Get.find<Explorer>().scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        ControlHeader(),
+        MediaControls(),
         _ExploreGrid(),
         _EndOfListLoader(),
         SliverToBoxAdapter(

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/models/anilist/review_data.dart';
+import 'package:otraku/models/anilist/review_model.dart';
 import 'package:otraku/helpers/network.dart';
 
 class Review extends GetxController {
@@ -28,9 +28,9 @@ class Review extends GetxController {
   // DATA
   // ***************************************************************************
 
-  ReviewData _data;
+  ReviewModel _data;
 
-  ReviewData get data => _data;
+  ReviewModel get data => _data;
 
   // ***************************************************************************
   // FETCHING
@@ -39,7 +39,7 @@ class Review extends GetxController {
   Future<void> fetchReview(int id) async {
     final body = await Network.request(_reviewQuery, {'id': id});
     if (body == null) return;
-    _data = ReviewData(body['Review']);
+    _data = ReviewModel(body['Review']);
     update();
   }
 }

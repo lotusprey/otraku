@@ -3,11 +3,11 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
-import 'package:otraku/models/anilist/review_tile_data.dart';
+import 'package:otraku/models/anilist/related_review_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/media_overview.dart';
 import 'package:otraku/models/connection.dart';
-import 'package:otraku/models/anilist/related_media.dart';
+import 'package:otraku/models/anilist/related_media_model.dart';
 
 class Media extends ScrollxController {
   // ***************************************************************************
@@ -129,10 +129,10 @@ class Media extends ScrollxController {
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
   final _overview = Rx<MediaOverview>();
-  final _otherMedia = List<RelatedMedia>().obs;
+  final _otherMedia = List<RelatedMediaModel>().obs;
   final _characters = Rx<LoadableList<Connection>>();
   final _staff = Rx<LoadableList<Connection>>();
-  final _reviews = Rx<LoadableList<ReviewTileData>>();
+  final _reviews = Rx<LoadableList<RelatedReviewModel>>();
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
 
@@ -151,13 +151,13 @@ class Media extends ScrollxController {
 
   MediaOverview get overview => _overview();
 
-  List<RelatedMedia> get otherMedia => _otherMedia();
+  List<RelatedMediaModel> get otherMedia => _otherMedia();
 
   LoadableList get characters => _characters();
 
   LoadableList get staff => _staff();
 
-  LoadableList<ReviewTileData> get reviews => _reviews();
+  LoadableList<RelatedReviewModel> get reviews => _reviews();
 
   String get staffLanguage => _staffLanguage();
 
@@ -189,14 +189,14 @@ class Media extends ScrollxController {
     final data = result['Media'];
     _overview(MediaOverview(data));
 
-    final List<RelatedMedia> mediaRel = [];
+    final List<RelatedMediaModel> mediaRel = [];
     for (final relation in data['relations']['edges'])
-      mediaRel.add(RelatedMedia(relation));
+      mediaRel.add(RelatedMediaModel(relation));
 
     _otherMedia.addAll(mediaRel);
 
-    final List<ReviewTileData> revs = [];
-    for (final r in data['reviews']['nodes']) revs.add(ReviewTileData(r));
+    final List<RelatedReviewModel> revs = [];
+    for (final r in data['reviews']['nodes']) revs.add(RelatedReviewModel(r));
     _reviews(LoadableList(revs, data['reviews']['pageInfo']['hasNextPage']));
   }
 
@@ -284,8 +284,9 @@ class Media extends ScrollxController {
 
     if (result == null) return;
 
-    final List<ReviewTileData> items = [];
-    for (final r in result['reviews']['nodes']) items.add(ReviewTileData(r));
+    final List<RelatedReviewModel> items = [];
+    for (final r in result['reviews']['nodes'])
+      items.add(RelatedReviewModel(r));
     _reviews.update(
       (r) => r.append(items, result['reviews']['pageInfo']['hasNextPage']),
     );

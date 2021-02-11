@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
-class ReviewData {
+class ReviewModel {
   final int id;
   final int userId;
   final int mediaId;
@@ -20,7 +20,7 @@ class ReviewData {
   final bool viewerRating;
   final Browsable browsable;
 
-  ReviewData._({
+  ReviewModel._({
     @required this.id,
     @required this.userId,
     @required this.mediaId,
@@ -39,7 +39,7 @@ class ReviewData {
     @required this.browsable,
   });
 
-  factory ReviewData(Map<String, dynamic> map) => ReviewData._(
+  factory ReviewModel(Map<String, dynamic> map) => ReviewModel._(
         id: map['id'],
         userId: map['user']['id'],
         mediaId: map['media']['id'],

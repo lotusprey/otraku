@@ -1,4 +1,4 @@
-class UserData {
+class UserModel {
   final int id;
   final String name;
   final String description;
@@ -11,7 +11,7 @@ class UserData {
   final String moderatorStatus;
   final bool isMe;
 
-  UserData._({
+  UserModel._({
     this.id,
     this.name,
     this.description,
@@ -27,7 +27,7 @@ class UserData {
     _following = amFollowing;
   }
 
-  factory UserData(Map<String, dynamic> map, bool me) => UserData._(
+  factory UserModel(Map<String, dynamic> map, bool me) => UserModel._(
         id: map['id'],
         name: map['name'],
         description: map['about'],

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/models/anilist/notification_data.dart';
+import 'package:otraku/models/anilist/notification_model.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
@@ -55,7 +55,7 @@ class NotificationsPage extends StatelessWidget {
 }
 
 class _NotificationWidget extends StatelessWidget {
-  final NotificationData notification;
+  final NotificationModel notification;
   final bool unread;
 
   _NotificationWidget(this.notification, this.unread);

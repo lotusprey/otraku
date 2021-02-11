@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 import 'package:otraku/models/tile_model.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
 
 class TileGrid extends StatelessWidget {
-  final List<TileData> tileData;
+  final List<BrowseResultModel> tileData;
   final Function loadMore;
   final TileModel tileModel;
 

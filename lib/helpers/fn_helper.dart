@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 
 abstract class FnHelper {
@@ -85,4 +87,6 @@ abstract class FnHelper {
     12: 'Dec',
     null: '',
   };
+
+  static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
 }

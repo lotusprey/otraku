@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/themes.dart';
+import 'package:otraku/helpers/fn_helper.dart';
 
 class CustomNavBar extends StatefulWidget {
   final List<IconData> icons;
@@ -38,7 +37,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
 
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: FnHelper.filter,
         child: Container(
           height: MediaQuery.of(context).viewPadding.bottom + 50,
           padding: EdgeInsets.only(

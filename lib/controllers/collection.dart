@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/models/anilist/entry_list.dart';
-import 'package:otraku/models/anilist/media_entry_data.dart';
-import 'package:otraku/models/anilist/media_list_data.dart';
+import 'package:otraku/models/anilist/collection_list_model.dart';
+import 'package:otraku/models/anilist/entry_model.dart';
+import 'package:otraku/models/anilist/list_entry_model.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
@@ -113,8 +113,8 @@ class Collection extends ScrollxController implements Filterable {
 
   final int userId;
   final bool ofAnime;
-  final _lists = List<EntryList>();
-  final _entries = List<MediaListData>().obs;
+  final _lists = List<CollectionListModel>();
+  final _entries = List<ListEntryModel>().obs;
   final _listIndex = 0.obs;
   final Map<String, dynamic> _filters = {};
   final _fetching = false.obs;
@@ -146,7 +146,7 @@ class Collection extends ScrollxController implements Filterable {
     filter();
   }
 
-  List<MediaListData> get entries => _entries();
+  List<ListEntryModel> get entries => _entries();
 
   String get currentName => _lists[_listIndex()].name;
 
@@ -219,11 +219,13 @@ class Collection extends ScrollxController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(EntryList(l, splitCompleted)..sort(_filters[Filterable.SORT]));
+      _lists.add(CollectionListModel(l, splitCompleted)
+        ..sort(_filters[Filterable.SORT]));
     }
 
     for (final l in data['lists'])
-      _lists.add(EntryList(l, splitCompleted)..sort(_filters[Filterable.SORT]));
+      _lists.add(CollectionListModel(l, splitCompleted)
+        ..sort(_filters[Filterable.SORT]));
 
     _listIndex.value = 0;
     filter();
@@ -231,8 +233,8 @@ class Collection extends ScrollxController implements Filterable {
   }
 
   Future<void> updateEntry(
-    MediaEntryData oldEntry,
-    MediaEntryData newEntry,
+    EntryModel oldEntry,
+    EntryModel newEntry,
   ) async {
     // Update database item
     final List<String> oldCustomLists = oldEntry.customLists.entries
@@ -266,7 +268,7 @@ class Collection extends ScrollxController implements Filterable {
 
     if (data == null) return;
 
-    final entry = MediaListData(data['SaveMediaListEntry']);
+    final entry = ListEntryModel(data['SaveMediaListEntry']);
 
     for (int i = 0; i < newCustomLists.length; i++)
       newCustomLists[i] = newCustomLists[i].toLowerCase();
@@ -334,7 +336,7 @@ class Collection extends ScrollxController implements Filterable {
     filter();
   }
 
-  Future<void> removeEntry(MediaEntryData entry) async {
+  Future<void> removeEntry(EntryModel entry) async {
     final data = await Network.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
@@ -378,7 +380,7 @@ class Collection extends ScrollxController implements Filterable {
     final List<String> genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 
     final list = _lists[_listIndex()];
-    final List<MediaListData> e = [];
+    final List<ListEntryModel> e = [];
 
     for (final entry in list.entries) {
       if (search != null && !entry.title.toLowerCase().contains(search))

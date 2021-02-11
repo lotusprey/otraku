@@ -8,7 +8,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/models/anilist/user_data.dart';
+import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
 import 'package:otraku/pages/pushable/tab_page.dart';
@@ -142,7 +142,7 @@ class UserTab extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   final int id;
-  final UserData user;
+  final UserModel user;
   final bool isMe;
   final String avatarUrl;
 

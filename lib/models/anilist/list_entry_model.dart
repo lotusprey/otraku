@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
-class MediaListData {
+class ListEntryModel {
   final int mediaId;
   final String title;
   final String cover;
@@ -22,7 +22,7 @@ class MediaListData {
   DateTime startDate;
   DateTime endDate;
 
-  MediaListData._({
+  ListEntryModel._({
     @required this.mediaId,
     @required this.title,
     @required this.cover,
@@ -44,7 +44,7 @@ class MediaListData {
     this.endDate,
   });
 
-  factory MediaListData(Map<String, dynamic> map) => MediaListData._(
+  factory ListEntryModel(Map<String, dynamic> map) => ListEntryModel._(
         mediaId: map['mediaId'],
         title: map['media']['title']['userPreferred'],
         cover: map['media']['coverImage']['large'],

@@ -4,7 +4,7 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
-import 'package:otraku/models/anilist/settings_data.dart';
+import 'package:otraku/models/anilist/settings_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 
 class Viewer extends ScrollxController {
@@ -13,11 +13,11 @@ class Viewer extends ScrollxController {
   // ***************************************************************************
 
   static const _viewerQuery = r'''
-    query ViewerData($withMain: Boolean = false, $page: Int = 1, $isFollowing: Boolean = false) {
+    query ViewerData($withMain: Boolean = false, $page: Int = 1, $isFollowing: Boolean = false, $hasReplies: Boolean, $type_in: [ActivityType]) {
       Viewer {unreadNotificationCount ...main @include(if: $withMain)}
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(isFollowing: $isFollowing, sort: ID_DESC) {
+        activities(isFollowing: $isFollowing, hasReplies: $hasReplies, type_in: $type_in, sort: ID_DESC) {
           ... on TextActivity {
             id
             type
@@ -36,7 +36,7 @@ class Viewer extends ScrollxController {
             isLiked
             createdAt
             user {id name avatar {large}}
-            media {id type title{userPreferred} coverImage{large}}
+            media {id type title{userPreferred} coverImage{large} format}
             progress
             status
           }
@@ -103,9 +103,9 @@ class Viewer extends ScrollxController {
   final _activities = Rx<LoadableList<ActivityModel>>();
   final _unreadCount = 0.obs;
   final List<int> _idNotIn = [];
-  final List<ActivityType> _typeIn = ActivityType.values;
-  bool isFollowing = true;
-  SettingsData _settings;
+  final List<ActivityType> _typeIn = ActivityType.values.toList();
+  bool _isFollowing = true;
+  SettingsModel _settings;
   bool _fetching = false;
 
   // ***************************************************************************
@@ -118,13 +118,16 @@ class Viewer extends ScrollxController {
 
   int get unreadCount => _unreadCount();
 
-  void updateFilters(final bool following, final List<ActivityType> types) {
-    isFollowing = following;
-    typeIn.replaceRange(0, typeIn.length, types);
+  bool get isFollowing => _isFollowing;
+
+  void updateFilters({final bool following, final List<ActivityType> types}) {
+    if (following != null) _isFollowing = following;
+    if (types != null) _typeIn.replaceRange(0, _typeIn.length, types);
     refetch();
+    scrollTo(0);
   }
 
-  SettingsData get settings => _settings;
+  SettingsModel get settings => _settings;
 
   void nullifyUnread() => _unreadCount.value = 0;
 
@@ -139,13 +142,14 @@ class Viewer extends ScrollxController {
         'withMain': true,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
-        'isFollowing': isFollowing,
+        'isFollowing': _isFollowing,
+        'hasReplies': _isFollowing ? null : true,
       },
       popOnErr: false,
     );
     if (data == null) return;
 
-    _settings = SettingsData(data['Viewer']);
+    _settings = SettingsModel(data['Viewer']);
     _unreadCount.value = data['Viewer']['unreadNotificationCount'];
     update();
 
@@ -162,7 +166,8 @@ class Viewer extends ScrollxController {
         'page': _activities().nextPage,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
-        'isFollowing': isFollowing,
+        'isFollowing': _isFollowing,
+        'hasReplies': _isFollowing ? null : true,
       },
       popOnErr: false,
     );
@@ -179,7 +184,8 @@ class Viewer extends ScrollxController {
       {
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
-        'isFollowing': isFollowing,
+        'isFollowing': _isFollowing,
+        'hasReplies': _isFollowing ? null : true,
       },
       popOnErr: false,
     );
@@ -192,7 +198,7 @@ class Viewer extends ScrollxController {
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
     final data = await Network.request(_settingsMutation, variables);
     if (data == null) return false;
-    _settings = SettingsData(data['UpdateUser']);
+    _settings = SettingsModel(data['UpdateUser']);
     return true;
   }
 

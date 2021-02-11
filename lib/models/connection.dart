@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 
-class Connection extends TileData {
+class Connection extends BrowseResultModel {
   final String subtitle;
   final String caption;
   final List<Connection> others;

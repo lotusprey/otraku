@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class ReviewTileData {
+class RelatedReviewModel {
   final int reviewId;
   final int userId;
   final String avatar;
@@ -8,7 +8,7 @@ class ReviewTileData {
   final String summary;
   final String rating;
 
-  ReviewTileData._({
+  RelatedReviewModel._({
     @required this.reviewId,
     @required this.userId,
     @required this.avatar,
@@ -17,7 +17,7 @@ class ReviewTileData {
     @required this.rating,
   });
 
-  factory ReviewTileData(Map<String, dynamic> map) => ReviewTileData._(
+  factory RelatedReviewModel(Map<String, dynamic> map) => RelatedReviewModel._(
         reviewId: map['id'],
         userId: map['user']['id'],
         username: map['user']['name'],

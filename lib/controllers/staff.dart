@@ -5,7 +5,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/loadable_list.dart';
-import 'package:otraku/models/anilist/person.dart';
+import 'package:otraku/models/anilist/person_model.dart';
 import 'package:otraku/models/connection.dart';
 
 class Staff extends GetxController {
@@ -50,6 +50,7 @@ class Staff extends GetxController {
       }
     }
     fragment person on Staff {
+      id
       name{full native alternative}
       image{large}
       favourites 
@@ -70,13 +71,13 @@ class Staff extends GetxController {
   // DATA
   // ***************************************************************************
 
-  final _person = Rx<Person>();
+  final _person = Rx<PersonModel>();
   final _characterList = Rx<LoadableList<Connection>>();
   final _roleList = Rx<LoadableList<Connection>>();
   final _onCharacters = true.obs;
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
-  Person get person => _person();
+  PersonModel get person => _person();
 
   LoadableList get characterList => _characterList();
 
@@ -112,7 +113,7 @@ class Staff extends GetxController {
 
     final data = body['Staff'];
 
-    _person(Person(data, id));
+    _person(PersonModel(data));
 
     _initLists(data);
   }

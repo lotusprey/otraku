@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 
 class TitleList extends StatelessWidget {
-  final List<TileData> results;
+  final List<BrowseResultModel> results;
   final Function loadMore;
 
   TitleList(this.results, this.loadMore);

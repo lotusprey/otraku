@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/helpers/network.dart';
-import 'package:otraku/models/anilist/media_entry_data.dart';
+import 'package:otraku/models/anilist/entry_model.dart';
 
 class Entry extends GetxController {
   static const _entryQuery = r'''
@@ -30,20 +30,20 @@ class Entry extends GetxController {
     }
   ''';
 
-  MediaEntryData _entry;
-  MediaEntryData _copy;
+  EntryModel _entry;
+  EntryModel _copy;
 
-  MediaEntryData get data => _entry;
+  EntryModel get data => _entry;
 
-  MediaEntryData get oldData => _copy;
+  EntryModel get oldData => _copy;
 
   Future<void> fetchEntry(int id) async {
     final body = await Network.request(_entryQuery, {'id': id});
 
     if (body == null) return;
 
-    _entry = MediaEntryData(body['Media']);
-    _copy = MediaEntryData(body['Media']);
+    _entry = EntryModel(body['Media']);
+    _copy = EntryModel(body['Media']);
 
     if (_entry.customLists == null) {
       final customLists = Map.fromIterable(

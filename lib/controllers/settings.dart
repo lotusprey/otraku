@@ -2,12 +2,12 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/models/anilist/settings_data.dart';
+import 'package:otraku/models/anilist/settings_model.dart';
 import 'package:otraku/helpers/filterable.dart';
 
 class Settings extends GetxController {
   final Map<String, dynamic> _changes = {};
-  SettingsData _data;
+  SettingsModel _data;
   int _pageIndex = 0;
 
   Settings() {
@@ -16,7 +16,7 @@ class Settings extends GetxController {
 
   Map<String, dynamic> get changes => _changes;
 
-  SettingsData get data => _data;
+  SettingsModel get data => _data;
 
   int get pageIndex => _pageIndex;
 

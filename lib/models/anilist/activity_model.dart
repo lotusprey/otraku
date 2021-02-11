@@ -15,6 +15,7 @@ class ActivityModel {
   final int mediaId;
   final String mediaTitle;
   final String mediaImage;
+  final String mediaFormat;
   final Browsable mediaType;
   final String text;
   final String createdAt;
@@ -34,6 +35,7 @@ class ActivityModel {
     @required this.mediaId,
     @required this.mediaTitle,
     @required this.mediaImage,
+    @required this.mediaFormat,
     @required this.mediaType,
     @required this.text,
     @required this.createdAt,
@@ -57,6 +59,7 @@ class ActivityModel {
           mediaId: null,
           mediaTitle: null,
           mediaImage: null,
+          mediaFormat: null,
           mediaType: null,
           text: map['text'],
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
@@ -65,6 +68,10 @@ class ActivityModel {
           isLiked: map['isLiked'],
         );
       case 'ANIME_LIST':
+        final progress =
+            map['progress'] != null ? '${map['progress']} of ' : '';
+        final status = (map['status'] as String)[0].toUpperCase() +
+            (map['status'] as String).substring(1);
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.ANIME_LIST,
@@ -77,14 +84,19 @@ class ActivityModel {
           mediaId: map['media']['id'],
           mediaTitle: map['media']['title']['userPreferred'],
           mediaImage: map['media']['coverImage']['large'],
+          mediaFormat: FnHelper.clarifyEnum(map['media']['format']),
           mediaType: Browsable.anime,
-          text: null,
+          text: '$status $progress',
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'],
           likeCount: map['likeCount'],
           isLiked: map['isLiked'],
         );
       case 'MANGA_LIST':
+        final progress =
+            map['progress'] != null ? '${map['progress']} of ' : '';
+        final status = (map['status'] as String)[0].toUpperCase() +
+            (map['status'] as String).substring(1);
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.MANGA_LIST,
@@ -97,8 +109,9 @@ class ActivityModel {
           mediaId: map['media']['id'],
           mediaTitle: map['media']['title']['userPreferred'],
           mediaImage: map['media']['coverImage']['large'],
+          mediaFormat: FnHelper.clarifyEnum(map['media']['format']),
           mediaType: Browsable.manga,
-          text: null,
+          text: '$status $progress',
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'],
           likeCount: map['likeCount'],
@@ -111,12 +124,13 @@ class ActivityModel {
           agentId: map['messenger']['id'],
           agentName: map['messenger']['name'],
           agentImage: map['messenger']['avatar']['large'],
-          recieverId: map['reciever']['id'],
-          recieverName: map['reciever']['name'],
-          recieverImage: map['reciever']['avatar']['large'],
+          recieverId: map['recipient']['id'],
+          recieverName: map['recipient']['name'],
+          recieverImage: map['recipient']['avatar']['large'],
           mediaId: null,
           mediaTitle: null,
           mediaImage: null,
+          mediaFormat: null,
           mediaType: null,
           text: map['message'],
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
@@ -137,6 +151,7 @@ class ActivityModel {
           mediaId: null,
           mediaTitle: '',
           mediaImage: '',
+          mediaFormat: '',
           mediaType: null,
           text: '',
           createdAt: null,

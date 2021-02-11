@@ -2,16 +2,16 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/anilist/media_list_data.dart';
+import 'package:otraku/models/anilist/list_entry_model.dart';
 
-class EntryList {
+class CollectionListModel {
   final String name;
   final ListStatus status;
   final bool isCustomList;
   final String splitCompletedListFormat;
-  final List<MediaListData> entries;
+  final List<ListEntryModel> entries;
 
-  EntryList._({
+  CollectionListModel._({
     @required this.name,
     @required this.isCustomList,
     @required this.entries,
@@ -19,8 +19,8 @@ class EntryList {
     this.splitCompletedListFormat,
   });
 
-  factory EntryList(Map<String, dynamic> map, bool splitCompleted) =>
-      EntryList._(
+  factory CollectionListModel(Map<String, dynamic> map, bool splitCompleted) =>
+      CollectionListModel._(
         name: map['name'],
         isCustomList: map['isCustomList'],
         status: !map['isCustomList']
@@ -32,7 +32,7 @@ class EntryList {
             ? map['entries'][0]['media']['format']
             : null,
         entries: (map['entries'] as List<dynamic>)
-            .map((e) => MediaListData(e))
+            .map((e) => ListEntryModel(e))
             .toList(),
       );
 
@@ -44,7 +44,7 @@ class EntryList {
       }
   }
 
-  void insertSorted(final MediaListData item, final ListSort s) {
+  void insertSorted(final ListEntryModel item, final ListSort s) {
     final compare = _compareFn(s);
     for (int i = 0; i < entries.length; i++)
       if (compare(item, entries[i]) <= 0) {
@@ -56,7 +56,7 @@ class EntryList {
 
   void sort(final ListSort s) => entries.sort(_compareFn(s));
 
-  int Function(MediaListData, MediaListData) _compareFn(final ListSort s) {
+  int Function(ListEntryModel, ListEntryModel) _compareFn(final ListSort s) {
     switch (s) {
       case ListSort.TITLE:
         return (a, b) => a.title.compareTo(b.title);

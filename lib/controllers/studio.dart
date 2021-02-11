@@ -4,9 +4,9 @@ import 'package:otraku/helpers/network.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/anilist/studio_data.dart';
+import 'package:otraku/models/anilist/person_model.dart';
 import 'package:otraku/models/studio_connection_list.dart';
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 
 class Studio extends GetxController {
   // ***************************************************************************
@@ -30,6 +30,7 @@ class Studio extends GetxController {
       }
     }
     fragment studio on Studio {
+      id
       name
       favourites
       isFavourite
@@ -48,11 +49,11 @@ class Studio extends GetxController {
   // DATA
   // ***************************************************************************
 
-  final _company = Rx<StudioData>();
+  final _company = Rx<PersonModel>();
   final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
-  StudioData get company => _company();
+  PersonModel get company => _company();
 
   StudioConnectionList get media => _media();
 
@@ -78,7 +79,7 @@ class Studio extends GetxController {
 
     final data = body['Studio'];
 
-    _company(StudioData.studio(data, id));
+    _company(PersonModel.studio(data));
 
     _initLists(data['media']);
   }
@@ -109,7 +110,7 @@ class Studio extends GetxController {
     final data = body['Studio']['media'];
 
     List<String> categories = [];
-    List<List<TileData>> results = [];
+    List<List<BrowseResultModel>> results = [];
     for (final node in data['nodes']) {
       final String category =
           (node['startDate']['year'] ?? FnHelper.clarifyEnum(node['status']))
@@ -120,7 +121,7 @@ class Studio extends GetxController {
         results.add([]);
       }
 
-      results.last.add(TileData(
+      results.last.add(BrowseResultModel(
         id: node['id'],
         title: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],
@@ -155,7 +156,7 @@ class Studio extends GetxController {
     }
 
     List<String> categories = [];
-    List<List<TileData>> results = [];
+    List<List<BrowseResultModel>> results = [];
     for (final node in nodes) {
       final String category =
           (node['startDate']['year'] ?? FnHelper.clarifyEnum(node['status']))
@@ -166,7 +167,7 @@ class Studio extends GetxController {
         results.add([]);
       }
 
-      results.last.add(TileData(
+      results.last.add(BrowseResultModel(
         id: node['id'],
         title: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],

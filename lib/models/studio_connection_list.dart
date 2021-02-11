@@ -1,15 +1,15 @@
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 
 class StudioConnectionList {
   final List<String> categories;
-  final List<List<TileData>> split;
+  final List<List<BrowseResultModel>> split;
   bool _hasNextPage;
   int _nextPage = 2;
 
   StudioConnectionList(this.categories, this.split, this._hasNextPage);
 
-  List<TileData> get joined {
-    final List<TileData> joined = [];
+  List<BrowseResultModel> get joined {
+    final List<BrowseResultModel> joined = [];
     for (final list in split) {
       joined.addAll(list);
     }
@@ -28,7 +28,7 @@ class StudioConnectionList {
 
   void append(
     List<String> moreCategories,
-    List<List<TileData>> moreMedia,
+    List<List<BrowseResultModel>> moreMedia,
     bool hasNext,
   ) {
     if (categories.last == moreCategories.first) {

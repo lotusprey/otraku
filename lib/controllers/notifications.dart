@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/models/anilist/notification_data.dart';
+import 'package:otraku/models/anilist/notification_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
@@ -136,7 +136,7 @@ class Notifications extends ScrollxController {
   bool _fetching = false;
   int _unreadCount = 0;
   int _filter = 0;
-  LoadableList<NotificationData> _entries;
+  LoadableList<NotificationModel> _entries;
 
   int get unreadCount => _unreadCount;
 
@@ -149,7 +149,7 @@ class Notifications extends ScrollxController {
     scrollTo(0);
   }
 
-  List<NotificationData> get entries => _entries?.items;
+  List<NotificationModel> get entries => _entries?.items;
 
   // ***************************************************************************
   // FETCHING
@@ -167,8 +167,8 @@ class Notifications extends ScrollxController {
     _unreadCount = _filter == 0 ? data['Viewer']['unreadNotificationCount'] : 0;
     data = data['Page'];
 
-    final List<NotificationData> nl = [];
-    for (final n in data['notifications']) nl.add(NotificationData(n));
+    final List<NotificationModel> nl = [];
+    for (final n in data['notifications']) nl.add(NotificationModel(n));
 
     _entries = LoadableList(nl, data['pageInfo']['hasNextPage']);
     update();
@@ -192,8 +192,8 @@ class Notifications extends ScrollxController {
     _unreadCount = data['Viewer']['unreadNotificationCount'];
     data = data['Page'];
 
-    final List<NotificationData> nl = [];
-    for (final n in data['notifications']) nl.add(NotificationData(n));
+    final List<NotificationModel> nl = [];
+    for (final n in data['notifications']) nl.add(NotificationModel(n));
 
     _entries.append(nl, data['pageInfo']['hasNextPage']);
     update();

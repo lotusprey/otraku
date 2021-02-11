@@ -4,8 +4,7 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
-import 'package:otraku/tools/fields/three_state_field.dart';
-import 'package:otraku/tools/fields/two_state_field.dart';
+import 'package:otraku/tools/overlays/option_sheet.dart';
 
 class ChipGrid<T> extends StatefulWidget {
   final String title;
@@ -91,7 +90,7 @@ class _ChipGridState extends State<ChipGrid> {
                   icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_filled),
                   onPressed: () => showModalBottomSheet(
                     context: context,
-                    builder: (_) => _OptionSheet(
+                    builder: (_) => SelectionSheet(
                       options: widget.options,
                       values: widget.values,
                       inclusive: [...widget.inclusive],
@@ -128,94 +127,6 @@ class _ChipGridState extends State<ChipGrid> {
                 ),
               ),
       ],
-    );
-  }
-}
-
-class _OptionSheet<T> extends StatelessWidget {
-  final List<String> options;
-  final List<T> values;
-  final List<T> inclusive;
-  final List<T> exclusive;
-  final Function(List<T>, List<T>) onDone;
-
-  _OptionSheet({
-    @required this.onDone,
-    @required this.options,
-    @required this.values,
-    @required this.inclusive,
-    this.exclusive,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final sideMargin = MediaQuery.of(context).size.width > 420
-        ? (MediaQuery.of(context).size.width - 400) / 2
-        : 20.0;
-    return Container(
-      margin: EdgeInsets.only(
-        left: sideMargin,
-        right: sideMargin,
-        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
-        borderRadius: Config.BORDER_RADIUS,
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              physics: Config.PHYSICS,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              itemBuilder: (_, index) => exclusive == null
-                  ? TwoStateField(
-                      title: options[index],
-                      initial: inclusive.contains(values[index]),
-                      onChanged: (val) {
-                        if (val)
-                          inclusive.add(values[index]);
-                        else
-                          inclusive.remove(values[index]);
-                      },
-                    )
-                  : ThreeStateField(
-                      title: options[index],
-                      initialState: inclusive.contains(values[index])
-                          ? 1
-                          : exclusive.contains(values[index])
-                              ? 2
-                              : 0,
-                      onChanged: (state) {
-                        if (state == 0) {
-                          exclusive.remove(values[index]);
-                        } else if (state == 1) {
-                          inclusive.add(values[index]);
-                        } else {
-                          inclusive.remove(values[index]);
-                          exclusive.add(values[index]);
-                        }
-                      },
-                    ),
-              itemCount: options.length,
-              itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
-            ),
-          ),
-          FlatButton.icon(
-            onPressed: () {
-              onDone(inclusive, exclusive);
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              FluentSystemIcons.ic_fluent_checkmark_filled,
-              color: Theme.of(context).accentColor,
-              size: Styles.ICON_SMALLER,
-            ),
-            label: Text('Done', style: Theme.of(context).textTheme.headline5),
-          ),
-        ],
-      ),
     );
   }
 }

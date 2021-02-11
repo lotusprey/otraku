@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/models/anilist/person.dart';
+import 'package:otraku/models/anilist/person_model.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class PersonHeader extends StatelessWidget {
-  final Person person;
+  final PersonModel person;
   final int personId;
   final String imageUrl;
   final Future<bool> Function() toggleFavourite;
@@ -38,7 +38,7 @@ class PersonHeader extends StatelessWidget {
 }
 
 class _PersonHeader implements SliverPersistentHeaderDelegate {
-  final Person person;
+  final PersonModel person;
   final int personId;
   final double coverWidth;
   final double coverHeight;
@@ -180,7 +180,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
 }
 
 class PersonInfo extends StatelessWidget {
-  final Person person;
+  final PersonModel person;
 
   PersonInfo(this.person);
 

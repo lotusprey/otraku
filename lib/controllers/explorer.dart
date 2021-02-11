@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/helpers/filterable.dart';
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 import 'package:otraku/helpers/network.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 
@@ -97,7 +97,7 @@ class Explorer extends ScrollxController implements Filterable {
 
   final _isLoading = true.obs;
   final _hasNextPage = true.obs;
-  final _results = List<TileData>().obs;
+  final _results = List<BrowseResultModel>().obs;
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
   int _concurrentFetches = 0;
@@ -122,7 +122,7 @@ class Explorer extends ScrollxController implements Filterable {
 
   String get search => _search();
 
-  List<TileData> get results => [..._results()];
+  List<BrowseResultModel> get results => [..._results()];
 
   List<String> get genres => [..._genres];
 
@@ -263,11 +263,11 @@ class Explorer extends ScrollxController implements Filterable {
 
     _hasNextPage.value = data['Page']['pageInfo']['hasNextPage'];
 
-    List<TileData> loaded = [];
+    List<BrowseResultModel> loaded = [];
 
     if (currentType == Browsable.anime || currentType == Browsable.manga) {
       for (final m in data['Page']['media'] as List<dynamic>) {
-        loaded.add(TileData(
+        loaded.add(BrowseResultModel(
           id: m['id'],
           title: m['title']['userPreferred'],
           imageUrl: m['coverImage']['large'],
@@ -277,7 +277,7 @@ class Explorer extends ScrollxController implements Filterable {
       }
     } else if (currentType == Browsable.character) {
       for (final c in data['Page']['characters'] as List<dynamic>) {
-        loaded.add(TileData(
+        loaded.add(BrowseResultModel(
           id: c['id'],
           title: c['name']['full'],
           imageUrl: c['image']['large'],
@@ -287,7 +287,7 @@ class Explorer extends ScrollxController implements Filterable {
       }
     } else if (currentType == Browsable.staff) {
       for (final c in data['Page']['staff'] as List<dynamic>) {
-        loaded.add(TileData(
+        loaded.add(BrowseResultModel(
           id: c['id'],
           title: c['name']['full'],
           imageUrl: c['image']['large'],
@@ -297,7 +297,7 @@ class Explorer extends ScrollxController implements Filterable {
       }
     } else if (currentType == Browsable.studio) {
       for (final s in data['Page']['studios'] as List<dynamic>) {
-        loaded.add(TileData(
+        loaded.add(BrowseResultModel(
           id: s['id'],
           title: s['name'],
           browsable: currentType,
@@ -306,7 +306,7 @@ class Explorer extends ScrollxController implements Filterable {
       }
     } else if (currentType == Browsable.user) {
       for (final u in data['Page']['users'] as List<dynamic>)
-        loaded.add(TileData(
+        loaded.add(BrowseResultModel(
           id: u['id'],
           title: u['name'],
           imageUrl: u['avatar']['large'],
@@ -314,7 +314,7 @@ class Explorer extends ScrollxController implements Filterable {
         ));
     } else {
       for (final r in data['Page']['reviews'] as List<dynamic>)
-        loaded.add(TileData(
+        loaded.add(BrowseResultModel(
           id: r['id'],
           title:
               'Review of ${r['media']['title']['userPreferred']} by ${r['user']['name']}',
@@ -368,10 +368,10 @@ class Explorer extends ScrollxController implements Filterable {
     for (final tag in data['MediaTagCollection'])
       _tags[tag['name']] = tag['description'];
 
-    List<TileData> loaded = [];
+    List<BrowseResultModel> loaded = [];
 
     for (final m in data['Page']['media'] as List<dynamic>) {
-      loaded.add(TileData(
+      loaded.add(BrowseResultModel(
         id: m['id'],
         title: m['title']['userPreferred'],
         imageUrl: m['coverImage']['large'],

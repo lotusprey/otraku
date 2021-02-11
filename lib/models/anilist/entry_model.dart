@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_status.dart';
 
-class MediaEntryData {
+class EntryModel {
   final int mediaId;
   final int entryId;
   final String type;
@@ -20,7 +20,7 @@ class MediaEntryData {
   bool hiddenFromStatusLists;
   Map<String, bool> customLists;
 
-  MediaEntryData._({
+  EntryModel._({
     @required this.mediaId,
     @required this.type,
     this.entryId,
@@ -39,9 +39,9 @@ class MediaEntryData {
     this.customLists,
   });
 
-  factory MediaEntryData(Map<String, dynamic> map) {
+  factory EntryModel(Map<String, dynamic> map) {
     if (map['mediaListEntry'] == null) {
-      return MediaEntryData._(
+      return EntryModel._(
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
@@ -54,7 +54,7 @@ class MediaEntryData {
       for (final key in map['mediaListEntry']['customLists'].keys)
         customLists[key] = map['mediaListEntry']['customLists'][key];
 
-    return MediaEntryData._(
+    return EntryModel._(
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],

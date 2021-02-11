@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
-class Person {
+class PersonModel {
   final int id;
   final String fullName;
   final List<String> altNames;
@@ -10,7 +10,7 @@ class Person {
   final int favourites;
   final bool isFavourite;
 
-  Person._({
+  PersonModel._({
     @required this.id,
     @required this.fullName,
     @required this.altNames,
@@ -20,15 +20,15 @@ class Person {
     @required this.favourites,
   });
 
-  factory Person(Map<String, dynamic> map, int id) {
+  factory PersonModel(final Map<String, dynamic> map) {
     List<String> altNames = (map['name']['alternative'] as List<dynamic>)
         .map((a) => a.toString())
         .toList();
     if (map['name']['native'] != null)
       altNames.insert(0, map['name']['native']);
 
-    return Person._(
-      id: id,
+    return PersonModel._(
+      id: map['id'],
       isFavourite: map['isFavourite'],
       favourites: map['favourites'],
       fullName: map['name']['full'],
@@ -37,4 +37,14 @@ class Person {
       description: FnHelper.clearHtml(map['description']),
     );
   }
+
+  factory PersonModel.studio(final Map<String, dynamic> map) => PersonModel._(
+        id: map['id'],
+        isFavourite: map['isFavourite'],
+        favourites: map['favourites'],
+        fullName: null,
+        altNames: null,
+        imageUrl: null,
+        description: null,
+      );
 }

@@ -3,7 +3,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
-class NotificationData {
+class NotificationModel {
   final NotificationType type;
   final int headId;
   final int bodyId;
@@ -13,7 +13,7 @@ class NotificationData {
   final String timestamp;
   final Browsable browsable;
 
-  NotificationData._({
+  NotificationModel._({
     @required this.type,
     @required this.headId,
     @required this.bodyId,
@@ -24,10 +24,10 @@ class NotificationData {
     this.browsable,
   });
 
-  factory NotificationData(final Map<String, dynamic> map) {
+  factory NotificationModel(final Map<String, dynamic> map) {
     switch (map['type']) {
       case 'FOLLOWING':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.FOLLOWING,
           headId: map['user']['id'],
           bodyId: map['user']['id'],
@@ -38,7 +38,7 @@ class NotificationData {
           browsable: Browsable.user,
         );
       case 'ACTIVITY_MESSAGE':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.ACTIVITY_MESSAGE,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -48,7 +48,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_REPLY':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.ACTIVITY_REPLY,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -58,7 +58,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_SUBSCRIBED':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.ACTIVITY_REPLY_SUBSCRIBED,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -71,7 +71,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_COMMENT_REPLY':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.THREAD_COMMENT_REPLY,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -88,7 +88,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_MENTION':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.ACTIVITY_MENTION,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -98,7 +98,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_COMMENT_MENTION':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.THREAD_COMMENT_MENTION,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -115,7 +115,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_SUBSCRIBED':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.THREAD_SUBSCRIBED,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -132,7 +132,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_LIKE':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.ACTIVITY_LIKE,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -142,7 +142,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_LIKE':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.ACTIVITY_REPLY_LIKE,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -152,7 +152,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_LIKE':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.THREAD_LIKE,
           headId: map['user']['id'],
           bodyId: map['threadId'],
@@ -166,7 +166,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'THREAD_COMMENT_LIKE':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.THREAD_COMMENT_LIKE,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -183,7 +183,7 @@ class NotificationData {
           timestamp: FnHelper.millisecondsToTimeString(map['createdAt']),
         );
       case 'AIRING':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.AIRING,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
@@ -202,7 +202,7 @@ class NotificationData {
               : Browsable.manga,
         );
       case 'RELATED_MEDIA_ADDITION':
-        return NotificationData._(
+        return NotificationModel._(
           type: NotificationType.RELATED_MEDIA_ADDITION,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
@@ -218,7 +218,7 @@ class NotificationData {
               : Browsable.manga,
         );
       default:
-        return NotificationData._(
+        return NotificationModel._(
           type: null,
           headId: null,
           bodyId: null,

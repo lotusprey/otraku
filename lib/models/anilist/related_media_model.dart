@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/models/tile_data.dart';
+import 'package:otraku/models/browse_result_model.dart';
 
-class RelatedMedia extends TileData {
+class RelatedMediaModel extends BrowseResultModel {
   final String relationType;
   final String format;
   final String status;
 
-  RelatedMedia._({
+  RelatedMediaModel._({
     @required this.relationType,
     @required this.format,
     @required this.status,
@@ -18,7 +18,7 @@ class RelatedMedia extends TileData {
     @required Browsable browsable,
   }) : super(id: id, title: title, imageUrl: imageUrl, browsable: browsable);
 
-  factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
+  factory RelatedMediaModel(Map<String, dynamic> map) => RelatedMediaModel._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
         relationType: FnHelper.clarifyEnum(map['relationType']),

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +56,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   ) {
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        filter: FnHelper.filter,
         child: Container(
           height: _height,
           color: Theme.of(context).cardColor,

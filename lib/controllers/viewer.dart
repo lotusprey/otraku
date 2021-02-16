@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/models/anilist/settings_model.dart';
@@ -13,11 +13,11 @@ class Viewer extends ScrollxController {
   // ***************************************************************************
 
   static const _viewerQuery = r'''
-    query ViewerData($withMain: Boolean = false, $page: Int = 1, $isFollowing: Boolean = false, $hasReplies: Boolean, $type_in: [ActivityType]) {
+    query ViewerData($withMain: Boolean = false, $page: Int = 1, $isFollowing: Boolean = false, $hasRepliesOrTypeText: Boolean, $type_in: [ActivityType]) {
       Viewer {unreadNotificationCount ...main @include(if: $withMain)}
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(isFollowing: $isFollowing, hasReplies: $hasReplies, type_in: $type_in, sort: ID_DESC) {
+        activities(isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $type_in, sort: ID_DESC) {
           ... on TextActivity {
             id
             type
@@ -103,7 +103,11 @@ class Viewer extends ScrollxController {
   final _activities = Rx<LoadableList<ActivityModel>>();
   final _unreadCount = 0.obs;
   final List<int> _idNotIn = [];
-  final List<ActivityType> _typeIn = ActivityType.values.toList();
+  final List<ActivityType> _typeIn = [
+    ActivityType.TEXT,
+    ActivityType.ANIME_LIST,
+    ActivityType.MANGA_LIST,
+  ];
   bool _isFollowing = true;
   SettingsModel _settings;
   bool _fetching = false;
@@ -136,14 +140,14 @@ class Viewer extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetchData() async {
-    final data = await Network.request(
+    final data = await GraphQL.request(
       _viewerQuery,
       {
         'withMain': true,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
         'isFollowing': _isFollowing,
-        'hasReplies': _isFollowing ? null : true,
+        'hasRepliesOrTypeText': _isFollowing ? null : true,
       },
       popOnErr: false,
     );
@@ -160,14 +164,14 @@ class Viewer extends ScrollxController {
     if (_fetching || !_activities().hasNextPage) return;
     _fetching = true;
 
-    final data = await Network.request(
+    final data = await GraphQL.request(
       _viewerQuery,
       {
         'page': _activities().nextPage,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
         'isFollowing': _isFollowing,
-        'hasReplies': _isFollowing ? null : true,
+        'hasRepliesOrTypeText': _isFollowing ? null : true,
       },
       popOnErr: false,
     );
@@ -179,13 +183,13 @@ class Viewer extends ScrollxController {
 
   Future<void> refetch() async {
     _fetching = true;
-    final data = await Network.request(
+    final data = await GraphQL.request(
       _viewerQuery,
       {
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
         'isFollowing': _isFollowing,
-        'hasReplies': _isFollowing ? null : true,
+        'hasRepliesOrTypeText': _isFollowing ? null : true,
       },
       popOnErr: false,
     );
@@ -196,7 +200,7 @@ class Viewer extends ScrollxController {
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
-    final data = await Network.request(_settingsMutation, variables);
+    final data = await GraphQL.request(_settingsMutation, variables);
     if (data == null) return false;
     _settings = SettingsModel(data['UpdateUser']);
     return true;
@@ -211,7 +215,8 @@ class Viewer extends ScrollxController {
 
     final List<ActivityModel> al = [];
     for (final a in data['Page']['activities']) {
-      al.add(ActivityModel(a));
+      final m = ActivityModel(a);
+      if (m != null) al.add(m);
       _idNotIn.add(al.last.id);
     }
 

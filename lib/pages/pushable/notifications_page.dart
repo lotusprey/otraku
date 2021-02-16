@@ -10,6 +10,8 @@ import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/overlays/option_sheet.dart';
 
 class NotificationsPage extends StatelessWidget {
+  static const ROUTE = '/notifications';
+
   @override
   Widget build(BuildContext context) {
     final notifications = Get.find<Notifications>();

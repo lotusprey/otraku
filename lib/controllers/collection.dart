@@ -7,7 +7,7 @@ import 'package:otraku/models/anilist/collection_list_model.dart';
 import 'package:otraku/models/anilist/entry_model.dart';
 import 'package:otraku/models/anilist/list_entry_model.dart';
 import 'package:otraku/helpers/filterable.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 
 class Collection extends ScrollxController implements Filterable {
@@ -181,10 +181,10 @@ class Collection extends ScrollxController implements Filterable {
 
   Future<void> fetch() async {
     _fetching.value = true;
-    Map<String, dynamic> data = await Network.request(
+    Map<String, dynamic> data = await GraphQL.request(
       _collectionQuery,
       {
-        'userId': userId ?? Network.viewerId,
+        'userId': userId ?? GraphQL.viewerId,
         'type': ofAnime ? 'ANIME' : 'MANGA',
       },
       popOnErr: userId != null,
@@ -248,7 +248,7 @@ class Collection extends ScrollxController implements Filterable {
 
     newEntry.status ??= ListStatus.CURRENT;
 
-    final data = await Network.request(
+    final data = await GraphQL.request(
       _updateEntryMutation,
       {
         'mediaId': newEntry.mediaId,
@@ -337,7 +337,7 @@ class Collection extends ScrollxController implements Filterable {
   }
 
   Future<void> removeEntry(EntryModel entry) async {
-    final data = await Network.request(
+    final data = await GraphQL.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
       popOnErr: false,

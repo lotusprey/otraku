@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,9 +23,9 @@ class _AuthPageState extends State<AuthPage> {
   bool _loading = true;
   StreamSubscription _subscription;
 
-  void _verify() => Network.logIn().then((loggedIn) {
+  void _verify() => GraphQL.logIn().then((loggedIn) {
         if (loggedIn) {
-          Network.initViewerId().then((ok) {
+          GraphQL.initViewerId().then((ok) {
             if (ok) Get.offAllNamed(HomePage.ROUTE);
           });
         } else {
@@ -69,7 +69,7 @@ class _AuthPageState extends State<AuthPage> {
         final String accessToken = link.substring(start, end);
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
-        Network.accessToken = accessToken;
+        GraphQL.accessToken = accessToken;
         _verify();
       },
       onError: (error) {

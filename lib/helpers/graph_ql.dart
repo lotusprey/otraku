@@ -8,8 +8,8 @@ import 'package:http/http.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/auth_page.dart';
 
-class Network {
-  Network._();
+class GraphQL {
+  GraphQL._();
 
   static const String _url = 'https://graphql.anilist.co';
 
@@ -41,22 +41,19 @@ class Network {
   }
 
   static Future<void> logOut() async {
-    await FlutterSecureStorage().deleteAll();
+    FlutterSecureStorage().deleteAll();
     Config.storage.erase();
     _accessToken = null;
     _viewerId = null;
-    Get.offAll(AuthPage());
+    Get.offAllNamed(AuthPage.ROUTE);
   }
 
   static Future<bool> initViewerId() async {
     _viewerId = Config.storage.read('viewerId');
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnErr: false);
-      if (data != null) {
-        _viewerId = data['Viewer']['id'];
-        return true;
-      } else
-        return false;
+      if (data == null) return false;
+      _viewerId = data['Viewer']['id'];
     }
     return true;
   }
@@ -121,7 +118,7 @@ class Network {
     if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
-      Get.offAll(AuthPage());
+      Get.offAllNamed(AuthPage.ROUTE);
       return;
     }
 

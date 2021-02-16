@@ -17,23 +17,23 @@ class UserModel {
     this.description,
     this.avatar,
     this.banner,
-    amFollowing,
+    followed,
     this.follower,
     this.blocked,
     this.donatorBadge,
     this.moderatorStatus,
     this.isMe = false,
   }) {
-    _following = amFollowing;
+    _following = followed;
   }
 
-  factory UserModel(Map<String, dynamic> map, bool me) => UserModel._(
+  factory UserModel(final Map<String, dynamic> map, bool me) => UserModel._(
         id: map['id'],
         name: map['name'],
         description: map['about'],
         avatar: map['avatar']['large'],
         banner: map['bannerImage'],
-        amFollowing: map['isFollowing'],
+        followed: map['isFollowing'],
         follower: map['isFollower'],
         blocked: map['isBlocked'],
         donatorBadge: map['donatorBadge'],
@@ -43,6 +43,6 @@ class UserModel {
 
   bool get following => _following;
 
-  void toggleFollow(Map<String, dynamic> map) =>
+  void toggleFollow(final Map<String, dynamic> map) =>
       _following = map['isFollowing'];
 }

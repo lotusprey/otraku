@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/models/anilist/user_model.dart';
 
 class User extends GetxController {
@@ -91,10 +91,10 @@ class User extends GetxController {
   // ***************************************************************************
 
   Future<void> fetchUser(int id) async {
-    final data = await Network.request(
+    final data = await GraphQL.request(
       _userQuery,
       {
-        'id': id ?? Network.viewerId,
+        'id': id ?? GraphQL.viewerId,
         'withMain': true,
         'withAnime': true,
         'withManga': true,
@@ -124,7 +124,7 @@ class User extends GetxController {
     if (_loading || !_favourites[_favsIndex].hasNextPage) return;
     _loading = true;
 
-    final data = await Network.request(_userQuery, {
+    final data = await GraphQL.request(_userQuery, {
       'id': _user.id,
       'withAnime': _favsIndex == ANIME_FAV,
       'withManga': _favsIndex == MANGA_FAV,
@@ -161,7 +161,7 @@ class User extends GetxController {
   }
 
   Future<void> toggleFollow() async {
-    final data = await Network.request(_toggleFollow, {'id': _user.id});
+    final data = await GraphQL.request(_toggleFollow, {'id': _user.id});
     if (data == null) return;
     _user.toggleFollow(data['ToggleFollow']);
     update();

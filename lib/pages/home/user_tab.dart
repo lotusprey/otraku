@@ -5,7 +5,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/user_model.dart';
@@ -15,7 +14,7 @@ import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
@@ -35,12 +34,12 @@ class UserTab extends StatelessWidget {
         : 10.0;
 
     return GetBuilder<User>(
-      tag: id?.toString() ?? Network.viewerId.toString(),
+      tag: id?.toString() ?? GraphQL.viewerId.toString(),
       builder: (user) => CustomScrollView(
         physics: Config.PHYSICS,
         slivers: [
           _Header(
-            id: id ?? Network.viewerId,
+            id: id ?? GraphQL.viewerId,
             user: user.person,
             isMe: id == null,
             avatarUrl: avatarUrl,
@@ -171,10 +170,7 @@ class _Header extends StatelessWidget {
           IconShade(IconButton(
             icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
             color: Theme.of(context).dividerColor,
-            onPressed: () => Get.to(
-              SettingsPage(),
-              binding: BindingsBuilder.put(() => Settings()),
-            ),
+            onPressed: () => Get.toNamed(SettingsPage.ROUTE),
           ))
         else if (user != null)
           Padding(

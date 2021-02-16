@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/home/feed_controls.dart';
-import 'package:otraku/tools/layouts/activity_list.dart';
+import 'package:otraku/tools/activity_widgets.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
 class FeedTab extends StatelessWidget {
@@ -18,7 +18,31 @@ class FeedTab extends StatelessWidget {
       slivers: [
         const HeadlineHeader('Feed', false),
         FeedControls(viewer),
-        ActivityList(viewer),
+        SliverPadding(
+          padding: Config.PADDING,
+          sliver: Obx(
+            () {
+              final activities = viewer.activities;
+              if ((activities?.length ?? 0) == 0)
+                return SliverFillRemaining(
+                  child: Text(
+                    'No Activities',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                );
+
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (_, i) {
+                    if (i == activities.length - 5) viewer.fetchPage();
+                    return UserActivity(activities[i]);
+                  },
+                  childCount: activities.length,
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
@@ -71,7 +71,7 @@ class Studio extends GetxController {
   Future<void> fetchStudio(int id) async {
     if (_company.value != null) return;
 
-    final body = await Network.request(
+    final body = await GraphQL.request(
       _studioQuery,
       {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
@@ -85,7 +85,7 @@ class Studio extends GetxController {
   }
 
   Future<void> refetch() async {
-    final body = await Network.request(
+    final body = await GraphQL.request(
       _studioQuery,
       {'id': _company().id, 'sort': describeEnum(_sort)},
     );
@@ -96,7 +96,7 @@ class Studio extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    final body = await Network.request(
+    final body = await GraphQL.request(
       _studioQuery,
       {
         'id': _company().id,
@@ -137,7 +137,7 @@ class Studio extends GetxController {
   }
 
   Future<bool> toggleFavourite() async =>
-      await Network.request(
+      await GraphQL.request(
         _toggleFavouriteMutation,
         {'id': _company().id},
         popOnErr: false,

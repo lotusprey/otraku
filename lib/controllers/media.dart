@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/helpers/network.dart';
+import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/related_review_model.dart';
 import 'package:otraku/models/loadable_list.dart';
-import 'package:otraku/models/media_overview.dart';
+import 'package:otraku/models/anilist/media_overview_model.dart';
 import 'package:otraku/models/connection.dart';
 import 'package:otraku/models/anilist/related_media_model.dart';
 
@@ -128,7 +128,7 @@ class Media extends ScrollxController {
 
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
-  final _overview = Rx<MediaOverview>();
+  final _overview = Rx<MediaOverviewModel>();
   final _otherMedia = List<RelatedMediaModel>().obs;
   final _characters = Rx<LoadableList<Connection>>();
   final _staff = Rx<LoadableList<Connection>>();
@@ -149,7 +149,7 @@ class Media extends ScrollxController {
     if (value == REL_STAFF && _staff() == null) fetchRelationPage(false);
   }
 
-  MediaOverview get overview => _overview();
+  MediaOverviewModel get overview => _overview();
 
   List<RelatedMediaModel> get otherMedia => _otherMedia();
 
@@ -178,7 +178,7 @@ class Media extends ScrollxController {
   Future<void> fetchOverview(int id) async {
     if (_overview.value != null) return;
 
-    final result = await Network.request(_mediaQuery, {
+    final result = await GraphQL.request(_mediaQuery, {
       'id': id,
       'withMain': true,
       'withReviews': true,
@@ -187,7 +187,7 @@ class Media extends ScrollxController {
     if (result == null) return null;
 
     final data = result['Media'];
-    _overview(MediaOverview(data));
+    _overview(MediaOverviewModel(data));
 
     final List<RelatedMediaModel> mediaRel = [];
     for (final relation in data['relations']['edges'])
@@ -204,7 +204,7 @@ class Media extends ScrollxController {
     if (ofCharacters && !(_characters()?.hasNextPage ?? true)) return;
     if (!ofCharacters && !(_staff()?.hasNextPage ?? true)) return;
 
-    final result = await Network.request(_mediaQuery, {
+    final result = await GraphQL.request(_mediaQuery, {
       'id': overview.id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
@@ -276,7 +276,7 @@ class Media extends ScrollxController {
   Future<void> fetchReviewPage() async {
     if (!_reviews().hasNextPage) return;
 
-    final result = await Network.request(_mediaQuery, {
+    final result = await GraphQL.request(_mediaQuery, {
       'id': overview.id,
       'withReviews': true,
       'reviewPage': _reviews()?.nextPage,
@@ -293,7 +293,7 @@ class Media extends ScrollxController {
   }
 
   Future<bool> toggleFavourite() async =>
-      await Network.request(
+      await GraphQL.request(
         _overview().browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,

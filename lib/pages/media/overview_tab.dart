@@ -7,14 +7,14 @@ import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/helpers/filterable.dart';
-import 'package:otraku/models/media_overview.dart';
+import 'package:otraku/models/anilist/media_overview_model.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fields/input_field_structure.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class OverviewTab extends StatelessWidget {
-  final MediaOverview overview;
+  final MediaOverviewModel overview;
 
   OverviewTab(this.overview);
 

@@ -4,7 +4,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/list_status.dart';
 
-class MediaOverview {
+class MediaOverviewModel {
   final int id;
   final Browsable browsable;
   final int favourites;
@@ -39,7 +39,7 @@ class MediaOverview {
   final String hashtag;
   final String countryOfOrigin;
 
-  MediaOverview._({
+  MediaOverviewModel._({
     @required this.id,
     @required this.browsable,
     @required this.favourites,
@@ -75,7 +75,7 @@ class MediaOverview {
     @required this.countryOfOrigin,
   });
 
-  factory MediaOverview(Map<String, dynamic> map) {
+  factory MediaOverviewModel(Map<String, dynamic> map) {
     String duration;
     if (map['duration'] != null) {
       int time = map['duration'];
@@ -102,7 +102,7 @@ class MediaOverview {
           producers[company['node']['name']] = company['node']['id'];
     }
 
-    return MediaOverview._(
+    return MediaOverviewModel._(
       id: map['id'],
       browsable: map['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
       isFavourite: map['isFavourite'],

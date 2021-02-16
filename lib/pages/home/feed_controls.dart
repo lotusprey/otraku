@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/helpers/fn_helper.dart';
@@ -67,12 +66,7 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
               IconButton(
                 padding: const EdgeInsets.all(0),
                 icon: const Icon(Icons.notifications_outlined),
-                onPressed: () => Get.to(
-                  NotificationsPage(),
-                  binding: BindingsBuilder.put(
-                    () => Notifications()..fetchData(),
-                  ),
-                ),
+                onPressed: () => Get.toNamed(NotificationsPage.ROUTE),
               ),
             ],
           ),

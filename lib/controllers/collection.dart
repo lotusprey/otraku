@@ -471,4 +471,10 @@ class Collection extends ScrollxController implements Filterable {
     for (final key in keys) if (_filters.containsKey(key)) return true;
     return false;
   }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
+  }
 }

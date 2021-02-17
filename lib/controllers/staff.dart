@@ -71,6 +71,9 @@ class Staff extends GetxController {
   // DATA
   // ***************************************************************************
 
+  final int _id;
+  Staff(this._id);
+
   final _person = Rx<PersonModel>();
   final _characterList = Rx<LoadableList<Connection>>();
   final _roleList = Rx<LoadableList<Connection>>();
@@ -98,11 +101,11 @@ class Staff extends GetxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchStaff(int id) async {
+  Future<void> fetch() async {
     if (_person.value != null) return;
 
     final body = await GraphQL.request(_staffQuery, {
-      'id': id,
+      'id': _id,
       'withPerson': true,
       'withCharacters': true,
       'withStaff': true,
@@ -120,7 +123,7 @@ class Staff extends GetxController {
 
   Future<void> refetch() async {
     final body = await GraphQL.request(_staffQuery, {
-      'id': _person().id,
+      'id': _id,
       'withCharacters': true,
       'withStaff': true,
       'sort': describeEnum(_sort),
@@ -136,7 +139,7 @@ class Staff extends GetxController {
     if (!_onCharacters() && !_roleList().hasNextPage) return;
 
     final body = await GraphQL.request(_staffQuery, {
-      'id': _person().id,
+      'id': _id,
       'withCharacters': _onCharacters(),
       'withStaff': !_onCharacters(),
       'characterPage': _characterList().nextPage,
@@ -157,7 +160,7 @@ class Staff extends GetxController {
               title: char['name']['full'],
               imageUrl: char['image']['large'],
               browsable: Browsable.character,
-              subtitle: FnHelper.clarifyEnum(connection['characterRole']),
+              text2: FnHelper.clarifyEnum(connection['characterRole']),
               others: [
                 Connection(
                   id: connection['node']['id'],
@@ -180,7 +183,7 @@ class Staff extends GetxController {
           browsable: connection['node']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
-          subtitle: FnHelper.clarifyEnum(connection['staffRole']),
+          text2: FnHelper.clarifyEnum(connection['staffRole']),
         ));
 
       _roleList.update((list) => list.append(
@@ -191,7 +194,7 @@ class Staff extends GetxController {
   Future<bool> toggleFavourite() async =>
       await GraphQL.request(
         _toggleFavouriteMutation,
-        {'id': _person().id},
+        {'id': _id},
         popOnErr: false,
       ) !=
       null;
@@ -209,7 +212,7 @@ class Staff extends GetxController {
             title: char['name']['full'],
             imageUrl: char['image']['large'],
             browsable: Browsable.character,
-            subtitle: FnHelper.clarifyEnum(connection['characterRole']),
+            text2: FnHelper.clarifyEnum(connection['characterRole']),
             others: [
               Connection(
                 id: connection['node']['id'],
@@ -237,12 +240,18 @@ class Staff extends GetxController {
         browsable: connection['node']['type'] == 'ANIME'
             ? Browsable.anime
             : Browsable.manga,
-        subtitle: FnHelper.clarifyEnum(connection['staffRole']),
+        text2: FnHelper.clarifyEnum(connection['staffRole']),
       ));
 
     _roleList(LoadableList(
       connections,
       data['staffMedia']['pageInfo']['hasNextPage'],
     ));
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

@@ -145,7 +145,7 @@ class Notifications extends ScrollxController {
   set filter(int val) {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
-    fetchData();
+    fetch();
     scrollTo(0);
   }
 
@@ -155,7 +155,7 @@ class Notifications extends ScrollxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchData() async {
+  Future<void> fetch() async {
     _fetching = true;
     Map<String, dynamic> data = await GraphQL.request(
       _notificationQuery,
@@ -198,6 +198,12 @@ class Notifications extends ScrollxController {
     _entries.append(nl, data['pageInfo']['hasNextPage']);
     update();
     _fetching = false;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 
   @override

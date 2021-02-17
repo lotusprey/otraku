@@ -30,6 +30,9 @@ class Entry extends GetxController {
     }
   ''';
 
+  final int _id;
+  Entry(this._id);
+
   EntryModel _entry;
   EntryModel _copy;
 
@@ -37,8 +40,8 @@ class Entry extends GetxController {
 
   EntryModel get oldData => _copy;
 
-  Future<void> fetchEntry(int id) async {
-    final body = await GraphQL.request(_entryQuery, {'id': id});
+  Future<void> fetch() async {
+    final body = await GraphQL.request(_entryQuery, {'id': _id});
 
     if (body == null) return;
 
@@ -59,5 +62,11 @@ class Entry extends GetxController {
     }
 
     update();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

@@ -9,6 +9,8 @@ import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 
 class ReviewPage extends StatelessWidget {
+  static const ROUTE = '/review';
+
   final int id;
   final String bannerUrl;
 

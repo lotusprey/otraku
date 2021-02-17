@@ -3,18 +3,18 @@ import 'package:otraku/enums/browsable.dart';
 
 class BrowseResultModel {
   final int id;
-  final String title;
-  final String subtitle;
-  final String caption;
+  final String text1;
+  final String text2;
+  final String text3;
   final String imageUrl;
   final Browsable browsable;
 
   BrowseResultModel({
     @required this.id,
-    @required this.title,
+    @required this.text1,
     @required this.browsable,
-    this.subtitle,
-    this.caption,
+    this.text2,
+    this.text3,
     this.imageUrl,
   });
 }

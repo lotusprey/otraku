@@ -10,10 +10,6 @@ class Settings extends GetxController {
   SettingsModel _data;
   int _pageIndex = 0;
 
-  Settings() {
-    _data = Get.find<Viewer>().settings;
-  }
-
   Map<String, dynamic> get changes => _changes;
 
   SettingsModel get data => _data;
@@ -23,6 +19,12 @@ class Settings extends GetxController {
   set pageIndex(int val) {
     _pageIndex = val;
     update();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    _data = Get.find<Viewer>().settings;
   }
 
   @override

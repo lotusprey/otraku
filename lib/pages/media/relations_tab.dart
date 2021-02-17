@@ -67,7 +67,7 @@ class RelationsTab extends StatelessWidget {
                                     ),
                                     Flexible(
                                       child: Text(
-                                        media.otherMedia[index].title,
+                                        media.otherMedia[index].text1,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1,

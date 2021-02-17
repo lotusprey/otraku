@@ -132,14 +132,6 @@ class Explorer extends ScrollxController implements Filterable {
   // FUNCTIONS CONTROLLING QUERY VARIABLES
   // ***************************************************************************
 
-  @override
-  void onInit() {
-    super.onInit();
-    _search.firstRebuild = false;
-    debounce(_search, (_) => fetchData(),
-        time: const Duration(milliseconds: 600));
-  }
-
   set type(Browsable value) {
     if (value == null) return;
     _type.value = value;
@@ -148,7 +140,7 @@ class Explorer extends ScrollxController implements Filterable {
     if (value == Browsable.manga) _filters[Filterable.TYPE] = 'MANGA';
 
     _filters.remove(Filterable.FORMAT_IN);
-    fetchData();
+    fetch();
   }
 
   set search(String value) {
@@ -176,7 +168,7 @@ class Explorer extends ScrollxController implements Filterable {
       _filters[key] = value;
     }
 
-    if (update) fetchData();
+    if (update) fetch();
   }
 
   @override
@@ -196,7 +188,7 @@ class Explorer extends ScrollxController implements Filterable {
       _filters.remove(key);
     }
 
-    if (update) fetchData();
+    if (update) fetch();
   }
 
   @override
@@ -207,14 +199,14 @@ class Explorer extends ScrollxController implements Filterable {
 
   void loadMore() {
     _filters[Filterable.PAGE]++;
-    fetchData(clean: false);
+    fetch(clean: false);
   }
 
   // ***************************************************************************
   // DATA FETCHING
   // ***************************************************************************
 
-  Future<void> fetchData({bool clean = true}) async {
+  Future<void> fetch({bool clean = true}) async {
     _concurrentFetches++;
 
     if (clean) {
@@ -225,36 +217,25 @@ class Explorer extends ScrollxController implements Filterable {
 
     final currentType = _type.value;
     String query;
-    Map<String, dynamic> variables;
 
     if (currentType == Browsable.anime || currentType == Browsable.manga) {
       query = _mediaQuery;
-      variables = {..._filters};
     } else {
-      variables = {
-        Filterable.PAGE: _filters[Filterable.PAGE],
-        Filterable.SEARCH: _filters[Filterable.SEARCH],
-        Filterable.ID_NOT_IN: _filters[Filterable.ID_NOT_IN],
-      };
-
-      if (currentType == Browsable.character) {
+      if (currentType == Browsable.character)
         query = _charactersQuery;
-      } else if (currentType == Browsable.staff) {
+      else if (currentType == Browsable.staff)
         query = _staffQuery;
-      } else if (currentType == Browsable.studio) {
+      else if (currentType == Browsable.studio)
         query = _studiosQuery;
-      } else if (currentType == Browsable.user) {
+      else if (currentType == Browsable.user)
         query = _usersQuery;
-      } else {
+      else
         query = _reviewsQuery;
-      }
     }
-
-    if (_search() != null && _search() != '') variables['search'] = _search();
 
     final data = await GraphQL.request(
       query,
-      variables,
+      {..._filters, if (_search() != '') 'search': _search()},
       popOnErr: false,
     );
 
@@ -263,67 +244,66 @@ class Explorer extends ScrollxController implements Filterable {
 
     _hasNextPage.value = data['Page']['pageInfo']['hasNextPage'];
 
-    List<BrowseResultModel> loaded = [];
+    final List<BrowseResultModel> loaded = [];
 
-    if (currentType == Browsable.anime || currentType == Browsable.manga) {
-      for (final m in data['Page']['media'] as List<dynamic>) {
+    if (currentType == Browsable.anime || currentType == Browsable.manga)
+      for (final m in data['Page']['media']) {
         loaded.add(BrowseResultModel(
           id: m['id'],
-          title: m['title']['userPreferred'],
+          text1: m['title']['userPreferred'],
           imageUrl: m['coverImage']['large'],
           browsable: currentType,
         ));
         (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(m['id']);
       }
-    } else if (currentType == Browsable.character) {
-      for (final c in data['Page']['characters'] as List<dynamic>) {
+    else if (currentType == Browsable.character)
+      for (final c in data['Page']['characters']) {
         loaded.add(BrowseResultModel(
           id: c['id'],
-          title: c['name']['full'],
+          text1: c['name']['full'],
           imageUrl: c['image']['large'],
           browsable: currentType,
         ));
         (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(c['id']);
       }
-    } else if (currentType == Browsable.staff) {
-      for (final c in data['Page']['staff'] as List<dynamic>) {
+    else if (currentType == Browsable.staff)
+      for (final c in data['Page']['staff']) {
         loaded.add(BrowseResultModel(
           id: c['id'],
-          title: c['name']['full'],
+          text1: c['name']['full'],
           imageUrl: c['image']['large'],
           browsable: currentType,
         ));
         (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(c['id']);
       }
-    } else if (currentType == Browsable.studio) {
-      for (final s in data['Page']['studios'] as List<dynamic>) {
+    else if (currentType == Browsable.studio)
+      for (final s in data['Page']['studios']) {
         loaded.add(BrowseResultModel(
           id: s['id'],
-          title: s['name'],
+          text1: s['name'],
           browsable: currentType,
         ));
         (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(s['id']);
       }
-    } else if (currentType == Browsable.user) {
-      for (final u in data['Page']['users'] as List<dynamic>)
+    else if (currentType == Browsable.user)
+      for (final u in data['Page']['users'])
         loaded.add(BrowseResultModel(
           id: u['id'],
-          title: u['name'],
+          text1: u['name'],
           imageUrl: u['avatar']['large'],
           browsable: currentType,
         ));
-    } else {
-      for (final r in data['Page']['reviews'] as List<dynamic>)
+    else
+      for (final r in data['Page']['reviews'])
         loaded.add(BrowseResultModel(
           id: r['id'],
-          title:
+          text1:
               'Review of ${r['media']['title']['userPreferred']} by ${r['user']['name']}',
-          subtitle: r['summary'],
-          caption: '${r['rating']}/${r['ratingAmount']}',
+          text2: r['summary'],
+          text3: '${r['rating']}/${r['ratingAmount']}',
           imageUrl: r['media']['bannerImage'],
           browsable: currentType,
         ));
-    }
 
     if (clean) {
       scrollTo(0);
@@ -338,7 +318,7 @@ class Explorer extends ScrollxController implements Filterable {
   Future<void> fetchInitial() async {
     _isLoading.value = true;
 
-    final query = '''
+    const query = '''
         query Filters {
           Viewer {options {displayAdultContent}}
           GenreCollection
@@ -370,10 +350,10 @@ class Explorer extends ScrollxController implements Filterable {
 
     List<BrowseResultModel> loaded = [];
 
-    for (final m in data['Page']['media'] as List<dynamic>) {
+    for (final m in data['Page']['media']) {
       loaded.add(BrowseResultModel(
         id: m['id'],
-        title: m['title']['userPreferred'],
+        text1: m['title']['userPreferred'],
         imageUrl: m['coverImage']['large'],
         browsable: Browsable.anime,
       ));
@@ -381,7 +361,14 @@ class Explorer extends ScrollxController implements Filterable {
     }
 
     _results.assignAll(loaded);
-
     _isLoading.value = false;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchInitial();
+    _search.firstRebuild = false;
+    debounce(_search, (_) => fetch(), time: const Duration(milliseconds: 600));
   }
 }

@@ -28,6 +28,9 @@ class Review extends GetxController {
   // DATA
   // ***************************************************************************
 
+  final int _id;
+  Review(this._id);
+
   ReviewModel _data;
 
   ReviewModel get data => _data;
@@ -36,10 +39,16 @@ class Review extends GetxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchReview(int id) async {
-    final body = await GraphQL.request(_reviewQuery, {'id': id});
+  Future<void> fetch() async {
+    final body = await GraphQL.request(_reviewQuery, {'id': _id});
     if (body == null) return;
     _data = ReviewModel(body['Review']);
     update();
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

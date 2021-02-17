@@ -7,6 +7,8 @@ import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
 class CollectionTab extends StatelessWidget {
+  static const ROUTE = '/collection';
+
   final int otherUserId;
   final bool ofAnime;
   final String collectionTag;

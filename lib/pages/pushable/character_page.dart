@@ -10,6 +10,8 @@ import 'package:otraku/tools/overlays/option_sheet.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class CharacterPage extends StatelessWidget {
+  static const ROUTE = '/character';
+
   final int id;
   final String imageUrl;
 

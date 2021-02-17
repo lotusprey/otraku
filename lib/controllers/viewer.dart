@@ -139,7 +139,7 @@ class Viewer extends ScrollxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchData() async {
+  Future<void> fetch() async {
     final data = await GraphQL.request(
       _viewerQuery,
       {
@@ -226,5 +226,11 @@ class Viewer extends ScrollxController {
       _activities.update(
         (a) => a.append(al, data['Page']['pageInfo']['hasNextPage']),
       );
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

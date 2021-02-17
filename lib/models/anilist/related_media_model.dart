@@ -16,7 +16,7 @@ class RelatedMediaModel extends BrowseResultModel {
     @required String title,
     @required String imageUrl,
     @required Browsable browsable,
-  }) : super(id: id, title: title, imageUrl: imageUrl, browsable: browsable);
+  }) : super(id: id, text1: title, imageUrl: imageUrl, browsable: browsable);
 
   factory RelatedMediaModel(Map<String, dynamic> map) => RelatedMediaModel._(
         id: map['node']['id'],

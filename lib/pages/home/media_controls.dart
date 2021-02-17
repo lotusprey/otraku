@@ -259,7 +259,7 @@ class __NavigationState extends State<_Navigation> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!_searchMode) ...[
+          if (!_searchMode || widget.search == null) ...[
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
@@ -407,13 +407,16 @@ class __FilterState extends State<_Filter> {
   }
 
   void _pushPage(BuildContext context) =>
-      Get.to(FilterPage(widget.collectionTag, (newActive) {
-        if (newActive == null) {
-          setState(() => _active = _checkIfActive());
-        } else {
-          setState(() => _active = newActive);
-        }
-      }));
+      Get.toNamed(FilterPage.ROUTE, arguments: [
+        widget.collectionTag,
+        (newActive) {
+          if (newActive == null) {
+            setState(() => _active = _checkIfActive());
+          } else {
+            setState(() => _active = newActive);
+          }
+        },
+      ]);
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([
         Filterable.STATUS_IN,

@@ -126,6 +126,9 @@ class Media extends ScrollxController {
   // DATA
   // ***************************************************************************
 
+  final int _id;
+  Media(this._id);
+
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
   final _overview = Rx<MediaOverviewModel>();
@@ -175,11 +178,11 @@ class Media extends ScrollxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchOverview(int id) async {
+  Future<void> fetch() async {
     if (_overview.value != null) return;
 
     final result = await GraphQL.request(_mediaQuery, {
-      'id': id,
+      'id': _id,
       'withMain': true,
       'withReviews': true,
     });
@@ -205,7 +208,7 @@ class Media extends ScrollxController {
     if (!ofCharacters && !(_staff()?.hasNextPage ?? true)) return;
 
     final result = await GraphQL.request(_mediaQuery, {
-      'id': overview.id,
+      'id': _id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
       'characterPage': _characters()?.nextPage,
@@ -230,14 +233,14 @@ class Media extends ScrollxController {
             title: va['name']['full'],
             imageUrl: va['image']['large'],
             browsable: Browsable.staff,
-            subtitle: language,
+            text2: language,
           ));
         }
 
         items.add(Connection(
           id: connection['node']['id'],
           title: connection['node']['name']['full'],
-          subtitle: FnHelper.clarifyEnum(connection['role']),
+          text2: FnHelper.clarifyEnum(connection['role']),
           imageUrl: connection['node']['image']['large'],
           others: voiceActors,
           browsable: Browsable.character,
@@ -257,7 +260,7 @@ class Media extends ScrollxController {
         items.add(Connection(
           id: connection['node']['id'],
           title: connection['node']['name']['full'],
-          subtitle: connection['role'],
+          text2: connection['role'],
           imageUrl: connection['node']['image']['large'],
           browsable: Browsable.staff,
         ));
@@ -277,7 +280,7 @@ class Media extends ScrollxController {
     if (!_reviews().hasNextPage) return;
 
     final result = await GraphQL.request(_mediaQuery, {
-      'id': overview.id,
+      'id': _id,
       'withReviews': true,
       'reviewPage': _reviews()?.nextPage,
     });
@@ -297,8 +300,14 @@ class Media extends ScrollxController {
         _overview().browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
-        {'id': _overview().id},
+        {'id': _id},
         popOnErr: false,
       ) !=
       null;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
+  }
 }

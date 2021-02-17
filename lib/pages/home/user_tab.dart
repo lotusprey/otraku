@@ -10,18 +10,18 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
-import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/tools/fade_image.dart';
-import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class UserTab extends StatelessWidget {
+  static const ROUTE = '/user';
+
   final int id;
   final String avatarUrl;
 
@@ -120,20 +120,9 @@ class UserTab extends StatelessWidget {
 
   void _pushCollection(bool ofAnime) {
     final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';
-    Get.to(
-      TabPage(
-        CollectionTab(
-          otherUserId: id,
-          ofAnime: ofAnime,
-          collectionTag: collectionTag,
-          key: null,
-        ),
-        drawer: CollectionDrawer(collectionTag),
-      ),
-      binding: BindingsBuilder(() {
-        if (!Get.isRegistered<Collection>(tag: collectionTag))
-          Get.put(Collection(id, ofAnime), tag: collectionTag).fetch();
-      }),
+    Get.toNamed(
+      CollectionTab.ROUTE,
+      arguments: [id, ofAnime, collectionTag],
       preventDuplicates: false,
     );
   }

@@ -16,6 +16,8 @@ import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/layouts/chip_grid.dart';
 
 class FilterPage extends StatelessWidget {
+  static const ROUTE = '/filters';
+
   final String collectionTag;
   final Function(bool) onUpdate;
   final Map<String, dynamic> changes = {};
@@ -87,7 +89,7 @@ class FilterPage extends StatelessWidget {
                 if (originalSort != changes[Filterable.SORT]) filterable.sort();
                 filterable.filter();
               }
-              if (filterable is Explorer) filterable.fetchData();
+              if (filterable is Explorer) filterable.fetch();
 
               onUpdate(null);
               Navigator.of(context).pop();

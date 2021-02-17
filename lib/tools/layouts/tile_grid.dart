@@ -52,7 +52,7 @@ class TileGrid extends StatelessWidget {
                     SizedBox(
                       height: tileModel.textHeight,
                       child: Text(
-                        tileData[index].title,
+                        tileData[index].text1,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
                         style: Theme.of(context).textTheme.subtitle1,

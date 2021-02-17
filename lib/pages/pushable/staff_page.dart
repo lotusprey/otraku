@@ -9,6 +9,8 @@ import 'package:otraku/tools/layouts/connections_grid.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StaffPage extends StatelessWidget {
+  static const ROUTE = '/staff';
+
   final int id;
   final String imageUrl;
 

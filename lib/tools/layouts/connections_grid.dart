@@ -51,7 +51,7 @@ class _MediaConnectionTile extends StatelessWidget {
       index = 0;
     else
       for (int i = 0; i < item.others.length; i++)
-        if (item.others[i].subtitle == preferredSubtitle) {
+        if (item.others[i].text2 == preferredSubtitle) {
           index = i;
           break;
         }
@@ -89,13 +89,13 @@ class _MediaConnectionTile extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  item.title,
+                                  item.text1,
                                   overflow: TextOverflow.fade,
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
                               Text(
-                                item.subtitle,
+                                item.text2,
                                 maxLines: 2,
                                 overflow: TextOverflow.fade,
                                 style: Theme.of(context).textTheme.subtitle2,
@@ -129,7 +129,7 @@ class _MediaConnectionTile extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    item.others[index].title,
+                                    item.others[index].text1,
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.end,
                                     style:
@@ -137,7 +137,7 @@ class _MediaConnectionTile extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  item.others[index].subtitle,
+                                  item.others[index].text2,
                                   style: Theme.of(context).textTheme.subtitle2,
                                 ),
                               ],

@@ -10,6 +10,8 @@ import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/pages/media/media_header.dart';
 
 class MediaPage extends StatelessWidget {
+  static const ROUTE = '/media';
+
   final int id;
   final String coverUrl;
 

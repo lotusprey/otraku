@@ -12,6 +12,8 @@ import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/overlays/sort_sheet.dart';
 
 class StudioPage extends StatelessWidget {
+  static const ROUTE = '/studio';
+
   final int id;
   final String name;
 

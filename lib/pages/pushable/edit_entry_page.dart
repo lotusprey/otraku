@@ -17,6 +17,8 @@ import 'package:otraku/tools/fields/score_picker.dart';
 import 'package:otraku/tools/overlays/dialogs.dart';
 
 class EditEntryPage extends StatefulWidget {
+  static const ROUTE = '/edit';
+
   final int mediaId;
   final Function(ListStatus) update;
 
@@ -69,7 +71,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                 ).removeEntry(entry.oldData);
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
-                                widget.update(null);
+                                widget.update?.call(null);
                               },
                             ),
                           ],
@@ -87,7 +89,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             : Collection.MANGA,
                       ).updateEntry(entry.oldData, data);
                       Navigator.of(context).pop();
-                      widget.update(data.status);
+                      widget.update?.call(data.status);
                     }),
               ],
             ],

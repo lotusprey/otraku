@@ -19,12 +19,12 @@ class TitleList extends StatelessWidget {
               return BrowseIndexer(
                 browsable: results[index].browsable,
                 id: results[index].id,
-                imageUrl: results[index].title,
+                imageUrl: results[index].text1,
                 child: Hero(
                   tag: results[index].id,
                   child: Container(
                     child: Text(
-                      results[index].title,
+                      results[index].text1,
                       style: Theme.of(context).textTheme.headline3,
                       maxLines: 2,
                     ),

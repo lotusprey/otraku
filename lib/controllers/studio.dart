@@ -49,6 +49,9 @@ class Studio extends GetxController {
   // DATA
   // ***************************************************************************
 
+  final int _id;
+  Studio(this._id);
+
   final _company = Rx<PersonModel>();
   final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
@@ -68,12 +71,12 @@ class Studio extends GetxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchStudio(int id) async {
+  Future<void> fetch() async {
     if (_company.value != null) return;
 
     final body = await GraphQL.request(
       _studioQuery,
-      {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
+      {'id': _id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
     if (body == null) return;
 
@@ -87,7 +90,7 @@ class Studio extends GetxController {
   Future<void> refetch() async {
     final body = await GraphQL.request(
       _studioQuery,
-      {'id': _company().id, 'sort': describeEnum(_sort)},
+      {'id': _id, 'sort': describeEnum(_sort)},
     );
 
     if (body == null) return;
@@ -99,7 +102,7 @@ class Studio extends GetxController {
     final body = await GraphQL.request(
       _studioQuery,
       {
-        'id': _company().id,
+        'id': _id,
         'page': _media().nextPage,
         'sort': describeEnum(_sort),
       },
@@ -123,7 +126,7 @@ class Studio extends GetxController {
 
       results.last.add(BrowseResultModel(
         id: node['id'],
-        title: node['title']['userPreferred'],
+        text1: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],
         browsable: Browsable.anime,
       ));
@@ -139,7 +142,7 @@ class Studio extends GetxController {
   Future<bool> toggleFavourite() async =>
       await GraphQL.request(
         _toggleFavouriteMutation,
-        {'id': _company().id},
+        {'id': _id},
         popOnErr: false,
       ) !=
       null;
@@ -169,7 +172,7 @@ class Studio extends GetxController {
 
       results.last.add(BrowseResultModel(
         id: node['id'],
-        title: node['title']['userPreferred'],
+        text1: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],
         browsable: Browsable.anime,
       ));
@@ -180,5 +183,11 @@ class Studio extends GetxController {
       results,
       data['pageInfo']['hasNextPage'],
     ));
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

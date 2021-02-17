@@ -54,6 +54,9 @@ class Character extends GetxController {
   // DATA
   // ***************************************************************************
 
+  final int _id;
+  Character(this._id);
+
   final _person = Rx<PersonModel>();
   final _anime = Rx<LoadableList<Connection>>();
   final _manga = Rx<LoadableList<Connection>>();
@@ -95,11 +98,11 @@ class Character extends GetxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchCharacter(int id) async {
+  Future<void> fetch() async {
     if (_person.value != null) return;
 
     final body = await GraphQL.request(_characterQuery, {
-      'id': id,
+      'id': _id,
       'withPerson': true,
       'withAnime': true,
       'withManga': true,
@@ -133,7 +136,7 @@ class Character extends GetxController {
     if (!_onAnime() && !_manga().hasNextPage) return;
 
     final body = await GraphQL.request(_characterQuery, {
-      'id': _person().id,
+      'id': _id,
       'withAnime': _onAnime(),
       'withManga': !_onAnime(),
       'animePage': _anime().nextPage,
@@ -156,7 +159,7 @@ class Character extends GetxController {
             title: va['name']['full'],
             imageUrl: va['image']['large'],
             browsable: Browsable.staff,
-            subtitle: FnHelper.clarifyEnum(va['language']),
+            text2: FnHelper.clarifyEnum(va['language']),
           ));
 
         connections.add(Connection(
@@ -164,7 +167,7 @@ class Character extends GetxController {
           title: connection['node']['title']['userPreferred'],
           imageUrl: connection['node']['coverImage']['large'],
           browsable: Browsable.anime,
-          subtitle: FnHelper.clarifyEnum(connection['characterRole']),
+          text2: FnHelper.clarifyEnum(connection['characterRole']),
           others: voiceActors,
         ));
       }
@@ -179,7 +182,7 @@ class Character extends GetxController {
           title: connection['node']['title']['userPreferred'],
           imageUrl: connection['node']['coverImage']['large'],
           browsable: Browsable.manga,
-          subtitle: FnHelper.clarifyEnum(connection['characterRole']),
+          text2: FnHelper.clarifyEnum(connection['characterRole']),
         ));
 
       _manga.update((media) {
@@ -191,7 +194,7 @@ class Character extends GetxController {
   Future<bool> toggleFavourite() async =>
       await GraphQL.request(
         _toggleFavouriteMutation,
-        {'id': _person().id},
+        {'id': _id},
         popOnErr: false,
       ) !=
       null;
@@ -217,7 +220,7 @@ class Character extends GetxController {
           title: va['name']['full'],
           imageUrl: va['image']['large'],
           browsable: Browsable.staff,
-          subtitle: language,
+          text2: language,
         ));
       }
 
@@ -226,7 +229,7 @@ class Character extends GetxController {
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
         browsable: Browsable.anime,
-        subtitle: FnHelper.clarifyEnum(connection['characterRole']),
+        text2: FnHelper.clarifyEnum(connection['characterRole']),
         others: voiceActors,
       ));
     }
@@ -246,12 +249,18 @@ class Character extends GetxController {
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
         browsable: Browsable.manga,
-        subtitle: FnHelper.clarifyEnum(connection['characterRole']),
+        text2: FnHelper.clarifyEnum(connection['characterRole']),
       ));
 
     _manga(LoadableList(
       connections,
       data['manga']['pageInfo']['hasNextPage'],
     ));
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

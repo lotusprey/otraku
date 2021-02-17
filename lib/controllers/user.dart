@@ -54,6 +54,9 @@ class User extends GetxController {
   static const STAFF_FAV = 3;
   static const STUDIO_FAV = 4;
 
+  final int _id;
+  User(this._id);
+
   UserModel _user;
   int _favsIndex = ANIME_FAV;
   bool _loading = true;
@@ -90,11 +93,11 @@ class User extends GetxController {
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetchUser(int id) async {
+  Future<void> fetch() async {
     final data = await GraphQL.request(
       _userQuery,
       {
-        'id': id ?? GraphQL.viewerId,
+        'id': _id,
         'withMain': true,
         'withAnime': true,
         'withManga': true,
@@ -102,12 +105,12 @@ class User extends GetxController {
         'withStaff': true,
         'withStudios': true,
       },
-      popOnErr: id != null,
+      popOnErr: _id != GraphQL.viewerId,
     );
 
     if (data == null) return;
 
-    _user = UserModel(data['User'], id == null);
+    _user = UserModel(data['User'], _id == GraphQL.viewerId);
     final favs = data['User']['favourites'];
 
     _appendMediaFavs(favs['anime'], ANIME_FAV, Browsable.anime);
@@ -180,7 +183,7 @@ class User extends GetxController {
     for (final node in data['nodes'])
       items.add(BrowseResultModel(
         id: node['id'],
-        title: node['title']['userPreferred'],
+        text1: node['title']['userPreferred'],
         imageUrl: node['coverImage']['large'],
         browsable: browsable,
       ));
@@ -196,7 +199,7 @@ class User extends GetxController {
     for (final node in data['nodes'])
       items.add(BrowseResultModel(
         id: node['id'],
-        title: node['name']['full'],
+        text1: node['name']['full'],
         imageUrl: node['image']['large'],
         browsable: browsable,
       ));
@@ -208,9 +211,15 @@ class User extends GetxController {
     for (final node in data['nodes'])
       items.add(BrowseResultModel(
         id: node['id'],
-        title: node['name'],
+        text1: node['name'],
         browsable: Browsable.studio,
       ));
     _favourites[STUDIO_FAV].append(items, data['pageInfo']['hasNextPage']);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

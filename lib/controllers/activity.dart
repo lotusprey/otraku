@@ -1,7 +1,8 @@
+import 'package:get/get.dart';
 import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 
-class Activity {
+class Activity extends GetxController {
   static const _activityQuery = r'''
     query Activity($id: Int, $withActivity: Boolean = false) {
       Activity(id: $id) {
@@ -57,7 +58,7 @@ class Activity {
       likeCount
       isLiked
       createdAt
-      text {asHtml: true}
+      text(asHtml: true)
       user {id name avatar {large}}
     }
   ''';
@@ -82,41 +83,50 @@ class Activity {
     }
   ''';
 
-  ActivityModel _activity;
+  final int _id;
+  Activity(this._id, [this._model]);
 
-  ActivityModel get model => _activity;
+  ActivityModel _model;
 
-  // TODO: Finish activity fetching
-  Future<void> fetch(final int id, final ActivityModel activityModel) async {
+  ActivityModel get model => _model;
+
+  Future<void> fetch() async {
     final data = await GraphQL.request(
       _activityQuery,
-      {'id': id, 'withActivity': activityModel == null},
+      {'id': _id, 'withActivity': _model == null},
     );
     if (data == null) return;
 
-    if (activityModel == null)
-      _activity = ActivityModel(data['Activity']);
+    if (_model == null)
+      _model = ActivityModel(data['Activity']);
     else
-      _activity = activityModel..appendReplies(data['Activity']);
+      _model.appendReplies(data['Activity']);
+    update();
   }
 
-  static Future<void> toggleLike(ActivityModel activity) async {
+  static Future<void> toggleLike(ActivityModel activityModel) async {
     final data = await GraphQL.request(
       _toggleLikeMutation,
-      {'id': activity.id},
+      {'id': activityModel.id},
       popOnErr: false,
     );
     if (data == null) return;
-    activity.toggleLike(data['ToggleLikeV2']);
+    activityModel.toggleLike(data['ToggleLikeV2']);
   }
 
-  static Future<void> toggleSubscription(ActivityModel activity) async {
+  static Future<void> toggleSubscription(ActivityModel activityModel) async {
     final data = await GraphQL.request(
       _toggleSubscriptionMutation,
-      {'id': activity.id, 'subscribe': !activity.isSubscribed},
+      {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed},
       popOnErr: false,
     );
     if (data == null) return;
-    activity.toggleSubscription(data['ToggleActivitySubscription']);
+    activityModel.toggleSubscription(data['ToggleActivitySubscription']);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetch();
   }
 }

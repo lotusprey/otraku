@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:get/get.dart';
 import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
+import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/triangle_clip.dart';
@@ -189,7 +191,11 @@ class ActivityBox extends StatelessWidget {
                   _ActivitySubscribeIcon(activity),
                   const SizedBox(width: 10),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () => Get.toNamed(
+                      ActivityPage.ROUTE,
+                      arguments: [activity.id, activity],
+                      parameters: {'id': activity.id.toString()},
+                    ),
                     child: Row(
                       children: [
                         Text(

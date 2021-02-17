@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/controllers/character.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
@@ -22,6 +23,7 @@ import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/pages/home/user_tab.dart';
 import 'package:otraku/pages/media/media_page.dart';
+import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
@@ -95,8 +97,10 @@ class App extends StatelessWidget {
           page: () => MediaPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<Media>(tag: Get.arguments[0].toString()))
-              Get.put(Media(Get.arguments[0]),
-                  tag: Get.arguments[0].toString());
+              Get.put(
+                Media(Get.arguments[0]),
+                tag: Get.arguments[0].toString(),
+              );
           }),
         ),
         GetPage(
@@ -104,8 +108,10 @@ class App extends StatelessWidget {
           page: () => CharacterPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<Character>(tag: Get.arguments[0].toString()))
-              Get.put(Character(Get.arguments[0]),
-                  tag: Get.arguments[0].toString());
+              Get.put(
+                Character(Get.arguments[0]),
+                tag: Get.arguments[0].toString(),
+              );
           }),
         ),
         GetPage(
@@ -113,8 +119,10 @@ class App extends StatelessWidget {
           page: () => StaffPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<Staff>(tag: Get.arguments[0].toString()))
-              Get.put(Staff(Get.arguments[0]),
-                  tag: Get.arguments[0].toString());
+              Get.put(
+                Staff(Get.arguments[0]),
+                tag: Get.arguments[0].toString(),
+              );
           }),
         ),
         GetPage(
@@ -122,8 +130,10 @@ class App extends StatelessWidget {
           page: () => StudioPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<Studio>(tag: Get.arguments[0].toString()))
-              Get.put(Studio(Get.arguments[0]),
-                  tag: Get.arguments[0].toString());
+              Get.put(
+                Studio(Get.arguments[0]),
+                tag: Get.arguments[0].toString(),
+              );
           }),
         ),
         GetPage(
@@ -131,8 +141,21 @@ class App extends StatelessWidget {
           page: () => ReviewPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<Review>(tag: Get.arguments[0].toString()))
-              Get.put(Review(Get.arguments[0]),
-                  tag: Get.arguments[0].toString());
+              Get.put(
+                Review(Get.arguments[0]),
+                tag: Get.arguments[0].toString(),
+              );
+          }),
+        ),
+        GetPage(
+          name: ActivityPage.ROUTE,
+          page: () => ActivityPage(Get.arguments[0]),
+          binding: BindingsBuilder(() {
+            if (!Get.isRegistered<Activity>(tag: Get.arguments[0].toString()))
+              Get.put(
+                Activity(Get.arguments[0], Get.arguments[1]),
+                tag: Get.arguments[0].toString(),
+              );
           }),
         ),
         GetPage(

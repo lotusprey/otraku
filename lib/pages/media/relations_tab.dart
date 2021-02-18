@@ -21,8 +21,9 @@ class RelationsTab extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
       sliver: Obx(() {
-        if (media.relationsTab == Media.REL_MEDIA)
-          return media.otherMedia.isNotEmpty
+        if (media.relationsTab == Media.REL_MEDIA) {
+          final other = media.model.otherMedia;
+          return other.isNotEmpty
               ? SliverGrid(
                   gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
                     minWidth: 300,
@@ -31,20 +32,20 @@ class RelationsTab extends StatelessWidget {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (_, index) => BrowseIndexer(
-                      id: media.otherMedia[index].id,
-                      imageUrl: media.otherMedia[index].imageUrl,
-                      browsable: media.otherMedia[index].browsable,
+                      id: other[index].id,
+                      imageUrl: other[index].imageUrl,
+                      browsable: other[index].browsable,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Hero(
-                            tag: media.otherMedia[index].id,
+                            tag: other[index].id,
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: Container(
                                 color: Theme.of(context).primaryColor,
                                 child: FadeImage(
-                                  media.otherMedia[index].imageUrl,
+                                  other[index].imageUrl,
                                   width: Config.highTile.maxWidth,
                                 ),
                               ),
@@ -61,13 +62,13 @@ class RelationsTab extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      media.otherMedia[index].relationType,
+                                      other[index].relationType,
                                       style:
                                           Theme.of(context).textTheme.bodyText2,
                                     ),
                                     Flexible(
                                       child: Text(
-                                        media.otherMedia[index].text1,
+                                        other[index].text1,
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyText1,
@@ -80,16 +81,16 @@ class RelationsTab extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (media.otherMedia[index].format != null)
+                                    if (other[index].format != null)
                                       Text(
-                                        media.otherMedia[index].format,
+                                        other[index].format,
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle1,
                                       ),
-                                    if (media.otherMedia[index].status != null)
+                                    if (other[index].status != null)
                                       Text(
-                                        media.otherMedia[index].status,
+                                        other[index].status,
                                         style: Theme.of(context)
                                             .textTheme
                                             .subtitle1,
@@ -102,26 +103,26 @@ class RelationsTab extends StatelessWidget {
                         ],
                       ),
                     ),
-                    childCount: media.otherMedia.length,
+                    childCount: other.length,
                   ),
                 )
               : _Empty('No related media');
+        }
 
-        if (media.relationsTab == Media.REL_CHARACTERS &&
-            media.characters != null) {
-          return media.characters.items.isNotEmpty
+        if (media.relationsTab == Media.REL_CHARACTERS) {
+          return media.model.characters.items.isNotEmpty
               ? ConnectionsGrid(
-                  connections: media.characters.items,
+                  connections: media.model.characters.items,
                   loadMore: () => media.fetchRelationPage(true),
                   preferredSubtitle: media.staffLanguage,
                 )
               : _Empty('No Characters');
         }
 
-        if (media.relationsTab == Media.REL_STAFF && media.staff != null) {
-          return media.staff.items.isNotEmpty
+        if (media.relationsTab == Media.REL_STAFF) {
+          return media.model.staff.items.isNotEmpty
               ? ConnectionsGrid(
-                  connections: media.staff.items,
+                  connections: media.model.staff.items,
                   loadMore: () => media.fetchRelationPage(false),
                 )
               : _Empty('No Staff');
@@ -208,8 +209,7 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
           ),
           Obx(() {
             if (media.relationsTab == Media.REL_CHARACTERS &&
-                media.characters != null &&
-                media.characters.items.isNotEmpty &&
+                media.model.characters.items.isNotEmpty &&
                 media.availableLanguages.length > 1)
               return IconButton(
                 icon: const Icon(Icons.language),

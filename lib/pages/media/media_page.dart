@@ -56,8 +56,8 @@ class MediaPage extends StatelessWidget {
               height: headerHeight,
             ),
             Obx(
-              () => media.tab == Media.OVERVIEW && media.overview != null
-                  ? OverviewTab(media.overview)
+              () => media.tab == Media.OVERVIEW && media.model.overview != null
+                  ? OverviewTab(media.model.overview)
                   : placeholder,
             ),
             Obx(

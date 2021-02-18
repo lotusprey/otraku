@@ -27,7 +27,7 @@ class SocialTab extends StatelessWidget {
     return SliverPadding(
       padding: Config.PADDING,
       sliver: Obx(() {
-        if ((media.reviews?.items?.length ?? 0) == 0)
+        if (media.model.reviews.items.isEmpty)
           return SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(top: 20),
@@ -39,7 +39,7 @@ class SocialTab extends StatelessWidget {
             ),
           );
 
-        final items = media.reviews.items;
+        final items = media.model.reviews.items;
 
         return SliverGrid(
           delegate: SliverChildBuilderDelegate(
@@ -79,7 +79,7 @@ class SocialTab extends StatelessWidget {
                   Expanded(
                     child: BrowseIndexer(
                       id: items[index].reviewId,
-                      imageUrl: media.overview.banner,
+                      imageUrl: media.model.overview.banner,
                       browsable: Browsable.review,
                       child: Container(
                         width: double.infinity,

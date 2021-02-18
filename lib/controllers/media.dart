@@ -1,13 +1,8 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
-import 'package:otraku/models/anilist/related_review_model.dart';
-import 'package:otraku/models/loadable_list.dart';
-import 'package:otraku/models/anilist/media_overview_model.dart';
-import 'package:otraku/models/connection.dart';
-import 'package:otraku/models/anilist/related_media_model.dart';
+import 'package:otraku/models/anilist/media_model.dart';
 
 class Media extends ScrollxController {
   // ***************************************************************************
@@ -131,11 +126,7 @@ class Media extends ScrollxController {
 
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
-  final _overview = Rx<MediaOverviewModel>();
-  final _otherMedia = List<RelatedMediaModel>().obs;
-  final _characters = Rx<LoadableList<Connection>>();
-  final _staff = Rx<LoadableList<Connection>>();
-  final _reviews = Rx<LoadableList<RelatedReviewModel>>();
+  final _model = MediaModel();
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
 
@@ -145,22 +136,15 @@ class Media extends ScrollxController {
 
   int get relationsTab => _relationsTab();
 
-  set relationsTab(int value) {
-    _relationsTab.value = value;
-    if (value == REL_CHARACTERS && _characters() == null)
+  set relationsTab(final int val) {
+    _relationsTab.value = val;
+    if (val == REL_CHARACTERS && _model.characters.items.isEmpty)
       fetchRelationPage(true);
-    if (value == REL_STAFF && _staff() == null) fetchRelationPage(false);
+    if (val == REL_STAFF && _model.staff.items.isEmpty)
+      fetchRelationPage(false);
   }
 
-  MediaOverviewModel get overview => _overview();
-
-  List<RelatedMediaModel> get otherMedia => _otherMedia();
-
-  LoadableList get characters => _characters();
-
-  LoadableList get staff => _staff();
-
-  LoadableList<RelatedReviewModel> get reviews => _reviews();
+  MediaModel get model => _model;
 
   String get staffLanguage => _staffLanguage();
 
@@ -179,7 +163,7 @@ class Media extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    if (_overview.value != null) return;
+    if (_model.overview != null) return;
 
     final result = await GraphQL.request(_mediaQuery, {
       'id': _id,
@@ -187,117 +171,46 @@ class Media extends ScrollxController {
       'withReviews': true,
     });
 
-    if (result == null) return null;
-
-    final data = result['Media'];
-    _overview(MediaOverviewModel(data));
-
-    final List<RelatedMediaModel> mediaRel = [];
-    for (final relation in data['relations']['edges'])
-      mediaRel.add(RelatedMediaModel(relation));
-
-    _otherMedia.addAll(mediaRel);
-
-    final List<RelatedReviewModel> revs = [];
-    for (final r in data['reviews']['nodes']) revs.add(RelatedReviewModel(r));
-    _reviews(LoadableList(revs, data['reviews']['pageInfo']['hasNextPage']));
+    if (result == null) return;
+    _model.setMain(result['Media']);
+    _model.addReviews(result['Media']);
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
-    if (ofCharacters && !(_characters()?.hasNextPage ?? true)) return;
-    if (!ofCharacters && !(_staff()?.hasNextPage ?? true)) return;
+    if (ofCharacters && !_model.characters.hasNextPage) return;
+    if (!ofCharacters && !_model.staff.hasNextPage) return;
 
     final result = await GraphQL.request(_mediaQuery, {
       'id': _id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
-      'characterPage': _characters()?.nextPage,
-      'staffPage': _staff()?.nextPage,
+      'characterPage': _model.characters.nextPage,
+      'staffPage': _model.staff.nextPage,
     });
 
     if (result == null) return;
-    final data = result['Media'];
-
-    final List<Connection> items = [];
-    if (ofCharacters) {
-      for (final connection in data['characters']['edges']) {
-        final List<Connection> voiceActors = [];
-
-        for (final va in connection['voiceActors']) {
-          final language = FnHelper.clarifyEnum(va['language']);
-          if (!_availableLanguages.contains(language))
-            _availableLanguages.add(language);
-
-          voiceActors.add(Connection(
-            id: va['id'],
-            title: va['name']['full'],
-            imageUrl: va['image']['large'],
-            browsable: Browsable.staff,
-            text2: language,
-          ));
-        }
-
-        items.add(Connection(
-          id: connection['node']['id'],
-          title: connection['node']['name']['full'],
-          text2: FnHelper.clarifyEnum(connection['role']),
-          imageUrl: connection['node']['image']['large'],
-          others: voiceActors,
-          browsable: Browsable.character,
-        ));
-      }
-
-      if (_characters() == null)
-        _characters(
-          LoadableList(items, data['characters']['pageInfo']['hasNextPage']),
-        );
-      else
-        _characters.update(
-          (c) => c.append(items, data['characters']['pageInfo']['hasNextPage']),
-        );
-    } else {
-      for (final connection in data['staff']['edges'])
-        items.add(Connection(
-          id: connection['node']['id'],
-          title: connection['node']['name']['full'],
-          text2: connection['role'],
-          imageUrl: connection['node']['image']['large'],
-          browsable: Browsable.staff,
-        ));
-
-      if (_staff() == null)
-        _staff(
-          LoadableList(items, data['staff']['pageInfo']['hasNextPage']),
-        );
-      else
-        _staff.update(
-          (s) => s.append(items, data['staff']['pageInfo']['hasNextPage']),
-        );
-    }
+    if (ofCharacters)
+      _model.addCharacters(result['Media'], _availableLanguages);
+    else
+      _model.addStaff(result['Media']);
   }
 
   Future<void> fetchReviewPage() async {
-    if (!_reviews().hasNextPage) return;
+    if (!_model.reviews.hasNextPage) return;
 
     final result = await GraphQL.request(_mediaQuery, {
       'id': _id,
       'withReviews': true,
-      'reviewPage': _reviews()?.nextPage,
+      'reviewPage': _model.reviews.nextPage,
     });
 
     if (result == null) return;
-
-    final List<RelatedReviewModel> items = [];
-    for (final r in result['reviews']['nodes'])
-      items.add(RelatedReviewModel(r));
-    _reviews.update(
-      (r) => r.append(items, result['reviews']['pageInfo']['hasNextPage']),
-    );
+    _model.addReviews(result['Media']);
   }
 
   Future<bool> toggleFavourite() async =>
       await GraphQL.request(
-        _overview().browsable == Browsable.anime
+        _model.overview.browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': _id},

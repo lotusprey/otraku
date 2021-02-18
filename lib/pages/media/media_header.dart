@@ -35,25 +35,24 @@ class MediaHeader extends StatefulWidget {
 class _MediaHeaderState extends State<MediaHeader> {
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => CustomSliverHeader(
+    return Obx(() {
+      final overview = widget.media.model.overview;
+      return CustomSliverHeader(
         height: widget.height,
-        title: widget.media.overview?.preferredTitle,
-        actions: widget.media.overview != null
+        title: overview?.preferredTitle,
+        actions: overview != null
             ? [
                 IconButton(
                   onPressed: _edit,
                   icon: Icon(
-                    widget.media.overview.entryStatus == null
-                        ? Icons.add
-                        : Icons.edit,
+                    overview.entryStatus == null ? Icons.add : Icons.edit,
                     color: Theme.of(context).dividerColor,
                   ),
                 ),
                 IconButton(
                   onPressed: _toggleFavourite,
                   icon: Icon(
-                    widget.media.overview.isFavourite
+                    overview.isFavourite
                         ? Icons.favorite
                         : Icons.favorite_border,
                     color: Theme.of(context).dividerColor,
@@ -71,9 +70,9 @@ class _MediaHeaderState extends State<MediaHeader> {
                     fit: StackFit.expand,
                     children: [
                       Container(color: Theme.of(context).primaryColor),
-                      if (widget.media.overview?.banner != null)
+                      if (overview?.banner != null)
                         FadeImage(
-                          widget.media.overview.banner,
+                          overview.banner,
                           height: widget.bannerHeight,
                         ),
                     ],
@@ -118,19 +117,19 @@ class _MediaHeaderState extends State<MediaHeader> {
                       fit: StackFit.expand,
                       children: [
                         Image.network(widget.imageUrl, fit: BoxFit.cover),
-                        if (widget.media.overview != null)
+                        if (overview != null)
                           GestureDetector(
                             child: Image.network(
-                              widget.media.overview.cover,
+                              overview.cover,
                               fit: BoxFit.cover,
                             ),
                             onTap: () => showDialog(
                               context: context,
                               builder: (ctx) => PopUpAnimation(
                                 ImageTextDialog(
-                                  text: widget.media.overview.preferredTitle,
+                                  text: overview.preferredTitle,
                                   image: Image.network(
-                                    widget.media.overview.cover,
+                                    overview.cover,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -143,7 +142,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                 ),
               ),
               const SizedBox(width: 10),
-              if (widget.media.overview != null)
+              if (overview != null)
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -152,17 +151,17 @@ class _MediaHeaderState extends State<MediaHeader> {
                       Flexible(
                         flex: 2,
                         child: Text(
-                          widget.media.overview.preferredTitle,
+                          overview.preferredTitle,
                           style: Theme.of(context).textTheme.headline3,
                           overflow: TextOverflow.fade,
                         ),
                       ),
-                      if (widget.media.overview.nextEpisode != null)
+                      if (overview.nextEpisode != null)
                         Flexible(
                           child: Padding(
                             padding: const EdgeInsets.only(top: 5),
                             child: Text(
-                              'Ep ${widget.media.overview.nextEpisode} in ${widget.media.overview.timeUntilAiring}',
+                              'Ep ${overview.nextEpisode} in ${overview.timeUntilAiring}',
                               style: Theme.of(context).textTheme.bodyText2,
                             ),
                           ),
@@ -179,7 +178,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                 clipBehavior: Clip.hardEdge,
                                 onPressed: _edit,
                                 child: Icon(
-                                  widget.media.overview.entryStatus == null
+                                  overview.entryStatus == null
                                       ? Icons.add
                                       : Icons.edit,
                                   color: Theme.of(context).backgroundColor,
@@ -193,7 +192,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                 clipBehavior: Clip.hardEdge,
                                 onPressed: _toggleFavourite,
                                 child: Icon(
-                                  widget.media.overview.isFavourite
+                                  overview.isFavourite
                                       ? Icons.favorite
                                       : Icons.favorite_border,
                                   color: Theme.of(context).backgroundColor,
@@ -209,19 +208,20 @@ class _MediaHeaderState extends State<MediaHeader> {
             ],
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   void _edit() => BrowseIndexer.openEditPage(
-        widget.media.overview.id,
-        (status) => setState(() => widget.media.overview.entryStatus = status),
+        widget.media.model.overview.id,
+        (status) =>
+            setState(() => widget.media.model.overview.entryStatus = status),
       );
 
   void _toggleFavourite() => widget.media.toggleFavourite().then((ok) => ok
       ? setState(
-          () => widget.media.overview.isFavourite =
-              !widget.media.overview.isFavourite,
+          () => widget.media.model.overview.isFavourite =
+              !widget.media.model.overview.isFavourite,
         )
       : null);
 }

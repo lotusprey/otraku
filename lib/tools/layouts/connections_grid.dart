@@ -27,7 +27,9 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
           (_, index) {
             if (index == widget.connections.length - 5) widget.loadMore();
             return _MediaConnectionTile(
-                widget.connections[index], widget.preferredSubtitle);
+              widget.connections[index],
+              widget.preferredSubtitle,
+            );
           },
           childCount: widget.connections.length,
         ),

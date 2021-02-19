@@ -61,9 +61,9 @@ class OverviewTab extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate(
         [
-          if (overview.description != null)
+          if (overview.description.isNotEmpty)
             Padding(
-              padding: Config.PADDING,
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
               child: InputFieldStructure(
                 title: 'Description',
                 child: GestureDetector(
@@ -93,7 +93,7 @@ class OverviewTab extends StatelessWidget {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
             child: InputFieldStructure(
               title: 'Info',
               child: GridView.count(

@@ -11,6 +11,7 @@ class ActivityPage extends StatelessWidget {
   final int id;
   ActivityPage(this.id);
 
+  // TODO: Add user comments
   @override
   Widget build(BuildContext context) {
     return Scaffold(

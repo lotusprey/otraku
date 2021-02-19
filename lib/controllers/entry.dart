@@ -37,12 +37,10 @@ class Entry extends GetxController {
   EntryModel _copy;
 
   EntryModel get data => _entry;
-
   EntryModel get oldData => _copy;
 
   Future<void> fetch() async {
     final body = await GraphQL.request(_entryQuery, {'id': _id});
-
     if (body == null) return;
 
     _entry = EntryModel(body['Media']);

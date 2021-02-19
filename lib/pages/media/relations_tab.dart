@@ -23,112 +23,104 @@ class RelationsTab extends StatelessWidget {
       sliver: Obx(() {
         if (media.relationsTab == Media.REL_MEDIA) {
           final other = media.model.otherMedia;
-          return other.isNotEmpty
-              ? SliverGrid(
-                  gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-                    minWidth: 300,
-                    height:
-                        Config.highTile.maxWidth / Config.highTile.imgWHRatio,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (_, index) => BrowseIndexer(
-                      id: other[index].id,
-                      imageUrl: other[index].imageUrl,
-                      browsable: other[index].browsable,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+
+          if (other.isEmpty)
+            return media.fetching ? _Empty(null) : _Empty('No related media');
+
+          return SliverGrid(
+            gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+              minWidth: 300,
+              height: Config.highTile.maxWidth / Config.highTile.imgWHRatio,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (_, index) => BrowseIndexer(
+                id: other[index].id,
+                imageUrl: other[index].imageUrl,
+                browsable: other[index].browsable,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Hero(
+                      tag: other[index].id,
+                      child: ClipRRect(
+                        borderRadius: Config.BORDER_RADIUS,
+                        child: Container(
+                          color: Theme.of(context).primaryColor,
+                          child: FadeImage(
+                            other[index].imageUrl,
+                            width: Config.highTile.maxWidth,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Hero(
-                            tag: other[index].id,
-                            child: ClipRRect(
-                              borderRadius: Config.BORDER_RADIUS,
-                              child: Container(
-                                color: Theme.of(context).primaryColor,
-                                child: FadeImage(
-                                  other[index].imageUrl,
-                                  width: Config.highTile.maxWidth,
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                other[index].relationType,
+                                style: Theme.of(context).textTheme.bodyText2,
+                              ),
+                              Flexible(
+                                child: Text(
+                                  other[index].text1,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                  overflow: TextOverflow.fade,
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      other[index].relationType,
-                                      style:
-                                          Theme.of(context).textTheme.bodyText2,
-                                    ),
-                                    Flexible(
-                                      child: Text(
-                                        other[index].text1,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                        overflow: TextOverflow.fade,
-                                      ),
-                                    ),
-                                  ],
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (other[index].format != null)
+                                Text(
+                                  other[index].format,
+                                  style: Theme.of(context).textTheme.subtitle1,
                                 ),
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (other[index].format != null)
-                                      Text(
-                                        other[index].format,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                      ),
-                                    if (other[index].status != null)
-                                      Text(
-                                        other[index].status,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                      ),
-                                  ],
+                              if (other[index].status != null)
+                                Text(
+                                  other[index].status,
+                                  style: Theme.of(context).textTheme.subtitle1,
                                 ),
-                              ],
-                            ),
+                            ],
                           ),
                         ],
                       ),
                     ),
-                    childCount: other.length,
-                  ),
-                )
-              : _Empty('No related media');
+                  ],
+                ),
+              ),
+              childCount: other.length,
+            ),
+          );
         }
 
         if (media.relationsTab == Media.REL_CHARACTERS) {
-          return media.model.characters.items.isNotEmpty
-              ? ConnectionsGrid(
-                  connections: media.model.characters.items,
-                  loadMore: () => media.fetchRelationPage(true),
-                  preferredSubtitle: media.staffLanguage,
-                )
-              : _Empty('No Characters');
+          if (media.model.characters.items.isEmpty)
+            return media.fetching ? _Empty(null) : _Empty('No Characters');
+
+          return ConnectionsGrid(
+            connections: media.model.characters.items,
+            loadMore: () => media.fetchRelationPage(true),
+            preferredSubtitle: media.staffLanguage,
+          );
         }
 
-        if (media.relationsTab == Media.REL_STAFF) {
-          return media.model.staff.items.isNotEmpty
-              ? ConnectionsGrid(
-                  connections: media.model.staff.items,
-                  loadMore: () => media.fetchRelationPage(false),
-                )
-              : _Empty('No Staff');
-        }
+        if (media.model.staff.items.isEmpty)
+          return media.fetching ? _Empty(null) : _Empty('No Staff');
 
-        return const SliverFillRemaining(child: Center(child: Loader()));
+        return ConnectionsGrid(
+          connections: media.model.staff.items,
+          loadMore: () => media.fetchRelationPage(false),
+        );
       }),
     );
   }
@@ -143,10 +135,12 @@ class _Empty extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverFillRemaining(
         child: Center(
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.subtitle1,
-      ),
+      child: text == null
+          ? Loader()
+          : Text(
+              text,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
     ));
   }
 }

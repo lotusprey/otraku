@@ -1,9 +1,9 @@
 class LoadableList<T> {
   final List<T> items;
   bool _hasNextPage;
-  int _nextPage = 2;
+  int _nextPage;
 
-  LoadableList(this.items, this._hasNextPage);
+  LoadableList(this.items, this._hasNextPage, [this._nextPage = 2]);
 
   bool get hasNextPage => _hasNextPage;
 

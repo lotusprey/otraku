@@ -204,7 +204,7 @@ class PersonInfo extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            if (person.description != null && person.description != '')
+            if (person.description.isNotEmpty)
               InputFieldStructure(
                 title: 'Description',
                 child: GestureDetector(

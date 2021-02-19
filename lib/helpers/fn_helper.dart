@@ -24,7 +24,7 @@ abstract class FnHelper {
 
   // Removes all the html tags in a string with regex (copied from the internet)
   static String clearHtml(String str) {
-    if (str == null) return null;
+    if (str == null) return '';
     return str.replaceAll(RegExp(r'<[^>]*>'), '');
   }
 

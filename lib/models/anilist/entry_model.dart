@@ -45,7 +45,7 @@ class EntryModel {
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
-        progressVolumesMax: map['voumes'],
+        progressVolumesMax: map['volumes'],
       );
     }
 
@@ -65,7 +65,7 @@ class EntryModel {
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],
       progressVolumes: map['mediaListEntry']['volumes'] ?? 0,
-      progressVolumesMax: map['voumes'],
+      progressVolumesMax: map['volumes'],
       score: map['mediaListEntry']['score'].toDouble(),
       repeat: map['mediaListEntry']['repeat'],
       notes: map['mediaListEntry']['notes'],

@@ -129,13 +129,12 @@ class Media extends ScrollxController {
   final _model = MediaModel();
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
+  bool _fetching = false;
 
   int get tab => _tab();
-
   set tab(int value) => _tab.value = value;
 
   int get relationsTab => _relationsTab();
-
   set relationsTab(final int val) {
     _relationsTab.value = val;
     if (val == REL_CHARACTERS && _model.characters.items.isEmpty)
@@ -144,19 +143,19 @@ class Media extends ScrollxController {
       fetchRelationPage(false);
   }
 
+  bool get fetching => _fetching;
+
   MediaModel get model => _model;
 
   String get staffLanguage => _staffLanguage();
-
   set staffLanguage(String value) => _staffLanguage.value = value;
 
+  List<String> get availableLanguages => [..._availableLanguages];
   int get languageIndex {
     final index = _availableLanguages.indexOf(_staffLanguage());
     if (index != -1) return index;
     return 0;
   }
-
-  List<String> get availableLanguages => [..._availableLanguages];
 
   // ***************************************************************************
   // FETCHING
@@ -164,6 +163,7 @@ class Media extends ScrollxController {
 
   Future<void> fetch() async {
     if (_model.overview != null) return;
+    _fetching = true;
 
     final result = await GraphQL.request(_mediaQuery, {
       'id': _id,
@@ -174,11 +174,13 @@ class Media extends ScrollxController {
     if (result == null) return;
     _model.setMain(result['Media']);
     _model.addReviews(result['Media']);
+    _fetching = false;
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
     if (ofCharacters && !_model.characters.hasNextPage) return;
     if (!ofCharacters && !_model.staff.hasNextPage) return;
+    _fetching = true;
 
     final result = await GraphQL.request(_mediaQuery, {
       'id': _id,
@@ -193,10 +195,12 @@ class Media extends ScrollxController {
       _model.addCharacters(result['Media'], _availableLanguages);
     else
       _model.addStaff(result['Media']);
+    _fetching = false;
   }
 
   Future<void> fetchReviewPage() async {
     if (!_model.reviews.hasNextPage) return;
+    _fetching = true;
 
     final result = await GraphQL.request(_mediaQuery, {
       'id': _id,
@@ -206,6 +210,7 @@ class Media extends ScrollxController {
 
     if (result == null) return;
     _model.addReviews(result['Media']);
+    _fetching = false;
   }
 
   Future<bool> toggleFavourite() async =>

@@ -1,74 +1,67 @@
 import 'package:get/get.dart';
 import 'package:otraku/helpers/graph_ql.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
+import 'package:otraku/models/anilist/reply_model.dart';
 
 class Activity extends GetxController {
   static const _activityQuery = r'''
-    query Activity($id: Int, $withActivity: Boolean = false) {
-      Activity(id: $id) {
+    query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
+      Activity(id: $id) @include(if: $withActivity) {
         ... on TextActivity {
-          ...text @include(if: $withActivity)
-          replies {...reply}
+          id
+          type
+          replyCount
+          likeCount
+          isLiked
+          createdAt
+          user {id name avatar {large}}
+          text(asHtml: true)
         }
         ... on ListActivity {
-          ...list @include(if: $withActivity)
-          replies {...reply}
+          id
+          type
+          replyCount
+          likeCount
+          isLiked
+          createdAt
+          user {id name avatar {large}}
+          media {id type title{userPreferred} coverImage{large} format}
+          progress
+          status
         }
         ... on MessageActivity {
-          ...message @include(if: $withActivity)
-          replies {...reply}
+          id
+          type
+          replyCount
+          likeCount
+          isLiked
+          createdAt
+          recipient {id name avatar {large}}
+          messenger {id name avatar {large}}
+          message(asHtml: true)
         }
       }
-    }
-    fragment text on TextActivity {
-      id
-      type
-      replyCount
-      likeCount
-      isLiked
-      createdAt
-      user {id name avatar {large}}
-      text(asHtml: true)
-    }
-    fragment list on ListActivity {
-      id
-      type
-      replyCount
-      likeCount
-      isLiked
-      createdAt
-      user {id name avatar {large}}
-      media {id type title{userPreferred} coverImage{large} format}
-      progress
-      status
-    }
-    fragment message on MessageActivity {
-      id
-      type
-      replyCount
-      likeCount
-      isLiked
-      createdAt
-      recipient {id name avatar {large}}
-      messenger {id name avatar {large}}
-      message(asHtml: true)
-    }
-    fragment reply on ActivityReply {
-      id
-      likeCount
-      isLiked
-      createdAt
-      text(asHtml: true)
-      user {id name avatar {large}}
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        activityReplies(activityId: $id) {
+          id
+          likeCount
+          isLiked
+          createdAt
+          text(asHtml: true)
+          user {id name avatar {large}}
+        }
+      }
     }
   ''';
 
   static const _toggleLikeMutation = r'''
-    mutation ToggleLikeActivity($id: Int) {
-      ToggleLikeV2(id: $id, type: ACTIVITY) {
+    mutation ToggleLike($id: Int, $type: LikeableType) {
+      ToggleLikeV2(id: $id, type: $type) {
         ... on ListActivity {likeCount isLiked}
         ... on TextActivity {likeCount isLiked}
         ... on MessageActivity {likeCount isLiked}
+        ... on ActivityReply {likeCount isLiked}
       }
     }
   ''';
@@ -91,27 +84,50 @@ class Activity extends GetxController {
   ActivityModel get model => _model;
 
   Future<void> fetch() async {
+    if (_model != null && _model.replies.items.isNotEmpty) return;
+
     final data = await GraphQL.request(
       _activityQuery,
       {'id': _id, 'withActivity': _model == null},
     );
     if (data == null) return;
 
-    if (_model == null)
-      _model = ActivityModel(data['Activity']);
-    else
-      _model.appendReplies(data['Activity']);
+    if (_model == null) _model = ActivityModel(data['Activity']);
+    _model.appendReplies(data['Page']);
     update();
   }
 
-  static Future<void> toggleLike(ActivityModel activityModel) async {
+  Future<void> fetchPage() async {
+    if (!_model.replies.hasNextPage) return;
+
+    final data = await GraphQL.request(
+      _activityQuery,
+      {'id': _id, 'page': _model.replies.nextPage},
+    );
+    if (data == null) return;
+
+    _model.appendReplies(data['Page']);
+    update();
+  }
+
+  static Future<void> toggleActivityLike(ActivityModel activityModel) async {
     final data = await GraphQL.request(
       _toggleLikeMutation,
-      {'id': activityModel.id},
+      {'id': activityModel.id, 'type': 'ACTIVITY'},
       popOnErr: false,
     );
     if (data == null) return;
     activityModel.toggleLike(data['ToggleLikeV2']);
+  }
+
+  static Future<void> toggleReplyLike(ReplyModel reply) async {
+    final data = await GraphQL.request(
+      _toggleLikeMutation,
+      {'id': reply.id, 'type': 'ACTIVITY_REPLY'},
+      popOnErr: false,
+    );
+    if (data == null) return;
+    reply.toggleLike(data['ToggleLikeV2']);
   }
 
   static Future<void> toggleSubscription(ActivityModel activityModel) async {

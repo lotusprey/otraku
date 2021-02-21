@@ -8,6 +8,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/user_model.dart';
+import 'package:otraku/pages/pushable/user_activities_page.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
@@ -40,7 +41,7 @@ class UserTab extends StatelessWidget {
         slivers: [
           _Header(
             id: id ?? GraphQL.viewerId,
-            user: user.person,
+            user: user.model,
             isMe: id == null,
             avatarUrl: avatarUrl,
           ),
@@ -62,6 +63,16 @@ class UserTab extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+                        IconButton(
+                          icon: Icon(
+                            FluentSystemIcons.ic_fluent_comment_filled,
+                            color: Theme.of(context).accentColor,
+                          ),
+                          onPressed: () => Get.toNamed(
+                            UserActivitiesPage.ROUTE,
+                            arguments: id,
+                          ),
+                        ),
                         IconButton(
                           icon: Icon(
                             FluentSystemIcons.ic_fluent_movies_and_tv_filled,
@@ -87,13 +98,16 @@ class UserTab extends StatelessWidget {
                             FluentSystemIcons.ic_fluent_heart_filled,
                             color: Theme.of(context).accentColor,
                           ),
-                          onPressed: () => Get.to(FavouritesPage(id)),
+                          onPressed: () => Get.toNamed(
+                            FavouritesPage.ROUTE,
+                            arguments: id,
+                          ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 10),
-                  if (user.person?.description != null)
+                  if (user.model?.description != null)
                     Container(
                       padding: Config.PADDING,
                       decoration: BoxDecoration(
@@ -101,7 +115,7 @@ class UserTab extends StatelessWidget {
                         borderRadius: Config.BORDER_RADIUS,
                       ),
                       child: HtmlWidget(
-                        user.person.description,
+                        user.model.description,
                         textStyle: TextStyle(
                           color: Theme.of(context).textTheme.bodyText1.color,
                         ),
@@ -112,7 +126,6 @@ class UserTab extends StatelessWidget {
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 1000)),
         ],
       ),
     );

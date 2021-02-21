@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/controllers/config.dart';
@@ -10,6 +9,7 @@ import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
+import 'package:otraku/tools/html_content.dart';
 import 'package:otraku/tools/triangle_clip.dart';
 
 class UserActivity extends StatelessWidget {
@@ -47,40 +47,25 @@ class UserActivity extends StatelessWidget {
                 ],
               ),
             ),
-            // if (activity.recieverId != null) ...[
-            //   Padding(
-            //     padding: const EdgeInsets.symmetric(horizontal: 10),
-            //     child: Icon(Icons.arrow_right_alt),
-            //   ),
-            //   Flexible(
-            //     child: BrowseIndexer(
-            //       id: activity.recieverId,
-            //       imageUrl: activity.recieverImage,
-            //       browsable: Browsable.user,
-            //       child: Row(
-            //         mainAxisSize: MainAxisSize.min,
-            //         children: [
-            //           ClipRRect(
-            //             borderRadius: Config.BORDER_RADIUS,
-            //             child: FadeImage(
-            //               activity.recieverImage,
-            //               height: 50,
-            //               width: 50,
-            //             ),
-            //           ),
-            //           const SizedBox(width: 10),
-            //           Flexible(
-            //             child: Text(
-            //               activity.recieverName,
-            //               overflow: TextOverflow.fade,
-            //               style: Theme.of(context).textTheme.bodyText1,
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ],
+            if (activity.recieverId != null) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Icon(Icons.arrow_right_alt),
+              ),
+              BrowseIndexer(
+                id: activity.recieverId,
+                imageUrl: activity.recieverImage,
+                browsable: Browsable.user,
+                child: ClipRRect(
+                  borderRadius: Config.BORDER_RADIUS,
+                  child: FadeImage(
+                    activity.recieverImage,
+                    height: 50,
+                    width: 50,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
         const SizedBox(height: 5),
@@ -176,7 +161,7 @@ class ActivityBox extends StatelessWidget {
             UnconstrainedBox(
               constrainedAxis: Axis.horizontal,
               alignment: Alignment.topLeft,
-              child: HtmlWidget(activity.text),
+              child: HtmlContent(activity.text),
             ),
           const SizedBox(height: 5),
           Row(
@@ -188,7 +173,7 @@ class ActivityBox extends StatelessWidget {
               ),
               Row(
                 children: [
-                  _ActivitySubscribeIcon(activity),
+                  _SubscribeIcon(activity),
                   const SizedBox(width: 10),
                   GestureDetector(
                     onTap: () => Get.toNamed(
@@ -224,19 +209,18 @@ class ActivityBox extends StatelessWidget {
 
 class _ActivityLikeIcon extends StatefulWidget {
   final ActivityModel activity;
-
   _ActivityLikeIcon(this.activity);
 
   @override
-  __ActivityLikeIconState createState() => __ActivityLikeIconState();
+  _ActivityLikeIconState createState() => _ActivityLikeIconState();
 }
 
-class __ActivityLikeIconState extends State<_ActivityLikeIcon> {
+class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () =>
-          Activity.toggleLike(widget.activity).then((_) => setState(() {})),
+      onTap: () => Activity.toggleActivityLike(widget.activity)
+          .then((_) => setState(() {})),
       child: Row(
         children: [
           Text(
@@ -261,16 +245,15 @@ class __ActivityLikeIconState extends State<_ActivityLikeIcon> {
   }
 }
 
-class _ActivitySubscribeIcon extends StatefulWidget {
+class _SubscribeIcon extends StatefulWidget {
   final ActivityModel activity;
-
-  _ActivitySubscribeIcon(this.activity);
+  _SubscribeIcon(this.activity);
 
   @override
-  __ActivitySubscribeIconState createState() => __ActivitySubscribeIconState();
+  _SubscribeIconState createState() => _SubscribeIconState();
 }
 
-class __ActivitySubscribeIconState extends State<_ActivitySubscribeIcon> {
+class _SubscribeIconState extends State<_SubscribeIcon> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

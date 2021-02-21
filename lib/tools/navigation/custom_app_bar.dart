@@ -6,12 +6,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final IconData leading;
   final String title;
+  final Widget titleWidget;
   final List<Widget> trailing;
   final bool wrapTrailing;
 
   CustomAppBar({
     this.leading = FluentSystemIcons.ic_fluent_arrow_left_filled,
     this.title = '',
+    this.titleWidget,
     this.trailing,
     this.wrapTrailing = true,
   });
@@ -32,29 +34,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Stack(
-          alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Positioned(
-              left: 0,
-              child: AppBarIcon(IconButton(
-                icon: Icon(leading),
-                onPressed: () => Navigator.of(context).pop(),
-              )),
+            AppBarIcon(IconButton(
+              icon: Icon(leading),
+              onPressed: () => Navigator.of(context).pop(),
+            )),
+            Expanded(
+              child: titleWidget != null
+                  ? titleWidget
+                  : Text(
+                      title,
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
             ),
-            if (trailing != null)
-              Positioned(
-                right: 0,
-                child: Row(
+            trailing != null
+                ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: wrapTrailing
                         ? trailing.map((t) => AppBarIcon(t)).toList()
-                        : trailing),
-              ),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headline3,
-            ),
+                        : trailing)
+                : const SizedBox(),
           ],
         ),
       ),

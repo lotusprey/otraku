@@ -28,9 +28,8 @@ class SocialTab extends StatelessWidget {
       padding: Config.PADDING,
       sliver: Obx(() {
         if (media.model.reviews.items.isEmpty)
-          return SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 20),
+          return SliverFillRemaining(
+            child: Center(
               child: Text(
                 'No reviews',
                 style: Theme.of(context).textTheme.subtitle1,

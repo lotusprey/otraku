@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/anilist/notification_model.dart';
+import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
@@ -94,12 +96,30 @@ class _NotificationWidget extends StatelessWidget {
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
-                  if (notification.browsable != null)
-                    BrowseIndexer.openPage(
-                      id: notification.bodyId,
-                      imageUrl: notification.imageUrl,
-                      browsable: notification.browsable,
-                    );
+                  switch (notification.type) {
+                    case NotificationType.AIRING:
+                    case NotificationType.RELATED_MEDIA_ADDITION:
+                      BrowseIndexer.openPage(
+                        id: notification.bodyId,
+                        imageUrl: notification.imageUrl,
+                        browsable: notification.browsable,
+                      );
+                      return;
+                    case NotificationType.ACTIVITY_LIKE:
+                    case NotificationType.ACTIVITY_MENTION:
+                    case NotificationType.ACTIVITY_MESSAGE:
+                    case NotificationType.ACTIVITY_REPLY:
+                    case NotificationType.ACTIVITY_REPLY_LIKE:
+                    case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
+                      Get.toNamed(
+                        ActivityPage.ROUTE,
+                        arguments: [notification.bodyId, null],
+                        parameters: {'id': notification.bodyId.toString()},
+                      );
+                      return;
+                    default:
+                      return;
+                  }
                 },
                 onLongPress: () {
                   if (notification.browsable == Browsable.anime ||

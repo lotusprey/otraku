@@ -2,7 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/models/anilist/activity_reply_model.dart';
+import 'package:otraku/models/anilist/reply_model.dart';
+import 'package:otraku/models/loadable_list.dart';
 
 class ActivityModel {
   final int id;
@@ -21,7 +22,7 @@ class ActivityModel {
   final String text;
   final String createdAt;
   final int replyCount;
-  final List<ActivityReplyModel> replies;
+  final LoadableList<ReplyModel> replies;
   int _likeCount;
   bool _isLiked;
   bool _isSubscribed;
@@ -53,11 +54,7 @@ class ActivityModel {
     _isSubscribed = subscribed;
   }
 
-  factory ActivityModel(final Map<String, dynamic> map) {
-    final List<ActivityReplyModel> replies = [];
-    if (map['replies'] != null)
-      for (final r in map['replies']) replies.add(ActivityReplyModel(r));
-
+  factory ActivityModel(Map<String, dynamic> map) {
     switch (map['type']) {
       case 'TEXT':
         return ActivityModel._(
@@ -77,7 +74,7 @@ class ActivityModel {
           text: map['text'],
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: replies,
+          replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -104,7 +101,7 @@ class ActivityModel {
           text: '$status $progress',
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: replies,
+          replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -131,7 +128,7 @@ class ActivityModel {
           text: '$status $progress',
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: replies,
+          replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -154,7 +151,7 @@ class ActivityModel {
           text: map['message'],
           createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: replies,
+          replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -165,14 +162,15 @@ class ActivityModel {
   }
 
   int get likeCount => _likeCount;
-
   bool get isLiked => _isLiked;
-
   bool get isSubscribed => _isSubscribed;
 
   void appendReplies(final Map<String, dynamic> map) {
-    if (map['replies'] != null)
-      for (final r in map['replies']) replies.add(ActivityReplyModel(r));
+    if (map['activityReplies'] != null) {
+      final List<ReplyModel> rl = [];
+      for (final r in map['activityReplies']) rl.add(ReplyModel(r));
+      replies.append(rl, map['pageInfo']['hasNextPage']);
+    }
   }
 
   void toggleLike(final Map<String, dynamic> map) {

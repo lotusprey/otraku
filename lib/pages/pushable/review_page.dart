@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/review.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
+import 'package:otraku/tools/html_content.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
 
 class ReviewPage extends StatelessWidget {
@@ -89,13 +89,7 @@ class ReviewPage extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                            HtmlWidget(
-                              data.text,
-                              textStyle: TextStyle(
-                                color:
-                                    Theme.of(context).textTheme.bodyText1.color,
-                              ),
-                            ),
+                            HtmlContent(data.text),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Text(

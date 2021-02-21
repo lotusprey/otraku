@@ -112,10 +112,9 @@ class Character extends GetxController {
     if (body == null) return;
 
     final data = body['Character'];
-
     _person(PersonModel(data));
-
     _initLists(data);
+    if (_anime().items.isEmpty) _onAnime.value = false;
   }
 
   Future<void> refetch() async {

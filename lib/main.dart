@@ -23,9 +23,11 @@ import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/pages/home/user_tab.dart';
 import 'package:otraku/pages/media/media_page.dart';
+import 'package:otraku/pages/pushable/user_activities_page.dart';
 import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
+import 'package:otraku/pages/pushable/favourites_page.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/pages/pushable/notifications_page.dart';
 import 'package:otraku/pages/pushable/review_page.dart';
@@ -171,6 +173,14 @@ class App extends StatelessWidget {
         GetPage(
           name: FilterPage.ROUTE,
           page: () => FilterPage(Get.arguments[0], Get.arguments[1]),
+        ),
+        GetPage(
+          name: FavouritesPage.ROUTE,
+          page: () => FavouritesPage(Get.arguments),
+        ),
+        GetPage(
+          name: UserActivitiesPage.ROUTE,
+          page: () => UserActivitiesPage(Get.arguments),
         ),
         GetPage(
           name: SettingsPage.ROUTE,

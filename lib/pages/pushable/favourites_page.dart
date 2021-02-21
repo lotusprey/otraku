@@ -4,14 +4,16 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/layouts/title_list.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 
 class FavouritesPage extends StatelessWidget {
-  final int id;
+  static const ROUTE = '/favourites';
 
+  final int id;
   FavouritesPage(this.id);
 
   @override
@@ -38,7 +40,7 @@ class FavouritesPage extends StatelessWidget {
             physics: Config.PHYSICS,
             slivers: [
               if (user.favourites.isNotEmpty)
-                user.favsIndex == User.STUDIO_FAV
+                user.favsIndex == UserModel.STUDIO_FAV
                     ? TitleList(user.favourites, user.fetchFavourites)
                     : TileGrid(
                         tileData: user.favourites,

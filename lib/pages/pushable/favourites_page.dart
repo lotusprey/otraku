@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/layouts/title_list.dart';
@@ -19,7 +19,7 @@ class FavouritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<User>(
-      tag: id?.toString() ?? GraphQL.viewerId.toString(),
+      tag: id?.toString() ?? Client.viewerId.toString(),
       builder: (user) => Scaffold(
         extendBody: true,
         bottomNavigationBar: CustomNavBar(

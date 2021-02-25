@@ -85,8 +85,9 @@ class UserActivity extends StatelessWidget {
 
 class ActivityBox extends StatelessWidget {
   final ActivityModel activity;
+  final bool canNavigateToReplies;
 
-  ActivityBox(this.activity);
+  ActivityBox(this.activity, [this.canNavigateToReplies = true]);
 
   @override
   Widget build(BuildContext context) {
@@ -176,11 +177,15 @@ class ActivityBox extends StatelessWidget {
                   _SubscribeIcon(activity),
                   const SizedBox(width: 10),
                   GestureDetector(
-                    onTap: () => Get.toNamed(
-                      ActivityPage.ROUTE,
-                      arguments: [activity.id, activity],
-                      parameters: {'id': activity.id.toString()},
-                    ),
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      if (canNavigateToReplies)
+                        Get.toNamed(
+                          ActivityPage.ROUTE,
+                          arguments: [activity.id, activity],
+                          parameters: {'id': activity.id.toString()},
+                        );
+                    },
                     child: Row(
                       children: [
                         Text(
@@ -219,6 +224,7 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => Activity.toggleActivityLike(widget.activity)
           .then((_) => setState(() {})),
       child: Row(
@@ -257,6 +263,7 @@ class _SubscribeIconState extends State<_SubscribeIcon> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => Activity.toggleSubscription(widget.activity)
           .then((_) => setState(() {})),
       child: !(widget.activity.isSubscribed ?? false)

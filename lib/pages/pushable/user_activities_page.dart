@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/tools/activity_widgets.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
@@ -19,7 +19,7 @@ class UserActivitiesPage extends StatelessWidget {
       appBar: CustomAppBar(title: 'Activities'),
       body: SafeArea(
         child: GetBuilder<User>(
-          tag: id?.toString() ?? GraphQL.viewerId.toString(),
+          tag: id?.toString() ?? Client.viewerId.toString(),
           builder: (user) {
             if (user.activities.isEmpty) {
               user.fetchActivities();

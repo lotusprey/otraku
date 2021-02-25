@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 
@@ -122,7 +122,7 @@ class User extends GetxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _userQuery,
       {
         'id': _id,
@@ -133,11 +133,11 @@ class User extends GetxController {
         'withStaff': true,
         'withStudios': true,
       },
-      popOnErr: _id != GraphQL.viewerId,
+      popOnErr: _id != Client.viewerId,
     );
     if (data == null) return;
 
-    _model = UserModel(data['User'], _id == GraphQL.viewerId);
+    _model = UserModel(data['User'], _id == Client.viewerId);
     _model.addFavs(null, data['User']['favourites']);
     _loading = false;
     update();
@@ -147,7 +147,7 @@ class User extends GetxController {
     if (_loading || !_model.favourites(_favsIndex).hasNextPage) return;
     _loading = true;
 
-    final data = await GraphQL.request(_userQuery, {
+    final data = await Client.request(_userQuery, {
       'id': _id,
       'withAnime': _favsIndex == UserModel.ANIME_FAV,
       'withManga': _favsIndex == UserModel.MANGA_FAV,
@@ -167,7 +167,7 @@ class User extends GetxController {
     if (_loading || !_activities.hasNextPage) return;
     _loading = true;
 
-    final data = await GraphQL.request(_activitiesQuery, {
+    final data = await Client.request(_activitiesQuery, {
       'id': _id,
       'page': _activities.nextPage,
     });
@@ -185,7 +185,7 @@ class User extends GetxController {
   }
 
   Future<void> toggleFollow() async {
-    final data = await GraphQL.request(_toggleFollow, {'id': _model.id});
+    final data = await Client.request(_toggleFollow, {'id': _model.id});
     if (data == null) return;
     _model.toggleFollow(data['ToggleFollow']);
     update();

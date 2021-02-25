@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 
 class ProfileSettingsTab extends StatelessWidget {
   @override
@@ -13,7 +13,7 @@ class ProfileSettingsTab extends StatelessWidget {
         ),
         color: Theme.of(context).errorColor,
         child: Text('Log Out', style: Theme.of(context).textTheme.button),
-        onPressed: GraphQL.logOut,
+        onPressed: Client.logOut,
       ),
     );
   }

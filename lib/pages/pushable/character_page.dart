@@ -6,8 +6,7 @@ import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/navigation/person_header.dart';
 import 'package:otraku/controllers/character.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
-import 'package:otraku/tools/overlays/option_sheet.dart';
-import 'package:otraku/tools/overlays/sort_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class CharacterPage extends StatelessWidget {
   static const ROUTE = '/character';
@@ -62,16 +61,15 @@ class CharacterPage extends StatelessWidget {
                           if (character.availableLanguages.length > 1)
                             IconButton(
                               icon: const Icon(Icons.language),
-                              onPressed: () => showModalBottomSheet(
-                                context: context,
-                                builder: (_) => OptionSheet(
+                              onPressed: () => Sheet.show(
+                                ctx: context,
+                                sheet: OptionSheet(
                                   title: 'Language',
                                   options: character.availableLanguages,
                                   index: character.languageIndex,
                                   onTap: (index) => character.staffLanguage =
                                       character.availableLanguages[index],
                                 ),
-                                backgroundColor: Colors.transparent,
                                 isScrollControlled: true,
                               ),
                             ),
@@ -79,13 +77,12 @@ class CharacterPage extends StatelessWidget {
                             icon: const Icon(
                               FluentSystemIcons.ic_fluent_arrow_sort_filled,
                             ),
-                            onPressed: () => showModalBottomSheet(
-                              context: context,
-                              builder: (_) => MediaSortSheet(
+                            onPressed: () => Sheet.show(
+                              ctx: context,
+                              sheet: MediaSortSheet(
                                 character.sort,
                                 (sort) => character.sort = sort,
                               ),
-                              backgroundColor: Colors.transparent,
                               isScrollControlled: true,
                             ),
                           ),

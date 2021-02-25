@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/models/anilist/notification_model.dart';
 import 'package:otraku/models/loadable_list.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 
 class Notifications extends ScrollxController {
@@ -157,7 +157,7 @@ class Notifications extends ScrollxController {
 
   Future<void> fetch() async {
     _fetching = true;
-    Map<String, dynamic> data = await GraphQL.request(
+    Map<String, dynamic> data = await Client.request(
       _notificationQuery,
       _filter != 0 ? {'filter': _filters[_filter]} : null,
       popOnErr: false,
@@ -179,7 +179,7 @@ class Notifications extends ScrollxController {
     if (_fetching || !_entries.hasNextPage) return;
     _fetching = true;
 
-    Map<String, dynamic> data = await GraphQL.request(
+    Map<String, dynamic> data = await Client.request(
       _notificationQuery,
       {
         'page': _entries.nextPage,

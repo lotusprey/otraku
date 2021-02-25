@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/media_model.dart';
 
@@ -165,7 +165,7 @@ class Media extends ScrollxController {
     if (_model.overview != null) return;
     _fetching = true;
 
-    final result = await GraphQL.request(_mediaQuery, {
+    final result = await Client.request(_mediaQuery, {
       'id': _id,
       'withMain': true,
       'withReviews': true,
@@ -182,7 +182,7 @@ class Media extends ScrollxController {
     if (!ofCharacters && !_model.staff.hasNextPage) return;
     _fetching = true;
 
-    final result = await GraphQL.request(_mediaQuery, {
+    final result = await Client.request(_mediaQuery, {
       'id': _id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
@@ -202,7 +202,7 @@ class Media extends ScrollxController {
     if (!_model.reviews.hasNextPage) return;
     _fetching = true;
 
-    final result = await GraphQL.request(_mediaQuery, {
+    final result = await Client.request(_mediaQuery, {
       'id': _id,
       'withReviews': true,
       'reviewPage': _model.reviews.nextPage,
@@ -214,7 +214,7 @@ class Media extends ScrollxController {
   }
 
   Future<bool> toggleFavourite() async =>
-      await GraphQL.request(
+      await Client.request(
         _model.overview.browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,

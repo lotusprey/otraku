@@ -9,7 +9,7 @@ import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/tools/browse_indexer.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/overlays/option_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class NotificationsPage extends StatelessWidget {
   static const ROUTE = '/notifications';
@@ -23,15 +23,15 @@ class NotificationsPage extends StatelessWidget {
         trailing: [
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined),
-            onPressed: () => showModalBottomSheet(
-              context: context,
-              builder: (_) => OptionSheet(
+            onPressed: () => Sheet.show(
+              ctx: context,
+              sheet: OptionSheet(
                 title: 'Category',
                 options: ['All', 'Activities', 'Forum', 'Media', 'Follows'],
                 index: notifications.filter,
                 onTap: (val) => notifications.filter = val,
               ),
-              backgroundColor: Colors.transparent,
+              isScrollControlled: true,
             ),
           ),
         ],

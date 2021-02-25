@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/models/anilist/settings_model.dart';
@@ -140,7 +140,7 @@ class Viewer extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _viewerQuery,
       {
         'withMain': true,
@@ -164,7 +164,7 @@ class Viewer extends ScrollxController {
     if (_fetching || !_activities().hasNextPage) return;
     _fetching = true;
 
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _viewerQuery,
       {
         'page': _activities().nextPage,
@@ -183,7 +183,7 @@ class Viewer extends ScrollxController {
 
   Future<void> refetch() async {
     _fetching = true;
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _viewerQuery,
       {
         'id_not_in': _idNotIn,
@@ -200,7 +200,7 @@ class Viewer extends ScrollxController {
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
-    final data = await GraphQL.request(_settingsMutation, variables);
+    final data = await Client.request(_settingsMutation, variables);
     if (data == null) return false;
     _settings = SettingsModel(data['UpdateUser']);
     return true;

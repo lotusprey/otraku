@@ -7,7 +7,7 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/pages/pushable/notifications_page.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
-import 'package:otraku/tools/overlays/option_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class FeedControls extends StatelessWidget {
   final Viewer viewer;
@@ -52,15 +52,14 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
               const Spacer(),
               IconButton(
                 icon: const Icon(Icons.filter_alt_outlined),
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (_) => SelectionSheet(
+                onPressed: () => Sheet.show(
+                  ctx: context,
+                  sheet: SelectionSheet(
                     options: ActivityType.values.map((v) => v.text).toList(),
                     values: ActivityType.values,
                     inclusive: viewer.typeIn,
                     onDone: (typeIn, _) => viewer.updateFilters(types: typeIn),
                   ),
-                  backgroundColor: Colors.transparent,
                 ),
               ),
               IconButton(

@@ -6,7 +6,7 @@ import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
 import 'package:otraku/tools/navigation/person_header.dart';
 import 'package:otraku/tools/layouts/connections_grid.dart';
-import 'package:otraku/tools/overlays/sort_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class StaffPage extends StatelessWidget {
   static const ROUTE = '/staff';
@@ -60,13 +60,12 @@ class StaffPage extends StatelessWidget {
                         icon: const Icon(
                           FluentSystemIcons.ic_fluent_arrow_sort_filled,
                         ),
-                        onPressed: () => showModalBottomSheet(
-                          context: context,
-                          builder: (_) => MediaSortSheet(
+                        onPressed: () => Sheet.show(
+                          ctx: context,
+                          sheet: MediaSortSheet(
                             staff.sort,
                             (sort) => staff.sort = sort,
                           ),
-                          backgroundColor: Colors.transparent,
                           isScrollControlled: true,
                         ),
                       ),

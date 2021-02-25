@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/models/anilist/reply_model.dart';
 
@@ -86,7 +86,7 @@ class Activity extends GetxController {
   Future<void> fetch() async {
     if (_model != null && _model.replies.items.isNotEmpty) return;
 
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _activityQuery,
       {'id': _id, 'withActivity': _model == null},
     );
@@ -100,7 +100,7 @@ class Activity extends GetxController {
   Future<void> fetchPage() async {
     if (!_model.replies.hasNextPage) return;
 
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _activityQuery,
       {'id': _id, 'page': _model.replies.nextPage},
     );
@@ -111,7 +111,7 @@ class Activity extends GetxController {
   }
 
   static Future<void> toggleActivityLike(ActivityModel activityModel) async {
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _toggleLikeMutation,
       {'id': activityModel.id, 'type': 'ACTIVITY'},
       popOnErr: false,
@@ -121,7 +121,7 @@ class Activity extends GetxController {
   }
 
   static Future<void> toggleReplyLike(ReplyModel reply) async {
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _toggleLikeMutation,
       {'id': reply.id, 'type': 'ACTIVITY_REPLY'},
       popOnErr: false,
@@ -131,7 +131,7 @@ class Activity extends GetxController {
   }
 
   static Future<void> toggleSubscription(ActivityModel activityModel) async {
-    final data = await GraphQL.request(
+    final data = await Client.request(
       _toggleSubscriptionMutation,
       {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed},
       popOnErr: false,

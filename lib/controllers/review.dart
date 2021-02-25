@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/anilist/review_model.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 
 class Review extends GetxController {
   // ***************************************************************************
@@ -40,7 +40,7 @@ class Review extends GetxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    final body = await GraphQL.request(_reviewQuery, {'id': _id});
+    final body = await Client.request(_reviewQuery, {'id': _id});
     if (body == null) return;
     _data = ReviewModel(body['Review']);
     update();

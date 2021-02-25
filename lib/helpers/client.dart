@@ -8,8 +8,8 @@ import 'package:http/http.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/auth_page.dart';
 
-class GraphQL {
-  GraphQL._();
+class Client {
+  Client._();
 
   static const String _url = 'https://graphql.anilist.co';
 

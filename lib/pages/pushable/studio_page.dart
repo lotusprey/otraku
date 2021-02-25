@@ -9,7 +9,7 @@ import 'package:otraku/models/anilist/person_model.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/favourite_button.dart';
 import 'package:otraku/tools/layouts/tile_grid.dart';
-import 'package:otraku/tools/overlays/sort_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class StudioPage extends StatelessWidget {
   static const ROUTE = '/studio';
@@ -62,13 +62,12 @@ class StudioPage extends StatelessWidget {
                           icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_sort_filled,
                           ),
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            builder: (_) => MediaSortSheet(
+                          onPressed: () => Sheet.show(
+                            ctx: context,
+                            sheet: MediaSortSheet(
                               studio.sort,
                               (sort) => studio.sort = sort,
                             ),
-                            backgroundColor: Colors.transparent,
                             isScrollControlled: true,
                           ),
                         ),

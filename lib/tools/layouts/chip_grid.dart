@@ -4,7 +4,7 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/tools/fields/chip_field.dart';
-import 'package:otraku/tools/overlays/option_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class ChipGrid<T> extends StatefulWidget {
   final String title;
@@ -88,15 +88,16 @@ class _ChipGridState extends State<ChipGrid> {
                   ),
                 IconButton(
                   icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_filled),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    builder: (_) => SelectionSheet(
+                  onPressed: () => Sheet.show(
+                    ctx: context,
+                    sheet: SelectionSheet(
                       options: widget.options,
                       values: widget.values,
                       inclusive: [...widget.inclusive],
                       exclusive: widget.exclusive != null
                           ? [...widget.exclusive]
                           : null,
+                      fixHeight: widget.options.length <= 10,
                       onDone: (inclusive, exclusive) {
                         setState(() {
                           widget.inclusive.clear();
@@ -108,7 +109,7 @@ class _ChipGridState extends State<ChipGrid> {
                         });
                       },
                     ),
-                    backgroundColor: Colors.transparent,
+                    isScrollControlled: widget.options.length <= 10,
                   ),
                 ),
               ],

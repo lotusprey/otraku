@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,9 +23,9 @@ class _AuthPageState extends State<AuthPage> {
   bool _loading = true;
   StreamSubscription _subscription;
 
-  void _verify() => GraphQL.logIn().then((loggedIn) {
+  void _verify() => Client.logIn().then((loggedIn) {
         if (loggedIn) {
-          GraphQL.initViewerId().then((ok) {
+          Client.initViewerId().then((ok) {
             if (ok) Get.offAllNamed(HomePage.ROUTE);
           });
         } else {
@@ -39,9 +39,9 @@ class _AuthPageState extends State<AuthPage> {
     const _redirectUrl =
         'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
 
-    if (await canLaunch(_redirectUrl)) {
+    if (await canLaunch(_redirectUrl))
       await launch(_redirectUrl);
-    } else {
+    else {
       Get.defaultDialog(
         radius: 5,
         backgroundColor: Get.theme.backgroundColor,
@@ -69,7 +69,7 @@ class _AuthPageState extends State<AuthPage> {
         final String accessToken = link.substring(start, end);
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
-        GraphQL.accessToken = accessToken;
+        Client.accessToken = accessToken;
         _verify();
       },
       onError: (error) {

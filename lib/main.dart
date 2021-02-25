@@ -17,7 +17,7 @@ import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/pages/home/home_page.dart';
@@ -62,7 +62,7 @@ class App extends StatelessWidget {
             Get.put(Config());
             Get.put(Collection(null, true), tag: Collection.ANIME);
             Get.put(Collection(null, false), tag: Collection.MANGA);
-            Get.put(User(GraphQL.viewerId), tag: GraphQL.viewerId.toString());
+            Get.put(User(Client.viewerId), tag: Client.viewerId.toString());
             Get.put(Explorer());
             Get.put(Viewer());
           }),

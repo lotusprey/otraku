@@ -13,7 +13,7 @@ import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
-import 'package:otraku/tools/overlays/sort_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class MediaControls extends StatelessWidget {
   final String collectionTag;
@@ -137,27 +137,32 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                   );
                 }),
               if (collectionTag == null) ...[
-                IconButton(
-                  icon: const Icon(
-                    FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                  ),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    builder: (_) => MediaSortSheet(
-                      FnHelper.stringToEnum(
-                        Get.find<Explorer>().getFilterWithKey(Filterable.SORT),
-                        MediaSort.values,
+                Obx(() {
+                  final type = Get.find<Explorer>().type;
+                  if (type == Browsable.anime || type == Browsable.manga)
+                    return IconButton(
+                      icon: const Icon(
+                        FluentSystemIcons.ic_fluent_arrow_sort_filled,
                       ),
-                      (sort) => Get.find<Explorer>().setFilterWithKey(
-                        Filterable.SORT,
-                        value: describeEnum(sort),
-                        update: true,
+                      onPressed: () => Sheet.show(
+                        ctx: context,
+                        sheet: MediaSortSheet(
+                          FnHelper.stringToEnum(
+                            Get.find<Explorer>()
+                                .getFilterWithKey(Filterable.SORT),
+                            MediaSort.values,
+                          ),
+                          (sort) => Get.find<Explorer>().setFilterWithKey(
+                            Filterable.SORT,
+                            value: describeEnum(sort),
+                            update: true,
+                          ),
+                        ),
+                        isScrollControlled: true,
                       ),
-                    ),
-                    backgroundColor: Colors.transparent,
-                    isScrollControlled: true,
-                  ),
-                ),
+                    );
+                  return const SizedBox();
+                }),
                 Obx(() {
                   final type = Get.find<Explorer>().type;
                   if (type == Browsable.anime || type == Browsable.manga)
@@ -169,10 +174,9 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                   icon: const Icon(
                     FluentSystemIcons.ic_fluent_arrow_sort_filled,
                   ),
-                  onPressed: () => showModalBottomSheet(
-                    context: context,
-                    builder: (_) => CollectionSortSheet(collectionTag),
-                    backgroundColor: Colors.transparent,
+                  onPressed: () => Sheet.show(
+                    ctx: context,
+                    sheet: CollectionSortSheet(collectionTag),
                     isScrollControlled: true,
                   ),
                 ),

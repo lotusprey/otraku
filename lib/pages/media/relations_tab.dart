@@ -9,7 +9,7 @@ import 'package:otraku/tools/layouts/connections_grid.dart';
 import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
-import 'package:otraku/tools/overlays/option_sheet.dart';
+import 'package:otraku/tools/overlays/sheets.dart';
 
 class RelationsTab extends StatelessWidget {
   final Media media;
@@ -207,16 +207,15 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
                 media.availableLanguages.length > 1)
               return IconButton(
                 icon: const Icon(Icons.language),
-                onPressed: () => showModalBottomSheet(
-                  context: context,
-                  builder: (_) => OptionSheet(
+                onPressed: () => Sheet.show(
+                  ctx: context,
+                  sheet: OptionSheet(
                     title: 'Language',
                     options: media.availableLanguages,
                     index: media.languageIndex,
                     onTap: (index) =>
                         media.staffLanguage = media.availableLanguages[index],
                   ),
-                  backgroundColor: Colors.transparent,
                   isScrollControlled: true,
                 ),
               );

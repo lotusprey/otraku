@@ -14,7 +14,7 @@ import 'package:otraku/pages/settings/settings_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/tools/fade_image.dart';
 import 'package:otraku/tools/navigation/custom_nav_bar.dart';
 import 'package:otraku/tools/navigation/custom_sliver_header.dart';
@@ -35,12 +35,12 @@ class UserTab extends StatelessWidget {
         : 10.0;
 
     return GetBuilder<User>(
-      tag: id?.toString() ?? GraphQL.viewerId.toString(),
+      tag: id?.toString() ?? Client.viewerId.toString(),
       builder: (user) => CustomScrollView(
         physics: Config.PHYSICS,
         slivers: [
           _Header(
-            id: id ?? GraphQL.viewerId,
+            id: id ?? Client.viewerId,
             user: user.model,
             isMe: id == null,
             avatarUrl: avatarUrl,

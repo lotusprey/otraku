@@ -4,7 +4,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/helpers/graph_ql.dart';
+import 'package:otraku/helpers/client.dart';
 import 'package:otraku/helpers/scroll_x_controller.dart';
 
 // Searches and filters items from the Browsable enum
@@ -233,7 +233,7 @@ class Explorer extends ScrollxController implements Filterable {
         query = _reviewsQuery;
     }
 
-    final data = await GraphQL.request(
+    final data = await Client.request(
       query,
       {..._filters, if (_search() != '') 'search': _search()},
       popOnErr: false,
@@ -333,7 +333,7 @@ class Explorer extends ScrollxController implements Filterable {
         }
       ''';
 
-    final data = await GraphQL.request(query, null, popOnErr: false);
+    final data = await Client.request(query, null, popOnErr: false);
 
     if (data == null) return;
 

@@ -85,9 +85,12 @@ class ActivityPage extends StatelessWidget {
                   ? ListView.builder(
                       physics: Config.PHYSICS,
                       padding: Config.PADDING,
-                      itemBuilder: (_, i) => i > 0
-                          ? UserReply(model.replies.items[i - 1])
-                          : ActivityBox(model),
+                      itemBuilder: (_, i) {
+                        if (i == 0) return ActivityBox(model, false);
+                        if (i == model.replies.items.length - 5)
+                          activity.fetchPage();
+                        return UserReply(model.replies.items[i - 1]);
+                      },
                       itemCount: model.replies.items.length + 1,
                     )
                   : Center(child: Loader()),
@@ -184,6 +187,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () =>
           Activity.toggleReplyLike(widget.reply).then((_) => setState(() {})),
       child: Row(

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -49,9 +47,7 @@ class App extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
-      defaultTransition: Platform.isIOS || Platform.isMacOS
-          ? Transition.native
-          : Transition.downToUp,
+      defaultTransition: Transition.cupertino,
       initialRoute: AuthPage.ROUTE,
       getPages: [
         GetPage(name: AuthPage.ROUTE, page: () => AuthPage()),

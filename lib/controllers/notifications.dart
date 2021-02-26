@@ -171,6 +171,7 @@ class Notifications extends ScrollxController {
     for (final n in data['notifications']) nl.add(NotificationModel(n));
 
     _entries = LoadableList(nl, data['pageInfo']['hasNextPage']);
+    Get.find<Viewer>().nullifyUnread();
     update();
     _fetching = false;
   }
@@ -204,11 +205,5 @@ class Notifications extends ScrollxController {
   void onInit() {
     super.onInit();
     fetch();
-  }
-
-  @override
-  void onClose() {
-    Get.find<Viewer>().nullifyUnread();
-    super.onClose();
   }
 }

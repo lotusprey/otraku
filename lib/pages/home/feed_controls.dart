@@ -48,7 +48,7 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
               BubbleTabs(
                 options: ['Following', 'Global'],
                 values: [true, false],
-                initial: viewer.isFollowing,
+                initial: viewer.onFollowing,
                 onNewValue: (val) => viewer.updateFilters(following: val),
                 onSameValue: (_) => viewer.scrollTo(0),
               ),

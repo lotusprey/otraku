@@ -23,7 +23,7 @@ class MediaList extends StatelessWidget {
     final collection = Get.find<Collection>(tag: collectionTag);
     return Obx(() {
       if (collection.isFullyEmpty) {
-        if (collection.fetching)
+        if (collection.isLoading)
           return const SliverFillRemaining(child: Center(child: Loader()));
 
         return SliverFillRemaining(

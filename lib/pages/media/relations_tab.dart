@@ -25,7 +25,7 @@ class RelationsTab extends StatelessWidget {
           final other = media.model.otherMedia;
 
           if (other.isEmpty)
-            return media.fetching ? _Empty(null) : _Empty('No related media');
+            return media.isLoading ? _Empty(null) : _Empty('No related media');
 
           return SliverGrid(
             gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
@@ -105,7 +105,7 @@ class RelationsTab extends StatelessWidget {
 
         if (media.relationsTab == Media.REL_CHARACTERS) {
           if (media.model.characters.items.isEmpty)
-            return media.fetching ? _Empty(null) : _Empty('No Characters');
+            return media.isLoading ? _Empty(null) : _Empty('No Characters');
 
           return ConnectionsGrid(
             connections: media.model.characters.items,
@@ -115,7 +115,7 @@ class RelationsTab extends StatelessWidget {
         }
 
         if (media.model.staff.items.isEmpty)
-          return media.fetching ? _Empty(null) : _Empty('No Staff');
+          return media.isLoading ? _Empty(null) : _Empty('No Staff');
 
         return ConnectionsGrid(
           connections: media.model.staff.items,

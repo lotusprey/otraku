@@ -129,7 +129,7 @@ class Media extends ScrollxController {
   final _model = MediaModel();
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
-  bool _fetching = false;
+  bool _isLoading = false;
 
   int get tab => _tab();
   set tab(int value) => _tab.value = value;
@@ -143,7 +143,7 @@ class Media extends ScrollxController {
       fetchRelationPage(false);
   }
 
-  bool get fetching => _fetching;
+  bool get isLoading => _isLoading;
 
   MediaModel get model => _model;
 
@@ -163,7 +163,7 @@ class Media extends ScrollxController {
 
   Future<void> fetch() async {
     if (_model.overview != null) return;
-    _fetching = true;
+    _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': _id,
@@ -174,13 +174,13 @@ class Media extends ScrollxController {
     if (result == null) return;
     _model.setMain(result['Media']);
     _model.addReviews(result['Media']);
-    _fetching = false;
+    _isLoading = false;
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
     if (ofCharacters && !_model.characters.hasNextPage) return;
     if (!ofCharacters && !_model.staff.hasNextPage) return;
-    _fetching = true;
+    _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': _id,
@@ -195,12 +195,12 @@ class Media extends ScrollxController {
       _model.addCharacters(result['Media'], _availableLanguages);
     else
       _model.addStaff(result['Media']);
-    _fetching = false;
+    _isLoading = false;
   }
 
   Future<void> fetchReviewPage() async {
     if (!_model.reviews.hasNextPage) return;
-    _fetching = true;
+    _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': _id,
@@ -210,7 +210,7 @@ class Media extends ScrollxController {
 
     if (result == null) return;
     _model.addReviews(result['Media']);
-    _fetching = false;
+    _isLoading = false;
   }
 
   Future<bool> toggleFavourite() async =>

@@ -30,7 +30,7 @@ class MediaControls extends StatelessWidget {
 
     return Obx(() {
       final collection = Get.find<Collection>(tag: collectionTag);
-      if (collection.fetching || collection.isFullyEmpty)
+      if (collection.isLoading || collection.isFullyEmpty)
         return const SliverToBoxAdapter();
 
       return SliverPersistentHeader(

@@ -70,11 +70,14 @@ class Client {
       body: json.encode({'query': request, 'variables': variables}),
       headers: _headers,
     ).catchError((err) {
-      _handleError(popOnErr, ioErr: err as IOException);
+      _handleErr(popOnErr, ioErr: err as IOException);
       erred = true;
     });
 
-    if (erred) return null;
+    if (erred || response.body.isEmpty) {
+      _handleErr(popOnErr, apiErr: ['Empty AniList response...']);
+      return null;
+    }
 
     final Map<String, dynamic> body = json.decode(response.body);
 
@@ -83,7 +86,7 @@ class Client {
           .map((e) => e['message'].toString())
           .toList();
 
-      _handleError(popOnErr, apiErr: messages);
+      _handleErr(popOnErr, apiErr: messages);
 
       return null;
     }
@@ -91,12 +94,12 @@ class Client {
     return body['data'];
   }
 
-  static void _handleError(
-    bool popOnError, {
+  static void _handleErr(
+    bool popOnErr, {
     IOException ioErr,
     List<String> apiErr,
   }) {
-    if (popOnError) Get.back();
+    if (popOnErr) Get.back();
 
     if (ioErr != null && ioErr is SocketException) {
       Get.defaultDialog(

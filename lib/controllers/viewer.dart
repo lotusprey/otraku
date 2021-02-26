@@ -108,30 +108,27 @@ class Viewer extends ScrollxController {
     ActivityType.ANIME_LIST,
     ActivityType.MANGA_LIST,
   ];
-  bool _isFollowing = true;
+  bool _onFollowing = true;
   SettingsModel _settings;
-  bool _fetching = false;
+  bool _isLoading = true;
 
   // ***************************************************************************
   // GETTERS & SETTERS
   // ***************************************************************************
 
   List<ActivityModel> get activities => _activities()?.items;
-
   List<ActivityType> get typeIn => [..._typeIn];
-
+  SettingsModel get settings => _settings;
   int get unreadCount => _unreadCount();
-
-  bool get isFollowing => _isFollowing;
+  bool get onFollowing => _onFollowing;
+  bool get isLoading => _isLoading;
 
   void updateFilters({final bool following, final List<ActivityType> types}) {
-    if (following != null) _isFollowing = following;
+    if (following != null) _onFollowing = following;
     if (types != null) _typeIn.replaceRange(0, _typeIn.length, types);
     refetch();
     scrollTo(0);
   }
-
-  SettingsModel get settings => _settings;
 
   void nullifyUnread() => _unreadCount.value = 0;
 
@@ -140,14 +137,15 @@ class Viewer extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
+    _isLoading = true;
     final data = await Client.request(
       _viewerQuery,
       {
         'withMain': true,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
-        'isFollowing': _isFollowing,
-        'hasRepliesOrTypeText': _isFollowing ? null : true,
+        'isFollowing': _onFollowing,
+        'hasRepliesOrTypeText': _onFollowing ? null : true,
       },
       popOnErr: false,
     );
@@ -158,11 +156,12 @@ class Viewer extends ScrollxController {
     update();
 
     _initActivities(data, true);
+    _isLoading = false;
   }
 
   Future<void> fetchPage() async {
-    if (_fetching || !_activities().hasNextPage) return;
-    _fetching = true;
+    if (_isLoading || !_activities().hasNextPage) return;
+    _isLoading = true;
 
     final data = await Client.request(
       _viewerQuery,
@@ -170,33 +169,35 @@ class Viewer extends ScrollxController {
         'page': _activities().nextPage,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
-        'isFollowing': _isFollowing,
-        'hasRepliesOrTypeText': _isFollowing ? null : true,
+        'isFollowing': _onFollowing,
+        'hasRepliesOrTypeText': _onFollowing ? null : true,
       },
       popOnErr: false,
     );
     if (data == null) return;
 
     _initActivities(data, false);
-    _fetching = false;
+    _isLoading = false;
   }
 
   Future<void> refetch() async {
-    _fetching = true;
+    _isLoading = true;
+    _activities.update((a) => a?.items?.clear());
+
     final data = await Client.request(
       _viewerQuery,
       {
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
-        'isFollowing': _isFollowing,
-        'hasRepliesOrTypeText': _isFollowing ? null : true,
+        'isFollowing': _onFollowing,
+        'hasRepliesOrTypeText': _onFollowing ? null : true,
       },
       popOnErr: false,
     );
     if (data == null) return;
 
     _initActivities(data, true);
-    _fetching = false;
+    _isLoading = false;
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {

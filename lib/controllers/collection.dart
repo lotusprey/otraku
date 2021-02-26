@@ -117,7 +117,7 @@ class Collection extends ScrollxController implements Filterable {
   final _entries = List<ListEntryModel>().obs;
   final _listIndex = 0.obs;
   final Map<String, dynamic> _filters = {};
-  final _fetching = false.obs;
+  final _isLoading = false.obs;
   final List<String> _customListNames = [];
   String _scoreFormat;
 
@@ -127,7 +127,7 @@ class Collection extends ScrollxController implements Filterable {
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  bool get fetching => _fetching();
+  bool get isLoading => _isLoading();
 
   int get listIndex => _listIndex();
 
@@ -180,7 +180,7 @@ class Collection extends ScrollxController implements Filterable {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    _fetching.value = true;
+    _isLoading.value = true;
     Map<String, dynamic> data = await Client.request(
       _collectionQuery,
       {
@@ -191,7 +191,7 @@ class Collection extends ScrollxController implements Filterable {
     );
 
     if (data == null) {
-      _fetching.value = false;
+      _isLoading.value = false;
       return null;
     }
 
@@ -229,7 +229,7 @@ class Collection extends ScrollxController implements Filterable {
 
     _listIndex.value = 0;
     filter();
-    _fetching.value = false;
+    _isLoading.value = false;
   }
 
   Future<void> updateEntry(

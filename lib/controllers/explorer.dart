@@ -28,7 +28,7 @@ class Explorer extends ScrollxController implements Filterable {
         onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
         startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
         source: $source, season: $season, id_not_in: $id_not_in, sort: $sort) {
-          id title {userPreferred} coverImage {large}
+          id type title {userPreferred} coverImage {large}
         }
       }
     }
@@ -215,25 +215,30 @@ class Explorer extends ScrollxController implements Filterable {
       _filters[Filterable.PAGE] = 1;
     }
 
-    final currentType = _type.value;
     String query;
-
-    if (currentType == Browsable.anime || currentType == Browsable.manga) {
-      query = _mediaQuery;
-    } else {
-      if (currentType == Browsable.character)
+    switch (_type.value) {
+      case Browsable.anime:
+      case Browsable.manga:
+        query = _mediaQuery;
+        break;
+      case Browsable.character:
         query = _charactersQuery;
-      else if (currentType == Browsable.staff)
+        break;
+      case Browsable.staff:
         query = _staffQuery;
-      else if (currentType == Browsable.studio)
+        break;
+      case Browsable.studio:
         query = _studiosQuery;
-      else if (currentType == Browsable.user)
+        break;
+      case Browsable.user:
         query = _usersQuery;
-      else
+        break;
+      case Browsable.review:
         query = _reviewsQuery;
+        break;
     }
 
-    final data = await Client.request(
+    Map<String, dynamic> data = await Client.request(
       query,
       {..._filters, if (_search() != '') 'search': _search()},
       popOnErr: false,
@@ -242,76 +247,43 @@ class Explorer extends ScrollxController implements Filterable {
     _concurrentFetches--;
     if (data == null || _concurrentFetches > 0) return;
 
-    _hasNextPage.value = data['Page']['pageInfo']['hasNextPage'];
+    data = data['Page'];
+    _hasNextPage.value = data['pageInfo']['hasNextPage'];
 
-    final List<BrowseResultModel> loaded = [];
+    final List<BrowseResultModel> items = [];
+    final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
-    if (currentType == Browsable.anime || currentType == Browsable.manga)
-      for (final m in data['Page']['media']) {
-        loaded.add(BrowseResultModel(
-          id: m['id'],
-          text1: m['title']['userPreferred'],
-          imageUrl: m['coverImage']['large'],
-          browsable: currentType,
-        ));
-        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(m['id']);
+    if (data['media'] != null)
+      for (final m in data['media']) {
+        items.add(BrowseResultModel.media(m));
+        idNotIn.add(m['id']);
       }
-    else if (currentType == Browsable.character)
-      for (final c in data['Page']['characters']) {
-        loaded.add(BrowseResultModel(
-          id: c['id'],
-          text1: c['name']['full'],
-          imageUrl: c['image']['large'],
-          browsable: currentType,
-        ));
-        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(c['id']);
+    else if (data['characters'] != null)
+      for (final c in data['characters']) {
+        items.add(BrowseResultModel.character(c));
+        idNotIn.add(c['id']);
       }
-    else if (currentType == Browsable.staff)
-      for (final c in data['Page']['staff']) {
-        loaded.add(BrowseResultModel(
-          id: c['id'],
-          text1: c['name']['full'],
-          imageUrl: c['image']['large'],
-          browsable: currentType,
-        ));
-        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(c['id']);
+    else if (data['staff'] != null)
+      for (final s in data['staff']) {
+        items.add(BrowseResultModel.staff(s));
+        idNotIn.add(s['id']);
       }
-    else if (currentType == Browsable.studio)
-      for (final s in data['Page']['studios']) {
-        loaded.add(BrowseResultModel(
-          id: s['id'],
-          text1: s['name'],
-          browsable: currentType,
-        ));
-        (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(s['id']);
+    else if (data['studios'] != null)
+      for (final s in data['studios']) {
+        items.add(BrowseResultModel.studio(s));
+        idNotIn.add(s['id']);
       }
-    else if (currentType == Browsable.user)
-      for (final u in data['Page']['users'])
-        loaded.add(BrowseResultModel(
-          id: u['id'],
-          text1: u['name'],
-          imageUrl: u['avatar']['large'],
-          browsable: currentType,
-        ));
-    else
-      for (final r in data['Page']['reviews'])
-        loaded.add(BrowseResultModel(
-          id: r['id'],
-          text1:
-              'Review of ${r['media']['title']['userPreferred']} by ${r['user']['name']}',
-          text2: r['summary'],
-          text3: '${r['rating']}/${r['ratingAmount']}',
-          imageUrl: r['media']['bannerImage'],
-          browsable: currentType,
-        ));
+    else if (data['users'] != null)
+      for (final u in data['users']) items.add(BrowseResultModel.user(u));
+    else if (data['reviews'] != null)
+      for (final r in data['reviews']) items.add(BrowseResultModel.review(r));
 
     if (clean) {
       scrollTo(0);
-      _results.assignAll(loaded);
+      _results.assignAll(items);
       _isLoading.value = false;
-    } else {
-      _results.addAll(loaded);
-    }
+    } else
+      _results.addAll(items);
   }
 
   //Fetches genres, tags and initial media
@@ -349,15 +321,11 @@ class Explorer extends ScrollxController implements Filterable {
       _tags[tag['name']] = tag['description'];
 
     List<BrowseResultModel> loaded = [];
+    final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
-    for (final m in data['Page']['media']) {
-      loaded.add(BrowseResultModel(
-        id: m['id'],
-        text1: m['title']['userPreferred'],
-        imageUrl: m['coverImage']['large'],
-        browsable: Browsable.anime,
-      ));
-      (_filters[Filterable.ID_NOT_IN] as List<dynamic>).add(m['id']);
+    for (final a in data['Page']['media']) {
+      loaded.add(BrowseResultModel.anime(a));
+      idNotIn.add(a['id']);
     }
 
     _results.assignAll(loaded);

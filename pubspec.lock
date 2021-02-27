@@ -106,14 +106,14 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.2"
+    version: "0.5.2+1"
   get:
     dependency: "direct main"
     description:
       name: get
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.25.4"
+    version: "3.25.6"
   get_storage:
     dependency: "direct main"
     description:

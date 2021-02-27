@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/helpers/client.dart';
-import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/anilist/person_model.dart';
@@ -74,32 +73,30 @@ class Studio extends GetxController {
   Future<void> fetch() async {
     if (_company.value != null) return;
 
-    final body = await Client.request(
+    final data = await Client.request(
       _studioQuery,
       {'id': _id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
-    if (body == null) return;
+    if (data == null) return;
 
-    final data = body['Studio'];
-
-    _company(PersonModel.studio(data));
-
-    _initLists(data['media']);
+    _company(PersonModel.studio(data['Studio']));
+    _initLists(data['Studio']['media']);
   }
 
   Future<void> refetch() async {
-    final body = await Client.request(
+    final data = await Client.request(
       _studioQuery,
       {'id': _id, 'sort': describeEnum(_sort)},
     );
+    if (data == null) return;
 
-    if (body == null) return;
-
-    _initLists(body['Studio']['media']);
+    _initLists(data['Studio']['media']);
   }
 
   Future<void> fetchPage() async {
-    final body = await Client.request(
+    if (_media() == null || !_media().hasNextPage) return;
+
+    final data = await Client.request(
       _studioQuery,
       {
         'id': _id,
@@ -107,36 +104,9 @@ class Studio extends GetxController {
         'sort': describeEnum(_sort),
       },
     );
+    if (data == null) return;
 
-    if (body == null) return;
-
-    final data = body['Studio']['media'];
-
-    List<String> categories = [];
-    List<List<BrowseResultModel>> results = [];
-    for (final node in data['nodes']) {
-      final String category =
-          (node['startDate']['year'] ?? FnHelper.clarifyEnum(node['status']))
-              .toString();
-
-      if (categories.isEmpty || categories.last != category) {
-        categories.add(category);
-        results.add([]);
-      }
-
-      results.last.add(BrowseResultModel(
-        id: node['id'],
-        text1: node['title']['userPreferred'],
-        imageUrl: node['coverImage']['large'],
-        browsable: Browsable.anime,
-      ));
-    }
-
-    _media.update((m) => m.append(
-          categories,
-          results,
-          data['pageInfo']['hasNextPage'],
-        ));
+    _initLists(data['Studio']['media'], true);
   }
 
   Future<bool> toggleFavourite() async =>
@@ -151,7 +121,7 @@ class Studio extends GetxController {
   // HELPER FUNCTIONS
   // ***************************************************************************
 
-  void _initLists(Map<String, dynamic> data) {
+  void _initLists(Map<String, dynamic> data, [bool append = false]) {
     final List<dynamic> nodes = data['nodes'];
     if (nodes.isEmpty) {
       _media(StudioConnectionList([], [], false));
@@ -160,6 +130,7 @@ class Studio extends GetxController {
 
     List<String> categories = [];
     List<List<BrowseResultModel>> results = [];
+
     for (final node in nodes) {
       final String category =
           (node['startDate']['year'] ?? FnHelper.clarifyEnum(node['status']))
@@ -170,19 +141,21 @@ class Studio extends GetxController {
         results.add([]);
       }
 
-      results.last.add(BrowseResultModel(
-        id: node['id'],
-        text1: node['title']['userPreferred'],
-        imageUrl: node['coverImage']['large'],
-        browsable: Browsable.anime,
-      ));
+      results.last.add(BrowseResultModel.anime(node));
     }
 
-    _media(StudioConnectionList(
-      categories,
-      results,
-      data['pageInfo']['hasNextPage'],
-    ));
+    if (append)
+      _media.update((m) => m.append(
+            categories,
+            results,
+            data['pageInfo']['hasNextPage'],
+          ));
+    else
+      _media(StudioConnectionList(
+        categories,
+        results,
+        data['pageInfo']['hasNextPage'],
+      ));
   }
 
   @override

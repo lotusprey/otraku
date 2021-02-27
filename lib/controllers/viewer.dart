@@ -127,7 +127,6 @@ class Viewer extends ScrollxController {
     if (following != null) _onFollowing = following;
     if (types != null) _typeIn.replaceRange(0, _typeIn.length, types);
     refetch();
-    scrollTo(0);
   }
 
   void nullifyUnread() => _unreadCount.value = 0;
@@ -212,7 +211,10 @@ class Viewer extends ScrollxController {
   // ***************************************************************************
 
   void _initActivities(final Map<String, dynamic> data, final bool replace) {
-    if (replace) _idNotIn.clear();
+    if (replace) {
+      _idNotIn.clear();
+      scrollTo(0);
+    }
 
     final List<ActivityModel> al = [];
     for (final a in data['Page']['activities']) {

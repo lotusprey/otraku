@@ -1,4 +1,3 @@
-import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/models/browse_result_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 
@@ -67,62 +66,48 @@ class UserModel {
   void addFavs(final int index, final Map<String, dynamic> map) {
     final List<BrowseResultModel> items = [];
     if (index == null || index == ANIME_FAV) {
-      for (final node in map['anime']['nodes'])
-        items.add(BrowseResultModel(
-          id: node['id'],
-          text1: node['title']['userPreferred'],
-          imageUrl: node['coverImage']['large'],
-          browsable: Browsable.anime,
-        ));
-      _favourites[ANIME_FAV]
-          .append(items, map['anime']['pageInfo']['hasNextPage']);
+      for (final a in map['anime']['nodes'])
+        items.add(BrowseResultModel.anime(a));
+      _favourites[ANIME_FAV].append(
+        items,
+        map['anime']['pageInfo']['hasNextPage'],
+      );
     }
     if (index == null || index == MANGA_FAV) {
       items.clear();
-      for (final node in map['manga']['nodes'])
-        items.add(BrowseResultModel(
-          id: node['id'],
-          text1: node['title']['userPreferred'],
-          imageUrl: node['coverImage']['large'],
-          browsable: Browsable.manga,
-        ));
-      _favourites[MANGA_FAV]
-          .append(items, map['manga']['pageInfo']['hasNextPage']);
+      for (final m in map['manga']['nodes'])
+        items.add(BrowseResultModel.manga(m));
+      _favourites[MANGA_FAV].append(
+        items,
+        map['manga']['pageInfo']['hasNextPage'],
+      );
     }
     if (index == null || index == CHARACTER_FAV) {
       items.clear();
-      for (final node in map['characters']['nodes'])
-        items.add(BrowseResultModel(
-          id: node['id'],
-          text1: node['name']['full'],
-          imageUrl: node['image']['large'],
-          browsable: Browsable.character,
-        ));
-      _favourites[CHARACTER_FAV]
-          .append(items, map['characters']['pageInfo']['hasNextPage']);
+      for (final c in map['characters']['nodes'])
+        items.add(BrowseResultModel.character(c));
+      _favourites[CHARACTER_FAV].append(
+        items,
+        map['characters']['pageInfo']['hasNextPage'],
+      );
     }
     if (index == null || index == STAFF_FAV) {
       items.clear();
-      for (final node in map['staff']['nodes'])
-        items.add(BrowseResultModel(
-          id: node['id'],
-          text1: node['name']['full'],
-          imageUrl: node['image']['large'],
-          browsable: Browsable.staff,
-        ));
-      _favourites[STAFF_FAV]
-          .append(items, map['staff']['pageInfo']['hasNextPage']);
+      for (final s in map['staff']['nodes'])
+        items.add(BrowseResultModel.staff(s));
+      _favourites[STAFF_FAV].append(
+        items,
+        map['staff']['pageInfo']['hasNextPage'],
+      );
     }
     if (index == null || index == STUDIO_FAV) {
       items.clear();
-      for (final node in map['studios']['nodes'])
-        items.add(BrowseResultModel(
-          id: node['id'],
-          text1: node['name'],
-          browsable: Browsable.studio,
-        ));
-      _favourites[STUDIO_FAV]
-          .append(items, map['studios']['pageInfo']['hasNextPage']);
+      for (final s in map['studios']['nodes'])
+        items.add(BrowseResultModel.studio(s));
+      _favourites[STUDIO_FAV].append(
+        items,
+        map['studios']['pageInfo']['hasNextPage'],
+      );
     }
   }
 }

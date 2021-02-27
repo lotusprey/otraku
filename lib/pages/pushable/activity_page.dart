@@ -81,19 +81,45 @@ class ActivityPage extends StatelessWidget {
             ),
             body: SafeArea(
               bottom: false,
-              child: model != null
-                  ? ListView.builder(
-                      physics: Config.PHYSICS,
-                      padding: Config.PADDING,
-                      itemBuilder: (_, i) {
-                        if (i == 0) return ActivityBox(model, false);
-                        if (i == model.replies.items.length - 5)
-                          activity.fetchPage();
-                        return UserReply(model.replies.items[i - 1]);
-                      },
-                      itemCount: model.replies.items.length + 1,
-                    )
-                  : Center(child: Loader()),
+              child: CustomScrollView(
+                physics: Config.PHYSICS,
+                slivers: [
+                  if (model != null) ...[
+                    SliverToBoxAdapter(
+                        child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                      ),
+                      child: ActivityBox(model, false),
+                    )),
+                    SliverPadding(
+                      padding: const EdgeInsets.all(10),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (_, i) {
+                            if (i == model.replies.items.length - 5)
+                              activity.fetchPage();
+                            return UserReply(model.replies.items[i]);
+                          },
+                          childCount: model.replies.items.length,
+                        ),
+                      ),
+                    ),
+                  ],
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 50,
+                      child: Obx(
+                        () => Center(
+                          child: activity.isLoading ? Loader() : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         });

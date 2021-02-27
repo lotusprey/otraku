@@ -80,20 +80,24 @@ class Activity extends GetxController {
   Activity(this._id, [this._model]);
 
   ActivityModel _model;
+  final _isLoading = true.obs;
 
   ActivityModel get model => _model;
+  bool get isLoading => _isLoading();
 
   Future<void> fetch() async {
     if (_model != null && _model.replies.items.isNotEmpty) return;
+    _isLoading.value = true;
 
     final data = await Client.request(
       _activityQuery,
-      {'id': _id, 'withActivity': _model == null},
+      {'id': _id, 'withActivity': true},
     );
     if (data == null) return;
 
-    if (_model == null) _model = ActivityModel(data['Activity']);
+    _model = ActivityModel(data['Activity']);
     _model.appendReplies(data['Page']);
+    _isLoading.value = false;
     update();
   }
 

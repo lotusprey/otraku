@@ -431,6 +431,7 @@ class Collection extends ScrollxController implements Filterable {
 
     scrollTo(0);
     _entries.assignAll(e);
+    // [ERROR:flutter/lib/ui/ui_dart_state.cc(177)] Unhandled Exception: 'package:get/get_rx/src/rx_stream/get_stream.dart': Failed assertion: line 95 pos 12: '!isClosed': You cannot add event to closed Stream
   }
 
   @override

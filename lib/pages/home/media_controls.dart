@@ -64,6 +64,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
           child: Row(
             children: [
               IconButton(
+                tooltip: collectionTag == null ? 'Types' : 'Lists',
                 padding: const EdgeInsets.only(right: 10),
                 icon: const Icon(FluentSystemIcons.ic_fluent_list_regular),
                 onPressed: () => Scaffold.of(context).openDrawer(),
@@ -141,6 +142,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                   final type = Get.find<Explorer>().type;
                   if (type == Browsable.anime || type == Browsable.manga)
                     return IconButton(
+                      tooltip: 'Sort',
                       icon: const Icon(
                         FluentSystemIcons.ic_fluent_arrow_sort_filled,
                       ),
@@ -171,6 +173,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                 }),
               ] else ...[
                 IconButton(
+                  tooltip: 'Sort',
                   icon: const Icon(
                     FluentSystemIcons.ic_fluent_arrow_sort_filled,
                   ),
@@ -284,6 +287,7 @@ class __NavigationState extends State<_Navigation> {
             ),
             if (widget.search != null)
               IconButton(
+                tooltip: 'Search',
                 icon: const Icon(FluentSystemIcons.ic_fluent_search_regular),
                 onPressed: () => setState(() => _searchMode = true),
               ),
@@ -313,6 +317,7 @@ class __NavigationState extends State<_Navigation> {
                     isDense: true,
                     suffixIcon: _empty
                         ? IconButton(
+                            tooltip: 'Hide',
                             padding: const EdgeInsets.all(0),
                             icon: const Icon(
                               FluentSystemIcons.ic_fluent_chevron_right_filled,
@@ -325,6 +330,7 @@ class __NavigationState extends State<_Navigation> {
                             },
                           )
                         : IconButton(
+                            tooltip: 'Clear',
                             padding: const EdgeInsets.all(0),
                             icon: const Icon(Icons.close),
                             color: Theme.of(context).disabledColor,
@@ -386,25 +392,29 @@ class __FilterState extends State<_Filter> {
   Widget build(BuildContext context) {
     if (!_active)
       return IconButton(
+        tooltip: 'Filter',
         icon: const Icon(Icons.filter_alt_outlined),
         onPressed: () => _pushPage(context),
       );
 
-    return GestureDetector(
-      onTap: () => _pushPage(context),
-      onLongPress: () {
-        _filterable.clearAllFilters();
-        setState(() => _active = false);
-      },
-      child: Container(
-        width: Config.MATERIAL_TAP_TARGET_SIZE,
-        decoration: BoxDecoration(
-          color: Theme.of(context).accentColor,
-          borderRadius: Config.BORDER_RADIUS,
-        ),
-        child: Icon(
-          Icons.filter_alt_outlined,
-          color: Theme.of(context).backgroundColor,
+    return Tooltip(
+      message: 'Filter',
+      child: GestureDetector(
+        onTap: () => _pushPage(context),
+        onLongPress: () {
+          _filterable.clearAllFilters();
+          setState(() => _active = false);
+        },
+        child: Container(
+          width: Config.MATERIAL_TAP_TARGET_SIZE,
+          decoration: BoxDecoration(
+            color: Theme.of(context).accentColor,
+            borderRadius: Config.BORDER_RADIUS,
+          ),
+          child: Icon(
+            Icons.filter_alt_outlined,
+            color: Theme.of(context).backgroundColor,
+          ),
         ),
       ),
     );

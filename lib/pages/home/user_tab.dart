@@ -13,7 +13,7 @@ import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/collection_tab.dart';
 import 'package:otraku/helpers/client.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 
 class UserTab extends StatelessWidget {
   static const ROUTE = '/user';
@@ -116,7 +116,7 @@ class UserTab extends StatelessWidget {
                         ),
                       ),
                     ),
-                  SizedBox(height: CustomNavBar.offset(context)),
+                  SizedBox(height: NavBar.offset(context)),
                 ],
               ),
             ),

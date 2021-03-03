@@ -43,6 +43,7 @@ class _MediaHeaderState extends State<MediaHeader> {
         actions: overview != null
             ? [
                 IconButton(
+                  tooltip: 'Edit',
                   onPressed: _edit,
                   icon: Icon(
                     overview.entryStatus == null ? Icons.add : Icons.edit,
@@ -50,6 +51,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                   ),
                 ),
                 IconButton(
+                  tooltip: 'Favourite',
                   onPressed: _toggleFavourite,
                   icon: Icon(
                     overview.isFavourite

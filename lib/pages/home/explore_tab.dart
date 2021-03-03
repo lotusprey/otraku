@@ -8,7 +8,7 @@ import 'package:otraku/tools/layouts/title_list.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:otraku/pages/home/media_controls.dart';
 import 'package:otraku/tools/layouts/tile_grid.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
 class ExploreTab extends StatelessWidget {
@@ -27,7 +27,7 @@ class ExploreTab extends StatelessWidget {
         _ExploreGrid(),
         _EndOfListLoader(),
         SliverToBoxAdapter(
-          child: SizedBox(height: CustomNavBar.offset(context)),
+          child: SizedBox(height: NavBar.offset(context)),
         ),
       ],
     );

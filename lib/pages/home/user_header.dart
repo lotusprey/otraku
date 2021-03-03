@@ -39,6 +39,7 @@ class UserHeader extends StatelessWidget {
       actions: [
         if (isMe)
           IconShade(IconButton(
+            tooltip: 'Settings',
             icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
             color: Theme.of(context).dividerColor,
             onPressed: () => Get.toNamed(SettingsPage.ROUTE),

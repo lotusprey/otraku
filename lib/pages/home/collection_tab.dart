@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/pages/home/media_controls.dart';
 import 'package:otraku/tools/layouts/media_list.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
 class CollectionTab extends StatelessWidget {
@@ -34,7 +34,7 @@ class CollectionTab extends StatelessWidget {
           MediaControls(collectionTag),
           MediaList(collectionTag),
           SliverToBoxAdapter(
-            child: SizedBox(height: CustomNavBar.offset(context)),
+            child: SizedBox(height: NavBar.offset(context)),
           ),
         ],
       );

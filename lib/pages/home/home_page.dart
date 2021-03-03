@@ -8,7 +8,7 @@ import 'package:otraku/pages/home/feed_tab.dart';
 import 'package:otraku/pages/home/user_tab.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 
 class HomePage extends StatelessWidget {
   static const ROUTE = '/home';
@@ -51,17 +51,16 @@ class HomePage extends StatelessWidget {
       builder: (config) => Scaffold(
         extendBody: true,
         drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
-        bottomNavigationBar: CustomNavBar(
-          icons: const [
-            FluentSystemIcons.ic_fluent_mail_inbox_regular,
-            FluentSystemIcons.ic_fluent_movies_and_tv_regular,
-            FluentSystemIcons.ic_fluent_bookmark_regular,
-            Icons.explore_outlined,
-            FluentSystemIcons.ic_fluent_person_regular,
-          ],
+        bottomNavigationBar: NavBar(
+          options: {
+            FluentSystemIcons.ic_fluent_mail_inbox_regular: 'Feed',
+            FluentSystemIcons.ic_fluent_movies_and_tv_regular: 'Anime',
+            FluentSystemIcons.ic_fluent_bookmark_regular: 'Manga',
+            Icons.explore_outlined: 'Explore',
+            FluentSystemIcons.ic_fluent_person_regular: 'Profile',
+          },
           onChanged: (page) => config.pageIndex = page,
           initial: config.pageIndex,
-          getIndex: () => config.pageIndex,
         ),
         drawer: drawers[config.pageIndex],
         body: SafeArea(

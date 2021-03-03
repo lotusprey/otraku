@@ -104,6 +104,17 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     dividerColor: theme['contrast'],
     disabledColor: theme['faded'],
     unselectedWidgetColor: theme['faded'],
+    tooltipTheme: TooltipThemeData(
+      padding: Config.PADDING,
+      decoration: BoxDecoration(
+        color: theme['primary'],
+        borderRadius: Config.BORDER_RADIUS,
+      ),
+      textStyle: TextStyle(
+        fontSize: Styles.FONT_SMALL,
+        color: theme['faded'],
+      ),
+    ),
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     iconTheme: IconThemeData(

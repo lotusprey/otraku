@@ -49,11 +49,12 @@ class Client {
   }
 
   static Future<bool> initViewerId() async {
-    _viewerId = Config.storage.read('viewerId');
+    _viewerId = Config.storage.read('viewerId1');
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnErr: false);
       if (data == null) return false;
       _viewerId = data['Viewer']['id'];
+      Config.storage.write('viewerId1', _viewerId);
     }
     return true;
   }

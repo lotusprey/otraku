@@ -5,7 +5,7 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 
 class AppSettingsTab extends StatelessWidget {
   @override
@@ -74,7 +74,7 @@ class AppSettingsTab extends StatelessWidget {
               Config.updateTheme();
             },
           ),
-          SizedBox(height: CustomNavBar.offset(context)),
+          SizedBox(height: NavBar.offset(context)),
         ],
       );
 }

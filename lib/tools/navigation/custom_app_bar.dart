@@ -38,6 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             AppBarIcon(IconButton(
+              tooltip: 'Close',
               icon: Icon(leading),
               onPressed: () => Navigator.of(context).pop(),
             )),

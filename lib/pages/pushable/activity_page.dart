@@ -212,28 +212,31 @@ class _ReplyLikeIcon extends StatefulWidget {
 class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () =>
-          Activity.toggleReplyLike(widget.reply).then((_) => setState(() {})),
-      child: Row(
-        children: [
-          Text(
-            widget.reply.likeCount.toString(),
-            style: !widget.reply.isLiked
-                ? Theme.of(context).textTheme.subtitle2
-                : Theme.of(context)
-                    .textTheme
-                    .subtitle2
-                    .copyWith(color: Theme.of(context).errorColor),
-          ),
-          const SizedBox(width: 5),
-          Icon(
-            Icons.favorite,
-            size: Styles.ICON_SMALLER,
-            color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
-          ),
-        ],
+    return Tooltip(
+      message: !widget.reply.isLiked ? 'Like' : 'Unlike',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () =>
+            Activity.toggleReplyLike(widget.reply).then((_) => setState(() {})),
+        child: Row(
+          children: [
+            Text(
+              widget.reply.likeCount.toString(),
+              style: !widget.reply.isLiked
+                  ? Theme.of(context).textTheme.subtitle2
+                  : Theme.of(context)
+                      .textTheme
+                      .subtitle2
+                      .copyWith(color: Theme.of(context).errorColor),
+            ),
+            const SizedBox(width: 5),
+            Icon(
+              Icons.favorite,
+              size: Styles.ICON_SMALLER,
+              color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
+            ),
+          ],
+        ),
       ),
     );
   }

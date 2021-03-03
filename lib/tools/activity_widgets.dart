@@ -176,28 +176,31 @@ class ActivityBox extends StatelessWidget {
                 children: [
                   _SubscribeIcon(activity),
                   const SizedBox(width: 10),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      if (canNavigateToReplies)
-                        Get.toNamed(
-                          ActivityPage.ROUTE,
-                          arguments: [activity.id, activity],
-                          parameters: {'id': activity.id.toString()},
-                        );
-                    },
-                    child: Row(
-                      children: [
-                        Text(
-                          activity.replyCount.toString(),
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                        const SizedBox(width: 5),
-                        const Icon(
-                          Icons.comment,
-                          size: Styles.ICON_SMALLER,
-                        ),
-                      ],
+                  Tooltip(
+                    message: 'Replies',
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (canNavigateToReplies)
+                          Get.toNamed(
+                            ActivityPage.ROUTE,
+                            arguments: [activity.id, activity],
+                            parameters: {'id': activity.id.toString()},
+                          );
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            activity.replyCount.toString(),
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          const SizedBox(width: 5),
+                          const Icon(
+                            Icons.comment,
+                            size: Styles.ICON_SMALLER,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -223,29 +226,32 @@ class _ActivityLikeIcon extends StatefulWidget {
 class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => Activity.toggleActivityLike(widget.activity)
-          .then((_) => setState(() {})),
-      child: Row(
-        children: [
-          Text(
-            widget.activity.likeCount.toString(),
-            style: !widget.activity.isLiked
-                ? Theme.of(context).textTheme.subtitle2
-                : Theme.of(context)
-                    .textTheme
-                    .subtitle2
-                    .copyWith(color: Theme.of(context).errorColor),
-          ),
-          const SizedBox(width: 5),
-          Icon(
-            Icons.favorite,
-            size: Styles.ICON_SMALLER,
-            color:
-                widget.activity.isLiked ? Theme.of(context).errorColor : null,
-          ),
-        ],
+    return Tooltip(
+      message: !widget.activity.isLiked ? 'Like' : 'Unlike',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => Activity.toggleActivityLike(widget.activity)
+            .then((_) => setState(() {})),
+        child: Row(
+          children: [
+            Text(
+              widget.activity.likeCount.toString(),
+              style: !widget.activity.isLiked
+                  ? Theme.of(context).textTheme.subtitle2
+                  : Theme.of(context)
+                      .textTheme
+                      .subtitle2
+                      .copyWith(color: Theme.of(context).errorColor),
+            ),
+            const SizedBox(width: 5),
+            Icon(
+              Icons.favorite,
+              size: Styles.ICON_SMALLER,
+              color:
+                  widget.activity.isLiked ? Theme.of(context).errorColor : null,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -262,20 +268,23 @@ class _SubscribeIcon extends StatefulWidget {
 class _SubscribeIconState extends State<_SubscribeIcon> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => Activity.toggleSubscription(widget.activity)
-          .then((_) => setState(() {})),
-      child: !(widget.activity.isSubscribed ?? false)
-          ? Icon(
-              Icons.notifications,
-              size: Styles.ICON_SMALLER,
-            )
-          : Icon(
-              Icons.notifications_active,
-              size: Styles.ICON_SMALLER,
-              color: Theme.of(context).accentColor,
-            ),
+    return Tooltip(
+      message: !widget.activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => Activity.toggleSubscription(widget.activity)
+            .then((_) => setState(() {})),
+        child: !widget.activity.isSubscribed
+            ? Icon(
+                Icons.notifications,
+                size: Styles.ICON_SMALLER,
+              )
+            : Icon(
+                Icons.notifications_active,
+                size: Styles.ICON_SMALLER,
+                color: Theme.of(context).accentColor,
+              ),
+      ),
     );
   }
 }

@@ -6,7 +6,7 @@ import 'package:otraku/controllers/config.dart';
 import 'package:otraku/pages/media/overview_tab.dart';
 import 'package:otraku/pages/media/relations_tab.dart';
 import 'package:otraku/pages/media/social_tab.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 import 'package:otraku/pages/media/media_header.dart';
 
 class MediaPage extends StatelessWidget {
@@ -32,12 +32,12 @@ class MediaPage extends StatelessWidget {
 
     return Scaffold(
       extendBody: true,
-      bottomNavigationBar: CustomNavBar(
-        icons: const [
-          FluentSystemIcons.ic_fluent_text_description_regular,
-          FluentSystemIcons.ic_fluent_recommended_regular,
-          FluentSystemIcons.ic_fluent_people_community_regular,
-        ],
+      bottomNavigationBar: NavBar(
+        options: {
+          FluentSystemIcons.ic_fluent_text_description_regular: 'Overview',
+          FluentSystemIcons.ic_fluent_recommended_regular: 'Relations',
+          FluentSystemIcons.ic_fluent_people_community_regular: 'Social',
+        },
         onChanged: (index) => media.tab = index,
       ),
       body: SafeArea(
@@ -79,7 +79,7 @@ class MediaPage extends StatelessWidget {
               () => media.tab == Media.SOCIAL ? SocialTab(media) : placeholder,
             ),
             SliverToBoxAdapter(
-              child: SizedBox(height: CustomNavBar.offset(context)),
+              child: SizedBox(height: NavBar.offset(context)),
             ),
           ],
         ),

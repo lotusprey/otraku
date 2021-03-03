@@ -9,7 +9,7 @@ import 'package:otraku/pages/settings/content_settings_tab.dart';
 import 'package:otraku/pages/settings/notification_settings_tab.dart';
 import 'package:otraku/pages/settings/profile_settings_tab.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   static const ROUTE = '/settings';
@@ -32,13 +32,13 @@ class SettingsPage extends StatelessWidget {
     return GetBuilder<Settings>(
       builder: (settings) => Scaffold(
         extendBody: true,
-        bottomNavigationBar: CustomNavBar(
-          icons: const [
-            FluentSystemIcons.ic_fluent_phone_link_setup_regular,
-            Icons.video_settings,
-            Icons.notifications_none,
-            Icons.account_circle_outlined,
-          ],
+        bottomNavigationBar: NavBar(
+          options: {
+            FluentSystemIcons.ic_fluent_phone_link_setup_regular: 'App',
+            Icons.video_settings: 'Content',
+            Icons.notifications_none: 'Notifications',
+            Icons.account_circle_outlined: 'Profile',
+          },
           onChanged: (page) => settings.pageIndex = page,
           initial: settings.pageIndex,
         ),

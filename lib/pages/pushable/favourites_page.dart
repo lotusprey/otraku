@@ -8,7 +8,7 @@ import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/layouts/title_list.dart';
 import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 
 class FavouritesPage extends StatelessWidget {
   static const ROUTE = '/favourites';
@@ -22,14 +22,14 @@ class FavouritesPage extends StatelessWidget {
       tag: id?.toString() ?? Client.viewerId.toString(),
       builder: (user) => Scaffold(
         extendBody: true,
-        bottomNavigationBar: CustomNavBar(
-          icons: [
-            FluentSystemIcons.ic_fluent_movies_and_tv_regular,
-            FluentSystemIcons.ic_fluent_bookmark_regular,
-            FluentSystemIcons.ic_fluent_accessibility_regular,
-            FluentSystemIcons.ic_fluent_mic_on_regular,
-            FluentSystemIcons.ic_fluent_building_regular,
-          ],
+        bottomNavigationBar: NavBar(
+          options: {
+            FluentSystemIcons.ic_fluent_movies_and_tv_regular: 'Anime',
+            FluentSystemIcons.ic_fluent_bookmark_regular: 'Manga',
+            FluentSystemIcons.ic_fluent_accessibility_regular: 'Characters',
+            FluentSystemIcons.ic_fluent_mic_on_regular: 'Staff',
+            FluentSystemIcons.ic_fluent_building_regular: 'Studios',
+          },
           initial: user.favsIndex,
           onChanged: (index) => user.favsIndex = index,
         ),

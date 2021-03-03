@@ -5,7 +5,7 @@ import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/home/feed_controls.dart';
 import 'package:otraku/tools/activity_widgets.dart';
 import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigation/custom_nav_bar.dart';
+import 'package:otraku/tools/navigation/nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
 class FeedTab extends StatelessWidget {
@@ -50,7 +50,7 @@ class FeedTab extends StatelessWidget {
           ),
         ),
         SliverToBoxAdapter(
-          child: SizedBox(height: CustomNavBar.offset(context)),
+          child: SizedBox(height: NavBar.offset(context)),
         ),
       ],
     );

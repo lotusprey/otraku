@@ -131,6 +131,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 children: [
                   if (implyLeading)
                     IconShade(IconButton(
+                      tooltip: 'Close',
                       icon: const Icon(Icons.close),
                       color: Theme.of(context).dividerColor,
                       onPressed: () => Navigator.of(context).pop(),

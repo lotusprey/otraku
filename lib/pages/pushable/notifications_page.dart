@@ -22,6 +22,7 @@ class NotificationsPage extends StatelessWidget {
         title: 'Notifications',
         trailing: [
           IconButton(
+            tooltip: 'Filter',
             icon: const Icon(Icons.filter_alt_outlined),
             onPressed: () => Sheet.show(
               ctx: context,

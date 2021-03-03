@@ -39,6 +39,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
               if (data != null) ...[
                 if (data.entryId != null)
                   IconButton(
+                    tooltip: 'Remove',
                     icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () => showDialog(
@@ -80,6 +81,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     ),
                   ),
                 IconButton(
+                    tooltip: 'Save',
                     icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () {
@@ -96,10 +98,11 @@ class _EditEntryPageState extends State<EditEntryPage> {
           ),
           body: data != null
               ? Padding(
-                  padding: Config.PADDING,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: CustomScrollView(
                     physics: Config.PHYSICS,
                     slivers: [
+                      const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       _FieldGrid([
                         DropDownField(
                           hint: 'Add',

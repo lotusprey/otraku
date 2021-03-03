@@ -18,7 +18,7 @@ class NotificationSettingsTab extends StatelessWidget {
 
     const gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
       height: Config.MATERIAL_TAP_TARGET_SIZE,
-      minWidth: 190,
+      minWidth: 200,
     );
 
     return Padding(

@@ -21,6 +21,10 @@ class MediaList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collection = Get.find<Collection>(tag: collectionTag);
+    final sidePadding = MediaQuery.of(context).size.width > 620
+        ? (MediaQuery.of(context).size.width - 600) / 2.0
+        : 10.0;
+
     return Obx(() {
       if (collection.isFullyEmpty) {
         if (collection.isLoading)
@@ -53,7 +57,11 @@ class MediaList extends StatelessWidget {
 
       final entries = collection.entries;
       return SliverPadding(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+        padding: EdgeInsets.only(
+          left: sidePadding,
+          right: sidePadding,
+          top: 15,
+        ),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
             (_, index) =>
@@ -77,143 +85,148 @@ class _MediaListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BrowseIndexer(
-      id: media.mediaId,
-      browsable: Browsable.anime,
-      imageUrl: media.cover,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Hero(
-            tag: media.mediaId,
-            child: SizedBox(
-              height: 140,
-              width: 95,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: Config.BORDER_RADIUS,
+      ),
+      child: BrowseIndexer(
+        id: media.mediaId,
+        browsable: Browsable.anime,
+        imageUrl: media.cover,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Hero(
+              tag: media.mediaId,
               child: ClipRRect(
                 child: Container(
+                  width: 95,
                   color: Theme.of(context).primaryColor,
                   child: FadeImage(media.cover),
                 ),
                 borderRadius: Config.BORDER_RADIUS,
               ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          media.title,
-                          style: Theme.of(context).textTheme.bodyText1,
-                          overflow: TextOverflow.fade,
-                        ),
-                      ),
-                      _space,
-                      RichText(
-                        text: TextSpan(
-                          style: Theme.of(context).textTheme.subtitle2,
-                          children: [
-                            TextSpan(
-                              text: FnHelper.clarifyEnum(media.format),
-                            ),
-                            if (media.timeUntilAiring != null)
-                              TextSpan(
-                                text:
-                                    ' • Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
-                                style: TextStyle(
-                                  color: Theme.of(context).accentColor,
-                                ),
-                              ),
-                            if (media.nextEpisode != null &&
-                                media.nextEpisode - 1 > media.progress)
-                              TextSpan(
-                                text:
-                                    ' • ${media.nextEpisode - 1 - media.progress} ep behind',
-                                style: TextStyle(
-                                  color: Theme.of(context).errorColor,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Center(
+            Expanded(
+              child: Padding(
+                padding: Config.PADDING,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Flexible(
                           child: Text(
-                            media.progress != media.progressMax
-                                ? '${media.progress} / ${media.progressMax ?? '?'}'
-                                : media.progress.toString(),
+                            media.title,
+                            style: Theme.of(context).textTheme.bodyText1,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
+                        _space,
+                        RichText(
+                          text: TextSpan(
                             style: Theme.of(context).textTheme.subtitle2,
+                            children: [
+                              TextSpan(
+                                text: FnHelper.clarifyEnum(media.format),
+                              ),
+                              if (media.timeUntilAiring != null)
+                                TextSpan(
+                                  text:
+                                      ' • Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
+                                  style: TextStyle(
+                                    color: Theme.of(context).accentColor,
+                                  ),
+                                ),
+                              if (media.nextEpisode != null &&
+                                  media.nextEpisode - 1 > media.progress)
+                                TextSpan(
+                                  text:
+                                      ' • ${media.nextEpisode - 1 - media.progress} ep behind',
+                                  style: TextStyle(
+                                    color: Theme.of(context).errorColor,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
-                      ),
-                      Flexible(
-                        child: Center(
-                          child: getWidgetFormScoreFormat(
-                            context,
-                            scoreFormat,
-                            media.score,
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Center(
+                            child: Text(
+                              media.progress != media.progressMax
+                                  ? '${media.progress} / ${media.progressMax ?? '?'}'
+                                  : media.progress.toString(),
+                              style: Theme.of(context).textTheme.subtitle2,
+                            ),
                           ),
                         ),
-                      ),
-                      Flexible(
-                        child: Center(
-                          child: media.repeat > 0
-                              ? Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      FluentSystemIcons
-                                          .ic_fluent_arrow_repeat_all_filled,
-                                      size: Styles.ICON_SMALLER,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      media.repeat.toString(),
-                                      style:
-                                          Theme.of(context).textTheme.subtitle1,
-                                    ),
-                                  ],
-                                )
-                              : null,
+                        Flexible(
+                          child: Center(
+                            child: getWidgetFormScoreFormat(
+                              context,
+                              scoreFormat,
+                              media.score,
+                            ),
+                          ),
                         ),
-                      ),
-                      Flexible(
-                        child: Center(
-                          child: media.notes != null
-                              ? IconButton(
-                                  icon: const Icon(Icons.comment),
-                                  onPressed: () => showDialog(
-                                    context: context,
-                                    builder: (_) => PopUpAnimation(
-                                      TextDialog(
-                                        title: 'Comment',
-                                        text: media.notes,
+                        Flexible(
+                          child: Center(
+                            child: media.repeat > 0
+                                ? Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(
+                                        FluentSystemIcons
+                                            .ic_fluent_arrow_repeat_all_filled,
+                                        size: Styles.ICON_SMALLER,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        media.repeat.toString(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1,
+                                      ),
+                                    ],
+                                  )
+                                : null,
+                          ),
+                        ),
+                        Flexible(
+                          child: Center(
+                            child: media.notes != null
+                                ? IconButton(
+                                    icon: const Icon(Icons.comment),
+                                    onPressed: () => showDialog(
+                                      context: context,
+                                      builder: (_) => PopUpAnimation(
+                                        TextDialog(
+                                          title: 'Comment',
+                                          text: media.notes,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                )
-                              : null,
+                                  )
+                                : null,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

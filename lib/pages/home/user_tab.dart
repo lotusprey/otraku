@@ -25,8 +25,8 @@ class UserTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > 515
-        ? (MediaQuery.of(context).size.width - 500) / 2.0
+    final sidePadding = MediaQuery.of(context).size.width > 620
+        ? (MediaQuery.of(context).size.width - 600) / 2.0
         : 10.0;
 
     return GetBuilder<User>(

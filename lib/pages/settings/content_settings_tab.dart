@@ -21,7 +21,7 @@ class ContentSettingsTab extends StatelessWidget {
       children: [
         DropDownField(
           title: 'Title Language',
-          initialValue: settings.data.titleLanguage,
+          initialValue: settings.model.titleLanguage,
           items: {
             'Romaji': 'ROMAJI',
             'English': 'ENGLISH',

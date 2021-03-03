@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/helpers/client.dart';
+import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/pages/pushable/character_page.dart';
 import 'package:otraku/pages/pushable/edit_entry_page.dart';
 import 'package:otraku/pages/media/media_page.dart';
@@ -61,11 +64,16 @@ class BrowseIndexer extends StatelessWidget {
         );
         return;
       case Browsable.user:
-        Get.toNamed(
-          UserTab.ROUTE,
-          arguments: [id, imageUrl],
-          parameters: {'id': id.toString()},
-        );
+        if (id != Client.viewerId)
+          Get.toNamed(
+            UserTab.ROUTE,
+            arguments: [id, imageUrl],
+            parameters: {'id': id.toString()},
+          );
+        else {
+          Get.find<Config>().pageIndex = HomePage.PROFILE;
+          Get.until((route) => route.isFirst);
+        }
         return;
       case Browsable.review:
         Get.toNamed(

@@ -6,13 +6,11 @@ import 'package:otraku/models/anilist/settings_model.dart';
 import 'package:otraku/helpers/filterable.dart';
 
 class Settings extends GetxController {
-  final Map<String, dynamic> _changes = {};
-  SettingsModel _data;
+  final changes = <String, dynamic>{};
+  SettingsModel _model;
   int _pageIndex = 0;
 
-  Map<String, dynamic> get changes => _changes;
-
-  SettingsModel get data => _data;
+  SettingsModel get model => _model;
 
   int get pageIndex => _pageIndex;
 
@@ -24,7 +22,7 @@ class Settings extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _data = Get.find<Viewer>().settings;
+    _model = Get.find<Viewer>().settings;
   }
 
   @override
@@ -33,27 +31,23 @@ class Settings extends GetxController {
       final ok = await Get.find<Viewer>().updateSettings(changes);
       if (ok) {
         if (changes.containsKey('displayAdultContent')) {
-          if (changes['displayAdultContent']) {
+          if (changes['displayAdultContent'])
             Get.find<Explorer>().setFilterWithKey(Filterable.IS_ADULT);
-          } else {
+          else
             Get.find<Explorer>()
                 .setFilterWithKey(Filterable.IS_ADULT, value: false);
-          }
         }
 
         if (changes.containsKey('scoreFormat') ||
             changes.containsKey('titleLanguage')) {
           Get.find<Collection>(tag: Collection.ANIME).fetch();
           Get.find<Collection>(tag: Collection.MANGA).fetch();
-          return;
-        }
+        } else {
+          if (changes.containsKey('splitCompletedAnime'))
+            Get.find<Collection>(tag: Collection.ANIME).fetch();
 
-        if (changes.containsKey('splitCompletedAnime')) {
-          Get.find<Collection>(tag: Collection.ANIME).fetch();
-        }
-
-        if (changes.containsKey('splitCompletedManga')) {
-          Get.find<Collection>(tag: Collection.MANGA).fetch();
+          if (changes.containsKey('splitCompletedManga'))
+            Get.find<Collection>(tag: Collection.MANGA).fetch();
         }
       }
     }

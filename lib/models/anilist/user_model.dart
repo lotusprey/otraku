@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:otraku/models/browse_result_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 
@@ -16,6 +17,7 @@ class UserModel {
   bool _following;
   final bool follower;
   final bool blocked;
+  final int donatorTier;
   final String donatorBadge;
   final String moderatorStatus;
   final bool isMe;
@@ -28,16 +30,17 @@ class UserModel {
   ];
 
   UserModel._({
-    this.id,
-    this.name,
-    this.description,
-    this.avatar,
-    this.banner,
-    followed,
-    this.follower,
-    this.blocked,
-    this.donatorBadge,
-    this.moderatorStatus,
+    @required this.id,
+    @required this.name,
+    @required this.description,
+    @required this.avatar,
+    @required this.banner,
+    @required followed,
+    @required this.follower,
+    @required this.blocked,
+    @required this.donatorTier,
+    @required this.donatorBadge,
+    @required this.moderatorStatus,
     this.isMe = false,
   }) {
     _following = followed;
@@ -52,6 +55,7 @@ class UserModel {
         followed: map['isFollowing'],
         follower: map['isFollower'],
         blocked: map['isBlocked'],
+        donatorTier: map['donatorTier'],
         donatorBadge: map['donatorBadge'],
         moderatorStatus: map['moderatorStatus'],
         isMe: me,

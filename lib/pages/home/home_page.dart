@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
         body: SafeArea(
           bottom: false,
           child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
+            duration: Config.TAB_SWITCH_DURATION,
             child: tabs[config.pageIndex],
           ),
         ),

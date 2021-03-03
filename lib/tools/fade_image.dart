@@ -8,12 +8,14 @@ class FadeImage extends StatelessWidget {
   final BoxFit fit;
   final double width;
   final double height;
+  final Alignment alignment;
 
   FadeImage(
     this.image, {
     this.fit = BoxFit.cover,
     this.width = double.infinity,
     this.height = double.infinity,
+    this.alignment = Alignment.center,
   });
 
   @override
@@ -23,6 +25,7 @@ class FadeImage extends StatelessWidget {
       image: image,
       width: width,
       height: height,
+      alignment: alignment,
       fadeInDuration: Config.FADE_DURATION,
       fadeOutDuration: Config.FADE_DURATION,
       placeholder: _transparentImage,

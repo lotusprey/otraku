@@ -14,6 +14,7 @@ class Config extends GetxController {
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
   static const PHYSICS = BouncingScrollPhysics();
   static const FADE_DURATION = Duration(milliseconds: 300);
+  static const TAB_SWITCH_DURATION = Duration(milliseconds: 200);
 
   // Storage keys
   static const STARTUP_PAGE = 'startupPage';

@@ -30,6 +30,7 @@ class User extends GetxController {
         isFollowing
         isFollower
         isBlocked
+        donatorTier
         donatorBadge
         moderatorStatus
       }

@@ -2,6 +2,7 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/pages/settings/app_settings_tab.dart';
 import 'package:otraku/pages/settings/content_settings_tab.dart';
@@ -43,7 +44,7 @@ class SettingsPage extends StatelessWidget {
         ),
         appBar: CustomAppBar(title: _pageNames[settings.pageIndex]),
         body: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
+          duration: Config.TAB_SWITCH_DURATION,
           child: tabs[settings.pageIndex],
         ),
       ),

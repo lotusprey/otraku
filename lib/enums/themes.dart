@@ -110,22 +110,31 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         color: theme['primary'],
         borderRadius: Config.BORDER_RADIUS,
       ),
-      textStyle: TextStyle(
-        fontSize: Styles.FONT_SMALL,
-        color: theme['faded'],
-      ),
+      textStyle: TextStyle(fontSize: Styles.FONT_SMALL, color: theme['faded']),
     ),
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    iconTheme: IconThemeData(
-      color: theme['faded'],
-      size: Styles.ICON_MEDIUM,
-    ),
-    buttonTheme: ButtonThemeData(
-      shape: RoundedRectangleBorder(
-        borderRadius: Config.BORDER_RADIUS,
+    iconTheme: IconThemeData(color: theme['faded'], size: Styles.ICON_MEDIUM),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        textStyle: MaterialStateProperty.all(TextStyle(
+          fontSize: Styles.FONT_SMALL,
+          color: theme['accent'],
+        )),
       ),
-      buttonColor: theme['accent'],
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+        textStyle: MaterialStateProperty.all(TextStyle(
+          fontSize: Styles.FONT_MEDIUM,
+          fontWeight: FontWeight.w500,
+        )),
+        backgroundColor: MaterialStateProperty.all(theme['accent']),
+        foregroundColor: MaterialStateProperty.all(theme['background']),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          borderRadius: Config.BORDER_RADIUS,
+        )),
+      ),
     ),
     textTheme: TextTheme(
       headline1: TextStyle(

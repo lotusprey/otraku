@@ -9,7 +9,7 @@ import 'package:otraku/models/loadable_list.dart';
 
 class MediaModel {
   final _overview = Rx<MediaOverviewModel>();
-  final _otherMedia = List<RelatedMediaModel>().obs;
+  final _otherMedia = <RelatedMediaModel>[].obs;
   final _characters = Rx(LoadableList<Connection>([], true, 1));
   final _staff = Rx(LoadableList<Connection>([], true, 1));
   final _reviews = Rx(LoadableList<RelatedReviewModel>([], true, 1));

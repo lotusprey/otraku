@@ -109,12 +109,7 @@ class Client {
         titleStyle: Get.theme.textTheme.headline3,
         title: 'Internet connection problem',
         content: Text(ioErr.toString(), style: Get.theme.textTheme.bodyText1),
-        actions: [
-          FlatButton(
-            child: Text('OK', style: Get.theme.textTheme.bodyText2),
-            onPressed: Get.back,
-          ),
-        ],
+        actions: [TextButton(child: Text('Ok'), onPressed: Get.back)],
       );
       return;
     }
@@ -135,12 +130,7 @@ class Client {
       title:
           ioErr == null ? 'A query error occured' : 'A request error occured',
       content: Text(text, style: Get.theme.textTheme.bodyText1),
-      actions: [
-        FlatButton(
-          child: Text('SAD', style: Get.theme.textTheme.bodyText2),
-          onPressed: Get.back,
-        ),
-      ],
+      actions: [TextButton(child: Text('Sad'), onPressed: Get.back)],
     );
   }
 }

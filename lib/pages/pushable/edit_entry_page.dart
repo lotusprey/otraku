@@ -52,18 +52,17 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             style: Theme.of(context).textTheme.bodyText1,
                           ),
                           actions: [
-                            FlatButton(
+                            TextButton(
                               child: Text(
                                 'No',
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: TextStyle(
+                                  color: Theme.of(context).dividerColor,
+                                ),
                               ),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
-                            FlatButton(
-                              child: Text(
-                                'Yes',
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
+                            TextButton(
+                              child: Text('Yes'),
                               onPressed: () {
                                 Get.find<Collection>(
                                   tag: data.type == 'ANIME'

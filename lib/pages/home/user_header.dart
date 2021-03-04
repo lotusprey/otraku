@@ -47,19 +47,15 @@ class UserHeader extends StatelessWidget {
         else if (user != null)
           Padding(
             padding: const EdgeInsets.only(right: 10, top: 8, bottom: 8),
-            child: FlatButton(
+            child: ElevatedButton(
               child: Text(
                 user.following
                     ? user.follower
                         ? 'Mutual'
                         : 'Unfollow'
                     : 'Follow',
-                style: Theme.of(context)
-                    .textTheme
-                    .button
-                    .copyWith(fontSize: Styles.FONT_SMALL),
+                style: TextStyle(fontSize: Styles.FONT_SMALL),
               ),
-              color: Theme.of(context).accentColor,
               onPressed: Get.find<User>(tag: id.toString()).toggleFollow,
             ),
           )

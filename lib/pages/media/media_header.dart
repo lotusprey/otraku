@@ -174,32 +174,40 @@ class _MediaHeaderState extends State<MediaHeader> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              RaisedButton(
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
+                              ElevatedButton(
                                 clipBehavior: Clip.hardEdge,
                                 onPressed: _edit,
-                                child: Icon(
-                                  overview.entryStatus == null
-                                      ? Icons.add
-                                      : Icons.edit,
-                                  color: Theme.of(context).backgroundColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Icon(
+                                    overview.entryStatus == null
+                                        ? Icons.add
+                                        : Icons.edit,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              RaisedButton(
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                color: Theme.of(context).errorColor,
+                              ElevatedButton(
                                 clipBehavior: Clip.hardEdge,
                                 onPressed: _toggleFavourite,
-                                child: Icon(
-                                  overview.isFavourite
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: Theme.of(context).backgroundColor,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                  child: Icon(
+                                    overview.isFavourite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                  ),
                                 ),
-                              )
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                    Theme.of(context).errorColor,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),

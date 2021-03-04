@@ -113,8 +113,8 @@ class Collection extends ScrollxController implements Filterable {
 
   final int userId;
   final bool ofAnime;
-  final _lists = List<CollectionListModel>();
-  final _entries = List<ListEntryModel>().obs;
+  final _lists = <CollectionListModel>[];
+  final _entries = <ListEntryModel>[].obs;
   final _listIndex = 0.obs;
   final Map<String, dynamic> _filters = {};
   final _isLoading = false.obs;

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/client.dart';
 import 'package:otraku/tools/loader.dart';
 import 'package:uni_links/uni_links.dart';
@@ -51,12 +50,7 @@ class _AuthPageState extends State<AuthPage> {
           'Could not launch authentication url',
           style: Get.theme.textTheme.bodyText1,
         ),
-        actions: [
-          FlatButton(
-            child: Text('Oh No', style: Get.theme.textTheme.bodyText2),
-            onPressed: Get.back,
-          ),
-        ],
+        actions: [TextButton(child: Text('Oh No'), onPressed: Get.back)],
       );
       setState(() => _loading = false);
       return;
@@ -80,12 +74,7 @@ class _AuthPageState extends State<AuthPage> {
           titleStyle: Get.theme.textTheme.headline3,
           title: 'Could not connect to AniList',
           content: Text(error.toString(), style: Get.theme.textTheme.bodyText1),
-          actions: [
-            FlatButton(
-              child: Text('Oh No', style: Get.theme.textTheme.bodyText2),
-              onPressed: Get.back,
-            ),
-          ],
+          actions: [TextButton(child: Text('Oh No'), onPressed: Get.back)],
         );
       },
     );
@@ -115,16 +104,8 @@ class _AuthPageState extends State<AuthPage> {
                               .copyWith(fontSize: Styles.FONT_BIG),
                         ),
                       ),
-                      RaisedButton(
-                        padding: Config.PADDING,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: Config.BORDER_RADIUS,
-                        ),
-                        color: Theme.of(context).accentColor,
-                        child: Text(
-                          'Connect to AniList',
-                          style: Theme.of(context).textTheme.button,
-                        ),
+                      ElevatedButton(
+                        child: Text('Connect to AniList'),
                         onPressed: _requestAccessToken,
                       ),
                     ],

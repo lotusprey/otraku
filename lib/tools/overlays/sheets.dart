@@ -58,7 +58,7 @@ class Sheet extends StatelessWidget {
         children: [
           Expanded(child: child),
           if (onDone != null)
-            FlatButton.icon(
+            TextButton.icon(
               onPressed: () {
                 onDone();
                 Navigator.pop(context);
@@ -68,7 +68,7 @@ class Sheet extends StatelessWidget {
                 color: Theme.of(context).accentColor,
                 size: Styles.ICON_SMALLER,
               ),
-              label: Text('Done', style: Theme.of(context).textTheme.headline5),
+              label: Text('Done'),
             ),
         ],
       ),

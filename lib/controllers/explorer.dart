@@ -97,7 +97,7 @@ class Explorer extends ScrollxController implements Filterable {
 
   final _isLoading = true.obs;
   final _hasNextPage = true.obs;
-  final _results = List<BrowseResultModel>().obs;
+  final _results = <BrowseResultModel>[].obs;
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
   int _concurrentFetches = 0;

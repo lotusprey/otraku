@@ -11,7 +11,7 @@ import 'package:otraku/pages/auth_page.dart';
 class Client {
   Client._();
 
-  static const String _url = 'https://graphql.anilist.co';
+  static final _url = Uri.https('graphql.anilist.co', '');
 
   static const String _idQuery = 'query Id {Viewer {id}}';
 

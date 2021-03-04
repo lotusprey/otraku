@@ -66,7 +66,7 @@ class Sheet extends StatelessWidget {
               icon: Icon(
                 FluentSystemIcons.ic_fluent_checkmark_filled,
                 color: Theme.of(context).accentColor,
-                size: Styles.ICON_SMALLER,
+                size: Styles.ICON_SMALL,
               ),
               label: Text('Done'),
             ),
@@ -256,7 +256,7 @@ class _SortSheet extends StatelessWidget {
                           padding: const EdgeInsets.all(0),
                           icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_down_filled,
-                            size: Styles.ICON_SMALLER,
+                            size: Styles.ICON_SMALL,
                           ),
                           color: Theme.of(context).backgroundColor,
                           onPressed: () {
@@ -277,7 +277,7 @@ class _SortSheet extends StatelessWidget {
                           padding: const EdgeInsets.all(0),
                           icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_up_filled,
-                            size: Styles.ICON_SMALLER,
+                            size: Styles.ICON_SMALL,
                           ),
                           color: Theme.of(context).backgroundColor,
                           onPressed: () {

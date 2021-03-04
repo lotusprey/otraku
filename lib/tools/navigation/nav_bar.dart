@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
 class NavBar extends StatefulWidget {
@@ -47,7 +46,6 @@ class _NavBarState extends State<NavBar> {
                   IconButton(
                     icon: Icon(widget.options.keys.elementAt(i)),
                     tooltip: widget.options.values.elementAt(i),
-                    iconSize: Styles.ICON_SMALL,
                     color: i != _index ? null : Theme.of(context).accentColor,
                     onPressed: () {
                       if (i != _index) {

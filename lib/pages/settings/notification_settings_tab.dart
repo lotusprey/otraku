@@ -78,7 +78,7 @@ class NotificationSettingsTab extends StatelessWidget {
   }) =>
       [
         SliverToBoxAdapter(
-          child: Text(title, style: Theme.of(ctx).textTheme.headline4),
+          child: Text(title, style: Theme.of(ctx).textTheme.headline5),
         ),
         SliverGrid(
           delegate: SliverChildBuilderDelegate(

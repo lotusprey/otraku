@@ -55,6 +55,10 @@ class ActivityModel {
   }
 
   factory ActivityModel(Map<String, dynamic> map) {
+    if (map['type'] == 'MESSAGE') {
+      print('now ${map['id']} ${map['messenger']}');
+    }
+
     switch (map['type']) {
       case 'TEXT':
         return ActivityModel._(

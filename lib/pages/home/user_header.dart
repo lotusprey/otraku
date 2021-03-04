@@ -54,7 +54,7 @@ class UserHeader extends StatelessWidget {
                         ? 'Mutual'
                         : 'Unfollow'
                     : 'Follow',
-                style: TextStyle(fontSize: Styles.FONT_SMALL),
+                style: TextStyle(fontSize: Styles.FONT_MEDIUM),
               ),
               onPressed: Get.find<User>(tag: id.toString()).toggleFollow,
             ),
@@ -142,7 +142,7 @@ class UserHeader extends StatelessWidget {
                         child: Text(
                           user.name,
                           overflow: TextOverflow.fade,
-                          style: Theme.of(context).textTheme.headline3,
+                          style: Theme.of(context).textTheme.headline2,
                         ),
                       ),
                       if (user.donatorTier > 0)
@@ -164,8 +164,11 @@ class UserHeader extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
                                   .textTheme
-                                  .button
-                                  .copyWith(fontSize: Styles.FONT_SMALLER),
+                                  .subtitle2
+                                  .copyWith(
+                                    color: Theme.of(context).backgroundColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ),
                         ),

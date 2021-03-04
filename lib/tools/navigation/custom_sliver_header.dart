@@ -144,7 +144,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                         child: title != null
                             ? Text(
                                 title,
-                                style: Theme.of(context).textTheme.headline6,
+                                style: Theme.of(context).textTheme.headline5,
                                 overflow: TextOverflow.ellipsis,
                               )
                             : const SizedBox(),

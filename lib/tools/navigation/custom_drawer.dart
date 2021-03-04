@@ -5,7 +5,6 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -45,10 +44,7 @@ class CustomDrawer extends StatelessWidget {
           children: [
             Text(
               heading,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline4
-                  .copyWith(fontSize: Styles.FONT_MEDIUM),
+              style: Theme.of(context).textTheme.headline3,
             ),
             const SizedBox(height: 20),
             for (int i = 0; i < length; i++)
@@ -94,12 +90,12 @@ class CollectionDrawer extends StatelessWidget {
       titleBuilder: (int i) => Text(
         names[i],
         style: i != selected
-            ? Theme.of(context).textTheme.headline3
-            : Theme.of(context).textTheme.headline2,
+            ? Theme.of(context).textTheme.headline2
+            : Theme.of(context).textTheme.headline1,
       ),
       subtitleBuilder: (int i) => Text(
         counts[i].toString(),
-        style: Theme.of(context).textTheme.headline4,
+        style: Theme.of(context).textTheme.headline6,
       ),
     );
   }
@@ -132,8 +128,8 @@ class ExploreDrawer extends StatelessWidget {
           Text(
             FnHelper.clarifyEnum(describeEnum(Browsable.values[i])),
             style: i != selected
-                ? Theme.of(context).textTheme.headline3
-                : Theme.of(context).textTheme.headline2,
+                ? Theme.of(context).textTheme.headline2
+                : Theme.of(context).textTheme.headline1,
           ),
         ],
       ),

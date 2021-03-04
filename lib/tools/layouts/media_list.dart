@@ -187,7 +187,7 @@ class _MediaListTile extends StatelessWidget {
                                       const Icon(
                                         FluentSystemIcons
                                             .ic_fluent_arrow_repeat_all_filled,
-                                        size: Styles.ICON_SMALLER,
+                                        size: Styles.ICON_SMALL,
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
@@ -205,7 +205,10 @@ class _MediaListTile extends StatelessWidget {
                           child: Center(
                             child: media.notes != null
                                 ? IconButton(
-                                    icon: const Icon(Icons.comment),
+                                    icon: const Icon(
+                                      Icons.comment,
+                                      size: Styles.ICON_SMALL,
+                                    ),
                                     onPressed: () => showDialog(
                                       context: context,
                                       builder: (_) => PopUpAnimation(

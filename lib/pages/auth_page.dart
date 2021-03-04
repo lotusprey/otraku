@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/helpers/client.dart';
 import 'package:otraku/tools/loader.dart';
@@ -98,10 +97,7 @@ class _AuthPageState extends State<AuthPage> {
                         padding: const EdgeInsets.only(bottom: 15),
                         child: Text(
                           'An unofficial AniList app.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline2
-                              .copyWith(fontSize: Styles.FONT_BIG),
+                          style: Theme.of(context).textTheme.headline1,
                         ),
                       ),
                       ElevatedButton(

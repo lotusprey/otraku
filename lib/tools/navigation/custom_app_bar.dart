@@ -40,6 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             AppBarIcon(IconButton(
               tooltip: 'Close',
               icon: Icon(leading),
+              color: Theme.of(context).dividerColor,
               onPressed: () => Navigator.of(context).pop(),
             )),
             Expanded(
@@ -47,7 +48,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ? titleWidget
                   : Text(
                       title,
-                      style: Theme.of(context).textTheme.headline3,
+                      style: Theme.of(context).textTheme.headline2,
                     ),
             ),
             trailing != null

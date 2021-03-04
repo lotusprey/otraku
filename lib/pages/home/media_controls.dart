@@ -10,7 +10,6 @@ import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/filterable.dart';
 import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/tools/overlays/sheets.dart';
@@ -81,14 +80,14 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         Flexible(
                           child: Text(
                             collection.currentName,
-                            style: Theme.of(context).textTheme.headline2,
+                            style: Theme.of(context).textTheme.headline1,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Text(
                           ' ${collection.currentCount}',
-                          style: Theme.of(context).textTheme.headline4,
+                          style: Theme.of(context).textTheme.headline6,
                         ),
                       ],
                     ),
@@ -117,13 +116,12 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         Icon(
                           explorer.type.icon,
                           color: Theme.of(context).accentColor,
-                          size: Styles.ICON_SMALL,
                         ),
                         const SizedBox(width: 10),
                         Flexible(
                           child: Text(
                             FnHelper.clarifyEnum(describeEnum(explorer.type)),
-                            style: Theme.of(context).textTheme.headline2,
+                            style: Theme.of(context).textTheme.headline1,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

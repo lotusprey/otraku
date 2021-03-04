@@ -59,12 +59,18 @@ Widget getWidgetFormScoreFormat(
       );
     case 'POINT_3':
       if (score == 3) {
-        return const Icon(Icons.sentiment_very_satisfied);
+        return const Icon(
+          Icons.sentiment_very_satisfied,
+          size: Styles.ICON_SMALL,
+        );
       }
       if (score == 2) {
-        return const Icon(Icons.sentiment_neutral);
+        return const Icon(Icons.sentiment_neutral, size: Styles.ICON_SMALL);
       }
-      return const Icon(Icons.sentiment_very_dissatisfied);
+      return const Icon(
+        Icons.sentiment_very_dissatisfied,
+        size: Styles.ICON_SMALL,
+      );
     default:
       throw 'Unrecognised Score Format: $format';
   }

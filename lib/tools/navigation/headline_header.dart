@@ -48,10 +48,7 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
                 icon: const Icon(FluentSystemIcons.ic_fluent_arrow_left_filled),
                 onPressed: () => Navigator.pop(context),
               ),
-            Text(
-              headline,
-              style: Theme.of(context).textTheme.headline1,
-            ),
+            Text(headline, style: Theme.of(context).textTheme.headline3),
           ],
         ),
       );

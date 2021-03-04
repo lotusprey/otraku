@@ -82,7 +82,7 @@ class _ChipGridState extends State<ChipGrid> {
                       child: Icon(
                         Icons.close,
                         color: Theme.of(context).backgroundColor,
-                        size: Styles.ICON_SMALLER,
+                        size: Styles.ICON_SMALL,
                       ),
                     ),
                   ),

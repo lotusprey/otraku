@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/pages/pushable/notifications_page.dart';
 import 'package:otraku/tools/navigation/bubble_tabs.dart';
@@ -78,10 +77,7 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
                         if (viewer.unreadCount > 0) ...[
                           Positioned(
                             right: 0,
-                            child: Icon(
-                              Icons.notifications_outlined,
-                              size: Styles.ICON_SMALL,
-                            ),
+                            child: const Icon(Icons.notifications_outlined),
                           ),
                           Container(
                             constraints: const BoxConstraints(
@@ -108,10 +104,7 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
                             ),
                           ),
                         ] else
-                          Icon(
-                            Icons.notifications_outlined,
-                            size: Styles.ICON_SMALL,
-                          ),
+                          const Icon(Icons.notifications_outlined),
                       ],
                     ),
                   ),

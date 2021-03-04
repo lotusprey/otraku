@@ -69,7 +69,7 @@ class FilterPage extends StatelessWidget {
         trailing: [
           IconButton(
             icon: const Icon(Icons.close),
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).dividerColor,
             onPressed: () {
               filterable.clearAllFilters();
               onUpdate(false);
@@ -79,7 +79,7 @@ class FilterPage extends StatelessWidget {
           IconButton(
             icon: Icon(
               FluentSystemIcons.ic_fluent_checkmark_filled,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).dividerColor,
             ),
             onPressed: () {
               for (final key in changes.keys)

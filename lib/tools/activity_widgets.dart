@@ -197,7 +197,7 @@ class ActivityBox extends StatelessWidget {
                           const SizedBox(width: 5),
                           const Icon(
                             Icons.comment,
-                            size: Styles.ICON_SMALLER,
+                            size: Styles.ICON_SMALL,
                           ),
                         ],
                       ),
@@ -246,7 +246,7 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Styles.ICON_SMALLER,
+              size: Styles.ICON_SMALL,
               color:
                   widget.activity.isLiked ? Theme.of(context).errorColor : null,
             ),
@@ -277,11 +277,11 @@ class _SubscribeIconState extends State<_SubscribeIcon> {
         child: !widget.activity.isSubscribed
             ? Icon(
                 Icons.notifications,
-                size: Styles.ICON_SMALLER,
+                size: Styles.ICON_SMALL,
               )
             : Icon(
                 Icons.notifications_active,
-                size: Styles.ICON_SMALLER,
+                size: Styles.ICON_SMALL,
                 color: Theme.of(context).accentColor,
               ),
       ),

@@ -232,7 +232,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Styles.ICON_SMALLER,
+              size: Styles.ICON_SMALL,
               color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
             ),
           ],

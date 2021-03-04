@@ -59,7 +59,7 @@ class ReviewGrid extends StatelessWidget {
                                 alignment: Alignment.bottomLeft,
                                 child: Text(
                                   results[index].text1,
-                                  style: Theme.of(context).textTheme.headline6,
+                                  style: Theme.of(context).textTheme.headline5,
                                   overflow: TextOverflow.fade,
                                 ),
                               ),
@@ -79,7 +79,8 @@ class ReviewGrid extends StatelessWidget {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 5),
+                                      horizontal: 5,
+                                    ),
                                     child: Icon(
                                       Icons.thumb_up_outlined,
                                       size: Styles.ICON_SMALL,

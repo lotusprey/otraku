@@ -154,7 +154,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                         flex: 2,
                         child: Text(
                           overview.preferredTitle,
-                          style: Theme.of(context).textTheme.headline3,
+                          style: Theme.of(context).textTheme.headline2,
                           overflow: TextOverflow.fade,
                         ),
                       ),

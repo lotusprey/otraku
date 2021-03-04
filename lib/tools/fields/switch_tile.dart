@@ -30,7 +30,6 @@ class _SwitchTileState extends State<SwitchTile> {
           setState(() => _value = val);
           widget.onChanged(val);
         },
-        activeColor: Theme.of(context).accentColor,
       );
 
   @override

@@ -55,12 +55,10 @@ class ActivityModel {
   }
 
   factory ActivityModel(Map<String, dynamic> map) {
-    if (map['type'] == 'MESSAGE') {
-      print('now ${map['id']} ${map['messenger']}');
-    }
-
     switch (map['type']) {
       case 'TEXT':
+        if (map['user'] == null) return null;
+
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.TEXT,
@@ -84,10 +82,12 @@ class ActivityModel {
           subscribed: map['isSubscribed'] ?? false,
         );
       case 'ANIME_LIST':
+        if (map['user'] == null || map['media'] == null) return null;
         final progress =
             map['progress'] != null ? '${map['progress']} of ' : '';
         final status = (map['status'] as String)[0].toUpperCase() +
             (map['status'] as String).substring(1);
+
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.ANIME_LIST,
@@ -111,10 +111,12 @@ class ActivityModel {
           subscribed: map['isSubscribed'] ?? false,
         );
       case 'MANGA_LIST':
+        if (map['user'] == null || map['media'] == null) return null;
         final progress =
             map['progress'] != null ? '${map['progress']} of ' : '';
         final status = (map['status'] as String)[0].toUpperCase() +
             (map['status'] as String).substring(1);
+
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.MANGA_LIST,
@@ -138,6 +140,8 @@ class ActivityModel {
           subscribed: map['isSubscribed'] ?? false,
         );
       case 'MESSAGE':
+        if (map['messenger'] == null || map['recipient'] == null) return null;
+
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.MESSAGE,

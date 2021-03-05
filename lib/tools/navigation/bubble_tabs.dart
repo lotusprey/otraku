@@ -59,10 +59,10 @@ class _BubbleTabsState extends State<BubbleTabs> {
               child: Text(
                 widget.options[index],
                 style: index != _index
-                    ? Theme.of(context).textTheme.headline6
+                    ? Theme.of(context).textTheme.headline5
                     : Theme.of(context)
                         .textTheme
-                        .headline6
+                        .headline5
                         .copyWith(color: Theme.of(context).backgroundColor),
               ),
             ),

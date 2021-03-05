@@ -157,6 +157,35 @@ class _MediaListTile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (media.progressMax != null)
+                      Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          borderRadius: Config.BORDER_RADIUS,
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).disabledColor,
+                              Theme.of(context).disabledColor,
+                              Theme.of(context).backgroundColor,
+                              Theme.of(context).backgroundColor,
+                            ],
+                            stops: [
+                              0.0,
+                              media.progress.toDouble() / media.progressMax,
+                              media.progress.toDouble() / media.progressMax,
+                              1.0,
+                            ],
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).disabledColor,
+                          borderRadius: Config.BORDER_RADIUS,
+                        ),
+                      ),
                     Row(
                       children: [
                         Flexible(
@@ -204,17 +233,22 @@ class _MediaListTile extends StatelessWidget {
                         Flexible(
                           child: Center(
                             child: media.notes != null
-                                ? IconButton(
-                                    icon: const Icon(
-                                      Icons.comment,
-                                      size: Styles.ICON_SMALL,
-                                    ),
-                                    onPressed: () => showDialog(
-                                      context: context,
-                                      builder: (_) => PopUpAnimation(
-                                        TextDialog(
-                                          title: 'Comment',
-                                          text: media.notes,
+                                ? SizedBox(
+                                    height: 20,
+                                    child: IconButton(
+                                      tooltip: 'Comment',
+                                      padding: const EdgeInsets.all(0),
+                                      icon: const Icon(
+                                        Icons.comment,
+                                        size: Styles.ICON_SMALL,
+                                      ),
+                                      onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (_) => PopUpAnimation(
+                                          TextDialog(
+                                            title: 'Comment',
+                                            text: media.notes,
+                                          ),
                                         ),
                                       ),
                                     ),

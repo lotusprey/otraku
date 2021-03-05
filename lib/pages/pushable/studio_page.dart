@@ -59,6 +59,7 @@ class StudioPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
+                          tooltip: 'Sort',
                           icon: const Icon(
                             FluentSystemIcons.ic_fluent_arrow_sort_filled,
                           ),
@@ -179,6 +180,7 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
+                  tooltip: 'Close',
                   icon: const Icon(Icons.close),
                   color: Theme.of(context).dividerColor,
                   onPressed: () => Navigator.of(context).pop(),

@@ -57,6 +57,7 @@ class StaffPage extends StatelessWidget {
                       else
                         const SizedBox(),
                       IconButton(
+                        tooltip: 'Sort',
                         icon: const Icon(
                           FluentSystemIcons.ic_fluent_arrow_sort_filled,
                         ),

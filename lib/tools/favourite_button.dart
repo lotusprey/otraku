@@ -34,6 +34,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             ),
           ),
         IconButton(
+          tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
           icon: Icon(
             _isFavourite ? Icons.favorite : Icons.favorite_border,
             color: Theme.of(context).dividerColor,

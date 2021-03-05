@@ -60,6 +60,7 @@ class CharacterPage extends StatelessWidget {
                         children: [
                           if (character.availableLanguages.length > 1)
                             IconButton(
+                              tooltip: 'Language',
                               icon: const Icon(Icons.language),
                               onPressed: () => Sheet.show(
                                 ctx: context,
@@ -74,6 +75,7 @@ class CharacterPage extends StatelessWidget {
                               ),
                             ),
                           IconButton(
+                            tooltip: 'Sort',
                             icon: const Icon(
                               FluentSystemIcons.ic_fluent_arrow_sort_filled,
                             ),

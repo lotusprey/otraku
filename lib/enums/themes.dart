@@ -164,15 +164,6 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         color: theme['faded'],
         fontWeight: FontWeight.w500,
       ),
-      subtitle1: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
-        color: theme['faded'],
-      ),
-      subtitle2: TextStyle(
-        fontSize: Styles.FONT_SMALL,
-        color: theme['faded'],
-        fontWeight: FontWeight.normal,
-      ),
       bodyText1: TextStyle(
         fontSize: Styles.FONT_MEDIUM,
         color: theme['contrast'],
@@ -181,6 +172,15 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       bodyText2: TextStyle(
         fontSize: Styles.FONT_MEDIUM,
         color: theme['accent'],
+        fontWeight: FontWeight.normal,
+      ),
+      subtitle1: TextStyle(
+        fontSize: Styles.FONT_MEDIUM,
+        color: theme['faded'],
+      ),
+      subtitle2: TextStyle(
+        fontSize: Styles.FONT_SMALL,
+        color: theme['faded'],
         fontWeight: FontWeight.normal,
       ),
     ),

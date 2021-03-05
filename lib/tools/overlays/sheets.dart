@@ -68,7 +68,7 @@ class Sheet extends StatelessWidget {
                 color: Theme.of(context).accentColor,
                 size: Styles.ICON_SMALL,
               ),
-              label: Text('Done'),
+              label: Text('Done', style: Theme.of(context).textTheme.bodyText2),
             ),
         ],
       ),

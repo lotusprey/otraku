@@ -7,7 +7,7 @@ enum Themes {
   cyber,
   night,
   amethyst,
-  light_blue,
+  frost,
 }
 
 extension Styles on Themes {
@@ -59,7 +59,7 @@ extension Styles on Themes {
       'contrast': Color(0xFFE8D9FC),
       'brightness': Brightness.dark,
     },
-    Themes.light_blue: {
+    Themes.frost: {
       'background': Color(0xFFFFFEFF),
       'primary': Color(0xFFF4F5F6),
       'translucent': Color(0xBBFFFEFF),
@@ -104,6 +104,9 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     iconTheme: IconThemeData(color: theme['faded'], size: Styles.ICON_BIG),
+    inputDecorationTheme: InputDecorationTheme(
+        // TODO
+        ),
     tooltipTheme: TooltipThemeData(
       padding: Config.PADDING,
       decoration: BoxDecoration(

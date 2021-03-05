@@ -16,8 +16,8 @@ abstract class FnHelper {
   }
 
   // Transforms a string into enum. The string must be
-  // as if it was acquired through "describeEnum()" (from the
-  // foundation package) and the values must be the enum
+  // as if it was acquired through "describeEnum()"
+  // and the values must be the enum
   // values ex. "MyEnum.values"
   static T stringToEnum<T>(String str, List<T> values) =>
       values.firstWhere((v) => describeEnum(v) == str, orElse: () => null);

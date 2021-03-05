@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/helpers/fn_helper.dart';
 import 'package:otraku/models/anilist/collection_list_model.dart';
 import 'package:otraku/models/anilist/entry_model.dart';
@@ -119,7 +120,7 @@ class Collection extends ScrollxController implements Filterable {
   final Map<String, dynamic> _filters = {};
   final _isLoading = false.obs;
   final List<String> _customListNames = [];
-  String _scoreFormat;
+  ScoreFormat _scoreFormat;
 
   Collection(this.userId, this.ofAnime);
 
@@ -128,12 +129,15 @@ class Collection extends ScrollxController implements Filterable {
   // ***************************************************************************
 
   bool get isLoading => _isLoading();
-
   int get listIndex => _listIndex();
-
-  String get scoreFormat => _scoreFormat;
-
+  ScoreFormat get scoreFormat => _scoreFormat;
   List<String> get customListNames => [..._customListNames];
+  List<ListEntryModel> get entries => _entries();
+  String get currentName => _lists[_listIndex()].name;
+  ListStatus get listStatus => _lists[_listIndex()].status;
+  int get currentCount => _lists[_listIndex()].entries.length;
+  bool get isEmpty => _entries.isEmpty;
+  bool get isFullyEmpty => _lists.isEmpty;
 
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
@@ -145,16 +149,6 @@ class Collection extends ScrollxController implements Filterable {
     for (final list in _lists) list.sort(_filters[Filterable.SORT]);
     filter();
   }
-
-  List<ListEntryModel> get entries => _entries();
-
-  String get currentName => _lists[_listIndex()].name;
-
-  int get currentCount => _lists[_listIndex()].entries.length;
-
-  bool get isEmpty => _entries.isEmpty;
-
-  bool get isFullyEmpty => _lists.isEmpty;
 
   int get totalEntryCount {
     int c = 0;
@@ -202,7 +196,10 @@ class Collection extends ScrollxController implements Filterable {
         : data['user']['mediaListOptions']['mangaList'];
     final bool splitCompleted = metaData['splitCompletedSectionByFormat'];
 
-    _scoreFormat = data['user']['mediaListOptions']['scoreFormat'];
+    _scoreFormat = FnHelper.stringToEnum(
+      data['user']['mediaListOptions']['scoreFormat'],
+      ScoreFormat.values,
+    );
     _filters[Filterable.SORT] = ListSortHelper.getEnum(
       data['user']['mediaListOptions']['rowOrder'],
     );

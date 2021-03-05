@@ -245,7 +245,7 @@ class __NavigationState extends State<_Navigation> {
     super.initState();
     _searchMode = widget.searchValue != null && widget.searchValue != '';
     _ctrl = TextEditingController(text: widget.searchValue ?? '');
-    _empty = _ctrl.text.length == 0;
+    _empty = _ctrl.text.isEmpty;
   }
 
   @override

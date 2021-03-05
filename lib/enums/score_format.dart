@@ -10,68 +10,46 @@ enum ScoreFormat {
 }
 
 extension ScoreFormatExtension on ScoreFormat {
-  static const _formats = const {
-    ScoreFormat.POINT_100: 'POINT_100',
-    ScoreFormat.POINT_10_DECIMAL: 'POINT_10_DECIMAL',
-    ScoreFormat.POINT_10: 'POINT_10',
-    ScoreFormat.POINT_5: 'POINT_5',
-    ScoreFormat.POINT_3: 'POINT_3',
-  };
+  Widget getWidget(final BuildContext context, final double score) {
+    if (score == 0) return const SizedBox();
 
-  String get string => _formats[this];
-}
-
-Widget getWidgetFormScoreFormat(
-  BuildContext context,
-  String format,
-  double score,
-) {
-  if (score == 0) {
-    return Text('');
-  }
-
-  switch (format) {
-    case 'POINT_10_DECIMAL':
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.star, size: Styles.ICON_SMALL),
-          const SizedBox(width: 5),
-          Text(
-            score.toStringAsFixed(score.truncate() == score ? 0 : 1),
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ],
-      );
-    case 'POINT_100':
-    case 'POINT_10':
-    case 'POINT_5':
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.star, size: Styles.ICON_SMALL),
-          const SizedBox(width: 5),
-          Text(
-            score.toStringAsFixed(0),
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ],
-      );
-    case 'POINT_3':
-      if (score == 3) {
+    switch (this) {
+      case ScoreFormat.POINT_10_DECIMAL:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star, size: Styles.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              score.toStringAsFixed(score.truncate() == score ? 0 : 1),
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ],
+        );
+      case ScoreFormat.POINT_3:
+        if (score == 3)
+          return const Icon(
+            Icons.sentiment_very_satisfied,
+            size: Styles.ICON_SMALL,
+          );
+        if (score == 2)
+          return const Icon(Icons.sentiment_neutral, size: Styles.ICON_SMALL);
         return const Icon(
-          Icons.sentiment_very_satisfied,
+          Icons.sentiment_very_dissatisfied,
           size: Styles.ICON_SMALL,
         );
-      }
-      if (score == 2) {
-        return const Icon(Icons.sentiment_neutral, size: Styles.ICON_SMALL);
-      }
-      return const Icon(
-        Icons.sentiment_very_dissatisfied,
-        size: Styles.ICON_SMALL,
-      );
-    default:
-      throw 'Unrecognised Score Format: $format';
+      default:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star, size: Styles.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              score.toStringAsFixed(0),
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+          ],
+        );
+    }
   }
 }

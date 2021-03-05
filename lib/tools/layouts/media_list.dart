@@ -56,6 +56,8 @@ class MediaList extends StatelessWidget {
         );
 
       final entries = collection.entries;
+      final scoreFormat = collection.scoreFormat;
+
       return SliverPadding(
         padding: EdgeInsets.only(
           left: sidePadding,
@@ -64,8 +66,7 @@ class MediaList extends StatelessWidget {
         ),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (_, index) =>
-                _MediaListTile(entries[index], collection.scoreFormat),
+            (_, i) => _MediaListTile(entries[i], scoreFormat),
             childCount: entries.length,
           ),
           itemExtent: 150,
@@ -76,12 +77,10 @@ class MediaList extends StatelessWidget {
 }
 
 class _MediaListTile extends StatelessWidget {
-  final _space = const SizedBox(height: 5);
+  final ListEntryModel entry;
+  final ScoreFormat scoreFormat;
 
-  final ListEntryModel media;
-  final String scoreFormat;
-
-  _MediaListTile(this.media, this.scoreFormat);
+  _MediaListTile(this.entry, this.scoreFormat);
 
   @override
   Widget build(BuildContext context) {
@@ -92,19 +91,19 @@ class _MediaListTile extends StatelessWidget {
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: BrowseIndexer(
-        id: media.mediaId,
+        id: entry.mediaId,
         browsable: Browsable.anime,
-        imageUrl: media.cover,
+        imageUrl: entry.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: media.mediaId,
+              tag: entry.mediaId,
               child: ClipRRect(
                 child: Container(
                   width: 95,
                   color: Theme.of(context).primaryColor,
-                  child: FadeImage(media.cover),
+                  child: FadeImage(entry.cover),
                 ),
                 borderRadius: Config.BORDER_RADIUS,
               ),
@@ -116,123 +115,124 @@ class _MediaListTile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            media.title,
-                            style: Theme.of(context).textTheme.bodyText1,
-                            overflow: TextOverflow.fade,
+                    Flexible(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              entry.title,
+                              style: Theme.of(context).textTheme.bodyText1,
+                              overflow: TextOverflow.fade,
+                            ),
                           ),
-                        ),
-                        _space,
-                        RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.subtitle2,
-                            children: [
-                              TextSpan(
-                                text: FnHelper.clarifyEnum(media.format),
-                              ),
-                              if (media.timeUntilAiring != null)
+                          const SizedBox(height: 5),
+                          RichText(
+                            text: TextSpan(
+                              style: Theme.of(context).textTheme.subtitle2,
+                              children: [
                                 TextSpan(
-                                  text:
-                                      ' • Ep ${media.nextEpisode} in ${media.timeUntilAiring}',
-                                  style: TextStyle(
-                                    color: Theme.of(context).accentColor,
-                                  ),
+                                  text: FnHelper.clarifyEnum(entry.format),
                                 ),
-                              if (media.nextEpisode != null &&
-                                  media.nextEpisode - 1 > media.progress)
-                                TextSpan(
-                                  text:
-                                      ' • ${media.nextEpisode - 1 - media.progress} ep behind',
-                                  style: TextStyle(
-                                    color: Theme.of(context).errorColor,
+                                if (entry.timeUntilAiring != null)
+                                  TextSpan(
+                                    text:
+                                        ' • Ep ${entry.nextEpisode} in ${entry.timeUntilAiring}',
+                                    style: TextStyle(
+                                      color: Theme.of(context).accentColor,
+                                    ),
                                   ),
-                                ),
-                            ],
+                                if (entry.nextEpisode != null &&
+                                    entry.nextEpisode - 1 > entry.progress)
+                                  TextSpan(
+                                    text:
+                                        ' • ${entry.nextEpisode - 1 - entry.progress} ep behind',
+                                    style: TextStyle(
+                                      color: Theme.of(context).errorColor,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    if (media.progressMax != null)
-                      Container(
-                        height: 10,
-                        decoration: BoxDecoration(
-                          borderRadius: Config.BORDER_RADIUS,
-                          gradient: LinearGradient(
-                            colors: [
-                              Theme.of(context).disabledColor,
-                              Theme.of(context).disabledColor,
-                              Theme.of(context).backgroundColor,
-                              Theme.of(context).backgroundColor,
-                            ],
-                            stops: [
-                              0.0,
-                              media.progress.toDouble() / media.progressMax,
-                              media.progress.toDouble() / media.progressMax,
-                              1.0,
-                            ],
-                          ),
-                        ),
-                      )
-                    else
-                      Container(
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).disabledColor,
-                          borderRadius: Config.BORDER_RADIUS,
-                        ),
+                        ],
                       ),
+                    ),
+                    Container(
+                      height: 5,
+                      margin: const EdgeInsets.symmetric(vertical: 3),
+                      decoration: entry.progressMax != null
+                          ? BoxDecoration(
+                              borderRadius: Config.BORDER_RADIUS,
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).disabledColor,
+                                  Theme.of(context).disabledColor,
+                                  Theme.of(context).backgroundColor,
+                                  Theme.of(context).backgroundColor,
+                                ],
+                                stops: [
+                                  0.0,
+                                  entry.progress.toDouble() / entry.progressMax,
+                                  entry.progress.toDouble() / entry.progressMax,
+                                  1.0,
+                                ],
+                              ),
+                            )
+                          : BoxDecoration(
+                              color: Theme.of(context).disabledColor,
+                              borderRadius: Config.BORDER_RADIUS,
+                            ),
+                    ),
                     Row(
                       children: [
                         Flexible(
                           child: Center(
-                            child: Text(
-                              media.progress != media.progressMax
-                                  ? '${media.progress} / ${media.progressMax ?? '?'}'
-                                  : media.progress.toString(),
-                              style: Theme.of(context).textTheme.subtitle2,
+                            child: Tooltip(
+                              message: 'Progress',
+                              child: Text(
+                                entry.progress != entry.progressMax
+                                    ? '${entry.progress} / ${entry.progressMax ?? '?'}'
+                                    : entry.progress.toString(),
+                                style: Theme.of(context).textTheme.subtitle2,
+                              ),
                             ),
                           ),
                         ),
                         Flexible(
                           child: Center(
-                            child: getWidgetFormScoreFormat(
-                              context,
-                              scoreFormat,
-                              media.score,
-                            ),
+                            child: scoreFormat.getWidget(context, entry.score),
                           ),
                         ),
                         Flexible(
                           child: Center(
-                            child: media.repeat > 0
-                                ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        FluentSystemIcons
-                                            .ic_fluent_arrow_repeat_all_filled,
-                                        size: Styles.ICON_SMALL,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        media.repeat.toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                      ),
-                                    ],
+                            child: entry.repeat > 0
+                                ? Tooltip(
+                                    message: 'Repeats',
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          FluentSystemIcons
+                                              .ic_fluent_arrow_repeat_all_filled,
+                                          size: Styles.ICON_SMALL,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          entry.repeat.toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1,
+                                        ),
+                                      ],
+                                    ),
                                   )
                                 : null,
                           ),
                         ),
                         Flexible(
                           child: Center(
-                            child: media.notes != null
+                            child: entry.notes != null
                                 ? SizedBox(
                                     height: 20,
                                     child: IconButton(
@@ -247,7 +247,7 @@ class _MediaListTile extends StatelessWidget {
                                         builder: (_) => PopUpAnimation(
                                           TextDialog(
                                             title: 'Comment',
-                                            text: media.notes,
+                                            text: entry.notes,
                                           ),
                                         ),
                                       ),

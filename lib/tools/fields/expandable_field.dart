@@ -32,7 +32,6 @@ class _ExpandableFieldState extends State<ExpandableField> {
           maxLines: 5,
           cursorColor: Theme.of(context).accentColor,
           style: Theme.of(context).textTheme.bodyText1,
-          decoration: InputDecoration(border: InputBorder.none),
         ),
       );
 

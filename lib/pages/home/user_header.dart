@@ -162,13 +162,7 @@ class UserHeader extends StatelessWidget {
                             child: Text(
                               user.moderatorStatus,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle2
-                                  .copyWith(
-                                    color: Theme.of(context).backgroundColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              style: Theme.of(context).textTheme.button,
                             ),
                           ),
                         ),

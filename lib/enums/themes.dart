@@ -7,6 +7,7 @@ enum Themes {
   cyber,
   night,
   amethyst,
+  bee,
   frost,
 }
 
@@ -59,6 +60,16 @@ extension Styles on Themes {
       'contrast': Color(0xFFE8D9FC),
       'brightness': Brightness.dark,
     },
+    Themes.bee: {
+      'background': Color(0xFF000000),
+      'primary': Color(0xFF141414),
+      'translucent': Color(0xBB000000),
+      'accent': Color(0xFFFFDB00),
+      'error': Color(0xFFFF1F39),
+      'faded': Color(0xFF999999),
+      'contrast': Color(0xFFFFFFD6),
+      'brightness': Brightness.dark,
+    },
     Themes.frost: {
       'background': Color(0xFFFFFEFF),
       'primary': Color(0xFFF4F5F6),
@@ -104,9 +115,6 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
     iconTheme: IconThemeData(color: theme['faded'], size: Styles.ICON_BIG),
-    inputDecorationTheme: InputDecorationTheme(
-        // TODO
-        ),
     tooltipTheme: TooltipThemeData(
       padding: Config.PADDING,
       decoration: BoxDecoration(
@@ -114,6 +122,16 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         borderRadius: Config.BORDER_RADIUS,
       ),
       textStyle: TextStyle(fontSize: Styles.FONT_MEDIUM, color: theme['faded']),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      isDense: true,
+      filled: true,
+      fillColor: theme['primary'],
+      hintStyle: TextStyle(fontSize: Styles.FONT_MEDIUM, color: theme['faded']),
+      border: const OutlineInputBorder(
+        borderRadius: Config.BORDER_RADIUS,
+        borderSide: BorderSide.none,
+      ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
@@ -184,6 +202,11 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       subtitle2: TextStyle(
         fontSize: Styles.FONT_SMALL,
         color: theme['faded'],
+        fontWeight: FontWeight.normal,
+      ),
+      button: TextStyle(
+        fontSize: Styles.FONT_MEDIUM,
+        color: theme['background'],
         fontWeight: FontWeight.normal,
       ),
     ),

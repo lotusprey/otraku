@@ -38,7 +38,7 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
         child: _state != 0
             ? Icon(
                 _state == 1 ? Icons.add : Icons.remove,
-                color: Theme.of(context).dividerColor,
+                color: Theme.of(context).backgroundColor,
               )
             : null,
       ),

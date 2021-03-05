@@ -305,14 +305,6 @@ class __NavigationState extends State<_Navigation> {
                   textAlignVertical: TextAlignVertical.bottom,
                   decoration: InputDecoration(
                     hintText: widget.hint,
-                    hintStyle: Theme.of(context).textTheme.subtitle1,
-                    filled: true,
-                    fillColor: Theme.of(context).primaryColor,
-                    border: OutlineInputBorder(
-                      borderRadius: Config.BORDER_RADIUS,
-                      borderSide: BorderSide.none,
-                    ),
-                    isDense: true,
                     suffixIcon: _empty
                         ? IconButton(
                             tooltip: 'Hide',

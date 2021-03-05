@@ -32,8 +32,8 @@ class _ChipFieldState extends State<ChipField> {
           backgroundColor: _isPositive
               ? Theme.of(context).accentColor
               : Theme.of(context).errorColor,
-          label:
-              Text(widget.title, style: Theme.of(context).textTheme.bodyText1),
+          label: Text(widget.title, style: Theme.of(context).textTheme.button),
+          deleteIconColor: Theme.of(context).backgroundColor,
           onDeleted: widget.onRemoved,
         ),
       );

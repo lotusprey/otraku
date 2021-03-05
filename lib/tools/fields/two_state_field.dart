@@ -34,10 +34,7 @@ class _TwoStateFieldState extends State<TwoStateField> {
               : Theme.of(context).accentColor,
         ),
         child: _active
-            ? Icon(
-                Icons.done,
-                color: Theme.of(context).dividerColor,
-              )
+            ? Icon(Icons.done, color: Theme.of(context).backgroundColor)
             : null,
       ),
       onTap: () {

@@ -22,13 +22,12 @@ class _AuthPageState extends State<AuthPage> {
   StreamSubscription _subscription;
 
   void _verify() => Client.logIn().then((loggedIn) {
-        if (loggedIn) {
+        if (loggedIn)
           Client.initViewerId().then((ok) {
             if (ok) Get.offAllNamed(HomePage.ROUTE);
           });
-        } else {
+        else
           setState(() => _loading = false);
-        }
       });
 
   Future<void> _requestAccessToken() async {
@@ -63,6 +62,7 @@ class _AuthPageState extends State<AuthPage> {
         // final int expiration =
         //     int.parse(link.substring(link.lastIndexOf('=') + 1));
         Client.accessToken = accessToken;
+        closeWebView();
         _verify();
       },
       onError: (error) {

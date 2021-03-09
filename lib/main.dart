@@ -17,9 +17,9 @@ import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/helpers/client.dart';
 import 'package:otraku/pages/auth_page.dart';
-import 'package:otraku/pages/home/collection_tab.dart';
+import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/pages/home/user_tab.dart';
+import 'package:otraku/pages/home/user_page.dart';
 import 'package:otraku/pages/media/media_page.dart';
 import 'package:otraku/pages/pushable/user_activities_page.dart';
 import 'package:otraku/pages/pushable/activity_page.dart';
@@ -31,9 +31,7 @@ import 'package:otraku/pages/pushable/notifications_page.dart';
 import 'package:otraku/pages/pushable/review_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
-import 'package:otraku/pages/pushable/tab_page.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
-import 'package:otraku/tools/navigation/custom_drawer.dart';
 
 Future<void> main() async {
   await GetStorage.init();
@@ -64,23 +62,19 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: UserTab.ROUTE,
-          page: () => TabPage(UserTab(Get.arguments[0], Get.arguments[1])),
+          name: UserPage.ROUTE,
+          page: () => UserPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<User>(tag: Get.arguments[0].toString()))
               Get.put(User(Get.arguments[0]), tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
-          name: CollectionTab.ROUTE,
-          page: () => TabPage(
-            CollectionTab(
-              otherUserId: Get.arguments[0],
-              ofAnime: Get.arguments[1],
-              collectionTag: Get.arguments[2],
-              key: null,
-            ),
-            drawer: CollectionDrawer(Get.arguments[2]),
+          name: CollectionPage.ROUTE,
+          page: () => CollectionPage(
+            otherUserId: Get.arguments[0],
+            ofAnime: Get.arguments[1],
+            collectionTag: Get.arguments[2],
           ),
           binding: BindingsBuilder(() {
             if (!Get.isRegistered<Collection>(tag: Get.arguments[2]))

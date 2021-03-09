@@ -11,8 +11,8 @@ import 'package:otraku/tools/layouts/tile_grid.dart';
 import 'package:otraku/tools/navigation/nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class ExploreTab extends StatelessWidget {
-  const ExploreTab();
+class ExplorePage extends StatelessWidget {
+  const ExplorePage();
 
   @override
   Widget build(BuildContext context) {

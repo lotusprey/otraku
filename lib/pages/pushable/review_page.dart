@@ -74,7 +74,7 @@ class ReviewPage extends StatelessWidget {
                                     TextSpan(
                                       text: 'review by ',
                                       style:
-                                          Theme.of(context).textTheme.headline4,
+                                          Theme.of(context).textTheme.headline6,
                                     ),
                                     TextSpan(text: data.userName),
                                   ],

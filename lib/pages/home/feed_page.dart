@@ -8,8 +8,8 @@ import 'package:otraku/tools/loader.dart';
 import 'package:otraku/tools/navigation/nav_bar.dart';
 import 'package:otraku/tools/navigation/headline_header.dart';
 
-class FeedTab extends StatelessWidget {
-  const FeedTab();
+class FeedPage extends StatelessWidget {
+  const FeedPage();
 
   @override
   Widget build(BuildContext context) {

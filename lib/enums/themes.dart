@@ -123,11 +123,19 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       ),
       textStyle: TextStyle(fontSize: Styles.FONT_MEDIUM, color: theme['faded']),
     ),
+    scrollbarTheme: ScrollbarThemeData(
+      radius: Config.RADIUS,
+      thumbColor: MaterialStateProperty.all(theme['faded']),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       filled: true,
       fillColor: theme['primary'],
-      hintStyle: TextStyle(fontSize: Styles.FONT_MEDIUM, color: theme['faded']),
+      hintStyle: TextStyle(
+        fontSize: Styles.FONT_MEDIUM,
+        color: theme['faded'],
+        fontWeight: FontWeight.w500,
+      ),
       border: const OutlineInputBorder(
         borderRadius: Config.BORDER_RADIUS,
         borderSide: BorderSide.none,

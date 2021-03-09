@@ -76,4 +76,31 @@ class EntryModel {
       customLists: customLists,
     );
   }
+
+  factory EntryModel.copy(final EntryModel copy) => EntryModel._(
+        type: copy.type,
+        mediaId: copy.mediaId,
+        entryId: copy.entryId,
+        status: copy.status,
+        progress: copy.progress,
+        progressMax: copy.progressMax,
+        progressVolumes: copy.progressVolumes,
+        progressVolumesMax: copy.progressVolumesMax,
+        score: copy.score,
+        repeat: copy.repeat,
+        notes: copy.notes,
+        startedAt: copy.startedAt != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                copy.startedAt.millisecondsSinceEpoch,
+              )
+            : null,
+        completedAt: copy.completedAt != null
+            ? DateTime.fromMillisecondsSinceEpoch(
+                copy.completedAt.millisecondsSinceEpoch,
+              )
+            : null,
+        private: copy.private,
+        hiddenFromStatusLists: copy.hiddenFromStatusLists,
+        customLists: {...copy.customLists},
+      );
 }

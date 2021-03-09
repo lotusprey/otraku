@@ -29,6 +29,12 @@ class _NavBarState extends State<NavBar> {
   }
 
   @override
+  void didUpdateWidget(covariant NavBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _index = widget.initial;
+  }
+
+  @override
   Widget build(BuildContext context) => ClipRect(
         child: BackdropFilter(
           filter: FnHelper.filter,

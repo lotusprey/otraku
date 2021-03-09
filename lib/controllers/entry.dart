@@ -44,7 +44,6 @@ class Entry extends GetxController {
     if (body == null) return;
 
     _entry = EntryModel(body['Media']);
-    _copy = EntryModel(body['Media']);
 
     if (_entry.customLists == null) {
       final customLists = Map.fromIterable(
@@ -56,8 +55,8 @@ class Entry extends GetxController {
       );
 
       _entry.customLists = customLists;
-      _copy.customLists = {...customLists};
     }
+    _copy = EntryModel.copy(_entry);
 
     update();
   }

@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/scrollbar_implementation.dart';
 
 class PopUpAnimation extends StatefulWidget {
   final Widget child;
@@ -78,12 +77,15 @@ class TextDialog extends StatelessWidget {
                       const BorderRadius.vertical(bottom: Config.RADIUS),
                   color: Theme.of(context).primaryColor,
                 ),
-                child: ScrollbarImplementation(
-                  SingleChildScrollView(
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    physics: Config.PHYSICS,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: Text(text,
-                        style: Theme.of(context).textTheme.bodyText1),
+                    child: Text(
+                      text,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
                   ),
                 ),
               ),

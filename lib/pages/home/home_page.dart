@@ -2,10 +2,10 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/pages/home/explore_tab.dart';
-import 'package:otraku/pages/home/collection_tab.dart';
-import 'package:otraku/pages/home/feed_tab.dart';
-import 'package:otraku/pages/home/user_tab.dart';
+import 'package:otraku/pages/home/explore_page.dart';
+import 'package:otraku/pages/home/collection_page.dart';
+import 'package:otraku/pages/home/feed_page.dart';
+import 'package:otraku/pages/home/user_page.dart';
 import 'package:otraku/controllers/config.dart';
 import 'package:otraku/tools/navigation/custom_drawer.dart';
 import 'package:otraku/tools/navigation/nav_bar.dart';
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      const FeedTab(),
+      const FeedPage(),
       CollectionTab(
         ofAnime: true,
         otherUserId: null,
@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
         collectionTag: Collection.MANGA,
         key: UniqueKey(),
       ),
-      const ExploreTab(),
+      const ExplorePage(),
       const UserTab(null, null),
     ];
 

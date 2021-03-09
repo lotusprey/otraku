@@ -12,7 +12,7 @@ import 'package:otraku/pages/media/media_page.dart';
 import 'package:otraku/pages/pushable/review_page.dart';
 import 'package:otraku/pages/pushable/staff_page.dart';
 import 'package:otraku/pages/pushable/studio_page.dart';
-import 'package:otraku/pages/home/user_tab.dart';
+import 'package:otraku/pages/home/user_page.dart';
 
 class BrowseIndexer extends StatelessWidget {
   final Browsable browsable;
@@ -66,7 +66,7 @@ class BrowseIndexer extends StatelessWidget {
       case Browsable.user:
         if (id != Client.viewerId)
           Get.toNamed(
-            UserTab.ROUTE,
+            UserPage.ROUTE,
             arguments: [id, imageUrl],
             parameters: {'id': id.toString()},
           );

@@ -11,13 +11,25 @@ import 'package:otraku/pages/pushable/user_activities_page.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/controllers/config.dart';
-import 'package:otraku/pages/home/collection_tab.dart';
+import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/helpers/client.dart';
 import 'package:otraku/tools/navigation/nav_bar.dart';
 
-class UserTab extends StatelessWidget {
+class UserPage extends StatelessWidget {
   static const ROUTE = '/user';
 
+  final int id;
+  final String avatarUrl;
+
+  const UserPage(this.id, this.avatarUrl);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: SafeArea(child: UserTab(id, avatarUrl)));
+  }
+}
+
+class UserTab extends StatelessWidget {
   final int id;
   final String avatarUrl;
 
@@ -129,7 +141,7 @@ class UserTab extends StatelessWidget {
   void _pushCollection(bool ofAnime) {
     final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';
     Get.toNamed(
-      CollectionTab.ROUTE,
+      CollectionPage.ROUTE,
       arguments: [id, ofAnime, collectionTag],
       preventDuplicates: false,
     );

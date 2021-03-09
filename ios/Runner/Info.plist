@@ -26,7 +26,9 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<!--Note: Set up of 'Custom Url Scheme' for uni_links-->
+	<!--Note: Deep Linking-->
+	<!-- <key>FlutterDeepLinkingEnabled</key>
+	<true/> -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -36,11 +38,11 @@
 			<string>otraku</string> <!--Url Name-->
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>otrakuscheme</string> <!--Scheme Name-->
+				<string>otraku</string> <!--Scheme Name-->
 			</array>
 		</dict>
 	</array>
-	<!--Note: End of scheme-->
+	<!--Note: End of dl scheme-->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

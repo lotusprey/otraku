@@ -38,15 +38,17 @@
                     <action android:name="android.intent.action.MAIN"/>
                     <category android:name="android.intent.category.LAUNCHER"/>
                </intent-filter>
-               <!--Note: Set up of 'Custom Url Scheme' for uni_links-->
-               <intent-filter>
+               <!--Note: Deep Linking-->
+               <!-- <meta-data android:name="flutter_deeplinking_enabled" android:value="true" /> -->
+               <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="otrakuscheme" android:host="otraku" />
-                    <!--Scheme Name & Url Name-->
+                    <data android:scheme="otraku" android:host="otraku" />
+                    <data android:scheme="https" />
+                    <!--^^^Scheme Name & Url Name-->
                </intent-filter>
-               <!--Note: End of scheme-->
+               <!--Note: End of dl scheme-->
           </activity>
           <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

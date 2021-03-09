@@ -58,10 +58,10 @@ class _AuthPageState extends State<AuthPage> {
       (final String link) {
         final int start = link.indexOf('=') + 1;
         final int end = link.indexOf('&');
-        final String accessToken = link.substring(start, end);
-        // final int expiration =
-        //     int.parse(link.substring(link.lastIndexOf('=') + 1));
-        Client.accessToken = accessToken;
+        Client.setCredentials(
+          link.substring(start, end),
+          int.parse(link.substring(link.lastIndexOf('=') + 1)),
+        );
         closeWebView();
         _verify();
       },

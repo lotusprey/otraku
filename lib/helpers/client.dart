@@ -13,7 +13,11 @@ class Client {
 
   static final _url = Uri.parse('https://graphql.anilist.co');
 
-  static const String _idQuery = 'query Id {Viewer {id}}';
+  static const _idQuery = 'query Id {Viewer {id}}';
+
+  static const _TOKEN_KEY = 'accessToken1';
+  static const _ID_KEY = 'viewerId1';
+  static const _EXPIRATION_KEY = 'expirationMillis1';
 
   static final Map<String, String> _headers = {
     'Authorization': 'Bearer $_accessToken',
@@ -27,14 +31,31 @@ class Client {
 
   static get viewerId => _viewerId;
 
-  static set accessToken(String token) {
+  static setCredentials(String token, int expiration) {
     _accessToken = token;
-    FlutterSecureStorage().write(key: 'accessToken1', value: _accessToken);
+    FlutterSecureStorage().write(key: _TOKEN_KEY, value: _accessToken);
+    Config.storage.write(
+      _EXPIRATION_KEY,
+      DateTime.now()
+          .add(Duration(seconds: expiration, days: -1))
+          .millisecondsSinceEpoch,
+    );
   }
 
   static Future<bool> logIn() async {
     if (_accessToken == null) {
-      _accessToken = await FlutterSecureStorage().read(key: 'accessToken1');
+      final int millis = Config.storage.read(_EXPIRATION_KEY);
+      if (millis != null) {
+        final date = DateTime.fromMillisecondsSinceEpoch(millis);
+        if (DateTime.now().compareTo(date) >= 0) {
+          FlutterSecureStorage().deleteAll();
+          Config.storage.remove(_ID_KEY);
+          Config.storage.remove(_EXPIRATION_KEY);
+          return false;
+        }
+      }
+
+      _accessToken = await FlutterSecureStorage().read(key: _TOKEN_KEY);
       if (_accessToken == null) return false;
     }
     return true;
@@ -49,12 +70,12 @@ class Client {
   }
 
   static Future<bool> initViewerId() async {
-    _viewerId = Config.storage.read('viewerId1');
+    _viewerId = Config.storage.read(_ID_KEY);
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnErr: false);
       if (data == null) return false;
       _viewerId = data['Viewer']['id'];
-      Config.storage.write('viewerId1', _viewerId);
+      Config.storage.write(_ID_KEY, _viewerId);
     }
     return true;
   }

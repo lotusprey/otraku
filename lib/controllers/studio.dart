@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/anilist/person_model.dart';
 import 'package:otraku/models/studio_connection_list.dart';
@@ -133,7 +133,7 @@ class Studio extends GetxController {
 
     for (final node in nodes) {
       final String category =
-          (node['startDate']['year'] ?? FnHelper.clarifyEnum(node['status']))
+          (node['startDate']['year'] ?? Convert.clarifyEnum(node['status']))
               .toString();
 
       if (categories.isEmpty || categories.last != category) {

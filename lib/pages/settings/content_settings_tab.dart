@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/score_format.dart';
-import 'package:otraku/helpers/fn_helper.dart';
-import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/fields/switch_tile.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/utils/convert.dart';
+import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/fields/switch_tile.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class ContentSettingsTab extends StatelessWidget {
   @override
@@ -65,7 +65,7 @@ class ContentSettingsTab extends StatelessWidget {
           initialValue: Get.find<Viewer>().settings.scoreFormat,
           items: Map.fromIterable(
             ScoreFormat.values,
-            key: (v) => FnHelper.clarifyEnum(describeEnum(v)),
+            key: (v) => Convert.clarifyEnum(describeEnum(v)),
             value: (v) => v,
           ),
           onChanged: (value) {

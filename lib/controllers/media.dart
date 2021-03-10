@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/helpers/scroll_x_controller.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/media_model.dart';
 
 class Media extends ScrollxController {

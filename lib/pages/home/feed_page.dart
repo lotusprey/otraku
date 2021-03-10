@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/pages/home/feed_controls.dart';
-import 'package:otraku/tools/activity_widgets.dart';
-import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
-import 'package:otraku/tools/navigation/headline_header.dart';
+import 'package:otraku/widgets/navigation/feed_control_header.dart';
+import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/navigation/headline_header.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage();
@@ -19,7 +19,7 @@ class FeedPage extends StatelessWidget {
       physics: Config.PHYSICS,
       slivers: [
         const HeadlineHeader('Feed', false),
-        FeedControls(viewer),
+        FeedControlHeader(viewer),
         SliverPadding(
           padding: Config.PADDING,
           sliver: Obx(

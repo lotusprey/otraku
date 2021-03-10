@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
-import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/fade_image.dart';
-import 'package:otraku/tools/layouts/connections_grid.dart';
-import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigation/bubble_tabs.dart';
-import 'package:otraku/tools/overlays/sheets.dart';
+import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/layouts/connections_grid.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class RelationsTab extends StatelessWidget {
   final Media media;

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/helpers/client.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/anilist/user_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 

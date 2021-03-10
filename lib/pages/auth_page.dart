@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/tools/loader.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/widgets/loader.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,14 +21,11 @@ class _AuthPageState extends State<AuthPage> {
   bool _loading = true;
   StreamSubscription _subscription;
 
-  void _verify() => Client.logIn().then((loggedIn) {
-        if (loggedIn)
-          Client.initViewerId().then((ok) {
-            if (ok) Get.offAllNamed(HomePage.ROUTE);
-          });
-        else
-          setState(() => _loading = false);
-      });
+  void _verify() => Client.logIn().then(
+        (loggedIn) => loggedIn
+            ? Get.offAllNamed(HomePage.ROUTE)
+            : setState(() => _loading = false),
+      );
 
   Future<void> _requestAccessToken() async {
     setState(() => _loading = true);

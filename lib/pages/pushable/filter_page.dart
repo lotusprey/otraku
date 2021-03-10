@@ -5,15 +5,15 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/anime_format.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_status.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/filterable.dart';
-import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/layouts/chip_grid.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/filterable.dart';
+import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/layouts/chip_grid.dart';
 
 class FilterPage extends StatelessWidget {
   static const ROUTE = '/filters';
@@ -116,7 +116,7 @@ class FilterPage extends StatelessWidget {
             title: 'Status',
             placeholder: 'statuses',
             options: MediaStatus.values
-                .map((s) => FnHelper.clarifyEnum(describeEnum(s)))
+                .map((s) => Convert.clarifyEnum(describeEnum(s)))
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
             inclusive: changes[Filterable.STATUS_IN],
@@ -126,10 +126,10 @@ class FilterPage extends StatelessWidget {
             placeholder: 'formats',
             options: browsable == Browsable.anime
                 ? AnimeFormat.values
-                    .map((f) => FnHelper.clarifyEnum(describeEnum(f)))
+                    .map((f) => Convert.clarifyEnum(describeEnum(f)))
                     .toList()
                 : MangaFormat.values
-                    .map((f) => FnHelper.clarifyEnum(describeEnum(f)))
+                    .map((f) => Convert.clarifyEnum(describeEnum(f)))
                     .toList(),
             values: browsable == Browsable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()

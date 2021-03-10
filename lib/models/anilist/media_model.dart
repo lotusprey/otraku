@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/anilist/media_overview_model.dart';
 import 'package:otraku/models/anilist/related_media_model.dart';
 import 'package:otraku/models/anilist/related_review_model.dart';
@@ -37,7 +37,7 @@ class MediaModel {
     for (final connection in map['characters']['edges']) {
       final List<Connection> voiceActors = [];
       for (final va in connection['voiceActors']) {
-        final language = FnHelper.clarifyEnum(va['language']);
+        final language = Convert.clarifyEnum(va['language']);
         if (!availableLanguages.contains(language))
           availableLanguages.add(language);
 
@@ -53,7 +53,7 @@ class MediaModel {
       items.add(Connection(
         id: connection['node']['id'],
         title: connection['node']['name']['full'],
-        text2: FnHelper.clarifyEnum(connection['role']),
+        text2: Convert.clarifyEnum(connection['role']),
         imageUrl: connection['node']['image']['large'],
         others: voiceActors,
         browsable: Browsable.character,

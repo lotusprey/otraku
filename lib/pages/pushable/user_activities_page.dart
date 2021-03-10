@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/tools/activity_widgets.dart';
-import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 
 class UserActivitiesPage extends StatelessWidget {
   static const ROUTE = '/activities';

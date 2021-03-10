@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_status.dart';
 
 class MediaOverviewModel {
@@ -114,11 +114,11 @@ class MediaOverviewModel {
       synonyms: List<String>.from(map['synonyms']),
       cover: map['coverImage']['extraLarge'] ?? map['coverImage']['large'],
       banner: map['bannerImage'],
-      description: FnHelper.clearHtml(map['description']),
-      format: FnHelper.clarifyEnum(map['format']),
-      status: FnHelper.clarifyEnum(map['status']),
+      description: Convert.clearHtml(map['description']),
+      format: Convert.clarifyEnum(map['format']),
+      status: Convert.clarifyEnum(map['status']),
       entryStatus: map['mediaListEntry'] != null
-          ? FnHelper.stringToEnum(
+          ? Convert.stringToEnum(
               map['mediaListEntry']['status'].toString(),
               ListStatus.values,
             )
@@ -127,7 +127,7 @@ class MediaOverviewModel {
           ? map['nextAiringEpisode']['episode']
           : null,
       timeUntilAiring: map['nextAiringEpisode'] != null
-          ? FnHelper.secondsToTimeString(
+          ? Convert.secondsToTimeString(
               map['nextAiringEpisode']['timeUntilAiring'])
           : null,
       episodes: map['episodes'],
@@ -135,10 +135,10 @@ class MediaOverviewModel {
       chapters: map['chapters'],
       volumes: map['volumes'],
       startDate: map['startDate'] != null
-          ? FnHelper.mapToDateString(map['startDate'])
+          ? Convert.mapToDateString(map['startDate'])
           : null,
       endDate: map['endDate'] != null
-          ? FnHelper.mapToDateString(map['endDate'])
+          ? Convert.mapToDateString(map['endDate'])
           : null,
       season: season,
       averageScore:
@@ -148,7 +148,7 @@ class MediaOverviewModel {
       genres: List<String>.from(map['genres']),
       studios: studios,
       producers: producers,
-      source: FnHelper.clarifyEnum(map['source']),
+      source: Convert.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
       countryOfOrigin: map['countryOfOrigin'],
     );

@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/enums/notification_type.dart';
-import 'package:otraku/tools/fields/checkbox_field.dart';
-import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/widgets/fields/checkbox_field.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class NotificationSettingsTab extends StatelessWidget {
   @override

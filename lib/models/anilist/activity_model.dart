@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/anilist/reply_model.dart';
 import 'package:otraku/models/loadable_list.dart';
 
@@ -74,7 +74,7 @@ class ActivityModel {
           mediaFormat: null,
           mediaType: null,
           text: map['text'],
-          createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
+          createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
           replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
@@ -100,10 +100,10 @@ class ActivityModel {
           mediaId: map['media']['id'],
           mediaTitle: map['media']['title']['userPreferred'],
           mediaImage: map['media']['coverImage']['large'],
-          mediaFormat: FnHelper.clarifyEnum(map['media']['format']),
+          mediaFormat: Convert.clarifyEnum(map['media']['format']),
           mediaType: Browsable.anime,
           text: '$status $progress',
-          createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
+          createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
           replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
@@ -129,10 +129,10 @@ class ActivityModel {
           mediaId: map['media']['id'],
           mediaTitle: map['media']['title']['userPreferred'],
           mediaImage: map['media']['coverImage']['large'],
-          mediaFormat: FnHelper.clarifyEnum(map['media']['format']),
+          mediaFormat: Convert.clarifyEnum(map['media']['format']),
           mediaType: Browsable.manga,
           text: '$status $progress',
-          createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
+          createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
           replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
@@ -157,7 +157,7 @@ class ActivityModel {
           mediaFormat: null,
           mediaType: null,
           text: map['message'],
-          createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
+          createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
           replies: LoadableList<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,

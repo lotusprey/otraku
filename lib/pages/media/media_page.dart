@@ -2,11 +2,11 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/pages/media/overview_tab.dart';
 import 'package:otraku/pages/media/relations_tab.dart';
 import 'package:otraku/pages/media/social_tab.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/pages/media/media_header.dart';
 
 class MediaPage extends StatelessWidget {

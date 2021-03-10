@@ -2,13 +2,13 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/client.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/anilist/user_model.dart';
-import 'package:otraku/tools/layouts/tile_grid.dart';
-import 'package:otraku/tools/layouts/title_list.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/tile_grid.dart';
+import 'package:otraku/widgets/layouts/title_list.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class FavouritesPage extends StatelessWidget {
   static const ROUTE = '/favourites';

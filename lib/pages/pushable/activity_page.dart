@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/activity.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/anilist/reply_model.dart';
-import 'package:otraku/tools/activity_widgets.dart';
-import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/fade_image.dart';
-import 'package:otraku/tools/html_content.dart';
-import 'package:otraku/tools/loader.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/triangle_clip.dart';
+import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/html_content.dart';
+import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityPage extends StatelessWidget {
   static const ROUTE = '/activity';
@@ -232,7 +232,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Styles.ICON_SMALL,
+              size: Style.ICON_SMALL,
               color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
             ),
           ],

@@ -1,15 +1,14 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/anilist/collection_list_model.dart';
 import 'package:otraku/models/anilist/entry_model.dart';
 import 'package:otraku/models/anilist/list_entry_model.dart';
-import 'package:otraku/helpers/filterable.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/helpers/scroll_x_controller.dart';
+import 'package:otraku/utils/filterable.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 
 class Collection extends ScrollxController implements Filterable {
   // ***************************************************************************
@@ -196,7 +195,7 @@ class Collection extends ScrollxController implements Filterable {
         : data['user']['mediaListOptions']['mangaList'];
     final bool splitCompleted = metaData['splitCompletedSectionByFormat'];
 
-    _scoreFormat = FnHelper.stringToEnum(
+    _scoreFormat = Convert.stringToEnum(
       data['user']['mediaListOptions']['scoreFormat'],
       ScoreFormat.values,
     );
@@ -234,34 +233,16 @@ class Collection extends ScrollxController implements Filterable {
     EntryModel newEntry,
   ) async {
     // Update database item
-    final List<String> oldCustomLists = oldEntry.customLists.entries
+    final oldCustomLists = oldEntry.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
-    final List<String> newCustomLists = newEntry.customLists.entries
+    final newCustomLists = newEntry.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key)
         .toList();
 
-    newEntry.status ??= ListStatus.CURRENT;
-
-    final data = await Client.request(
-      _updateEntryMutation,
-      {
-        'mediaId': newEntry.mediaId,
-        'status': describeEnum(newEntry.status),
-        'progress': newEntry.progress,
-        'progressVolumes': newEntry.progressVolumes,
-        'score': newEntry.score,
-        'repeat': newEntry.repeat,
-        'notes': newEntry.notes,
-        'startedAt': FnHelper.dateTimeToMap(newEntry.startedAt),
-        'completedAt': FnHelper.dateTimeToMap(newEntry.completedAt),
-        'private': newEntry.private,
-        'hiddenFromStatusLists': newEntry.hiddenFromStatusLists,
-        'customLists': newCustomLists,
-      },
-    );
+    final data = await Client.request(_updateEntryMutation, newEntry.toMap());
 
     if (data == null) return;
 

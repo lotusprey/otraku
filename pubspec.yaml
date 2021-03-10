@@ -1,5 +1,5 @@
 name: otraku
-description: A new Flutter project.
+description: An unofficial AniList app.
 
 publish_to: 'none'
 
@@ -22,8 +22,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  get: ^3.25.6
-  get_storage: ^1.4.0
+  get: ^4.0.0-nullsafety.2
+  get_storage: ^2.0.1
   http: ^0.13.0
   url_launcher: ^6.0.2
   uni_links: ^0.4.0
@@ -52,6 +52,6 @@ flutter:
   fonts:
     - family: Rubik
       fonts:
-        - asset: resources/fonts/Rubik-Regular.ttf
-        - asset: resources/fonts/Rubik-Medium.ttf
+        - asset: assets/fonts/Rubik-Regular.ttf
+        - asset: assets/fonts/Rubik-Medium.ttf
           weight: 500

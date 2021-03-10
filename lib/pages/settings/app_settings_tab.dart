@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class AppSettingsTab extends StatelessWidget {
   @override
@@ -61,7 +61,7 @@ class AppSettingsTab extends StatelessWidget {
           ),
           _Radio(
             options: Themes.values
-                .map((t) => FnHelper.clarifyEnum(describeEnum(t)))
+                .map((t) => Convert.clarifyEnum(describeEnum(t)))
                 .toList(),
             leftValue: Config.storage.read(Config.LIGHT_THEME) ?? 0,
             rightValue: Config.storage.read(Config.DARK_THEME) ?? 0,

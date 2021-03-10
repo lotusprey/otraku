@@ -14,8 +14,8 @@ import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/helpers/client.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
@@ -53,7 +53,6 @@ class App extends StatelessWidget {
           name: HomePage.ROUTE,
           page: () => HomePage(),
           binding: BindingsBuilder(() {
-            Get.put(Config());
             Get.put(Collection(null, true), tag: Collection.ANIME);
             Get.put(Collection(null, false), tag: Collection.MANGA);
             Get.put(User(Client.viewerId), tag: Client.viewerId.toString());

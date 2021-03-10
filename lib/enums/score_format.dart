@@ -18,7 +18,7 @@ extension ScoreFormatExtension on ScoreFormat {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star, size: Styles.ICON_SMALL),
+            const Icon(Icons.star, size: Style.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               score.toStringAsFixed(score.truncate() == score ? 0 : 1),
@@ -30,19 +30,19 @@ extension ScoreFormatExtension on ScoreFormat {
         if (score == 3)
           return const Icon(
             Icons.sentiment_very_satisfied,
-            size: Styles.ICON_SMALL,
+            size: Style.ICON_SMALL,
           );
         if (score == 2)
-          return const Icon(Icons.sentiment_neutral, size: Styles.ICON_SMALL);
+          return const Icon(Icons.sentiment_neutral, size: Style.ICON_SMALL);
         return const Icon(
           Icons.sentiment_very_dissatisfied,
-          size: Styles.ICON_SMALL,
+          size: Style.ICON_SMALL,
         );
       default:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star, size: Styles.ICON_SMALL),
+            const Icon(Icons.star, size: Style.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               score.toStringAsFixed(0),

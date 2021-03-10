@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 
 enum Themes {
   navy,
@@ -11,7 +11,7 @@ enum Themes {
   frost,
 }
 
-extension Styles on Themes {
+extension Style on Themes {
   static const ICON_BIG = 25.0;
   static const ICON_SMALL = 20.0;
 
@@ -114,14 +114,14 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     toggleableActiveColor: theme['accent'],
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
-    iconTheme: IconThemeData(color: theme['faded'], size: Styles.ICON_BIG),
+    iconTheme: IconThemeData(color: theme['faded'], size: Style.ICON_BIG),
     tooltipTheme: TooltipThemeData(
       padding: Config.PADDING,
       decoration: BoxDecoration(
         color: theme['primary'],
         borderRadius: Config.BORDER_RADIUS,
       ),
-      textStyle: TextStyle(fontSize: Styles.FONT_MEDIUM, color: theme['faded']),
+      textStyle: TextStyle(fontSize: Style.FONT_MEDIUM, color: theme['faded']),
     ),
     scrollbarTheme: ScrollbarThemeData(
       radius: Config.RADIUS,
@@ -132,7 +132,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       filled: true,
       fillColor: theme['primary'],
       hintStyle: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['faded'],
         fontWeight: FontWeight.w500,
       ),
@@ -144,7 +144,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     textButtonTheme: TextButtonThemeData(
       style: ButtonStyle(
         textStyle: MaterialStateProperty.all(TextStyle(
-          fontSize: Styles.FONT_MEDIUM,
+          fontSize: Style.FONT_MEDIUM,
           color: theme['accent'],
         )),
       ),
@@ -152,7 +152,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         textStyle: MaterialStateProperty.all(TextStyle(
-          fontSize: Styles.FONT_BIG,
+          fontSize: Style.FONT_BIG,
           fontWeight: FontWeight.w500,
         )),
         backgroundColor: MaterialStateProperty.all(theme['accent']),
@@ -164,56 +164,56 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     ),
     textTheme: TextTheme(
       headline1: TextStyle(
-        fontSize: Styles.FONT_BIG,
+        fontSize: Style.FONT_BIG,
         color: theme['accent'],
         fontWeight: FontWeight.w500,
       ),
       headline2: TextStyle(
-        fontSize: Styles.FONT_BIG,
+        fontSize: Style.FONT_BIG,
         color: theme['contrast'],
         fontWeight: FontWeight.w500,
       ),
       headline3: TextStyle(
-        fontSize: Styles.FONT_BIG,
+        fontSize: Style.FONT_BIG,
         color: theme['faded'],
         fontWeight: FontWeight.w500,
       ),
       headline4: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['accent'],
         fontWeight: FontWeight.w500,
       ),
       headline5: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['contrast'],
         fontWeight: FontWeight.w500,
       ),
       headline6: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['faded'],
         fontWeight: FontWeight.w500,
       ),
       bodyText1: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['contrast'],
         fontWeight: FontWeight.normal,
       ),
       bodyText2: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['accent'],
         fontWeight: FontWeight.normal,
       ),
       subtitle1: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['faded'],
       ),
       subtitle2: TextStyle(
-        fontSize: Styles.FONT_SMALL,
+        fontSize: Style.FONT_SMALL,
         color: theme['faded'],
         fontWeight: FontWeight.normal,
       ),
       button: TextStyle(
-        fontSize: Styles.FONT_MEDIUM,
+        fontSize: Style.FONT_MEDIUM,
         color: theme['background'],
         fontWeight: FontWeight.normal,
       ),

@@ -6,14 +6,14 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/pages/home/user_header.dart';
+import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/pages/pushable/user_activities_page.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/pages/home/collection_page.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class UserPage extends StatelessWidget {
   static const ROUTE = '/user';
@@ -86,8 +86,7 @@ class UserTab extends StatelessWidget {
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => id == null
-                              ? Get.find<Config>().pageIndex =
-                                  HomePage.ANIME_LIST
+                              ? Config.index = HomePage.ANIME_LIST
                               : _pushCollection(true),
                         ),
                         IconButton(
@@ -96,8 +95,7 @@ class UserTab extends StatelessWidget {
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => id == null
-                              ? Get.find<Config>().pageIndex =
-                                  HomePage.MANGA_LIST
+                              ? Config.index = HomePage.MANGA_LIST
                               : _pushCollection(false),
                         ),
                         IconButton(

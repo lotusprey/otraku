@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/helpers/client.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/loadable_list.dart';
 import 'package:otraku/models/anilist/person_model.dart';
@@ -158,7 +158,7 @@ class Character extends GetxController {
             title: va['name']['full'],
             imageUrl: va['image']['large'],
             browsable: Browsable.staff,
-            text2: FnHelper.clarifyEnum(va['language']),
+            text2: Convert.clarifyEnum(va['language']),
           ));
 
         connections.add(Connection(
@@ -166,7 +166,7 @@ class Character extends GetxController {
           title: connection['node']['title']['userPreferred'],
           imageUrl: connection['node']['coverImage']['large'],
           browsable: Browsable.anime,
-          text2: FnHelper.clarifyEnum(connection['characterRole']),
+          text2: Convert.clarifyEnum(connection['characterRole']),
           others: voiceActors,
         ));
       }
@@ -181,7 +181,7 @@ class Character extends GetxController {
           title: connection['node']['title']['userPreferred'],
           imageUrl: connection['node']['coverImage']['large'],
           browsable: Browsable.manga,
-          text2: FnHelper.clarifyEnum(connection['characterRole']),
+          text2: Convert.clarifyEnum(connection['characterRole']),
         ));
 
       _manga.update((media) {
@@ -210,7 +210,7 @@ class Character extends GetxController {
       final List<Connection> voiceActors = [];
 
       for (final va in connection['voiceActors']) {
-        final language = FnHelper.clarifyEnum(va['language']);
+        final language = Convert.clarifyEnum(va['language']);
         if (!_availableLanguages.contains(language))
           _availableLanguages.add(language);
 
@@ -228,7 +228,7 @@ class Character extends GetxController {
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
         browsable: Browsable.anime,
-        text2: FnHelper.clarifyEnum(connection['characterRole']),
+        text2: Convert.clarifyEnum(connection['characterRole']),
         others: voiceActors,
       ));
     }
@@ -248,7 +248,7 @@ class Character extends GetxController {
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
         browsable: Browsable.manga,
-        text2: FnHelper.clarifyEnum(connection['characterRole']),
+        text2: Convert.clarifyEnum(connection['characterRole']),
       ));
 
     _manga(LoadableList(

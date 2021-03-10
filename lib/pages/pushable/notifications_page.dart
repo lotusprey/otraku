@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/anilist/notification_model.dart';
 import 'package:otraku/pages/pushable/activity_page.dart';
-import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/fade_image.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/overlays/sheets.dart';
+import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class NotificationsPage extends StatelessWidget {
   static const ROUTE = '/notifications';

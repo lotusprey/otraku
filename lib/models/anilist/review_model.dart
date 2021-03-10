@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 
 class ReviewModel {
   final int id;
@@ -50,7 +50,7 @@ class ReviewModel {
         banner: map['media']['bannerImage'],
         summary: map['summary'],
         text: map['body'],
-        createdAt: FnHelper.millisecondsToDateString(map['createdAt']),
+        createdAt: Convert.millisecondsToDateString(map['createdAt']),
         score: map['score'],
         rating: map['rating'],
         totalRating: map['ratingAmount'],

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
   final int mediaId;
@@ -52,7 +52,7 @@ class ListEntryModel {
             ? map['media']['nextAiringEpisode']['episode']
             : null,
         timeUntilAiring: map['media']['nextAiringEpisode'] != null
-            ? FnHelper.secondsToTimeString(
+            ? Convert.secondsToTimeString(
                 map['media']['nextAiringEpisode']['timeUntilAiring'])
             : null,
         format: map['media']['format'],
@@ -62,8 +62,8 @@ class ListEntryModel {
         progressVolumes: map['progressVolumes'] ?? 0,
         progressVolumesMax: map['media']['volumes'],
         score: map['score'].toDouble(),
-        startDate: FnHelper.mapToDateTime(map['startedAt']),
-        endDate: FnHelper.mapToDateTime(map['completedAt']),
+        startDate: Convert.mapToDateTime(map['startedAt']),
+        endDate: Convert.mapToDateTime(map['completedAt']),
         repeat: map['repeat'] ?? 0,
         notes: map['notes'],
         createdAt: map['createdAt'],

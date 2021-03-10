@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_status.dart';
 
 class EntryModel {
@@ -58,7 +58,7 @@ class EntryModel {
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
-      status: FnHelper.stringToEnum(
+      status: Convert.stringToEnum(
         map['mediaListEntry']['status'],
         ListStatus.values,
       ),
@@ -69,8 +69,8 @@ class EntryModel {
       score: map['mediaListEntry']['score'].toDouble(),
       repeat: map['mediaListEntry']['repeat'],
       notes: map['mediaListEntry']['notes'],
-      startedAt: FnHelper.mapToDateTime(map['mediaListEntry']['startedAt']),
-      completedAt: FnHelper.mapToDateTime(map['mediaListEntry']['completedAt']),
+      startedAt: Convert.mapToDateTime(map['mediaListEntry']['startedAt']),
+      completedAt: Convert.mapToDateTime(map['mediaListEntry']['completedAt']),
       private: map['mediaListEntry']['private'],
       hiddenFromStatusLists: map['mediaListEntry']['hiddenFromStatusLists'],
       customLists: customLists,
@@ -103,4 +103,22 @@ class EntryModel {
         hiddenFromStatusLists: copy.hiddenFromStatusLists,
         customLists: {...copy.customLists},
       );
+
+  Map<String, dynamic> toMap() => {
+        'mediaId': mediaId,
+        'status': describeEnum(status ?? ListStatus.CURRENT),
+        'progress': progress,
+        'progressVolumes': progressVolumes,
+        'score': score,
+        'repeat': repeat,
+        'notes': notes,
+        'startedAt': Convert.dateTimeToMap(startedAt),
+        'completedAt': Convert.dateTimeToMap(completedAt),
+        'private': private,
+        'hiddenFromStatusLists': hiddenFromStatusLists,
+        'customLists': customLists.entries
+            .where((e) => e.value)
+            .map((e) => e.key)
+            .toList(),
+      };
 }

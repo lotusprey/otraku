@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 
 class PersonModel {
   final int id;
@@ -34,7 +34,7 @@ class PersonModel {
       fullName: map['name']['full'],
       altNames: altNames,
       imageUrl: map['image']['large'],
-      description: FnHelper.clearHtml(map['description']),
+      description: Convert.clearHtml(map['description']),
     );
   }
 

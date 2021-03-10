@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 
@@ -25,7 +25,7 @@ class SettingsModel {
   });
 
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(
-        scoreFormat: FnHelper.stringToEnum(
+        scoreFormat: Convert.stringToEnum(
           map['mediaListOptions']['scoreFormat'],
           ScoreFormat.values,
         ),

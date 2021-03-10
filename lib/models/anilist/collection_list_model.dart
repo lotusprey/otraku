@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/anilist/list_entry_model.dart';
@@ -24,7 +24,7 @@ class CollectionListModel {
         name: map['name'],
         isCustomList: map['isCustomList'],
         status: !map['isCustomList']
-            ? FnHelper.stringToEnum(map['status'], ListStatus.values)
+            ? Convert.stringToEnum(map['status'], ListStatus.values)
             : null,
         splitCompletedListFormat: splitCompleted &&
                 !map['isCustomList'] &&

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/helpers/client.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/anilist/entry_model.dart';
 
 class Entry extends GetxController {

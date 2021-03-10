@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/helpers/client.dart';
+import 'package:otraku/utils/client.dart';
 
 class ProfileSettingsTab extends StatelessWidget {
   @override

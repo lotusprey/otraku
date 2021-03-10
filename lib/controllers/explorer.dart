@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/helpers/filterable.dart';
+import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/helpers/scroll_x_controller.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 
 // Searches and filters items from the Browsable enum
 class Explorer extends ScrollxController implements Filterable {

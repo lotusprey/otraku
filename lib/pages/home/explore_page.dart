@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/tools/layouts/review_grid.dart';
-import 'package:otraku/tools/layouts/title_list.dart';
-import 'package:otraku/tools/loader.dart';
-import 'package:otraku/pages/home/media_controls.dart';
-import 'package:otraku/tools/layouts/tile_grid.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
-import 'package:otraku/tools/navigation/headline_header.dart';
+import 'package:otraku/widgets/layouts/review_grid.dart';
+import 'package:otraku/widgets/layouts/title_list.dart';
+import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/navigation/media_control_header.dart';
+import 'package:otraku/widgets/layouts/tile_grid.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/navigation/headline_header.dart';
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage();
@@ -23,7 +23,7 @@ class ExplorePage extends StatelessWidget {
       controller: Get.find<Explorer>().scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        MediaControls(),
+        MediaControlHeader(),
         _ExploreGrid(),
         _EndOfListLoader(),
         SliverToBoxAdapter(

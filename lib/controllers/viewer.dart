@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/helpers/client.dart';
-import 'package:otraku/helpers/scroll_x_controller.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 import 'package:otraku/models/anilist/activity_model.dart';
 import 'package:otraku/models/anilist/settings_model.dart';
 import 'package:otraku/models/loadable_list.dart';

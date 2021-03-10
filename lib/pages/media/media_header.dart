@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/fade_image.dart';
-import 'package:otraku/tools/navigation/custom_sliver_header.dart';
-import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaHeader extends StatefulWidget {
   final Media media;

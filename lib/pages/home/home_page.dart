@@ -1,14 +1,13 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/pages/home/explore_page.dart';
 import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/navigation/custom_drawer.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/navigation/custom_drawer.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class HomePage extends StatelessWidget {
   static const ROUTE = '/home';
@@ -39,7 +38,7 @@ class HomePage extends StatelessWidget {
       const UserTab(null, null),
     ];
 
-    const drawers = const [
+    const drawers = [
       const SizedBox(),
       const CollectionDrawer(Collection.ANIME),
       const CollectionDrawer(Collection.MANGA),
@@ -47,8 +46,9 @@ class HomePage extends StatelessWidget {
       const SizedBox(),
     ];
 
-    return GetBuilder<Config>(
-      builder: (config) => Scaffold(
+    return ValueListenableBuilder<int>(
+      valueListenable: Config.index,
+      builder: (_, index, __) => Scaffold(
         extendBody: true,
         drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
         bottomNavigationBar: NavBar(
@@ -59,15 +59,15 @@ class HomePage extends StatelessWidget {
             Icons.explore_outlined: 'Explore',
             FluentSystemIcons.ic_fluent_person_regular: 'Profile',
           },
-          onChanged: (page) => config.pageIndex = page,
-          initial: config.pageIndex,
+          onChanged: (page) => Config.index = page,
+          initial: index,
         ),
-        drawer: drawers[config.pageIndex],
+        drawer: drawers[index],
         body: SafeArea(
           bottom: false,
           child: AnimatedSwitcher(
             duration: Config.TAB_SWITCH_DURATION,
-            child: tabs[config.pageIndex],
+            child: tabs[index],
           ),
         ),
       ),

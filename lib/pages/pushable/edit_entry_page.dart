@@ -4,17 +4,17 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/fields/checkbox_field.dart';
-import 'package:otraku/tools/fields/date_field.dart';
-import 'package:otraku/tools/fields/drop_down_field.dart';
-import 'package:otraku/tools/fields/expandable_field.dart';
-import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/fields/input_field_structure.dart';
-import 'package:otraku/tools/fields/number_field.dart';
-import 'package:otraku/tools/fields/score_picker.dart';
-import 'package:otraku/tools/overlays/dialogs.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/fields/checkbox_field.dart';
+import 'package:otraku/widgets/fields/date_field.dart';
+import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/fields/expandable_field.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/number_field.dart';
+import 'package:otraku/widgets/fields/score_picker.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class EditEntryPage extends StatefulWidget {
   static const ROUTE = '/edit';

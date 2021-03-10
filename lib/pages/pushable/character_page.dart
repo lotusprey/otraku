@@ -1,12 +1,12 @@
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
-import 'package:otraku/tools/navigation/bubble_tabs.dart';
-import 'package:otraku/tools/navigation/person_header.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/person_header.dart';
 import 'package:otraku/controllers/character.dart';
-import 'package:otraku/tools/layouts/connections_grid.dart';
-import 'package:otraku/tools/overlays/sheets.dart';
+import 'package:otraku/widgets/layouts/connections_grid.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CharacterPage extends StatelessWidget {
   static const ROUTE = '/character';

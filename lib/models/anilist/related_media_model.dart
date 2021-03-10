@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/browse_result_model.dart';
 
 class RelatedMediaModel extends BrowseResultModel {
@@ -21,9 +21,9 @@ class RelatedMediaModel extends BrowseResultModel {
   factory RelatedMediaModel(Map<String, dynamic> map) => RelatedMediaModel._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        relationType: FnHelper.clarifyEnum(map['relationType']),
-        format: FnHelper.clarifyEnum(map['node']['format']),
-        status: FnHelper.clarifyEnum(map['node']['status']),
+        relationType: Convert.clarifyEnum(map['relationType']),
+        format: Convert.clarifyEnum(map['node']['format']),
+        status: Convert.clarifyEnum(map['node']['status']),
         imageUrl: map['node']['coverImage']['large'],
         browsable:
             map['node']['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,

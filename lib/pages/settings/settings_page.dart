@@ -2,14 +2,14 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/pages/settings/app_settings_tab.dart';
 import 'package:otraku/pages/settings/content_settings_tab.dart';
 import 'package:otraku/pages/settings/notification_settings_tab.dart';
 import 'package:otraku/pages/settings/profile_settings_tab.dart';
-import 'package:otraku/tools/navigation/custom_app_bar.dart';
-import 'package:otraku/tools/navigation/nav_bar.dart';
+import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsPage extends StatelessWidget {
   static const ROUTE = '/settings';

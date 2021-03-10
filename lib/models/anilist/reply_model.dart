@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:otraku/helpers/fn_helper.dart';
+import 'package:otraku/utils/convert.dart';
 
 class ReplyModel {
   final int id;
@@ -33,7 +33,7 @@ class ReplyModel {
         userName: map['user']['name'],
         userImage: map['user']['avatar']['large'],
         text: map['text'],
-        createdAt: FnHelper.millisecondsToTimeString(map['createdAt']),
+        createdAt: Convert.millisecondsToTimeString(map['createdAt']),
       );
 
   int get likeCount => _likeCount;

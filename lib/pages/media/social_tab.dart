@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/config.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/enums/browsable.dart';
-import 'package:otraku/tools/browse_indexer.dart';
-import 'package:otraku/tools/fade_image.dart';
-import 'package:otraku/tools/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/tools/triangle_clip.dart';
+import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/triangle_clip.dart';
 
 class SocialTab extends StatelessWidget {
   final Media media;

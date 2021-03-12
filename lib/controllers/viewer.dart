@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
-import 'package:otraku/models/anilist/activity_model.dart';
-import 'package:otraku/models/anilist/settings_model.dart';
-import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/activity_model.dart';
+import 'package:otraku/models/settings_model.dart';
+import 'package:otraku/models/page_model.dart';
 
 class Viewer extends ScrollxController {
   // ***************************************************************************
@@ -100,7 +100,7 @@ class Viewer extends ScrollxController {
   // DATA
   // ***************************************************************************
 
-  final _activities = Rx<LoadableList<ActivityModel>>();
+  final _activities = Rx<PageModel<ActivityModel>>();
   final _unreadCount = 0.obs;
   final List<int> _idNotIn = [];
   final List<ActivityType> _typeIn = [
@@ -224,7 +224,7 @@ class Viewer extends ScrollxController {
     }
 
     if (replace)
-      _activities(LoadableList(al, data['Page']['pageInfo']['hasNextPage']));
+      _activities(PageModel(al, data['Page']['pageInfo']['hasNextPage'], 2));
     else
       _activities.update(
         (a) => a.append(al, data['Page']['pageInfo']['hasNextPage']),

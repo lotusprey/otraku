@@ -1,5 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 enum Browsable {
@@ -14,12 +13,12 @@ enum Browsable {
 
 extension BrowsableExtension on Browsable {
   static const _icons = {
-    Browsable.anime: FluentSystemIcons.ic_fluent_movies_and_tv_regular,
-    Browsable.manga: FluentSystemIcons.ic_fluent_bookmark_regular,
-    Browsable.character: FluentSystemIcons.ic_fluent_accessibility_regular,
-    Browsable.staff: FluentSystemIcons.ic_fluent_mic_on_regular,
-    Browsable.studio: FluentSystemIcons.ic_fluent_building_regular,
-    Browsable.user: FluentSystemIcons.ic_fluent_person_regular,
+    Browsable.anime: FluentIcons.movies_and_tv_24_regular,
+    Browsable.manga: FluentIcons.bookmark_24_regular,
+    Browsable.character: FluentIcons.accessibility_24_regular,
+    Browsable.staff: FluentIcons.mic_on_24_regular,
+    Browsable.studio: FluentIcons.building_24_regular,
+    Browsable.user: FluentIcons.person_24_regular,
     Browsable.review: Icons.rate_review_outlined,
   };
 

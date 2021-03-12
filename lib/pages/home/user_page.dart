@@ -1,7 +1,5 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
@@ -72,7 +70,7 @@ class UserTab extends StatelessWidget {
                       children: [
                         IconButton(
                           icon: Icon(
-                            FluentSystemIcons.ic_fluent_comment_filled,
+                            FluentIcons.comment_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => Get.toNamed(
@@ -82,7 +80,7 @@ class UserTab extends StatelessWidget {
                         ),
                         IconButton(
                           icon: Icon(
-                            FluentSystemIcons.ic_fluent_movies_and_tv_filled,
+                            FluentIcons.movies_and_tv_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => id == null
@@ -91,7 +89,7 @@ class UserTab extends StatelessWidget {
                         ),
                         IconButton(
                           icon: Icon(
-                            FluentSystemIcons.ic_fluent_bookmark_filled,
+                            FluentIcons.bookmark_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => id == null
@@ -100,7 +98,7 @@ class UserTab extends StatelessWidget {
                         ),
                         IconButton(
                           icon: Icon(
-                            FluentSystemIcons.ic_fluent_heart_filled,
+                            FluentIcons.heart_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => Get.toNamed(

@@ -1,32 +1,41 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/models/anilist/media_overview_model.dart';
-import 'package:otraku/models/anilist/related_media_model.dart';
-import 'package:otraku/models/anilist/related_review_model.dart';
-import 'package:otraku/models/connection.dart';
-import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/media_overview_model.dart';
+import 'package:otraku/models/related_media_model.dart';
+import 'package:otraku/models/related_review_model.dart';
+import 'package:otraku/models/helper_models/connection.dart';
+import 'package:otraku/models/page_model.dart';
 
 class MediaModel {
-  final _overview = Rx<MediaOverviewModel>();
-  final _otherMedia = <RelatedMediaModel>[].obs;
-  final _characters = Rx(LoadableList<Connection>([], true, 1));
-  final _staff = Rx(LoadableList<Connection>([], true, 1));
-  final _reviews = Rx(LoadableList<RelatedReviewModel>([], true, 1));
+  final MediaOverviewModel overview;
+  final EntryModel entry;
+  final List<RelatedMediaModel> otherMedia;
+  final _characters = Rx(PageModel<Connection>([], true, 1));
+  final _staff = Rx(PageModel<Connection>([], true, 1));
+  final _reviews = Rx(PageModel<RelatedReviewModel>([], true, 1));
 
-  MediaOverviewModel get overview => _overview();
-  List<RelatedMediaModel> get otherMedia => _otherMedia();
-  LoadableList get characters => _characters();
-  LoadableList get staff => _staff();
-  LoadableList get reviews => _reviews();
+  PageModel get characters => _characters();
+  PageModel get staff => _staff();
+  PageModel get reviews => _reviews();
 
-  void setMain(final Map<String, dynamic> map) {
-    _overview(MediaOverviewModel(map));
+  MediaModel._(
+    this.overview,
+    this.entry,
+    this.otherMedia,
+  );
 
-    final List<RelatedMediaModel> om = [];
+  factory MediaModel(final Map<String, dynamic> map) {
+    final other = <RelatedMediaModel>[];
     for (final relation in map['relations']['edges'])
-      om.add(RelatedMediaModel(relation));
-    _otherMedia.addAll(om);
+      other.add(RelatedMediaModel(relation));
+
+    return MediaModel._(
+      MediaOverviewModel(map),
+      EntryModel(map),
+      other,
+    )..addReviews(map);
   }
 
   void addCharacters(

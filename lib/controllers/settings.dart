@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/models/anilist/settings_model.dart';
+import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/filterable.dart';
 
 class Settings extends GetxController {

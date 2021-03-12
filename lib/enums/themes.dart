@@ -127,6 +127,12 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       radius: Config.RADIUS,
       thumbColor: MaterialStateProperty.all(theme['faded']),
     ),
+    sliderTheme: SliderThemeData(
+      thumbColor: theme['accent'],
+      overlayColor: (theme['accent'] as Color).withAlpha(20),
+      activeTrackColor: theme['accent'],
+      inactiveTrackColor: theme['primary'],
+    ),
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       filled: true,

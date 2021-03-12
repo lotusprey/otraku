@@ -5,7 +5,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/models/anilist/activity_model.dart';
+import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/pages/pushable/activity_page.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';

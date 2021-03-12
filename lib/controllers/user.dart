@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:otraku/models/anilist/activity_model.dart';
-import 'package:otraku/models/browse_result_model.dart';
+import 'package:otraku/models/activity_model.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/models/anilist/user_model.dart';
-import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/user_model.dart';
+import 'package:otraku/models/page_model.dart';
 
 class User extends GetxController {
   static const _userQuery = r'''
@@ -98,7 +98,7 @@ class User extends GetxController {
   UserModel _model;
   int _favsIndex = UserModel.ANIME_FAV;
   bool _loading = true;
-  final _activities = LoadableList<ActivityModel>([], true, 1);
+  final _activities = PageModel<ActivityModel>([], true, 1);
 
   UserModel get model => _model;
   List<BrowseResultModel> get favourites => _model.favourites(_favsIndex).items;

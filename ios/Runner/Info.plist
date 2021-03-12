@@ -26,23 +26,19 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<!--Note: Deep Linking-->
-	<!-- <key>FlutterDeepLinkingEnabled</key>
-	<true/> -->
+	<!-- Deep Link -> -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>otraku</string> <!--Url Name-->
+			<string>otraku</string> <!-- Host -->
 			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>otraku</string> <!--Scheme Name-->
-			</array>
+			<array><string>app</string></array> <!-- Scheme -->
 		</dict>
 	</array>
-	<!--Note: End of dl scheme-->
+	<!-- <- Deep Link -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

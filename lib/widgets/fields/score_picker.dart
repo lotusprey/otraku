@@ -2,13 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/models/anilist/entry_model.dart';
+import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 
 class ScorePicker extends StatelessWidget {
   final EntryModel data;
-
   ScorePicker(this.data);
 
   @override
@@ -30,7 +29,6 @@ class ScorePicker extends StatelessWidget {
 
 class _SmileyScorePicker extends StatefulWidget {
   final EntryModel data;
-
   _SmileyScorePicker(this.data);
 
   @override
@@ -44,19 +42,15 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
       color: score == index
           ? Theme.of(context).accentColor
           : Theme.of(context).disabledColor,
-      onPressed: () {
-        if (score == index) {
-          setState(() => widget.data.score = 0);
-        } else {
-          setState(() => widget.data.score = index.toDouble());
-        }
-      },
+      onPressed: () => score == index
+          ? setState(() => widget.data.score = 0)
+          : setState(() => widget.data.score = index.toDouble()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    int score = widget.data.score.floor();
+    final score = widget.data.score.floor();
 
     return Container(
       decoration: BoxDecoration(
@@ -77,7 +71,6 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
 
 class _StarScorePicker extends StatefulWidget {
   final EntryModel data;
-
   _StarScorePicker(this.data);
 
   @override
@@ -91,19 +84,15 @@ class __StarScorePickerState extends State<_StarScorePicker> {
           ? const Icon(Icons.star)
           : const Icon(Icons.star_border),
       color: Theme.of(context).accentColor,
-      onPressed: () {
-        if (score > index || score < index) {
-          setState(() => widget.data.score = index.toDouble());
-        } else {
-          setState(() => widget.data.score = 0);
-        }
-      },
+      onPressed: () => score != index
+          ? setState(() => widget.data.score = index.toDouble())
+          : setState(() => widget.data.score = 0),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    int score = widget.data.score.floor();
+    final score = widget.data.score.floor();
 
     return Container(
       decoration: BoxDecoration(
@@ -126,7 +115,6 @@ class __StarScorePickerState extends State<_StarScorePicker> {
 
 class _TenScorePicker extends StatefulWidget {
   final EntryModel data;
-
   _TenScorePicker(this.data);
 
   @override
@@ -136,7 +124,7 @@ class _TenScorePicker extends StatefulWidget {
 class _TenScorePickerState extends State<_TenScorePicker> {
   @override
   Widget build(BuildContext context) {
-    double score = widget.data.score.truncateToDouble();
+    final score = widget.data.score.truncateToDouble();
 
     return Row(
       children: [
@@ -147,8 +135,6 @@ class _TenScorePickerState extends State<_TenScorePicker> {
             min: 0,
             max: 10,
             divisions: 10,
-            activeColor: Theme.of(context).accentColor,
-            inactiveColor: Theme.of(context).primaryColor,
           ),
         ),
         SizedBox(
@@ -165,7 +151,6 @@ class _TenScorePickerState extends State<_TenScorePicker> {
 
 class _TenDecimalScorePicker extends StatefulWidget {
   final EntryModel data;
-
   _TenDecimalScorePicker(this.data);
 
   @override
@@ -175,7 +160,7 @@ class _TenDecimalScorePicker extends StatefulWidget {
 class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
   @override
   Widget build(BuildContext context) {
-    double score = widget.data.score;
+    final score = widget.data.score;
 
     return Row(
       children: [
@@ -186,8 +171,6 @@ class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
             min: 0,
             max: 10,
             divisions: 100,
-            activeColor: Theme.of(context).accentColor,
-            inactiveColor: Theme.of(context).primaryColor,
           ),
         ),
         SizedBox(
@@ -204,7 +187,6 @@ class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
 
 class _HundredScorePicker extends StatelessWidget {
   final EntryModel data;
-
   _HundredScorePicker(this.data);
 
   @override

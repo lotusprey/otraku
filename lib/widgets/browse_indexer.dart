@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/list_status.dart';
@@ -87,9 +87,14 @@ class BrowseIndexer extends StatelessWidget {
     }
   }
 
-  static void openEditPage(int id, [Function(ListStatus) fn]) => Get.toNamed(
+  static void openEditPage(
+    int id, [
+    EntryModel entry,
+    Function(ListStatus) fn,
+  ]) =>
+      Get.toNamed(
         EditEntryPage.ROUTE,
-        arguments: [id, fn],
+        arguments: [id, entry, fn],
         parameters: {'id': id.toString()},
       );
 

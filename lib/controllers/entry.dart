@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/models/anilist/entry_model.dart';
+import 'package:otraku/models/entry_model.dart';
 
 class Entry extends GetxController {
   static const _entryQuery = r'''
@@ -31,32 +31,33 @@ class Entry extends GetxController {
   ''';
 
   final int _id;
-  Entry(this._id);
+  Entry(this._id, [this._model]);
 
-  EntryModel _entry;
+  EntryModel _model;
   EntryModel _copy;
 
-  EntryModel get data => _entry;
-  EntryModel get oldData => _copy;
+  EntryModel get model => _copy;
+  EntryModel get oldModel => _model;
 
   Future<void> fetch() async {
-    final body = await Client.request(_entryQuery, {'id': _id});
-    if (body == null) return;
+    if (_model == null) {
+      final body = await Client.request(_entryQuery, {'id': _id});
+      if (body == null) return;
+      _model = EntryModel(body['Media']);
+    }
 
-    _entry = EntryModel(body['Media']);
-
-    if (_entry.customLists == null) {
+    if (_model.customLists == null) {
       final customLists = Map.fromIterable(
         Get.find<Collection>(
-          tag: _entry.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
+          tag: _model.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
         ).customListNames,
         key: (k) => k.toString(),
         value: (_) => false,
       );
 
-      _entry.customLists = customLists;
+      _model.customLists = customLists;
     }
-    _copy = EntryModel.copy(_entry);
+    _copy = EntryModel.copy(_model);
 
     update();
   }

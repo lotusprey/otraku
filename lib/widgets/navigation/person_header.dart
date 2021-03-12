@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/models/anilist/person_model.dart';
+import 'package:otraku/models/person_model.dart';
 import 'package:otraku/widgets/favourite_button.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';

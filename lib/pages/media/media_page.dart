@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/media.dart';
@@ -19,9 +19,7 @@ class MediaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const placeholder = const SliverToBoxAdapter(child: SizedBox());
-    final media = Get.find<Media>(tag: id.toString());
-
+    final placeHolder = const SliverToBoxAdapter(child: SizedBox());
     final coverWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.35
         : 150.0;
@@ -29,59 +27,55 @@ class MediaPage extends StatelessWidget {
     final bannerHeight =
         coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
     final headerHeight = bannerHeight + coverHeight * 0.6;
+    final pageTop = headerHeight - Config.MATERIAL_TAP_TARGET_SIZE;
 
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: NavBar(
-        options: {
-          FluentSystemIcons.ic_fluent_text_description_regular: 'Overview',
-          FluentSystemIcons.ic_fluent_recommended_regular: 'Relations',
-          FluentSystemIcons.ic_fluent_people_community_regular: 'Social',
-        },
-        onChanged: (index) => media.tab = index,
-      ),
-      body: SafeArea(
-        bottom: false,
-        child: CustomScrollView(
-          physics: Config.PHYSICS,
-          controller: media.scrollCtrl,
-          slivers: [
-            MediaHeader(
-              media: media,
-              mediaId: id,
-              imageUrl: coverUrl,
-              coverWidth: coverWidth,
-              coverHeight: coverHeight,
-              bannerHeight: bannerHeight,
-              height: headerHeight,
-            ),
-            Obx(
-              () => media.tab == Media.OVERVIEW && media.model.overview != null
-                  ? OverviewTab(media.model.overview)
-                  : placeholder,
-            ),
-            Obx(
-              () => media.tab == Media.RELATIONS
-                  ? RelationControls(
-                      media,
-                      () => media.scrollTo(
-                        headerHeight - Config.MATERIAL_TAP_TARGET_SIZE,
-                      ),
-                    )
-                  : placeholder,
-            ),
-            Obx(
-              () => media.tab == Media.RELATIONS
-                  ? RelationsTab(media)
-                  : placeholder,
-            ),
-            Obx(
-              () => media.tab == Media.SOCIAL ? SocialTab(media) : placeholder,
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: NavBar.offset(context)),
-            ),
-          ],
+    return GetBuilder<Media>(
+      tag: id.toString(),
+      builder: (media) => Scaffold(
+        extendBody: true,
+        bottomNavigationBar: NavBar(
+          options: {
+            FluentIcons.book_information_24_regular: 'Overview',
+            FluentIcons.accessibility_24_regular: 'Relations',
+            Icons.rate_review_outlined: 'Social',
+          },
+          initial: media.tab,
+          onChanged: (index) => media.tab = index,
+        ),
+        body: SafeArea(
+          bottom: false,
+          child: CustomScrollView(
+            physics: Config.PHYSICS,
+            controller: media.scrollCtrl,
+            slivers: [
+              MediaHeader(
+                media: media,
+                imageUrl: coverUrl,
+                coverWidth: coverWidth,
+                coverHeight: coverHeight,
+                bannerHeight: bannerHeight,
+                height: headerHeight,
+              ),
+              if (media.model != null) ...[
+                Obx(
+                  () => media.tab == Media.RELATIONS
+                      ? RelationControls(media, () => media.scrollTo(pageTop))
+                      : placeHolder,
+                ),
+                Obx(() {
+                  if (media.tab == Media.OVERVIEW)
+                    return OverviewTab(media.model.overview);
+                  else if (media.tab == Media.RELATIONS)
+                    return RelationsTab(media);
+                  else
+                    return SocialTab(media);
+                }),
+              ],
+              SliverToBoxAdapter(
+                child: SizedBox(height: NavBar.offset(context)),
+              ),
+            ],
+          ),
         ),
       ),
     );

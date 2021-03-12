@@ -156,8 +156,10 @@ class App extends StatelessWidget {
         ),
         GetPage(
           name: EditEntryPage.ROUTE,
-          page: () => EditEntryPage(Get.arguments[0], Get.arguments[1]),
-          binding: BindingsBuilder.put(() => Entry(Get.arguments[0])),
+          page: () => EditEntryPage(Get.arguments[0], Get.arguments[2]),
+          binding: BindingsBuilder.put(
+            () => Entry(Get.arguments[0], Get.arguments[1]),
+          ),
         ),
         GetPage(
           name: FilterPage.ROUTE,

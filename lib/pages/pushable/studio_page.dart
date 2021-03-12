@@ -1,11 +1,11 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/anilist/person_model.dart';
+import 'package:otraku/models/person_model.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/favourite_button.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
@@ -61,7 +61,7 @@ class StudioPage extends StatelessWidget {
                         IconButton(
                           tooltip: 'Sort',
                           icon: const Icon(
-                            FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                            FluentIcons.arrow_sort_24_filled,
                           ),
                           onPressed: () => Sheet.show(
                             ctx: context,

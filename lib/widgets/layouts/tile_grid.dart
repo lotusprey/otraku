@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/models/tile_model.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/helper_models/tile_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';

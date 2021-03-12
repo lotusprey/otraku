@@ -1,10 +1,10 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/models/anilist/user_model.dart';
+import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
@@ -24,11 +24,11 @@ class FavouritesPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            FluentSystemIcons.ic_fluent_movies_and_tv_regular: 'Anime',
-            FluentSystemIcons.ic_fluent_bookmark_regular: 'Manga',
-            FluentSystemIcons.ic_fluent_accessibility_regular: 'Characters',
-            FluentSystemIcons.ic_fluent_mic_on_regular: 'Staff',
-            FluentSystemIcons.ic_fluent_building_regular: 'Studios',
+            FluentIcons.movies_and_tv_24_regular: 'Anime',
+            FluentIcons.bookmark_24_regular: 'Manga',
+            FluentIcons.accessibility_24_regular: 'Characters',
+            FluentIcons.mic_on_24_regular: 'Staff',
+            FluentIcons.building_24_regular: 'Studios',
           },
           initial: user.favsIndex,
           onChanged: (index) => user.favsIndex = index,

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/models/browse_result_model.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
 
 class RelatedMediaModel extends BrowseResultModel {
   final String relationType;

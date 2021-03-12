@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/models/anilist/reply_model.dart';
-import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/reply_model.dart';
+import 'package:otraku/models/page_model.dart';
 
 class ActivityModel {
   final int id;
@@ -22,7 +22,7 @@ class ActivityModel {
   final String text;
   final String createdAt;
   final int replyCount;
-  final LoadableList<ReplyModel> replies;
+  final PageModel<ReplyModel> replies;
   int _likeCount;
   bool _isLiked;
   bool _isSubscribed;
@@ -76,7 +76,7 @@ class ActivityModel {
           text: map['text'],
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: LoadableList<ReplyModel>([], true, 1),
+          replies: PageModel<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -105,7 +105,7 @@ class ActivityModel {
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: LoadableList<ReplyModel>([], true, 1),
+          replies: PageModel<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -134,7 +134,7 @@ class ActivityModel {
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: LoadableList<ReplyModel>([], true, 1),
+          replies: PageModel<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,
@@ -159,7 +159,7 @@ class ActivityModel {
           text: map['message'],
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: LoadableList<ReplyModel>([], true, 1),
+          replies: PageModel<ReplyModel>([], true, 1),
           likes: map['likeCount'] ?? 0,
           liked: map['isLiked'] ?? false,
           subscribed: map['isSubscribed'] ?? false,

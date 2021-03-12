@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/browse_result_model.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 
 class TitleList extends StatelessWidget {

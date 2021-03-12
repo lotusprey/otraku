@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/connection.dart';
+import 'package:otraku/models/helper_models/connection.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';

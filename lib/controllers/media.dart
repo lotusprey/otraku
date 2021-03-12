@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
-import 'package:otraku/models/anilist/media_model.dart';
+import 'package:otraku/models/media_model.dart';
 
 class Media extends ScrollxController {
   // ***************************************************************************
@@ -29,7 +29,6 @@ class Media extends ScrollxController {
       bannerImage
       isFavourite
       favourites
-      mediaListEntry {status}
       nextAiringEpisode {episode timeUntilAiring}
       description
       format
@@ -50,6 +49,20 @@ class Media extends ScrollxController {
       source
       hashtag
       countryOfOrigin
+      mediaListEntry {
+        id
+        status
+        progress
+        progressVolumes
+        score
+        repeat
+        notes
+        startedAt {year month day}
+        completedAt {year month day}
+        private
+        hiddenFromStatusLists
+        customLists
+      }
       relations {
         edges {
           relationType(version: 2)
@@ -121,14 +134,14 @@ class Media extends ScrollxController {
   // DATA
   // ***************************************************************************
 
-  final int _id;
-  Media(this._id);
+  final int id;
+  Media(this.id);
 
+  MediaModel _model;
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
-  final _model = MediaModel();
   final _staffLanguage = 'Japanese'.obs;
-  final List<String> _availableLanguages = [];
+  final _availableLanguages = <String>[];
   bool _isLoading = false;
 
   int get tab => _tab();
@@ -139,7 +152,7 @@ class Media extends ScrollxController {
     _relationsTab.value = val;
     if (val == REL_CHARACTERS && _model.characters.items.isEmpty)
       fetchRelationPage(true);
-    if (val == REL_STAFF && _model.staff.items.isEmpty)
+    else if (val == REL_STAFF && _model.staff.items.isEmpty)
       fetchRelationPage(false);
   }
 
@@ -162,18 +175,19 @@ class Media extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    if (_model.overview != null) return;
+    if (_model != null) return;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
-      'id': _id,
+      'id': id,
       'withMain': true,
       'withReviews': true,
     });
 
     if (result == null) return;
-    _model.setMain(result['Media']);
-    _model.addReviews(result['Media']);
+
+    _model = MediaModel(result['Media']);
+    update();
     _isLoading = false;
   }
 
@@ -183,7 +197,7 @@ class Media extends ScrollxController {
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
-      'id': _id,
+      'id': id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
       'characterPage': _model.characters.nextPage,
@@ -203,7 +217,7 @@ class Media extends ScrollxController {
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
-      'id': _id,
+      'id': id,
       'withReviews': true,
       'reviewPage': _model.reviews.nextPage,
     });
@@ -218,7 +232,7 @@ class Media extends ScrollxController {
         _model.overview.browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
-        {'id': _id},
+        {'id': id},
         popOnErr: false,
       ) !=
       null;

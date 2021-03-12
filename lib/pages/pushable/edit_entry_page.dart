@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
@@ -31,16 +31,16 @@ class EditEntryPage extends StatefulWidget {
 class _EditEntryPageState extends State<EditEntryPage> {
   @override
   Widget build(BuildContext context) => GetBuilder<Entry>(builder: (entry) {
-        final data = entry.data;
+        final model = entry.model;
         return Scaffold(
           appBar: CustomAppBar(
             title: 'Edit',
             trailing: [
-              if (data != null) ...[
-                if (data.entryId != null)
+              if (model != null) ...[
+                if (model.entryId != null)
                   IconButton(
                     tooltip: 'Remove',
-                    icon: const Icon(FluentSystemIcons.ic_fluent_delete_filled),
+                    icon: const Icon(FluentIcons.delete_24_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () => showDialog(
                       context: context,
@@ -65,10 +65,10 @@ class _EditEntryPageState extends State<EditEntryPage> {
                               child: Text('Yes'),
                               onPressed: () {
                                 Get.find<Collection>(
-                                  tag: data.type == 'ANIME'
+                                  tag: model.type == 'ANIME'
                                       ? Collection.ANIME
                                       : Collection.MANGA,
-                                ).removeEntry(entry.oldData);
+                                ).removeEntry(entry.oldModel);
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                                 widget.update?.call(null);
@@ -81,21 +81,21 @@ class _EditEntryPageState extends State<EditEntryPage> {
                   ),
                 IconButton(
                     tooltip: 'Save',
-                    icon: const Icon(FluentSystemIcons.ic_fluent_save_filled),
+                    icon: const Icon(FluentIcons.save_24_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () {
                       Get.find<Collection>(
-                        tag: data.type == 'ANIME'
+                        tag: model.type == 'ANIME'
                             ? Collection.ANIME
                             : Collection.MANGA,
-                      ).updateEntry(entry.oldData, data);
+                      ).updateEntry(entry.oldModel, model);
                       Navigator.of(context).pop();
-                      widget.update?.call(data.status);
+                      widget.update?.call(model.status);
                     }),
               ],
             ],
           ),
-          body: data != null
+          body: model != null
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: CustomScrollView(
@@ -106,38 +106,38 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         DropDownField(
                           hint: 'Add',
                           title: 'Status',
-                          initialValue: data.status,
+                          initialValue: model.status,
                           items: Map.fromIterable(
                             ListStatus.values,
                             key: (v) => listStatusSpecification(
-                                v, data.type == 'ANIME'),
+                                v, model.type == 'ANIME'),
                             value: (v) => v,
                           ),
-                          onChanged: (status) => data.status = status,
+                          onChanged: (status) => model.status = status,
                         ),
                         InputFieldStructure(
                           title: 'Progress',
                           child: NumberField(
-                            initialValue: data.progress,
-                            maxValue: data.progressMax ?? 100000,
-                            update: (progress) => data.progress = progress,
+                            initialValue: model.progress,
+                            maxValue: model.progressMax ?? 100000,
+                            update: (progress) => model.progress = progress,
                           ),
                         ),
                         InputFieldStructure(
                           title: 'Repeat',
                           child: NumberField(
-                            initialValue: data.repeat,
-                            update: (repeat) => data.repeat = repeat,
+                            initialValue: model.repeat,
+                            update: (repeat) => model.repeat = repeat,
                           ),
                         ),
-                        if (data.type != 'ANIME')
+                        if (model.type != 'ANIME')
                           InputFieldStructure(
                             title: 'Progress Volumes',
                             child: NumberField(
-                              initialValue: data.progressVolumes,
-                              maxValue: data.progressVolumesMax ?? 100000,
+                              initialValue: model.progressVolumes,
+                              maxValue: model.progressVolumesMax ?? 100000,
                               update: (progressVolumes) =>
-                                  data.progressVolumes = progressVolumes,
+                                  model.progressVolumes = progressVolumes,
                             ),
                           ),
                       ], minWidth: 140),
@@ -145,15 +145,15 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       SliverToBoxAdapter(
                         child: InputFieldStructure(
                           title: 'Score',
-                          child: ScorePicker(data),
+                          child: ScorePicker(model),
                         ),
                       ),
                       SliverToBoxAdapter(
                         child: InputFieldStructure(
                           title: 'Notes',
                           child: ExpandableField(
-                            text: data.notes,
-                            onChanged: (notes) => data.notes = notes,
+                            text: model.notes,
+                            onChanged: (notes) => model.notes = notes,
                           ),
                         ),
                       ),
@@ -162,17 +162,17 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         InputFieldStructure(
                           title: 'Start Date',
                           child: DateField(
-                            date: data.startedAt,
+                            date: model.startedAt,
                             onChanged: (startDate) =>
-                                data.startedAt = startDate,
+                                model.startedAt = startDate,
                             helpText: 'Start Date',
                           ),
                         ),
                         InputFieldStructure(
                           title: 'End Date',
                           child: DateField(
-                            date: data.completedAt,
-                            onChanged: (endDate) => data.completedAt = endDate,
+                            date: model.completedAt,
+                            onChanged: (endDate) => model.completedAt = endDate,
                             helpText: 'End Date',
                           ),
                         ),
@@ -181,20 +181,20 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       _Label('Additional Settings'),
                       _CheckboxGrid(
                         {
-                          'Private': data.private,
+                          'Private': model.private,
                           'Hidden From Status Lists':
-                              data.hiddenFromStatusLists,
+                              model.hiddenFromStatusLists,
                         },
                         (key, val) => key == 'Private'
-                            ? data.private = val
-                            : data.hiddenFromStatusLists = val,
+                            ? model.private = val
+                            : model.hiddenFromStatusLists = val,
                       ),
-                      if (data.customLists.isNotEmpty) ...[
+                      if (model.customLists.isNotEmpty) ...[
                         const SliverToBoxAdapter(child: SizedBox(height: 10)),
                         _Label('Custom Lists'),
                         _CheckboxGrid(
-                          data.customLists,
-                          (key, val) => data.customLists[key] = val,
+                          model.customLists,
+                          (key, val) => model.customLists[key] = val,
                         ),
                       ],
                     ],

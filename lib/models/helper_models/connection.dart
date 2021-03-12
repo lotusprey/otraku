@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/browse_result_model.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
 
 class Connection extends BrowseResultModel {
   final String text2;

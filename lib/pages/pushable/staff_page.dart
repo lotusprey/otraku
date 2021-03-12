@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
@@ -59,7 +59,7 @@ class StaffPage extends StatelessWidget {
                       IconButton(
                         tooltip: 'Sort',
                         icon: const Icon(
-                          FluentSystemIcons.ic_fluent_arrow_sort_filled,
+                          FluentIcons.arrow_sort_24_filled,
                         ),
                         onPressed: () => Sheet.show(
                           ctx: context,

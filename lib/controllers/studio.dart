@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/anilist/person_model.dart';
-import 'package:otraku/models/studio_connection_list.dart';
-import 'package:otraku/models/browse_result_model.dart';
+import 'package:otraku/models/person_model.dart';
+import 'package:otraku/models/helper_models/studio_connection_list.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
 
 class Studio extends GetxController {
   // ***************************************************************************

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/models/anilist/review_model.dart';
+import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/client.dart';
 
 class Review extends GetxController {

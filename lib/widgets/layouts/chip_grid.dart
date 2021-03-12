@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
@@ -87,7 +87,7 @@ class _ChipGridState extends State<ChipGrid> {
                     ),
                   ),
                 IconButton(
-                  icon: Icon(FluentSystemIcons.ic_fluent_settings_dev_filled),
+                  icon: Icon(FluentIcons.options_24_regular),
                   onPressed: () => Sheet.show(
                     ctx: context,
                     sheet: SelectionSheet(

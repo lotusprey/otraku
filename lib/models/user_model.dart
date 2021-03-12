@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:otraku/models/browse_result_model.dart';
-import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/page_model.dart';
 
 class UserModel {
   static const ANIME_FAV = 0;
@@ -22,11 +22,11 @@ class UserModel {
   final String moderatorStatus;
   final bool isMe;
   final _favourites = [
-    LoadableList<BrowseResultModel>([], true, 1),
-    LoadableList<BrowseResultModel>([], true, 1),
-    LoadableList<BrowseResultModel>([], true, 1),
-    LoadableList<BrowseResultModel>([], true, 1),
-    LoadableList<BrowseResultModel>([], true, 1),
+    PageModel<BrowseResultModel>([], true, 1),
+    PageModel<BrowseResultModel>([], true, 1),
+    PageModel<BrowseResultModel>([], true, 1),
+    PageModel<BrowseResultModel>([], true, 1),
+    PageModel<BrowseResultModel>([], true, 1),
   ];
 
   UserModel._({
@@ -61,7 +61,7 @@ class UserModel {
         isMe: me,
       );
 
-  LoadableList favourites(final int index) => _favourites[index];
+  PageModel favourites(final int index) => _favourites[index];
   bool get following => _following;
 
   void toggleFollow(final Map<String, dynamic> map) =>

@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -11,7 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool wrapTrailing;
 
   CustomAppBar({
-    this.leading = FluentSystemIcons.ic_fluent_arrow_left_filled,
+    this.leading = FluentIcons.arrow_left_24_filled,
     this.title = '',
     this.titleWidget,
     this.trailing,

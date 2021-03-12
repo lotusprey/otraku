@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
-import 'package:otraku/models/browse_result_model.dart';
+import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 

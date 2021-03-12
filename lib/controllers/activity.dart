@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/models/anilist/activity_model.dart';
-import 'package:otraku/models/anilist/reply_model.dart';
+import 'package:otraku/models/activity_model.dart';
+import 'package:otraku/models/reply_model.dart';
 
 class Activity extends GetxController {
   static const _activityQuery = r'''

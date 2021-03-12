@@ -1,10 +1,10 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/models/anilist/user_model.dart';
+import 'package:otraku/models/user_model.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -40,7 +40,7 @@ class UserHeader extends StatelessWidget {
         if (isMe)
           IconShade(IconButton(
             tooltip: 'Settings',
-            icon: const Icon(FluentSystemIcons.ic_fluent_settings_regular),
+            icon: const Icon(FluentIcons.settings_24_regular),
             color: Theme.of(context).dividerColor,
             onPressed: () => Get.toNamed(SettingsPage.ROUTE),
           ))

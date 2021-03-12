@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
@@ -6,7 +6,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/models/anilist/list_entry_model.dart';
+import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/loader.dart';
@@ -213,8 +213,8 @@ class _MediaListTile extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         const Icon(
-                                          FluentSystemIcons
-                                              .ic_fluent_arrow_repeat_all_filled,
+                                          FluentIcons
+                                              .arrow_repeat_all_20_filled,
                                           size: Style.ICON_SMALL,
                                         ),
                                         const SizedBox(width: 5),

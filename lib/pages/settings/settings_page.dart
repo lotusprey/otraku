@@ -1,5 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
@@ -34,7 +33,7 @@ class SettingsPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            FluentSystemIcons.ic_fluent_phone_link_setup_regular: 'App',
+            FluentIcons.phone_link_setup_24_regular: 'App',
             Icons.video_settings: 'Content',
             Icons.notifications_none: 'Notifications',
             Icons.account_circle_outlined: 'Profile',

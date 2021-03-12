@@ -4,9 +4,9 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/loadable_list.dart';
-import 'package:otraku/models/anilist/person_model.dart';
-import 'package:otraku/models/connection.dart';
+import 'package:otraku/models/page_model.dart';
+import 'package:otraku/models/person_model.dart';
+import 'package:otraku/models/helper_models/connection.dart';
 
 class Staff extends GetxController {
   // ***************************************************************************
@@ -75,16 +75,16 @@ class Staff extends GetxController {
   Staff(this._id);
 
   final _person = Rx<PersonModel>();
-  final _characterList = Rx<LoadableList<Connection>>();
-  final _roleList = Rx<LoadableList<Connection>>();
+  final _characterList = Rx<PageModel<Connection>>();
+  final _roleList = Rx<PageModel<Connection>>();
   final _onCharacters = true.obs;
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
   PersonModel get person => _person();
 
-  LoadableList get characterList => _characterList();
+  PageModel get characterList => _characterList();
 
-  LoadableList get roleList => _roleList();
+  PageModel get roleList => _roleList();
 
   bool get onCharacters => _onCharacters();
 
@@ -226,10 +226,10 @@ class Staff extends GetxController {
 
     if (connections.isEmpty) _onCharacters.value = false;
 
-    _characterList(LoadableList(
-      connections,
-      data['characterMedia']['pageInfo']['hasNextPage'],
-    ));
+    _characterList(
+      PageModel(
+          connections, data['characterMedia']['pageInfo']['hasNextPage'], 2),
+    );
 
     connections = [];
     for (final connection in data['staffMedia']['edges'])
@@ -243,10 +243,9 @@ class Staff extends GetxController {
         text2: Convert.clarifyEnum(connection['staffRole']),
       ));
 
-    _roleList(LoadableList(
-      connections,
-      data['staffMedia']['pageInfo']['hasNextPage'],
-    ));
+    _roleList(
+      PageModel(connections, data['staffMedia']['pageInfo']['hasNextPage'], 2),
+    );
   }
 
   @override

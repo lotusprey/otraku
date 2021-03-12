@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/models/anilist/list_entry_model.dart';
+import 'package:otraku/models/list_entry_model.dart';
 
 class CollectionListModel {
   final String name;

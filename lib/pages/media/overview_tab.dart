@@ -7,7 +7,7 @@ import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
-import 'package:otraku/models/anilist/media_overview_model.dart';
+import 'package:otraku/models/media_overview_model.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';

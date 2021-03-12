@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -78,7 +78,7 @@ class FilterPage extends StatelessWidget {
           ),
           IconButton(
             icon: Icon(
-              FluentSystemIcons.ic_fluent_checkmark_filled,
+              FluentIcons.checkmark_24_filled,
               color: Theme.of(context).dividerColor,
             ),
             onPressed: () {

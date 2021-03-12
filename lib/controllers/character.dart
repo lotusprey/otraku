@@ -4,9 +4,9 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/loadable_list.dart';
-import 'package:otraku/models/anilist/person_model.dart';
-import 'package:otraku/models/connection.dart';
+import 'package:otraku/models/page_model.dart';
+import 'package:otraku/models/person_model.dart';
+import 'package:otraku/models/helper_models/connection.dart';
 
 class Character extends GetxController {
   // ***************************************************************************
@@ -58,8 +58,8 @@ class Character extends GetxController {
   Character(this._id);
 
   final _person = Rx<PersonModel>();
-  final _anime = Rx<LoadableList<Connection>>();
-  final _manga = Rx<LoadableList<Connection>>();
+  final _anime = Rx<PageModel<Connection>>();
+  final _manga = Rx<PageModel<Connection>>();
   final _onAnime = true.obs;
   final _staffLanguage = 'Japanese'.obs;
   final List<String> _availableLanguages = [];
@@ -67,9 +67,9 @@ class Character extends GetxController {
 
   PersonModel get person => _person();
 
-  LoadableList get anime => _anime();
+  PageModel get anime => _anime();
 
-  LoadableList get manga => _manga();
+  PageModel get manga => _manga();
 
   bool get onAnime => _onAnime();
 
@@ -236,10 +236,7 @@ class Character extends GetxController {
     if (!_availableLanguages.contains(_staffLanguage()))
       _staffLanguage.value = 'Japanese';
 
-    _anime(LoadableList(
-      connections,
-      data['anime']['pageInfo']['hasNextPage'],
-    ));
+    _anime(PageModel(connections, data['anime']['pageInfo']['hasNextPage'], 2));
 
     connections = [];
     for (final connection in data['manga']['edges'])
@@ -251,10 +248,7 @@ class Character extends GetxController {
         text2: Convert.clarifyEnum(connection['characterRole']),
       ));
 
-    _manga(LoadableList(
-      connections,
-      data['manga']['pageInfo']['hasNextPage'],
-    ));
+    _manga(PageModel(connections, data['manga']['pageInfo']['hasNextPage'], 2));
   }
 
   @override

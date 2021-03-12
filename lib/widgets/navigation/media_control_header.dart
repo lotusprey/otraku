@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -65,7 +65,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
               IconButton(
                 tooltip: collectionTag == null ? 'Types' : 'Lists',
                 padding: const EdgeInsets.only(right: 10),
-                icon: const Icon(FluentSystemIcons.ic_fluent_list_regular),
+                icon: const Icon(FluentIcons.list_24_regular),
                 onPressed: () => Scaffold.of(context).openDrawer(),
               ),
               if (collectionTag != null)
@@ -141,9 +141,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                   if (type == Browsable.anime || type == Browsable.manga)
                     return IconButton(
                       tooltip: 'Sort',
-                      icon: const Icon(
-                        FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                      ),
+                      icon: const Icon(FluentIcons.arrow_sort_24_regular),
                       onPressed: () => Sheet.show(
                         ctx: context,
                         sheet: MediaSortSheet(
@@ -172,9 +170,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
               ] else ...[
                 IconButton(
                   tooltip: 'Sort',
-                  icon: const Icon(
-                    FluentSystemIcons.ic_fluent_arrow_sort_filled,
-                  ),
+                  icon: const Icon(FluentIcons.arrow_sort_24_regular),
                   onPressed: () => Sheet.show(
                     ctx: context,
                     sheet: CollectionSortSheet(collectionTag),
@@ -286,7 +282,7 @@ class __NavigationState extends State<_Navigation> {
             if (widget.search != null)
               IconButton(
                 tooltip: 'Search',
-                icon: const Icon(FluentSystemIcons.ic_fluent_search_regular),
+                icon: const Icon(FluentIcons.search_24_regular),
                 onPressed: () => setState(() => _searchMode = true),
               ),
           ] else
@@ -309,9 +305,8 @@ class __NavigationState extends State<_Navigation> {
                         ? IconButton(
                             tooltip: 'Hide',
                             padding: const EdgeInsets.all(0),
-                            icon: const Icon(
-                              FluentSystemIcons.ic_fluent_chevron_right_filled,
-                            ),
+                            icon:
+                                const Icon(FluentIcons.chevron_right_24_filled),
                             color: Theme.of(context).disabledColor,
                             onPressed: () {
                               _focus.canRequestFocus = false;

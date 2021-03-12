@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/models/anilist/notification_model.dart';
-import 'package:otraku/models/loadable_list.dart';
+import 'package:otraku/models/notification_model.dart';
+import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
@@ -136,7 +136,7 @@ class Notifications extends ScrollxController {
   bool _isLoading = false;
   int _unreadCount = 0;
   int _filter = 0;
-  LoadableList<NotificationModel> _entries;
+  PageModel<NotificationModel> _entries;
 
   int get unreadCount => _unreadCount;
 
@@ -170,7 +170,7 @@ class Notifications extends ScrollxController {
     final List<NotificationModel> nl = [];
     for (final n in data['notifications']) nl.add(NotificationModel(n));
 
-    _entries = LoadableList(nl, data['pageInfo']['hasNextPage']);
+    _entries = PageModel(nl, data['pageInfo']['hasNextPage'], 2);
     Get.find<Viewer>().nullifyUnread();
     update();
     _isLoading = false;

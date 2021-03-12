@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.otraku">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.otraku.app">
      <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -9,12 +9,13 @@
      <!-- Note: Additionally the property fullBackupContent was configured with
          the settings stored in "./res/xml/backup_rules.xml" -->
      <!-- Note: Android requires the following line in order to use the internet-->
+     <!-- Note: android:label is the name -->
      <uses-permission android:name="android.permission.INTERNET" />
      <application 
           android:allowBackup="false" 
           android:fullBackupContent="@xml/backup_rules" 
-          android:name="io.flutter.app.FlutterApplication" 
-          android:label="otraku" 
+          android:name="io.flutter.app.FlutterApplication"
+          android:label="Otraku" 
           android:icon="@mipmap/ic_launcher">
           <activity 
                android:name=".MainActivity" 
@@ -38,17 +39,14 @@
                     <action android:name="android.intent.action.MAIN"/>
                     <category android:name="android.intent.category.LAUNCHER"/>
                </intent-filter>
-               <!--Note: Deep Linking-->
-               <!-- <meta-data android:name="flutter_deeplinking_enabled" android:value="true" /> -->
+               <!-- Deep Link -> -->
                <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="otraku" android:host="otraku" />
-                    <data android:scheme="https" />
-                    <!--^^^Scheme Name & Url Name-->
+                    <data android:scheme="app" android:host="otraku" />
                </intent-filter>
-               <!--Note: End of dl scheme-->
+               <!-- <- Deep Link -->
           </activity>
           <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

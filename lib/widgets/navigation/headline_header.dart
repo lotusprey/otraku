@@ -1,4 +1,4 @@
-import 'package:fluentui_icons/fluentui_icons.dart';
+import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -45,7 +45,7 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
             if (isPushed)
               IconButton(
                 padding: const EdgeInsets.only(right: 20),
-                icon: const Icon(FluentSystemIcons.ic_fluent_arrow_left_filled),
+                icon: const Icon(FluentIcons.arrow_left_24_filled),
                 onPressed: () => Navigator.pop(context),
               ),
             Text(headline, style: Theme.of(context).textTheme.headline3),

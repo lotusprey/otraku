@@ -69,24 +69,28 @@ class _ChipGridState extends State<ChipGrid> {
             Row(
               children: [
                 if (list.length > 0)
-                  GestureDetector(
-                    onTap: () => setState(() {
-                      widget.inclusive!.clear();
-                      widget.exclusive?.clear();
-                    }),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).disabledColor,
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        color: Theme.of(context).backgroundColor,
-                        size: Style.ICON_SMALL,
+                  Tooltip(
+                    message: 'Clear Category',
+                    child: GestureDetector(
+                      onTap: () => setState(() {
+                        widget.inclusive!.clear();
+                        widget.exclusive?.clear();
+                      }),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).disabledColor,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Theme.of(context).backgroundColor,
+                          size: Style.ICON_SMALL,
+                        ),
                       ),
                     ),
                   ),
                 IconButton(
+                  tooltip: 'Show Options',
                   icon: Icon(FluentIcons.options_24_regular),
                   onPressed: () => Sheet.show(
                     ctx: context,

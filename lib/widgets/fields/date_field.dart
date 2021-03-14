@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 
 class DateField extends StatefulWidget {
-  final DateTime date;
-  final Function(DateTime) onChanged;
+  final DateTime? date;
+  final Function(DateTime?) onChanged;
   final String helpText;
 
   DateField({
-    @required this.date,
-    @required this.onChanged,
-    @required this.helpText,
+    required this.date,
+    required this.onChanged,
+    required this.helpText,
   });
 
   @override
@@ -19,7 +19,7 @@ class DateField extends StatefulWidget {
 class _DateFieldState extends State<DateField> {
   final constraints = const BoxConstraints(
       maxWidth: 30, minHeight: Config.MATERIAL_TAP_TARGET_SIZE);
-  DateTime date;
+  DateTime? date;
 
   @override
   void initState() {
@@ -27,12 +27,12 @@ class _DateFieldState extends State<DateField> {
     date = widget.date;
   }
 
-  Widget _picker(DateTime initialDate) {
+  Widget _picker(DateTime? initialDate) {
     return IconButton(
       icon: const Icon(Icons.calendar_today),
       onPressed: () => showDatePicker(
         context: context,
-        initialDate: initialDate,
+        initialDate: initialDate!,
         firstDate: DateTime(1920),
         lastDate: DateTime.now(),
         helpText: widget.helpText,
@@ -61,7 +61,7 @@ class _DateFieldState extends State<DateField> {
                 children: [
                   _picker(date),
                   Text(
-                    '${date.year}-${date.month}-${date.day}',
+                    '${date!.year}-${date!.month}-${date!.day}',
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   IconButton(

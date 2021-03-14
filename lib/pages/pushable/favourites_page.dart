@@ -13,7 +13,7 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class FavouritesPage extends StatelessWidget {
   static const ROUTE = '/favourites';
 
-  final int id;
+  final int? id;
   FavouritesPage(this.id);
 
   @override

@@ -79,14 +79,14 @@ class Activity extends GetxController {
   final int _id;
   Activity(this._id, [this._model]);
 
-  ActivityModel _model;
+  ActivityModel? _model;
   final _isLoading = true.obs;
 
-  ActivityModel get model => _model;
-  bool get isLoading => _isLoading();
+  ActivityModel? get model => _model;
+  bool get isLoading => _isLoading()!;
 
   Future<void> fetch() async {
-    if (_model != null && _model.replies.items.isNotEmpty) return;
+    if (_model != null && _model!.replies.items.isNotEmpty) return;
     _isLoading.value = true;
 
     final data = await Client.request(
@@ -96,21 +96,21 @@ class Activity extends GetxController {
     if (data == null) return;
 
     _model = ActivityModel(data['Activity']);
-    _model.appendReplies(data['Page']);
+    _model!.appendReplies(data['Page']);
     _isLoading.value = false;
     update();
   }
 
   Future<void> fetchPage() async {
-    if (!_model.replies.hasNextPage) return;
+    if (!_model!.replies.hasNextPage!) return;
 
     final data = await Client.request(
       _activityQuery,
-      {'id': _id, 'page': _model.replies.nextPage},
+      {'id': _id, 'page': _model!.replies.nextPage},
     );
     if (data == null) return;
 
-    _model.appendReplies(data['Page']);
+    _model!.appendReplies(data['Page']);
     update();
   }
 
@@ -137,7 +137,7 @@ class Activity extends GetxController {
   static Future<void> toggleSubscription(ActivityModel activityModel) async {
     final data = await Client.request(
       _toggleSubscriptionMutation,
-      {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed},
+      {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed!},
       popOnErr: false,
     );
     if (data == null) return;

@@ -8,13 +8,13 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 
 class TileGrid extends StatelessWidget {
   final List<BrowseResultModel> tileData;
-  final Function loadMore;
+  final Function? loadMore;
   final TileModel tileModel;
 
   TileGrid({
-    @required this.tileData,
-    @required this.loadMore,
-    @required this.tileModel,
+    required this.tileData,
+    required this.loadMore,
+    required this.tileModel,
   });
 
   @override

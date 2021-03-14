@@ -11,11 +11,11 @@ class BubbleTabs<T> extends StatefulWidget {
   final bool padding;
 
   const BubbleTabs({
-    @required this.options,
-    @required this.values,
-    @required this.initial,
-    @required this.onNewValue,
-    @required this.onSameValue,
+    required this.options,
+    required this.values,
+    required this.initial,
+    required this.onNewValue,
+    required this.onSameValue,
     this.shrinkWrap = true,
     this.padding = true,
   });
@@ -25,7 +25,7 @@ class BubbleTabs<T> extends StatefulWidget {
 }
 
 class _BubbleTabsState extends State<BubbleTabs> {
-  int _index;
+  int? _index;
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -62,7 +62,7 @@ class _BubbleTabsState extends State<BubbleTabs> {
                     ? Theme.of(context).textTheme.headline5
                     : Theme.of(context)
                         .textTheme
-                        .headline5
+                        .headline5!
                         .copyWith(color: Theme.of(context).backgroundColor),
               ),
             ),

@@ -10,7 +10,7 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 class UserActivitiesPage extends StatelessWidget {
   static const ROUTE = '/activities';
 
-  final int id;
+  final int? id;
   UserActivitiesPage(this.id);
 
   @override

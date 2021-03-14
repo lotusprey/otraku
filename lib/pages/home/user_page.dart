@@ -16,8 +16,8 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class UserPage extends StatelessWidget {
   static const ROUTE = '/user';
 
-  final int id;
-  final String avatarUrl;
+  final int? id;
+  final String? avatarUrl;
 
   const UserPage(this.id, this.avatarUrl);
 
@@ -28,8 +28,8 @@ class UserPage extends StatelessWidget {
 }
 
 class UserTab extends StatelessWidget {
-  final int id;
-  final String avatarUrl;
+  final int? id;
+  final String? avatarUrl;
 
   const UserTab(this.id, this.avatarUrl);
 
@@ -84,7 +84,7 @@ class UserTab extends StatelessWidget {
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => id == null
-                              ? Config.index = HomePage.ANIME_LIST
+                              ? Config.setIndex(HomePage.ANIME_LIST)
                               : _pushCollection(true),
                         ),
                         IconButton(
@@ -93,7 +93,7 @@ class UserTab extends StatelessWidget {
                             color: Theme.of(context).accentColor,
                           ),
                           onPressed: () => id == null
-                              ? Config.index = HomePage.MANGA_LIST
+                              ? Config.setIndex(HomePage.MANGA_LIST)
                               : _pushCollection(false),
                         ),
                         IconButton(
@@ -118,9 +118,9 @@ class UserTab extends StatelessWidget {
                         borderRadius: Config.BORDER_RADIUS,
                       ),
                       child: HtmlWidget(
-                        user.model.description,
+                        user.model!.description!,
                         textStyle: TextStyle(
-                          color: Theme.of(context).textTheme.bodyText1.color,
+                          color: Theme.of(context).textTheme.bodyText1!.color,
                         ),
                       ),
                     ),

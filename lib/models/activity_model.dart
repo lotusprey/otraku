@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
@@ -8,56 +7,56 @@ import 'package:otraku/models/page_model.dart';
 class ActivityModel {
   final int id;
   final ActivityType type;
-  final int agentId;
-  final String agentName;
-  final String agentImage;
-  final int recieverId;
-  final String recieverName;
-  final String recieverImage;
-  final int mediaId;
-  final String mediaTitle;
-  final String mediaImage;
-  final String mediaFormat;
-  final Browsable mediaType;
+  final int? agentId;
+  final String? agentName;
+  final String? agentImage;
+  final int? recieverId;
+  final String? recieverName;
+  final String? recieverImage;
+  final int? mediaId;
+  final String? mediaTitle;
+  final String? mediaImage;
+  final String? mediaFormat;
+  final Browsable? mediaType;
   final String text;
   final String createdAt;
   final int replyCount;
   final PageModel<ReplyModel> replies;
-  int _likeCount;
-  bool _isLiked;
-  bool _isSubscribed;
+  late int _likeCount;
+  late bool _isLiked;
+  late bool _isSubscribed;
 
   ActivityModel._({
-    @required this.id,
-    @required this.type,
-    @required this.agentId,
-    @required this.agentName,
-    @required this.agentImage,
-    @required this.recieverId,
-    @required this.recieverName,
-    @required this.recieverImage,
-    @required this.mediaId,
-    @required this.mediaTitle,
-    @required this.mediaImage,
-    @required this.mediaFormat,
-    @required this.mediaType,
-    @required this.text,
-    @required this.createdAt,
-    @required this.replyCount,
-    @required this.replies,
-    @required int likes,
-    @required bool liked,
-    @required bool subscribed,
+    required this.id,
+    required this.type,
+    required this.agentId,
+    required this.agentName,
+    required this.agentImage,
+    required this.createdAt,
+    required this.replies,
+    this.recieverId,
+    this.recieverName,
+    this.recieverImage,
+    this.mediaId,
+    this.mediaTitle,
+    this.mediaImage,
+    this.mediaFormat,
+    this.mediaType,
+    this.text = '',
+    this.replyCount = 0,
+    int? likes,
+    bool? liked,
+    bool? subscribed,
   }) {
-    _likeCount = likes;
-    _isLiked = liked;
-    _isSubscribed = subscribed;
+    _likeCount = likes ?? 0;
+    _isLiked = liked ?? false;
+    _isSubscribed = subscribed ?? false;
   }
 
   factory ActivityModel(Map<String, dynamic> map) {
     switch (map['type']) {
       case 'TEXT':
-        if (map['user'] == null) return null;
+        if (map['user'] == null) return ActivityModel.empty();
 
         return ActivityModel._(
           id: map['id'],
@@ -75,14 +74,15 @@ class ActivityModel {
           mediaType: null,
           text: map['text'],
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'] ?? 0,
+          replyCount: map['replyCount'],
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'] ?? 0,
-          liked: map['isLiked'] ?? false,
-          subscribed: map['isSubscribed'] ?? false,
+          likes: map['likeCount'],
+          liked: map['isLiked'],
+          subscribed: map['isSubscribed'],
         );
       case 'ANIME_LIST':
-        if (map['user'] == null || map['media'] == null) return null;
+        if (map['user'] == null || map['media'] == null)
+          return ActivityModel.empty();
         final progress =
             map['progress'] != null ? '${map['progress']} of ' : '';
         final status = (map['status'] as String)[0].toUpperCase() +
@@ -104,14 +104,15 @@ class ActivityModel {
           mediaType: Browsable.anime,
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'] ?? 0,
+          replyCount: map['replyCount'],
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'] ?? 0,
-          liked: map['isLiked'] ?? false,
-          subscribed: map['isSubscribed'] ?? false,
+          likes: map['likeCount'],
+          liked: map['isLiked'],
+          subscribed: map['isSubscribed'],
         );
       case 'MANGA_LIST':
-        if (map['user'] == null || map['media'] == null) return null;
+        if (map['user'] == null || map['media'] == null)
+          return ActivityModel.empty();
         final progress =
             map['progress'] != null ? '${map['progress']} of ' : '';
         final status = (map['status'] as String)[0].toUpperCase() +
@@ -133,14 +134,15 @@ class ActivityModel {
           mediaType: Browsable.manga,
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'] ?? 0,
+          replyCount: map['replyCount'],
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'] ?? 0,
-          liked: map['isLiked'] ?? false,
-          subscribed: map['isSubscribed'] ?? false,
+          likes: map['likeCount'],
+          liked: map['isLiked'],
+          subscribed: map['isSubscribed'],
         );
       case 'MESSAGE':
-        if (map['messenger'] == null || map['recipient'] == null) return null;
+        if (map['messenger'] == null || map['recipient'] == null)
+          return ActivityModel.empty();
 
         return ActivityModel._(
           id: map['id'],
@@ -158,24 +160,36 @@ class ActivityModel {
           mediaType: null,
           text: map['message'],
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'] ?? 0,
+          replyCount: map['replyCount'],
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'] ?? 0,
-          liked: map['isLiked'] ?? false,
-          subscribed: map['isSubscribed'] ?? false,
+          likes: map['likeCount'],
+          liked: map['isLiked'],
+          subscribed: map['isSubscribed'],
         );
       default:
-        return null;
+        return ActivityModel.empty();
     }
   }
 
-  int get likeCount => _likeCount;
-  bool get isLiked => _isLiked;
-  bool get isSubscribed => _isSubscribed;
+  factory ActivityModel.empty() => ActivityModel._(
+        id: 0,
+        type: ActivityType.TEXT,
+        agentId: null,
+        agentImage: null,
+        agentName: null,
+        createdAt: '',
+        replies: PageModel<ReplyModel>([], true, 1),
+      );
+
+  bool get valid => agentId != null;
+
+  int? get likeCount => _likeCount;
+  bool? get isLiked => _isLiked;
+  bool? get isSubscribed => _isSubscribed;
 
   void appendReplies(final Map<String, dynamic> map) {
     if (map['activityReplies'] != null) {
-      final List<ReplyModel> rl = [];
+      final rl = <ReplyModel>[];
       for (final r in map['activityReplies']) rl.add(ReplyModel(r));
       replies.append(rl, map['pageInfo']['hasNextPage']);
     }

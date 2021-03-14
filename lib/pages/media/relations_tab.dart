@@ -22,7 +22,7 @@ class RelationsTab extends StatelessWidget {
       padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
       sliver: Obx(() {
         if (media.relationsTab == Media.REL_MEDIA) {
-          final other = media.model.otherMedia;
+          final other = media.model!.otherMedia;
 
           if (other.isEmpty)
             return media.isLoading ? _Empty(null) : _Empty('No related media');
@@ -64,7 +64,7 @@ class RelationsTab extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                other[index].relationType,
+                                other[index].relationType!,
                                 style: Theme.of(context).textTheme.bodyText2,
                               ),
                               Flexible(
@@ -82,12 +82,12 @@ class RelationsTab extends StatelessWidget {
                             children: [
                               if (other[index].format != null)
                                 Text(
-                                  other[index].format,
+                                  other[index].format!,
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
                               if (other[index].status != null)
                                 Text(
-                                  other[index].status,
+                                  other[index].status!,
                                   style: Theme.of(context).textTheme.subtitle1,
                                 ),
                             ],
@@ -104,21 +104,21 @@ class RelationsTab extends StatelessWidget {
         }
 
         if (media.relationsTab == Media.REL_CHARACTERS) {
-          if (media.model.characters.items.isEmpty)
+          if (media.model!.characters!.items.isEmpty)
             return media.isLoading ? _Empty(null) : _Empty('No Characters');
 
           return ConnectionsGrid(
-            connections: media.model.characters.items,
+            connections: media.model!.characters!.items.cast(),
             loadMore: () => media.fetchRelationPage(true),
             preferredSubtitle: media.staffLanguage,
           );
         }
 
-        if (media.model.staff.items.isEmpty)
+        if (media.model!.staff!.items.isEmpty)
           return media.isLoading ? _Empty(null) : _Empty('No Staff');
 
         return ConnectionsGrid(
-          connections: media.model.staff.items,
+          connections: media.model!.staff!.items.cast(),
           loadMore: () => media.fetchRelationPage(false),
         );
       }),
@@ -127,7 +127,7 @@ class RelationsTab extends StatelessWidget {
 }
 
 class _Empty extends StatelessWidget {
-  final String text;
+  final String? text;
 
   _Empty(this.text);
 
@@ -138,7 +138,7 @@ class _Empty extends StatelessWidget {
       child: text == null
           ? Loader()
           : Text(
-              text,
+              text!,
               style: Theme.of(context).textTheme.subtitle1,
             ),
     ));
@@ -195,15 +195,15 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
               Media.REL_STAFF,
             ],
             initial: media.relationsTab,
-            onNewValue: (val) {
+            onNewValue: (dynamic val) {
               scrollUp();
               media.relationsTab = val;
             },
-            onSameValue: (_) => scrollUp(),
+            onSameValue: (dynamic _) => scrollUp(),
           ),
           Obx(() {
             if (media.relationsTab == Media.REL_CHARACTERS &&
-                media.model.characters.items.isNotEmpty &&
+                media.model!.characters!.items.isNotEmpty &&
                 media.availableLanguages.length > 1)
               return IconButton(
                 icon: const Icon(Icons.language),
@@ -237,15 +237,15 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
       true;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }

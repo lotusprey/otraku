@@ -7,10 +7,10 @@ import 'package:otraku/utils/filterable.dart';
 
 class Settings extends GetxController {
   final changes = <String, dynamic>{};
-  SettingsModel _model;
+  SettingsModel? _model;
   int _pageIndex = 0;
 
-  SettingsModel get model => _model;
+  SettingsModel? get model => _model;
 
   int get pageIndex => _pageIndex;
 

@@ -27,9 +27,9 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
   final bool isPushed;
 
   _HeadlineHeaderDelegate({
-    @required this.headline,
-    @required this.isPushed,
-    @required BuildContext context,
+    required this.headline,
+    required this.isPushed,
+    required BuildContext context,
   });
 
   @override
@@ -63,15 +63,15 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }

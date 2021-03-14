@@ -1,82 +1,80 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_status.dart';
 
 class MediaOverviewModel {
-  final int id;
+  final int? id;
   final Browsable browsable;
-  final int favourites;
-  bool isFavourite;
-  final String preferredTitle;
-  final String romajiTitle;
-  final String englishTitle;
-  final String nativeTitle;
+  final int? favourites;
+  bool? isFavourite;
+  final String? preferredTitle;
+  final String? romajiTitle;
+  final String? englishTitle;
+  final String? nativeTitle;
   final List<String> synonyms;
-  final String cover;
-  final String banner;
+  final String? cover;
+  final String? banner;
   final String description;
-  final String format;
-  final String status;
-  ListStatus entryStatus;
-  final int nextEpisode;
-  final String timeUntilAiring;
-  final int episodes;
-  final String duration;
-  final int chapters;
-  final int volumes;
-  final String startDate;
-  final String endDate;
-  final String season;
-  final String averageScore;
-  final String meanScore;
-  final int popularity;
+  final String? format;
+  final String? status;
+  ListStatus? entryStatus;
+  final int? nextEpisode;
+  final String? timeUntilAiring;
+  final int? episodes;
+  final String? duration;
+  final int? chapters;
+  final int? volumes;
+  final String? startDate;
+  final String? endDate;
+  final String? season;
+  final String? averageScore;
+  final String? meanScore;
+  final int? popularity;
   final List<String> genres;
-  final Map<String, int> studios;
-  final Map<String, int> producers;
-  final String source;
-  final String hashtag;
-  final String countryOfOrigin;
+  final Map<String?, int?> studios;
+  final Map<String?, int?> producers;
+  final String? source;
+  final String? hashtag;
+  final String? countryOfOrigin;
 
   MediaOverviewModel._({
-    @required this.id,
-    @required this.browsable,
-    @required this.favourites,
-    @required this.isFavourite,
-    @required this.preferredTitle,
-    @required this.romajiTitle,
-    @required this.englishTitle,
-    @required this.nativeTitle,
-    @required this.synonyms,
-    @required this.cover,
-    @required this.banner,
-    @required this.description,
-    @required this.format,
-    @required this.status,
-    @required this.entryStatus,
-    @required this.nextEpisode,
-    @required this.timeUntilAiring,
-    @required this.episodes,
-    @required this.duration,
-    @required this.chapters,
-    @required this.volumes,
-    @required this.startDate,
-    @required this.endDate,
-    @required this.season,
-    @required this.averageScore,
-    @required this.meanScore,
-    @required this.popularity,
-    @required this.genres,
-    @required this.studios,
-    @required this.producers,
-    @required this.source,
-    @required this.hashtag,
-    @required this.countryOfOrigin,
+    required this.id,
+    required this.browsable,
+    required this.favourites,
+    required this.isFavourite,
+    required this.preferredTitle,
+    required this.romajiTitle,
+    required this.englishTitle,
+    required this.nativeTitle,
+    required this.synonyms,
+    required this.cover,
+    required this.banner,
+    required this.description,
+    required this.format,
+    required this.status,
+    required this.entryStatus,
+    required this.nextEpisode,
+    required this.timeUntilAiring,
+    required this.episodes,
+    required this.duration,
+    required this.chapters,
+    required this.volumes,
+    required this.startDate,
+    required this.endDate,
+    required this.season,
+    required this.averageScore,
+    required this.meanScore,
+    required this.popularity,
+    required this.genres,
+    required this.studios,
+    required this.producers,
+    required this.source,
+    required this.hashtag,
+    required this.countryOfOrigin,
   });
 
   factory MediaOverviewModel(Map<String, dynamic> map) {
-    String duration;
+    String? duration;
     if (map['duration'] != null) {
       int time = map['duration'];
       int hours = time ~/ 60;
@@ -84,15 +82,15 @@ class MediaOverviewModel {
       duration = (hours != 0 ? '$hours hours, ' : '') + '$minutes mins';
     }
 
-    String season;
+    String? season;
     if (map['season'] != null) {
       season = map['season'];
-      season = season[0] + season.substring(1).toLowerCase();
+      season = season![0] + season.substring(1).toLowerCase();
       if (map['seasonYear'] != null) season += ' ${map["seasonYear"]}';
     }
 
-    final Map<String, int> studios = {};
-    final Map<String, int> producers = {};
+    final Map<String?, int?> studios = {};
+    final Map<String?, int?> producers = {};
     if (map['studios'] != null) {
       final List<dynamic> companies = map['studios']['edges'];
       for (final company in companies)

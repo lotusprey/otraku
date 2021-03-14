@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class ChipField extends StatefulWidget {
-  final String title;
+  final String? title;
   final bool initiallyPositive;
-  final Function(bool) onChanged;
+  final Function(bool)? onChanged;
   final Function onRemoved;
 
   ChipField({
-    @required this.title,
-    @required this.initiallyPositive,
-    @required this.onChanged,
-    @required this.onRemoved,
+    required this.title,
+    required this.initiallyPositive,
+    required this.onChanged,
+    required this.onRemoved,
     key,
   }) : super(key: key);
 
@@ -19,22 +19,22 @@ class ChipField extends StatefulWidget {
 }
 
 class _ChipFieldState extends State<ChipField> {
-  bool _isPositive;
+  late bool _isPositive;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () {
           if (widget.onChanged == null) return;
           setState(() => _isPositive = !_isPositive);
-          widget.onChanged(_isPositive);
+          widget.onChanged!(_isPositive);
         },
         child: Chip(
           backgroundColor: _isPositive
               ? Theme.of(context).accentColor
               : Theme.of(context).errorColor,
-          label: Text(widget.title, style: Theme.of(context).textTheme.button),
+          label: Text(widget.title!, style: Theme.of(context).textTheme.button),
           deleteIconColor: Theme.of(context).backgroundColor,
-          onDeleted: widget.onRemoved,
+          onDeleted: widget.onRemoved as void Function()?,
         ),
       );
 

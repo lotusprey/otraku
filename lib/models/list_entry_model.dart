@@ -1,38 +1,37 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
-  final int mediaId;
-  final String title;
-  final String cover;
-  final String format;
-  final String status;
-  final int nextEpisode;
-  final String timeUntilAiring;
-  final int createdAt;
-  final int updatedAt;
+  final int? mediaId;
+  final String? title;
+  final String? cover;
+  final String? format;
+  final String? status;
+  final int? nextEpisode;
+  final String? timeUntilAiring;
+  final int? createdAt;
+  final int? updatedAt;
   final List<String> genres;
   int progress;
-  final int progressMax;
+  final int? progressMax;
   int progressVolumes;
-  final int progressVolumesMax;
-  double score;
+  final int? progressVolumesMax;
+  double? score;
   int repeat;
-  String notes;
-  DateTime startDate;
-  DateTime endDate;
+  String? notes;
+  DateTime? startDate;
+  DateTime? endDate;
 
   ListEntryModel._({
-    @required this.mediaId,
-    @required this.title,
-    @required this.cover,
-    @required this.format,
-    @required this.status,
-    @required this.nextEpisode,
-    @required this.timeUntilAiring,
-    @required this.createdAt,
-    @required this.updatedAt,
-    @required this.genres,
+    required this.mediaId,
+    required this.title,
+    required this.cover,
+    required this.format,
+    required this.status,
+    required this.nextEpisode,
+    required this.timeUntilAiring,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.genres,
     this.progress = 0,
     this.progressMax,
     this.progressVolumes = 0,

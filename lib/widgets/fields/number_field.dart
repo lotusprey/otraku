@@ -4,12 +4,12 @@ import 'package:otraku/utils/config.dart';
 
 class NumberField extends StatefulWidget {
   final int initialValue;
-  final int maxValue;
+  final int? maxValue;
   final int fraction;
   final Function(int) update;
 
   NumberField({
-    @required this.update,
+    required this.update,
     this.initialValue = 0,
     this.maxValue,
     this.fraction = 1,
@@ -20,7 +20,7 @@ class NumberField extends StatefulWidget {
 }
 
 class _NumberFieldState extends State<NumberField> {
-  TextEditingController _controller;
+  TextEditingController? _controller;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -59,13 +59,13 @@ class _NumberFieldState extends State<NumberField> {
   void _validateInput({int add = 0}) {
     int result;
 
-    if (_controller.text == null || _controller.text == '') {
+    if (_controller!.text == '') {
       result = 0;
     } else {
-      int number = int.parse(_controller.text) + add;
+      int number = int.parse(_controller!.text) + add;
 
-      if (widget.maxValue != null && number > widget.maxValue) {
-        result = widget.maxValue;
+      if (widget.maxValue != null && number > widget.maxValue!) {
+        result = widget.maxValue!;
       } else if (number < 0) {
         result = 0;
       } else {
@@ -76,7 +76,7 @@ class _NumberFieldState extends State<NumberField> {
     widget.update(result);
 
     final text = result.toString();
-    _controller.value = _controller.value.copyWith(
+    _controller!.value = _controller!.value.copyWith(
       text: text,
       selection: TextSelection(
         baseOffset: text.length,
@@ -90,12 +90,12 @@ class _NumberFieldState extends State<NumberField> {
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue.toString());
-    _controller.addListener(_validateInput);
+    _controller!.addListener(_validateInput);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 }

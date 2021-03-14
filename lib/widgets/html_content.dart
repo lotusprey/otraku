@@ -5,13 +5,13 @@ import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HtmlContent extends StatelessWidget {
-  final String text;
+  final String? text;
   HtmlContent(this.text);
 
   @override
   Widget build(BuildContext context) {
     return HtmlWidget(
-      text,
+      text!,
       textStyle: Theme.of(context).textTheme.bodyText1,
       hyperlinkColor: Theme.of(context).accentColor,
       onTapUrl: (url) async {

@@ -20,7 +20,7 @@ class EditEntryPage extends StatefulWidget {
   static const ROUTE = '/edit';
 
   final int mediaId;
-  final Function(ListStatus) update;
+  final Function(ListStatus?)? update;
 
   EditEntryPage(this.mediaId, this.update);
 
@@ -68,7 +68,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                   tag: model.type == 'ANIME'
                                       ? Collection.ANIME
                                       : Collection.MANGA,
-                                ).removeEntry(entry.oldModel);
+                                ).removeEntry(entry.oldModel!);
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
                                 widget.update?.call(null);
@@ -88,7 +88,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                         tag: model.type == 'ANIME'
                             ? Collection.ANIME
                             : Collection.MANGA,
-                      ).updateEntry(entry.oldModel, model);
+                      ).updateEntry(entry.oldModel!, model);
                       Navigator.of(context).pop();
                       widget.update?.call(model.status);
                     }),
@@ -103,14 +103,16 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     slivers: [
                       const SliverToBoxAdapter(child: SizedBox(height: 10)),
                       _FieldGrid([
-                        DropDownField(
+                        DropDownField<ListStatus>(
                           hint: 'Add',
                           title: 'Status',
                           initialValue: model.status,
                           items: Map.fromIterable(
                             ListStatus.values,
                             key: (v) => listStatusSpecification(
-                                v, model.type == 'ANIME'),
+                              v,
+                              model.type == 'ANIME',
+                            ),
                             value: (v) => v,
                           ),
                           onChanged: (status) => model.status = status,
@@ -222,7 +224,7 @@ class _FieldGrid extends StatelessWidget {
   final List<Widget> list;
   final double minWidth;
 
-  _FieldGrid(this.list, {@required this.minWidth});
+  _FieldGrid(this.list, {required this.minWidth});
 
   @override
   Widget build(BuildContext context) {

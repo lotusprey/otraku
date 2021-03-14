@@ -25,9 +25,9 @@ class Client {
     'Content-type': 'application/json',
   };
 
-  static String _accessToken;
+  static String? _accessToken;
 
-  static int _viewerId;
+  static int? _viewerId;
   static get viewerId => _viewerId;
 
   static setCredentials(String token, int expiration) {
@@ -43,7 +43,7 @@ class Client {
 
   static Future<bool> logIn() async {
     if (_accessToken == null) {
-      final int millis = Config.storage.read(_EXPIRATION_KEY);
+      final int? millis = Config.storage.read(_EXPIRATION_KEY);
       if (millis != null) {
         final date = DateTime.fromMillisecondsSinceEpoch(millis);
         if (DateTime.now().compareTo(date) >= 0) {
@@ -77,9 +77,9 @@ class Client {
     Get.offAllNamed(AuthPage.ROUTE);
   }
 
-  static Future<Map<String, dynamic>> request(
-    String request,
-    Map<String, dynamic> variables, {
+  static Future<Map<String, dynamic>?> request(
+    String? request,
+    Map<String, dynamic>? variables, {
     bool popOnErr = true,
   }) async {
     bool erred = false;
@@ -115,18 +115,18 @@ class Client {
 
   static void _handleErr(
     bool popOnErr, {
-    IOException ioErr,
-    List<String> apiErr,
+    IOException? ioErr,
+    List<String>? apiErr,
   }) {
     if (popOnErr) Get.back();
 
     if (ioErr != null && ioErr is SocketException) {
       Get.defaultDialog(
         radius: 5,
-        backgroundColor: Get.theme.backgroundColor,
-        titleStyle: Get.theme.textTheme.headline3,
+        backgroundColor: Get.theme!.backgroundColor,
+        titleStyle: Get.theme!.textTheme.headline3,
         title: 'Internet connection problem',
-        content: Text(ioErr.toString(), style: Get.theme.textTheme.bodyText1),
+        content: Text(ioErr.toString(), style: Get.theme!.textTheme.bodyText1),
         actions: [TextButton(child: Text('Ok'), onPressed: Get.back)],
       );
       return;
@@ -139,15 +139,15 @@ class Client {
       return;
     }
 
-    final text = ioErr?.toString() ?? apiErr.join('\n');
+    final text = ioErr?.toString() ?? apiErr!.join('\n');
 
     Get.defaultDialog(
       radius: 5,
-      backgroundColor: Get.theme.backgroundColor,
-      titleStyle: Get.theme.textTheme.headline3,
+      backgroundColor: Get.theme!.backgroundColor,
+      titleStyle: Get.theme!.textTheme.headline3,
       title:
           ioErr == null ? 'A query error occured' : 'A request error occured',
-      content: Text(text, style: Get.theme.textTheme.bodyText1),
+      content: Text(text, style: Get.theme!.textTheme.bodyText1),
       actions: [TextButton(child: Text('Sad'), onPressed: Get.back)],
     );
   }

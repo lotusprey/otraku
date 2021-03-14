@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class FavoriteButton extends StatefulWidget {
-  final int favourites;
-  final bool isFavourite;
+  final int? favourites;
+  final bool? isFavourite;
   final double shrinkPercentage;
-  final Future<bool> Function() toggle;
+  final Future<bool> Function()? toggle;
 
   FavoriteButton({
-    @required this.favourites,
-    @required this.isFavourite,
-    @required this.shrinkPercentage,
-    @required this.toggle,
+    required this.favourites,
+    required this.isFavourite,
+    required this.shrinkPercentage,
+    required this.toggle,
   });
 
   @override
@@ -18,7 +18,7 @@ class FavoriteButton extends StatefulWidget {
 }
 
 class _FavoriteButtonState extends State<FavoriteButton> {
-  bool _isFavourite;
+  bool? _isFavourite;
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +34,13 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             ),
           ),
         IconButton(
-          tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
+          tooltip: _isFavourite! ? 'UnFavourite' : 'Favourite',
           icon: Icon(
-            _isFavourite ? Icons.favorite : Icons.favorite_border,
+            _isFavourite! ? Icons.favorite : Icons.favorite_border,
             color: Theme.of(context).dividerColor,
           ),
-          onPressed: () => widget.toggle().then(
-              (ok) => ok ? setState(() => _isFavourite = !_isFavourite) : null),
+          onPressed: () => widget.toggle!().then(
+              (ok) => ok ? setState(() => _isFavourite = !_isFavourite!) : null),
         ),
       ],
     );

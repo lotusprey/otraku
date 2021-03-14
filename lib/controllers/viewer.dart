@@ -109,21 +109,21 @@ class Viewer extends ScrollxController {
     ActivityType.MANGA_LIST,
   ];
   bool _onFollowing = true;
-  SettingsModel _settings;
+  SettingsModel? _settings;
   bool _isLoading = true;
 
   // ***************************************************************************
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  List<ActivityModel> get activities => _activities()?.items;
+  List<ActivityModel>? get activities => _activities()?.items;
   List<ActivityType> get typeIn => [..._typeIn];
-  SettingsModel get settings => _settings;
+  SettingsModel? get settings => _settings;
   int get unreadCount => _unreadCount();
   bool get onFollowing => _onFollowing;
   bool get isLoading => _isLoading;
 
-  void updateFilters({final bool following, final List<ActivityType> types}) {
+  void updateFilters({bool? following, List<ActivityType>? types}) {
     if (following != null) _onFollowing = following;
     if (types != null) _typeIn.replaceRange(0, _typeIn.length, types);
     refetch();
@@ -159,13 +159,13 @@ class Viewer extends ScrollxController {
   }
 
   Future<void> fetchPage() async {
-    if (_isLoading || !_activities().hasNextPage) return;
+    if (_isLoading || !_activities()!.hasNextPage!) return;
     _isLoading = true;
 
     final data = await Client.request(
       _viewerQuery,
       {
-        'page': _activities().nextPage,
+        'page': _activities()!.nextPage,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
         'isFollowing': _onFollowing,
@@ -181,7 +181,7 @@ class Viewer extends ScrollxController {
 
   Future<void> refetch() async {
     _isLoading = true;
-    _activities.update((a) => a?.items?.clear());
+    _activities.update((a) => a?.items.clear());
 
     final data = await Client.request(
       _viewerQuery,
@@ -219,7 +219,8 @@ class Viewer extends ScrollxController {
     final List<ActivityModel> al = [];
     for (final a in data['Page']['activities']) {
       final m = ActivityModel(a);
-      if (m != null) al.add(m);
+      if (!m.valid) continue;
+      al.add(m);
       _idNotIn.add(al.last.id);
     }
 
@@ -227,7 +228,7 @@ class Viewer extends ScrollxController {
       _activities(PageModel(al, data['Page']['pageInfo']['hasNextPage'], 2));
     else
       _activities.update(
-        (a) => a.append(al, data['Page']['pageInfo']['hasNextPage']),
+        (a) => a!.append(al, data['Page']['pageInfo']['hasNextPage']),
       );
   }
 

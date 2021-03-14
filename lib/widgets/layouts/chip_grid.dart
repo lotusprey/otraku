@@ -11,15 +11,15 @@ class ChipGrid<T> extends StatefulWidget {
   final String placeholder;
   final List<String> options;
   final List<T> values;
-  final List<T> inclusive;
-  final List<T> exclusive;
+  final List<T>? inclusive;
+  final List<T>? exclusive;
 
   ChipGrid({
-    @required this.title,
-    @required this.placeholder,
-    @required this.options,
-    @required this.values,
-    @required this.inclusive,
+    required this.title,
+    required this.placeholder,
+    required this.options,
+    required this.values,
+    required this.inclusive,
     this.exclusive,
   });
 
@@ -31,30 +31,30 @@ class _ChipGridState extends State<ChipGrid> {
   @override
   Widget build(BuildContext context) {
     final list = List.generate(
-        widget.inclusive.length + (widget.exclusive?.length ?? 0), (index) {
-      final value = index < widget.inclusive.length
-          ? widget.inclusive[index]
-          : widget.exclusive[index - widget.inclusive.length];
+        widget.inclusive!.length + (widget.exclusive?.length ?? 0), (index) {
+      final value = index < widget.inclusive!.length
+          ? widget.inclusive![index]
+          : widget.exclusive![index - widget.inclusive!.length];
       return ChipField(
         key: UniqueKey(),
         title: Convert.clarifyEnum(value),
-        initiallyPositive: index < widget.inclusive.length,
+        initiallyPositive: index < widget.inclusive!.length,
         onChanged: widget.exclusive == null
             ? null
             : (changed) {
                 if (changed) {
-                  widget.exclusive.remove(value);
-                  widget.inclusive.add(value);
+                  widget.exclusive!.remove(value);
+                  widget.inclusive!.add(value);
                 } else {
-                  widget.inclusive.remove(value);
-                  widget.exclusive.add(value);
+                  widget.inclusive!.remove(value);
+                  widget.exclusive!.add(value);
                 }
               },
         onRemoved: () {
-          if (index < widget.inclusive.length)
-            setState(() => widget.inclusive.remove(value));
+          if (index < widget.inclusive!.length)
+            setState(() => widget.inclusive!.remove(value));
           else
-            setState(() => widget.exclusive.remove(value));
+            setState(() => widget.exclusive!.remove(value));
         },
       );
     });
@@ -71,7 +71,7 @@ class _ChipGridState extends State<ChipGrid> {
                 if (list.length > 0)
                   GestureDetector(
                     onTap: () => setState(() {
-                      widget.inclusive.clear();
+                      widget.inclusive!.clear();
                       widget.exclusive?.clear();
                     }),
                     child: Container(
@@ -93,18 +93,19 @@ class _ChipGridState extends State<ChipGrid> {
                     sheet: SelectionSheet(
                       options: widget.options,
                       values: widget.values,
-                      inclusive: [...widget.inclusive],
+                      inclusive: [...widget.inclusive!],
                       exclusive: widget.exclusive != null
-                          ? [...widget.exclusive]
+                          ? [...widget.exclusive!]
                           : null,
                       fixHeight: widget.options.length <= 10,
                       onDone: (inclusive, exclusive) {
                         setState(() {
-                          widget.inclusive.clear();
-                          for (final i in inclusive) widget.inclusive.add(i);
+                          widget.inclusive!.clear();
+                          for (final i in inclusive) widget.inclusive!.add(i);
                           if (widget.exclusive != null) {
-                            widget.exclusive.clear();
-                            for (final e in exclusive) widget.exclusive.add(e);
+                            widget.exclusive!.clear();
+                            for (final e in exclusive!)
+                              widget.exclusive!.add(e);
                           }
                         });
                       },

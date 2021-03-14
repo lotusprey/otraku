@@ -8,11 +8,11 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 class ConnectionsGrid extends StatefulWidget {
   final List<Connection> connections;
   final Function loadMore;
-  final String preferredSubtitle;
+  final String? preferredSubtitle;
 
   ConnectionsGrid({
-    @required this.connections,
-    @required this.loadMore,
+    required this.connections,
+    required this.loadMore,
     this.preferredSubtitle,
   });
 
@@ -42,13 +42,13 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
 
 class _MediaConnectionTile extends StatelessWidget {
   final Connection item;
-  final String preferredSubtitle;
+  final String? preferredSubtitle;
 
   _MediaConnectionTile(this.item, this.preferredSubtitle);
 
   @override
   Widget build(BuildContext context) {
-    int index;
+    int? index;
     if (preferredSubtitle == null)
       index = 0;
     else
@@ -97,7 +97,7 @@ class _MediaConnectionTile extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                item.text2,
+                                item.text2!,
                                 maxLines: 2,
                                 overflow: TextOverflow.fade,
                                 style: Theme.of(context).textTheme.subtitle2,
@@ -139,7 +139,7 @@ class _MediaConnectionTile extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  item.others[index].text2,
+                                  item.others[index].text2!,
                                   style: Theme.of(context).textTheme.subtitle2,
                                 ),
                               ],

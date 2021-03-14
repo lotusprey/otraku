@@ -55,9 +55,9 @@ class Studio extends GetxController {
   final _media = Rx<StudioConnectionList>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
-  PersonModel get company => _company();
+  PersonModel? get company => _company();
 
-  StudioConnectionList get media => _media();
+  StudioConnectionList? get media => _media();
 
   MediaSort get sort => _sort;
 
@@ -94,13 +94,13 @@ class Studio extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (_media() == null || !_media().hasNextPage) return;
+    if (_media() == null || !_media()!.hasNextPage) return;
 
     final data = await Client.request(
       _studioQuery,
       {
         'id': _id,
-        'page': _media().nextPage,
+        'page': _media()!.nextPage,
         'sort': describeEnum(_sort),
       },
     );
@@ -145,7 +145,7 @@ class Studio extends GetxController {
     }
 
     if (append)
-      _media.update((m) => m.append(
+      _media.update((m) => m!.append(
             categories,
             results,
             data['pageInfo']['hasNextPage'],

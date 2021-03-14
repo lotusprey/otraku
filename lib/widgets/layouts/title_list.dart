@@ -14,7 +14,7 @@ class TitleList extends StatelessWidget {
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
             (_, index) {
-              if (index == results.length - 6) loadMore?.call();
+              if (index == results.length - 6) loadMore.call();
 
               return BrowseIndexer(
                 browsable: results[index].browsable,

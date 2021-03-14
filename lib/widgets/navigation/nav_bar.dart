@@ -7,8 +7,8 @@ class NavBar extends StatefulWidget {
   final int initial;
 
   NavBar({
-    @required this.options,
-    @required this.onChanged,
+    required this.options,
+    required this.onChanged,
     this.initial = 0,
   });
 
@@ -20,7 +20,7 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  int _index;
+  int? _index;
 
   @override
   void initState() {

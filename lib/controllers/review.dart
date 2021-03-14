@@ -31,9 +31,9 @@ class Review extends GetxController {
   final int _id;
   Review(this._id);
 
-  ReviewModel _data;
+  ReviewModel? _model;
 
-  ReviewModel get data => _data;
+  ReviewModel? get model => _model;
 
   // ***************************************************************************
   // FETCHING
@@ -42,7 +42,7 @@ class Review extends GetxController {
   Future<void> fetch() async {
     final body = await Client.request(_reviewQuery, {'id': _id});
     if (body == null) return;
-    _data = ReviewModel(body['Review']);
+    _model = ReviewModel(body['Review']);
     update();
   }
 

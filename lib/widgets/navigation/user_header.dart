@@ -11,16 +11,16 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class UserHeader extends StatelessWidget {
-  final int id;
-  final UserModel user;
+  final int? id;
+  final UserModel? user;
   final bool isMe;
-  final String avatarUrl;
+  final String? avatarUrl;
 
   UserHeader({
-    @required this.id,
-    @required this.user,
-    @required this.isMe,
-    @required this.avatarUrl,
+    required this.id,
+    required this.user,
+    required this.isMe,
+    required this.avatarUrl,
   });
 
   @override
@@ -49,8 +49,8 @@ class UserHeader extends StatelessWidget {
             padding: const EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: ElevatedButton(
               child: Text(
-                user.following
-                    ? user.follower
+                user!.following!
+                    ? user!.follower!
                         ? 'Mutual'
                         : 'Unfollow'
                     : 'Follow',
@@ -71,7 +71,7 @@ class UserHeader extends StatelessWidget {
                   children: [
                     Container(color: Theme.of(context).primaryColor),
                     if (user?.banner != null)
-                      FadeImage(user.banner, height: bannerHeight)
+                      FadeImage(user!.banner, height: bannerHeight)
                   ],
                 ),
               ),
@@ -106,7 +106,7 @@ class UserHeader extends StatelessWidget {
             avatar != null
                 ? GestureDetector(
                     child: Hero(
-                      tag: id,
+                      tag: id!,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
                         child: Container(
@@ -140,14 +140,14 @@ class UserHeader extends StatelessWidget {
                       Flexible(
                         flex: 3,
                         child: Text(
-                          user.name,
+                          user!.name!,
                           overflow: TextOverflow.fade,
                           style: Theme.of(context).textTheme.headline2,
                         ),
                       ),
-                      if (user.donatorTier > 0)
-                        Flexible(child: _AnimatedBadge(user.donatorBadge)),
-                      if (user.moderatorStatus != null)
+                      if (user!.donatorTier! > 0)
+                        Flexible(child: _AnimatedBadge(user!.donatorBadge)),
+                      if (user!.moderatorStatus != null)
                         Flexible(
                           child: Container(
                             margin: const EdgeInsets.only(top: 5),
@@ -160,7 +160,7 @@ class UserHeader extends StatelessWidget {
                               borderRadius: Config.BORDER_RADIUS,
                             ),
                             child: Text(
-                              user.moderatorStatus,
+                              user!.moderatorStatus!,
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.button,
                             ),
@@ -178,7 +178,7 @@ class UserHeader extends StatelessWidget {
 }
 
 class _AnimatedBadge extends StatefulWidget {
-  final String text;
+  final String? text;
   _AnimatedBadge(this.text);
 
   @override
@@ -187,8 +187,8 @@ class _AnimatedBadge extends StatefulWidget {
 
 class __AnimatedBadgeState extends State<_AnimatedBadge>
     with SingleTickerProviderStateMixin {
-  AnimationController _ctrl;
-  Animation<Color> _animation;
+  late AnimationController _ctrl;
+  late Animation<Color?> _animation;
 
   @override
   void initState() {
@@ -254,10 +254,10 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: Text(
-        widget.text,
+        widget.text!,
         overflow: TextOverflow.ellipsis,
         style:
-            Theme.of(context).textTheme.headline6.copyWith(color: Colors.white),
+            Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
       ),
     );
   }

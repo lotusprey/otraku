@@ -16,11 +16,11 @@ class CustomDrawer extends StatelessWidget {
   final Widget Function(int) subtitleBuilder;
 
   CustomDrawer({
-    @required this.index,
-    @required this.length,
-    @required this.onChanged,
-    @required this.titleBuilder,
-    @required this.subtitleBuilder,
+    required this.index,
+    required this.length,
+    required this.onChanged,
+    required this.titleBuilder,
+    required this.subtitleBuilder,
     this.heading = '',
   });
 
@@ -71,7 +71,7 @@ class CustomDrawer extends StatelessWidget {
 }
 
 class CollectionDrawer extends StatelessWidget {
-  final String collectionTag;
+  final String? collectionTag;
 
   const CollectionDrawer(this.collectionTag);
 
@@ -126,7 +126,7 @@ class ExploreDrawer extends StatelessWidget {
           ),
           _space,
           Text(
-            Convert.clarifyEnum(describeEnum(Browsable.values[i])),
+            Convert.clarifyEnum(describeEnum(Browsable.values[i]))!,
             style: i != selected
                 ? Theme.of(context).textTheme.headline2
                 : Theme.of(context).textTheme.headline1,

@@ -79,14 +79,14 @@ class _NotificationWidget extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () => BrowseIndexer.openPage(
-                id: notification.headId,
+                id: notification.headId!,
                 imageUrl: notification.imageUrl,
                 browsable: notification.browsable ?? Browsable.user,
               ),
               onLongPress: () {
                 if (notification.browsable == Browsable.anime ||
                     notification.browsable == Browsable.manga)
-                  BrowseIndexer.openEditPage(notification.headId);
+                  BrowseIndexer.openEditPage(notification.headId!);
               },
               child: ClipRRect(
                 child: FadeImage(notification.imageUrl, width: 70),
@@ -101,9 +101,9 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.AIRING:
                     case NotificationType.RELATED_MEDIA_ADDITION:
                       BrowseIndexer.openPage(
-                        id: notification.bodyId,
+                        id: notification.bodyId!,
                         imageUrl: notification.imageUrl,
-                        browsable: notification.browsable,
+                        browsable: notification.browsable!,
                       );
                       return;
                     case NotificationType.ACTIVITY_LIKE:
@@ -125,7 +125,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.browsable == Browsable.anime ||
                       notification.browsable == Browsable.manga)
-                    BrowseIndexer.openEditPage(notification.headId);
+                    BrowseIndexer.openEditPage(notification.headId!);
                 },
                 child: Padding(
                   padding: Config.PADDING,

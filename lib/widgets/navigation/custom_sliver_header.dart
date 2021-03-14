@@ -4,16 +4,16 @@ import 'package:otraku/utils/config.dart';
 
 class CustomSliverHeader extends StatelessWidget {
   final double height;
-  final Widget background;
-  final Widget child;
-  final List<Widget> actions;
-  final String title;
+  final Widget? background;
+  final Widget? child;
+  final List<Widget>? actions;
+  final String? title;
   final bool actionsScrollFadeIn;
   final bool titleScrollFadeIn;
   final bool implyLeading;
 
   CustomSliverHeader({
-    @required this.height,
+    required this.height,
     this.child,
     this.background,
     this.title,
@@ -43,24 +43,24 @@ class CustomSliverHeader extends StatelessWidget {
 
 class _Delegate implements SliverPersistentHeaderDelegate {
   final double height;
-  final Widget background;
-  final Widget child;
-  final List<Widget> actions;
-  final String title;
+  final Widget? background;
+  final Widget? child;
+  final List<Widget>? actions;
+  final String? title;
   final bool actionsScrollFadeIn;
   final bool titleScrollFadeIn;
   final bool implyLeading;
-  double _middleExtent;
+  late double _middleExtent;
 
   _Delegate({
-    @required this.height,
-    @required this.background,
-    @required this.child,
-    @required this.actions,
-    @required this.title,
-    @required this.actionsScrollFadeIn,
-    @required this.titleScrollFadeIn,
-    @required this.implyLeading,
+    required this.height,
+    required this.background,
+    required this.child,
+    required this.actions,
+    required this.title,
+    required this.actionsScrollFadeIn,
+    required this.titleScrollFadeIn,
+    required this.implyLeading,
   }) {
     _middleExtent = (minExtent + maxExtent) * 0.5;
   }
@@ -143,7 +143,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                         opacity: titleOpacity,
                         child: title != null
                             ? Text(
-                                title,
+                                title!,
                                 style: Theme.of(context).textTheme.headline5,
                                 overflow: TextOverflow.ellipsis,
                               )
@@ -179,14 +179,14 @@ class _Delegate implements SliverPersistentHeaderDelegate {
       true;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }
 
 class IconShade extends StatelessWidget {

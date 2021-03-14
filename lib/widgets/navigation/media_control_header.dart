@@ -15,7 +15,7 @@ import 'package:otraku/pages/pushable/filter_page.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaControlHeader extends StatelessWidget {
-  final String collectionTag;
+  final String? collectionTag;
 
   const MediaControlHeader([this.collectionTag]);
 
@@ -43,7 +43,7 @@ class MediaControlHeader extends StatelessWidget {
 class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 58.0;
 
-  final String collectionTag;
+  final String? collectionTag;
 
   _ControlHeaderDelegate(this.collectionTag);
 
@@ -79,7 +79,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                       children: [
                         Flexible(
                           child: Text(
-                            collection.currentName,
+                            collection.currentName!,
                             style: Theme.of(context).textTheme.headline2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -120,7 +120,7 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
                         const SizedBox(width: 10),
                         Flexible(
                           child: Text(
-                            Convert.clarifyEnum(describeEnum(explorer.type)),
+                            Convert.clarifyEnum(describeEnum(explorer.type))!,
                             style: Theme.of(context).textTheme.headline2,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -196,34 +196,34 @@ class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }
 
 class _Navigation extends StatefulWidget {
   final Function scrollToTop;
   final Function(int) swipe;
   final Widget title;
-  final String hint;
-  final String searchValue;
-  final Function(String) search;
+  final String? hint;
+  final String? searchValue;
+  final Function(String)? search;
 
   _Navigation({
-    @required this.scrollToTop,
-    @required this.swipe,
-    @required this.title,
-    @required this.hint,
-    @required this.searchValue,
-    @required this.search,
+    required this.scrollToTop,
+    required this.swipe,
+    required this.title,
+    required this.hint,
+    required this.searchValue,
+    required this.search,
   });
 
   @override
@@ -231,9 +231,9 @@ class _Navigation extends StatefulWidget {
 }
 
 class __NavigationState extends State<_Navigation> {
-  bool _empty;
-  bool _searchMode;
-  TextEditingController _ctrl;
+  late bool _empty;
+  late bool _searchMode;
+  TextEditingController? _ctrl;
   FocusNode _focus = FocusNode();
 
   @override
@@ -241,20 +241,20 @@ class __NavigationState extends State<_Navigation> {
     super.initState();
     _searchMode = widget.searchValue != null && widget.searchValue != '';
     _ctrl = TextEditingController(text: widget.searchValue ?? '');
-    _empty = _ctrl.text.isEmpty;
+    _empty = _ctrl!.text.isEmpty;
   }
 
   @override
   void dispose() {
     _focus.dispose();
-    _ctrl.dispose();
+    _ctrl!.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    DragStartDetails dragStart;
-    DragUpdateDetails dragUpdate;
+    DragStartDetails? dragStart;
+    DragUpdateDetails? dragUpdate;
 
     return Expanded(
       child: Row(
@@ -264,13 +264,13 @@ class __NavigationState extends State<_Navigation> {
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: widget.scrollToTop,
+                onTap: widget.scrollToTop as void Function()?,
                 onHorizontalDragStart: (details) => dragStart = details,
                 onHorizontalDragUpdate: (details) => dragUpdate = details,
                 onHorizontalDragEnd: (_) {
                   if (dragUpdate == null || dragStart == null) return;
-                  if (dragUpdate.globalPosition.dx <
-                      dragStart.globalPosition.dx) {
+                  if (dragUpdate!.globalPosition.dx <
+                      dragStart!.globalPosition.dx) {
                     widget.swipe(1);
                   } else {
                     widget.swipe(-1);
@@ -310,7 +310,7 @@ class __NavigationState extends State<_Navigation> {
                             color: Theme.of(context).disabledColor,
                             onPressed: () {
                               _focus.canRequestFocus = false;
-                              widget.search(null);
+                              widget.search!('');
                               setState(() => _searchMode = false);
                             },
                           )
@@ -320,7 +320,7 @@ class __NavigationState extends State<_Navigation> {
                             icon: const Icon(Icons.close),
                             color: Theme.of(context).disabledColor,
                             onPressed: () {
-                              _ctrl.clear();
+                              _ctrl!.clear();
                               _update('');
                             },
                           ),
@@ -335,7 +335,7 @@ class __NavigationState extends State<_Navigation> {
   }
 
   void _update(String text) {
-    widget.search(text);
+    widget.search!(text);
     if (text.length > 0) {
       if (_empty) setState(() => _empty = false);
     } else {
@@ -345,7 +345,7 @@ class __NavigationState extends State<_Navigation> {
 }
 
 class _Filter extends StatefulWidget {
-  final String collectionTag;
+  final String? collectionTag;
 
   _Filter(this.collectionTag);
 
@@ -354,8 +354,8 @@ class _Filter extends StatefulWidget {
 }
 
 class __FilterState extends State<_Filter> {
-  Filterable _filterable;
-  bool _active;
+  late Filterable _filterable;
+  late bool _active;
 
   @override
   void initState() {

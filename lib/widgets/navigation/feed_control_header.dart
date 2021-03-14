@@ -47,8 +47,9 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
                 options: ['Following', 'Global'],
                 values: [true, false],
                 initial: viewer.onFollowing,
-                onNewValue: (val) => viewer.updateFilters(following: val),
-                onSameValue: (_) => viewer.scrollTo(0),
+                onNewValue: (dynamic val) =>
+                    viewer.updateFilters(following: val),
+                onSameValue: (dynamic _) => viewer.scrollTo(0),
               ),
               const Spacer(),
               IconButton(
@@ -60,7 +61,9 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
                     options: ActivityType.values.map((v) => v.text).toList(),
                     values: ActivityType.values,
                     inclusive: viewer.typeIn,
-                    onDone: (typeIn, _) => viewer.updateFilters(types: typeIn),
+                    onDone: (typeIn, _) => viewer.updateFilters(
+                      types: typeIn as List<ActivityType>?,
+                    ),
                     fixHeight: true,
                   ),
                   isScrollControlled: true,
@@ -95,7 +98,7 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
                                 viewer.unreadCount.toString(),
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle2
+                                    .subtitle2!
                                     .copyWith(
                                       color: Theme.of(context).backgroundColor,
                                     ),
@@ -127,15 +130,15 @@ class _FeedControls implements SliverPersistentHeaderDelegate {
       true;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }

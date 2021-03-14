@@ -11,7 +11,7 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class NotificationSettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final options = Get.find<Settings>().model.notificationOptions;
+    final options = Get.find<Settings>().model!.notificationOptions;
     final values = <bool>[];
     for (int i = 0; i < NotificationType.values.length - 2; i++)
       values.add(options[describeEnum(NotificationType.values[i])] ?? false);
@@ -69,12 +69,12 @@ class NotificationSettingsTab extends StatelessWidget {
   }
 
   List<Widget> _segment({
-    @required String title,
-    @required BuildContext ctx,
-    @required SliverGridDelegate gridDelegate,
-    @required int indexOffset,
-    @required int count,
-    @required List<bool> values,
+    required String title,
+    required BuildContext ctx,
+    required SliverGridDelegate gridDelegate,
+    required int indexOffset,
+    required int count,
+    required List<bool> values,
   }) =>
       [
         SliverToBoxAdapter(

@@ -37,10 +37,10 @@ class _AuthPageState extends State<AuthPage> {
     } catch (err) {
       Get.defaultDialog(
         radius: 5,
-        backgroundColor: Get.theme.backgroundColor,
-        titleStyle: Get.theme.textTheme.headline6,
+        backgroundColor: Get.theme!.backgroundColor,
+        titleStyle: Get.theme!.textTheme.headline6,
         title: 'Could not open AniList',
-        content: Text(err.toString(), style: Get.theme.textTheme.bodyText1),
+        content: Text(err.toString(), style: Get.theme!.textTheme.bodyText1),
         actions: [TextButton(child: Text('Oh No'), onPressed: Get.back)],
       );
       setState(() => _loading = false);

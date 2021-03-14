@@ -5,11 +5,11 @@ class PageModel<T> {
 
   PageModel(this.items, this._hasNextPage, this._nextPage);
 
-  bool get hasNextPage => _hasNextPage;
+  bool? get hasNextPage => _hasNextPage;
 
   int get nextPage => _nextPage;
 
-  void append(List<T> moreItems, bool hasNext) {
+  void append(List<T> moreItems, [bool hasNext = false]) {
     items.addAll(moreItems);
     _hasNextPage = hasNext;
     _nextPage++;

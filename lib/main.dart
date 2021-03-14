@@ -41,10 +41,10 @@ Future<void> main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Config.updateTheme();
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
+      theme: Config.theme,
       defaultTransition: Transition.cupertino,
       initialRoute: AuthPage.ROUTE,
       getPages: [

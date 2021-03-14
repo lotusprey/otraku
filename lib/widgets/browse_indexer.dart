@@ -17,20 +17,20 @@ import 'package:otraku/pages/home/user_page.dart';
 class BrowseIndexer extends StatelessWidget {
   final Browsable browsable;
   final int id;
-  final String imageUrl;
+  final String? imageUrl;
   final Widget child;
 
   BrowseIndexer({
-    @required this.browsable,
-    @required this.id,
-    @required this.imageUrl,
-    @required this.child,
+    required this.browsable,
+    required this.id,
+    required this.imageUrl,
+    required this.child,
   });
 
   static void openPage({
-    @required int id,
-    @required String imageUrl,
-    @required Browsable browsable,
+    required int id,
+    required String? imageUrl,
+    required Browsable browsable,
   }) {
     switch (browsable) {
       case Browsable.anime:
@@ -71,7 +71,7 @@ class BrowseIndexer extends StatelessWidget {
             parameters: {'id': id.toString()},
           );
         else {
-          Config.index = HomePage.PROFILE;
+          Config.setIndex(HomePage.PROFILE);
           Get.until((route) => route.isFirst);
         }
         return;
@@ -89,8 +89,8 @@ class BrowseIndexer extends StatelessWidget {
 
   static void openEditPage(
     int id, [
-    EntryModel entry,
-    Function(ListStatus) fn,
+    EntryModel? entry,
+    Function(ListStatus?)? fn,
   ]) =>
       Get.toNamed(
         EditEntryPage.ROUTE,

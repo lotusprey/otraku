@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 
 class ExpandableField extends StatefulWidget {
-  final String text;
+  final String? text;
   final Function(String) onChanged;
 
   ExpandableField({
-    @required this.text,
-    @required this.onChanged,
+    required this.text,
+    required this.onChanged,
   });
 
   @override
@@ -15,7 +15,7 @@ class ExpandableField extends StatefulWidget {
 }
 
 class _ExpandableFieldState extends State<ExpandableField> {
-  TextEditingController _controller;
+  TextEditingController? _controller;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -43,7 +43,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 }

@@ -137,7 +137,7 @@ class Media extends ScrollxController {
   final int id;
   Media(this.id);
 
-  MediaModel _model;
+  MediaModel? _model;
   final _tab = OVERVIEW.obs;
   final _relationsTab = REL_MEDIA.obs;
   final _staffLanguage = 'Japanese'.obs;
@@ -150,22 +150,22 @@ class Media extends ScrollxController {
   int get relationsTab => _relationsTab();
   set relationsTab(final int val) {
     _relationsTab.value = val;
-    if (val == REL_CHARACTERS && _model.characters.items.isEmpty)
+    if (val == REL_CHARACTERS && _model!.characters!.items.isEmpty)
       fetchRelationPage(true);
-    else if (val == REL_STAFF && _model.staff.items.isEmpty)
+    else if (val == REL_STAFF && _model!.staff!.items.isEmpty)
       fetchRelationPage(false);
   }
 
   bool get isLoading => _isLoading;
 
-  MediaModel get model => _model;
+  MediaModel? get model => _model;
 
-  String get staffLanguage => _staffLanguage();
+  String get staffLanguage => _staffLanguage()!;
   set staffLanguage(String value) => _staffLanguage.value = value;
 
   List<String> get availableLanguages => [..._availableLanguages];
   int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage());
+    final index = _availableLanguages.indexOf(_staffLanguage()!);
     if (index != -1) return index;
     return 0;
   }
@@ -192,44 +192,44 @@ class Media extends ScrollxController {
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
-    if (ofCharacters && !_model.characters.hasNextPage) return;
-    if (!ofCharacters && !_model.staff.hasNextPage) return;
+    if (ofCharacters && !_model!.characters!.hasNextPage!) return;
+    if (!ofCharacters && !_model!.staff!.hasNextPage!) return;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
-      'characterPage': _model.characters.nextPage,
-      'staffPage': _model.staff.nextPage,
+      'characterPage': _model!.characters!.nextPage,
+      'staffPage': _model!.staff!.nextPage,
     });
 
     if (result == null) return;
     if (ofCharacters)
-      _model.addCharacters(result['Media'], _availableLanguages);
+      _model!.addCharacters(result['Media'], _availableLanguages);
     else
-      _model.addStaff(result['Media']);
+      _model!.addStaff(result['Media']);
     _isLoading = false;
   }
 
   Future<void> fetchReviewPage() async {
-    if (!_model.reviews.hasNextPage) return;
+    if (!_model!.reviews!.hasNextPage!) return;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withReviews': true,
-      'reviewPage': _model.reviews.nextPage,
+      'reviewPage': _model!.reviews!.nextPage,
     });
 
     if (result == null) return;
-    _model.addReviews(result['Media']);
+    _model!.addReviews(result['Media']);
     _isLoading = false;
   }
 
   Future<bool> toggleFavourite() async =>
       await Client.request(
-        _model.overview.browsable == Browsable.anime
+        _model!.overview.browsable == Browsable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': id},

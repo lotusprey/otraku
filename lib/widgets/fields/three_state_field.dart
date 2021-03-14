@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ThreeStateField extends StatefulWidget {
-  final String title;
+  final String? title;
   final int initialState;
   final Function(int) onChanged;
 
   ThreeStateField({
-    @required this.title,
-    @required this.initialState,
-    @required this.onChanged,
+    required this.title,
+    required this.initialState,
+    required this.onChanged,
   });
 
   @override
@@ -16,14 +16,14 @@ class ThreeStateField extends StatefulWidget {
 }
 
 class _ThreeStateFieldState extends State<ThreeStateField> {
-  int _state;
+  late int _state;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      title: Text(widget.title, style: Theme.of(context).textTheme.bodyText1),
+      title: Text(widget.title!, style: Theme.of(context).textTheme.bodyText1),
       trailing: Container(
         height: 30,
         width: 30,

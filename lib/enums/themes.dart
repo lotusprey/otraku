@@ -82,7 +82,7 @@ extension Style on Themes {
     },
   };
 
-  ThemeData get themeData => _buildTheme(_themes[this]);
+  ThemeData get themeData => _buildTheme(_themes[this]!);
 }
 
 ThemeData _buildTheme(Map<String, dynamic> theme) {
@@ -132,6 +132,12 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       overlayColor: (theme['accent'] as Color).withAlpha(20),
       activeTrackColor: theme['accent'],
       inactiveTrackColor: theme['primary'],
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: MaterialStateProperty.all(theme['accent']),
+      overlayColor: MaterialStateProperty.all(
+        (theme['accent'] as Color).withAlpha(20),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,

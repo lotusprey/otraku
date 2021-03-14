@@ -15,8 +15,8 @@ import 'package:otraku/widgets/fields/two_state_field.dart';
 
 class Sheet extends StatelessWidget {
   static void show({
-    @required BuildContext ctx,
-    @required Widget sheet,
+    required BuildContext ctx,
+    required Widget sheet,
     bool isScrollControlled = false,
   }) =>
       showModalBottomSheet(
@@ -27,11 +27,11 @@ class Sheet extends StatelessWidget {
       );
 
   final Widget child;
-  final double height;
-  final Function onDone;
+  final double? height;
+  final Function? onDone;
 
   Sheet({
-    @required this.child,
+    required this.child,
     this.height,
     this.onDone,
   });
@@ -60,7 +60,7 @@ class Sheet extends StatelessWidget {
           if (onDone != null)
             TextButton.icon(
               onPressed: () {
-                onDone();
+                onDone!();
                 Navigator.pop(context);
               },
               icon: Icon(
@@ -83,10 +83,10 @@ class OptionSheet extends StatelessWidget {
   final Function(int) onTap;
 
   OptionSheet({
-    @required this.title,
-    @required this.options,
-    @required this.index,
-    @required this.onTap,
+    required this.title,
+    required this.options,
+    required this.index,
+    required this.onTap,
   });
 
   @override
@@ -135,18 +135,18 @@ class OptionSheet extends StatelessWidget {
 }
 
 class SelectionSheet<T> extends StatelessWidget {
-  final List<String> options;
+  final List<String?> options;
   final List<T> values;
   final List<T> inclusive;
-  final List<T> exclusive;
-  final Function(List<T>, List<T>) onDone;
+  final List<T>? exclusive;
+  final Function(List<T>, List<T>?) onDone;
   final bool fixHeight;
 
   SelectionSheet({
-    @required this.onDone,
-    @required this.options,
-    @required this.values,
-    @required this.inclusive,
+    required this.onDone,
+    required this.options,
+    required this.values,
+    required this.inclusive,
     this.exclusive,
     this.fixHeight = false,
   });
@@ -175,17 +175,17 @@ class SelectionSheet<T> extends StatelessWidget {
                   title: options[index],
                   initialState: inclusive.contains(values[index])
                       ? 1
-                      : exclusive.contains(values[index])
+                      : exclusive!.contains(values[index])
                           ? 2
                           : 0,
                   onChanged: (state) {
                     if (state == 0) {
-                      exclusive.remove(values[index]);
+                      exclusive!.remove(values[index]);
                     } else if (state == 1) {
                       inclusive.add(values[index]);
                     } else {
                       inclusive.remove(values[index]);
-                      exclusive.add(values[index]);
+                      exclusive!.add(values[index]);
                     }
                   },
                 ),
@@ -197,16 +197,16 @@ class SelectionSheet<T> extends StatelessWidget {
 }
 
 class _SortSheet extends StatelessWidget {
-  final List<String> options;
-  final int index;
+  final List<String?> options;
+  final int? index;
   final bool desc;
   final Function(int, bool) onTap;
 
   _SortSheet({
-    @required this.options,
-    @required this.index,
-    @required this.desc,
-    @required this.onTap,
+    required this.options,
+    required this.index,
+    required this.desc,
+    required this.onTap,
   });
 
   @override
@@ -236,7 +236,7 @@ class _SortSheet extends StatelessWidget {
                 itemBuilder: (_, i) => ListTile(
                   dense: true,
                   title: Text(
-                    options[i],
+                    options[i]!,
                     style: i != index
                         ? Theme.of(context).textTheme.bodyText1
                         : Theme.of(context).textTheme.bodyText2,
@@ -299,7 +299,7 @@ class _SortSheet extends StatelessWidget {
 }
 
 class CollectionSortSheet extends StatelessWidget {
-  final String collectionTag;
+  final String? collectionTag;
 
   CollectionSortSheet(this.collectionTag);
 
@@ -311,7 +311,7 @@ class CollectionSortSheet extends StatelessWidget {
     final currentIndex = mediaSort.index ~/ 2;
     final currentlyDesc = mediaSort.index % 2 == 0 ? false : true;
 
-    List<String> options = [];
+    List<String?> options = [];
     for (int i = 0; i < ListSort.values.length; i += 2) {
       options.add(Convert.clarifyEnum(describeEnum(ListSort.values[i])));
     }
@@ -334,7 +334,7 @@ class CollectionSortSheet extends StatelessWidget {
 }
 
 class MediaSortSheet extends StatelessWidget {
-  final MediaSort initial;
+  final MediaSort? initial;
   final Function(MediaSort) onTap;
 
   MediaSortSheet(this.initial, this.onTap);
@@ -342,7 +342,7 @@ class MediaSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final length = MediaSort.values.length;
-    final prefTitle = Get.find<Viewer>().settings.titleLanguage;
+    final prefTitle = Get.find<Viewer>().settings!.titleLanguage!;
     MediaSort titleAsc;
     MediaSort titleDesc;
 
@@ -357,14 +357,14 @@ class MediaSortSheet extends StatelessWidget {
       titleDesc = MediaSort.values[length - 5];
     }
 
-    int currentIndex = initial.index ~/ 2;
-    bool currentlyDesc = initial.index % 2 == 0 ? false : true;
+    int currentIndex = initial!.index ~/ 2;
+    bool currentlyDesc = initial!.index % 2 == 0 ? false : true;
 
     if (currentIndex > (length - 5) ~/ 2) {
       currentIndex = (length - 6) ~/ 2;
     }
 
-    List<String> options = [];
+    List<String?> options = [];
     for (int i = 0; i < length - 6; i += 2) {
       options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i])));
     }

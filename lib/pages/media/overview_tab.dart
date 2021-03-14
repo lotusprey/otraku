@@ -129,13 +129,13 @@ class OverviewTab extends StatelessWidget {
               ),
             ),
           ),
-          if (overview.genres != null && overview.genres.isNotEmpty)
+          if (overview.genres.isNotEmpty)
             _ScrollCards(
               title: 'Genres',
               items: overview.genres,
               onTap: (index) {
                 final explorable = Get.find<Explorer>();
-                explorable.search = null;
+                explorable.search = '';
                 explorable.clearAllFilters(update: false);
                 explorable.setFilterWithKey(
                   Filterable.SORT,
@@ -146,30 +146,30 @@ class OverviewTab extends StatelessWidget {
                   value: [overview.genres[index]],
                 );
                 explorable.type = overview.browsable;
-                Config.index = HomePage.EXPLORE;
+                Config.setIndex(HomePage.EXPLORE);
                 Get.until((route) => route.isFirst);
               },
               onLongTap: (index) => Clipboard.setData(
                 ClipboardData(text: overview.genres[index]),
               ),
             ),
-          if (overview.studios != null && overview.studios.isNotEmpty)
+          if (overview.studios.isNotEmpty)
             _ScrollCards(
               title: 'Studios',
               items: overview.studios.keys.toList(),
               onTap: (index) => BrowseIndexer.openPage(
-                id: overview.studios[overview.studios.keys.elementAt(index)],
+                id: overview.studios[overview.studios.keys.elementAt(index)]!,
                 imageUrl: overview.studios.keys.elementAt(index),
                 browsable: Browsable.studio,
               ),
             ),
-          if (overview.producers != null && overview.producers.isNotEmpty)
+          if (overview.producers.isNotEmpty)
             _ScrollCards(
               title: 'Producers',
               items: overview.producers.keys.toList(),
               onTap: (index) => BrowseIndexer.openPage(
                 id: overview
-                    .producers[overview.producers.keys.elementAt(index)],
+                    .producers[overview.producers.keys.elementAt(index)]!,
                 imageUrl: overview.producers.keys.elementAt(index),
                 browsable: Browsable.studio,
               ),
@@ -181,7 +181,7 @@ class OverviewTab extends StatelessWidget {
             _Tiles('English', [overview.englishTitle]),
           if (overview.nativeTitle != null)
             _Tiles('Native', [overview.nativeTitle]),
-          if (overview.synonyms != null && overview.synonyms.isNotEmpty)
+          if (overview.synonyms.isNotEmpty)
             _Tiles('Synonyms', overview.synonyms),
         ],
       ),
@@ -191,14 +191,14 @@ class OverviewTab extends StatelessWidget {
 
 class _ScrollCards extends StatelessWidget {
   final String title;
-  final List<String> items;
+  final List<String?> items;
   final Function(int) onTap;
-  final Function(int) onLongTap;
+  final Function(int)? onLongTap;
 
   _ScrollCards({
-    @required this.title,
-    @required this.items,
-    @required this.onTap,
+    required this.title,
+    required this.items,
+    required this.onTap,
     this.onLongTap,
   });
 
@@ -233,7 +233,7 @@ class _ScrollCards extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                   ),
                   child: Text(
-                    items[index],
+                    items[index]!,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ),
@@ -249,7 +249,7 @@ class _ScrollCards extends StatelessWidget {
 
 class _Tiles extends StatelessWidget {
   final String title;
-  final List<String> items;
+  final List<String?> items;
 
   _Tiles(this.title, this.items);
 
@@ -273,7 +273,7 @@ class _Tiles extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
               ),
               child: Text(
-                items[index],
+                items[index]!,
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ),

@@ -11,8 +11,8 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class StaffPage extends StatelessWidget {
   static const ROUTE = '/staff';
 
-  final int id;
-  final String imageUrl;
+  final int? id;
+  final String? imageUrl;
 
   StaffPage(this.id, this.imageUrl);
 
@@ -45,14 +45,15 @@ class StaffPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (staff.characterList.items.isNotEmpty &&
-                          staff.roleList.items.isNotEmpty)
+                      if (staff.characterList!.items.isNotEmpty &&
+                          staff.roleList!.items.isNotEmpty)
                         BubbleTabs(
                           options: const ['Characters', 'Staff Roles'],
                           values: const [true, false],
                           initial: true,
-                          onNewValue: (value) => staff.onCharacters = value,
-                          onSameValue: (_) {},
+                          onNewValue: (dynamic value) =>
+                              staff.onCharacters = value,
+                          onSameValue: (dynamic _) {},
                         )
                       else
                         const SizedBox(),
@@ -89,7 +90,7 @@ class StaffPage extends StatelessWidget {
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
                 sliver: ConnectionsGrid(
-                  connections: connectionList.items,
+                  connections: connectionList.items.cast(),
                   loadMore: staff.fetchPage,
                 ),
               );

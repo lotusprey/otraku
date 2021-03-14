@@ -71,7 +71,7 @@ class ReviewGrid extends StatelessWidget {
                                 children: [
                                   Expanded(
                                     child: Text(
-                                      results[index].text2,
+                                      results[index].text2!,
                                       style:
                                           Theme.of(context).textTheme.subtitle1,
                                       overflow: TextOverflow.fade,
@@ -87,7 +87,7 @@ class ReviewGrid extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    results[index].text3,
+                                    results[index].text3!,
                                     style:
                                         Theme.of(context).textTheme.subtitle1,
                                   ),

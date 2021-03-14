@@ -11,8 +11,8 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 class ReviewPage extends StatelessWidget {
   static const ROUTE = '/review';
 
-  final int id;
-  final String bannerUrl;
+  final int? id;
+  final String? bannerUrl;
 
   ReviewPage(this.id, this.bannerUrl);
 
@@ -23,14 +23,14 @@ class ReviewPage extends StatelessWidget {
           child: GetBuilder<Review>(
               tag: id.toString(),
               builder: (review) {
-                final data = review.data;
+                final data = review.model;
                 return CustomScrollView(
                   physics: Config.PHYSICS,
                   slivers: [
                     CustomSliverHeader(
                       height: 150,
                       background: Hero(
-                        tag: id,
+                        tag: id!,
                         child: bannerUrl != null
                             ? FadeImage(bannerUrl)
                             : const SizedBox(),
@@ -49,12 +49,12 @@ class ReviewPage extends StatelessWidget {
                           delegate: SliverChildListDelegate.fixed([
                             GestureDetector(
                               onTap: () => BrowseIndexer.openPage(
-                                id: data.mediaId,
+                                id: data.mediaId!,
                                 imageUrl: data.mediaCover,
                                 browsable: data.browsable,
                               ),
                               child: Text(
-                                data.mediaTitle,
+                                data.mediaTitle!,
                                 style: Theme.of(context).textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
@@ -62,7 +62,7 @@ class ReviewPage extends StatelessWidget {
                             const SizedBox(height: 5),
                             GestureDetector(
                               onTap: () => BrowseIndexer.openPage(
-                                id: data.userId,
+                                id: data.userId!,
                                 imageUrl: data.userAvatar,
                                 browsable: Browsable.user,
                               ),
@@ -84,7 +84,7 @@ class ReviewPage extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Text(
-                                data.summary,
+                                data.summary!,
                                 style: Theme.of(context).textTheme.subtitle1,
                                 textAlign: TextAlign.center,
                               ),

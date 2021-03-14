@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class SwitchTile extends StatefulWidget {
   final String title;
-  final bool initialValue;
+  final bool? initialValue;
   final Function(bool) onChanged;
 
   SwitchTile({
-    @required this.title,
-    @required this.initialValue,
-    @required this.onChanged,
+    required this.title,
+    required this.initialValue,
+    required this.onChanged,
   });
 
   @override
@@ -16,7 +16,7 @@ class SwitchTile extends StatefulWidget {
 }
 
 class _SwitchTileState extends State<SwitchTile> {
-  bool _value;
+  bool? _value;
 
   @override
   Widget build(BuildContext context) => SwitchListTile.adaptive(
@@ -25,7 +25,7 @@ class _SwitchTileState extends State<SwitchTile> {
           widget.title,
           style: Theme.of(context).textTheme.bodyText1,
         ),
-        value: _value,
+        value: _value!,
         onChanged: (val) {
           setState(() => _value = val);
           widget.onChanged(val);

@@ -4,25 +4,25 @@ import 'package:otraku/enums/list_status.dart';
 
 class EntryModel {
   final int mediaId;
-  final int entryId;
-  final String type;
-  ListStatus status;
+  final int? entryId;
+  final String? type;
+  ListStatus? status;
   int progress;
-  final int progressMax;
+  final int? progressMax;
   int progressVolumes;
-  final int progressVolumesMax;
+  final int? progressVolumesMax;
   double score;
   int repeat;
-  String notes;
-  DateTime startedAt;
-  DateTime completedAt;
+  String? notes;
+  DateTime? startedAt;
+  DateTime? completedAt;
   bool private;
   bool hiddenFromStatusLists;
   Map<String, bool> customLists;
 
   EntryModel._({
-    @required this.mediaId,
-    @required this.type,
+    required this.mediaId,
+    required this.type,
     this.entryId,
     this.status,
     this.progress = 0,
@@ -36,7 +36,7 @@ class EntryModel {
     this.completedAt,
     this.private = false,
     this.hiddenFromStatusLists = false,
-    this.customLists,
+    this.customLists = const {},
   });
 
   factory EntryModel(Map<String, dynamic> map) {
@@ -91,12 +91,12 @@ class EntryModel {
         notes: copy.notes,
         startedAt: copy.startedAt != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                copy.startedAt.millisecondsSinceEpoch,
+                copy.startedAt!.millisecondsSinceEpoch,
               )
             : null,
         completedAt: copy.completedAt != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                copy.completedAt.millisecondsSinceEpoch,
+                copy.completedAt!.millisecondsSinceEpoch,
               )
             : null,
         private: copy.private,

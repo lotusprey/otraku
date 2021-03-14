@@ -16,9 +16,9 @@ class MediaModel {
   final _staff = Rx(PageModel<Connection>([], true, 1));
   final _reviews = Rx(PageModel<RelatedReviewModel>([], true, 1));
 
-  PageModel get characters => _characters();
-  PageModel get staff => _staff();
-  PageModel get reviews => _reviews();
+  PageModel? get characters => _characters();
+  PageModel? get staff => _staff();
+  PageModel? get reviews => _reviews();
 
   MediaModel._(
     this.overview,
@@ -40,7 +40,7 @@ class MediaModel {
 
   void addCharacters(
     final Map<String, dynamic> map,
-    final List<String> availableLanguages,
+    final List<String?> availableLanguages,
   ) {
     final List<Connection> items = [];
     for (final connection in map['characters']['edges']) {
@@ -69,7 +69,7 @@ class MediaModel {
       ));
     }
     _characters.update(
-      (c) => c.append(items, map['characters']['pageInfo']['hasNextPage']),
+      (c) => c!.append(items, map['characters']['pageInfo']['hasNextPage']),
     );
   }
 
@@ -84,7 +84,7 @@ class MediaModel {
         browsable: Browsable.staff,
       ));
     _staff.update(
-      (s) => s.append(items, map['staff']['pageInfo']['hasNextPage']),
+      (s) => s!.append(items, map['staff']['pageInfo']['hasNextPage']),
     );
   }
 
@@ -92,7 +92,7 @@ class MediaModel {
     final List<RelatedReviewModel> items = [];
     for (final r in map['reviews']['nodes']) items.add(RelatedReviewModel(r));
     _reviews.update(
-      (r) => r.append(items, map['reviews']['pageInfo']['hasNextPage']),
+      (r) => r!.append(items, map['reviews']['pageInfo']['hasNextPage']),
     );
   }
 }

@@ -5,9 +5,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double CUSTOM_APP_BAR_HEIGHT = 50;
 
   final IconData leading;
-  final String title;
-  final Widget titleWidget;
-  final List<Widget> trailing;
+  final String? title;
+  final Widget? titleWidget;
+  final List<Widget>? trailing;
   final bool wrapTrailing;
 
   CustomAppBar({
@@ -45,9 +45,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             )),
             Expanded(
               child: titleWidget != null
-                  ? titleWidget
+                  ? titleWidget!
                   : Text(
-                      title,
+                      title!,
                       style: Theme.of(context).textTheme.headline2,
                     ),
             ),
@@ -55,8 +55,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
                     children: wrapTrailing
-                        ? trailing.map((t) => AppBarIcon(t)).toList()
-                        : trailing)
+                        ? trailing!.map((t) => AppBarIcon(t)).toList()
+                        : trailing!)
                 : const SizedBox(),
           ],
         ),

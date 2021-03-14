@@ -16,19 +16,19 @@ class AppSettingsTab extends StatelessWidget {
           Row(
             children: [
               Flexible(
-                child: DropDownField(
+                child: DropDownField<int>(
                   title: 'Theme',
                   initialValue: Config.storage.read(Config.THEME_MODE) ?? 0,
                   items: {'Auto': 0, 'Light': 1, 'Dark': 2},
-                  onChanged: (value) {
-                    Config.storage.write(Config.THEME_MODE, value);
+                  onChanged: (val) {
+                    Config.storage.write(Config.THEME_MODE, val);
                     Config.updateTheme();
                   },
                 ),
               ),
               const SizedBox(width: 10),
               Flexible(
-                child: DropDownField(
+                child: DropDownField<int>(
                   title: 'Startup Page',
                   initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
                       HomePage.ANIME_LIST,
@@ -80,18 +80,18 @@ class AppSettingsTab extends StatelessWidget {
 }
 
 class _Radio extends StatefulWidget {
-  final List<String> options;
+  final List<String?> options;
   final int leftValue;
   final int rightValue;
   final Function(int) onChangedLeft;
   final Function(int) onChangedRight;
 
   _Radio({
-    @required this.options,
-    @required this.leftValue,
-    @required this.rightValue,
-    @required this.onChangedLeft,
-    @required this.onChangedRight,
+    required this.options,
+    required this.leftValue,
+    required this.rightValue,
+    required this.onChangedLeft,
+    required this.onChangedRight,
   });
 
   @override
@@ -99,8 +99,8 @@ class _Radio extends StatefulWidget {
 }
 
 class __RadioState extends State<_Radio> {
-  int _leftValue;
-  int _rightValue;
+  int? _leftValue;
+  int? _rightValue;
 
   @override
   Widget build(BuildContext context) {
@@ -113,24 +113,22 @@ class __RadioState extends State<_Radio> {
           Radio(
             value: index,
             groupValue: _leftValue,
-            onChanged: (_) {
+            onChanged: (dynamic _) {
               widget.onChangedLeft(index);
               setState(() => _leftValue = index);
             },
-            activeColor: Theme.of(context).accentColor,
           ),
           Text(
-            widget.options[index],
+            widget.options[index]!,
             style: Theme.of(context).textTheme.bodyText1,
           ),
           Radio(
             value: index,
             groupValue: _rightValue,
-            onChanged: (_) {
+            onChanged: (dynamic _) {
               widget.onChangedRight(index);
               setState(() => _rightValue = index);
             },
-            activeColor: Theme.of(context).accentColor,
           ),
         ],
       ),

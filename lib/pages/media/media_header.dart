@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -8,19 +9,19 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaHeader extends StatefulWidget {
   final Media media;
-  final String imageUrl;
+  final String? imageUrl;
   final double coverWidth;
   final double coverHeight;
   final double bannerHeight;
   final double height;
 
   MediaHeader({
-    @required this.media,
-    @required this.imageUrl,
-    @required this.coverWidth,
-    @required this.coverHeight,
-    @required this.bannerHeight,
-    @required this.height,
+    required this.media,
+    required this.imageUrl,
+    required this.coverWidth,
+    required this.coverHeight,
+    required this.bannerHeight,
+    required this.height,
   });
 
   @override
@@ -48,7 +49,9 @@ class _MediaHeaderState extends State<MediaHeader> {
                 tooltip: 'Favourite',
                 onPressed: _toggleFavourite,
                 icon: Icon(
-                  overview.isFavourite ? Icons.favorite : Icons.favorite_border,
+                  overview.isFavourite!
+                      ? Icons.favorite
+                      : Icons.favorite_border,
                   color: Theme.of(context).dividerColor,
                 ),
               ),
@@ -66,7 +69,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                     Container(color: Theme.of(context).primaryColor),
                     if (overview?.banner != null)
                       FadeImage(
-                        overview.banner,
+                        overview!.banner,
                         height: widget.bannerHeight,
                       ),
                   ],
@@ -110,11 +113,11 @@ class _MediaHeaderState extends State<MediaHeader> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.network(widget.imageUrl, fit: BoxFit.cover),
+                      Image.network(widget.imageUrl!, fit: BoxFit.cover),
                       if (overview != null)
                         GestureDetector(
                           child: Image.network(
-                            overview.cover,
+                            overview.cover!,
                             fit: BoxFit.cover,
                           ),
                           onTap: () => showDialog(
@@ -123,7 +126,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                               ImageTextDialog(
                                 text: overview.preferredTitle,
                                 image: Image.network(
-                                  overview.cover,
+                                  overview.cover!,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -145,7 +148,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                     Flexible(
                       flex: 2,
                       child: Text(
-                        overview.preferredTitle,
+                        overview.preferredTitle!,
                         style: Theme.of(context).textTheme.headline2,
                         overflow: TextOverflow.fade,
                       ),
@@ -189,7 +192,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                   horizontal: 10,
                                 ),
                                 child: Icon(
-                                  overview.isFavourite
+                                  overview.isFavourite!
                                       ? Icons.favorite
                                       : Icons.favorite_border,
                                 ),
@@ -214,16 +217,16 @@ class _MediaHeaderState extends State<MediaHeader> {
   }
 
   void _edit() => BrowseIndexer.openEditPage(
-        widget.media.model.overview.id,
-        widget.media.model.entry,
-        (status) =>
-            setState(() => widget.media.model.overview.entryStatus = status),
+        widget.media.model!.overview.id!,
+        widget.media.model!.entry,
+        (ListStatus? status) =>
+            setState(() => widget.media.model!.overview.entryStatus = status),
       );
 
   void _toggleFavourite() => widget.media.toggleFavourite().then((ok) => ok
       ? setState(
-          () => widget.media.model.overview.isFavourite =
-              !widget.media.model.overview.isFavourite,
+          () => widget.media.model!.overview.isFavourite =
+              !widget.media.model!.overview.isFavourite!,
         )
       : null);
 }

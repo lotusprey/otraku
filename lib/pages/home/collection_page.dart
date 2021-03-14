@@ -10,14 +10,14 @@ import 'package:otraku/widgets/navigation/headline_header.dart';
 class CollectionPage extends StatelessWidget {
   static const ROUTE = '/collection';
 
-  final int otherUserId;
-  final bool ofAnime;
-  final String collectionTag;
+  final int? otherUserId;
+  final bool? ofAnime;
+  final String? collectionTag;
 
   CollectionPage({
-    @required this.otherUserId,
-    @required this.ofAnime,
-    @required this.collectionTag,
+    required this.otherUserId,
+    required this.ofAnime,
+    required this.collectionTag,
   });
 
   @override
@@ -38,15 +38,15 @@ class CollectionPage extends StatelessWidget {
 }
 
 class CollectionTab extends StatelessWidget {
-  final int otherUserId;
-  final bool ofAnime;
-  final String collectionTag;
+  final int? otherUserId;
+  final bool? ofAnime;
+  final String? collectionTag;
 
   CollectionTab({
-    @required this.otherUserId,
-    @required this.ofAnime,
-    @required this.collectionTag,
-    @required key,
+    required this.otherUserId,
+    required this.ofAnime,
+    required this.collectionTag,
+    required key,
   }) : super(key: key);
 
   @override
@@ -57,7 +57,7 @@ class CollectionTab extends StatelessWidget {
         controller: Get.find<Collection>(tag: collectionTag).scrollCtrl,
         slivers: [
           HeadlineHeader(
-            '${ofAnime ? 'Anime' : 'Manga'} List',
+            '${ofAnime! ? 'Anime' : 'Manga'} List',
             otherUserId != null,
           ),
           MediaControlHeader(collectionTag),

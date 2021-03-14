@@ -1,25 +1,24 @@
-import 'package:flutter/material.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ReplyModel {
-  final int id;
-  final int userId;
-  final String userName;
-  final String userImage;
-  final String text;
+  final int? id;
+  final int? userId;
+  final String? userName;
+  final String? userImage;
+  final String? text;
   final String createdAt;
-  int _likeCount;
-  bool _isLiked;
+  int? _likeCount;
+  bool? _isLiked;
 
   ReplyModel._({
-    @required this.id,
-    @required this.userId,
-    @required this.userName,
-    @required this.userImage,
-    @required this.text,
-    @required this.createdAt,
-    @required likes,
-    @required liked,
+    required this.id,
+    required this.userId,
+    required this.userName,
+    required this.userImage,
+    required this.text,
+    required this.createdAt,
+    required likes,
+    required liked,
   }) {
     _likeCount = likes;
     _isLiked = liked;
@@ -36,8 +35,8 @@ class ReplyModel {
         createdAt: Convert.millisecondsToTimeString(map['createdAt']),
       );
 
-  int get likeCount => _likeCount;
-  bool get isLiked => _isLiked;
+  int? get likeCount => _likeCount;
+  bool? get isLiked => _isLiked;
 
   void toggleLike(final Map<String, dynamic> map) {
     _likeCount = map['likeCount'];

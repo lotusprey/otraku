@@ -101,8 +101,8 @@ class Explorer extends ScrollxController implements Filterable {
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
   int _concurrentFetches = 0;
-  List<String> _genres;
-  Map<String, String> _tags;
+  List<String>? _genres;
+  Map<String?, String?>? _tags;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
@@ -114,26 +114,25 @@ class Explorer extends ScrollxController implements Filterable {
   // GETTERS
   // ***************************************************************************
 
-  bool get isLoading => _isLoading();
+  bool get isLoading => _isLoading()!;
 
-  bool get hasNextPage => _hasNextPage();
+  bool get hasNextPage => _hasNextPage()!;
 
-  Browsable get type => _type();
+  Browsable get type => _type()!;
 
-  String get search => _search();
+  String get search => _search()!;
 
   List<BrowseResultModel> get results => [..._results()];
 
-  List<String> get genres => [..._genres];
+  List<String> get genres => [..._genres!];
 
-  Map<String, String> get tags => _tags;
+  Map<String, String>? get tags => _tags as Map<String, String>?;
 
   // ***************************************************************************
   // FUNCTIONS CONTROLLING QUERY VARIABLES
   // ***************************************************************************
 
   set type(Browsable value) {
-    if (value == null) return;
     _type.value = value;
 
     if (value == Browsable.anime) _filters[Filterable.TYPE] = 'ANIME';
@@ -143,13 +142,7 @@ class Explorer extends ScrollxController implements Filterable {
     fetch();
   }
 
-  set search(String value) {
-    if (value == null) {
-      _search.value = '';
-    } else {
-      _search.value = value.trim();
-    }
-  }
+  set search(String value) => _search.value = value.trim();
 
   @override
   dynamic getFilterWithKey(String key) => _filters[key];
@@ -216,7 +209,7 @@ class Explorer extends ScrollxController implements Filterable {
     }
 
     String query;
-    switch (_type.value) {
+    switch (_type.value!) {
       case Browsable.anime:
       case Browsable.manga:
         query = _mediaQuery;
@@ -238,7 +231,7 @@ class Explorer extends ScrollxController implements Filterable {
         break;
     }
 
-    Map<String, dynamic> data = await Client.request(
+    Map<String, dynamic>? data = await Client.request(
       query,
       {..._filters, if (_search() != '') 'search': _search()},
       popOnErr: false,
@@ -248,7 +241,7 @@ class Explorer extends ScrollxController implements Filterable {
     if (data == null || _concurrentFetches > 0) return;
 
     data = data['Page'];
-    _hasNextPage.value = data['pageInfo']['hasNextPage'];
+    _hasNextPage.value = data!['pageInfo']['hasNextPage'];
 
     final List<BrowseResultModel> items = [];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
@@ -318,9 +311,9 @@ class Explorer extends ScrollxController implements Filterable {
 
     _tags = {};
     for (final tag in data['MediaTagCollection'])
-      _tags[tag['name']] = tag['description'];
+      _tags![tag['name']] = tag['description'];
 
-    List<BrowseResultModel> loaded = [];
+    final loaded = <BrowseResultModel>[];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
     for (final a in data['Page']['media']) {
@@ -337,6 +330,7 @@ class Explorer extends ScrollxController implements Filterable {
     super.onInit();
     fetchInitial();
     _search.firstRebuild = false;
-    debounce(_search, (_) => fetch(), time: const Duration(milliseconds: 600));
+    debounce(_search, (dynamic _) => fetch(),
+        time: const Duration(milliseconds: 600));
   }
 }

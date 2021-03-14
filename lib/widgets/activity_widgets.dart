@@ -25,7 +25,7 @@ class UserActivity extends StatelessWidget {
         Row(
           children: [
             BrowseIndexer(
-              id: activity.agentId,
+              id: activity.agentId!,
               imageUrl: activity.agentImage,
               browsable: Browsable.user,
               child: Row(
@@ -41,7 +41,7 @@ class UserActivity extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    activity.agentName,
+                    activity.agentName!,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ],
@@ -53,7 +53,7 @@ class UserActivity extends StatelessWidget {
                 child: Icon(Icons.arrow_right_alt),
               ),
               BrowseIndexer(
-                id: activity.recieverId,
+                id: activity.recieverId!,
                 imageUrl: activity.recieverImage,
                 browsable: Browsable.user,
                 child: ClipRRect(
@@ -103,9 +103,9 @@ class ActivityBox extends StatelessWidget {
           if (activity.type == ActivityType.ANIME_LIST ||
               activity.type == ActivityType.MANGA_LIST)
             BrowseIndexer(
-              id: activity.mediaId,
+              id: activity.mediaId!,
               imageUrl: activity.mediaImage,
-              browsable: activity.mediaType,
+              browsable: activity.mediaType!,
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: 108),
                 child: Row(
@@ -146,7 +146,7 @@ class ActivityBox extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(top: 5),
                               child: Text(
-                                activity.mediaFormat,
+                                activity.mediaFormat!,
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             ),
@@ -227,7 +227,7 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: !widget.activity.isLiked ? 'Like' : 'Unlike',
+      message: !widget.activity.isLiked! ? 'Like' : 'Unlike',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Activity.toggleActivityLike(widget.activity)
@@ -236,19 +236,20 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
           children: [
             Text(
               widget.activity.likeCount.toString(),
-              style: !widget.activity.isLiked
+              style: !widget.activity.isLiked!
                   ? Theme.of(context).textTheme.subtitle2
                   : Theme.of(context)
                       .textTheme
-                      .subtitle2
+                      .subtitle2!
                       .copyWith(color: Theme.of(context).errorColor),
             ),
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
               size: Style.ICON_SMALL,
-              color:
-                  widget.activity.isLiked ? Theme.of(context).errorColor : null,
+              color: widget.activity.isLiked!
+                  ? Theme.of(context).errorColor
+                  : null,
             ),
           ],
         ),
@@ -269,12 +270,12 @@ class _SubscribeIconState extends State<_SubscribeIcon> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: !widget.activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+      message: !widget.activity.isSubscribed! ? 'Subscribe' : 'Unsubscribe',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Activity.toggleSubscription(widget.activity)
             .then((_) => setState(() {})),
-        child: !widget.activity.isSubscribed
+        child: !widget.activity.isSubscribed!
             ? Icon(
                 Icons.notifications,
                 size: Style.ICON_SMALL,

@@ -111,15 +111,15 @@ class Collection extends ScrollxController implements Filterable {
   // DATA
   // ***************************************************************************
 
-  final int userId;
+  final int? userId;
   final bool ofAnime;
   final _lists = <CollectionListModel>[];
   final _entries = <ListEntryModel>[].obs;
   final _listIndex = 0.obs;
-  final Map<String, dynamic> _filters = {};
+  final _filters = <String, dynamic>{};
   final _isLoading = false.obs;
-  final List<String> _customListNames = [];
-  ScoreFormat _scoreFormat;
+  final _customListNames = <String>[];
+  ScoreFormat? _scoreFormat;
 
   Collection(this.userId, this.ofAnime);
 
@@ -127,13 +127,13 @@ class Collection extends ScrollxController implements Filterable {
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  bool get isLoading => _isLoading();
+  bool get isLoading => _isLoading()!;
   int get listIndex => _listIndex();
-  ScoreFormat get scoreFormat => _scoreFormat;
+  ScoreFormat? get scoreFormat => _scoreFormat;
   List<String> get customListNames => [..._customListNames];
   List<ListEntryModel> get entries => _entries();
-  String get currentName => _lists[_listIndex()].name;
-  ListStatus get listStatus => _lists[_listIndex()].status;
+  String? get currentName => _lists[_listIndex()].name;
+  ListStatus? get listStatus => _lists[_listIndex()].status;
   int get currentCount => _lists[_listIndex()].entries.length;
   bool get isEmpty => _entries.isEmpty;
   bool get isFullyEmpty => _lists.isEmpty;
@@ -158,7 +158,7 @@ class Collection extends ScrollxController implements Filterable {
 
   List<String> get names {
     List<String> n = [];
-    for (final list in _lists) n.add(list.name);
+    for (final list in _lists) n.add(list.name!);
     return n;
   }
 
@@ -174,7 +174,7 @@ class Collection extends ScrollxController implements Filterable {
 
   Future<void> fetch() async {
     _isLoading.value = true;
-    Map<String, dynamic> data = await Client.request(
+    Map<String, dynamic>? data = await Client.request(
       _collectionQuery,
       {
         'userId': userId ?? Client.viewerId,
@@ -191,9 +191,10 @@ class Collection extends ScrollxController implements Filterable {
     data = data['MediaListCollection'];
 
     final metaData = ofAnime
-        ? data['user']['mediaListOptions']['animeList']
-        : data['user']['mediaListOptions']['mangaList'];
-    final bool splitCompleted = metaData['splitCompletedSectionByFormat'];
+        ? data!['user']['mediaListOptions']['animeList']
+        : data!['user']['mediaListOptions']['mangaList'];
+    final bool splitCompleted =
+        metaData['splitCompletedSectionByFormat'] ?? false;
 
     _scoreFormat = Convert.stringToEnum(
       data['user']['mediaListOptions']['scoreFormat'],
@@ -266,7 +267,7 @@ class Collection extends ScrollxController implements Filterable {
     if (oldCustomLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < oldCustomLists.length; i++)
-          if (oldCustomLists[i] == list.name.toLowerCase()) {
+          if (oldCustomLists[i] == list.name!.toLowerCase()) {
             list.removeByMediaId(entry.mediaId);
             oldCustomLists.removeAt(i);
             break;
@@ -293,7 +294,7 @@ class Collection extends ScrollxController implements Filterable {
     if (newCustomLists.isNotEmpty) {
       for (final list in _lists)
         for (int i = 0; i < newCustomLists.length; i++)
-          if (newCustomLists[i] == list.name.toLowerCase()) {
+          if (newCustomLists[i] == list.name!.toLowerCase()) {
             list.insertSorted(entry, _filters[Filterable.SORT]);
             newCustomLists.removeAt(i);
             break;
@@ -331,8 +332,9 @@ class Collection extends ScrollxController implements Filterable {
     for (final list in _lists)
       if ((!entry.hiddenFromStatusLists &&
               entry.status == list.status &&
-              !list.isCustomList) ||
-          (list.isCustomList && customLists.contains(list.name.toLowerCase())))
+              !list.isCustomList!) ||
+          (list.isCustomList! &&
+              customLists.contains(list.name!.toLowerCase())))
         list.removeByMediaId(entry.mediaId);
 
     for (int i = 0; i < _lists.length; i++)
@@ -351,17 +353,17 @@ class Collection extends ScrollxController implements Filterable {
   void filter() {
     if (_lists.isEmpty) return;
 
-    final search = (_filters[Filterable.SEARCH] as String)?.toLowerCase();
+    final search = (_filters[Filterable.SEARCH] as String?)?.toLowerCase();
     final formatIn = _filters[Filterable.FORMAT_IN];
     final statusIn = _filters[Filterable.STATUS_IN];
-    final List<String> genreIn = _filters[Filterable.GENRE_IN];
-    final List<String> genreNotIn = _filters[Filterable.GENRE_NOT_IN];
+    final List<String>? genreIn = _filters[Filterable.GENRE_IN];
+    final List<String>? genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 
     final list = _lists[_listIndex()];
     final List<ListEntryModel> e = [];
 
     for (final entry in list.entries) {
-      if (search != null && !entry.title.toLowerCase().contains(search))
+      if (search != null && !entry.title!.toLowerCase().contains(search))
         continue;
 
       if (formatIn != null) {
@@ -409,7 +411,6 @@ class Collection extends ScrollxController implements Filterable {
 
     scrollTo(0);
     _entries.assignAll(e);
-    // [ERROR:flutter/lib/ui/ui_dart_state.cc(177)] Unhandled Exception: 'package:get/get_rx/src/rx_stream/get_stream.dart': Failed assertion: line 95 pos 12: '!isClosed': You cannot add event to closed Stream
   }
 
   @override

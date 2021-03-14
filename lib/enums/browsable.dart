@@ -22,5 +22,5 @@ extension BrowsableExtension on Browsable {
     Browsable.review: Icons.rate_review_outlined,
   };
 
-  IconData get icon => _icons[this];
+  IconData get icon => _icons[this]!;
 }

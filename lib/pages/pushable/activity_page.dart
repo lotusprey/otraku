@@ -16,7 +16,7 @@ import 'package:otraku/widgets/triangle_clip.dart';
 class ActivityPage extends StatelessWidget {
   static const ROUTE = '/activity';
 
-  final int id;
+  final int? id;
   ActivityPage(this.id);
 
   @override
@@ -31,14 +31,14 @@ class ActivityPage extends StatelessWidget {
                   ? Row(
                       children: [
                         BrowseIndexer(
-                          id: model.agentId,
+                          id: model.agentId!,
                           imageUrl: model.agentImage,
                           browsable: Browsable.user,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Hero(
-                                tag: model.agentId,
+                                tag: model.agentId!,
                                 child: ClipRRect(
                                   borderRadius: Config.BORDER_RADIUS,
                                   child: FadeImage(
@@ -50,7 +50,7 @@ class ActivityPage extends StatelessWidget {
                               ),
                               const SizedBox(width: 10),
                               Text(
-                                model.agentName,
+                                model.agentName!,
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                             ],
@@ -62,7 +62,7 @@ class ActivityPage extends StatelessWidget {
                             child: Icon(Icons.arrow_right_alt),
                           ),
                           BrowseIndexer(
-                            id: model.recieverId,
+                            id: model.recieverId!,
                             imageUrl: model.recieverImage,
                             browsable: Browsable.user,
                             child: ClipRRect(
@@ -137,7 +137,7 @@ class UserReply extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BrowseIndexer(
-          id: reply.userId,
+          id: reply.userId!,
           imageUrl: reply.userImage,
           browsable: Browsable.user,
           child: Row(
@@ -153,7 +153,7 @@ class UserReply extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                reply.userName,
+                reply.userName!,
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ],
@@ -213,7 +213,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: !widget.reply.isLiked ? 'Like' : 'Unlike',
+      message: !widget.reply.isLiked! ? 'Like' : 'Unlike',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () =>
@@ -222,18 +222,19 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
           children: [
             Text(
               widget.reply.likeCount.toString(),
-              style: !widget.reply.isLiked
+              style: !widget.reply.isLiked!
                   ? Theme.of(context).textTheme.subtitle2
                   : Theme.of(context)
                       .textTheme
-                      .subtitle2
+                      .subtitle2!
                       .copyWith(color: Theme.of(context).errorColor),
             ),
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
               size: Style.ICON_SMALL,
-              color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
+              color:
+                  widget.reply.isLiked! ? Theme.of(context).errorColor : null,
             ),
           ],
         ),

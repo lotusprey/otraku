@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 
 class Toast {
-  static OverlayEntry _entry;
+  static OverlayEntry? _entry;
   static bool _busy = false;
 
   static void show(final BuildContext ctx, final String text) {
@@ -26,7 +26,7 @@ class Toast {
       ),
     );
 
-    Overlay.of(ctx).insert(_entry);
+    Overlay.of(ctx)!.insert(_entry!);
 
     Future.delayed(const Duration(seconds: 2)).then((_) {
       if (!_busy) {

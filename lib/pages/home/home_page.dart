@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
             Icons.explore_outlined: 'Explore',
             FluentIcons.person_24_regular: 'Profile',
           },
-          onChanged: (page) => Config.index = page,
+          onChanged: (page) => Config.setIndex(page),
           initial: index,
         ),
         drawer: drawers[index],

@@ -65,22 +65,22 @@ class Character extends GetxController {
   final List<String> _availableLanguages = [];
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
-  PersonModel get person => _person();
+  PersonModel? get person => _person();
 
-  PageModel get anime => _anime();
+  PageModel? get anime => _anime();
 
-  PageModel get manga => _manga();
+  PageModel? get manga => _manga();
 
-  bool get onAnime => _onAnime();
+  bool get onAnime => _onAnime()!;
 
   set onAnime(bool value) => _onAnime.value = value;
 
-  String get staffLanguage => _staffLanguage();
+  String get staffLanguage => _staffLanguage()!;
 
   set staffLanguage(String value) => _staffLanguage.value = value;
 
   int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage());
+    final index = _availableLanguages.indexOf(_staffLanguage()!);
     if (index != -1) return index;
     return 0;
   }
@@ -114,12 +114,12 @@ class Character extends GetxController {
     final data = body['Character'];
     _person(PersonModel(data));
     _initLists(data);
-    if (_anime().items.isEmpty) _onAnime.value = false;
+    if (_anime()!.items.isEmpty) _onAnime.value = false;
   }
 
   Future<void> refetch() async {
     final body = await Client.request(_characterQuery, {
-      'id': _person().id,
+      'id': _person()!.id,
       'withAnime': true,
       'withManga': true,
       'sort': describeEnum(_sort),
@@ -131,15 +131,15 @@ class Character extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (_onAnime() && !_anime().hasNextPage) return;
-    if (!_onAnime() && !_manga().hasNextPage) return;
+    if (_onAnime()! && !_anime()!.hasNextPage!) return;
+    if (!_onAnime()! && !_manga()!.hasNextPage!) return;
 
     final body = await Client.request(_characterQuery, {
       'id': _id,
       'withAnime': _onAnime(),
-      'withManga': !_onAnime(),
-      'animePage': _anime().nextPage,
-      'mangaPage': _manga().nextPage,
+      'withManga': !_onAnime()!,
+      'animePage': _anime()!.nextPage,
+      'mangaPage': _manga()!.nextPage,
       'sort': describeEnum(_sort)
     });
 
@@ -148,7 +148,7 @@ class Character extends GetxController {
     final data = body['Character'];
 
     final List<Connection> connections = [];
-    if (_onAnime()) {
+    if (_onAnime()!) {
       for (final connection in data['anime']['edges']) {
         final List<Connection> voiceActors = [];
 
@@ -172,7 +172,7 @@ class Character extends GetxController {
       }
 
       _anime.update((media) {
-        media.append(connections, data['anime']['pageInfo']['hasNextPage']);
+        media!.append(connections, data['anime']['pageInfo']['hasNextPage']);
       });
     } else {
       for (final connection in data['manga']['edges'])
@@ -185,7 +185,7 @@ class Character extends GetxController {
         ));
 
       _manga.update((media) {
-        media.append(connections, data['manga']['pageInfo']['hasNextPage']);
+        media!.append(connections, data['manga']['pageInfo']['hasNextPage']);
       });
     }
   }
@@ -205,14 +205,14 @@ class Character extends GetxController {
   void _initLists(Map<String, dynamic> data) {
     _availableLanguages.clear();
 
-    List<Connection> connections = [];
+    final connections = <Connection>[];
     for (final connection in data['anime']['edges']) {
-      final List<Connection> voiceActors = [];
+      final voiceActors = <Connection>[];
 
       for (final va in connection['voiceActors']) {
         final language = Convert.clarifyEnum(va['language']);
         if (!_availableLanguages.contains(language))
-          _availableLanguages.add(language);
+          _availableLanguages.add(language!);
 
         voiceActors.add(Connection(
           id: va['id'],
@@ -238,7 +238,7 @@ class Character extends GetxController {
 
     _anime(PageModel(connections, data['anime']['pageInfo']['hasNextPage'], 2));
 
-    connections = [];
+    connections.clear();
     for (final connection in data['manga']['edges'])
       connections.add(Connection(
         id: connection['node']['id'],

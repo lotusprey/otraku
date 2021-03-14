@@ -14,8 +14,8 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class StudioPage extends StatelessWidget {
   static const ROUTE = '/studio';
 
-  final int id;
-  final String name;
+  final int? id;
+  final String? name;
 
   StudioPage(this.id, this.name);
 
@@ -29,8 +29,8 @@ class StudioPage extends StatelessWidget {
         bottom: false,
         child: Obx(
           () => NotificationListener(
-            onNotification: (notification) {
-              if (studio.media.hasNextPage &&
+            onNotification: (dynamic notification) {
+              if (studio.media!.hasNextPage &&
                   notification is ScrollNotification &&
                   notification.metrics.extentAfter <= 50 &&
                   notification.metrics.maxScrollExtent > extentOnLastCall) {
@@ -42,7 +42,7 @@ class StudioPage extends StatelessWidget {
             child: CustomScrollView(
               physics: Config.PHYSICS,
               semanticChildCount:
-                  studio.media != null ? studio.media.mediaCount : null,
+                  studio.media != null ? studio.media!.mediaCount : null,
               slivers: [
                 SliverPersistentHeader(
                   pinned: true,
@@ -80,30 +80,30 @@ class StudioPage extends StatelessWidget {
                       studio.sort == MediaSort.END_DATE ||
                       studio.sort == MediaSort.END_DATE_DESC) ...[
                     for (int i = 0;
-                        i < studio.media.categories.length;
+                        i < studio.media!.categories.length;
                         i++) ...[
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: Config.PADDING,
                           child: Text(
-                            studio.media.categories[i],
+                            studio.media!.categories[i],
                             style: Theme.of(context).textTheme.headline3,
                           ),
                         ),
                       ),
                       TileGrid(
-                        tileData: studio.media.split[i],
+                        tileData: studio.media!.split[i],
                         tileModel: Config.highTile,
                         loadMore: null,
                       ),
                     ],
                   ] else
                     TileGrid(
-                      tileData: studio.media.joined,
+                      tileData: studio.media!.joined,
                       loadMore: studio.fetchPage,
                       tileModel: Config.highTile,
                     ),
-                  if (studio.media != null && studio.media.hasNextPage)
+                  if (studio.media != null && studio.media!.hasNextPage)
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -128,9 +128,9 @@ class StudioPage extends StatelessWidget {
 }
 
 class _StudioHeader implements SliverPersistentHeaderDelegate {
-  final PersonModel company;
-  final int companyId;
-  final String name;
+  final PersonModel? company;
+  final int? companyId;
+  final String? name;
   final Future<bool> Function() toggleFavourite;
 
   _StudioHeader(this.company, this.companyId, this.name, this.toggleFavourite);
@@ -163,9 +163,9 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
             child: Align(
               alignment: Alignment.center,
               child: Hero(
-                tag: companyId,
+                tag: companyId!,
                 child: Text(
-                  name,
+                  name!,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headline2,
                 ),
@@ -187,8 +187,8 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
                 ),
                 if (company != null)
                   FavoriteButton(
-                    favourites: company.favourites,
-                    isFavourite: company.isFavourite,
+                    favourites: company!.favourites,
+                    isFavourite: company!.isFavourite,
                     shrinkPercentage: shrinkPercentage,
                     toggle: toggleFavourite,
                   )
@@ -211,15 +211,15 @@ class _StudioHeader implements SliverPersistentHeaderDelegate {
       true;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }

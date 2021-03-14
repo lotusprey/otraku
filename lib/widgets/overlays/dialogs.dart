@@ -14,8 +14,8 @@ class PopUpAnimation extends StatefulWidget {
 
 class _PopUpAnimationState extends State<PopUpAnimation>
     with SingleTickerProviderStateMixin {
-  AnimationController _ctrl;
-  Animation<double> _anim;
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
 
   @override
   void initState() {
@@ -43,8 +43,8 @@ class _PopUpAnimationState extends State<PopUpAnimation>
 }
 
 class TextDialog extends StatelessWidget {
-  final String title;
-  final String text;
+  final String? title;
+  final String? text;
 
   const TextDialog({this.title, this.text});
 
@@ -67,7 +67,7 @@ class TextDialog extends StatelessWidget {
                 color: Theme.of(context).backgroundColor,
               ),
               padding: Config.PADDING,
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+              child: Text(title!, style: Theme.of(context).textTheme.subtitle1),
             ),
             Flexible(
               child: Container(
@@ -83,7 +83,7 @@ class TextDialog extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Text(
-                      text,
+                      text!,
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -115,11 +115,11 @@ class ImageDialog extends StatelessWidget {
 }
 
 class ImageTextDialog extends StatelessWidget {
-  final String text;
-  final Image image;
+  final String? text;
+  final Image? image;
 
   const ImageTextDialog({
-    @required this.text,
+    required this.text,
     this.image,
   });
 
@@ -137,7 +137,7 @@ class ImageTextDialog extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
             child: SelectableText(
-              text,
+              text!,
               style: Theme.of(context).textTheme.headline3,
               textAlign: TextAlign.center,
             ),

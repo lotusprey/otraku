@@ -21,15 +21,15 @@ class ContentSettingsTab extends StatelessWidget {
       children: [
         DropDownField(
           title: 'Title Language',
-          initialValue: settings.model.titleLanguage,
+          initialValue: settings.model!.titleLanguage,
           items: {
             'Romaji': 'ROMAJI',
             'English': 'ENGLISH',
             'Native': 'NATIVE',
           },
-          onChanged: (value) {
+          onChanged: (dynamic value) {
             const key = 'titleLanguage';
-            if (value == Get.find<Viewer>().settings.titleLanguage) {
+            if (value == Get.find<Viewer>().settings!.titleLanguage) {
               settings.changes.remove(key);
             } else {
               settings.changes[key] = value;
@@ -38,7 +38,7 @@ class ContentSettingsTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Airing Anime Notifications',
-          initialValue: Get.find<Viewer>().settings.airingNotifications,
+          initialValue: Get.find<Viewer>().settings!.airingNotifications,
           onChanged: (value) {
             const notifications = 'airingNotifications';
             if (settings.changes.containsKey(notifications)) {
@@ -50,7 +50,7 @@ class ContentSettingsTab extends StatelessWidget {
         ),
         SwitchTile(
           title: '18+ Content',
-          initialValue: Get.find<Viewer>().settings.displayAdultContent,
+          initialValue: Get.find<Viewer>().settings!.displayAdultContent,
           onChanged: (value) {
             const adultContent = 'displayAdultContent';
             if (settings.changes.containsKey(adultContent)) {
@@ -62,15 +62,15 @@ class ContentSettingsTab extends StatelessWidget {
         ),
         DropDownField(
           title: 'Scoring System',
-          initialValue: Get.find<Viewer>().settings.scoreFormat,
+          initialValue: Get.find<Viewer>().settings!.scoreFormat,
           items: Map.fromIterable(
             ScoreFormat.values,
-            key: (v) => Convert.clarifyEnum(describeEnum(v)),
+            key: (v) => Convert.clarifyEnum(describeEnum(v))!,
             value: (v) => v,
           ),
-          onChanged: (value) {
+          onChanged: (dynamic value) {
             const key = 'scoreFormat';
-            if (value == Get.find<Viewer>().settings.scoreFormat) {
+            if (value == Get.find<Viewer>().settings!.scoreFormat) {
               settings.changes.remove(key);
             } else {
               settings.changes[key] = describeEnum(value);
@@ -80,14 +80,14 @@ class ContentSettingsTab extends StatelessWidget {
         const SizedBox(height: 10),
         DropDownField(
           title: 'Default List Order',
-          initialValue: Get.find<Viewer>().settings.defaultSort,
+          initialValue: Get.find<Viewer>().settings!.defaultSort,
           items: Map.fromIterables(
             ListSortHelper.defaultStrings,
             ListSortHelper.defaultEnums,
           ),
-          onChanged: (value) {
+          onChanged: (dynamic value) {
             const key = 'rowOrder';
-            if (value == Get.find<Viewer>().settings.defaultSort) {
+            if (value == Get.find<Viewer>().settings!.defaultSort) {
               settings.changes.remove(key);
             } else {
               settings.changes[key] = (value as ListSort).string;
@@ -96,7 +96,7 @@ class ContentSettingsTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Split Completed Anime',
-          initialValue: Get.find<Viewer>().settings.splitCompletedAnime,
+          initialValue: Get.find<Viewer>().settings!.splitCompletedAnime,
           onChanged: (value) {
             const splitAnime = 'splitCompletedAnime';
             if (settings.changes.containsKey(splitAnime)) {
@@ -108,7 +108,7 @@ class ContentSettingsTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Split Completed Manga',
-          initialValue: Get.find<Viewer>().settings.splitCompletedManga,
+          initialValue: Get.find<Viewer>().settings!.splitCompletedManga,
           onChanged: (value) {
             const splitManga = 'splitCompletedManga';
             if (settings.changes.containsKey(splitManga)) {

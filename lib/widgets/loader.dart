@@ -8,10 +8,10 @@ class Loader extends StatefulWidget {
 }
 
 class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
-  AnimationController _ctrl;
-  Animation<Color> _animation1;
-  Animation<Color> _animation2;
-  Animation<Color> _animation3;
+  late AnimationController _ctrl;
+  late Animation<Color?> _animation1;
+  late Animation<Color?> _animation2;
+  late Animation<Color?> _animation3;
 
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       vsync: this,
     );
 
-    final color = Get.theme.accentColor;
+    final color = Get.theme!.accentColor;
     final red = color.red;
     final green = color.green;
     final blue = color.blue;
@@ -44,19 +44,19 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       blue + (blue2 * 0.20).floor(),
     );
 
-    final darkToMiddle = TweenSequenceItem<Color>(
+    final darkToMiddle = TweenSequenceItem(
       tween: ColorTween(begin: dark, end: color),
       weight: 25,
     );
-    final middleToLight = TweenSequenceItem<Color>(
+    final middleToLight = TweenSequenceItem(
       tween: ColorTween(begin: color, end: light),
       weight: 25,
     );
-    final lightToMiddle = TweenSequenceItem<Color>(
+    final lightToMiddle = TweenSequenceItem(
       tween: ColorTween(begin: light, end: color),
       weight: 25,
     );
-    final middleToDark = TweenSequenceItem<Color>(
+    final middleToDark = TweenSequenceItem(
       tween: ColorTween(begin: color, end: dark),
       weight: 25,
     );
@@ -109,7 +109,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
 }
 
 class _LoadingCircle extends AnimatedWidget {
-  _LoadingCircle(Animation<Color> animation) : super(listenable: animation);
+  _LoadingCircle(Animation<Color?> animation) : super(listenable: animation);
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +118,7 @@ class _LoadingCircle extends AnimatedWidget {
       height: 15,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: (listenable as Animation<Color>).value,
+        color: (listenable as Animation<Color?>).value,
       ),
     );
   }

@@ -1,27 +1,26 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 
 class SettingsModel {
-  final ScoreFormat scoreFormat;
+  final ScoreFormat? scoreFormat;
   final ListSort defaultSort;
-  final String titleLanguage;
-  final bool splitCompletedAnime;
-  final bool splitCompletedManga;
-  final bool displayAdultContent;
-  final bool airingNotifications;
-  final Map<String, bool> notificationOptions;
+  final String? titleLanguage;
+  final bool? splitCompletedAnime;
+  final bool? splitCompletedManga;
+  final bool? displayAdultContent;
+  final bool? airingNotifications;
+  final Map<String?, bool?> notificationOptions;
 
   SettingsModel._({
-    @required this.scoreFormat,
-    @required this.defaultSort,
-    @required this.titleLanguage,
-    @required this.splitCompletedAnime,
-    @required this.splitCompletedManga,
-    @required this.displayAdultContent,
-    @required this.airingNotifications,
-    @required this.notificationOptions,
+    required this.scoreFormat,
+    required this.defaultSort,
+    required this.titleLanguage,
+    required this.splitCompletedAnime,
+    required this.splitCompletedManga,
+    required this.displayAdultContent,
+    required this.airingNotifications,
+    required this.notificationOptions,
   });
 
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(

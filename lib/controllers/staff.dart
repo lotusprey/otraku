@@ -80,13 +80,13 @@ class Staff extends GetxController {
   final _onCharacters = true.obs;
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
-  PersonModel get person => _person();
+  PersonModel? get person => _person();
 
-  PageModel get characterList => _characterList();
+  PageModel? get characterList => _characterList();
 
-  PageModel get roleList => _roleList();
+  PageModel? get roleList => _roleList();
 
-  bool get onCharacters => _onCharacters();
+  bool get onCharacters => _onCharacters()!;
 
   set onCharacters(bool value) => _onCharacters.value = value;
 
@@ -135,15 +135,15 @@ class Staff extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (_onCharacters() && !_characterList().hasNextPage) return;
-    if (!_onCharacters() && !_roleList().hasNextPage) return;
+    if (_onCharacters()! && !_characterList()!.hasNextPage!) return;
+    if (!_onCharacters()! && !_roleList()!.hasNextPage!) return;
 
     final body = await Client.request(_staffQuery, {
       'id': _id,
       'withCharacters': _onCharacters(),
-      'withStaff': !_onCharacters(),
-      'characterPage': _characterList().nextPage,
-      'staffPage': _roleList().nextPage,
+      'withStaff': !_onCharacters()!,
+      'characterPage': _characterList()!.nextPage,
+      'staffPage': _roleList()!.nextPage,
       'sort': describeEnum(_sort),
     });
 
@@ -152,7 +152,7 @@ class Staff extends GetxController {
     final data = body['Staff'];
 
     List<Connection> connections = [];
-    if (_onCharacters()) {
+    if (_onCharacters()!) {
       for (final connection in data['characterMedia']['edges'])
         for (final char in connection['characters'])
           connections.add(Connection(
@@ -172,7 +172,7 @@ class Staff extends GetxController {
                 ),
               ]));
 
-      _characterList.update((list) => list.append(
+      _characterList.update((list) => list!.append(
           connections, data['characterMedia']['pageInfo']['hasNextPage']));
     } else {
       for (final connection in data['staffMedia']['edges'])
@@ -186,7 +186,7 @@ class Staff extends GetxController {
           text2: Convert.clarifyEnum(connection['staffRole']),
         ));
 
-      _roleList.update((list) => list.append(
+      _roleList.update((list) => list!.append(
           connections, data['staffMedia']['pageInfo']['hasNextPage']));
     }
   }

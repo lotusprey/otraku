@@ -29,15 +29,12 @@ class Config {
   static final _index =
       ValueNotifier<int>(storage.read(STARTUP_PAGE) ?? HomePage.ANIME_LIST);
 
-  static get index => _index;
-  static set index(final int val) {
-    if (val != null && val > -1 && val < 5) _index.value = val;
+  static ValueNotifier<int> get index => _index;
+  static setIndex(final int val) {
+    if (val > -1 && val < 5) _index.value = val;
   }
 
-  // The first time it is called should be before the
-  // app initialisation. Whenever it is called, the
-  // theme is updated to the current configuration.
-  static void updateTheme() {
+  static ThemeData get theme {
     final themeMode = storage.read(THEME_MODE) ?? 0;
     final key = themeMode == 0
         ? Get.isPlatformDarkMode
@@ -47,8 +44,10 @@ class Config {
             ? LIGHT_THEME
             : DARK_THEME;
 
-    Get.changeTheme(Themes.values[storage.read(key) ?? 0].themeData);
+    return Themes.values[storage.read(key) ?? 0].themeData;
   }
+
+  static void updateTheme() => Get.changeTheme(theme);
 
   static const highTile = TileModel(
     maxWidth: 125,

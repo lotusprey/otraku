@@ -28,9 +28,9 @@ extension ListSortHelper on ListSort {
     'id': ListSort.CREATED_AT_DESC,
   };
 
-  String get string => _enumsToStrings[this];
+  String get string => _enumsToStrings[this]!;
 
-  static ListSort getEnum(String key) => _stringsToEnums[key];
+  static ListSort getEnum(String key) => _stringsToEnums[key]!;
 
   static List<ListSort> get defaultEnums => [..._enumsToStrings.keys];
 

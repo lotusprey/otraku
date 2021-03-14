@@ -4,31 +4,31 @@ import 'package:otraku/widgets/fields/input_field_structure.dart';
 
 class DropDownField<T> extends StatefulWidget {
   final String title;
-  final T initialValue;
+  final T? initialValue;
   final Map<String, T> items;
   final Function(T) onChanged;
   final String hint;
 
   DropDownField({
-    @required this.title,
-    @required this.initialValue,
-    @required this.items,
-    @required this.onChanged,
+    required this.title,
+    required this.initialValue,
+    required this.items,
+    required this.onChanged,
     this.hint = 'Choose',
   });
 
   @override
-  _DropDownFieldState createState() => _DropDownFieldState();
+  _DropDownFieldState<T> createState() => _DropDownFieldState<T>();
 }
 
-class _DropDownFieldState<T> extends State<DropDownField> {
-  T value;
+class _DropDownFieldState<T> extends State<DropDownField<T>> {
+  T? value;
 
   @override
   Widget build(BuildContext context) {
-    List<DropdownMenuItem> menuItems = [];
-    for (final key in widget.items.keys) {
-      menuItems.add(DropdownMenuItem(
+    final items = <DropdownMenuItem<T>>[];
+    for (final key in widget.items.keys)
+      items.add(DropdownMenuItem(
         value: widget.items[key],
         child: Text(
           key,
@@ -37,7 +37,6 @@ class _DropDownFieldState<T> extends State<DropDownField> {
               : Theme.of(context).textTheme.bodyText2,
         ),
       ));
-    }
 
     return InputFieldStructure(
       title: widget.title,
@@ -50,15 +49,17 @@ class _DropDownFieldState<T> extends State<DropDownField> {
         child: Theme(
           data: Theme.of(context)
               .copyWith(highlightColor: Theme.of(context).accentColor),
-          child: DropdownButton(
+          child: DropdownButton<T>(
             value: value,
-            items: menuItems,
+            items: items,
             onChanged: (val) {
-              setState(() => value = val);
-              widget.onChanged(val);
+              setState(() => value = val!);
+              widget.onChanged(val!);
             },
-            hint:
-                Text(widget.hint, style: Theme.of(context).textTheme.subtitle1),
+            hint: Text(
+              widget.hint,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
             iconEnabledColor: Theme.of(context).disabledColor,
             dropdownColor: Theme.of(context).primaryColor,
             underline: const SizedBox(),

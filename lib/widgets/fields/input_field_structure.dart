@@ -7,8 +7,8 @@ class InputFieldStructure extends StatelessWidget {
   final Widget child;
 
   InputFieldStructure({
-    @required this.title,
-    @required this.child,
+    required this.title,
+    required this.child,
   });
 
   @override

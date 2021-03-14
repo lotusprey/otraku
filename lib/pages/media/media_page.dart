@@ -12,8 +12,8 @@ import 'package:otraku/pages/media/media_header.dart';
 class MediaPage extends StatelessWidget {
   static const ROUTE = '/media';
 
-  final int id;
-  final String coverUrl;
+  final int? id;
+  final String? coverUrl;
 
   MediaPage(this.id, this.coverUrl);
 
@@ -64,7 +64,7 @@ class MediaPage extends StatelessWidget {
                 ),
                 Obx(() {
                   if (media.tab == Media.OVERVIEW)
-                    return OverviewTab(media.model.overview);
+                    return OverviewTab(media.model!.overview);
                   else if (media.tab == Media.RELATIONS)
                     return RelationsTab(media);
                   else

@@ -8,10 +8,10 @@ class TileModel {
   final bool needsBackground;
 
   const TileModel({
-    @required this.maxWidth,
-    @required this.imgWHRatio,
-    @required this.textHeight,
-    @required this.fit,
-    @required this.needsBackground,
+    required this.maxWidth,
+    required this.imgWHRatio,
+    required this.textHeight,
+    required this.fit,
+    required this.needsBackground,
   });
 }

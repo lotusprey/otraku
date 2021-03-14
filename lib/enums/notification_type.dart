@@ -34,5 +34,5 @@ extension NotificationTypeExtension on NotificationType {
     NotificationType.RELATED_MEDIA_ADDITION: 'New media related to me',
   };
 
-  String get text => _notificationNames[this];
+  String get text => _notificationNames[this]!;
 }

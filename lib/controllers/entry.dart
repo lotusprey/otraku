@@ -33,11 +33,11 @@ class Entry extends GetxController {
   final int _id;
   Entry(this._id, [this._model]);
 
-  EntryModel _model;
-  EntryModel _copy;
+  EntryModel? _model;
+  EntryModel? _copy;
 
-  EntryModel get model => _copy;
-  EntryModel get oldModel => _model;
+  EntryModel? get model => _copy;
+  EntryModel? get oldModel => _model;
 
   Future<void> fetch() async {
     if (_model == null) {
@@ -46,18 +46,18 @@ class Entry extends GetxController {
       _model = EntryModel(body['Media']);
     }
 
-    if (_model.customLists == null) {
+    if (_model!.customLists.isEmpty) {
       final customLists = Map.fromIterable(
         Get.find<Collection>(
-          tag: _model.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
+          tag: _model!.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
         ).customListNames,
         key: (k) => k.toString(),
         value: (_) => false,
       );
 
-      _model.customLists = customLists;
+      _model!.customLists = customLists;
     }
-    _copy = EntryModel.copy(_model);
+    _copy = EntryModel.copy(_model!);
 
     update();
   }

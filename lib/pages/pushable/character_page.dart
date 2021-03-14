@@ -11,8 +11,8 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class CharacterPage extends StatelessWidget {
   static const ROUTE = '/character';
 
-  final int id;
-  final String imageUrl;
+  final int? id;
+  final String? imageUrl;
 
   CharacterPage(this.id, this.imageUrl);
 
@@ -45,14 +45,15 @@ class CharacterPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (character.anime.items.isNotEmpty &&
-                          character.manga.items.isNotEmpty)
+                      if (character.anime!.items.isNotEmpty &&
+                          character.manga!.items.isNotEmpty)
                         BubbleTabs(
                           options: const ['Anime', 'Manga'],
                           values: const [true, false],
                           initial: true,
-                          onNewValue: (value) => character.onAnime = value,
-                          onSameValue: (_) {},
+                          onNewValue: (dynamic value) =>
+                              character.onAnime = value,
+                          onSameValue: (dynamic _) {},
                         )
                       else
                         const SizedBox(),
@@ -109,7 +110,7 @@ class CharacterPage extends StatelessWidget {
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
                 sliver: ConnectionsGrid(
-                  connections: connectionList.items,
+                  connections: connectionList.items.cast(),
                   loadMore: character.fetchPage,
                   preferredSubtitle: character.staffLanguage,
                 ),

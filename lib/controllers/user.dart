@@ -95,13 +95,14 @@ class User extends GetxController {
   final int _id;
   User(this._id);
 
-  UserModel _model;
+  UserModel? _model;
   int _favsIndex = UserModel.ANIME_FAV;
   bool _loading = true;
   final _activities = PageModel<ActivityModel>([], true, 1);
 
-  UserModel get model => _model;
-  List<BrowseResultModel> get favourites => _model.favourites(_favsIndex).items;
+  UserModel? get model => _model;
+  List<BrowseResultModel> get favourites =>
+      _model!.favourites(_favsIndex).items as List<BrowseResultModel>;
   List<ActivityModel> get activities => _activities.items;
   bool get loading => _loading;
   int get favsIndex => _favsIndex;
@@ -139,13 +140,13 @@ class User extends GetxController {
     if (data == null) return;
 
     _model = UserModel(data['User'], _id == Client.viewerId);
-    _model.addFavs(null, data['User']['favourites']);
+    _model!.addFavs(null, data['User']['favourites']);
     _loading = false;
     update();
   }
 
   Future<void> fetchFavourites() async {
-    if (_loading || !_model.favourites(_favsIndex).hasNextPage) return;
+    if (_loading || !_model!.favourites(_favsIndex).hasNextPage!) return;
     _loading = true;
 
     final data = await Client.request(_userQuery, {
@@ -155,17 +156,17 @@ class User extends GetxController {
       'withCharacters': _favsIndex == UserModel.CHARACTER_FAV,
       'withStaff': _favsIndex == UserModel.STAFF_FAV,
       'withStudios': _favsIndex == UserModel.STUDIO_FAV,
-      'favsPage': _model.favourites(_favsIndex).nextPage,
+      'favsPage': _model!.favourites(_favsIndex).nextPage,
     });
     if (data == null) return;
 
-    _model.addFavs(_favsIndex, data['User']['favourites']);
+    _model!.addFavs(_favsIndex, data['User']['favourites']);
     _loading = false;
     update();
   }
 
   Future<void> fetchActivities() async {
-    if (_loading || !_activities.hasNextPage) return;
+    if (_loading || !_activities.hasNextPage!) return;
     _loading = true;
 
     final data = await Client.request(_activitiesQuery, {
@@ -177,7 +178,7 @@ class User extends GetxController {
     final List<ActivityModel> al = [];
     for (final a in data['Page']['activities']) {
       final m = ActivityModel(a);
-      if (m != null) al.add(m);
+      if (m.valid) al.add(m);
     }
     _activities.append(al, data['Page']['pageInfo']['hasNextPage']);
 
@@ -186,9 +187,9 @@ class User extends GetxController {
   }
 
   Future<void> toggleFollow() async {
-    final data = await Client.request(_toggleFollow, {'id': _model.id});
+    final data = await Client.request(_toggleFollow, {'id': _model!.id});
     if (data == null) return;
-    _model.toggleFollow(data['ToggleFollow']);
+    _model!.toggleFollow(data['ToggleFollow']);
     update();
   }
 

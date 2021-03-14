@@ -7,10 +7,10 @@ import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class PersonHeader extends StatelessWidget {
-  final PersonModel person;
-  final int personId;
-  final String imageUrl;
-  final Future<bool> Function() toggleFavourite;
+  final PersonModel? person;
+  final int? personId;
+  final String? imageUrl;
+  final Future<bool> Function()? toggleFavourite;
 
   PersonHeader({
     this.person,
@@ -38,20 +38,20 @@ class PersonHeader extends StatelessWidget {
 }
 
 class _PersonHeader implements SliverPersistentHeaderDelegate {
-  final PersonModel person;
-  final int personId;
+  final PersonModel? person;
+  final int? personId;
   final double coverWidth;
   final double coverHeight;
-  final String imageUrl;
-  final Future<bool> Function() toggleFavourite;
+  final String? imageUrl;
+  final Future<bool> Function()? toggleFavourite;
 
   _PersonHeader({
-    @required this.person,
-    @required this.personId,
-    @required this.coverWidth,
-    @required this.coverHeight,
-    @required this.imageUrl,
-    @required this.toggleFavourite,
+    required this.person,
+    required this.personId,
+    required this.coverWidth,
+    required this.coverHeight,
+    required this.imageUrl,
+    required this.toggleFavourite,
   });
 
   @override
@@ -61,7 +61,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final shrinkPercentage = shrinkOffset / (maxExtent - minExtent);
-    final image = Image.network(imageUrl, fit: BoxFit.cover);
+    final image = Image.network(imageUrl!, fit: BoxFit.cover);
 
     return Container(
       height: maxExtent,
@@ -80,7 +80,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                 Flexible(
                   child: GestureDetector(
                     child: Hero(
-                      tag: personId,
+                      tag: personId!,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
                         child: Container(
@@ -130,7 +130,7 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                         child: Opacity(
                           opacity: 1 < shrinkPercentage ? 1 : shrinkPercentage,
                           child: Text(
-                            person.fullName,
+                            person!.fullName!,
                             style: Theme.of(context).textTheme.headline3,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -139,8 +139,8 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
                         ),
                       ),
                     FavoriteButton(
-                      favourites: person.favourites,
-                      isFavourite: person.isFavourite,
+                      favourites: person!.favourites,
+                      isFavourite: person!.isFavourite,
                       shrinkPercentage: shrinkPercentage,
                       toggle: toggleFavourite,
                     ),
@@ -166,21 +166,21 @@ class _PersonHeader implements SliverPersistentHeaderDelegate {
       true;
 
   @override
-  PersistentHeaderShowOnScreenConfiguration get showOnScreenConfiguration =>
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
       null;
 
   @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
 
   @override
-  OverScrollHeaderStretchConfiguration get stretchConfiguration => null;
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
 
   @override
-  TickerProvider get vsync => null;
+  TickerProvider? get vsync => null;
 }
 
 class PersonInfo extends StatelessWidget {
-  final PersonModel person;
+  final PersonModel? person;
 
   PersonInfo(this.person);
 
@@ -194,17 +194,17 @@ class PersonInfo extends StatelessWidget {
           children: [
             const SizedBox(height: 10),
             Text(
-              person.fullName,
+              person!.fullName!,
               style: Theme.of(context).textTheme.headline2,
               textAlign: TextAlign.center,
             ),
             Text(
-              person.altNames.join(', '),
+              person!.altNames!.join(', '),
               style: Theme.of(context).textTheme.bodyText1,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
-            if (person.description.isNotEmpty)
+            if (person!.description!.isNotEmpty)
               InputFieldStructure(
                 title: 'Description',
                 child: GestureDetector(
@@ -215,7 +215,7 @@ class PersonInfo extends StatelessWidget {
                       borderRadius: Config.BORDER_RADIUS,
                     ),
                     child: Text(
-                      person.description,
+                      person!.description!,
                       style: Theme.of(context).textTheme.bodyText1,
                       overflow: TextOverflow.fade,
                       maxLines: 8,
@@ -226,7 +226,7 @@ class PersonInfo extends StatelessWidget {
                     builder: (_) => PopUpAnimation(
                       TextDialog(
                         title: 'Description',
-                        text: person.description,
+                        text: person!.description,
                       ),
                     ),
                   ),

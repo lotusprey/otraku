@@ -13,5 +13,5 @@ extension ActivityTypeExtension on ActivityType {
     ActivityType.MESSAGE: 'Messages',
   };
 
-  String get text => _activityNames[this];
+  String get text => _activityNames[this]!;
 }

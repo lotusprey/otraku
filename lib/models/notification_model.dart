@@ -1,26 +1,25 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/utils/convert.dart';
 
 class NotificationModel {
-  final NotificationType type;
-  final int headId;
-  final int bodyId;
-  final String imageUrl;
-  final List<String> texts;
+  final NotificationType? type;
+  final int? headId;
+  final int? bodyId;
+  final String? imageUrl;
+  final List<String?> texts;
   final bool markTextOnEvenIndex;
   final String timestamp;
-  final Browsable browsable;
+  final Browsable? browsable;
 
   NotificationModel._({
-    @required this.type,
-    @required this.headId,
-    @required this.bodyId,
-    @required this.imageUrl,
-    @required this.texts,
-    @required this.markTextOnEvenIndex,
-    @required this.timestamp,
+    required this.type,
+    required this.headId,
+    required this.bodyId,
+    required this.imageUrl,
+    required this.texts,
+    required this.markTextOnEvenIndex,
+    required this.timestamp,
     this.browsable,
   });
 

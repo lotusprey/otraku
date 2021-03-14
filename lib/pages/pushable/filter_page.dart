@@ -18,8 +18,8 @@ import 'package:otraku/widgets/layouts/chip_grid.dart';
 class FilterPage extends StatelessWidget {
   static const ROUTE = '/filters';
 
-  final String collectionTag;
-  final Function(bool) onUpdate;
+  final String? collectionTag;
+  final Function(bool?)? onUpdate;
   final Map<String, dynamic> changes = {};
 
   FilterPage(this.collectionTag, this.onUpdate);
@@ -72,7 +72,7 @@ class FilterPage extends StatelessWidget {
             color: Theme.of(context).dividerColor,
             onPressed: () {
               filterable.clearAllFilters();
-              onUpdate(false);
+              onUpdate!(false);
               Navigator.of(context).pop();
             },
           ),
@@ -91,7 +91,7 @@ class FilterPage extends StatelessWidget {
               }
               if (filterable is Explorer) filterable.fetch();
 
-              onUpdate(null);
+              onUpdate!(null);
               Navigator.of(context).pop();
             },
           ),
@@ -110,13 +110,13 @@ class FilterPage extends StatelessWidget {
                 'In My List': true,
                 'Not In My List': false,
               },
-              onChanged: (value) => changes[Filterable.ON_LIST] = value,
+              onChanged: (dynamic value) => changes[Filterable.ON_LIST] = value,
             ),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
             options: MediaStatus.values
-                .map((s) => Convert.clarifyEnum(describeEnum(s)))
+                .map((s) => Convert.clarifyEnum(describeEnum(s))!)
                 .toList(),
             values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
             inclusive: changes[Filterable.STATUS_IN],
@@ -126,10 +126,10 @@ class FilterPage extends StatelessWidget {
             placeholder: 'formats',
             options: browsable == Browsable.anime
                 ? AnimeFormat.values
-                    .map((f) => Convert.clarifyEnum(describeEnum(f)))
+                    .map((f) => Convert.clarifyEnum(describeEnum(f))!)
                     .toList()
                 : MangaFormat.values
-                    .map((f) => Convert.clarifyEnum(describeEnum(f)))
+                    .map((f) => Convert.clarifyEnum(describeEnum(f))!)
                     .toList(),
             values: browsable == Browsable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
@@ -148,8 +148,8 @@ class FilterPage extends StatelessWidget {
             ChipGrid(
               title: 'Tags',
               placeholder: 'tags',
-              options: explorer.tags.keys.toList(),
-              values: explorer.tags.keys.toList(),
+              options: explorer.tags!.keys.toList(),
+              values: explorer.tags!.keys.toList(),
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
             ),

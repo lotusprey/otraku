@@ -3,13 +3,13 @@ import 'package:flutter/rendering.dart';
 
 class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   const SliverGridDelegateWithMinWidthAndFixedHeight({
-    @required this.minWidth,
-    @required this.height,
+    required this.minWidth,
+    required this.height,
     this.mainAxisSpacing = 10.0,
     this.crossAxisSpacing = 10.0,
-  })  : assert(minWidth != null && minWidth > 0),
-        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0);
+  })  : assert(minWidth > 0),
+        assert(mainAxisSpacing >= 0),
+        assert(crossAxisSpacing >= 0);
 
   final double minWidth;
   final double height;
@@ -57,16 +57,16 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
 
 class SliverGridDelegateWithMaxWidthAndAddedHeight extends SliverGridDelegate {
   const SliverGridDelegateWithMaxWidthAndAddedHeight({
-    @required this.maxWidth,
+    required this.maxWidth,
     this.mainAxisSpacing = 10.0,
     this.crossAxisSpacing = 10.0,
     this.additionalHeight = 0.0,
     this.rawWHRatio = 1.0,
-  })  : assert(maxWidth != null && maxWidth >= 0),
-        assert(mainAxisSpacing != null && mainAxisSpacing >= 0),
-        assert(crossAxisSpacing != null && crossAxisSpacing >= 0),
-        assert(additionalHeight != null && additionalHeight >= 0),
-        assert(rawWHRatio != null && rawWHRatio > 0);
+  })  : assert(maxWidth >= 0),
+        assert(mainAxisSpacing >= 0),
+        assert(crossAxisSpacing >= 0),
+        assert(additionalHeight >= 0),
+        assert(rawWHRatio > 0);
 
   final double maxWidth;
   final double mainAxisSpacing;

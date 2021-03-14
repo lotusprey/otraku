@@ -14,7 +14,7 @@ import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaList extends StatelessWidget {
-  final String collectionTag;
+  final String? collectionTag;
 
   MediaList(this.collectionTag);
 
@@ -78,7 +78,7 @@ class MediaList extends StatelessWidget {
 
 class _MediaListTile extends StatelessWidget {
   final ListEntryModel entry;
-  final ScoreFormat scoreFormat;
+  final ScoreFormat? scoreFormat;
 
   _MediaListTile(this.entry, this.scoreFormat);
 
@@ -91,14 +91,14 @@ class _MediaListTile extends StatelessWidget {
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: BrowseIndexer(
-        id: entry.mediaId,
+        id: entry.mediaId!,
         browsable: Browsable.anime,
         imageUrl: entry.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: entry.mediaId,
+              tag: entry.mediaId!,
               child: ClipRRect(
                 child: Container(
                   width: 95,
@@ -122,7 +122,7 @@ class _MediaListTile extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              entry.title,
+                              entry.title!,
                               style: Theme.of(context).textTheme.bodyText1,
                               overflow: TextOverflow.fade,
                             ),
@@ -144,10 +144,10 @@ class _MediaListTile extends StatelessWidget {
                                     ),
                                   ),
                                 if (entry.nextEpisode != null &&
-                                    entry.nextEpisode - 1 > entry.progress)
+                                    entry.nextEpisode! - 1 > entry.progress)
                                   TextSpan(
                                     text:
-                                        ' • ${entry.nextEpisode - 1 - entry.progress} ep behind',
+                                        ' • ${entry.nextEpisode! - 1 - entry.progress} ep behind',
                                     style: TextStyle(
                                       color: Theme.of(context).errorColor,
                                     ),
@@ -173,8 +173,10 @@ class _MediaListTile extends StatelessWidget {
                                 ],
                                 stops: [
                                   0.0,
-                                  entry.progress.toDouble() / entry.progressMax,
-                                  entry.progress.toDouble() / entry.progressMax,
+                                  entry.progress.toDouble() /
+                                      entry.progressMax!,
+                                  entry.progress.toDouble() /
+                                      entry.progressMax!,
                                   1.0,
                                 ],
                               ),
@@ -201,7 +203,8 @@ class _MediaListTile extends StatelessWidget {
                         ),
                         Flexible(
                           child: Center(
-                            child: scoreFormat.getWidget(context, entry.score),
+                            child:
+                                scoreFormat!.getWidget(context, entry.score!),
                           ),
                         ),
                         Flexible(

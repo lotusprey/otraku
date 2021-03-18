@@ -7,6 +7,7 @@ import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
+import 'package:otraku/widgets/refresh_control.dart';
 
 class FeedPage extends StatelessWidget {
   const FeedPage();
@@ -20,6 +21,10 @@ class FeedPage extends StatelessWidget {
       slivers: [
         const HeadlineHeader('Feed', false),
         FeedControlHeader(viewer),
+        RefreshControl(
+          onRefresh: viewer.fetch,
+          canRefresh: () => !viewer.isLoading,
+        ),
         SliverPadding(
           padding: Config.PADDING,
           sliver: Obx(

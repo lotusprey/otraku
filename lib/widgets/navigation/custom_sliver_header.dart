@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 
 class CustomSliverHeader extends StatelessWidget {
@@ -134,7 +135,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       tooltip: 'Close',
                       icon: const Icon(Icons.close),
                       color: Theme.of(context).dividerColor,
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () => Get.back(),
                     )),
                   Expanded(
                     child: Padding(

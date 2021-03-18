@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
@@ -10,7 +9,7 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 class UserActivitiesPage extends StatelessWidget {
   static const ROUTE = '/activities';
 
-  final int? id;
+  final int id;
   UserActivitiesPage(this.id);
 
   @override
@@ -19,7 +18,7 @@ class UserActivitiesPage extends StatelessWidget {
       appBar: CustomAppBar(title: 'Activities'),
       body: SafeArea(
         child: GetBuilder<User>(
-          tag: id?.toString() ?? Client.viewerId.toString(),
+          tag: id.toString(),
           builder: (user) {
             if (user.activities.isEmpty) {
               user.fetchActivities();

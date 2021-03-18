@@ -15,6 +15,8 @@ class NavBar extends StatefulWidget {
   @override
   _NavBarState createState() => _NavBarState();
 
+  // At the bottom of a page there should be this offset
+  // in order to avoid obstruction by the navbar.
   static double offset(BuildContext ctx) =>
       MediaQuery.of(ctx).viewPadding.bottom + 60;
 }

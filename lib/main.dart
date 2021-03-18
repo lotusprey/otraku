@@ -53,9 +53,9 @@ class App extends StatelessWidget {
           name: HomePage.ROUTE,
           page: () => HomePage(),
           binding: BindingsBuilder(() {
-            Get.put(Collection(null, true), tag: Collection.ANIME);
-            Get.put(Collection(null, false), tag: Collection.MANGA);
-            Get.put(User(Client.viewerId), tag: Client.viewerId.toString());
+            Get.put(Collection(Client.viewerId!, true), tag: Collection.ANIME);
+            Get.put(Collection(Client.viewerId!, false), tag: Collection.MANGA);
+            Get.put(User(Client.viewerId!), tag: Client.viewerId.toString());
             Get.put(Explorer());
             Get.put(Viewer());
           }),
@@ -71,7 +71,7 @@ class App extends StatelessWidget {
         GetPage(
           name: CollectionPage.ROUTE,
           page: () => CollectionPage(
-            otherUserId: Get.arguments[0],
+            id: Get.arguments[0],
             ofAnime: Get.arguments[1],
             collectionTag: Get.arguments[2],
           ),

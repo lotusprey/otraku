@@ -100,9 +100,9 @@ class Explorer extends ScrollxController implements Filterable {
   final _results = <BrowseResultModel>[].obs;
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
+  final _genres = <String>[];
+  final _tags = <String, String>{};
   int _concurrentFetches = 0;
-  List<String>? _genres;
-  Map<String?, String?>? _tags;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
@@ -124,9 +124,9 @@ class Explorer extends ScrollxController implements Filterable {
 
   List<BrowseResultModel> get results => [..._results()];
 
-  List<String> get genres => [..._genres!];
+  List<String> get genres => [..._genres];
 
-  Map<String, String>? get tags => _tags as Map<String, String>?;
+  Map<String, String> get tags => _tags;
 
   // ***************************************************************************
   // FUNCTIONS CONTROLLING QUERY VARIABLES
@@ -305,13 +305,10 @@ class Explorer extends ScrollxController implements Filterable {
     if (!data['Viewer']['options']['displayAdultContent'])
       _filters[Filterable.IS_ADULT] = false;
 
-    _genres = (data['GenreCollection'] as List<dynamic>)
-        .map((g) => g.toString())
-        .toList();
+    for (final g in data['GenreCollection']) _genres.add(g.toString());
 
-    _tags = {};
-    for (final tag in data['MediaTagCollection'])
-      _tags![tag['name']] = tag['description'];
+    for (final t in data['MediaTagCollection'])
+      _tags[t['name']] = t['description'];
 
     final loaded = <BrowseResultModel>[];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];

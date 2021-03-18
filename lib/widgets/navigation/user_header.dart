@@ -11,7 +11,7 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class UserHeader extends StatelessWidget {
-  final int? id;
+  final int id;
   final UserModel? user;
   final bool isMe;
   final String? avatarUrl;
@@ -49,8 +49,8 @@ class UserHeader extends StatelessWidget {
             padding: const EdgeInsets.only(right: 10, top: 8, bottom: 8),
             child: ElevatedButton(
               child: Text(
-                user!.following!
-                    ? user!.follower!
+                user!.following
+                    ? user!.follower
                         ? 'Mutual'
                         : 'Unfollow'
                     : 'Follow',
@@ -106,7 +106,7 @@ class UserHeader extends StatelessWidget {
             avatar != null
                 ? GestureDetector(
                     child: Hero(
-                      tag: id!,
+                      tag: id,
                       child: ClipRRect(
                         borderRadius: Config.BORDER_RADIUS,
                         child: Container(
@@ -256,8 +256,10 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
       child: Text(
         widget.text!,
         overflow: TextOverflow.ellipsis,
-        style:
-            Theme.of(context).textTheme.headline6!.copyWith(color: Colors.white),
+        style: Theme.of(context)
+            .textTheme
+            .headline6!
+            .copyWith(color: Colors.white),
       ),
     );
   }

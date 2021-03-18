@@ -19,15 +19,14 @@ class FilterPage extends StatelessWidget {
   static const ROUTE = '/filters';
 
   final String? collectionTag;
-  final Function(bool?)? onUpdate;
-  final Map<String, dynamic> changes = {};
+  final Function(bool) isDefinitelyInactive;
 
-  FilterPage(this.collectionTag, this.onUpdate);
+  FilterPage(this.collectionTag, this.isDefinitelyInactive);
 
   @override
   Widget build(BuildContext context) {
+    final changes = <String, dynamic>{};
     final explorer = Get.find<Explorer>();
-
     Filterable filterable;
     if (collectionTag != null)
       filterable = Get.find<Collection>(tag: collectionTag);
@@ -61,8 +60,6 @@ class FilterPage extends StatelessWidget {
     changes[Filterable.ON_LIST] =
         filterable.getFilterWithKey(Filterable.ON_LIST);
 
-    final originalSort = changes[Filterable.SORT];
-
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Filters',
@@ -73,8 +70,8 @@ class FilterPage extends StatelessWidget {
             color: Theme.of(context).dividerColor,
             onPressed: () {
               filterable.clearAllFilters();
-              onUpdate!(false);
-              Navigator.of(context).pop();
+              isDefinitelyInactive(true);
+              Navigator.pop(context);
             },
           ),
           IconButton(
@@ -87,14 +84,11 @@ class FilterPage extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (filterable is Collection) {
-                if (originalSort != changes[Filterable.SORT]) filterable.sort();
-                filterable.filter();
-              }
+              if (filterable is Collection) filterable.filter();
               if (filterable is Explorer) filterable.fetch();
 
-              onUpdate!(null);
-              Navigator.of(context).pop();
+              isDefinitelyInactive(false);
+              Navigator.pop(context);
             },
           ),
         ],
@@ -150,8 +144,8 @@ class FilterPage extends StatelessWidget {
             ChipGrid(
               title: 'Tags',
               placeholder: 'tags',
-              options: explorer.tags!.keys.toList(),
-              values: explorer.tags!.keys.toList(),
+              options: explorer.tags.keys.toList(),
+              values: explorer.tags.keys.toList(),
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
             ),

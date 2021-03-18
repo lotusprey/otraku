@@ -1,9 +1,9 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
+import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/pages/pushable/user_activities_page.dart';
 import 'package:otraku/pages/pushable/favourites_page.dart';
@@ -13,10 +13,12 @@ import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
+import '../../utils/client.dart';
+
 class UserPage extends StatelessWidget {
   static const ROUTE = '/user';
 
-  final int? id;
+  final int id;
   final String? avatarUrl;
 
   const UserPage(this.id, this.avatarUrl);
@@ -28,7 +30,7 @@ class UserPage extends StatelessWidget {
 }
 
 class UserTab extends StatelessWidget {
-  final int? id;
+  final int id;
   final String? avatarUrl;
 
   const UserTab(this.id, this.avatarUrl);
@@ -40,14 +42,14 @@ class UserTab extends StatelessWidget {
         : 10.0;
 
     return GetBuilder<User>(
-      tag: id?.toString() ?? Client.viewerId.toString(),
+      tag: id.toString(),
       builder: (user) => CustomScrollView(
         physics: Config.PHYSICS,
         slivers: [
           UserHeader(
-            id: id ?? Client.viewerId,
+            id: id,
             user: user.model,
-            isMe: id == null,
+            isMe: id == Client.viewerId,
             avatarUrl: avatarUrl,
           ),
           SliverPadding(
@@ -83,7 +85,7 @@ class UserTab extends StatelessWidget {
                             FluentIcons.movies_and_tv_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
-                          onPressed: () => id == null
+                          onPressed: () => id == Client.viewerId
                               ? Config.setIndex(HomePage.ANIME_LIST)
                               : _pushCollection(true),
                         ),
@@ -92,7 +94,7 @@ class UserTab extends StatelessWidget {
                             FluentIcons.bookmark_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
-                          onPressed: () => id == null
+                          onPressed: () => id == Client.viewerId
                               ? Config.setIndex(HomePage.MANGA_LIST)
                               : _pushCollection(false),
                         ),
@@ -117,12 +119,7 @@ class UserTab extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                         borderRadius: Config.BORDER_RADIUS,
                       ),
-                      child: HtmlWidget(
-                        user.model!.description!,
-                        textStyle: TextStyle(
-                          color: Theme.of(context).textTheme.bodyText1!.color,
-                        ),
-                      ),
+                      child: HtmlContent(user.model!.description),
                     ),
                   SizedBox(height: NavBar.offset(context)),
                 ],

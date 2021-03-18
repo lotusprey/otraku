@@ -1,3 +1,4 @@
+import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/models/page_model.dart';
 
@@ -13,14 +14,15 @@ class UserModel {
   final String? description;
   final String? avatar;
   final String? banner;
-  bool? _following;
-  final bool? follower;
-  final bool? blocked;
+  bool following;
+  final bool follower;
+  final bool blocked;
   final int? donatorTier;
   final String? donatorBadge;
   final String? moderatorStatus;
   final bool isMe;
-  final _favourites = [
+  final activities = PageModel<ActivityModel>([], true, 1);
+  final favourites = [
     PageModel<BrowseResultModel>([], true, 1),
     PageModel<BrowseResultModel>([], true, 1),
     PageModel<BrowseResultModel>([], true, 1),
@@ -34,16 +36,14 @@ class UserModel {
     required this.description,
     required this.avatar,
     required this.banner,
-    required followed,
-    required this.follower,
-    required this.blocked,
     required this.donatorTier,
     required this.donatorBadge,
     required this.moderatorStatus,
+    this.blocked = false,
+    this.follower = false,
+    this.following = false,
     this.isMe = false,
-  }) {
-    _following = followed;
-  }
+  });
 
   factory UserModel(final Map<String, dynamic> map, bool me) => UserModel._(
         id: map['id'],
@@ -51,27 +51,24 @@ class UserModel {
         description: map['about'],
         avatar: map['avatar']['large'],
         banner: map['bannerImage'],
-        followed: map['isFollowing'],
-        follower: map['isFollower'],
-        blocked: map['isBlocked'],
+        following: map['isFollowing'] ?? false,
+        follower: map['isFollower'] ?? false,
+        blocked: map['isBlocked'] ?? false,
         donatorTier: map['donatorTier'],
         donatorBadge: map['donatorBadge'],
         moderatorStatus: map['moderatorStatus'],
         isMe: me,
       );
 
-  PageModel favourites(final int index) => _favourites[index];
-  bool? get following => _following;
-
   void toggleFollow(final Map<String, dynamic> map) =>
-      _following = map['isFollowing'];
+      following = map['isFollowing'] ?? false;
 
   void addFavs(final int? index, final Map<String, dynamic>? map) {
     final List<BrowseResultModel> items = [];
     if (index == null || index == ANIME_FAV) {
       for (final a in map!['anime']['nodes'])
         items.add(BrowseResultModel.anime(a));
-      _favourites[ANIME_FAV].append(
+      favourites[ANIME_FAV].append(
         items,
         map['anime']['pageInfo']['hasNextPage'],
       );
@@ -80,7 +77,7 @@ class UserModel {
       items.clear();
       for (final m in map!['manga']['nodes'])
         items.add(BrowseResultModel.manga(m));
-      _favourites[MANGA_FAV].append(
+      favourites[MANGA_FAV].append(
         items,
         map['manga']['pageInfo']['hasNextPage'],
       );
@@ -89,7 +86,7 @@ class UserModel {
       items.clear();
       for (final c in map!['characters']['nodes'])
         items.add(BrowseResultModel.character(c));
-      _favourites[CHARACTER_FAV].append(
+      favourites[CHARACTER_FAV].append(
         items,
         map['characters']['pageInfo']['hasNextPage'],
       );
@@ -98,7 +95,7 @@ class UserModel {
       items.clear();
       for (final s in map!['staff']['nodes'])
         items.add(BrowseResultModel.staff(s));
-      _favourites[STAFF_FAV].append(
+      favourites[STAFF_FAV].append(
         items,
         map['staff']['pageInfo']['hasNextPage'],
       );
@@ -107,7 +104,7 @@ class UserModel {
       items.clear();
       for (final s in map!['studios']['nodes'])
         items.add(BrowseResultModel.studio(s));
-      _favourites[STUDIO_FAV].append(
+      favourites[STUDIO_FAV].append(
         items,
         map['studios']['pageInfo']['hasNextPage'],
       );

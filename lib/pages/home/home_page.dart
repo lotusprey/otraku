@@ -9,6 +9,8 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
+import '../../utils/client.dart';
+
 class HomePage extends StatelessWidget {
   static const ROUTE = '/home';
 
@@ -24,18 +26,18 @@ class HomePage extends StatelessWidget {
       const FeedPage(),
       CollectionTab(
         ofAnime: true,
-        otherUserId: null,
+        id: Client.viewerId!,
         collectionTag: Collection.ANIME,
         key: UniqueKey(),
       ),
       CollectionTab(
         ofAnime: false,
-        otherUserId: null,
+        id: Client.viewerId!,
         collectionTag: Collection.MANGA,
         key: UniqueKey(),
       ),
       const ExplorePage(),
-      const UserTab(null, null),
+      UserTab(Client.viewerId!, null),
     ];
 
     const drawers = [

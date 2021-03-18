@@ -22,9 +22,9 @@ class ActivityModel {
   final String createdAt;
   final int replyCount;
   final PageModel<ReplyModel> replies;
-  late int _likeCount;
-  late bool _isLiked;
-  late bool _isSubscribed;
+  int likeCount;
+  bool isLiked;
+  bool isSubscribed;
 
   ActivityModel._({
     required this.id,
@@ -44,14 +44,10 @@ class ActivityModel {
     this.mediaType,
     this.text = '',
     this.replyCount = 0,
-    int? likes,
-    bool? liked,
-    bool? subscribed,
-  }) {
-    _likeCount = likes ?? 0;
-    _isLiked = liked ?? false;
-    _isSubscribed = subscribed ?? false;
-  }
+    this.likeCount = 0,
+    this.isLiked = false,
+    this.isSubscribed = false,
+  });
 
   factory ActivityModel(Map<String, dynamic> map) {
     switch (map['type']) {
@@ -72,13 +68,13 @@ class ActivityModel {
           mediaImage: null,
           mediaFormat: null,
           mediaType: null,
-          text: map['text'],
+          text: map['text'] ?? '',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'],
+          replyCount: map['replyCount'] ?? 0,
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'],
-          liked: map['isLiked'],
-          subscribed: map['isSubscribed'],
+          likeCount: map['likeCount'] ?? 0,
+          isLiked: map['isLiked'] ?? false,
+          isSubscribed: map['isSubscribed'] ?? false,
         );
       case 'ANIME_LIST':
         if (map['user'] == null || map['media'] == null)
@@ -104,11 +100,11 @@ class ActivityModel {
           mediaType: Browsable.anime,
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'],
+          replyCount: map['replyCount'] ?? 0,
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'],
-          liked: map['isLiked'],
-          subscribed: map['isSubscribed'],
+          likeCount: map['likeCount'] ?? 0,
+          isLiked: map['isLiked'] ?? false,
+          isSubscribed: map['isSubscribed'] ?? false,
         );
       case 'MANGA_LIST':
         if (map['user'] == null || map['media'] == null)
@@ -134,11 +130,11 @@ class ActivityModel {
           mediaType: Browsable.manga,
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'],
+          replyCount: map['replyCount'] ?? 0,
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'],
-          liked: map['isLiked'],
-          subscribed: map['isSubscribed'],
+          likeCount: map['likeCount'] ?? 0,
+          isLiked: map['isLiked'] ?? false,
+          isSubscribed: map['isSubscribed'] ?? false,
         );
       case 'MESSAGE':
         if (map['messenger'] == null || map['recipient'] == null)
@@ -158,13 +154,13 @@ class ActivityModel {
           mediaImage: null,
           mediaFormat: null,
           mediaType: null,
-          text: map['message'],
+          text: map['message'] ?? '',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-          replyCount: map['replyCount'],
+          replyCount: map['replyCount'] ?? 0,
           replies: PageModel<ReplyModel>([], true, 1),
-          likes: map['likeCount'],
-          liked: map['isLiked'],
-          subscribed: map['isSubscribed'],
+          likeCount: map['likeCount'] ?? 0,
+          isLiked: map['isLiked'] ?? false,
+          isSubscribed: map['isSubscribed'] ?? false,
         );
       default:
         return ActivityModel.empty();
@@ -183,10 +179,6 @@ class ActivityModel {
 
   bool get valid => agentId != null;
 
-  int? get likeCount => _likeCount;
-  bool? get isLiked => _isLiked;
-  bool? get isSubscribed => _isSubscribed;
-
   void appendReplies(final Map<String, dynamic> map) {
     if (map['activityReplies'] != null) {
       final rl = <ReplyModel>[];
@@ -196,10 +188,10 @@ class ActivityModel {
   }
 
   void toggleLike(final Map<String, dynamic> map) {
-    _likeCount = map['likeCount'];
-    _isLiked = map['isLiked'];
+    likeCount = map['likeCount'] ?? 0;
+    isLiked = map['isLiked'] ?? false;
   }
 
   void toggleSubscription(final Map<String, dynamic> map) =>
-      _isSubscribed = map['isSubscribed'];
+      isSubscribed = map['isSubscribed'] ?? false;
 }

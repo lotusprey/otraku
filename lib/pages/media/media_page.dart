@@ -12,7 +12,7 @@ import 'package:otraku/pages/media/media_header.dart';
 class MediaPage extends StatelessWidget {
   static const ROUTE = '/media';
 
-  final int? id;
+  final int id;
   final String? coverUrl;
 
   MediaPage(this.id, this.coverUrl);

@@ -11,7 +11,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class CharacterPage extends StatelessWidget {
   static const ROUTE = '/character';
 
-  final int? id;
+  final int id;
   final String? imageUrl;
 
   CharacterPage(this.id, this.imageUrl);

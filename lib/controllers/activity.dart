@@ -137,7 +137,7 @@ class Activity extends GetxController {
   static Future<void> toggleSubscription(ActivityModel activityModel) async {
     final data = await Client.request(
       _toggleSubscriptionMutation,
-      {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed!},
+      {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed},
       popOnErr: false,
     );
     if (data == null) return;

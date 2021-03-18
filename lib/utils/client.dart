@@ -28,7 +28,7 @@ class Client {
   static String? _accessToken;
 
   static int? _viewerId;
-  static get viewerId => _viewerId;
+  static int? get viewerId => _viewerId;
 
   static setCredentials(String token, int expiration) {
     _accessToken = token;

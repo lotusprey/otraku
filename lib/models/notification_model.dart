@@ -7,7 +7,7 @@ class NotificationModel {
   final int? headId;
   final int? bodyId;
   final String? imageUrl;
-  final List<String?> texts;
+  final List<String> texts;
   final bool markTextOnEvenIndex;
   final String timestamp;
   final Browsable? browsable;

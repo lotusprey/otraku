@@ -227,7 +227,7 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: !widget.activity.isLiked! ? 'Like' : 'Unlike',
+      message: !widget.activity.isLiked ? 'Like' : 'Unlike',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Activity.toggleActivityLike(widget.activity)
@@ -236,7 +236,7 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
           children: [
             Text(
               widget.activity.likeCount.toString(),
-              style: !widget.activity.isLiked!
+              style: !widget.activity.isLiked
                   ? Theme.of(context).textTheme.subtitle2
                   : Theme.of(context)
                       .textTheme
@@ -247,9 +247,8 @@ class _ActivityLikeIconState extends State<_ActivityLikeIcon> {
             Icon(
               Icons.favorite,
               size: Style.ICON_SMALL,
-              color: widget.activity.isLiked!
-                  ? Theme.of(context).errorColor
-                  : null,
+              color:
+                  widget.activity.isLiked ? Theme.of(context).errorColor : null,
             ),
           ],
         ),
@@ -270,12 +269,12 @@ class _SubscribeIconState extends State<_SubscribeIcon> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: !widget.activity.isSubscribed! ? 'Subscribe' : 'Unsubscribe',
+      message: !widget.activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Activity.toggleSubscription(widget.activity)
             .then((_) => setState(() {})),
-        child: !widget.activity.isSubscribed!
+        child: !widget.activity.isSubscribed
             ? Icon(
                 Icons.notifications,
                 size: Style.ICON_SMALL,

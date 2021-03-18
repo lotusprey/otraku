@@ -102,8 +102,8 @@ class Viewer extends ScrollxController {
 
   final _activities = Rx<PageModel<ActivityModel>>();
   final _unreadCount = 0.obs;
-  final List<int> _idNotIn = [];
-  final List<ActivityType> _typeIn = [
+  final _idNotIn = <int>[];
+  final _typeIn = [
     ActivityType.TEXT,
     ActivityType.ANIME_LIST,
     ActivityType.MANGA_LIST,
@@ -150,7 +150,7 @@ class Viewer extends ScrollxController {
     );
     if (data == null) return;
 
-    _settings = SettingsModel(data['Viewer']);
+    if (_settings == null) _settings = SettingsModel(data['Viewer']);
     _unreadCount.value = data['Viewer']['unreadNotificationCount'];
     update();
 
@@ -216,7 +216,7 @@ class Viewer extends ScrollxController {
       scrollTo(0);
     }
 
-    final List<ActivityModel> al = [];
+    final al = <ActivityModel>[];
     for (final a in data['Page']['activities']) {
       final m = ActivityModel(a);
       if (!m.valid) continue;

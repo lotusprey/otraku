@@ -111,7 +111,7 @@ class Collection extends ScrollxController implements Filterable {
   // DATA
   // ***************************************************************************
 
-  final int? userId;
+  final int userId;
   final bool ofAnime;
   final _lists = <CollectionListModel>[];
   final _entries = <ListEntryModel>[].obs;
@@ -177,10 +177,10 @@ class Collection extends ScrollxController implements Filterable {
     Map<String, dynamic>? data = await Client.request(
       _collectionQuery,
       {
-        'userId': userId ?? Client.viewerId,
+        'userId': userId,
         'type': ofAnime ? 'ANIME' : 'MANGA',
       },
-      popOnErr: userId != null,
+      popOnErr: userId != Client.viewerId,
     );
 
     if (data == null) {
@@ -354,8 +354,8 @@ class Collection extends ScrollxController implements Filterable {
     if (_lists.isEmpty) return;
 
     final search = (_filters[Filterable.SEARCH] as String?)?.toLowerCase();
-    final formatIn = _filters[Filterable.FORMAT_IN];
-    final statusIn = _filters[Filterable.STATUS_IN];
+    final List<String>? formatIn = _filters[Filterable.FORMAT_IN];
+    final List<String>? statusIn = _filters[Filterable.STATUS_IN];
     final List<String>? genreIn = _filters[Filterable.GENRE_IN];
     final List<String>? genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 

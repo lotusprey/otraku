@@ -7,15 +7,17 @@ import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 
+import '../../utils/client.dart';
+
 class CollectionPage extends StatelessWidget {
   static const ROUTE = '/collection';
 
-  final int? otherUserId;
-  final bool? ofAnime;
-  final String? collectionTag;
+  final int id;
+  final bool ofAnime;
+  final String collectionTag;
 
   CollectionPage({
-    required this.otherUserId,
+    required this.id,
     required this.ofAnime,
     required this.collectionTag,
   });
@@ -27,7 +29,7 @@ class CollectionPage extends StatelessWidget {
       drawer: CollectionDrawer(collectionTag),
       body: SafeArea(
         child: CollectionTab(
-          otherUserId: otherUserId,
+          id: id,
           ofAnime: ofAnime,
           collectionTag: collectionTag,
           key: null,
@@ -38,12 +40,12 @@ class CollectionPage extends StatelessWidget {
 }
 
 class CollectionTab extends StatelessWidget {
-  final int? otherUserId;
-  final bool? ofAnime;
-  final String? collectionTag;
+  final int id;
+  final bool ofAnime;
+  final String collectionTag;
 
   CollectionTab({
-    required this.otherUserId,
+    required this.id,
     required this.ofAnime,
     required this.collectionTag,
     required key,
@@ -57,8 +59,8 @@ class CollectionTab extends StatelessWidget {
         controller: Get.find<Collection>(tag: collectionTag).scrollCtrl,
         slivers: [
           HeadlineHeader(
-            '${ofAnime! ? 'Anime' : 'Manga'} List',
-            otherUserId != null,
+            '${ofAnime ? 'Anime' : 'Manga'} List',
+            id != Client.viewerId,
           ),
           MediaControlHeader(collectionTag),
           MediaList(collectionTag),

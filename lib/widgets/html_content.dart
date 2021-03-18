@@ -15,27 +15,37 @@ class HtmlContent extends StatelessWidget {
       textStyle: Theme.of(context).textTheme.bodyText1,
       hyperlinkColor: Theme.of(context).accentColor,
       onTapUrl: (url) async {
-        if (await canLaunch(url))
+        try {
           await launch(url);
-        else
-          Toast.show(context, 'Could not open link');
+        } catch (err) {
+          Toast.show(context, 'Couldn\'t open link: $err');
+        }
       },
       customStylesBuilder: (element) {
+        final styles = <String, String>{};
         if (element.localName == 'h1' ||
             element.localName == 'h2' ||
-            element.localName == 'h3') return {'font-size': '20px'};
-        return null;
+            element.localName == 'h3') styles['font-size'] = '20px';
+        if (element.localName == 'b') styles['font-weight'] = '500';
+        return styles.isEmpty ? null : styles;
       },
       customWidgetBuilder: (element) {
         if (element.localName == 'hr')
           return Container(
             height: 5,
             width: double.infinity,
+            margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).disabledColor,
               borderRadius: Config.BORDER_RADIUS,
             ),
           );
+
+        if (element.localName == 'a') {
+          final link = element.attributes['href'];
+          if (link == null) return null;
+        }
+
         return null;
       },
     );

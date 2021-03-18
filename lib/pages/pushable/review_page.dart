@@ -11,7 +11,7 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 class ReviewPage extends StatelessWidget {
   static const ROUTE = '/review';
 
-  final int? id;
+  final int id;
   final String? bannerUrl;
 
   ReviewPage(this.id, this.bannerUrl);
@@ -30,7 +30,7 @@ class ReviewPage extends StatelessWidget {
                     CustomSliverHeader(
                       height: 150,
                       background: Hero(
-                        tag: id!,
+                        tag: id,
                         child: bannerUrl != null
                             ? FadeImage(bannerUrl)
                             : const SizedBox(),

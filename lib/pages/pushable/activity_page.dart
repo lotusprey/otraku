@@ -16,7 +16,7 @@ import 'package:otraku/widgets/triangle_clip.dart';
 class ActivityPage extends StatelessWidget {
   static const ROUTE = '/activity';
 
-  final int? id;
+  final int id;
   ActivityPage(this.id);
 
   @override

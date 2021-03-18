@@ -3,7 +3,6 @@ import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
-import 'package:otraku/models/page_model.dart';
 
 class User extends GetxController {
   static const _userQuery = r'''
@@ -98,12 +97,11 @@ class User extends GetxController {
   UserModel? _model;
   int _favsIndex = UserModel.ANIME_FAV;
   bool _loading = true;
-  final _activities = PageModel<ActivityModel>([], true, 1);
 
   UserModel? get model => _model;
   List<BrowseResultModel> get favourites =>
-      _model!.favourites(_favsIndex).items as List<BrowseResultModel>;
-  List<ActivityModel> get activities => _activities.items;
+      _model!.favourites[_favsIndex].items;
+  List<ActivityModel> get activities => _model!.activities.items;
   bool get loading => _loading;
   int get favsIndex => _favsIndex;
   String get favPageName {
@@ -146,7 +144,7 @@ class User extends GetxController {
   }
 
   Future<void> fetchFavourites() async {
-    if (_loading || !_model!.favourites(_favsIndex).hasNextPage!) return;
+    if (_loading || !_model!.favourites[_favsIndex].hasNextPage!) return;
     _loading = true;
 
     final data = await Client.request(_userQuery, {
@@ -156,7 +154,7 @@ class User extends GetxController {
       'withCharacters': _favsIndex == UserModel.CHARACTER_FAV,
       'withStaff': _favsIndex == UserModel.STAFF_FAV,
       'withStudios': _favsIndex == UserModel.STUDIO_FAV,
-      'favsPage': _model!.favourites(_favsIndex).nextPage,
+      'favsPage': _model!.favourites[_favsIndex].nextPage,
     });
     if (data == null) return;
 
@@ -166,12 +164,12 @@ class User extends GetxController {
   }
 
   Future<void> fetchActivities() async {
-    if (_loading || !_activities.hasNextPage!) return;
+    if (_loading || !_model!.activities.hasNextPage!) return;
     _loading = true;
 
     final data = await Client.request(_activitiesQuery, {
       'id': _id,
-      'page': _activities.nextPage,
+      'page': _model!.activities.nextPage,
     });
     if (data == null) return;
 
@@ -180,7 +178,7 @@ class User extends GetxController {
       final m = ActivityModel(a);
       if (m.valid) al.add(m);
     }
-    _activities.append(al, data['Page']['pageInfo']['hasNextPage']);
+    _model!.activities.append(al, data['Page']['pageInfo']['hasNextPage']);
 
     _loading = false;
     update();

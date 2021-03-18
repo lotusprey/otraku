@@ -408,13 +408,9 @@ class __FilterState extends State<_Filter> {
   void _pushPage(BuildContext context) =>
       Get.toNamed(FilterPage.ROUTE, arguments: [
         widget.collectionTag,
-        (newActive) {
-          if (newActive == null) {
-            setState(() => _active = _checkIfActive());
-          } else {
-            setState(() => _active = newActive);
-          }
-        },
+        (definitelyInactive) => definitelyInactive
+            ? setState(() => _active = false)
+            : setState(() => _active = _checkIfActive()),
       ]);
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([

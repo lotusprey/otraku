@@ -1,5 +1,6 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double CUSTOM_APP_BAR_HEIGHT = 50;
@@ -41,7 +42,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               tooltip: 'Close',
               icon: Icon(leading),
               color: Theme.of(context).dividerColor,
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Get.back(),
             )),
             Expanded(
               child: titleWidget != null

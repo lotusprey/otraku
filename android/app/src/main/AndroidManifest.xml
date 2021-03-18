@@ -8,8 +8,6 @@
          exception "java.security.InvalidKeyException:Failed to unwrap key" -->
      <!-- Note: Additionally the property fullBackupContent was configured with
          the settings stored in "./res/xml/backup_rules.xml" -->
-     <!-- Note: Android requires the following line in order to use the internet-->
-     <!-- Note: android:label is the name -->
      <uses-permission android:name="android.permission.INTERNET" />
      <application 
           android:allowBackup="false" 

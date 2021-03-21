@@ -3,18 +3,42 @@ import 'package:otraku/widgets/loader.dart';
 
 class RefreshControl extends StatelessWidget {
   final Future<void> Function() onRefresh;
-  final bool Function()? canRefresh;
+  final bool Function() canRefresh;
+
   const RefreshControl({
     required this.onRefresh,
-    this.canRefresh,
+    required this.canRefresh,
   });
 
   @override
   Widget build(BuildContext context) => CupertinoSliverRefreshControl(
-        refreshTriggerPullDistance: 150,
         onRefresh: () async {
-          if (canRefresh == null || canRefresh!()) await onRefresh();
+          if (canRefresh()) await onRefresh();
         },
-        builder: (_, __, ___, ____, _____) => const Center(child: Loader()),
+        builder: (
+          _,
+          refreshState,
+          pulledExtent,
+          refreshTriggerPullDistance,
+          __,
+        ) {
+          double percentageComplete = pulledExtent / refreshTriggerPullDistance;
+          if (percentageComplete > 1) percentageComplete = 1;
+
+          switch (refreshState) {
+            case RefreshIndicatorMode.armed:
+            case RefreshIndicatorMode.refresh:
+              return const Center(child: Loader());
+            case RefreshIndicatorMode.drag:
+            case RefreshIndicatorMode.done:
+              const Curve opacity = Interval(0.0, 0.5, curve: Curves.easeInOut);
+              return Opacity(
+                opacity: opacity.transform(percentageComplete),
+                child: const Center(child: Loader()),
+              );
+            case RefreshIndicatorMode.inactive:
+              return const SizedBox();
+          }
+        },
       );
 }

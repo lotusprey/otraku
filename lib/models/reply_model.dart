@@ -5,7 +5,7 @@ class ReplyModel {
   final int? userId;
   final String? userName;
   final String? userImage;
-  final String? text;
+  final String text;
   final String createdAt;
   int? _likeCount;
   bool? _isLiked;
@@ -31,7 +31,7 @@ class ReplyModel {
         userId: map['user']['id'],
         userName: map['user']['name'],
         userImage: map['user']['avatar']['large'],
-        text: map['text'],
+        text: map['text'] ?? '',
         createdAt: Convert.millisecondsToTimeString(map['createdAt']),
       );
 

@@ -119,7 +119,7 @@ class UserTab extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                         borderRadius: Config.BORDER_RADIUS,
                       ),
-                      child: HtmlContent(user.model!.description),
+                      child: HtmlContent(user.model!.description!),
                     ),
                   SizedBox(height: NavBar.offset(context)),
                 ],

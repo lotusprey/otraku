@@ -23,7 +23,7 @@ class ReviewPage extends StatelessWidget {
           child: GetBuilder<Review>(
               tag: id.toString(),
               builder: (review) {
-                final data = review.model;
+                final model = review.model;
                 return CustomScrollView(
                   physics: Config.PHYSICS,
                   slivers: [
@@ -36,7 +36,7 @@ class ReviewPage extends StatelessWidget {
                             : const SizedBox(),
                       ),
                     ),
-                    if (data != null)
+                    if (model != null)
                       SliverPadding(
                         padding: EdgeInsets.only(
                           top: 15,
@@ -49,12 +49,12 @@ class ReviewPage extends StatelessWidget {
                           delegate: SliverChildListDelegate.fixed([
                             GestureDetector(
                               onTap: () => BrowseIndexer.openPage(
-                                id: data.mediaId!,
-                                imageUrl: data.mediaCover,
-                                browsable: data.browsable,
+                                id: model.mediaId!,
+                                imageUrl: model.mediaCover,
+                                browsable: model.browsable,
                               ),
                               child: Text(
-                                data.mediaTitle!,
+                                model.mediaTitle!,
                                 style: Theme.of(context).textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
@@ -62,8 +62,8 @@ class ReviewPage extends StatelessWidget {
                             const SizedBox(height: 5),
                             GestureDetector(
                               onTap: () => BrowseIndexer.openPage(
-                                id: data.userId!,
-                                imageUrl: data.userAvatar,
+                                id: model.userId!,
+                                imageUrl: model.userAvatar,
                                 browsable: Browsable.user,
                               ),
                               child: RichText(
@@ -76,7 +76,7 @@ class ReviewPage extends StatelessWidget {
                                       style:
                                           Theme.of(context).textTheme.headline6,
                                     ),
-                                    TextSpan(text: data.userName),
+                                    TextSpan(text: model.userName),
                                   ],
                                 ),
                               ),
@@ -84,16 +84,16 @@ class ReviewPage extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Text(
-                                data.summary!,
+                                model.summary!,
                                 style: Theme.of(context).textTheme.subtitle1,
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                            HtmlContent(data.text),
+                            HtmlContent(model.text),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Text(
-                                data.createdAt,
+                                model.createdAt,
                                 style: Theme.of(context).textTheme.subtitle1,
                                 textAlign: TextAlign.center,
                               ),

@@ -11,7 +11,7 @@ class ReviewModel {
   final String? mediaCover;
   final String? banner;
   final String? summary;
-  final String? text;
+  final String text;
   final String createdAt;
   final int? score;
   final int? rating;
@@ -48,7 +48,7 @@ class ReviewModel {
         mediaCover: map['media']['coverImage']['large'],
         banner: map['media']['bannerImage'],
         summary: map['summary'],
-        text: map['body'],
+        text: map['body'] ?? '',
         createdAt: Convert.millisecondsToDateString(map['createdAt']),
         score: map['score'],
         rating: map['rating'],

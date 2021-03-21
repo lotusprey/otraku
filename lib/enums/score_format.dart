@@ -10,7 +10,7 @@ enum ScoreFormat {
 }
 
 extension ScoreFormatExtension on ScoreFormat {
-  Widget getWidget(final BuildContext context, final double score) {
+  Widget getWidget(final BuildContext ctx, final double score) {
     if (score == 0) return const SizedBox();
 
     switch (this) {
@@ -22,7 +22,7 @@ extension ScoreFormatExtension on ScoreFormat {
             const SizedBox(width: 5),
             Text(
               score.toStringAsFixed(score.truncate() == score ? 0 : 1),
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(ctx).textTheme.subtitle1,
             ),
           ],
         );
@@ -38,7 +38,7 @@ extension ScoreFormatExtension on ScoreFormat {
           Icons.sentiment_very_dissatisfied,
           size: Style.ICON_SMALL,
         );
-      default:
+      case ScoreFormat.POINT_5:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -46,7 +46,19 @@ extension ScoreFormatExtension on ScoreFormat {
             const SizedBox(width: 5),
             Text(
               score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(ctx).textTheme.subtitle1,
+            ),
+          ],
+        );
+      default:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_half, size: Style.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              score.toStringAsFixed(0),
+              style: Theme.of(ctx).textTheme.subtitle1,
             ),
           ],
         );

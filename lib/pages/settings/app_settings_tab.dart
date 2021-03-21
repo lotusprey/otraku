@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
@@ -73,6 +74,18 @@ class AppSettingsTab extends StatelessWidget {
               Config.storage.write(Config.DARK_THEME, value);
               Config.updateTheme();
             },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 50),
+            child: ElevatedButton(
+              child: Text('Log Out'),
+              onPressed: Client.logOut,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Theme.of(context).errorColor,
+                ),
+              ),
+            ),
           ),
           SizedBox(height: NavBar.offset(context)),
         ],

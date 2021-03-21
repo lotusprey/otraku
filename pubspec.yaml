@@ -38,7 +38,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/android_b.png
+    - assets/icons/about_icon.png
 
   fonts:
     - family: Rubik

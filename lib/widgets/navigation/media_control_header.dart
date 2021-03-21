@@ -11,7 +11,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
-import 'package:otraku/pages/pushable/filter_page.dart';
+import 'package:otraku/pages/filter_page.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaControlHeader extends StatelessWidget {

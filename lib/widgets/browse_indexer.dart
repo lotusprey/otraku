@@ -6,12 +6,12 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/pages/pushable/character_page.dart';
-import 'package:otraku/pages/pushable/edit_entry_page.dart';
+import 'package:otraku/pages/character_page.dart';
+import 'package:otraku/pages/edit_entry_page.dart';
 import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/pushable/review_page.dart';
-import 'package:otraku/pages/pushable/staff_page.dart';
-import 'package:otraku/pages/pushable/studio_page.dart';
+import 'package:otraku/pages/review_page.dart';
+import 'package:otraku/pages/staff_page.dart';
+import 'package:otraku/pages/studio_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 
 class BrowseIndexer extends StatelessWidget {

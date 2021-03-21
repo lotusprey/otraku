@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/pages/pushable/notifications_page.dart';
+import 'package:otraku/pages/notifications_page.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 

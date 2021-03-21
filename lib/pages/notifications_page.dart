@@ -5,7 +5,7 @@ import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/pages/pushable/activity_page.dart';
+import 'package:otraku/pages/activity_page.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';

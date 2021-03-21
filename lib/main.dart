@@ -21,16 +21,16 @@ import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/pushable/user_activities_page.dart';
-import 'package:otraku/pages/pushable/activity_page.dart';
-import 'package:otraku/pages/pushable/character_page.dart';
-import 'package:otraku/pages/pushable/edit_entry_page.dart';
-import 'package:otraku/pages/pushable/favourites_page.dart';
-import 'package:otraku/pages/pushable/filter_page.dart';
-import 'package:otraku/pages/pushable/notifications_page.dart';
-import 'package:otraku/pages/pushable/review_page.dart';
-import 'package:otraku/pages/pushable/staff_page.dart';
-import 'package:otraku/pages/pushable/studio_page.dart';
+import 'package:otraku/pages/user_activities_page.dart';
+import 'package:otraku/pages/activity_page.dart';
+import 'package:otraku/pages/character_page.dart';
+import 'package:otraku/pages/edit_entry_page.dart';
+import 'package:otraku/pages/favourites_page.dart';
+import 'package:otraku/pages/filter_page.dart';
+import 'package:otraku/pages/notifications_page.dart';
+import 'package:otraku/pages/review_page.dart';
+import 'package:otraku/pages/staff_page.dart';
+import 'package:otraku/pages/studio_page.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
 
 Future<void> main() async {

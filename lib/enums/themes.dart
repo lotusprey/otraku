@@ -164,7 +164,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
         textStyle: MaterialStateProperty.all(TextStyle(
-          fontSize: Style.FONT_BIG,
+          fontSize: Style.FONT_MEDIUM,
           fontWeight: FontWeight.w500,
         )),
         backgroundColor: MaterialStateProperty.all(theme['accent']),

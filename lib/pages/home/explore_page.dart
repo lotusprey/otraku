@@ -10,20 +10,26 @@ import 'package:otraku/widgets/navigation/media_control_header.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
+import 'package:otraku/widgets/refresh_control.dart';
 
 class ExplorePage extends StatelessWidget {
   const ExplorePage();
 
   @override
   Widget build(BuildContext context) {
+    final explorer = Get.find<Explorer>();
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
-      controller: Get.find<Explorer>().scrollCtrl,
+      controller: explorer.scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
         MediaControlHeader(),
+        RefreshControl(
+          onRefresh: explorer.fetch,
+          canRefresh: () => !explorer.isLoading,
+        ),
         _ExploreGrid(),
         _EndOfListLoader(),
         SliverToBoxAdapter(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/themes.dart';
+import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/review.dart';
 import 'package:otraku/enums/browsable.dart';
@@ -49,12 +51,12 @@ class ReviewPage extends StatelessWidget {
                           delegate: SliverChildListDelegate.fixed([
                             GestureDetector(
                               onTap: () => BrowseIndexer.openPage(
-                                id: model.mediaId!,
+                                id: model.mediaId,
                                 imageUrl: model.mediaCover,
                                 browsable: model.browsable,
                               ),
                               child: Text(
-                                model.mediaTitle!,
+                                model.mediaTitle,
                                 style: Theme.of(context).textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
@@ -62,7 +64,7 @@ class ReviewPage extends StatelessWidget {
                             const SizedBox(height: 5),
                             GestureDetector(
                               onTap: () => BrowseIndexer.openPage(
-                                id: model.userId!,
+                                id: model.userId,
                                 imageUrl: model.userAvatar,
                                 browsable: Browsable.user,
                               ),
@@ -84,14 +86,35 @@ class ReviewPage extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: Text(
-                                model.summary!,
+                                model.summary,
                                 style: Theme.of(context).textTheme.subtitle1,
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             HtmlContent(model.text),
-                            Padding(
+                            Container(
                               padding: const EdgeInsets.symmetric(vertical: 10),
+                              alignment: Alignment.center,
+                              child: ElevatedButton(
+                                onPressed: null,
+                                child: Text('${model.score}/100'),
+                                style: ElevatedButton.styleFrom(
+                                  textStyle: TextStyle(
+                                    fontSize: Style.FONT_BIG,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            _RateButtons(model),
+                            Text(
+                              '${model.rating}/${model.totalRating} users liked this review',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(bottom: 10, top: 20),
                               child: Text(
                                 model.createdAt,
                                 style: Theme.of(context).textTheme.subtitle1,
@@ -106,4 +129,52 @@ class ReviewPage extends StatelessWidget {
               }),
         ),
       );
+}
+
+class _RateButtons extends StatefulWidget {
+  final ReviewModel model;
+  _RateButtons(this.model);
+
+  @override
+  _RateButtonsState createState() => _RateButtonsState();
+}
+
+class _RateButtonsState extends State<_RateButtons> {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(
+            widget.model.viewerRating == true
+                ? Icons.thumb_up
+                : Icons.thumb_up_outlined,
+          ),
+          color: widget.model.viewerRating == true
+              ? Theme.of(context).accentColor
+              : null,
+          onPressed: () =>
+              _rate(widget.model.viewerRating != true ? true : null)
+                  .then((_) => setState(() {})),
+        ),
+        IconButton(
+          icon: Icon(
+            widget.model.viewerRating == false
+                ? Icons.thumb_down
+                : Icons.thumb_down_outlined,
+          ),
+          color: widget.model.viewerRating == false
+              ? Theme.of(context).errorColor
+              : null,
+          onPressed: () =>
+              _rate(widget.model.viewerRating != false ? false : null)
+                  .then((_) => setState(() {})),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _rate(bool? rating) async =>
+      await Get.find<Review>(tag: widget.model.id.toString()).rate(rating);
 }

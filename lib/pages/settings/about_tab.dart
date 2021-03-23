@@ -27,13 +27,13 @@ class AboutTab extends StatelessWidget {
           child: Text(
             'Otraku - v. 1.0.0',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.headline5,
           ),
         ),
         Text(
           'An unofficial AniList app',
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headline5,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         const SizedBox(height: 30),
         Text(
@@ -63,8 +63,8 @@ class AboutTab extends StatelessWidget {
   }
 
   static const _privacyPolicy =
-      'All settings and tokens are stored onto the device.\n'
-      'Otraku does not transfer or use your data online.\n'
-      'Otraku uses the AniList API to read and mutate data and requires you to have an AniList account with which to log in, in order for you to use the app.\n'
+      'All settings and tokens are saved onto the device.\n'
+      'Otraku does not store, transfer or use your data online.\n'
+      'As a third-party app Otraku uses the AniList API to read and mutate data and it requires you to have an AniList account with which to log in.\n'
       'You can read the AniList terms & privacy policy down below.';
 }

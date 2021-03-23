@@ -157,8 +157,11 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       style: ButtonStyle(
         textStyle: MaterialStateProperty.all(TextStyle(
           fontSize: Style.FONT_MEDIUM,
-          color: theme['accent'],
         )),
+        foregroundColor: MaterialStateProperty.all(theme['accent']),
+        overlayColor: MaterialStateProperty.all(
+          (theme['accent'] as Color).withAlpha(20),
+        ),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -169,6 +172,9 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         )),
         backgroundColor: MaterialStateProperty.all(theme['accent']),
         foregroundColor: MaterialStateProperty.all(theme['background']),
+        overlayColor: MaterialStateProperty.all(
+          (theme['accent'] as Color).withAlpha(20),
+        ),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
           borderRadius: Config.BORDER_RADIUS,
         )),

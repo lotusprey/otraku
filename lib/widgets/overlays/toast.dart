@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:otraku/utils/config.dart';
 
 class Toast {
+  Toast._();
+
   static OverlayEntry? _entry;
   static bool _busy = false;
 
@@ -38,5 +41,7 @@ class Toast {
     _busy = false;
   }
 
-  Toast._();
+  static void copy(final BuildContext ctx, final String? text) =>
+      Clipboard.setData(ClipboardData(text: text))
+          .then((_) => show(ctx, 'Copied'));
 }

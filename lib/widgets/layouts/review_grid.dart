@@ -81,15 +81,23 @@ class ReviewGrid extends StatelessWidget {
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 5,
                                     ),
-                                    child: Icon(
-                                      Icons.thumb_up_outlined,
-                                      size: Style.ICON_SMALL,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.thumbs_up_down_outlined,
+                                          size: Style.ICON_SMALL,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          results[index].text3!,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Text(
-                                    results[index].text3!,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1,
                                   ),
                                 ],
                               ),

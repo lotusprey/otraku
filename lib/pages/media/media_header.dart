@@ -99,7 +99,7 @@ class _MediaHeaderState extends State<MediaHeader> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -182,6 +182,9 @@ class _MediaHeaderState extends State<MediaHeader> {
                                       : Icons.edit,
                                 ),
                               ),
+                              style: ButtonStyle(
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
                             ),
                             const SizedBox(width: 10),
                             ElevatedButton(
@@ -201,6 +204,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                 backgroundColor: MaterialStateProperty.all(
                                   Theme.of(context).errorColor,
                                 ),
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                             ),
                           ],

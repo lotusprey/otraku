@@ -24,6 +24,16 @@ class Review extends GetxController {
     }
   ''';
 
+  static const _rateMutation = r'''
+    mutation Rate($id: Int, $rating: ReviewRating) {
+      RateReview(reviewId: $id, rating: $rating) {
+        rating
+        ratingAmount
+        userRating
+      }
+    }
+  ''';
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -40,9 +50,24 @@ class Review extends GetxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    final body = await Client.request(_reviewQuery, {'id': _id});
-    if (body == null) return;
-    _model = ReviewModel(body['Review']);
+    final data = await Client.request(_reviewQuery, {'id': _id});
+    if (data == null) return;
+    _model = ReviewModel(data['Review']);
+    update();
+  }
+
+  Future<void> rate(bool? rating) async {
+    final data = await Client.request(_rateMutation, {
+      'id': _id,
+      'rating': rating == null
+          ? 'NO_VOTE'
+          : rating
+              ? 'UP_VOTE'
+              : 'DOWN_VOTE',
+    });
+    if (data == null) return;
+
+    _model!.updateRating(data['RateReview']);
     update();
   }
 

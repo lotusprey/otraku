@@ -46,6 +46,9 @@ class _EditEntryPageState extends State<EditEntryPage> {
                       context: context,
                       builder: (_) => PopUpAnimation(
                         AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: Config.BORDER_RADIUS,
+                          ),
                           backgroundColor: Theme.of(context).primaryColor,
                           title: Text(
                             'Remove entry?',

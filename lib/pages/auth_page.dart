@@ -36,7 +36,7 @@ class _AuthPageState extends State<AuthPage> {
       await launch(redirectUrl);
     } catch (err) {
       Get.defaultDialog(
-        radius: 5,
+        radius: 10,
         backgroundColor: Get.theme!.backgroundColor,
         titleStyle: Get.theme!.textTheme.headline6,
         title: 'Could not open AniList',

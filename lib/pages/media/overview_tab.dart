@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer.dart';
@@ -12,6 +11,7 @@ import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class OverviewTab extends StatelessWidget {
   final MediaOverviewModel overview;
@@ -149,9 +149,7 @@ class OverviewTab extends StatelessWidget {
                 Config.setIndex(HomePage.EXPLORE);
                 Get.until((route) => route.isFirst);
               },
-              onLongTap: (index) => Clipboard.setData(
-                ClipboardData(text: overview.genres[index]),
-              ),
+              onLongTap: (index) => Toast.copy(context, overview.genres[index]),
             ),
           if (overview.studios.isNotEmpty)
             _ScrollCards(
@@ -264,7 +262,7 @@ class _Tiles extends StatelessWidget {
           shrinkWrap: true,
           physics: Config.PHYSICS,
           itemBuilder: (_, index) => GestureDetector(
-            onTap: () => Clipboard.setData(ClipboardData(text: items[index])),
+            onTap: () => Toast.copy(context, items[index]),
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
               padding: Config.PADDING,

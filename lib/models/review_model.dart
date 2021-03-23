@@ -3,21 +3,21 @@ import 'package:otraku/utils/convert.dart';
 
 class ReviewModel {
   final int id;
-  final int? userId;
-  final int? mediaId;
-  final String? userName;
+  final int userId;
+  final int mediaId;
+  final String userName;
   final String? userAvatar;
-  final String? mediaTitle;
+  final String mediaTitle;
   final String? mediaCover;
   final String? banner;
-  final String? summary;
+  final String summary;
   final String text;
   final String createdAt;
-  final int? score;
-  final int? rating;
-  final int? totalRating;
-  final bool? viewerRating;
+  final int score;
   final Browsable browsable;
+  int rating;
+  int totalRating;
+  bool? viewerRating;
 
   ReviewModel._({
     required this.id,
@@ -42,17 +42,17 @@ class ReviewModel {
         id: map['id'],
         userId: map['user']['id'],
         mediaId: map['media']['id'],
-        userName: map['user']['name'],
+        userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
-        mediaTitle: map['media']['title']['userPreferred'],
+        mediaTitle: map['media']['title']['userPreferred'] ?? '',
         mediaCover: map['media']['coverImage']['large'],
         banner: map['media']['bannerImage'],
-        summary: map['summary'],
+        summary: map['summary'] ?? '',
         text: map['body'] ?? '',
         createdAt: Convert.millisecondsToDateString(map['createdAt']),
-        score: map['score'],
-        rating: map['rating'],
-        totalRating: map['ratingAmount'],
+        score: map['score'] ?? 0,
+        rating: map['rating'] ?? 0,
+        totalRating: map['ratingAmount'] ?? 0,
         viewerRating: map['userRating'] == 'UP_VOTE'
             ? true
             : map['userRating'] == 'DOWN_VOTE'
@@ -61,4 +61,14 @@ class ReviewModel {
         browsable:
             map['media']['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
       );
+
+  void updateRating(final Map<String, dynamic> map) {
+    rating = map['rating'] ?? 0;
+    totalRating = map['ratingAmount'] ?? 0;
+    viewerRating = map['userRating'] == 'UP_VOTE'
+        ? true
+        : map['userRating'] == 'DOWN_VOTE'
+            ? false
+            : null;
+  }
 }

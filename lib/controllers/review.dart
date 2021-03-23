@@ -68,7 +68,6 @@ class Review extends GetxController {
     if (data == null) return;
 
     _model!.updateRating(data['RateReview']);
-    update();
   }
 
   @override

@@ -29,15 +29,7 @@ class ReviewPage extends StatelessWidget {
                 return CustomScrollView(
                   physics: Config.PHYSICS,
                   slivers: [
-                    CustomSliverHeader(
-                      height: 150,
-                      background: Hero(
-                        tag: id,
-                        child: bannerUrl != null
-                            ? FadeImage(bannerUrl)
-                            : const SizedBox(),
-                      ),
-                    ),
+                    _Header(id, bannerUrl),
                     if (model != null)
                       SliverPadding(
                         padding: EdgeInsets.only(
@@ -57,7 +49,7 @@ class ReviewPage extends StatelessWidget {
                               ),
                               child: Text(
                                 model.mediaTitle,
-                                style: Theme.of(context).textTheme.headline2,
+                                style: Theme.of(context).textTheme.headline5,
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -76,7 +68,7 @@ class ReviewPage extends StatelessWidget {
                                     TextSpan(
                                       text: 'review by ',
                                       style:
-                                          Theme.of(context).textTheme.headline6,
+                                          Theme.of(context).textTheme.subtitle1,
                                     ),
                                     TextSpan(text: model.userName),
                                   ],
@@ -107,11 +99,6 @@ class ReviewPage extends StatelessWidget {
                               ),
                             ),
                             _RateButtons(model),
-                            Text(
-                              '${model.rating}/${model.totalRating} users liked this review',
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
                             Padding(
                               padding:
                                   const EdgeInsets.only(bottom: 10, top: 20),
@@ -131,6 +118,48 @@ class ReviewPage extends StatelessWidget {
       );
 }
 
+class _Header extends StatelessWidget {
+  final int id;
+  final String? bannerUrl;
+  _Header(this.id, this.bannerUrl);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomSliverHeader(
+      height: 150,
+      background: Hero(
+        tag: id,
+        child: bannerUrl != null
+            ? Stack(
+                fit: StackFit.expand,
+                children: [
+                  FadeImage(bannerUrl),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 10,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Theme.of(context).backgroundColor,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox(),
+      ),
+    );
+  }
+}
+
 class _RateButtons extends StatefulWidget {
   final ReviewModel model;
   _RateButtons(this.model);
@@ -142,34 +171,44 @@ class _RateButtons extends StatefulWidget {
 class _RateButtonsState extends State<_RateButtons> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          icon: Icon(
-            widget.model.viewerRating == true
-                ? Icons.thumb_up
-                : Icons.thumb_up_outlined,
-          ),
-          color: widget.model.viewerRating == true
-              ? Theme.of(context).accentColor
-              : null,
-          onPressed: () =>
-              _rate(widget.model.viewerRating != true ? true : null)
-                  .then((_) => setState(() {})),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(
+                widget.model.viewerRating == true
+                    ? Icons.thumb_up
+                    : Icons.thumb_up_outlined,
+              ),
+              color: widget.model.viewerRating == true
+                  ? Theme.of(context).accentColor
+                  : null,
+              onPressed: () =>
+                  _rate(widget.model.viewerRating != true ? true : null)
+                      .then((_) => setState(() {})),
+            ),
+            IconButton(
+              icon: Icon(
+                widget.model.viewerRating == false
+                    ? Icons.thumb_down
+                    : Icons.thumb_down_outlined,
+              ),
+              color: widget.model.viewerRating == false
+                  ? Theme.of(context).errorColor
+                  : null,
+              onPressed: () =>
+                  _rate(widget.model.viewerRating != false ? false : null)
+                      .then((_) => setState(() {})),
+            ),
+          ],
         ),
-        IconButton(
-          icon: Icon(
-            widget.model.viewerRating == false
-                ? Icons.thumb_down
-                : Icons.thumb_down_outlined,
-          ),
-          color: widget.model.viewerRating == false
-              ? Theme.of(context).errorColor
-              : null,
-          onPressed: () =>
-              _rate(widget.model.viewerRating != false ? false : null)
-                  .then((_) => setState(() {})),
+        Text(
+          '${widget.model.rating}/${widget.model.totalRating} users liked this review',
+          style: Theme.of(context).textTheme.subtitle1,
+          textAlign: TextAlign.center,
         ),
       ],
     );

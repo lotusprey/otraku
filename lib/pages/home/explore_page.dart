@@ -54,14 +54,7 @@ class _ExploreGrid extends StatelessWidget {
 
     return Obx(() {
       if (explorer.isLoading)
-        return SliverFillRemaining(
-          child: Center(
-            child: Text(
-              'Loading...',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          ),
-        );
+        return const SliverFillRemaining(child: Center(child: Loader()));
 
       final results = explorer.results;
       if (results.isEmpty) {

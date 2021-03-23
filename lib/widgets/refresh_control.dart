@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:otraku/widgets/loader.dart';
 
 class RefreshControl extends StatelessWidget {
@@ -12,6 +13,7 @@ class RefreshControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CupertinoSliverRefreshControl(
+        refreshIndicatorExtent: 30,
         onRefresh: () async {
           if (canRefresh()) await onRefresh();
         },
@@ -20,20 +22,23 @@ class RefreshControl extends StatelessWidget {
           refreshState,
           pulledExtent,
           refreshTriggerPullDistance,
-          __,
+          refreshIndicatorExtent,
         ) {
-          double percentageComplete = pulledExtent / refreshTriggerPullDistance;
-          if (percentageComplete > 1) percentageComplete = 1;
+          double visibility = 0;
+          if (pulledExtent > refreshIndicatorExtent) {
+            pulledExtent -= refreshIndicatorExtent;
+            refreshTriggerPullDistance -= refreshIndicatorExtent;
+            visibility = pulledExtent / refreshTriggerPullDistance;
+            if (visibility > 1) visibility = 1;
+          }
 
           switch (refreshState) {
-            case RefreshIndicatorMode.armed:
-            case RefreshIndicatorMode.refresh:
-              return const Center(child: Loader());
             case RefreshIndicatorMode.drag:
             case RefreshIndicatorMode.done:
-              const Curve opacity = Interval(0.0, 0.5, curve: Curves.easeInOut);
+            case RefreshIndicatorMode.armed:
+            case RefreshIndicatorMode.refresh:
               return Opacity(
-                opacity: opacity.transform(percentageComplete),
+                opacity: visibility,
                 child: const Center(child: Loader()),
               );
             case RefreshIndicatorMode.inactive:

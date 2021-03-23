@@ -70,7 +70,7 @@ class _ChipGridState extends State<ChipGrid> {
               children: [
                 if (list.length > 0)
                   Tooltip(
-                    message: 'Clear Category',
+                    message: 'Clear',
                     child: GestureDetector(
                       onTap: () => setState(() {
                         widget.inclusive!.clear();
@@ -90,7 +90,7 @@ class _ChipGridState extends State<ChipGrid> {
                     ),
                   ),
                 IconButton(
-                  tooltip: 'Show Options',
+                  tooltip: 'Options',
                   icon: Icon(FluentIcons.options_24_regular),
                   onPressed: () => Sheet.show(
                     ctx: context,

@@ -65,7 +65,7 @@ class FilterPage extends StatelessWidget {
         title: 'Filters',
         trailing: [
           IconButton(
-            tooltip: 'Clear Filters',
+            tooltip: 'Clear',
             icon: const Icon(Icons.close),
             color: Theme.of(context).dividerColor,
             onPressed: () {
@@ -75,7 +75,7 @@ class FilterPage extends StatelessWidget {
             },
           ),
           IconButton(
-            tooltip: 'Apply Filters',
+            tooltip: 'Apply',
             icon: Icon(
               FluentIcons.checkmark_24_filled,
               color: Theme.of(context).dividerColor,

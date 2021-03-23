@@ -78,7 +78,7 @@ class Client {
   }
 
   static Future<Map<String, dynamic>?> request(
-    String? request,
+    String request,
     Map<String, dynamic>? variables, {
     bool popOnErr = true,
   }) async {

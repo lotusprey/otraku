@@ -45,7 +45,6 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
       theme: Config.theme,
-      defaultTransition: Transition.cupertino,
       initialRoute: AuthPage.ROUTE,
       getPages: [
         GetPage(name: AuthPage.ROUTE, page: () => AuthPage()),

@@ -45,7 +45,7 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
             if (isPushed)
               IconButton(
                 padding: const EdgeInsets.only(right: 20),
-                icon: const Icon(FluentIcons.arrow_left_24_filled),
+                icon: const Icon(FluentIcons.arrow_left_24_regular),
                 onPressed: () => Navigator.pop(context),
               ),
             Text(headline, style: Theme.of(context).textTheme.headline3),

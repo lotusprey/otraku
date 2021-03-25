@@ -12,7 +12,7 @@ class HtmlContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return HtmlWidget(
       text,
-      textStyle: Theme.of(context).textTheme.bodyText1,
+      textStyle: Theme.of(context).textTheme.bodyText1!,
       hyperlinkColor: Theme.of(context).accentColor,
       onTapUrl: (url) async {
         try {
@@ -41,11 +41,6 @@ class HtmlContent extends StatelessWidget {
               borderRadius: Config.BORDER_RADIUS,
             ),
           );
-
-        if (element.localName == 'a') {
-          final link = element.attributes['href'];
-          if (link == null) return null;
-        }
 
         return null;
       },

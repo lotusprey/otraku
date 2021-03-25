@@ -14,12 +14,12 @@ dependencies:
 
   get: ^4.0.0-nullsafety.2
   get_storage: ^2.0.1
-  http: ^0.13.0
+  http: ^0.13.1
   url_launcher: ^6.0.2
   app_links: ^2.0.0
   flutter_widget_from_html_core: ^0.6.0-rc.2021031201
   flutter_secure_storage: ^4.1.0
-  fluentui_system_icons: ^1.1.106
+  fluentui_system_icons: ^1.1.111
 
 dev_dependencies:
   flutter_test:
@@ -50,9 +50,3 @@ flutter:
           weight: 500
         - asset: assets/fonts/Rubik-MediumItalic.ttf
           weight: 500
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages

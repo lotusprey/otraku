@@ -143,13 +143,14 @@ class ActivityBox extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: Text(
-                                activity.mediaFormat!,
-                                style: Theme.of(context).textTheme.bodyText1,
+                            if (activity.mediaFormat != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5),
+                                child: Text(
+                                  activity.mediaFormat!,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                       ),

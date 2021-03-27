@@ -62,14 +62,14 @@ class Character extends GetxController {
   final _manga = Rx<PageModel<Connection>>();
   final _onAnime = true.obs;
   final _staffLanguage = 'Japanese'.obs;
-  final List<String> _availableLanguages = [];
+  final _availableLanguages = <String>[];
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
   PersonModel? get person => _person();
 
-  PageModel? get anime => _anime();
+  PageModel<Connection>? get anime => _anime();
 
-  PageModel? get manga => _manga();
+  PageModel<Connection>? get manga => _manga();
 
   bool get onAnime => _onAnime()!;
 
@@ -205,7 +205,7 @@ class Character extends GetxController {
   void _initLists(Map<String, dynamic> data) {
     _availableLanguages.clear();
 
-    final connections = <Connection>[];
+    List<Connection> connections = [];
     for (final connection in data['anime']['edges']) {
       final voiceActors = <Connection>[];
 
@@ -238,7 +238,7 @@ class Character extends GetxController {
 
     _anime(PageModel(connections, data['anime']['pageInfo']['hasNextPage'], 2));
 
-    connections.clear();
+    connections = [];
     for (final connection in data['manga']['edges'])
       connections.add(Connection(
         id: connection['node']['id'],

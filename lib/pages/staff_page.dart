@@ -45,8 +45,8 @@ class StaffPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (staff.characterList!.items.isNotEmpty &&
-                          staff.roleList!.items.isNotEmpty)
+                      if (staff.characters.items.isNotEmpty &&
+                          staff.roles.items.isNotEmpty)
                         BubbleTabs(
                           options: const ['Characters', 'Staff Roles'],
                           values: const [true, false],
@@ -77,11 +77,10 @@ class StaffPage extends StatelessWidget {
               );
             }),
             Obx(() {
-              final connectionList =
-                  staff.onCharacters ? staff.characterList : staff.roleList;
+              final connections =
+                  staff.onCharacters ? staff.characters : staff.roles;
 
-              if (connectionList == null || connectionList.items.isEmpty)
-                return const SliverToBoxAdapter();
+              if (connections.items.isEmpty) return const SliverToBoxAdapter();
 
               return SliverPadding(
                 padding: EdgeInsets.only(
@@ -90,7 +89,7 @@ class StaffPage extends StatelessWidget {
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
                 sliver: ConnectionsGrid(
-                  connections: connectionList.items.cast(),
+                  connections: connections.items.cast(),
                   loadMore: staff.fetchPage,
                 ),
               );

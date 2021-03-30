@@ -1,11 +1,9 @@
 class PageModel<T> {
-  final List<T> items;
-  bool _hasNextPage;
-  int _nextPage;
+  final items = <T>[];
+  bool _hasNextPage = true;
+  int _nextPage = 1;
 
-  PageModel(this.items, this._hasNextPage, this._nextPage);
-
-  bool? get hasNextPage => _hasNextPage;
+  bool get hasNextPage => _hasNextPage;
 
   int get nextPage => _nextPage;
 
@@ -13,5 +11,11 @@ class PageModel<T> {
     items.addAll(moreItems);
     _hasNextPage = hasNext;
     _nextPage++;
+  }
+
+  void clear() {
+    items.clear();
+    _hasNextPage = true;
+    _nextPage = 1;
   }
 }

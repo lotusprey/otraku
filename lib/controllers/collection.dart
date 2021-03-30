@@ -127,7 +127,7 @@ class Collection extends ScrollxController implements Filterable {
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  bool get isLoading => _isLoading()!;
+  bool get isLoading => _isLoading();
   int get listIndex => _listIndex();
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<String> get customListNames => [..._customListNames];

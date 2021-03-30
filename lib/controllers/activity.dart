@@ -83,7 +83,7 @@ class Activity extends GetxController {
   final _isLoading = true.obs;
 
   ActivityModel? get model => _model;
-  bool get isLoading => _isLoading()!;
+  bool get isLoading => _isLoading();
 
   Future<void> fetch() async {
     if (_model != null && _model!.replies.items.isNotEmpty) return;
@@ -102,7 +102,7 @@ class Activity extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (!_model!.replies.hasNextPage!) return;
+    if (!_model!.replies.hasNextPage) return;
 
     final data = await Client.request(
       _activityQuery,

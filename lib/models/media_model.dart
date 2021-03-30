@@ -12,9 +12,9 @@ class MediaModel {
   final MediaOverviewModel overview;
   final EntryModel entry;
   final List<RelatedMediaModel> otherMedia;
-  final _characters = Rx(PageModel<Connection>([], true, 1));
-  final _staff = Rx(PageModel<Connection>([], true, 1));
-  final _reviews = Rx(PageModel<RelatedReviewModel>([], true, 1));
+  final _characters = PageModel<Connection>().obs;
+  final _staff = PageModel<Connection>().obs;
+  final _reviews = PageModel<RelatedReviewModel>().obs;
 
   PageModel? get characters => _characters();
   PageModel? get staff => _staff();

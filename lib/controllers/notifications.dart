@@ -136,7 +136,7 @@ class Notifications extends ScrollxController {
   bool _isLoading = false;
   int _unreadCount = 0;
   int _filter = 0;
-  PageModel<NotificationModel>? _entries;
+  final _entries = PageModel<NotificationModel>();
 
   int get unreadCount => _unreadCount;
 
@@ -149,7 +149,7 @@ class Notifications extends ScrollxController {
     scrollTo(0);
   }
 
-  List<NotificationModel>? get entries => _entries?.items;
+  List<NotificationModel> get entries => _entries.items;
 
   // ***************************************************************************
   // FETCHING
@@ -170,20 +170,20 @@ class Notifications extends ScrollxController {
     final List<NotificationModel> nl = [];
     for (final n in data!['notifications']) nl.add(NotificationModel(n));
 
-    _entries = PageModel(nl, data['pageInfo']['hasNextPage'], 2);
+    _entries.append(nl, data['pageInfo']['hasNextPage']);
     Get.find<Viewer>().nullifyUnread();
     update();
     _isLoading = false;
   }
 
   Future<void> fetchPage() async {
-    if (_isLoading || !_entries!.hasNextPage!) return;
+    if (_isLoading || !_entries.hasNextPage) return;
     _isLoading = true;
 
     Map<String, dynamic>? data = await Client.request(
       _notificationQuery,
       {
-        'page': _entries!.nextPage,
+        'page': _entries.nextPage,
         if (_filter != 0) 'filter': _filters[_filter],
       },
       popOnErr: false,
@@ -196,7 +196,7 @@ class Notifications extends ScrollxController {
     final List<NotificationModel> nl = [];
     for (final n in data!['notifications']) nl.add(NotificationModel(n));
 
-    _entries!.append(nl, data['pageInfo']['hasNextPage']);
+    _entries.append(nl, data['pageInfo']['hasNextPage']);
     update();
     _isLoading = false;
   }

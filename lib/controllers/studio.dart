@@ -4,7 +4,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/person_model.dart';
-import 'package:otraku/models/helper_models/studio_connection_list.dart';
+import 'package:otraku/models/studio_page_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 
 class Studio extends GetxController {
@@ -51,13 +51,13 @@ class Studio extends GetxController {
   final int _id;
   Studio(this._id);
 
-  final _company = Rx<PersonModel>();
-  final _media = Rx<StudioConnectionList>();
+  final _company = Rx<PersonModel?>(null);
+  final _media = StudioPageModel().obs;
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
   PersonModel? get company => _company();
 
-  StudioConnectionList? get media => _media();
+  StudioPageModel get media => _media();
 
   MediaSort get sort => _sort;
 
@@ -80,7 +80,7 @@ class Studio extends GetxController {
     if (data == null) return;
 
     _company(PersonModel.studio(data['Studio']));
-    _initLists(data['Studio']['media']);
+    _initMedia(data['Studio']['media'], false);
   }
 
   Future<void> refetch() async {
@@ -90,23 +90,23 @@ class Studio extends GetxController {
     );
     if (data == null) return;
 
-    _initLists(data['Studio']['media']);
+    _initMedia(data['Studio']['media'], true);
   }
 
   Future<void> fetchPage() async {
-    if (_media() == null || !_media()!.hasNextPage) return;
+    if (!_media().hasNextPage) return;
 
     final data = await Client.request(
       _studioQuery,
       {
         'id': _id,
-        'page': _media()!.nextPage,
+        'page': _media().nextPage,
         'sort': describeEnum(_sort),
       },
     );
     if (data == null) return;
 
-    _initLists(data['Studio']['media'], true);
+    _initMedia(data['Studio']['media'], false);
   }
 
   Future<bool> toggleFavourite() async =>
@@ -121,17 +121,13 @@ class Studio extends GetxController {
   // HELPER FUNCTIONS
   // ***************************************************************************
 
-  void _initLists(Map<String, dynamic> data, [bool append = false]) {
-    final List<dynamic> nodes = data['nodes'];
-    if (nodes.isEmpty) {
-      _media(StudioConnectionList([], [], false));
-      return;
-    }
+  void _initMedia(Map<String, dynamic> data, bool clear) {
+    if (clear) _media().clear();
 
-    List<String> categories = [];
-    List<List<BrowseResultModel>> results = [];
+    final categories = <String>[];
+    final results = <List<BrowseResultModel>>[];
 
-    for (final node in nodes) {
+    for (final node in data['nodes']) {
       final String category =
           (node['startDate']['year'] ?? Convert.clarifyEnum(node['status']))
               .toString();
@@ -144,18 +140,11 @@ class Studio extends GetxController {
       results.last.add(BrowseResultModel.anime(node));
     }
 
-    if (append)
-      _media.update((m) => m!.append(
-            categories,
-            results,
-            data['pageInfo']['hasNextPage'],
-          ));
-    else
-      _media(StudioConnectionList(
-        categories,
-        results,
-        data['pageInfo']['hasNextPage'],
-      ));
+    _media.update((m) => m!.append(
+          categories,
+          results,
+          data['pageInfo']['hasNextPage'],
+        ));
   }
 
   @override

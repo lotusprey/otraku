@@ -160,12 +160,12 @@ class Media extends ScrollxController {
 
   MediaModel? get model => _model;
 
-  String get staffLanguage => _staffLanguage()!;
+  String get staffLanguage => _staffLanguage();
   set staffLanguage(String value) => _staffLanguage.value = value;
 
   List<String> get availableLanguages => [..._availableLanguages];
   int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage()!);
+    final index = _availableLanguages.indexOf(_staffLanguage());
     if (index != -1) return index;
     return 0;
   }
@@ -192,8 +192,8 @@ class Media extends ScrollxController {
   }
 
   Future<void> fetchRelationPage(bool ofCharacters) async {
-    if (ofCharacters && !_model!.characters!.hasNextPage!) return;
-    if (!ofCharacters && !_model!.staff!.hasNextPage!) return;
+    if (ofCharacters && !_model!.characters!.hasNextPage) return;
+    if (!ofCharacters && !_model!.staff!.hasNextPage) return;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
@@ -213,7 +213,7 @@ class Media extends ScrollxController {
   }
 
   Future<void> fetchReviewPage() async {
-    if (!_model!.reviews!.hasNextPage!) return;
+    if (!_model!.reviews!.hasNextPage) return;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {

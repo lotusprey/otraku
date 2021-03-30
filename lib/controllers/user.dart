@@ -144,7 +144,7 @@ class User extends GetxController {
   }
 
   Future<void> fetchFavourites() async {
-    if (_loading || !_model!.favourites[_favsIndex].hasNextPage!) return;
+    if (_loading || !_model!.favourites[_favsIndex].hasNextPage) return;
     _loading = true;
 
     final data = await Client.request(_userQuery, {
@@ -164,7 +164,7 @@ class User extends GetxController {
   }
 
   Future<void> fetchActivities() async {
-    if (_loading || !_model!.activities.hasNextPage!) return;
+    if (_loading || !_model!.activities.hasNextPage) return;
     _loading = true;
 
     final data = await Client.request(_activitiesQuery, {

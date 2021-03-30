@@ -114,13 +114,13 @@ class Explorer extends ScrollxController implements Filterable {
   // GETTERS
   // ***************************************************************************
 
-  bool get isLoading => _isLoading()!;
+  bool get isLoading => _isLoading();
 
-  bool get hasNextPage => _hasNextPage()!;
+  bool get hasNextPage => _hasNextPage();
 
-  Browsable get type => _type()!;
+  Browsable get type => _type();
 
-  String get search => _search()!;
+  String get search => _search();
 
   List<BrowseResultModel> get results => [..._results()];
 
@@ -209,7 +209,7 @@ class Explorer extends ScrollxController implements Filterable {
     }
 
     String query;
-    switch (_type.value!) {
+    switch (_type.value) {
       case Browsable.anime:
       case Browsable.manga:
         query = _mediaQuery;

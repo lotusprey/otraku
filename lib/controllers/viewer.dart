@@ -100,7 +100,7 @@ class Viewer extends ScrollxController {
   // DATA
   // ***************************************************************************
 
-  final _activities = Rx<PageModel<ActivityModel>>();
+  final _activities = PageModel<ActivityModel>().obs;
   final _unreadCount = 0.obs;
   final _idNotIn = <int>[];
   final _typeIn = [
@@ -116,7 +116,7 @@ class Viewer extends ScrollxController {
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  List<ActivityModel>? get activities => _activities()?.items;
+  List<ActivityModel> get activities => _activities().items;
   List<ActivityType> get typeIn => [..._typeIn];
   SettingsModel? get settings => _settings;
   int get unreadCount => _unreadCount();
@@ -159,13 +159,13 @@ class Viewer extends ScrollxController {
   }
 
   Future<void> fetchPage() async {
-    if (_isLoading || !_activities()!.hasNextPage!) return;
+    if (_isLoading || !_activities().hasNextPage) return;
     _isLoading = true;
 
     final data = await Client.request(
       _viewerQuery,
       {
-        'page': _activities()!.nextPage,
+        'page': _activities().nextPage,
         'id_not_in': _idNotIn,
         'type_in': _typeIn.map((t) => describeEnum(t)).toList(),
         'isFollowing': _onFollowing,
@@ -210,9 +210,10 @@ class Viewer extends ScrollxController {
   // HELPER FUNCTIONS
   // ***************************************************************************
 
-  void _initActivities(final Map<String, dynamic> data, final bool replace) {
-    if (replace) {
+  void _initActivities(Map<String, dynamic> data, bool clear) {
+    if (clear) {
       _idNotIn.clear();
+      _activities().clear();
       scrollTo(0);
     }
 
@@ -224,12 +225,9 @@ class Viewer extends ScrollxController {
       _idNotIn.add(al.last.id);
     }
 
-    if (replace)
-      _activities(PageModel(al, data['Page']['pageInfo']['hasNextPage'], 2));
-    else
-      _activities.update(
-        (a) => a!.append(al, data['Page']['pageInfo']['hasNextPage']),
-      );
+    _activities.update(
+      (a) => a!.append(al, data['Page']['pageInfo']['hasNextPage']),
+    );
   }
 
   @override

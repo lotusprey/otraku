@@ -45,8 +45,8 @@ class CharacterPage extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (character.anime!.items.isNotEmpty &&
-                          character.manga!.items.isNotEmpty)
+                      if (character.anime.items.isNotEmpty &&
+                          character.manga.items.isNotEmpty)
                         BubbleTabs(
                           options: const ['Anime', 'Manga'],
                           values: const [true, false],
@@ -97,11 +97,10 @@ class CharacterPage extends StatelessWidget {
               );
             }),
             Obx(() {
-              final connectionList =
+              final connections =
                   character.onAnime ? character.anime : character.manga;
 
-              if (connectionList == null || connectionList.items.isEmpty)
-                return const SliverToBoxAdapter();
+              if (connections.items.isEmpty) return const SliverToBoxAdapter();
 
               return SliverPadding(
                 padding: EdgeInsets.only(
@@ -110,7 +109,7 @@ class CharacterPage extends StatelessWidget {
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
                 sliver: ConnectionsGrid(
-                  connections: connectionList.items.cast(),
+                  connections: connections.items.cast(),
                   loadMore: character.fetchPage,
                   preferredSubtitle: character.staffLanguage,
                 ),

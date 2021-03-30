@@ -21,13 +21,13 @@ class UserModel {
   final String? donatorBadge;
   final String? moderatorStatus;
   final bool isMe;
-  final activities = PageModel<ActivityModel>([], true, 1);
+  final activities = PageModel<ActivityModel>();
   final favourites = [
-    PageModel<BrowseResultModel>([], true, 1),
-    PageModel<BrowseResultModel>([], true, 1),
-    PageModel<BrowseResultModel>([], true, 1),
-    PageModel<BrowseResultModel>([], true, 1),
-    PageModel<BrowseResultModel>([], true, 1),
+    PageModel<BrowseResultModel>(),
+    PageModel<BrowseResultModel>(),
+    PageModel<BrowseResultModel>(),
+    PageModel<BrowseResultModel>(),
+    PageModel<BrowseResultModel>(),
   ];
 
   UserModel._({

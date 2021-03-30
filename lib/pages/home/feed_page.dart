@@ -30,7 +30,7 @@ class FeedPage extends StatelessWidget {
           sliver: Obx(
             () {
               final activities = viewer.activities;
-              if (activities?.isEmpty ?? true)
+              if (activities.isEmpty)
                 return SliverFillRemaining(
                   child: Center(
                     child: viewer.isLoading
@@ -45,10 +45,10 @@ class FeedPage extends StatelessWidget {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (_, i) {
-                    if (i == activities!.length - 5) viewer.fetchPage();
+                    if (i == activities.length - 5) viewer.fetchPage();
                     return UserActivity(activities[i]);
                   },
-                  childCount: activities!.length,
+                  childCount: activities.length,
                 ),
               );
             },

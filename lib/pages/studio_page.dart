@@ -30,7 +30,7 @@ class StudioPage extends StatelessWidget {
         child: Obx(
           () => NotificationListener(
             onNotification: (dynamic notification) {
-              if (studio.media!.hasNextPage &&
+              if (studio.media.hasNextPage &&
                   notification is ScrollNotification &&
                   notification.metrics.extentAfter <= 50 &&
                   notification.metrics.maxScrollExtent > extentOnLastCall) {
@@ -41,8 +41,7 @@ class StudioPage extends StatelessWidget {
             },
             child: CustomScrollView(
               physics: Config.PHYSICS,
-              semanticChildCount:
-                  studio.media != null ? studio.media!.mediaCount : null,
+              semanticChildCount: studio.media.mediaCount,
               slivers: [
                 SliverPersistentHeader(
                   pinned: true,
@@ -80,30 +79,30 @@ class StudioPage extends StatelessWidget {
                       studio.sort == MediaSort.END_DATE ||
                       studio.sort == MediaSort.END_DATE_DESC) ...[
                     for (int i = 0;
-                        i < studio.media!.categories.length;
+                        i < studio.media.categories.length;
                         i++) ...[
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: Config.PADDING,
                           child: Text(
-                            studio.media!.categories[i],
+                            studio.media.categories[i],
                             style: Theme.of(context).textTheme.headline3,
                           ),
                         ),
                       ),
                       TileGrid(
-                        tileData: studio.media!.split[i],
+                        tileData: studio.media.groups[i],
                         tileModel: Config.highTile,
                         loadMore: null,
                       ),
                     ],
                   ] else
                     TileGrid(
-                      tileData: studio.media!.joined,
+                      tileData: studio.media.joined,
                       loadMore: studio.fetchPage,
                       tileModel: Config.highTile,
                     ),
-                  if (studio.media != null && studio.media!.hasNextPage)
+                  if (studio.media.hasNextPage)
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),

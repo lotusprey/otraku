@@ -57,9 +57,9 @@ class Character extends GetxController {
   final int _id;
   Character(this._id);
 
-  final _person = Rx<PersonModel>();
-  final _anime = Rx<PageModel<Connection>>();
-  final _manga = Rx<PageModel<Connection>>();
+  final _person = Rx<PersonModel?>(null);
+  final _anime = PageModel<Connection>().obs;
+  final _manga = PageModel<Connection>().obs;
   final _onAnime = true.obs;
   final _staffLanguage = 'Japanese'.obs;
   final _availableLanguages = <String>[];
@@ -67,20 +67,20 @@ class Character extends GetxController {
 
   PersonModel? get person => _person();
 
-  PageModel<Connection>? get anime => _anime();
+  PageModel<Connection> get anime => _anime();
 
-  PageModel<Connection>? get manga => _manga();
+  PageModel<Connection> get manga => _manga();
 
-  bool get onAnime => _onAnime()!;
+  bool get onAnime => _onAnime();
 
   set onAnime(bool value) => _onAnime.value = value;
 
-  String get staffLanguage => _staffLanguage()!;
+  String get staffLanguage => _staffLanguage();
 
   set staffLanguage(String value) => _staffLanguage.value = value;
 
   int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage()!);
+    final index = _availableLanguages.indexOf(_staffLanguage());
     if (index != -1) return index;
     return 0;
   }
@@ -108,13 +108,15 @@ class Character extends GetxController {
       'withManga': true,
       'sort': describeEnum(_sort),
     });
-
     if (body == null) return;
 
     final data = body['Character'];
+
     _person(PersonModel(data));
-    _initLists(data);
-    if (_anime()!.items.isEmpty) _onAnime.value = false;
+    _initAnime(data, false);
+    _initManga(data, false);
+
+    if (_anime().items.isEmpty) _onAnime.value = false;
   }
 
   Future<void> refetch() async {
@@ -124,70 +126,30 @@ class Character extends GetxController {
       'withManga': true,
       'sort': describeEnum(_sort),
     });
-
     if (body == null) return;
 
-    _initLists(body['Character']);
+    _initAnime(body['Character'], true);
+    _initManga(body['Character'], true);
   }
 
   Future<void> fetchPage() async {
-    if (_onAnime()! && !_anime()!.hasNextPage!) return;
-    if (!_onAnime()! && !_manga()!.hasNextPage!) return;
+    if (_onAnime() && !_anime().hasNextPage) return;
+    if (!_onAnime() && !_manga().hasNextPage) return;
 
-    final body = await Client.request(_characterQuery, {
+    final data = await Client.request(_characterQuery, {
       'id': _id,
       'withAnime': _onAnime(),
-      'withManga': !_onAnime()!,
-      'animePage': _anime()!.nextPage,
-      'mangaPage': _manga()!.nextPage,
+      'withManga': !_onAnime(),
+      'animePage': _anime().nextPage,
+      'mangaPage': _manga().nextPage,
       'sort': describeEnum(_sort)
     });
+    if (data == null) return;
 
-    if (body == null) return;
-
-    final data = body['Character'];
-
-    final List<Connection> connections = [];
-    if (_onAnime()!) {
-      for (final connection in data['anime']['edges']) {
-        final List<Connection> voiceActors = [];
-
-        for (final va in connection['voiceActors'])
-          voiceActors.add(Connection(
-            id: va['id'],
-            title: va['name']['full'],
-            imageUrl: va['image']['large'],
-            browsable: Browsable.staff,
-            text2: Convert.clarifyEnum(va['language']),
-          ));
-
-        connections.add(Connection(
-          id: connection['node']['id'],
-          title: connection['node']['title']['userPreferred'],
-          imageUrl: connection['node']['coverImage']['large'],
-          browsable: Browsable.anime,
-          text2: Convert.clarifyEnum(connection['characterRole']),
-          others: voiceActors,
-        ));
-      }
-
-      _anime.update((media) {
-        media!.append(connections, data['anime']['pageInfo']['hasNextPage']);
-      });
-    } else {
-      for (final connection in data['manga']['edges'])
-        connections.add(Connection(
-          id: connection['node']['id'],
-          title: connection['node']['title']['userPreferred'],
-          imageUrl: connection['node']['coverImage']['large'],
-          browsable: Browsable.manga,
-          text2: Convert.clarifyEnum(connection['characterRole']),
-        ));
-
-      _manga.update((media) {
-        media!.append(connections, data['manga']['pageInfo']['hasNextPage']);
-      });
-    }
+    if (_onAnime())
+      _initAnime(data['Character'], false);
+    else
+      _initManga(data['Character'], false);
   }
 
   Future<bool> toggleFavourite() async =>
@@ -202,10 +164,13 @@ class Character extends GetxController {
   // HELPER FUNCTIONS
   // ***************************************************************************
 
-  void _initLists(Map<String, dynamic> data) {
-    _availableLanguages.clear();
+  void _initAnime(Map<String, dynamic> data, bool clear) {
+    if (clear) {
+      _availableLanguages.clear();
+      _anime().clear();
+    }
 
-    List<Connection> connections = [];
+    final connections = <Connection>[];
     for (final connection in data['anime']['edges']) {
       final voiceActors = <Connection>[];
 
@@ -236,9 +201,15 @@ class Character extends GetxController {
     if (!_availableLanguages.contains(_staffLanguage()))
       _staffLanguage.value = 'Japanese';
 
-    _anime(PageModel(connections, data['anime']['pageInfo']['hasNextPage'], 2));
+    _anime.update(
+      (a) => a!.append(connections, data['anime']['pageInfo']['hasNextPage']),
+    );
+  }
 
-    connections = [];
+  void _initManga(Map<String, dynamic> data, bool clear) {
+    if (clear) _manga().clear();
+
+    final connections = <Connection>[];
     for (final connection in data['manga']['edges'])
       connections.add(Connection(
         id: connection['node']['id'],
@@ -248,7 +219,9 @@ class Character extends GetxController {
         text2: Convert.clarifyEnum(connection['characterRole']),
       ));
 
-    _manga(PageModel(connections, data['manga']['pageInfo']['hasNextPage'], 2));
+    _manga.update(
+      (m) => m!.append(connections, data['manga']['pageInfo']['hasNextPage']),
+    );
   }
 
   @override

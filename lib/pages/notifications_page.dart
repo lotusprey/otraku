@@ -39,7 +39,6 @@ class NotificationsPage extends StatelessWidget {
       ),
       body: GetBuilder<Notifications>(builder: (notifications) {
         final entries = notifications.entries;
-        if (entries == null) return const SizedBox();
         return ListView.builder(
           padding: Config.PADDING,
           physics: Config.PHYSICS,

@@ -146,6 +146,7 @@ class Collection extends ScrollxController implements Filterable {
 
   void sort() {
     for (final list in _lists) list.sort(_filters[Filterable.SORT]);
+    scrollTo(0);
     filter();
   }
 
@@ -360,7 +361,7 @@ class Collection extends ScrollxController implements Filterable {
     final List<String>? genreNotIn = _filters[Filterable.GENRE_NOT_IN];
 
     final list = _lists[_listIndex()];
-    final List<ListEntryModel> e = [];
+    final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
       if (search != null && !entry.title!.toLowerCase().contains(search))
@@ -409,7 +410,6 @@ class Collection extends ScrollxController implements Filterable {
       e.add(entry);
     }
 
-    scrollTo(0);
     _entries.assignAll(e);
   }
 
@@ -426,7 +426,10 @@ class Collection extends ScrollxController implements Filterable {
       _filters[key] = value;
     }
 
-    if (update) filter();
+    if (update) {
+      scrollTo(0);
+      filter();
+    }
   }
 
   @override
@@ -443,7 +446,10 @@ class Collection extends ScrollxController implements Filterable {
       _filters.remove(key);
     }
 
-    if (update) filter();
+    if (update) {
+      scrollTo(0);
+      filter();
+    }
   }
 
   @override

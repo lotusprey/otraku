@@ -279,6 +279,8 @@ class Explorer extends ScrollxController implements Filterable {
       _results.addAll(items);
   }
 
+  Future<void> fetchPage() async => fetch(clean: false);
+
   //Fetches genres, tags and initial media
   Future<void> fetchInitial() async {
     _isLoading.value = true;

@@ -41,13 +41,6 @@ class ExplorePage extends StatelessWidget {
 }
 
 class _ExploreGrid extends StatelessWidget {
-  void _loadMore() {
-    final explorable = Get.find<Explorer>();
-    if (explorable.hasNextPage && !explorable.isLoading) {
-      explorable.loadMore();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final explorer = Get.find<Explorer>();
@@ -68,22 +61,18 @@ class _ExploreGrid extends StatelessWidget {
         );
       }
 
-      if (results[0].browsable == Browsable.studio)
-        return TitleList(results, _loadMore);
+      if (results[0].browsable == Browsable.studio) return TitleList(results);
 
       if (results[0].browsable == Browsable.user)
         return TileGrid(
           tileData: results,
-          loadMore: _loadMore,
           tileModel: Config.squareTile,
         );
 
-      if (results[0].browsable == Browsable.review)
-        return ReviewGrid(results, _loadMore);
+      if (results[0].browsable == Browsable.review) return ReviewGrid(results);
 
       return TileGrid(
         tileData: results,
-        loadMore: _loadMore,
         tileModel: Config.highTile,
       );
     });

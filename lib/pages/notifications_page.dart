@@ -43,13 +43,10 @@ class NotificationsPage extends StatelessWidget {
           padding: Config.PADDING,
           physics: Config.PHYSICS,
           controller: notifications.scrollCtrl,
-          itemBuilder: (_, index) {
-            if (index == entries.length - 5) notifications.fetchPage();
-            return _NotificationWidget(
-              entries[index],
-              index < notifications.unreadCount,
-            );
-          },
+          itemBuilder: (_, index) => _NotificationWidget(
+            entries[index],
+            index < notifications.unreadCount,
+          ),
           itemCount: entries.length,
           itemExtent: 100,
         );
@@ -113,7 +110,7 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
                       Get.toNamed(
                         ActivityPage.ROUTE,
-                        arguments: [notification.bodyId, null],
+                        arguments: [notification.bodyId, null, null],
                         parameters: {'id': notification.bodyId.toString()},
                       );
                       return;

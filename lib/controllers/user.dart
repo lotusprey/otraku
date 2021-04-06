@@ -8,15 +8,15 @@ class User extends GetxController {
   static const _userQuery = r'''
       query User($id: Int, $withMain: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false, 
           $withCharacters: Boolean = false, $withStaff: Boolean = false, $withStudios: Boolean = false,
-          $favsPage: Int = 1) {
+          $page: Int = 1) {
         User(id: $id) {
           ...main @include(if: $withMain)
           favourites {
-            anime(page: $favsPage) @include(if: $withAnime) {...media}
-            manga(page: $favsPage) @include(if: $withManga) {...media}
-            characters(page: $favsPage) @include(if: $withCharacters) {...character}
-            staff(page: $favsPage) @include(if: $withStaff) {...staff}
-            studios(page: $favsPage) @include(if: $withStudios) {...studio}
+            anime(page: $page) @include(if: $withAnime) {...media}
+            manga(page: $page) @include(if: $withManga) {...media}
+            characters(page: $page) @include(if: $withCharacters) {...character}
+            staff(page: $page) @include(if: $withStaff) {...staff}
+            studios(page: $page) @include(if: $withStudios) {...studio}
           }
         }
       }
@@ -154,7 +154,7 @@ class User extends GetxController {
       'withCharacters': _favsIndex == UserModel.CHARACTER_FAV,
       'withStaff': _favsIndex == UserModel.STAFF_FAV,
       'withStudios': _favsIndex == UserModel.STUDIO_FAV,
-      'favsPage': _model!.favourites[_favsIndex].nextPage,
+      'page': _model!.favourites[_favsIndex].nextPage,
     });
     if (data == null) return;
 

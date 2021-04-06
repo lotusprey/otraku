@@ -7,12 +7,10 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 
 class ConnectionsGrid extends StatefulWidget {
   final List<Connection> connections;
-  final Function loadMore;
   final String? preferredSubtitle;
 
   ConnectionsGrid({
     required this.connections,
-    required this.loadMore,
     this.preferredSubtitle,
   });
 
@@ -24,13 +22,10 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
   @override
   Widget build(BuildContext context) => SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, index) {
-            if (index == widget.connections.length - 5) widget.loadMore();
-            return _MediaConnectionTile(
-              widget.connections[index],
-              widget.preferredSubtitle,
-            );
-          },
+          (_, index) => _MediaConnectionTile(
+            widget.connections[index],
+            widget.preferredSubtitle,
+          ),
           childCount: widget.connections.length,
         ),
         gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(

@@ -7,8 +7,9 @@ import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/person_model.dart';
 import 'package:otraku/models/helper_models/connection.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Staff extends GetxController {
+class Staff extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -86,6 +87,9 @@ class Staff extends GetxController {
 
   PageModel get roles => _roles();
 
+  bool get hasNextPage =>
+      _onCharacters() ? _characters().hasNextPage : _roles().hasNextPage;
+
   bool get onCharacters => _onCharacters();
 
   set onCharacters(bool value) => _onCharacters.value = value;
@@ -136,9 +140,6 @@ class Staff extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (_onCharacters() && !_characters().hasNextPage) return;
-    if (!_onCharacters() && !_roles().hasNextPage) return;
-
     final data = await Client.request(_staffQuery, {
       'id': _id,
       'withCharacters': _onCharacters(),

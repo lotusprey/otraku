@@ -6,8 +6,9 @@ import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/person_model.dart';
 import 'package:otraku/models/studio_page_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Studio extends GetxController {
+class Studio extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -59,6 +60,8 @@ class Studio extends GetxController {
 
   StudioPageModel get media => _media();
 
+  bool get hasNextPage => _media().hasNextPage;
+
   MediaSort get sort => _sort;
 
   set sort(MediaSort value) {
@@ -94,8 +97,6 @@ class Studio extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (!_media().hasNextPage) return;
-
     final data = await Client.request(
       _studioQuery,
       {

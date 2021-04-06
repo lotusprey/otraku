@@ -17,7 +17,10 @@ class ActivityPage extends StatelessWidget {
   static const ROUTE = '/activity';
 
   final int id;
-  ActivityPage(this.id);
+  // TODO finish
+  final Function(bool, bool)? callback;
+
+  ActivityPage(this.id, [this.callback]);
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +86,7 @@ class ActivityPage extends StatelessWidget {
               bottom: false,
               child: CustomScrollView(
                 physics: Config.PHYSICS,
+                controller: activity.scrollCtrl,
                 slivers: [
                   if (model != null) ...[
                     SliverToBoxAdapter(
@@ -98,11 +102,7 @@ class ActivityPage extends StatelessWidget {
                       padding: const EdgeInsets.all(10),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (_, i) {
-                            if (i == model.replies.items.length - 5)
-                              activity.fetchPage();
-                            return UserReply(model.replies.items[i]);
-                          },
+                          (_, i) => UserReply(model.replies.items[i]),
                           childCount: model.replies.items.length,
                         ),
                       ),

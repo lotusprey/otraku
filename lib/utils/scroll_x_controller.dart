@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ScrollxController extends GetxController {
+abstract class ScrollxController extends GetxController {
   final scrollCtrl = ScrollController();
 
   void scrollTo(double offset) {
@@ -14,8 +14,32 @@ class ScrollxController extends GetxController {
     );
   }
 
+  bool get hasNextPage;
+
+  Future<void> fetchPage();
+
+  bool _canLoad = true;
+
+  Future<void> _listener() async {
+    if (scrollCtrl.position.pixels >
+            scrollCtrl.position.maxScrollExtent - 100 &&
+        hasNextPage &&
+        _canLoad) {
+      _canLoad = false;
+      await fetchPage();
+      _canLoad = true;
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    scrollCtrl.addListener(_listener);
+  }
+
   @override
   void onClose() {
+    scrollCtrl.removeListener(_listener);
     scrollCtrl.dispose();
     super.onClose();
   }

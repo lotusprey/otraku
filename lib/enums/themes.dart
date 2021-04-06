@@ -100,7 +100,6 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
 
   return ThemeData(
     fontFamily: 'Rubik',
-    visualDensity: VisualDensity.adaptivePlatformDensity,
     brightness: theme['brightness'],
     backgroundColor: theme['background'],
     scaffoldBackgroundColor: theme['background'],
@@ -233,7 +232,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       button: TextStyle(
         fontSize: Style.FONT_MEDIUM,
         color: theme['background'],
-        fontWeight: FontWeight.normal,
+        fontWeight: FontWeight.w500,
       ),
     ),
   );

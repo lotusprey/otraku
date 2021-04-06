@@ -137,6 +137,7 @@ class Collection extends ScrollxController implements Filterable {
   int get currentCount => _lists[_listIndex()].entries.length;
   bool get isEmpty => _entries.isEmpty;
   bool get isFullyEmpty => _lists.isEmpty;
+  bool get hasNextPage => false;
 
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
@@ -198,9 +199,11 @@ class Collection extends ScrollxController implements Filterable {
         metaData['splitCompletedSectionByFormat'] ?? false;
 
     _scoreFormat = Convert.stringToEnum(
-      data['user']['mediaListOptions']['scoreFormat'],
-      ScoreFormat.values,
-    );
+          data['user']['mediaListOptions']['scoreFormat'],
+          ScoreFormat.values,
+        ) ??
+        ScoreFormat.POINT_10_DECIMAL;
+
     _filters[Filterable.SORT] = ListSortHelper.getEnum(
       data['user']['mediaListOptions']['rowOrder'],
     );
@@ -229,6 +232,8 @@ class Collection extends ScrollxController implements Filterable {
     filter();
     _isLoading.value = false;
   }
+
+  Future<void> fetchPage() async {}
 
   Future<void> updateEntry(
     EntryModel oldEntry,

@@ -133,10 +133,11 @@ class Notifications extends ScrollxController {
   // DATA & GETTERS & SETTERS
   // ***************************************************************************
 
-  bool _isLoading = false;
   int _unreadCount = 0;
   int _filter = 0;
   final _entries = PageModel<NotificationModel>();
+
+  bool get hasNextPage => _entries.hasNextPage;
 
   int get unreadCount => _unreadCount;
 
@@ -156,7 +157,6 @@ class Notifications extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    _isLoading = true;
     Map<String, dynamic>? data = await Client.request(
       _notificationQuery,
       _filter != 0 ? {'filter': _filters[_filter]} : null,
@@ -173,13 +173,9 @@ class Notifications extends ScrollxController {
     _entries.append(nl, data['pageInfo']['hasNextPage']);
     Get.find<Viewer>().nullifyUnread();
     update();
-    _isLoading = false;
   }
 
   Future<void> fetchPage() async {
-    if (_isLoading || !_entries.hasNextPage) return;
-    _isLoading = true;
-
     Map<String, dynamic>? data = await Client.request(
       _notificationQuery,
       {
@@ -198,7 +194,6 @@ class Notifications extends ScrollxController {
 
     _entries.append(nl, data['pageInfo']['hasNextPage']);
     update();
-    _isLoading = false;
   }
 
   @override

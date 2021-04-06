@@ -25,6 +25,7 @@ class StaffPage extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
+          controller: staff.scrollCtrl,
           slivers: [
             Obx(() => PersonHeader(
                   person: staff.person,
@@ -88,10 +89,7 @@ class StaffPage extends StatelessWidget {
                   right: 10,
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
-                sliver: ConnectionsGrid(
-                  connections: connections.items.cast(),
-                  loadMore: staff.fetchPage,
-                ),
+                sliver: ConnectionsGrid(connections: connections.items.cast()),
               );
             }),
           ],

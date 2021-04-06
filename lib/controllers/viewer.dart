@@ -122,6 +122,7 @@ class Viewer extends ScrollxController {
   int get unreadCount => _unreadCount();
   bool get onFollowing => _onFollowing;
   bool get isLoading => _isLoading;
+  bool get hasNextPage => _activities().hasNextPage;
 
   void updateFilters({bool? following, List<ActivityType>? types}) {
     if (following != null) _onFollowing = following;
@@ -159,7 +160,6 @@ class Viewer extends ScrollxController {
   }
 
   Future<void> fetchPage() async {
-    if (_isLoading || !_activities().hasNextPage) return;
     _isLoading = true;
 
     final data = await Client.request(

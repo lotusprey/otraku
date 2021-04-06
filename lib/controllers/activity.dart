@@ -2,8 +2,9 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/reply_model.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Activity extends GetxController {
+class Activity extends ScrollxController {
   static const _activityQuery = r'''
     query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
       Activity(id: $id) @include(if: $withActivity) {
@@ -84,6 +85,7 @@ class Activity extends GetxController {
 
   ActivityModel? get model => _model;
   bool get isLoading => _isLoading();
+  bool get hasNextPage => _model!.replies.hasNextPage;
 
   Future<void> fetch() async {
     if (_model != null && _model!.replies.items.isNotEmpty) return;
@@ -102,8 +104,6 @@ class Activity extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (!_model!.replies.hasNextPage) return;
-
     final data = await Client.request(
       _activityQuery,
       {'id': _id, 'page': _model!.replies.nextPage},

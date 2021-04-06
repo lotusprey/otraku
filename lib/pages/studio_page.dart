@@ -22,103 +22,87 @@ class StudioPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final studio = Get.find<Studio>(tag: id.toString());
-    double extentOnLastCall = 0;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
         child: Obx(
-          () => NotificationListener(
-            onNotification: (dynamic notification) {
-              if (studio.media.hasNextPage &&
-                  notification is ScrollNotification &&
-                  notification.metrics.extentAfter <= 50 &&
-                  notification.metrics.maxScrollExtent > extentOnLastCall) {
-                extentOnLastCall = notification.metrics.maxScrollExtent;
-                studio.fetchPage();
-              }
-              return false;
-            },
-            child: CustomScrollView(
-              physics: Config.PHYSICS,
-              semanticChildCount: studio.media.mediaCount,
-              slivers: [
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _StudioHeader(
-                    studio.company,
-                    id,
-                    name,
-                    studio.toggleFavourite,
-                  ),
+          () => CustomScrollView(
+            physics: Config.PHYSICS,
+            controller: studio.scrollCtrl,
+            semanticChildCount: studio.media.mediaCount,
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StudioHeader(
+                  studio.company,
+                  id,
+                  name,
+                  studio.toggleFavourite,
                 ),
-                if (studio.company != null) ...[
-                  SliverToBoxAdapter(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          tooltip: 'Sort',
-                          icon: const Icon(
-                            FluentIcons.arrow_sort_24_filled,
-                          ),
-                          onPressed: () => Sheet.show(
-                            ctx: context,
-                            sheet: MediaSortSheet(
-                              studio.sort,
-                              (sort) => studio.sort = sort,
-                            ),
-                            isScrollControlled: true,
-                          ),
+              ),
+              if (studio.company != null) ...[
+                SliverToBoxAdapter(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        tooltip: 'Sort',
+                        icon: const Icon(
+                          FluentIcons.arrow_sort_24_filled,
                         ),
-                      ],
-                    ),
-                  ),
-                  if (studio.sort == MediaSort.START_DATE ||
-                      studio.sort == MediaSort.START_DATE_DESC ||
-                      studio.sort == MediaSort.END_DATE ||
-                      studio.sort == MediaSort.END_DATE_DESC) ...[
-                    for (int i = 0;
-                        i < studio.media.categories.length;
-                        i++) ...[
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: Config.PADDING,
-                          child: Text(
-                            studio.media.categories[i],
-                            style: Theme.of(context).textTheme.headline3,
+                        onPressed: () => Sheet.show(
+                          ctx: context,
+                          sheet: MediaSortSheet(
+                            studio.sort,
+                            (sort) => studio.sort = sort,
                           ),
+                          isScrollControlled: true,
                         ),
-                      ),
-                      TileGrid(
-                        tileData: studio.media.groups[i],
-                        tileModel: Config.highTile,
-                        loadMore: null,
                       ),
                     ],
-                  ] else
-                    TileGrid(
-                      tileData: studio.media.joined,
-                      loadMore: studio.fetchPage,
-                      tileModel: Config.highTile,
-                    ),
-                  if (studio.media.hasNextPage)
+                  ),
+                ),
+                if (studio.sort == MediaSort.START_DATE ||
+                    studio.sort == MediaSort.START_DATE_DESC ||
+                    studio.sort == MediaSort.END_DATE ||
+                    studio.sort == MediaSort.END_DATE_DESC) ...[
+                  for (int i = 0; i < studio.media.categories.length; i++) ...[
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: const Loader(),
+                        padding: Config.PADDING,
+                        child: Text(
+                          studio.media.categories[i],
+                          style: Theme.of(context).textTheme.headline3,
                         ),
                       ),
                     ),
+                    TileGrid(
+                      tileData: studio.media.groups[i],
+                      tileModel: Config.highTile,
+                    ),
+                  ],
+                ] else
+                  TileGrid(
+                    tileData: studio.media.joined,
+                    tileModel: Config.highTile,
+                  ),
+                if (studio.media.hasNextPage)
                   SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).viewPadding.bottom,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Center(
+                        child: const Loader(),
+                      ),
                     ),
                   ),
-                ],
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).viewPadding.bottom,
+                  ),
+                ),
               ],
-            ),
+            ],
           ),
         ),
       ),

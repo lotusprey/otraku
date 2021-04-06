@@ -11,10 +11,11 @@ class TileGrid extends StatelessWidget {
   final Function? loadMore;
   final TileModel tileModel;
 
+  // TODO remove
   TileGrid({
     required this.tileData,
-    required this.loadMore,
     required this.tileModel,
+    this.loadMore,
   });
 
   @override

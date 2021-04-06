@@ -7,8 +7,9 @@ import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/person_model.dart';
 import 'package:otraku/models/helper_models/connection.dart';
+import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Character extends GetxController {
+class Character extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -70,6 +71,9 @@ class Character extends GetxController {
   PageModel<Connection> get anime => _anime();
 
   PageModel<Connection> get manga => _manga();
+
+  bool get hasNextPage =>
+      _onAnime() ? _anime().hasNextPage : _manga().hasNextPage;
 
   bool get onAnime => _onAnime();
 
@@ -133,9 +137,6 @@ class Character extends GetxController {
   }
 
   Future<void> fetchPage() async {
-    if (_onAnime() && !_anime().hasNextPage) return;
-    if (!_onAnime() && !_manga().hasNextPage) return;
-
     final data = await Client.request(_characterQuery, {
       'id': _id,
       'withAnime': _onAnime(),

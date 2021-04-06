@@ -45,6 +45,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
       theme: Config.theme,
+      darkTheme: Config.theme,
       initialRoute: AuthPage.ROUTE,
       getPages: [
         GetPage(name: AuthPage.ROUTE, page: () => AuthPage()),
@@ -63,8 +64,7 @@ class App extends StatelessWidget {
           name: UserPage.ROUTE,
           page: () => UserPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<User>(tag: Get.arguments[0].toString()))
-              Get.put(User(Get.arguments[0]), tag: Get.arguments[0].toString());
+            Get.put(User(Get.arguments[0]), tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
@@ -75,77 +75,70 @@ class App extends StatelessWidget {
             collectionTag: Get.arguments[2],
           ),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Collection>(tag: Get.arguments[2]))
-              Get.put(
-                Collection(Get.arguments[0], Get.arguments[1]),
-                tag: Get.arguments[2],
-              );
+            Get.put(
+              Collection(Get.arguments[0], Get.arguments[1]),
+              tag: Get.arguments[2],
+            );
           }),
         ),
         GetPage(
           name: MediaPage.ROUTE,
           page: () => MediaPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Media>(tag: Get.arguments[0].toString()))
-              Get.put(
-                Media(Get.arguments[0]),
-                tag: Get.arguments[0].toString(),
-              );
+            Get.put(
+              Media(Get.arguments[0]),
+              tag: Get.arguments[0].toString(),
+            );
           }),
         ),
         GetPage(
           name: CharacterPage.ROUTE,
           page: () => CharacterPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Character>(tag: Get.arguments[0].toString()))
-              Get.put(
-                Character(Get.arguments[0]),
-                tag: Get.arguments[0].toString(),
-              );
+            Get.put(
+              Character(Get.arguments[0]),
+              tag: Get.arguments[0].toString(),
+            );
           }),
         ),
         GetPage(
           name: StaffPage.ROUTE,
           page: () => StaffPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Staff>(tag: Get.arguments[0].toString()))
-              Get.put(
-                Staff(Get.arguments[0]),
-                tag: Get.arguments[0].toString(),
-              );
+            Get.put(
+              Staff(Get.arguments[0]),
+              tag: Get.arguments[0].toString(),
+            );
           }),
         ),
         GetPage(
           name: StudioPage.ROUTE,
           page: () => StudioPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Studio>(tag: Get.arguments[0].toString()))
-              Get.put(
-                Studio(Get.arguments[0]),
-                tag: Get.arguments[0].toString(),
-              );
+            Get.put(
+              Studio(Get.arguments[0]),
+              tag: Get.arguments[0].toString(),
+            );
           }),
         ),
         GetPage(
           name: ReviewPage.ROUTE,
           page: () => ReviewPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Review>(tag: Get.arguments[0].toString()))
-              Get.put(
-                Review(Get.arguments[0]),
-                tag: Get.arguments[0].toString(),
-              );
+            Get.put(
+              Review(Get.arguments[0]),
+              tag: Get.arguments[0].toString(),
+            );
           }),
         ),
         GetPage(
           name: ActivityPage.ROUTE,
-          page: () => ActivityPage(Get.arguments[0]),
+          page: () => ActivityPage(Get.arguments[0], Get.arguments[2]),
           binding: BindingsBuilder(() {
-            if (!Get.isRegistered<Activity>(tag: Get.arguments[0].toString()))
-              Get.put(
-                Activity(Get.arguments[0], Get.arguments[1]),
-                tag: Get.arguments[0].toString(),
-              );
+            Get.put(
+              Activity(Get.arguments[0], Get.arguments[1]),
+              tag: Get.arguments[0].toString(),
+            );
           }),
         ),
         GetPage(

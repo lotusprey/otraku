@@ -150,13 +150,28 @@ class Media extends ScrollxController {
   int get relationsTab => _relationsTab();
   set relationsTab(final int val) {
     _relationsTab.value = val;
-    if (val == REL_CHARACTERS && _model!.characters!.items.isEmpty)
-      fetchRelationPage(true);
-    else if (val == REL_STAFF && _model!.staff!.items.isEmpty)
-      fetchRelationPage(false);
+    if (val == REL_CHARACTERS &&
+            _model!.characters.items.isEmpty &&
+            _model!.characters.hasNextPage ||
+        val == REL_STAFF &&
+            _model!.staff.items.isEmpty &&
+            _model!.staff.hasNextPage) fetchRelationPage();
   }
 
   bool get isLoading => _isLoading;
+
+  bool get hasNextPage {
+    if (_tab() == SOCIAL) return _model?.reviews.hasNextPage ?? false;
+
+    if (_tab() == RELATIONS) {
+      if (_tab() == REL_CHARACTERS)
+        return _model?.characters.hasNextPage ?? false;
+
+      if (_tab() == REL_STAFF) return _model?.characters.hasNextPage ?? false;
+    }
+
+    return false;
+  }
 
   MediaModel? get model => _model;
 
@@ -183,7 +198,6 @@ class Media extends ScrollxController {
       'withMain': true,
       'withReviews': true,
     });
-
     if (result == null) return;
 
     _model = MediaModel(result['Media']);
@@ -191,17 +205,19 @@ class Media extends ScrollxController {
     _isLoading = false;
   }
 
-  Future<void> fetchRelationPage(bool ofCharacters) async {
-    if (ofCharacters && !_model!.characters!.hasNextPage) return;
-    if (!ofCharacters && !_model!.staff!.hasNextPage) return;
+  Future<void> fetchPage() async =>
+      _tab() == RELATIONS ? fetchRelationPage() : fetchReviewPage();
+
+  Future<void> fetchRelationPage() async {
+    final ofCharacters = _relationsTab() == REL_CHARACTERS;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withCharacters': ofCharacters,
       'withStaff': !ofCharacters,
-      'characterPage': _model!.characters!.nextPage,
-      'staffPage': _model!.staff!.nextPage,
+      'characterPage': _model!.characters.nextPage,
+      'staffPage': _model!.staff.nextPage,
     });
 
     if (result == null) return;
@@ -213,13 +229,12 @@ class Media extends ScrollxController {
   }
 
   Future<void> fetchReviewPage() async {
-    if (!_model!.reviews!.hasNextPage) return;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withReviews': true,
-      'reviewPage': _model!.reviews!.nextPage,
+      'reviewPage': _model!.reviews.nextPage,
     });
 
     if (result == null) return;

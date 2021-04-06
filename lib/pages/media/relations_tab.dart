@@ -104,22 +104,20 @@ class RelationsTab extends StatelessWidget {
         }
 
         if (media.relationsTab == Media.REL_CHARACTERS) {
-          if (media.model!.characters!.items.isEmpty)
+          if (media.model!.characters.items.isEmpty)
             return media.isLoading ? _Empty(null) : _Empty('No Characters');
 
           return ConnectionsGrid(
-            connections: media.model!.characters!.items.cast(),
-            loadMore: () => media.fetchRelationPage(true),
+            connections: media.model!.characters.items.cast(),
             preferredSubtitle: media.staffLanguage,
           );
         }
 
-        if (media.model!.staff!.items.isEmpty)
+        if (media.model!.staff.items.isEmpty)
           return media.isLoading ? _Empty(null) : _Empty('No Staff');
 
         return ConnectionsGrid(
-          connections: media.model!.staff!.items.cast(),
-          loadMore: () => media.fetchRelationPage(false),
+          connections: media.model!.staff.items.cast(),
         );
       }),
     );
@@ -203,7 +201,7 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
           ),
           Obx(() {
             if (media.relationsTab == Media.REL_CHARACTERS &&
-                media.model!.characters!.items.isNotEmpty &&
+                media.model!.characters.items.isNotEmpty &&
                 media.availableLanguages.length > 1)
               return IconButton(
                 icon: const Icon(Icons.language),

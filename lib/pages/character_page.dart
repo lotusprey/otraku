@@ -25,6 +25,7 @@ class CharacterPage extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
+          controller: character.scrollCtrl,
           slivers: [
             Obx(() => PersonHeader(
                   person: character.person,
@@ -110,7 +111,6 @@ class CharacterPage extends StatelessWidget {
                 ),
                 sliver: ConnectionsGrid(
                   connections: connections.items.cast(),
-                  loadMore: character.fetchPage,
                   preferredSubtitle: character.staffLanguage,
                 ),
               );

@@ -21,7 +21,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin {
       vsync: this,
     );
 
-    final color = Get.theme!.accentColor;
+    final color = Get.theme.accentColor;
     final red = color.red;
     final green = color.green;
     final blue = color.blue;

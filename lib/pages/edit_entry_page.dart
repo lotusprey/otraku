@@ -20,9 +20,9 @@ class EditEntryPage extends StatefulWidget {
   static const ROUTE = '/edit';
 
   final int mediaId;
-  final Function(ListStatus?)? update;
+  final Function(ListStatus?)? callback;
 
-  EditEntryPage(this.mediaId, this.update);
+  EditEntryPage(this.mediaId, this.callback);
 
   @override
   _EditEntryPageState createState() => _EditEntryPageState();
@@ -74,7 +74,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                                 ).removeEntry(entry.oldModel!);
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
-                                widget.update?.call(null);
+                                widget.callback?.call(null);
                               },
                             ),
                           ],
@@ -93,7 +93,7 @@ class _EditEntryPageState extends State<EditEntryPage> {
                             : Collection.MANGA,
                       ).updateEntry(entry.oldModel!, model);
                       Navigator.of(context).pop();
-                      widget.update?.call(model.status);
+                      widget.callback?.call(model.status);
                     }),
               ],
             ],

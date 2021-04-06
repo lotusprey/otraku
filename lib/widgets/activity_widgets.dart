@@ -185,7 +185,7 @@ class ActivityBox extends StatelessWidget {
                         if (canNavigateToReplies)
                           Get.toNamed(
                             ActivityPage.ROUTE,
-                            arguments: [activity.id, activity],
+                            arguments: [activity.id, activity, null],
                             parameters: {'id': activity.id.toString()},
                           );
                       },

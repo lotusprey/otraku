@@ -100,13 +100,13 @@ class FilterPage extends StatelessWidget {
           if (collectionTag == null)
             DropDownField(
               title: 'List Filter',
+              hint: 'Everything',
               initialValue: changes[Filterable.ON_LIST],
               items: {
-                'Everything': null,
                 'In My List': true,
                 'Not In My List': false,
               },
-              onChanged: (dynamic value) => changes[Filterable.ON_LIST] = value,
+              onChanged: (val) => changes[Filterable.ON_LIST] = val,
             ),
           ChipGrid(
             title: 'Status',

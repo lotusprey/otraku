@@ -16,9 +16,9 @@ class MediaModel {
   final _staff = PageModel<Connection>().obs;
   final _reviews = PageModel<RelatedReviewModel>().obs;
 
-  PageModel? get characters => _characters();
-  PageModel? get staff => _staff();
-  PageModel? get reviews => _reviews();
+  PageModel get characters => _characters();
+  PageModel get staff => _staff();
+  PageModel get reviews => _reviews();
 
   MediaModel._(
     this.overview,

@@ -15,7 +15,7 @@ class ListEntryModel {
   final int? progressMax;
   int progressVolumes;
   final int? progressVolumesMax;
-  double? score;
+  double score;
   int repeat;
   String? notes;
   DateTime? startDate;

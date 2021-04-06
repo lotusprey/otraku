@@ -66,7 +66,7 @@ class MediaList extends StatelessWidget {
         ),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (_, i) => _MediaListTile(entries[i], scoreFormat),
+            (_, i) => _MediaListTile(entries[i], scoreFormat!),
             childCount: entries.length,
           ),
           itemExtent: 150,
@@ -78,12 +78,18 @@ class MediaList extends StatelessWidget {
 
 class _MediaListTile extends StatelessWidget {
   final ListEntryModel entry;
-  final ScoreFormat? scoreFormat;
+  final ScoreFormat scoreFormat;
 
   _MediaListTile(this.entry, this.scoreFormat);
 
   @override
   Widget build(BuildContext context) {
+    final details = <String>[Convert.clarifyEnum(entry.format).toString()];
+    if (entry.timeUntilAiring != null)
+      details.add(' • Ep ${entry.nextEpisode} in ${entry.timeUntilAiring}');
+    if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
+      details.add(' • ${entry.nextEpisode! - 1 - entry.progress} ep behind');
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -128,32 +134,9 @@ class _MediaListTile extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 5),
-                          RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.subtitle2,
-                              children: [
-                                TextSpan(
-                                  text: Convert.clarifyEnum(entry.format),
-                                ),
-                                if (entry.timeUntilAiring != null)
-                                  TextSpan(
-                                    text:
-                                        ' • Ep ${entry.nextEpisode} in ${entry.timeUntilAiring}',
-                                    style: TextStyle(
-                                      color: Theme.of(context).accentColor,
-                                    ),
-                                  ),
-                                if (entry.nextEpisode != null &&
-                                    entry.nextEpisode! - 1 > entry.progress)
-                                  TextSpan(
-                                    text:
-                                        ' • ${entry.nextEpisode! - 1 - entry.progress} ep behind',
-                                    style: TextStyle(
-                                      color: Theme.of(context).errorColor,
-                                    ),
-                                  ),
-                              ],
-                            ),
+                          Text(
+                            details.join(),
+                            style: Theme.of(context).textTheme.subtitle2,
                           ),
                         ],
                       ),
@@ -203,8 +186,7 @@ class _MediaListTile extends StatelessWidget {
                         ),
                         Flexible(
                           child: Center(
-                            child:
-                                scoreFormat!.getWidget(context, entry.score!),
+                            child: scoreFormat.getWidget(context, entry.score),
                           ),
                         ),
                         Flexible(

@@ -63,13 +63,13 @@ class CollectionListModel {
         return (a, b) => b.title!.compareTo(a.title!);
       case ListSort.SCORE:
         return (a, b) {
-          final comparison = a.score!.compareTo(b.score!);
+          final comparison = a.score.compareTo(b.score);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
       case ListSort.SCORE_DESC:
         return (a, b) {
-          final comparison = b.score!.compareTo(a.score!);
+          final comparison = b.score.compareTo(a.score);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };

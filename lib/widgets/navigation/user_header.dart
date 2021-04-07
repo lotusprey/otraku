@@ -63,36 +63,31 @@ class UserHeader extends StatelessWidget {
       background: Stack(
         fit: StackFit.expand,
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Container(color: Theme.of(context).primaryColor),
-                    if (user?.banner != null)
-                      FadeImage(user!.banner, height: bannerHeight)
-                  ],
-                ),
-              ),
-              SizedBox(height: height - bannerHeight),
-            ],
+          DecoratedBox(
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           ),
-          Positioned.fill(
-            bottom: height - bannerHeight - 1,
+          if (user?.banner != null)
+            Column(
+              children: [
+                Expanded(child: FadeImage(user!.banner)),
+                SizedBox(height: height - bannerHeight),
+              ],
+            ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: Container(
-              height: bannerHeight,
-              width: double.infinity,
+              height: height - bannerHeight,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.transparent,
-                    Theme.of(context).backgroundColor,
-                  ],
-                ),
+                color: Theme.of(context).backgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 15,
+                    spreadRadius: 25,
+                    color: Theme.of(context).backgroundColor,
+                  ),
+                ],
               ),
             ),
           ),

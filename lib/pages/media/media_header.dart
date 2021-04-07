@@ -60,39 +60,31 @@ class _MediaHeaderState extends State<MediaHeader> {
       background: Stack(
         fit: StackFit.expand,
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Container(color: Theme.of(context).primaryColor),
-                    if (overview?.banner != null)
-                      FadeImage(
-                        overview!.banner,
-                        height: widget.bannerHeight,
-                      ),
-                  ],
-                ),
-              ),
-              SizedBox(height: widget.height - widget.bannerHeight),
-            ],
+          DecoratedBox(
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           ),
-          Positioned.fill(
-            bottom: widget.height - widget.bannerHeight - 1,
+          if (overview?.banner != null)
+            Column(
+              children: [
+                Expanded(child: FadeImage(overview!.banner)),
+                SizedBox(height: widget.height - widget.bannerHeight),
+              ],
+            ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: Container(
-              height: widget.bannerHeight - Config.MATERIAL_TAP_TARGET_SIZE,
-              width: double.infinity,
+              height: widget.height - widget.bannerHeight,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.transparent,
-                    Theme.of(context).backgroundColor,
-                  ],
-                ),
+                color: Theme.of(context).backgroundColor,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 15,
+                    spreadRadius: 25,
+                    color: Theme.of(context).backgroundColor,
+                  ),
+                ],
               ),
             ),
           ),

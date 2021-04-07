@@ -75,7 +75,7 @@ const _themes = {
   },
   Themes.frost: {
     'background': Color(0xFFFFFEFF),
-    'primary': Color(0xFFF4F5F6),
+    'primary': Color(0xFFE0ECF5),
     'translucent': Color(0xBBFFFEFF),
     'accent': Color(0xFF54B2F1),
     'error': Color(0xFFE32749),

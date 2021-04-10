@@ -232,7 +232,7 @@ class _MediaListTile extends StatelessWidget {
                                         builder: (_) => PopUpAnimation(
                                           TextDialog(
                                             title: 'Comment',
-                                            text: entry.notes,
+                                            text: entry.notes!,
                                           ),
                                         ),
                                       ),

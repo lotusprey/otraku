@@ -9,8 +9,8 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/refresh_control.dart';
 
-class FeedPage extends StatelessWidget {
-  const FeedPage();
+class FeedTab extends StatelessWidget {
+  const FeedTab();
 
   @override
   Widget build(BuildContext context) {

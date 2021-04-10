@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/models/person_model.dart';
 import 'package:otraku/models/helper_models/connection.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
@@ -52,18 +52,27 @@ class Staff extends ScrollxController {
     }
     fragment person on Staff {
       id
-      name{full native alternative}
+      name{first middle last native alternative}
       image{large}
+      description(asHtml: true)
+      languageV2
+      primaryOccupations
+      dateOfBirth{year month day}
+      dateOfDeath{year month day}
+      gender
+      age
+      yearsActive
+      homeTown
       favourites 
       isFavourite
-      description(asHtml: true)
+      isFavouriteBlocked
     }
   ''';
 
   static const _toggleFavouriteMutation = r'''
     mutation ToggleFavouriteStaff($id: Int) {
       ToggleFavourite(staffId: $id) {
-        staff(page: 1, perPage: 1) {pageInfo {currentPage}}
+        staff(page: 1, perPage: 1) {nodes{isFavourite}}
       }
     }
   ''';
@@ -72,20 +81,20 @@ class Staff extends ScrollxController {
   // DATA
   // ***************************************************************************
 
-  final int _id;
-  Staff(this._id);
+  final int id;
+  Staff(this.id);
 
-  final _person = Rx<PersonModel?>(null);
+  StaffModel? _model;
   final _characters = PageModel<Connection>().obs;
   final _roles = PageModel<Connection>().obs;
   final _onCharacters = true.obs;
-  MediaSort _sort = MediaSort.TRENDING_DESC;
+  MediaSort _sort = MediaSort.POPULARITY_DESC;
 
-  PersonModel? get person => _person();
+  StaffModel? get model => _model;
 
-  PageModel get characters => _characters();
+  PageModel<Connection> get characters => _characters();
 
-  PageModel get roles => _roles();
+  PageModel<Connection> get roles => _roles();
 
   bool get hasNextPage =>
       _onCharacters() ? _characters().hasNextPage : _roles().hasNextPage;
@@ -106,10 +115,10 @@ class Staff extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    if (_person.value != null) return;
+    if (_model != null) return;
 
     final body = await Client.request(_staffQuery, {
-      'id': _id,
+      'id': id,
       'withPerson': true,
       'withCharacters': true,
       'withStaff': true,
@@ -119,7 +128,9 @@ class Staff extends ScrollxController {
 
     final data = body['Staff'];
 
-    _person(PersonModel(data));
+    _model = StaffModel(data);
+    update();
+
     _initCharacters(data, false);
     _initRoles(data, false);
 
@@ -128,7 +139,7 @@ class Staff extends ScrollxController {
 
   Future<void> refetch() async {
     final data = await Client.request(_staffQuery, {
-      'id': _id,
+      'id': id,
       'withCharacters': true,
       'withStaff': true,
       'sort': describeEnum(_sort),
@@ -141,7 +152,7 @@ class Staff extends ScrollxController {
 
   Future<void> fetchPage() async {
     final data = await Client.request(_staffQuery, {
-      'id': _id,
+      'id': id,
       'withCharacters': _onCharacters(),
       'withStaff': !_onCharacters(),
       'characterPage': _characters().nextPage,
@@ -156,13 +167,15 @@ class Staff extends ScrollxController {
       _initRoles(data['Staff'], false);
   }
 
-  Future<bool> toggleFavourite() async =>
-      await Client.request(
-        _toggleFavouriteMutation,
-        {'id': _id},
-        popOnErr: false,
-      ) !=
-      null;
+  Future<bool> toggleFavourite() async {
+    final data = await Client.request(
+      _toggleFavouriteMutation,
+      {'id': id},
+      popOnErr: false,
+    );
+    if (data != null) _model!.isFavourite = !_model!.isFavourite;
+    return _model!.isFavourite;
+  }
 
   // ***************************************************************************
   // HELPER FUNCTIONS
@@ -174,22 +187,23 @@ class Staff extends ScrollxController {
     final connections = <Connection>[];
     for (final connection in data['characterMedia']['edges'])
       for (final char in connection['characters'])
-        connections.add(Connection(
-            id: char['id'],
-            title: char['name']['full'],
-            imageUrl: char['image']['large'],
-            browsable: Browsable.character,
-            text2: Convert.clarifyEnum(connection['characterRole']),
-            others: [
-              Connection(
-                id: connection['node']['id'],
-                title: connection['node']['title']['userPreferred'],
-                imageUrl: connection['node']['coverImage']['large'],
-                browsable: connection['node']['type'] == 'ANIME'
-                    ? Browsable.anime
-                    : Browsable.manga,
-              ),
-            ]));
+        if (char != null)
+          connections.add(Connection(
+              id: char['id'],
+              title: char['name']['full'],
+              imageUrl: char['image']['large'],
+              browsable: Browsable.character,
+              text2: Convert.clarifyEnum(connection['characterRole']),
+              others: [
+                Connection(
+                  id: connection['node']['id'],
+                  title: connection['node']['title']['userPreferred'],
+                  imageUrl: connection['node']['coverImage']['large'],
+                  browsable: connection['node']['type'] == 'ANIME'
+                      ? Browsable.anime
+                      : Browsable.manga,
+                ),
+              ]));
 
     _characters.update((c) => c!.append(
           connections,

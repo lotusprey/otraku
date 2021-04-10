@@ -1,9 +1,9 @@
 class RelatedReviewModel {
-  final int? reviewId;
-  final int? userId;
+  final int reviewId;
+  final int userId;
+  final String username;
   final String? avatar;
-  final String? username;
-  final String? summary;
+  final String summary;
   final String rating;
 
   RelatedReviewModel._({
@@ -18,8 +18,8 @@ class RelatedReviewModel {
   factory RelatedReviewModel(Map<String, dynamic> map) => RelatedReviewModel._(
         reviewId: map['id'],
         userId: map['user']['id'],
-        username: map['user']['name'],
-        summary: map['summary'],
+        username: map['user']['name'] ?? '',
+        summary: map['summary'] ?? '',
         avatar: map['user']['avatar']['large'],
         rating: '${map['rating']}/${map['ratingAmount']}',
       );

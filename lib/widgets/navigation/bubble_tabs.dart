@@ -21,10 +21,10 @@ class BubbleTabs<T> extends StatefulWidget {
   });
 
   @override
-  _BubbleTabsState createState() => _BubbleTabsState();
+  _BubbleTabsState<T> createState() => _BubbleTabsState<T>();
 }
 
-class _BubbleTabsState extends State<BubbleTabs> {
+class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
   int? _index;
 
   @override
@@ -42,9 +42,8 @@ class _BubbleTabsState extends State<BubbleTabs> {
               if (index != _index) {
                 setState(() => _index = index);
                 widget.onNewValue(widget.values[index]);
-              } else {
+              } else
                 widget.onSameValue(widget.values[index]);
-              }
             },
             child: AnimatedContainer(
               alignment: Alignment.center,

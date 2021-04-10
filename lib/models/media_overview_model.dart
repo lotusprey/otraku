@@ -3,7 +3,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_status.dart';
 
 class MediaOverviewModel {
-  final int? id;
+  final int id;
   final Browsable browsable;
   final int? favourites;
   bool? isFavourite;

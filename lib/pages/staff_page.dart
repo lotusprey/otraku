@@ -1,24 +1,35 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/staff.dart';
+import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/navigation/person_header.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
+import 'package:otraku/widgets/navigation/button_sliver_header.dart';
+import 'package:otraku/widgets/navigation/top_sliver_header.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StaffPage extends StatelessWidget {
   static const ROUTE = '/staff';
 
   final int id;
-  final String? imageUrl;
+  final String imageUrl;
 
   StaffPage(this.id, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
     final staff = Get.find<Staff>(tag: id.toString());
+    final axis = MediaQuery.of(context).size.width > 450
+        ? Axis.horizontal
+        : Axis.vertical;
+    double coverWidth = MediaQuery.of(context).size.width * 0.35;
+    if (coverWidth > 300) coverWidth = 300;
+    final coverHeight = coverWidth / 0.7;
 
     return Scaffold(
       body: SafeArea(
@@ -27,54 +38,91 @@ class StaffPage extends StatelessWidget {
           physics: Config.PHYSICS,
           controller: staff.scrollCtrl,
           slivers: [
-            Obx(() => PersonHeader(
-                  person: staff.person,
-                  personId: id,
-                  imageUrl: imageUrl,
-                  toggleFavourite: staff.toggleFavourite,
-                )),
-            Obx(() {
-              if (staff.person == null) return const SliverToBoxAdapter();
-              return PersonInfo(staff.person);
-            }),
-            Obx(() {
-              if (staff.person == null) return const SliverToBoxAdapter();
-
-              return SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (staff.characters.items.isNotEmpty &&
-                          staff.roles.items.isNotEmpty)
-                        BubbleTabs(
-                          options: const ['Characters', 'Staff Roles'],
-                          values: const [true, false],
-                          initial: true,
-                          onNewValue: (dynamic value) =>
-                              staff.onCharacters = value,
-                          onSameValue: (dynamic _) {},
-                        )
-                      else
-                        const SizedBox(),
-                      IconButton(
-                        tooltip: 'Sort',
-                        icon: const Icon(
-                          FluentIcons.arrow_sort_24_filled,
-                        ),
-                        onPressed: () => Sheet.show(
-                          ctx: context,
-                          sheet: MediaSortSheet(
-                            staff.sort,
-                            (sort) => staff.sort = sort,
+            GetBuilder<Staff>(
+              tag: id.toString(),
+              builder: (s) => TopSliverHeader(
+                toggleFavourite: s.toggleFavourite,
+                isFavourite: s.model?.isFavourite,
+                favourites: s.model?.favourites,
+                text:
+                    '${s.model?.firstName} ${s.model?.middleName} ${s.model?.lastName}',
+              ),
+            ),
+            GetBuilder<Staff>(
+              tag: id.toString(),
+              builder: (s) => SliverPadding(
+                padding: Config.PADDING,
+                sliver: SliverToBoxAdapter(
+                  child: SizedBox(
+                    height:
+                        axis == Axis.horizontal ? coverHeight : coverHeight * 2,
+                    child: Flex(
+                      direction: axis,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          child: Hero(
+                            tag: s.id,
+                            child: ClipRRect(
+                              borderRadius: Config.BORDER_RADIUS,
+                              child: Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                width: coverWidth,
+                                height: coverHeight,
+                              ),
+                            ),
                           ),
-                          isScrollControlled: true,
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (ctx) =>
+                                PopUpAnimation(ImageDialog(imageUrl)),
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10, width: 10),
+                        if (s.model != null) _Details(staff.model!, axis),
+                      ],
+                    ),
                   ),
                 ),
+              ),
+            ),
+            Obx(() {
+              if (staff.characters.items.isEmpty && staff.roles.items.isEmpty)
+                return const SliverToBoxAdapter();
+
+              final offset =
+                  (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
+                      Config.PADDING.top * 2;
+
+              return ButtonSliverHeader(
+                leading: staff.characters.items.isNotEmpty &&
+                        staff.roles.items.isNotEmpty
+                    ? BubbleTabs<bool>(
+                        options: const ['Characters', 'Staff Roles'],
+                        values: const [true, false],
+                        initial: true,
+                        onNewValue: (value) {
+                          staff.onCharacters = value;
+                          staff.scrollTo(offset);
+                        },
+                        onSameValue: (_) => staff.scrollTo(offset),
+                      )
+                    : const SizedBox(),
+                trailing: [
+                  IconButton(
+                    tooltip: 'Sort',
+                    icon: const Icon(FluentIcons.arrow_sort_24_filled),
+                    onPressed: () => Sheet.show(
+                      ctx: context,
+                      sheet: MediaSortSheet(
+                        staff.sort,
+                        (sort) => staff.sort = sort,
+                      ),
+                      isScrollControlled: true,
+                    ),
+                  ),
+                ],
               );
             }),
             Obx(() {
@@ -85,15 +133,76 @@ class StaffPage extends StatelessWidget {
 
               return SliverPadding(
                 padding: EdgeInsets.only(
+                  top: 10,
                   left: 10,
                   right: 10,
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
-                sliver: ConnectionsGrid(connections: connections.items.cast()),
+                sliver: ConnectionsGrid(connections: connections.items),
               );
             }),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _Details extends StatelessWidget {
+  final StaffModel model;
+  final Axis axis;
+  _Details(this.model, this.axis);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SizedBox(height: 10),
+          Text(
+            '${model.firstName} ${model.middleName} ${model.lastName}',
+            style: Theme.of(context).textTheme.headline2,
+            textAlign: axis == Axis.vertical ? TextAlign.center : null,
+          ),
+          Text(
+            model.altNames.join(', '),
+            style: Theme.of(context).textTheme.bodyText1,
+            textAlign: axis == Axis.vertical ? TextAlign.center : null,
+          ),
+          const SizedBox(height: 10),
+          if (model.description.isNotEmpty)
+            Expanded(
+              child: InputFieldStructure(
+                title: 'Description',
+                child: Expanded(
+                  child: GestureDetector(
+                    child: Container(
+                      padding: Config.PADDING,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: Config.BORDER_RADIUS,
+                      ),
+                      child: Text(
+                        model.description,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (_) => PopUpAnimation(
+                        TextDialog(
+                          title: 'Description',
+                          text: model.description,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

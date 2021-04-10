@@ -4,31 +4,29 @@ import 'package:flutter/rendering.dart';
 
 class HeadlineHeader extends StatelessWidget {
   final String headline;
-  final bool isPushed;
+  final bool canPop;
 
-  const HeadlineHeader(this.headline, this.isPushed);
+  const HeadlineHeader(this.headline, this.canPop);
 
   @override
   Widget build(BuildContext context) => SliverPersistentHeader(
         pinned: false,
         floating: false,
-        delegate: _HeadlineHeaderDelegate(
+        delegate: _Delegate(
           context: context,
           headline: headline,
-          isPushed: isPushed,
+          canPop: canPop,
         ),
       );
 }
 
-class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
-  static const _height = 40.0;
-
+class _Delegate implements SliverPersistentHeaderDelegate {
   final String headline;
-  final bool isPushed;
+  final bool canPop;
 
-  _HeadlineHeaderDelegate({
+  _Delegate({
     required this.headline,
-    required this.isPushed,
+    required this.canPop,
     required BuildContext context,
   });
 
@@ -39,25 +37,34 @@ class _HeadlineHeaderDelegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) =>
       Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (isPushed)
+            if (canPop)
               IconButton(
+                tooltip: 'Close',
                 padding: const EdgeInsets.only(right: 20),
                 icon: const Icon(FluentIcons.arrow_left_24_regular),
                 onPressed: () => Navigator.pop(context),
               ),
-            Text(headline, style: Theme.of(context).textTheme.headline3),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                headline,
+                style: Theme.of(context).textTheme.headline3,
+                textAlign: TextAlign.center,
+              ),
+            ),
           ],
         ),
       );
 
   @override
-  double get maxExtent => _height;
+  double get maxExtent => 30;
 
   @override
-  double get minExtent => _height;
+  double get minExtent => 30;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;

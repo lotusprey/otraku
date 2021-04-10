@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/models/person_model.dart';
 import 'package:otraku/models/helper_models/connection.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
@@ -27,11 +27,15 @@ class Character extends ScrollxController {
     }
     fragment person on Character {
       id
-      name{full native alternative}
+      name{first middle last native alternative alternativeSpoiler}
       image{large}
+      description(asHtml: true)
+      dateOfBirth{year month day}
+      gender
+      age
       favourites 
       isFavourite
-      description(asHtml: true)
+      isFavouriteBlocked
     }
     fragment media on MediaConnection {
       pageInfo {hasNextPage}
@@ -46,7 +50,7 @@ class Character extends ScrollxController {
   static const _toggleFavouriteMutation = r'''
     mutation ToggleFavouriteCharacter($id: Int) {
       ToggleFavourite(characterId: $id) {
-        characters(page: 1, perPage: 1) {pageInfo {currentPage}}
+        characters(page: 1, perPage: 1) {nodes{isFavourite}}
       }
     }
   ''';
@@ -55,10 +59,10 @@ class Character extends ScrollxController {
   // DATA
   // ***************************************************************************
 
-  final int _id;
-  Character(this._id);
+  final int id;
+  Character(this.id);
 
-  final _person = Rx<PersonModel?>(null);
+  CharacterModel? _model;
   final _anime = PageModel<Connection>().obs;
   final _manga = PageModel<Connection>().obs;
   final _onAnime = true.obs;
@@ -66,7 +70,7 @@ class Character extends ScrollxController {
   final _availableLanguages = <String>[];
   MediaSort _sort = MediaSort.TRENDING_DESC;
 
-  PersonModel? get person => _person();
+  CharacterModel? get model => _model;
 
   PageModel<Connection> get anime => _anime();
 
@@ -103,10 +107,10 @@ class Character extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    if (_person.value != null) return;
+    if (_model != null) return;
 
     final body = await Client.request(_characterQuery, {
-      'id': _id,
+      'id': id,
       'withPerson': true,
       'withAnime': true,
       'withManga': true,
@@ -116,7 +120,9 @@ class Character extends ScrollxController {
 
     final data = body['Character'];
 
-    _person(PersonModel(data));
+    _model = CharacterModel(data);
+    update();
+
     _initAnime(data, false);
     _initManga(data, false);
 
@@ -125,7 +131,7 @@ class Character extends ScrollxController {
 
   Future<void> refetch() async {
     final body = await Client.request(_characterQuery, {
-      'id': _person()!.id,
+      'id': id,
       'withAnime': true,
       'withManga': true,
       'sort': describeEnum(_sort),
@@ -138,7 +144,7 @@ class Character extends ScrollxController {
 
   Future<void> fetchPage() async {
     final data = await Client.request(_characterQuery, {
-      'id': _id,
+      'id': id,
       'withAnime': _onAnime(),
       'withManga': !_onAnime(),
       'animePage': _anime().nextPage,
@@ -153,13 +159,15 @@ class Character extends ScrollxController {
       _initManga(data['Character'], false);
   }
 
-  Future<bool> toggleFavourite() async =>
-      await Client.request(
-        _toggleFavouriteMutation,
-        {'id': _id},
-        popOnErr: false,
-      ) !=
-      null;
+  Future<bool> toggleFavourite() async {
+    final data = await Client.request(
+      _toggleFavouriteMutation,
+      {'id': id},
+      popOnErr: false,
+    );
+    if (data != null) _model!.isFavourite = !_model!.isFavourite;
+    return _model!.isFavourite;
+  }
 
   // ***************************************************************************
   // HELPER FUNCTIONS

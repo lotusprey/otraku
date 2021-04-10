@@ -117,9 +117,7 @@ class UserHeader extends StatelessWidget {
                     ),
                     onTap: () => showDialog(
                       context: context,
-                      builder: (_) => PopUpAnimation(
-                        ImageDialog(Image.network(avatar, fit: BoxFit.cover)),
-                      ),
+                      builder: (_) => PopUpAnimation(ImageDialog(avatar)),
                     ),
                   )
                 : SizedBox(width: avatarSize),

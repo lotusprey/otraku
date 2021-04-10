@@ -213,7 +213,7 @@ class _MediaHeaderState extends State<MediaHeader> {
   }
 
   void _edit() => BrowseIndexer.openEditPage(
-        widget.media.model!.overview.id!,
+        widget.media.model!.overview.id,
         widget.media.model!.entry,
         (ListStatus? status) =>
             setState(() => widget.media.model!.overview.entryStatus = status),

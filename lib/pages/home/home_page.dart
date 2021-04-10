@@ -23,7 +23,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      const FeedPage(),
+      const FeedTab(),
       CollectionTab(
         ofAnime: true,
         id: Client.viewerId!,
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
         collectionTag: Collection.MANGA,
         key: UniqueKey(),
       ),
-      const ExplorePage(),
+      const ExploreTab(),
       UserTab(Client.viewerId!, null),
     ];
 

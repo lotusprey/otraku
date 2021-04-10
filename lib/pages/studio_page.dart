@@ -5,17 +5,17 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/person_model.dart';
 import 'package:otraku/widgets/loader.dart';
-import 'package:otraku/widgets/favourite_button.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
+import 'package:otraku/widgets/navigation/button_sliver_header.dart';
+import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StudioPage extends StatelessWidget {
   static const ROUTE = '/studio';
 
-  final int? id;
-  final String? name;
+  final int id;
+  final String name;
 
   StudioPage(this.id, this.name);
 
@@ -32,36 +32,41 @@ class StudioPage extends StatelessWidget {
             controller: studio.scrollCtrl,
             semanticChildCount: studio.media.mediaCount,
             slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _StudioHeader(
-                  studio.company,
-                  id,
-                  name,
-                  studio.toggleFavourite,
+              TopSliverHeader(
+                toggleFavourite: studio.toggleFavourite,
+                isFavourite: studio.model?.isFavourite,
+                favourites: studio.model?.favourites,
+                text: studio.model?.name,
+              ),
+              SliverToBoxAdapter(
+                child: Hero(
+                  tag: id,
+                  child: Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline2,
+                  ),
                 ),
               ),
-              if (studio.company != null) ...[
-                SliverToBoxAdapter(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        tooltip: 'Sort',
-                        icon: const Icon(
-                          FluentIcons.arrow_sort_24_filled,
-                        ),
-                        onPressed: () => Sheet.show(
-                          ctx: context,
-                          sheet: MediaSortSheet(
-                            studio.sort,
-                            (sort) => studio.sort = sort,
-                          ),
-                          isScrollControlled: true,
-                        ),
+              if (studio.model != null) ...[
+                ButtonSliverHeader(
+                  leading: const SizedBox(),
+                  trailing: [
+                    IconButton(
+                      tooltip: 'Sort',
+                      icon: const Icon(
+                        FluentIcons.arrow_sort_24_filled,
                       ),
-                    ],
-                  ),
+                      onPressed: () => Sheet.show(
+                        ctx: context,
+                        sheet: MediaSortSheet(
+                          studio.sort,
+                          (sort) => studio.sort = sort,
+                        ),
+                        isScrollControlled: true,
+                      ),
+                    ),
+                  ],
                 ),
                 if (studio.sort == MediaSort.START_DATE ||
                     studio.sort == MediaSort.START_DATE_DESC ||
@@ -108,101 +113,4 @@ class StudioPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class _StudioHeader implements SliverPersistentHeaderDelegate {
-  final PersonModel? company;
-  final int? companyId;
-  final String? name;
-  final Future<bool> Function() toggleFavourite;
-
-  _StudioHeader(this.company, this.companyId, this.name, this.toggleFavourite);
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    final shrinkPercentage = shrinkOffset / (maxExtent - minExtent);
-
-    return Container(
-      height: maxExtent,
-      decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).backgroundColor,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 45),
-            child: Align(
-              alignment: Alignment.center,
-              child: Hero(
-                tag: companyId!,
-                child: Text(
-                  name!,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline2,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  tooltip: 'Close',
-                  icon: const Icon(Icons.close),
-                  color: Theme.of(context).dividerColor,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                if (company != null)
-                  FavoriteButton(
-                    favourites: company!.favourites,
-                    isFavourite: company!.isFavourite,
-                    shrinkPercentage: shrinkPercentage,
-                    toggle: toggleFavourite,
-                  )
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  double get maxExtent => 120;
-
-  @override
-  double get minExtent => 60;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
-
-  @override
-  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
-      null;
-
-  @override
-  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
-
-  @override
-  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
-
-  @override
-  TickerProvider? get vsync => null;
 }

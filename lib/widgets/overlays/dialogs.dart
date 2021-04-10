@@ -43,10 +43,10 @@ class _PopUpAnimationState extends State<PopUpAnimation>
 }
 
 class TextDialog extends StatelessWidget {
-  final String? title;
-  final String? text;
+  final String title;
+  final String text;
 
-  const TextDialog({this.title, this.text});
+  const TextDialog({required this.title, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class TextDialog extends StatelessWidget {
                 color: Theme.of(context).backgroundColor,
               ),
               padding: Config.PADDING,
-              child: Text(title!, style: Theme.of(context).textTheme.subtitle1),
+              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
             ),
             Flexible(
               child: Container(
@@ -83,7 +83,7 @@ class TextDialog extends StatelessWidget {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Text(
-                      text!,
+                      text,
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -98,9 +98,10 @@ class TextDialog extends StatelessWidget {
 }
 
 class ImageDialog extends StatelessWidget {
-  final Image image;
+  final String url;
+  final BoxFit fit;
 
-  const ImageDialog(this.image);
+  const ImageDialog(this.url, [this.fit = BoxFit.cover]);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +110,10 @@ class ImageDialog extends StatelessWidget {
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       backgroundColor: Colors.transparent,
-      child: ClipRRect(borderRadius: Config.BORDER_RADIUS, child: image),
+      child: ClipRRect(
+        borderRadius: Config.BORDER_RADIUS,
+        child: Image.network(url, fit: fit),
+      ),
     );
   }
 }

@@ -108,7 +108,7 @@ class RelationsTab extends StatelessWidget {
             return media.isLoading ? _Empty(null) : _Empty('No Characters');
 
           return ConnectionsGrid(
-            connections: media.model!.characters.items.cast(),
+            connections: media.model!.characters.items,
             preferredSubtitle: media.staffLanguage,
           );
         }
@@ -116,9 +116,7 @@ class RelationsTab extends StatelessWidget {
         if (media.model!.staff.items.isEmpty)
           return media.isLoading ? _Empty(null) : _Empty('No Staff');
 
-        return ConnectionsGrid(
-          connections: media.model!.staff.items.cast(),
-        );
+        return ConnectionsGrid(connections: media.model!.staff.items);
       }),
     );
   }

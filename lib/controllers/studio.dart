@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:otraku/models/studio_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/person_model.dart';
 import 'package:otraku/models/studio_page_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
@@ -34,13 +34,14 @@ class Studio extends ScrollxController {
       name
       favourites
       isFavourite
+      isAnimationStudio
     }
   ''';
 
   static const _toggleFavouriteMutation = r'''
     mutation ToggleFavouriteStudio($id: Int) {
       ToggleFavourite(studioId: $id) {
-        studios(page: 1, perPage: 1) {pageInfo {currentPage}}
+        studios(page: 1, perPage: 1) {nodes{isFavourite}}
       }
     }
   ''';
@@ -49,14 +50,14 @@ class Studio extends ScrollxController {
   // DATA
   // ***************************************************************************
 
-  final int _id;
-  Studio(this._id);
+  final int id;
+  Studio(this.id);
 
-  final _company = Rx<PersonModel?>(null);
+  StudioModel? _model;
   final _media = StudioPageModel().obs;
   MediaSort _sort = MediaSort.START_DATE_DESC;
 
-  PersonModel? get company => _company();
+  StudioModel? get model => _model;
 
   StudioPageModel get media => _media();
 
@@ -74,22 +75,24 @@ class Studio extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    if (_company.value != null) return;
+    if (_model != null) return;
 
     final data = await Client.request(
       _studioQuery,
-      {'id': _id, 'withStudio': true, 'sort': describeEnum(_sort)},
+      {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
     );
     if (data == null) return;
 
-    _company(PersonModel.studio(data['Studio']));
+    _model = StudioModel(data['Studio']);
+    update();
+
     _initMedia(data['Studio']['media'], false);
   }
 
   Future<void> refetch() async {
     final data = await Client.request(
       _studioQuery,
-      {'id': _id, 'sort': describeEnum(_sort)},
+      {'id': id, 'sort': describeEnum(_sort)},
     );
     if (data == null) return;
 
@@ -100,7 +103,7 @@ class Studio extends ScrollxController {
     final data = await Client.request(
       _studioQuery,
       {
-        'id': _id,
+        'id': id,
         'page': _media().nextPage,
         'sort': describeEnum(_sort),
       },
@@ -110,13 +113,15 @@ class Studio extends ScrollxController {
     _initMedia(data['Studio']['media'], false);
   }
 
-  Future<bool> toggleFavourite() async =>
-      await Client.request(
-        _toggleFavouriteMutation,
-        {'id': _id},
-        popOnErr: false,
-      ) !=
-      null;
+  Future<bool> toggleFavourite() async {
+    final data = await Client.request(
+      _toggleFavouriteMutation,
+      {'id': id},
+      popOnErr: false,
+    );
+    if (data != null) _model!.isFavourite = !_model!.isFavourite;
+    return _model!.isFavourite;
+  }
 
   // ***************************************************************************
   // HELPER FUNCTIONS

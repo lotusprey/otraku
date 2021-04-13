@@ -105,7 +105,7 @@ packages:
       name: fluentui_system_icons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.116"
+    version: "1.1.117"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -141,7 +141,7 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.0-rc.2021031201"
+    version: "0.6.0"
   get:
     dependency: "direct main"
     description:

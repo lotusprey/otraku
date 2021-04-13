@@ -8,7 +8,7 @@ class CharacterModel {
   final String description;
   final String? imageUrl;
   final String? gender;
-  final int? age;
+  final String? age;
   final int favourites;
   final bool isFavouriteBlocked;
   bool isFavourite;

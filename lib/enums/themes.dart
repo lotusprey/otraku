@@ -74,9 +74,9 @@ const _themes = {
     'brightness': Brightness.dark,
   },
   Themes.frost: {
-    'background': Color(0xFFFFFEFF),
-    'primary': Color(0xFFE0ECF5),
-    'translucent': Color(0xBBFFFEFF),
+    'background': Color(0xFFF0F5FA),
+    'primary': Color(0xFFFFFEFF),
+    'translucent': Color(0xBBF0F5FA),
     'accent': Color(0xFF54B2F1),
     'error': Color(0xFFE32749),
     'faded': Color(0xFF3D5D7B),

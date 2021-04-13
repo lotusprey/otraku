@@ -114,15 +114,8 @@ class _MediaHeaderState extends State<MediaHeader> {
                           ),
                           onTap: () => showDialog(
                             context: context,
-                            builder: (ctx) => PopUpAnimation(
-                              ImageTextDialog(
-                                text: overview.preferredTitle,
-                                image: Image.network(
-                                  overview.cover!,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
+                            builder: (ctx) =>
+                                PopUpAnimation(ImageDialog(overview.cover!)),
                           ),
                         ),
                     ],
@@ -141,7 +134,14 @@ class _MediaHeaderState extends State<MediaHeader> {
                       flex: 2,
                       child: Text(
                         overview.preferredTitle!,
-                        style: Theme.of(context).textTheme.headline2,
+                        style: Theme.of(context).textTheme.headline2!.copyWith(
+                          shadows: [
+                            Shadow(
+                              color: Theme.of(context).backgroundColor,
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
                         overflow: TextOverflow.fade,
                       ),
                     ),

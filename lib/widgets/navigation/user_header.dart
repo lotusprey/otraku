@@ -135,7 +135,15 @@ class UserHeader extends StatelessWidget {
                         child: Text(
                           user!.name!,
                           overflow: TextOverflow.fade,
-                          style: Theme.of(context).textTheme.headline2,
+                          style:
+                              Theme.of(context).textTheme.headline2!.copyWith(
+                            shadows: [
+                              Shadow(
+                                color: Theme.of(context).backgroundColor,
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       if (user!.donatorTier! > 0)

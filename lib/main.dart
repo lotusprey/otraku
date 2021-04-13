@@ -133,10 +133,10 @@ class App extends StatelessWidget {
         ),
         GetPage(
           name: ActivityPage.ROUTE,
-          page: () => ActivityPage(Get.arguments[0], Get.arguments[2]),
+          page: () => ActivityPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
             Get.put(
-              Activity(Get.arguments[0], Get.arguments[1]),
+              Activity(Get.arguments[0], Get.arguments[1], Get.arguments[2]),
               tag: Get.arguments[0].toString(),
             );
           }),

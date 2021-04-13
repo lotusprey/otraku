@@ -83,12 +83,17 @@ class UserActivity extends StatelessWidget {
   }
 }
 
-class ActivityBox extends StatelessWidget {
+class ActivityBox extends StatefulWidget {
   final ActivityModel activity;
-  final bool canNavigateToReplies;
+  final bool canPush;
 
-  ActivityBox(this.activity, [this.canNavigateToReplies = true]);
+  ActivityBox(this.activity, {this.canPush = true});
 
+  @override
+  _ActivityBoxState createState() => _ActivityBoxState();
+}
+
+class _ActivityBoxState extends State<ActivityBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -100,12 +105,12 @@ class ActivityBox extends StatelessWidget {
       ),
       child: Column(
         children: [
-          if (activity.type == ActivityType.ANIME_LIST ||
-              activity.type == ActivityType.MANGA_LIST)
+          if (widget.activity.type == ActivityType.ANIME_LIST ||
+              widget.activity.type == ActivityType.MANGA_LIST)
             BrowseIndexer(
-              id: activity.mediaId!,
-              imageUrl: activity.mediaImage,
-              browsable: activity.mediaType!,
+              id: widget.activity.mediaId!,
+              imageUrl: widget.activity.mediaImage,
+              browsable: widget.activity.mediaType!,
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxHeight: 108),
                 child: Row(
@@ -113,7 +118,7 @@ class ActivityBox extends StatelessWidget {
                     ClipRRect(
                       borderRadius: Config.BORDER_RADIUS,
                       child: FadeImage(
-                        activity.mediaImage,
+                        widget.activity.mediaImage,
                         width: 70,
                       ),
                     ),
@@ -130,12 +135,12 @@ class ActivityBox extends StatelessWidget {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: activity.text,
+                                      text: widget.activity.text,
                                       style:
                                           Theme.of(context).textTheme.bodyText1,
                                     ),
                                     TextSpan(
-                                      text: activity.mediaTitle,
+                                      text: widget.activity.mediaTitle,
                                       style:
                                           Theme.of(context).textTheme.bodyText2,
                                     ),
@@ -143,11 +148,11 @@ class ActivityBox extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            if (activity.mediaFormat != null)
+                            if (widget.activity.mediaFormat != null)
                               Padding(
                                 padding: const EdgeInsets.only(top: 5),
                                 child: Text(
-                                  activity.mediaFormat!,
+                                  widget.activity.mediaFormat!,
                                   style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
@@ -163,36 +168,42 @@ class ActivityBox extends StatelessWidget {
             UnconstrainedBox(
               constrainedAxis: Axis.horizontal,
               alignment: Alignment.topLeft,
-              child: HtmlContent(activity.text),
+              child: HtmlContent(widget.activity.text),
             ),
           const SizedBox(height: 5),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                activity.createdAt,
+                widget.activity.createdAt,
                 style: Theme.of(context).textTheme.subtitle2,
               ),
               Row(
                 children: [
-                  _SubscribeIcon(activity),
+                  _SubscribeIcon(widget.activity),
                   const SizedBox(width: 10),
                   Tooltip(
                     message: 'Replies',
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        if (canNavigateToReplies)
+                        if (widget.canPush)
                           Get.toNamed(
                             ActivityPage.ROUTE,
-                            arguments: [activity.id, activity, null],
-                            parameters: {'id': activity.id.toString()},
+                            arguments: [
+                              widget.activity.id,
+                              widget.activity,
+                              (ActivityModel other) => setState(
+                                    () => widget.activity.updateFrom(other),
+                                  ),
+                            ],
+                            parameters: {'id': widget.activity.id.toString()},
                           );
                       },
                       child: Row(
                         children: [
                           Text(
-                            activity.replyCount.toString(),
+                            widget.activity.replyCount.toString(),
                             style: Theme.of(context).textTheme.subtitle2,
                           ),
                           const SizedBox(width: 5),
@@ -205,7 +216,7 @@ class ActivityBox extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  _ActivityLikeIcon(activity),
+                  _ActivityLikeIcon(widget.activity),
                 ],
               ),
             ],

@@ -78,9 +78,10 @@ class Activity extends ScrollxController {
   ''';
 
   final int _id;
-  Activity(this._id, [this._model]);
+  Activity(this._id, [this._model, this._callback]);
 
   ActivityModel? _model;
+  final Function(ActivityModel)? _callback;
   final _isLoading = true.obs;
 
   ActivityModel? get model => _model;
@@ -148,5 +149,11 @@ class Activity extends ScrollxController {
   void onInit() {
     super.onInit();
     fetch();
+  }
+
+  @override
+  void onClose() {
+    if (_callback != null && _model != null) _callback!(_model!);
+    super.onClose();
   }
 }

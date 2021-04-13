@@ -20,8 +20,8 @@ class ActivityModel {
   final Browsable? mediaType;
   final String text;
   final String createdAt;
-  final int replyCount;
-  final PageModel<ReplyModel> replies;
+  final replies = PageModel<ReplyModel>();
+  int replyCount;
   int likeCount;
   bool isLiked;
   bool isSubscribed;
@@ -33,7 +33,6 @@ class ActivityModel {
     required this.agentName,
     required this.agentImage,
     required this.createdAt,
-    required this.replies,
     this.recieverId,
     this.recieverName,
     this.recieverImage,
@@ -71,7 +70,6 @@ class ActivityModel {
           text: map['text'] ?? '',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: PageModel<ReplyModel>(),
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
@@ -101,7 +99,6 @@ class ActivityModel {
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: PageModel<ReplyModel>(),
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
@@ -131,7 +128,6 @@ class ActivityModel {
           text: '$status $progress',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: PageModel<ReplyModel>(),
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
@@ -157,7 +153,6 @@ class ActivityModel {
           text: map['message'] ?? '',
           createdAt: Convert.millisecondsToTimeString(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
-          replies: PageModel<ReplyModel>(),
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
@@ -174,17 +169,17 @@ class ActivityModel {
         agentImage: null,
         agentName: null,
         createdAt: '',
-        replies: PageModel<ReplyModel>(),
       );
 
   bool get valid => agentId != null;
 
   void appendReplies(final Map<String, dynamic> map) {
-    if (map['activityReplies'] != null) {
-      final rl = <ReplyModel>[];
-      for (final r in map['activityReplies']) rl.add(ReplyModel(r));
-      replies.append(rl, map['pageInfo']['hasNextPage']);
-    }
+    if (map['activityReplies'] == null) return;
+
+    final rl = <ReplyModel>[];
+    for (final r in map['activityReplies']) rl.add(ReplyModel(r));
+    replies.append(rl, map['pageInfo']['hasNextPage']);
+    replyCount = replies.items.length;
   }
 
   void toggleLike(final Map<String, dynamic> map) {
@@ -194,4 +189,11 @@ class ActivityModel {
 
   void toggleSubscription(final Map<String, dynamic> map) =>
       isSubscribed = map['isSubscribed'] ?? false;
+
+  void updateFrom(ActivityModel model) {
+    isSubscribed = model.isSubscribed;
+    replyCount = model.replyCount;
+    likeCount = model.likeCount;
+    isLiked = model.isLiked;
+  }
 }

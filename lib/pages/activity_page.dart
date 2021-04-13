@@ -17,10 +17,8 @@ class ActivityPage extends StatelessWidget {
   static const ROUTE = '/activity';
 
   final int id;
-  // TODO finish
-  final Function(bool, bool)? callback;
 
-  ActivityPage(this.id, [this.callback]);
+  ActivityPage(this.id);
 
   @override
   Widget build(BuildContext context) {
@@ -91,15 +89,11 @@ class ActivityPage extends StatelessWidget {
                   if (model != null) ...[
                     SliverToBoxAdapter(
                         child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 10,
-                        right: 10,
-                        top: 10,
-                      ),
-                      child: ActivityBox(model, false),
+                      padding: Config.PADDING,
+                      child: ActivityBox(model, canPush: false),
                     )),
                     SliverPadding(
-                      padding: const EdgeInsets.all(10),
+                      padding: Config.PADDING,
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => UserReply(model.replies.items[i]),

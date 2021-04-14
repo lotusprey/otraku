@@ -115,10 +115,7 @@ class UserHeader extends StatelessWidget {
                         ),
                       ),
                     ),
-                    onTap: () => showDialog(
-                      context: context,
-                      builder: (_) => PopUpAnimation(ImageDialog(avatar)),
-                    ),
+                    onTap: () => showPopUp(context, ImageDialog(avatar)),
                   )
                 : SizedBox(width: avatarSize),
             const SizedBox(width: 10),

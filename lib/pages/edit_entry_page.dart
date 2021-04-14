@@ -42,43 +42,41 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     tooltip: 'Remove',
                     icon: const Icon(FluentIcons.delete_24_filled),
                     color: Theme.of(context).dividerColor,
-                    onPressed: () => showDialog(
-                      context: context,
-                      builder: (_) => PopUpAnimation(
-                        AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: Config.BORDER_RADIUS,
-                          ),
-                          backgroundColor: Theme.of(context).primaryColor,
-                          title: Text(
-                            'Remove entry?',
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          actions: [
-                            TextButton(
-                              child: Text(
-                                'No',
-                                style: TextStyle(
-                                  color: Theme.of(context).dividerColor,
-                                ),
-                              ),
-                              onPressed: () => Navigator.of(context).pop(),
-                            ),
-                            TextButton(
-                              child: Text('Yes'),
-                              onPressed: () {
-                                Get.find<Collection>(
-                                  tag: model.type == 'ANIME'
-                                      ? Collection.ANIME
-                                      : Collection.MANGA,
-                                ).removeEntry(entry.oldModel!);
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                                widget.callback?.call(null);
-                              },
-                            ),
-                          ],
+                    onPressed: () => showPopUp(
+                      context,
+                      AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: Config.BORDER_RADIUS,
                         ),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        title: Text(
+                          'Remove entry?',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        actions: [
+                          TextButton(
+                            child: Text(
+                              'No',
+                              style: TextStyle(
+                                color: Theme.of(context).dividerColor,
+                              ),
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          TextButton(
+                            child: Text('Yes'),
+                            onPressed: () {
+                              Get.find<Collection>(
+                                tag: model.type == 'ANIME'
+                                    ? Collection.ANIME
+                                    : Collection.MANGA,
+                              ).removeEntry(entry.oldModel!);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              widget.callback?.call(null);
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),

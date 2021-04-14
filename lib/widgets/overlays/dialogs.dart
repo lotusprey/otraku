@@ -3,16 +3,18 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 
-class PopUpAnimation extends StatefulWidget {
-  final Widget child;
+void showPopUp(BuildContext ctx, Widget child) =>
+    showDialog(context: ctx, builder: (ctx) => _PopUpAnimation(child));
 
-  const PopUpAnimation(this.child);
+class _PopUpAnimation extends StatefulWidget {
+  final Widget child;
+  const _PopUpAnimation(this.child);
 
   @override
-  _PopUpAnimationState createState() => _PopUpAnimationState();
+  __PopUpAnimationState createState() => __PopUpAnimationState();
 }
 
-class _PopUpAnimationState extends State<PopUpAnimation>
+class __PopUpAnimationState extends State<_PopUpAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _anim;
@@ -113,40 +115,6 @@ class ImageDialog extends StatelessWidget {
       child: ClipRRect(
         borderRadius: Config.BORDER_RADIUS,
         child: Image.network(url, fit: fit),
-      ),
-    );
-  }
-}
-
-class ImageTextDialog extends StatelessWidget {
-  final String? text;
-  final Image? image;
-
-  const ImageTextDialog({
-    required this.text,
-    this.image,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-      backgroundColor: Theme.of(context).primaryColor,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ClipRRect(borderRadius: Config.BORDER_RADIUS, child: image),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-            child: SelectableText(
-              text!,
-              style: Theme.of(context).textTheme.headline3,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
       ),
     );
   }

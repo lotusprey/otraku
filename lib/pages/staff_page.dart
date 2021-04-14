@@ -73,11 +73,8 @@ class StaffPage extends StatelessWidget {
                               ),
                             ),
                           ),
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (ctx) =>
-                                PopUpAnimation(ImageDialog(imageUrl)),
-                          ),
+                          onTap: () =>
+                              showPopUp(context, ImageDialog(imageUrl)),
                         ),
                         const SizedBox(height: 10, width: 10),
                         if (s.model != null) _Details(staff.model!, axis),
@@ -189,14 +186,9 @@ class _Details extends StatelessWidget {
                         overflow: TextOverflow.fade,
                       ),
                     ),
-                    onTap: () => showDialog(
-                      context: context,
-                      builder: (_) => PopUpAnimation(
-                        TextDialog(
-                          title: 'Description',
-                          text: model.description,
-                        ),
-                      ),
+                    onTap: () => showPopUp(
+                      context,
+                      TextDialog(title: 'Description', text: model.description),
                     ),
                   ),
                 ),

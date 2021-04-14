@@ -227,13 +227,11 @@ class _MediaListTile extends StatelessWidget {
                                         Icons.comment,
                                         size: Style.ICON_SMALL,
                                       ),
-                                      onPressed: () => showDialog(
-                                        context: context,
-                                        builder: (_) => PopUpAnimation(
-                                          TextDialog(
-                                            title: 'Comment',
-                                            text: entry.notes!,
-                                          ),
+                                      onPressed: () => showPopUp(
+                                        context,
+                                        TextDialog(
+                                          title: 'Comment',
+                                          text: entry.notes!,
                                         ),
                                       ),
                                     ),

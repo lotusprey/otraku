@@ -112,11 +112,8 @@ class _MediaHeaderState extends State<MediaHeader> {
                             overview.cover!,
                             fit: BoxFit.cover,
                           ),
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (ctx) =>
-                                PopUpAnimation(ImageDialog(overview.cover!)),
-                          ),
+                          onTap: () =>
+                              showPopUp(context, ImageDialog(overview.cover!)),
                         ),
                     ],
                   ),

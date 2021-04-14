@@ -80,13 +80,11 @@ class OverviewTab extends StatelessWidget {
                       maxLines: 5,
                     ),
                   ),
-                  onTap: () => showDialog(
-                    context: context,
-                    builder: (_) => PopUpAnimation(
-                      TextDialog(
-                        title: 'Description',
-                        text: overview.description,
-                      ),
+                  onTap: () => showPopUp(
+                    context,
+                    TextDialog(
+                      title: 'Description',
+                      text: overview.description,
                     ),
                   ),
                 ),

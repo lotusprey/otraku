@@ -8,14 +8,11 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 
 class TileGrid extends StatelessWidget {
   final List<BrowseResultModel> tileData;
-  final Function? loadMore;
   final TileModel tileModel;
 
-  // TODO remove
   TileGrid({
     required this.tileData,
     required this.tileModel,
-    this.loadMore,
   });
 
   @override
@@ -32,46 +29,42 @@ class TileGrid extends StatelessWidget {
       ),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, index) {
-            if (index == tileData.length - 6) loadMore?.call();
-
-            return BrowseIndexer(
-              browsable: tileData[index].browsable,
-              id: tileData[index].id,
-              imageUrl: tileData[index].imageUrl,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Hero(
-                      tag: tileData[index].id,
-                      child: ClipRRect(
-                        borderRadius: Config.BORDER_RADIUS,
-                        child: Container(
-                          color: tileModel.needsBackground
-                              ? Theme.of(context).primaryColor
-                              : null,
-                          child: FadeImage(
-                            tileData[index].imageUrl,
-                            fit: tileModel.fit,
-                          ),
+          (_, index) => BrowseIndexer(
+            browsable: tileData[index].browsable,
+            id: tileData[index].id,
+            imageUrl: tileData[index].imageUrl,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: tileData[index].id,
+                    child: ClipRRect(
+                      borderRadius: Config.BORDER_RADIUS,
+                      child: Container(
+                        color: tileModel.needsBackground
+                            ? Theme.of(context).primaryColor
+                            : null,
+                        child: FadeImage(
+                          tileData[index].imageUrl,
+                          fit: tileModel.fit,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 5),
-                  SizedBox(
-                    height: tileModel.textHeight,
-                    child: Text(
-                      tileData[index].text1,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
+                ),
+                const SizedBox(height: 5),
+                SizedBox(
+                  height: tileModel.textHeight,
+                  child: Text(
+                    tileData[index].text1,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.subtitle1,
                   ),
-                ],
-              ),
-            );
-          },
+                ),
+              ],
+            ),
+          ),
           childCount: tileData.length,
         ),
         gridDelegate: SliverGridDelegateWithMaxWidthAndAddedHeight(

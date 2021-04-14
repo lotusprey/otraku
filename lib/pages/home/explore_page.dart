@@ -32,9 +32,7 @@ class ExploreTab extends StatelessWidget {
         ),
         _ExploreGrid(),
         _EndOfListLoader(),
-        SliverToBoxAdapter(
-          child: SizedBox(height: NavBar.offset(context)),
-        ),
+        SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
       ],
     );
   }

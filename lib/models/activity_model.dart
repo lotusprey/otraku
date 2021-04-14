@@ -179,7 +179,8 @@ class ActivityModel {
     final rl = <ReplyModel>[];
     for (final r in map['activityReplies']) rl.add(ReplyModel(r));
     replies.append(rl, map['pageInfo']['hasNextPage']);
-    replyCount = replies.items.length;
+
+    if (replyCount < replies.items.length) replyCount = replies.items.length;
   }
 
   void toggleLike(final Map<String, dynamic> map) {

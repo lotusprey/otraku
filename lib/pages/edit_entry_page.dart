@@ -85,6 +85,10 @@ class _EditEntryPageState extends State<EditEntryPage> {
                     icon: const Icon(FluentIcons.save_24_filled),
                     color: Theme.of(context).dividerColor,
                     onPressed: () {
+                      if (entry.oldModel!.status == null &&
+                          entry.model!.startedAt == null)
+                        entry.model!.startedAt = DateTime.now();
+
                       Get.find<Collection>(
                         tag: model.type == 'ANIME'
                             ? Collection.ANIME

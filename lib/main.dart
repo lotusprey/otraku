@@ -6,6 +6,7 @@ import 'package:otraku/controllers/character.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/favourites.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/controllers/review.dart';
@@ -154,12 +155,18 @@ class App extends StatelessWidget {
           ),
         ),
         GetPage(
-          name: FilterPage.ROUTE,
-          page: () => FilterPage(Get.arguments[0], Get.arguments[1]),
-        ),
-        GetPage(
           name: FavouritesPage.ROUTE,
           page: () => FavouritesPage(Get.arguments),
+          binding: BindingsBuilder(() {
+            Get.put(
+              Favourites(Get.arguments),
+              tag: Get.arguments.toString(),
+            );
+          }),
+        ),
+        GetPage(
+          name: FilterPage.ROUTE,
+          page: () => FilterPage(Get.arguments[0], Get.arguments[1]),
         ),
         GetPage(
           name: UserActivitiesPage.ROUTE,

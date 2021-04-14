@@ -1,9 +1,8 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/favourites.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
@@ -13,14 +12,14 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class FavouritesPage extends StatelessWidget {
   static const ROUTE = '/favourites';
 
-  final int? id;
+  final int id;
   FavouritesPage(this.id);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<User>(
-      tag: id?.toString() ?? Client.viewerId.toString(),
-      builder: (user) => Scaffold(
+    return GetBuilder<Favourites>(
+      tag: id.toString(),
+      builder: (favourites) => Scaffold(
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
@@ -30,31 +29,34 @@ class FavouritesPage extends StatelessWidget {
             FluentIcons.mic_on_24_regular: 'Staff',
             FluentIcons.building_24_regular: 'Studios',
           },
-          initial: user.favsIndex,
-          onChanged: (index) => user.favsIndex = index,
+          initial: favourites.pageIndex,
+          onChanged: (index) => favourites.pageIndex = index,
         ),
-        appBar: CustomAppBar(title: 'Favourite ${user.favPageName}'),
+        appBar: CustomAppBar(title: 'Favourite ${favourites.pageName}'),
         body: SafeArea(
           bottom: false,
           child: CustomScrollView(
+            controller: favourites.scrollCtrl,
             physics: Config.PHYSICS,
             slivers: [
-              if (user.favourites.isNotEmpty)
-                user.favsIndex == UserModel.STUDIO_FAV
-                    ? TitleList(user.favourites, user.fetchFavourites)
-                    : TileGrid(
-                        tileData: user.favourites,
-                        loadMore: user.fetchFavourites,
-                        tileModel: Config.highTile,
-                      )
-              else
-                SliverFillRemaining(
-                  child: Center(
-                    child: Text('Nothing here',
-                        style: Theme.of(context).textTheme.subtitle1),
-                  ),
-                ),
-              const SliverToBoxAdapter(child: SizedBox(height: 60)),
+              favourites.favourites.isNotEmpty
+                  ? favourites.pageIndex == UserModel.STUDIO_FAV
+                      ? TitleList(favourites.favourites)
+                      : TileGrid(
+                          tileData: favourites.favourites,
+                          tileModel: Config.highTile,
+                        )
+                  : SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          'Nothing here',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ),
+                    ),
+              SliverToBoxAdapter(
+                child: SizedBox(height: NavBar.offset(context)),
+              ),
             ],
           ),
         ),

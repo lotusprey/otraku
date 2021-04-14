@@ -13,8 +13,6 @@ import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-import '../../utils/client.dart';
-
 class UserPage extends StatelessWidget {
   static const ROUTE = '/user';
 

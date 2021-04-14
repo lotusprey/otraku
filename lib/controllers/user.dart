@@ -1,22 +1,19 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/activity_model.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
 
 class User extends GetxController {
   static const _userQuery = r'''
-      query User($id: Int, $withMain: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false, 
-          $withCharacters: Boolean = false, $withStaff: Boolean = false, $withStudios: Boolean = false,
-          $page: Int = 1) {
+      query User($id: Int) {
         User(id: $id) {
-          ...main @include(if: $withMain)
+          ...main
           favourites {
-            anime(page: $page) @include(if: $withAnime) {...media}
-            manga(page: $page) @include(if: $withManga) {...media}
-            characters(page: $page) @include(if: $withCharacters) {...character}
-            staff(page: $page) @include(if: $withStaff) {...staff}
-            studios(page: $page) @include(if: $withStudios) {...studio}
+            anime {...media}
+            manga {...media}
+            characters {...character}
+            staff {...staff}
+            studios {...studio}
           }
         }
       }
@@ -91,31 +88,15 @@ class User extends GetxController {
   static const _toggleFollow =
       r'''mutation FollowUser($id: Int) {ToggleFollow(userId: $id) {isFollowing}}''';
 
-  final int _id;
-  User(this._id);
+  final int id;
+  User(this.id);
 
   UserModel? _model;
-  int _favsIndex = UserModel.ANIME_FAV;
   bool _loading = true;
 
   UserModel? get model => _model;
-  List<BrowseResultModel> get favourites =>
-      _model!.favourites[_favsIndex].items;
   List<ActivityModel> get activities => _model!.activities.items;
   bool get loading => _loading;
-  int get favsIndex => _favsIndex;
-  String get favPageName {
-    if (_favsIndex == UserModel.ANIME_FAV) return 'Anime';
-    if (_favsIndex == UserModel.MANGA_FAV) return 'Manga';
-    if (_favsIndex == UserModel.CHARACTER_FAV) return 'Characters';
-    if (_favsIndex == UserModel.STAFF_FAV) return 'Staff';
-    return 'Studios';
-  }
-
-  set favsIndex(int index) {
-    _favsIndex = index;
-    update();
-  }
 
   // ***************************************************************************
   // FETCHING
@@ -124,41 +105,13 @@ class User extends GetxController {
   Future<void> fetch() async {
     final data = await Client.request(
       _userQuery,
-      {
-        'id': _id,
-        'withMain': true,
-        'withAnime': true,
-        'withManga': true,
-        'withCharacters': true,
-        'withStaff': true,
-        'withStudios': true,
-      },
-      popOnErr: _id != Client.viewerId,
+      {'id': id},
+      popOnErr: id != Client.viewerId,
     );
     if (data == null) return;
 
-    _model = UserModel(data['User'], _id == Client.viewerId);
+    _model = UserModel(data['User'], id == Client.viewerId);
     _model!.addFavs(null, data['User']['favourites']);
-    _loading = false;
-    update();
-  }
-
-  Future<void> fetchFavourites() async {
-    if (_loading || !_model!.favourites[_favsIndex].hasNextPage) return;
-    _loading = true;
-
-    final data = await Client.request(_userQuery, {
-      'id': _id,
-      'withAnime': _favsIndex == UserModel.ANIME_FAV,
-      'withManga': _favsIndex == UserModel.MANGA_FAV,
-      'withCharacters': _favsIndex == UserModel.CHARACTER_FAV,
-      'withStaff': _favsIndex == UserModel.STAFF_FAV,
-      'withStudios': _favsIndex == UserModel.STUDIO_FAV,
-      'page': _model!.favourites[_favsIndex].nextPage,
-    });
-    if (data == null) return;
-
-    _model!.addFavs(_favsIndex, data['User']['favourites']);
     _loading = false;
     update();
   }
@@ -168,24 +121,23 @@ class User extends GetxController {
     _loading = true;
 
     final data = await Client.request(_activitiesQuery, {
-      'id': _id,
+      'id': id,
       'page': _model!.activities.nextPage,
     });
     if (data == null) return;
 
-    final List<ActivityModel> al = [];
+    final al = <ActivityModel>[];
     for (final a in data['Page']['activities']) {
       final m = ActivityModel(a);
       if (m.valid) al.add(m);
     }
     _model!.activities.append(al, data['Page']['pageInfo']['hasNextPage']);
-
     _loading = false;
     update();
   }
 
   Future<void> toggleFollow() async {
-    final data = await Client.request(_toggleFollow, {'id': _model!.id});
+    final data = await Client.request(_toggleFollow, {'id': id});
     if (data == null) return;
     _model!.toggleFollow(data['ToggleFollow']);
     update();

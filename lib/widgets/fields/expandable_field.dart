@@ -30,7 +30,6 @@ class _ExpandableFieldState extends State<ExpandableField> {
           onChanged: (text) => widget.onChanged(text),
           minLines: 1,
           maxLines: 5,
-          cursorColor: Theme.of(context).accentColor,
           style: Theme.of(context).textTheme.bodyText1,
         ),
       );

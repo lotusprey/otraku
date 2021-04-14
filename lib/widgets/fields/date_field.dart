@@ -38,6 +38,7 @@ class _DateFieldState extends State<DateField> {
         helpText: widget.helpText,
         errorFormatText: 'Enter valid date',
         errorInvalidText: 'Enter date in valid range',
+        fieldLabelText: '',
       ).then((pickedDate) {
         if (pickedDate == null) return;
         setState(() => date = pickedDate);

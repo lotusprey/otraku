@@ -25,8 +25,9 @@ extension Style on Themes {
 const _themes = {
   Themes.navy: {
     'background': Color(0xFF0F171E),
-    'primary': Color(0xFF1D2835),
     'translucent': Color(0xBB0F171E),
+    'primary': Color(0xFF1D2835),
+    'highlight': Color(0x4445A0F2),
     'accent': Color(0xFF45A0F2),
     'error': Color(0xFFD74761),
     'faded': Color(0xFF56789F),
@@ -35,8 +36,9 @@ const _themes = {
   },
   Themes.cyber: {
     'background': Color(0xFF163B3B),
-    'primary': Color(0xFF1A6157),
     'translucent': Color(0xBB163B3B),
+    'primary': Color(0xFF1A6157),
+    'highlight': Color(0x4400E4A3),
     'accent': Color(0xFF00E4A3),
     'error': Color(0xFFD87CAC),
     'faded': Color(0xFF85D6C2),
@@ -45,8 +47,9 @@ const _themes = {
   },
   Themes.night: {
     'background': Color(0xFF08123A),
-    'primary': Color(0xFF1E2964),
     'translucent': Color(0xBB08123A),
+    'primary': Color(0xFF1E2964),
+    'highlight': Color(0x4441C0AA),
     'accent': Color(0xFF41C0AA),
     'error': Color(0xFFF445AF),
     'faded': Color(0xFF6B80DB),
@@ -55,8 +58,9 @@ const _themes = {
   },
   Themes.amethyst: {
     'background': Color(0xFF1E1E3F),
-    'primary': Color(0xFF2D2B55),
     'translucent': Color(0xBB1E1E3F),
+    'primary': Color(0xFF2D2B55),
+    'highlight': Color(0x44DFCD01),
     'accent': Color(0xFFDFCD01),
     'error': Color(0xFFF94E7E),
     'faded': Color(0xFFA7A0F8),
@@ -65,8 +69,9 @@ const _themes = {
   },
   Themes.bee: {
     'background': Color(0xFF000000),
-    'primary': Color(0xFF141414),
     'translucent': Color(0xBB000000),
+    'primary': Color(0xFF141414),
+    'highlight': Color(0x44FFDB00),
     'accent': Color(0xFFFFDB00),
     'error': Color(0xFFFF1F39),
     'faded': Color(0xFF999999),
@@ -75,8 +80,9 @@ const _themes = {
   },
   Themes.frost: {
     'background': Color(0xFFF0F5FA),
-    'primary': Color(0xFFFFFEFF),
     'translucent': Color(0xBBF0F5FA),
+    'primary': Color(0xFFFFFEFF),
+    'highlight': Color(0x4454B2F1),
     'accent': Color(0xFF54B2F1),
     'error': Color(0xFFE32749),
     'faded': Color(0xFF3D5D7B),
@@ -113,6 +119,41 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     toggleableActiveColor: theme['accent'],
     splashColor: Colors.transparent,
     highlightColor: Colors.transparent,
+    colorScheme: ColorScheme(
+      brightness: theme['brightness'],
+      surface: theme['background'],
+      background: theme['background'],
+      primary: theme['primary'],
+      primaryVariant: theme['primary'],
+      secondary: theme['accent'],
+      secondaryVariant: theme['accent'],
+      error: theme['error'],
+      onSurface: theme['contrast'],
+      onBackground: theme['contrast'],
+      onPrimary: theme['contrast'],
+      onSecondary: theme['background'],
+      onError: theme['background'],
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: theme['accent'],
+      selectionColor: theme['highlight'],
+      selectionHandleColor: theme['accent'],
+    ),
+    dialogTheme: DialogTheme(
+      elevation: 10,
+      backgroundColor: theme['background'],
+      shape: RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+      titleTextStyle: TextStyle(
+        fontSize: Style.FONT_MEDIUM,
+        color: theme['contrast'],
+        fontWeight: FontWeight.w500,
+      ),
+      contentTextStyle: TextStyle(
+        fontSize: Style.FONT_MEDIUM,
+        color: theme['contrast'],
+        fontWeight: FontWeight.normal,
+      ),
+    ),
     iconTheme: IconThemeData(color: theme['faded'], size: Style.ICON_BIG),
     tooltipTheme: TooltipThemeData(
       padding: Config.PADDING,
@@ -128,15 +169,13 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     ),
     sliderTheme: SliderThemeData(
       thumbColor: theme['accent'],
-      overlayColor: (theme['accent'] as Color).withAlpha(20),
+      overlayColor: theme['highlight'],
       activeTrackColor: theme['accent'],
       inactiveTrackColor: theme['primary'],
     ),
     radioTheme: RadioThemeData(
       fillColor: MaterialStateProperty.all(theme['accent']),
-      overlayColor: MaterialStateProperty.all(
-        (theme['accent'] as Color).withAlpha(20),
-      ),
+      overlayColor: MaterialStateProperty.all(theme['highlight']),
     ),
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
@@ -157,10 +196,11 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         textStyle: MaterialStateProperty.all(TextStyle(
           fontSize: Style.FONT_MEDIUM,
         )),
+        shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          borderRadius: Config.BORDER_RADIUS,
+        )),
         foregroundColor: MaterialStateProperty.all(theme['accent']),
-        overlayColor: MaterialStateProperty.all(
-          (theme['accent'] as Color).withAlpha(20),
-        ),
+        overlayColor: MaterialStateProperty.all(theme['highlight']),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -171,9 +211,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
         )),
         backgroundColor: MaterialStateProperty.all(theme['accent']),
         foregroundColor: MaterialStateProperty.all(theme['background']),
-        overlayColor: MaterialStateProperty.all(
-          (theme['accent'] as Color).withAlpha(20),
-        ),
+        overlayColor: MaterialStateProperty.all(theme['highlight']),
         shape: MaterialStateProperty.all(RoundedRectangleBorder(
           borderRadius: Config.BORDER_RADIUS,
         )),

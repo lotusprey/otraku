@@ -5,7 +5,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
-import 'package:otraku/pages/user_activities_page.dart';
+import 'package:otraku/pages/user_feed_page.dart';
 import 'package:otraku/pages/favourites_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/utils/config.dart';
@@ -73,10 +73,12 @@ class UserTab extends StatelessWidget {
                             FluentIcons.comment_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
-                          onPressed: () => Get.toNamed(
-                            UserActivitiesPage.ROUTE,
-                            arguments: id,
-                          ),
+                          onPressed: () => id == Client.viewerId
+                              ? Config.setIndex(HomePage.FEED)
+                              : Get.toNamed(
+                                  UserFeedPage.ROUTE,
+                                  arguments: id,
+                                ),
                         ),
                         IconButton(
                           icon: Icon(

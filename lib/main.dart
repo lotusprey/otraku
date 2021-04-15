@@ -14,6 +14,7 @@ import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/user_feed.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
@@ -22,7 +23,7 @@ import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/user_activities_page.dart';
+import 'package:otraku/pages/user_feed_page.dart';
 import 'package:otraku/pages/activity_page.dart';
 import 'package:otraku/pages/character_page.dart';
 import 'package:otraku/pages/edit_entry_page.dart';
@@ -165,12 +166,18 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: FilterPage.ROUTE,
-          page: () => FilterPage(Get.arguments[0], Get.arguments[1]),
+          name: UserFeedPage.ROUTE,
+          page: () => UserFeedPage(Get.arguments),
+          binding: BindingsBuilder(() {
+            Get.put(
+              UserFeed(Get.arguments),
+              tag: Get.arguments.toString(),
+            );
+          }),
         ),
         GetPage(
-          name: UserActivitiesPage.ROUTE,
-          page: () => UserActivitiesPage(Get.arguments),
+          name: FilterPage.ROUTE,
+          page: () => FilterPage(Get.arguments[0], Get.arguments[1]),
         ),
         GetPage(
           name: SettingsPage.ROUTE,

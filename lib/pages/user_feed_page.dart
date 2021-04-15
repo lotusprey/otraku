@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/controllers/user_feed.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/user.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 
-class UserActivitiesPage extends StatelessWidget {
+class UserFeedPage extends StatelessWidget {
   static const ROUTE = '/activities';
 
   final int id;
-  UserActivitiesPage(this.id);
+  UserFeedPage(this.id);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: 'Activities'),
       body: SafeArea(
-        child: GetBuilder<User>(
+        child: GetBuilder<UserFeed>(
           tag: id.toString(),
-          builder: (user) {
-            if (user.activities.isEmpty) {
-              user.fetchActivities();
-              if (user.loading) return Center(child: Loader());
+          builder: (feed) {
+            if (feed.activities.isEmpty) {
+              if (feed.hasNextPage) return const Center(child: Loader());
+
               return Center(
                 child: Text(
                   'No Activities',
@@ -34,11 +34,9 @@ class UserActivitiesPage extends StatelessWidget {
             return ListView.builder(
               physics: Config.PHYSICS,
               padding: Config.PADDING,
-              itemBuilder: (_, i) {
-                if (i == user.activities.length - 5) user.fetchActivities();
-                return UserActivity(user.activities[i]);
-              },
-              itemCount: user.activities.length,
+              controller: feed.scrollCtrl,
+              itemBuilder: (_, i) => UserActivity(feed.activities[i]),
+              itemCount: feed.activities.length,
             );
           },
         ),

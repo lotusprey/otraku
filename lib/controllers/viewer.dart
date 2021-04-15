@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/settings_model.dart';
@@ -108,7 +109,7 @@ class Viewer extends ScrollxController {
     ActivityType.ANIME_LIST,
     ActivityType.MANGA_LIST,
   ];
-  bool _onFollowing = true;
+  bool _onFollowing = Config.storage.read(Config.FOLLOWING_FEED) ?? true;
   SettingsModel? _settings;
   bool _isLoading = true;
 
@@ -125,7 +126,10 @@ class Viewer extends ScrollxController {
   bool get hasNextPage => _activities().hasNextPage;
 
   void updateFilters({bool? following, List<ActivityType>? types}) {
-    if (following != null) _onFollowing = following;
+    if (following != null) {
+      _onFollowing = following;
+      Config.storage.write(Config.FOLLOWING_FEED, following);
+    }
     if (types != null) _typeIn.replaceRange(0, _typeIn.length, types);
     refetch();
   }

@@ -23,6 +23,7 @@ class Config {
   static const THEME_MODE = 'themeMode';
   static const LIGHT_THEME = 'theme1';
   static const DARK_THEME = 'theme2';
+  static const FOLLOWING_FEED = 'feedMode';
 
   static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
   static final storage = GetStorage();

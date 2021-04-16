@@ -56,17 +56,21 @@ class Studio extends ScrollxController {
   StudioModel? _model;
   final _media = StudioPageModel().obs;
   MediaSort _sort = MediaSort.START_DATE_DESC;
+  bool? _onList;
 
   StudioModel? get model => _model;
-
   StudioPageModel get media => _media();
-
   bool get hasNextPage => _media().hasNextPage;
 
   MediaSort get sort => _sort;
-
   set sort(MediaSort value) {
     _sort = value;
+    refetch();
+  }
+
+  bool? get onList => _onList;
+  set onList(bool? val) {
+    _onList = val;
     refetch();
   }
 
@@ -75,11 +79,14 @@ class Studio extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    if (_model != null) return;
-
     final data = await Client.request(
       _studioQuery,
-      {'id': id, 'withStudio': true, 'sort': describeEnum(_sort)},
+      {
+        'id': id,
+        'withStudio': true,
+        'sort': describeEnum(_sort),
+        'onList': _onList,
+      },
     );
     if (data == null) return;
 
@@ -92,7 +99,7 @@ class Studio extends ScrollxController {
   Future<void> refetch() async {
     final data = await Client.request(
       _studioQuery,
-      {'id': id, 'sort': describeEnum(_sort)},
+      {'id': id, 'sort': describeEnum(_sort), 'onList': _onList},
     );
     if (data == null) return;
 
@@ -106,6 +113,7 @@ class Studio extends ScrollxController {
         'id': id,
         'page': _media().nextPage,
         'sort': describeEnum(_sort),
+        'onList': _onList,
       },
     );
     if (data == null) return;

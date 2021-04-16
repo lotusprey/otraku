@@ -39,12 +39,15 @@ class StudioPage extends StatelessWidget {
                 text: studio.model?.name,
               ),
               SliverToBoxAdapter(
-                child: Hero(
-                  tag: id,
-                  child: Text(
-                    name,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline2,
+                child: Padding(
+                  padding: Config.PADDING,
+                  child: Hero(
+                    tag: id,
+                    child: Text(
+                      name,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline2,
+                    ),
                   ),
                 ),
               ),
@@ -52,6 +55,27 @@ class StudioPage extends StatelessWidget {
                 ButtonSliverHeader(
                   leading: const SizedBox(),
                   trailing: [
+                    IconButton(
+                      tooltip: 'Filter',
+                      icon: const Icon(Icons.filter_alt_outlined),
+                      onPressed: () => Sheet.show(
+                        ctx: context,
+                        sheet: OptionSheet(
+                          title: 'List Filter',
+                          options: ['Everything', 'On List', 'Not On List'],
+                          index: studio.onList == null
+                              ? 0
+                              : studio.onList!
+                                  ? 1
+                                  : 2,
+                          onTap: (val) => studio.onList = val == 0
+                              ? null
+                              : val == 1
+                                  ? true
+                                  : false,
+                        ),
+                      ),
+                    ),
                     IconButton(
                       tooltip: 'Sort',
                       icon: const Icon(
@@ -68,6 +92,15 @@ class StudioPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                if (studio.media.categories.isEmpty)
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'No results',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  ),
                 if (studio.sort == MediaSort.START_DATE ||
                     studio.sort == MediaSort.START_DATE_DESC ||
                     studio.sort == MediaSort.END_DATE ||

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/themes.dart';
 
 class TwoStateField extends StatefulWidget {
   final String? title;
@@ -34,7 +35,11 @@ class _TwoStateFieldState extends State<TwoStateField> {
               : Theme.of(context).accentColor,
         ),
         child: _active
-            ? Icon(Icons.done, color: Theme.of(context).backgroundColor)
+            ? Icon(
+                Icons.done_rounded,
+                color: Theme.of(context).backgroundColor,
+                size: Style.ICON_SMALL,
+              )
             : null,
       ),
       onTap: () {

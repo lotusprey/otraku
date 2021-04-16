@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/themes.dart';
 
 class ThreeStateField extends StatefulWidget {
   final String? title;
@@ -38,7 +37,7 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
         ),
         child: _state != 0
             ? Icon(
-                _state == 1 ? Icons.add_rounded : Icons.remove_rounded,
+                _state == 1 ? Icons.add : Icons.remove,
                 color: Theme.of(context).backgroundColor,
               )
             : null,

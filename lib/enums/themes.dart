@@ -270,7 +270,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       button: TextStyle(
         fontSize: Style.FONT_MEDIUM,
         color: theme['background'],
-        fontWeight: FontWeight.normal,
+        fontWeight: FontWeight.w500,
       ),
     ),
   );

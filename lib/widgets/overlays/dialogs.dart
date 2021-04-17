@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/html_content.dart';
 
 void showPopUp(BuildContext ctx, Widget child) =>
     showDialog(context: ctx, builder: (ctx) => _PopUpAnimation(child));
@@ -44,61 +45,6 @@ class __PopUpAnimationState extends State<_PopUpAnimation>
       );
 }
 
-class TextDialog extends StatelessWidget {
-  final String title;
-  final String text;
-
-  const TextDialog({required this.title, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      backgroundColor: Theme.of(context).backgroundColor,
-      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 1000),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
-                color: Theme.of(context).backgroundColor,
-              ),
-              padding: Config.PADDING,
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-            ),
-            Flexible(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      const BorderRadius.vertical(bottom: Config.RADIUS),
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    physics: Config.PHYSICS,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: Text(
-                      text,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class ImageDialog extends StatelessWidget {
   final String url;
   final BoxFit fit;
@@ -115,6 +61,91 @@ class ImageDialog extends StatelessWidget {
       child: ClipRRect(
         borderRadius: Config.BORDER_RADIUS,
         child: Image.network(url, fit: fit),
+      ),
+    );
+  }
+}
+
+class TextDialog extends StatelessWidget {
+  final String title;
+  final String text;
+
+  const TextDialog({required this.title, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Dialog(
+      title: title,
+      expand: false,
+      child: Text(text, style: Theme.of(context).textTheme.bodyText1),
+    );
+  }
+}
+
+class HtmlDialog extends StatelessWidget {
+  final String title;
+  final String text;
+
+  const HtmlDialog({required this.title, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return _Dialog(title: title, expand: true, child: HtmlContent(text));
+  }
+}
+
+class _Dialog extends StatelessWidget {
+  final String title;
+  final Widget child;
+  final bool expand;
+
+  const _Dialog({
+    required this.title,
+    required this.child,
+    required this.expand,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+      backgroundColor: Theme.of(context).backgroundColor,
+      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
+                color: Theme.of(context).backgroundColor,
+              ),
+              padding: Config.PADDING,
+              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+            ),
+            Flexible(
+              fit: expand ? FlexFit.tight : FlexFit.loose,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      const BorderRadius.vertical(bottom: Config.RADIUS),
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: Scrollbar(
+                  child: SingleChildScrollView(
+                    physics: Config.PHYSICS,
+                    padding: Config.PADDING,
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

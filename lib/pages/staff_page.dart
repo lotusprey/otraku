@@ -28,7 +28,7 @@ class StaffPage extends StatelessWidget {
         ? Axis.horizontal
         : Axis.vertical;
     double coverWidth = MediaQuery.of(context).size.width * 0.35;
-    if (coverWidth > 300) coverWidth = 300;
+    if (coverWidth > 200) coverWidth = 200;
     final coverHeight = coverWidth / 0.7;
 
     return Scaffold(
@@ -156,7 +156,6 @@ class _Details extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 10),
           Text(
             '${model.firstName} ${model.middleName} ${model.lastName}',
             style: Theme.of(context).textTheme.headline2,
@@ -188,7 +187,7 @@ class _Details extends StatelessWidget {
                     ),
                     onTap: () => showPopUp(
                       context,
-                      TextDialog(title: 'Description', text: model.description),
+                      HtmlDialog(title: 'Description', text: model.description),
                     ),
                   ),
                 ),

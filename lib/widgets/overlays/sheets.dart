@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/enums/list_sort.dart';
@@ -194,6 +195,78 @@ class SelectionSheet<T> extends StatelessWidget {
         ),
         onDone: () => onDone(inclusive, exclusive),
       );
+}
+
+class TagSelectionSheet extends StatelessWidget {
+  final Map<String, List<TagModel>> tags;
+  final List<String> inclusive;
+  final List<String> exclusive;
+  final Function(List<String>, List<String>) onDone;
+
+  TagSelectionSheet({
+    required this.tags,
+    required this.inclusive,
+    required this.exclusive,
+    required this.onDone,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    int count = 0;
+    final slivers = <Widget>[];
+    for (int i = 0; i < tags.length; i++) {
+      slivers.add(SliverToBoxAdapter(
+        child: Padding(
+          padding: Config.PADDING,
+          child: Text(
+            tags.entries.elementAt(i).key,
+            style: Theme.of(context).textTheme.headline4,
+          ),
+        ),
+      ));
+
+      slivers.add(SliverFixedExtentList(
+        delegate: SliverChildBuilderDelegate(
+          (_, index) {
+            final val = tags.entries.elementAt(i).value[index].name;
+            return ThreeStateField(
+              title: val,
+              initialState: inclusive.contains(val)
+                  ? 1
+                  : exclusive.contains(val)
+                      ? 2
+                      : 0,
+              onChanged: (state) {
+                if (state == 0)
+                  exclusive.remove(val);
+                else if (state == 1)
+                  inclusive.add(val);
+                else {
+                  inclusive.remove(val);
+                  exclusive.add(val);
+                }
+              },
+            );
+          },
+          childCount: tags.entries.elementAt(i).value.length,
+          semanticIndexOffset: count,
+        ),
+        itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
+      ));
+
+      count += tags.entries.elementAt(i).value.length;
+    }
+
+    return Sheet(
+      height: null,
+      child: CustomScrollView(
+        physics: Config.PHYSICS,
+        semanticChildCount: count,
+        slivers: slivers,
+      ),
+      onDone: () => onDone(inclusive, exclusive),
+    );
+  }
 }
 
 class _SortSheet extends StatelessWidget {

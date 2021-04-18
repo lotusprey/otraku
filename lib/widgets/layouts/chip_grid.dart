@@ -1,27 +1,30 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/enums/themes.dart';
+import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/chip_field.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class ChipGrid<T> extends StatefulWidget {
+class ChipGrid extends StatefulWidget {
   final String title;
   final String placeholder;
-  final List<String> options;
-  final List<T> values;
-  final List<T>? inclusive;
-  final List<T>? exclusive;
+  final List<String>? options;
+  final List<String>? values;
+  final List<String> inclusive;
+  final List<String>? exclusive;
+  final Map<String, List<TagModel>>? tags;
 
   ChipGrid({
     required this.title,
     required this.placeholder,
-    required this.options,
-    required this.values,
     required this.inclusive,
+    this.options,
+    this.values,
     this.exclusive,
-  });
+    this.tags,
+  }) : assert(tags == null || (options == null && values == null));
 
   @override
   _ChipGridState createState() => _ChipGridState();
@@ -30,34 +33,49 @@ class ChipGrid<T> extends StatefulWidget {
 class _ChipGridState extends State<ChipGrid> {
   @override
   Widget build(BuildContext context) {
-    final list = List.generate(
-        widget.inclusive!.length + (widget.exclusive?.length ?? 0), (index) {
-      final value = index < widget.inclusive!.length
-          ? widget.inclusive![index]
-          : widget.exclusive![index - widget.inclusive!.length];
-      return ChipField(
-        key: UniqueKey(),
-        title: Convert.clarifyEnum(value),
-        initiallyPositive: index < widget.inclusive!.length,
-        onChanged: widget.exclusive == null
-            ? null
-            : (changed) {
-                if (changed) {
-                  widget.exclusive!.remove(value);
-                  widget.inclusive!.add(value);
-                } else {
-                  widget.inclusive!.remove(value);
-                  widget.exclusive!.add(value);
-                }
-              },
-        onRemoved: () {
-          if (index < widget.inclusive!.length)
-            setState(() => widget.inclusive!.remove(value));
-          else
-            setState(() => widget.exclusive!.remove(value));
-        },
-      );
-    });
+    final list = <ChipField>[];
+    if (widget.exclusive == null)
+      for (final val in widget.inclusive)
+        list.add(ChipField(
+          key: UniqueKey(),
+          title: Convert.clarifyEnum(val)!,
+          initiallyPositive: true,
+          onRemoved: () => setState(() => widget.inclusive.remove(val)),
+        ));
+    else {
+      for (final val in widget.inclusive)
+        list.add(ChipField(
+          key: UniqueKey(),
+          title: Convert.clarifyEnum(val)!,
+          initiallyPositive: true,
+          onChanged: (changed) {
+            if (changed) {
+              widget.exclusive!.remove(val);
+              widget.inclusive.add(val);
+            } else {
+              widget.inclusive.remove(val);
+              widget.exclusive!.add(val);
+            }
+          },
+          onRemoved: () => setState(() => widget.inclusive.remove(val)),
+        ));
+      for (final val in widget.exclusive!)
+        list.add(ChipField(
+          key: UniqueKey(),
+          title: Convert.clarifyEnum(val)!,
+          initiallyPositive: false,
+          onChanged: (changed) {
+            if (changed) {
+              widget.exclusive!.remove(val);
+              widget.inclusive.add(val);
+            } else {
+              widget.inclusive.remove(val);
+              widget.exclusive!.add(val);
+            }
+          },
+          onRemoved: () => setState(() => widget.exclusive!.remove(val)),
+        ));
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -73,7 +91,7 @@ class _ChipGridState extends State<ChipGrid> {
                     message: 'Clear',
                     child: GestureDetector(
                       onTap: () => setState(() {
-                        widget.inclusive!.clear();
+                        widget.inclusive.clear();
                         widget.exclusive?.clear();
                       }),
                       child: Container(
@@ -94,34 +112,39 @@ class _ChipGridState extends State<ChipGrid> {
                   icon: Icon(FluentIcons.options_24_regular),
                   onPressed: () => Sheet.show(
                     ctx: context,
-                    sheet: SelectionSheet(
-                      options: widget.options,
-                      values: widget.values,
-                      inclusive: [...widget.inclusive!],
-                      exclusive: widget.exclusive != null
-                          ? [...widget.exclusive!]
-                          : null,
-                      fixHeight: widget.options.length <= 10,
-                      onDone: (inclusive, exclusive) {
-                        setState(() {
-                          widget.inclusive!.clear();
-                          for (final i in inclusive) widget.inclusive!.add(i);
-                          if (widget.exclusive != null) {
-                            widget.exclusive!.clear();
-                            for (final e in exclusive!)
-                              widget.exclusive!.add(e);
-                          }
-                        });
-                      },
-                    ),
-                    isScrollControlled: widget.options.length <= 10,
+                    sheet: widget.tags != null
+                        ? _tagSheet()
+                        : SelectionSheet(
+                            options: widget.options!,
+                            values: widget.values!,
+                            inclusive: [...widget.inclusive],
+                            exclusive: widget.exclusive != null
+                                ? [...widget.exclusive!]
+                                : null,
+                            fixHeight: widget.options!.length <= 10,
+                            onDone: (inclusive, exclusive) {
+                              setState(() {
+                                widget.inclusive.clear();
+                                for (final i in inclusive as List<String>)
+                                  widget.inclusive.add(i);
+                                if (widget.exclusive != null) {
+                                  widget.exclusive!.clear();
+                                  for (final e in exclusive! as List<String>)
+                                    widget.exclusive!.add(e);
+                                }
+                              });
+                            },
+                          ),
+                    isScrollControlled: widget.options != null
+                        ? widget.options!.length <= 10
+                        : false,
                   ),
                 ),
               ],
             ),
           ],
         ),
-        list.length > 0
+        list.isNotEmpty
             ? Wrap(spacing: 10, runSpacing: 10, children: list)
             : SizedBox(
                 height: Config.MATERIAL_TAP_TARGET_SIZE,
@@ -135,4 +158,20 @@ class _ChipGridState extends State<ChipGrid> {
       ],
     );
   }
+
+  Widget _tagSheet() => TagSelectionSheet(
+        tags: widget.tags!,
+        inclusive: [...widget.inclusive],
+        exclusive: [...widget.exclusive!],
+        onDone: (inclusive, exclusive) {
+          setState(() {
+            widget.inclusive.clear();
+            for (final i in inclusive) widget.inclusive.add(i);
+            if (widget.exclusive != null) {
+              widget.exclusive!.clear();
+              for (final e in exclusive) widget.exclusive!.add(e);
+            }
+          });
+        },
+      );
 }

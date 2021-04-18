@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChipField extends StatefulWidget {
-  final String? title;
+  final String title;
   final bool initiallyPositive;
   final Function(bool)? onChanged;
   final Function onRemoved;
@@ -9,8 +9,8 @@ class ChipField extends StatefulWidget {
   ChipField({
     required this.title,
     required this.initiallyPositive,
-    required this.onChanged,
     required this.onRemoved,
+    this.onChanged,
     key,
   }) : super(key: key);
 
@@ -32,7 +32,7 @@ class _ChipFieldState extends State<ChipField> {
           backgroundColor: _isPositive
               ? Theme.of(context).accentColor
               : Theme.of(context).errorColor,
-          label: Text(widget.title!, style: Theme.of(context).textTheme.button),
+          label: Text(widget.title, style: Theme.of(context).textTheme.button),
           deleteIconColor: Theme.of(context).backgroundColor,
           onDeleted: widget.onRemoved as void Function()?,
         ),

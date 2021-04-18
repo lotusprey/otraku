@@ -144,10 +144,9 @@ class FilterPage extends StatelessWidget {
             ChipGrid(
               title: 'Tags',
               placeholder: 'tags',
-              options: explorer.tags.keys.toList(),
-              values: explorer.tags.keys.toList(),
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
+              tags: explorer.tags,
             ),
         ],
       ),

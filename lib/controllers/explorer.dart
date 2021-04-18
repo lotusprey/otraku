@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -101,7 +102,7 @@ class Explorer extends ScrollxController implements Filterable {
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
   final _genres = <String>[];
-  final _tags = <String, String>{};
+  final _tags = <String, List<TagModel>>{};
   int _concurrentFetches = 0;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
@@ -126,7 +127,7 @@ class Explorer extends ScrollxController implements Filterable {
 
   List<String> get genres => [..._genres];
 
-  Map<String, String> get tags => _tags;
+  Map<String, List<TagModel>> get tags => _tags;
 
   // ***************************************************************************
   // FUNCTIONS CONTROLLING QUERY VARIABLES
@@ -289,7 +290,7 @@ class Explorer extends ScrollxController implements Filterable {
         query Filters {
           Viewer {options {displayAdultContent}}
           GenreCollection
-          MediaTagCollection {name description}
+          MediaTagCollection {name description category isGeneralSpoiler}
           Page(page: 1, perPage: 30) {
             media(sort: TRENDING_DESC, type: ANIME) {
               id
@@ -301,7 +302,6 @@ class Explorer extends ScrollxController implements Filterable {
       ''';
 
     final data = await Client.request(query, null, popOnErr: false);
-
     if (data == null) return;
 
     if (!data['Viewer']['options']['displayAdultContent'])
@@ -309,8 +309,13 @@ class Explorer extends ScrollxController implements Filterable {
 
     for (final g in data['GenreCollection']) _genres.add(g.toString());
 
-    for (final t in data['MediaTagCollection'])
-      _tags[t['name']] = t['description'];
+    for (final t in data['MediaTagCollection']) {
+      final category = t['category'] ?? 'Other';
+      if (!_tags.containsKey(category))
+        _tags[category] = [TagModel(t)];
+      else
+        _tags[category]!.add(TagModel(t));
+    }
 
     final loaded = <BrowseResultModel>[];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];

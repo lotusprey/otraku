@@ -131,7 +131,10 @@ class CharacterPage extends StatelessWidget {
                       ctx: context,
                       sheet: MediaSortSheet(
                         character.sort,
-                        (sort) => character.sort = sort,
+                        (sort) {
+                          character.sort = sort;
+                          character.scrollTo(offset);
+                        },
                       ),
                       isScrollControlled: true,
                     ),

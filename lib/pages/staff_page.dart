@@ -114,7 +114,10 @@ class StaffPage extends StatelessWidget {
                       ctx: context,
                       sheet: MediaSortSheet(
                         staff.sort,
-                        (sort) => staff.sort = sort,
+                        (sort) {
+                          staff.sort = sort;
+                          staff.scrollTo(offset);
+                        },
                       ),
                       isScrollControlled: true,
                     ),

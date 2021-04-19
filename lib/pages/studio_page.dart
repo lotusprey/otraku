@@ -68,11 +68,14 @@ class StudioPage extends StatelessWidget {
                               : studio.onList!
                                   ? 1
                                   : 2,
-                          onTap: (val) => studio.onList = val == 0
-                              ? null
-                              : val == 1
-                                  ? true
-                                  : false,
+                          onTap: (val) {
+                            studio.onList = val == 0
+                                ? null
+                                : val == 1
+                                    ? true
+                                    : false;
+                            studio.scrollTo(0);
+                          },
                         ),
                       ),
                     ),
@@ -85,7 +88,10 @@ class StudioPage extends StatelessWidget {
                         ctx: context,
                         sheet: MediaSortSheet(
                           studio.sort,
-                          (sort) => studio.sort = sort,
+                          (sort) {
+                            studio.sort = sort;
+                            studio.scrollTo(0);
+                          },
                         ),
                         isScrollControlled: true,
                       ),

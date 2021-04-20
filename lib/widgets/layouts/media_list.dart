@@ -56,7 +56,6 @@ class MediaList extends StatelessWidget {
         );
 
       final entries = collection.entries;
-      final scoreFormat = collection.scoreFormat;
 
       return SliverPadding(
         padding: EdgeInsets.only(
@@ -66,7 +65,11 @@ class MediaList extends StatelessWidget {
         ),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (_, i) => _MediaListTile(entries[i], scoreFormat!),
+            (_, i) => _MediaListTile(
+              entries[i],
+              collection.scoreFormat!,
+              collection.updateProgress,
+            ),
             childCount: entries.length,
           ),
           itemExtent: 150,
@@ -76,12 +79,12 @@ class MediaList extends StatelessWidget {
   }
 }
 
-// TODO +1 episode/chapter
 class _MediaListTile extends StatelessWidget {
   final ListEntryModel entry;
   final ScoreFormat scoreFormat;
+  final Function(ListEntryModel) increment;
 
-  _MediaListTile(this.entry, this.scoreFormat);
+  _MediaListTile(this.entry, this.scoreFormat, this.increment);
 
   @override
   Widget build(BuildContext context) {
@@ -142,49 +145,57 @@ class _MediaListTile extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      height: 5,
-                      margin: const EdgeInsets.symmetric(vertical: 3),
-                      decoration: entry.progressMax != null
-                          ? BoxDecoration(
-                              borderRadius: Config.BORDER_RADIUS,
-                              gradient: LinearGradient(
-                                colors: [
-                                  Theme.of(context).disabledColor,
-                                  Theme.of(context).disabledColor,
-                                  Theme.of(context).backgroundColor,
-                                  Theme.of(context).backgroundColor,
-                                ],
-                                stops: [
-                                  0.0,
-                                  entry.progress.toDouble() /
-                                      entry.progressMax!,
-                                  entry.progress.toDouble() /
-                                      entry.progressMax!,
-                                  1.0,
-                                ],
-                              ),
-                            )
-                          : BoxDecoration(
-                              color: Theme.of(context).disabledColor,
-                              borderRadius: Config.BORDER_RADIUS,
-                            ),
-                    ),
                     Row(
                       children: [
                         Flexible(
+                          flex: 3,
+                          child: Container(
+                            height: 5,
+                            margin: const EdgeInsets.symmetric(vertical: 3),
+                            decoration: entry.progressMax != null
+                                ? BoxDecoration(
+                                    borderRadius: Config.BORDER_RADIUS,
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Theme.of(context).disabledColor,
+                                        Theme.of(context).disabledColor,
+                                        Theme.of(context).backgroundColor,
+                                        Theme.of(context).backgroundColor,
+                                      ],
+                                      stops: [
+                                        0.0,
+                                        entry.progress.toDouble() /
+                                            entry.progressMax!,
+                                        entry.progress.toDouble() /
+                                            entry.progressMax!,
+                                        1.0,
+                                      ],
+                                    ),
+                                  )
+                                : BoxDecoration(
+                                    color: Theme.of(context).disabledColor,
+                                    borderRadius: Config.BORDER_RADIUS,
+                                  ),
+                          ),
+                        ),
+                        Flexible(
                           child: Center(
-                            child: Tooltip(
-                              message: 'Progress',
-                              child: Text(
-                                entry.progress != entry.progressMax
-                                    ? '${entry.progress} / ${entry.progressMax ?? '?'}'
-                                    : entry.progress.toString(),
-                                style: Theme.of(context).textTheme.subtitle2,
+                            child: IconButton(
+                              constraints: BoxConstraints(maxHeight: 20),
+                              tooltip: 'Increment Progress',
+                              padding: const EdgeInsets.all(0),
+                              icon: const Icon(
+                                Icons.add_rounded,
+                                size: Style.ICON_SMALL,
                               ),
+                              onPressed: () => increment(entry),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    Row(
+                      children: [
                         Flexible(
                           child: Center(
                             child: scoreFormat.getWidget(context, entry.score),
@@ -238,6 +249,19 @@ class _MediaListTile extends StatelessWidget {
                                     ),
                                   )
                                 : null,
+                          ),
+                        ),
+                        Flexible(
+                          child: Center(
+                            child: Tooltip(
+                              message: 'Progress',
+                              child: Text(
+                                entry.progress != entry.progressMax
+                                    ? '${entry.progress} / ${entry.progressMax ?? '?'}'
+                                    : entry.progress.toString(),
+                                style: Theme.of(context).textTheme.subtitle2,
+                              ),
+                            ),
                           ),
                         ),
                       ],

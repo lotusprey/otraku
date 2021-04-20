@@ -103,6 +103,12 @@ class Collection extends ScrollxController implements Filterable {
     }
   ''';
 
+  static const _updateProgressMutation = r'''
+    mutation UpdateProgress($mediaId: Int, $progress: Int) {
+      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {progress}
+    }
+  ''';
+
   static const _removeEntryMutation = r'''
     mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
   ''';
@@ -236,10 +242,8 @@ class Collection extends ScrollxController implements Filterable {
 
   Future<void> fetchPage() async {}
 
-  Future<void> updateEntry(
-    EntryModel oldEntry,
-    EntryModel newEntry,
-  ) async {
+  // TODO update media loses next episode info, put not update progress
+  Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
     // Update database item
     final oldCustomLists = oldEntry.customLists.entries
         .where((e) => e.value)
@@ -251,7 +255,6 @@ class Collection extends ScrollxController implements Filterable {
         .toList();
 
     final data = await Client.request(_updateEntryMutation, newEntry.toMap());
-
     if (data == null) return;
 
     final entry = ListEntryModel(data['SaveMediaListEntry']);
@@ -318,6 +321,40 @@ class Collection extends ScrollxController implements Filterable {
         if (i <= _listIndex.value) _listIndex.value--;
         _lists.removeAt(i--);
       }
+
+    filter();
+  }
+
+  Future<void> updateProgress(ListEntryModel e) async {
+    if (e.progress == e.progressMax) return;
+
+    final data = await Client.request(
+      _updateProgressMutation,
+      e.progressToMap(),
+      popOnErr: false,
+    );
+    if (data == null) return;
+
+    e.updateProgress(data['SaveMediaListEntry']);
+
+    // TODO optimise
+    final ListSort sorting = _filters[Filterable.SORT];
+    if (sorting != ListSort.PROGRESS && sorting != ListSort.PROGRESS_DESC)
+      for (final list in _lists)
+        for (int i = 0; i < list.entries.length; i++) {
+          if (list.entries[i].mediaId == e.mediaId) {
+            list.entries[i] = e;
+            break;
+          }
+        }
+    else
+      for (final list in _lists)
+        for (int i = 0; i < list.entries.length; i++)
+          if (list.entries[i].mediaId == e.mediaId) {
+            list.entries.removeAt(i);
+            list.insertSorted(e, sorting);
+            break;
+          }
 
     filter();
   }

@@ -84,8 +84,11 @@ class FilterPage extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (filterable is Collection) filterable.filter();
               if (filterable is Explorer) filterable.fetch();
+              if (filterable is Collection) {
+                filterable.scrollTo(0);
+                filterable.filter();
+              }
 
               isDefinitelyInactive(false);
               Navigator.pop(context);

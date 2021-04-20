@@ -142,6 +142,7 @@ class Collection extends ScrollxController implements Filterable {
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
     _listIndex.value = value;
+    scrollTo(0);
     filter();
   }
 

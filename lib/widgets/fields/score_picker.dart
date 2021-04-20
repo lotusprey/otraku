@@ -12,7 +12,7 @@ class ScorePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (describeEnum(Get.find<Viewer>().settings!.scoreFormat!)) {
+    switch (describeEnum(Get.find<Viewer>().settings!.scoreFormat)) {
       case 'POINT_3':
         return _SmileyScorePicker(data);
       case 'POINT_5':

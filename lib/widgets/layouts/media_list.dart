@@ -76,6 +76,7 @@ class MediaList extends StatelessWidget {
   }
 }
 
+// TODO +1 episode/chapter
 class _MediaListTile extends StatelessWidget {
   final ListEntryModel entry;
   final ScoreFormat scoreFormat;
@@ -97,14 +98,14 @@ class _MediaListTile extends StatelessWidget {
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: BrowseIndexer(
-        id: entry.mediaId!,
+        id: entry.mediaId,
         browsable: Browsable.anime,
         imageUrl: entry.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: entry.mediaId!,
+              tag: entry.mediaId,
               child: ClipRRect(
                 child: Container(
                   width: 95,

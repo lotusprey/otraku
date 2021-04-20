@@ -1,7 +1,7 @@
 import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
-  final int? mediaId;
+  final int mediaId;
   final String? title;
   final String? cover;
   final String? format;
@@ -69,4 +69,9 @@ class ListEntryModel {
         updatedAt: map['updatedAt'],
         genres: List.from(map['media']['genres']),
       );
+
+  Map<String, int> progressToMap() =>
+      {'mediaId': mediaId, 'progress': progress};
+
+  void updateProgress(Map<String, dynamic> map) => progress = map['progress'];
 }

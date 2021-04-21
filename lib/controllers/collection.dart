@@ -69,12 +69,13 @@ class Collection extends ScrollxController implements Filterable {
     mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
         $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
         $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
-        $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput) {
+        $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput,
+        $advancedScores: [Float]) {
       SaveMediaListEntry(mediaId: $mediaId, status: $status,
         score: $score, progress: $progress, progressVolumes: $progressVolumes,
         repeat: $repeat, private: $private, notes: $notes,
         hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
-        startedAt: $startedAt, completedAt: $completedAt) {
+        startedAt: $startedAt, completedAt: $completedAt, advancedScores: $advancedScores) {
           mediaId
           status
           score
@@ -167,7 +168,7 @@ class Collection extends ScrollxController implements Filterable {
 
   List<String> get names {
     List<String> n = [];
-    for (final list in _lists) n.add(list.name!);
+    for (final list in _lists) n.add(list.name);
     return n;
   }
 
@@ -242,7 +243,6 @@ class Collection extends ScrollxController implements Filterable {
 
   Future<void> fetchPage() async {}
 
-  // TODO update media loses next episode info, put not update progress
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
     // Update database item
     final oldCustomLists = oldEntry.customLists.entries
@@ -277,7 +277,7 @@ class Collection extends ScrollxController implements Filterable {
     if (oldCustomLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < oldCustomLists.length; i++)
-          if (oldCustomLists[i] == list.name!.toLowerCase()) {
+          if (oldCustomLists[i] == list.name.toLowerCase()) {
             list.removeByMediaId(entry.mediaId);
             oldCustomLists.removeAt(i);
             break;
@@ -304,7 +304,7 @@ class Collection extends ScrollxController implements Filterable {
     if (newCustomLists.isNotEmpty) {
       for (final list in _lists)
         for (int i = 0; i < newCustomLists.length; i++)
-          if (newCustomLists[i] == list.name!.toLowerCase()) {
+          if (newCustomLists[i] == list.name.toLowerCase()) {
             list.insertSorted(entry, _filters[Filterable.SORT]);
             newCustomLists.removeAt(i);
             break;
@@ -337,26 +337,42 @@ class Collection extends ScrollxController implements Filterable {
 
     e.updateProgress(data['SaveMediaListEntry']);
 
-    // TODO optimise
     final ListSort sorting = _filters[Filterable.SORT];
+    final ListStatus? entryStatus = Convert.stringToEnum(
+      e.status,
+      ListStatus.values,
+    );
+
+    // If sorting doesn't depend on progress, replace entry
     if (sorting != ListSort.PROGRESS && sorting != ListSort.PROGRESS_DESC)
-      for (final list in _lists)
-        for (int i = 0; i < list.entries.length; i++) {
+      for (final list in _lists) {
+        if (list.status != null && list.status != entryStatus) continue;
+
+        for (int i = 0; i < list.entries.length; i++)
           if (list.entries[i].mediaId == e.mediaId) {
             list.entries[i] = e;
             break;
           }
-        }
+      }
+    // Otherwise, remove and insert sorted
     else
-      for (final list in _lists)
+      for (final list in _lists) {
+        if (list.status != null && list.status != entryStatus) continue;
+
         for (int i = 0; i < list.entries.length; i++)
           if (list.entries[i].mediaId == e.mediaId) {
             list.entries.removeAt(i);
             list.insertSorted(e, sorting);
             break;
           }
+      }
 
-    filter();
+    // Replace in filtered
+    for (int i = 0; i < _entries.length; i++)
+      if (_entries[i].mediaId == e.mediaId) {
+        _entries[i] = e;
+        break;
+      }
   }
 
   Future<void> removeEntry(EntryModel entry) async {
@@ -376,9 +392,8 @@ class Collection extends ScrollxController implements Filterable {
     for (final list in _lists)
       if ((!entry.hiddenFromStatusLists &&
               entry.status == list.status &&
-              !list.isCustomList!) ||
-          (list.isCustomList! &&
-              customLists.contains(list.name!.toLowerCase())))
+              !list.isCustomList) ||
+          (list.isCustomList && customLists.contains(list.name.toLowerCase())))
         list.removeByMediaId(entry.mediaId);
 
     for (int i = 0; i < _lists.length; i++)

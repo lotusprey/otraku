@@ -18,6 +18,7 @@ class EntryModel {
   DateTime? completedAt;
   bool private;
   bool hiddenFromStatusLists;
+  Map<String, double> advancedScores;
   Map<String, bool> customLists;
 
   EntryModel._({
@@ -36,6 +37,7 @@ class EntryModel {
     this.completedAt,
     this.private = false,
     this.hiddenFromStatusLists = false,
+    this.advancedScores = const {},
     this.customLists = const {},
   });
 
@@ -49,10 +51,15 @@ class EntryModel {
       );
     }
 
-    final Map<String, bool> customLists = {};
+    final advancedScores = <String, double>{};
+    if (map['mediaListEntry']['advancedScores'] != null)
+      for (final e in map['mediaListEntry']['advancedScores'].entries)
+        advancedScores[e.key] = e.value.toDouble();
+
+    final customLists = <String, bool>{};
     if (map['mediaListEntry']['customLists'] != null)
-      for (final key in map['mediaListEntry']['customLists'].keys)
-        customLists[key] = map['mediaListEntry']['customLists'][key];
+      for (final e in map['mediaListEntry']['customLists'].entries)
+        customLists[e.key] = e.value;
 
     return EntryModel._(
       type: map['type'],
@@ -73,6 +80,7 @@ class EntryModel {
       completedAt: Convert.mapToDateTime(map['mediaListEntry']['completedAt']),
       private: map['mediaListEntry']['private'],
       hiddenFromStatusLists: map['mediaListEntry']['hiddenFromStatusLists'],
+      advancedScores: advancedScores,
       customLists: customLists,
     );
   }
@@ -101,6 +109,7 @@ class EntryModel {
             : null,
         private: copy.private,
         hiddenFromStatusLists: copy.hiddenFromStatusLists,
+        advancedScores: {...copy.advancedScores},
         customLists: {...copy.customLists},
       );
 
@@ -116,6 +125,7 @@ class EntryModel {
         'completedAt': Convert.dateTimeToMap(completedAt),
         'private': private,
         'hiddenFromStatusLists': hiddenFromStatusLists,
+        'advancedScores': advancedScores.entries.map((e) => e.value).toList(),
         'customLists': customLists.entries
             .where((e) => e.value)
             .map((e) => e.key)

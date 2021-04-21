@@ -3,16 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:otraku/utils/config.dart';
 
 class NumberField extends StatefulWidget {
-  final int initialValue;
-  final int? maxValue;
-  final int fraction;
-  final Function(int) update;
+  final num initialValue;
+  final num? maxValue;
+  final Function(num) update;
 
   NumberField({
     required this.update,
     this.initialValue = 0,
     this.maxValue,
-    this.fraction = 1,
   });
 
   @override
@@ -20,7 +18,7 @@ class NumberField extends StatefulWidget {
 }
 
 class _NumberFieldState extends State<NumberField> {
-  TextEditingController? _controller;
+  late TextEditingController _controller;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -32,14 +30,14 @@ class _NumberFieldState extends State<NumberField> {
           children: [
             IconButton(
               icon: const Icon(Icons.remove),
-              onPressed: () => _validateInput(add: -widget.fraction),
+              onPressed: () => _validateInput(add: -1),
             ),
             Expanded(
               child: TextField(
                 controller: _controller,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
                 ],
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyText1,
@@ -50,52 +48,57 @@ class _NumberFieldState extends State<NumberField> {
             ),
             IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () => _validateInput(add: widget.fraction),
+              onPressed: () => _validateInput(add: 1),
             ),
           ],
         ),
       );
 
-  void _validateInput({int add = 0}) {
-    int result;
+  void _validateInput({num add = 0}) {
+    num result;
+    bool needEdit = true;
 
-    if (_controller!.text == '') {
+    if (_controller.text == '')
       result = 0;
-    } else {
-      int number = int.parse(_controller!.text) + add;
+    else {
+      final number = num.parse(_controller.text) + add;
 
-      if (widget.maxValue != null && number > widget.maxValue!) {
+      if (widget.maxValue != null && number > widget.maxValue!)
         result = widget.maxValue!;
-      } else if (number < 0) {
+      else if (number < 0)
         result = 0;
-      } else {
+      else {
         result = number;
+        if (add == 0 && int.tryParse(_controller.text) == null)
+          needEdit = false;
       }
     }
 
     widget.update(result);
 
-    final text = result.toString();
-    _controller!.value = _controller!.value.copyWith(
-      text: text,
-      selection: TextSelection(
-        baseOffset: text.length,
-        extentOffset: text.length,
-      ),
-      composing: TextRange.empty,
-    );
+    if (needEdit) {
+      final text = result.toString();
+      _controller.value = _controller.value.copyWith(
+        text: text,
+        selection: TextSelection(
+          baseOffset: text.length,
+          extentOffset: text.length,
+        ),
+        composing: TextRange.empty,
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue.toString());
-    _controller!.addListener(_validateInput);
+    _controller.addListener(_validateInput);
   }
 
   @override
   void dispose() {
-    _controller!.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }

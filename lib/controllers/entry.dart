@@ -25,6 +25,7 @@ class Entry extends GetxController {
           private
           hiddenFromStatusLists
           customLists
+          advancedScores
         }
       }
     }

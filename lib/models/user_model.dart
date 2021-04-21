@@ -64,7 +64,7 @@ class UserModel {
       following = map['isFollowing'] ?? false;
 
   void addFavs(final int? index, final Map<String, dynamic>? map) {
-    final List<BrowseResultModel> items = [];
+    final items = <BrowseResultModel>[];
     if (index == null || index == ANIME_FAV) {
       for (final a in map!['anime']['nodes'])
         items.add(BrowseResultModel.anime(a));

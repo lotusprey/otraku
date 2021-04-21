@@ -26,7 +26,7 @@ import 'package:otraku/pages/media/media_page.dart';
 import 'package:otraku/pages/user_feed_page.dart';
 import 'package:otraku/pages/activity_page.dart';
 import 'package:otraku/pages/character_page.dart';
-import 'package:otraku/pages/edit_entry_page.dart';
+import 'package:otraku/pages/entry_page.dart';
 import 'package:otraku/pages/favourites_page.dart';
 import 'package:otraku/pages/filter_page.dart';
 import 'package:otraku/pages/notifications_page.dart';
@@ -149,8 +149,8 @@ class App extends StatelessWidget {
           binding: BindingsBuilder.put(() => Notifications()),
         ),
         GetPage(
-          name: EditEntryPage.ROUTE,
-          page: () => EditEntryPage(Get.arguments[0], Get.arguments[2]),
+          name: EntryPage.ROUTE,
+          page: () => EntryPage(Get.arguments[0], Get.arguments[2]),
           binding: BindingsBuilder.put(
             () => Entry(Get.arguments[0], Get.arguments[1]),
           ),

@@ -94,6 +94,8 @@ class _MediaListTile extends StatelessWidget {
     if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
       details.add(' • ${entry.nextEpisode! - 1 - entry.progress} ep behind');
 
+    const iconConstraints = BoxConstraints(maxHeight: 20);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -181,8 +183,8 @@ class _MediaListTile extends StatelessWidget {
                         Flexible(
                           child: Center(
                             child: IconButton(
-                              constraints: BoxConstraints(maxHeight: 20),
                               tooltip: 'Increment Progress',
+                              constraints: iconConstraints,
                               padding: const EdgeInsets.all(0),
                               icon: const Icon(
                                 Icons.add_rounded,
@@ -230,21 +232,19 @@ class _MediaListTile extends StatelessWidget {
                         Flexible(
                           child: Center(
                             child: entry.notes != null
-                                ? SizedBox(
-                                    height: 20,
-                                    child: IconButton(
-                                      tooltip: 'Comment',
-                                      padding: const EdgeInsets.all(0),
-                                      icon: const Icon(
-                                        Icons.comment,
-                                        size: Style.ICON_SMALL,
-                                      ),
-                                      onPressed: () => showPopUp(
-                                        context,
-                                        TextDialog(
-                                          title: 'Comment',
-                                          text: entry.notes!,
-                                        ),
+                                ? IconButton(
+                                    tooltip: 'Comment',
+                                    constraints: iconConstraints,
+                                    padding: const EdgeInsets.all(0),
+                                    icon: const Icon(
+                                      Icons.comment,
+                                      size: Style.ICON_SMALL,
+                                    ),
+                                    onPressed: () => showPopUp(
+                                      context,
+                                      TextDialog(
+                                        title: 'Comment',
+                                        text: entry.notes!,
                                       ),
                                     ),
                                   )

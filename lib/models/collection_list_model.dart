@@ -4,9 +4,9 @@ import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/list_entry_model.dart';
 
 class CollectionListModel {
-  final String? name;
+  final String name;
   final ListStatus? status;
-  final bool? isCustomList;
+  final bool isCustomList;
   final String? splitCompletedListFormat;
   final List<ListEntryModel> entries;
 
@@ -21,7 +21,7 @@ class CollectionListModel {
   factory CollectionListModel(Map<String, dynamic> map, bool splitCompleted) =>
       CollectionListModel._(
         name: map['name'],
-        isCustomList: map['isCustomList'],
+        isCustomList: map['isCustomList'] ?? false,
         status: !map['isCustomList']
             ? Convert.stringToEnum(map['status'], ListStatus.values)
             : null,

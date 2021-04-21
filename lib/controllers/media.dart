@@ -62,6 +62,7 @@ class Media extends ScrollxController {
         private
         hiddenFromStatusLists
         customLists
+        advancedScores
       }
       relations {
         edges {

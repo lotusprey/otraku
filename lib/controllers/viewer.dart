@@ -65,7 +65,7 @@ class Viewer extends ScrollxController {
       mediaListOptions {
         scoreFormat
         rowOrder
-        animeList {splitCompletedSectionByFormat customLists}
+        animeList {splitCompletedSectionByFormat customLists advancedScoringEnabled}
         mangaList {splitCompletedSectionByFormat customLists}
       }
     }
@@ -75,12 +75,12 @@ class Viewer extends ScrollxController {
     mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, 
         $displayAdultContent: Boolean, $airingNotifications: Boolean, $scoreFormat: ScoreFormat, $rowOrder: String, 
         $notificationOptions: [NotificationOptionInput], $splitCompletedAnime: Boolean, 
-        $splitCompletedManga: Boolean,) {
+        $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean) {
       UpdateUser(about: $about, titleLanguage: $titleLanguage, 
           displayAdultContent: $displayAdultContent, airingNotifications: $airingNotifications,
           scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime},
-          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, advancedScoringEnabled: $advancedScoringEnabled},
+          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga, advancedScoringEnabled: $advancedScoringEnabled}) {
         options {
           titleLanguage 
           displayAdultContent
@@ -90,7 +90,7 @@ class Viewer extends ScrollxController {
         mediaListOptions {
           scoreFormat
           rowOrder
-          animeList {splitCompletedSectionByFormat}
+          animeList {splitCompletedSectionByFormat advancedScoringEnabled}
           mangaList {splitCompletedSectionByFormat}
         }
       }

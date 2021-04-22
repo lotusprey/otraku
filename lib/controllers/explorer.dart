@@ -191,11 +191,6 @@ class Explorer extends ScrollxController implements Filterable {
     return false;
   }
 
-  void loadMore() {
-    _filters[Filterable.PAGE]++;
-    fetch(clean: false);
-  }
-
   // ***************************************************************************
   // DATA FETCHING
   // ***************************************************************************
@@ -239,12 +234,12 @@ class Explorer extends ScrollxController implements Filterable {
     );
 
     _concurrentFetches--;
-    if (data == null || _concurrentFetches > 0) return;
+    if (data == null || (_concurrentFetches > 0 && clean)) return;
 
     data = data['Page'];
     _hasNextPage.value = data!['pageInfo']['hasNextPage'];
 
-    final List<BrowseResultModel> items = [];
+    final items = <BrowseResultModel>[];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
     if (data['media'] != null)
@@ -280,7 +275,10 @@ class Explorer extends ScrollxController implements Filterable {
       _results.addAll(items);
   }
 
-  Future<void> fetchPage() async => fetch(clean: false);
+  Future<void> fetchPage() async {
+    _filters[Filterable.PAGE]++;
+    await fetch(clean: false);
+  }
 
   //Fetches genres, tags and initial media
   Future<void> fetchInitial() async {

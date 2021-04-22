@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -21,14 +22,18 @@ class HtmlContent extends StatelessWidget {
           Toast.show(context, 'Couldn\'t open link: $err');
         }
       },
+      buildAsync: true,
+      buildAsyncBuilder: (_, snapshot) =>
+          snapshot.data ?? const Center(child: Loader()),
       customStylesBuilder: (element) {
-        final styles = <String, String>{};
         if (element.localName == 'h1' ||
             element.localName == 'h2' ||
-            element.localName == 'h3') styles['font-size'] = '20px';
+            element.localName == 'h3') return {'font-size': '20px'};
         if (element.localName == 'b' || element.localName == 'strong')
-          styles['font-weight'] = '500';
-        return styles.isEmpty ? null : styles;
+          return {'font-weight': '500'};
+        if (element.localName == 'i' || element.localName == 'em')
+          return {'font-style': 'italic'};
+        return null;
       },
       customWidgetBuilder: (element) {
         if (element.localName == 'hr')

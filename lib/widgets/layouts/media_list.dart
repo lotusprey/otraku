@@ -94,7 +94,7 @@ class _MediaListTile extends StatelessWidget {
     if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
       details.add(' • ${entry.nextEpisode! - 1 - entry.progress} ep behind');
 
-    const iconConstraints = BoxConstraints(maxHeight: 20);
+    const iconConstraints = BoxConstraints(maxHeight: Style.ICON_SMALL);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),

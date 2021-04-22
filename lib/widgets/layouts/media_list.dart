@@ -154,46 +154,40 @@ class _MediaListTile extends StatelessWidget {
                           child: Container(
                             height: 5,
                             margin: const EdgeInsets.symmetric(vertical: 3),
-                            decoration: entry.progressMax != null
-                                ? BoxDecoration(
-                                    borderRadius: Config.BORDER_RADIUS,
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Theme.of(context).disabledColor,
-                                        Theme.of(context).disabledColor,
-                                        Theme.of(context).backgroundColor,
-                                        Theme.of(context).backgroundColor,
-                                      ],
-                                      stops: [
-                                        0.0,
-                                        entry.progress.toDouble() /
-                                            entry.progressMax!,
-                                        entry.progress.toDouble() /
-                                            entry.progressMax!,
-                                        1.0,
-                                      ],
-                                    ),
-                                  )
-                                : BoxDecoration(
-                                    color: Theme.of(context).disabledColor,
-                                    borderRadius: Config.BORDER_RADIUS,
-                                  ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Center(
-                            child: IconButton(
-                              tooltip: 'Increment Progress',
-                              constraints: iconConstraints,
-                              padding: const EdgeInsets.all(0),
-                              icon: const Icon(
-                                Icons.add_rounded,
-                                size: Style.ICON_SMALL,
+                            decoration: BoxDecoration(
+                              borderRadius: Config.BORDER_RADIUS,
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).disabledColor,
+                                  Theme.of(context).disabledColor,
+                                  Theme.of(context).backgroundColor,
+                                  Theme.of(context).backgroundColor,
+                                ],
+                                stops: [
+                                  0.0,
+                                  entry.progressPercent(),
+                                  entry.progressPercent(),
+                                  1.0,
+                                ],
                               ),
-                              onPressed: () => increment(entry),
                             ),
                           ),
                         ),
+                        if (entry.canIncrement())
+                          Flexible(
+                            child: Center(
+                              child: IconButton(
+                                tooltip: 'Increment Progress',
+                                constraints: iconConstraints,
+                                padding: const EdgeInsets.all(0),
+                                icon: const Icon(
+                                  Icons.add_rounded,
+                                  size: Style.ICON_SMALL,
+                                ),
+                                onPressed: () => increment(entry),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                     Row(
@@ -257,7 +251,7 @@ class _MediaListTile extends StatelessWidget {
                               message: 'Progress',
                               child: Text(
                                 entry.progress != entry.progressMax
-                                    ? '${entry.progress} / ${entry.progressMax ?? '?'}'
+                                    ? '${entry.progress}/${entry.progressMax ?? '?'}'
                                     : entry.progress.toString(),
                                 style: Theme.of(context).textTheme.subtitle2,
                               ),

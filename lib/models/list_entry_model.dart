@@ -70,6 +70,18 @@ class ListEntryModel {
         genres: List.from(map['media']['genres']),
       );
 
+  double progressPercent() {
+    if (progressMax != null) return progress / progressMax!;
+    if (nextEpisode != null) return progress / (nextEpisode! - 1);
+    return 1;
+  }
+
+  bool canIncrement() {
+    if (progressMax != null) return progress < progressMax!;
+    if (nextEpisode != null) return progress < nextEpisode! - 1;
+    return true;
+  }
+
   Map<String, int> progressToMap() =>
       {'mediaId': mediaId, 'progress': progress + 1};
 

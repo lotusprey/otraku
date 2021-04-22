@@ -14,30 +14,6 @@ extension ScoreFormatExtension on ScoreFormat {
     if (score == 0) return const SizedBox();
 
     switch (this) {
-      case ScoreFormat.POINT_10_DECIMAL:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
-            const SizedBox(width: 5),
-            Text(
-              score.toStringAsFixed(score.truncate() == score ? 0 : 1),
-              style: Theme.of(ctx).textTheme.subtitle1,
-            ),
-          ],
-        );
-      case ScoreFormat.POINT_100:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
-            const SizedBox(width: 5),
-            Text(
-              score.toStringAsFixed(0),
-              style: Theme.of(ctx).textTheme.subtitle1,
-            ),
-          ],
-        );
       case ScoreFormat.POINT_3:
         if (score == 3)
           return const Icon(
@@ -50,11 +26,35 @@ extension ScoreFormatExtension on ScoreFormat {
           Icons.sentiment_very_dissatisfied,
           size: Style.ICON_SMALL,
         );
-      default:
+      case ScoreFormat.POINT_5:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.star_rounded, size: Style.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              score.toStringAsFixed(0),
+              style: Theme.of(ctx).textTheme.subtitle1,
+            ),
+          ],
+        );
+      case ScoreFormat.POINT_10_DECIMAL:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              score.toStringAsFixed(score.truncate() == score ? 0 : 1),
+              style: Theme.of(ctx).textTheme.subtitle1,
+            ),
+          ],
+        );
+      default:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               score.toStringAsFixed(0),

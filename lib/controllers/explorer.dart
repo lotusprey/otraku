@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
@@ -97,8 +98,7 @@ class Explorer extends ScrollxController implements Filterable {
   // ***************************************************************************
 
   final _isLoading = true.obs;
-  final _hasNextPage = true.obs;
-  final _results = <BrowseResultModel>[].obs;
+  final _results = PageModel<BrowseResultModel>().obs;
   final _type = Browsable.anime.obs;
   final _search = ''.obs;
   final _genres = <String>[];
@@ -117,13 +117,13 @@ class Explorer extends ScrollxController implements Filterable {
 
   bool get isLoading => _isLoading();
 
-  bool get hasNextPage => _hasNextPage();
+  bool get hasNextPage => _results().hasNextPage;
 
   Browsable get type => _type();
 
   String get search => _search();
 
-  List<BrowseResultModel> get results => [..._results()];
+  List<BrowseResultModel> get results => _results().items;
 
   List<String> get genres => [..._genres];
 
@@ -237,12 +237,11 @@ class Explorer extends ScrollxController implements Filterable {
     if (data == null || (_concurrentFetches > 0 && clean)) return;
 
     data = data['Page'];
-    _hasNextPage.value = data!['pageInfo']['hasNextPage'];
 
     final items = <BrowseResultModel>[];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
-    if (data['media'] != null)
+    if (data!['media'] != null)
       for (final m in data['media']) {
         items.add(BrowseResultModel.media(m));
         idNotIn.add(m['id']);
@@ -269,10 +268,15 @@ class Explorer extends ScrollxController implements Filterable {
 
     if (clean) {
       scrollTo(0);
-      _results.assignAll(items);
+      _results.update((r) {
+        r!.clear();
+        r.append(items, true);
+      });
       _isLoading.value = false;
     } else
-      _results.addAll(items);
+      _results.update(
+        (r) => r!.append(items, data!['pageInfo']['hasNextPage']),
+      );
   }
 
   Future<void> fetchPage() async {
@@ -315,15 +319,15 @@ class Explorer extends ScrollxController implements Filterable {
         _tags[category]!.add(TagModel(t));
     }
 
-    final loaded = <BrowseResultModel>[];
+    final items = <BrowseResultModel>[];
     final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
     for (final a in data['Page']['media']) {
-      loaded.add(BrowseResultModel.anime(a));
+      items.add(BrowseResultModel.anime(a));
       idNotIn.add(a['id']);
     }
 
-    _results.assignAll(loaded);
+    _results.update((r) => r!.append(items, true));
     _isLoading.value = false;
   }
 

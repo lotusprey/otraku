@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 abstract class ScrollxController extends GetxController {
   final scrollCtrl = ScrollController();
 
-  void scrollTo(double offset) {
+  Future<void> scrollTo(double offset) async {
     if (!scrollCtrl.hasClients) return;
     if (scrollCtrl.offset > offset + 100) scrollCtrl.jumpTo(offset + 100);
-    scrollCtrl.animateTo(
+    await scrollCtrl.animateTo(
       offset,
       duration: const Duration(milliseconds: 200),
       curve: Curves.decelerate,
@@ -23,10 +23,11 @@ abstract class ScrollxController extends GetxController {
   Future<void> _listener() async {
     if (scrollCtrl.position.pixels >
             scrollCtrl.position.maxScrollExtent - 100 &&
-        hasNextPage &&
-        _canLoad) {
+        _canLoad &&
+        hasNextPage) {
       _canLoad = false;
       await fetchPage();
+      await Future.delayed(const Duration(seconds: 1));
       _canLoad = true;
     }
   }

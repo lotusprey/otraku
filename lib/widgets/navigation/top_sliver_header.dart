@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/favourite_button.dart';
 
@@ -52,7 +53,9 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     double shrinkPercentage = shrinkOffset / maxExtent;
     if (shrinkPercentage > 1) shrinkPercentage = 1;
 
-    return DecoratedBox(
+    return Container(
+      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         boxShadow: [
@@ -67,6 +70,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
+            padding: const EdgeInsets.all(0),
+            constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
             icon: Icon(
               Icons.close,
               color: Theme.of(context).dividerColor,
@@ -74,6 +79,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
             onPressed: () => Navigator.pop(context),
           ),
           if (text != null && isFavourite != null && favourites != null) ...[
+            const SizedBox(width: 15),
             if (shrinkPercentage >= 0.5)
               Expanded(
                 child: Opacity(

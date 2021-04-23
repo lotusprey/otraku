@@ -2,24 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/utils/config.dart';
 
-class ButtonSliverHeader extends StatelessWidget {
-  final Widget leading;
-  final List<Widget> trailing;
-  ButtonSliverHeader({required this.leading, required this.trailing});
+class OpaqueHeader extends StatelessWidget {
+  final List<Widget> children;
+  OpaqueHeader(this.children);
 
   @override
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
-      delegate: _Delegate(leading, trailing),
+      delegate: _Delegate(children),
       pinned: true,
     );
   }
 }
 
 class _Delegate implements SliverPersistentHeaderDelegate {
-  final Widget leading;
-  final List<Widget> trailing;
-  _Delegate(this.leading, this.trailing);
+  final List<Widget> children;
+  _Delegate(this.children);
 
   @override
   Widget build(
@@ -27,20 +25,22 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return DecoratedBox(
+    return Container(
+      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).backgroundColor,
-            blurRadius: 7,
             offset: const Offset(0, 3),
+            blurRadius: 7,
           ),
         ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [leading, Row(children: trailing)],
+        children: children,
       ),
     );
   }

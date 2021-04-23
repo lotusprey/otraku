@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 
 class CustomSliverHeader extends StatelessWidget {
@@ -64,6 +65,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     required this.implyLeading,
   }) {
     _middleExtent = (minExtent + maxExtent) * 0.5;
+    if (actions != null && actions!.length > 1) {
+      const box = SizedBox(width: 15);
+      for (int i = 1; i < actions!.length; i += 2) actions!.insert(i, box);
+    }
   }
 
   @override
@@ -126,13 +131,17 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               ),
             Positioned(
               top: 0,
+              left: 10,
+              right: 10,
               height: minExtent,
-              width: MediaQuery.of(context).size.width,
               child: Row(
                 children: [
                   if (implyLeading)
                     IconShade(IconButton(
                       tooltip: 'Close',
+                      padding: const EdgeInsets.all(0),
+                      constraints:
+                          const BoxConstraints(maxWidth: Style.ICON_BIG),
                       icon: const Icon(Icons.close),
                       color: Theme.of(context).dividerColor,
                       onPressed: () => Get.back(),
@@ -152,10 +161,11 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
-                  Opacity(
-                    opacity: actionOpacity,
-                    child: Row(children: actions ?? const []),
-                  ),
+                  if (actions != null)
+                    Opacity(
+                      opacity: actionOpacity,
+                      child: Row(children: actions!),
+                    ),
                 ],
               ),
             ),
@@ -192,12 +202,11 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
 class IconShade extends StatelessWidget {
   final IconButton iconButton;
-
   IconShade(this.iconButton);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [

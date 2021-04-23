@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
@@ -233,7 +236,7 @@ class _Navigation extends StatefulWidget {
 class __NavigationState extends State<_Navigation> {
   late bool _empty;
   late bool _searchMode;
-  TextEditingController? _ctrl;
+  late TextEditingController _ctrl;
   FocusNode _focus = FocusNode();
 
   @override
@@ -241,13 +244,13 @@ class __NavigationState extends State<_Navigation> {
     super.initState();
     _searchMode = widget.searchValue != null && widget.searchValue != '';
     _ctrl = TextEditingController(text: widget.searchValue ?? '');
-    _empty = _ctrl!.text.isEmpty;
+    _empty = _ctrl.text.isEmpty;
   }
 
   @override
   void dispose() {
     _focus.dispose();
-    _ctrl!.dispose();
+    _ctrl.dispose();
     super.dispose();
   }
 
@@ -293,20 +296,23 @@ class __NavigationState extends State<_Navigation> {
                   controller: _ctrl,
                   focusNode: _focus,
                   autofocus: true,
+                  scrollPhysics: Config.PHYSICS,
                   cursorColor: Theme.of(context).accentColor,
                   style: Theme.of(context).textTheme.headline6,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(30),
                   ],
-                  textAlignVertical: TextAlignVertical.bottom,
                   decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.only(left: 10),
                     hintText: widget.hint,
                     suffixIcon: _empty
                         ? IconButton(
                             tooltip: 'Hide',
+                            constraints: const BoxConstraints(maxWidth: 40),
                             padding: const EdgeInsets.all(0),
                             icon:
                                 const Icon(FluentIcons.chevron_right_24_filled),
+                            iconSize: Style.ICON_SMALL,
                             color: Theme.of(context).disabledColor,
                             onPressed: () {
                               _focus.canRequestFocus = false;
@@ -316,11 +322,13 @@ class __NavigationState extends State<_Navigation> {
                           )
                         : IconButton(
                             tooltip: 'Clear',
+                            constraints: const BoxConstraints(maxWidth: 40),
                             padding: const EdgeInsets.all(0),
-                            icon: const Icon(Icons.close),
+                            icon: const Icon(Icons.close_rounded),
+                            iconSize: Style.ICON_SMALL,
                             color: Theme.of(context).disabledColor,
                             onPressed: () {
-                              _ctrl!.clear();
+                              _ctrl.clear();
                               _update('');
                             },
                           ),
@@ -336,11 +344,7 @@ class __NavigationState extends State<_Navigation> {
 
   void _update(String text) {
     widget.search!(text);
-    if (text.length > 0) {
-      if (_empty) setState(() => _empty = false);
-    } else {
-      if (!_empty) setState(() => _empty = true);
-    }
+    if (_empty != text.isEmpty) setState(() => _empty = text.isEmpty);
   }
 }
 

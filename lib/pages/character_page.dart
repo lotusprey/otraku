@@ -2,13 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/controllers/character.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
-import 'package:otraku/widgets/navigation/button_sliver_header.dart';
+import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -93,8 +94,8 @@ class CharacterPage extends StatelessWidget {
                   (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
                       Config.PADDING.top * 2;
 
-              return ButtonSliverHeader(
-                leading: character.anime.items.isNotEmpty &&
+              return OpaqueHeader([
+                character.anime.items.isNotEmpty &&
                         character.manga.items.isNotEmpty
                     ? BubbleTabs<bool>(
                         options: const ['Anime', 'Manga'],
@@ -107,40 +108,44 @@ class CharacterPage extends StatelessWidget {
                         onSameValue: (_) => character.scrollTo(offset),
                       )
                     : const SizedBox(),
-                trailing: [
-                  if (character.availableLanguages.length > 1)
-                    IconButton(
-                      tooltip: 'Language',
-                      icon: const Icon(Icons.language),
-                      onPressed: () => Sheet.show(
-                        ctx: context,
-                        sheet: OptionSheet(
-                          title: 'Language',
-                          options: character.availableLanguages,
-                          index: character.languageIndex,
-                          onTap: (index) => character.staffLanguage =
-                              character.availableLanguages[index],
-                        ),
-                        isScrollControlled: true,
-                      ),
-                    ),
+                const Spacer(),
+                if (character.availableLanguages.length > 1)
                   IconButton(
-                    tooltip: 'Sort',
-                    icon: const Icon(FluentIcons.arrow_sort_24_filled),
+                    tooltip: 'Language',
+                    padding: const EdgeInsets.all(0),
+                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
+                    icon: const Icon(Icons.language),
                     onPressed: () => Sheet.show(
                       ctx: context,
-                      sheet: MediaSortSheet(
-                        character.sort,
-                        (sort) {
-                          character.sort = sort;
-                          character.scrollTo(offset);
-                        },
+                      sheet: OptionSheet(
+                        title: 'Language',
+                        options: character.availableLanguages,
+                        index: character.languageIndex,
+                        onTap: (index) => character.staffLanguage =
+                            character.availableLanguages[index],
                       ),
                       isScrollControlled: true,
                     ),
                   ),
-                ],
-              );
+                const SizedBox(width: 15),
+                IconButton(
+                  tooltip: 'Sort',
+                  padding: const EdgeInsets.all(0),
+                  constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
+                  icon: const Icon(FluentIcons.arrow_sort_24_filled),
+                  onPressed: () => Sheet.show(
+                    ctx: context,
+                    sheet: MediaSortSheet(
+                      character.sort,
+                      (sort) {
+                        character.sort = sort;
+                        character.scrollTo(offset);
+                      },
+                    ),
+                    isScrollControlled: true,
+                  ),
+                ),
+              ]);
             }),
             Obx(() {
               final connections =

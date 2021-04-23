@@ -2,13 +2,14 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
-import 'package:otraku/widgets/navigation/button_sliver_header.dart';
+import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -92,23 +93,26 @@ class StaffPage extends StatelessWidget {
                   (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
                       Config.PADDING.top * 2;
 
-              return ButtonSliverHeader(
-                leading: staff.characters.items.isNotEmpty &&
-                        staff.roles.items.isNotEmpty
-                    ? BubbleTabs<bool>(
-                        options: const ['Characters', 'Staff Roles'],
-                        values: const [true, false],
-                        initial: true,
-                        onNewValue: (value) {
-                          staff.onCharacters = value;
-                          staff.scrollTo(offset);
-                        },
-                        onSameValue: (_) => staff.scrollTo(offset),
-                      )
-                    : const SizedBox(),
-                trailing: [
+              return OpaqueHeader(
+                [
+                  staff.characters.items.isNotEmpty &&
+                          staff.roles.items.isNotEmpty
+                      ? BubbleTabs<bool>(
+                          options: const ['Characters', 'Staff Roles'],
+                          values: const [true, false],
+                          initial: true,
+                          onNewValue: (value) {
+                            staff.onCharacters = value;
+                            staff.scrollTo(offset);
+                          },
+                          onSameValue: (_) => staff.scrollTo(offset),
+                        )
+                      : const SizedBox(),
+                  const Spacer(),
                   IconButton(
                     tooltip: 'Sort',
+                    padding: const EdgeInsets.all(0),
+                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
                     icon: const Icon(FluentIcons.arrow_sort_24_filled),
                     onPressed: () => Sheet.show(
                       ctx: context,

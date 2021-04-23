@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/activity_type.dart';
+import 'package:otraku/pages/notifications_page.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer.dart';
-import 'package:otraku/widgets/navigation/feed_control_header.dart';
+import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
+import 'package:otraku/widgets/navigation/transparent_header.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/refresh_control.dart';
 
 class FeedTab extends StatelessWidget {
@@ -20,7 +24,7 @@ class FeedTab extends StatelessWidget {
       physics: Config.PHYSICS,
       slivers: [
         const HeadlineHeader('Feed', false),
-        FeedControlHeader(viewer),
+        _Header(viewer),
         RefreshControl(
           onRefresh: viewer.fetch,
           canRefresh: () => !viewer.isLoading,
@@ -57,4 +61,79 @@ class FeedTab extends StatelessWidget {
       ],
     );
   }
+}
+
+class _Header extends StatelessWidget {
+  final Viewer viewer;
+  _Header(this.viewer);
+
+  @override
+  Widget build(BuildContext context) => TransparentHeader([
+        BubbleTabs(
+          options: ['Following', 'Global'],
+          values: [true, false],
+          initial: viewer.onFollowing,
+          onNewValue: (dynamic val) => viewer.updateFilters(following: val),
+          onSameValue: (dynamic _) => viewer.scrollTo(0),
+        ),
+        const Spacer(),
+        IconButton(
+          tooltip: 'Filter',
+          icon: const Icon(Icons.filter_alt_outlined),
+          onPressed: () => Sheet.show(
+            ctx: context,
+            sheet: SelectionSheet(
+              options: ActivityType.values.map((v) => v.text).toList(),
+              values: ActivityType.values,
+              inclusive: viewer.typeIn,
+              onDone: (typeIn, _) => viewer.updateFilters(
+                types: typeIn as List<ActivityType>?,
+              ),
+              fixHeight: true,
+            ),
+            isScrollControlled: true,
+          ),
+        ),
+        Tooltip(
+          message: 'Notifications',
+          child: GestureDetector(
+            onTap: () => Get.toNamed(NotificationsPage.ROUTE),
+            child: Obx(
+              () => Stack(
+                children: [
+                  if (viewer.unreadCount > 0) ...[
+                    Positioned(
+                      right: 0,
+                      child: const Icon(Icons.notifications_outlined),
+                    ),
+                    Container(
+                      constraints: const BoxConstraints(
+                        minWidth: 20,
+                        minHeight: 20,
+                        maxHeight: 20,
+                      ),
+                      margin: const EdgeInsets.only(right: 15, bottom: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).errorColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          viewer.unreadCount.toString(),
+                          style:
+                              Theme.of(context).textTheme.subtitle2!.copyWith(
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ] else
+                    const Icon(Icons.notifications_outlined),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ]);
 }

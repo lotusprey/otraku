@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/button_sliver_header.dart';
+import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -52,52 +53,55 @@ class StudioPage extends StatelessWidget {
                 ),
               ),
               if (studio.model != null) ...[
-                ButtonSliverHeader(
-                  leading: const SizedBox(),
-                  trailing: [
-                    IconButton(
-                      tooltip: 'Filter',
-                      icon: const Icon(Icons.filter_alt_outlined),
-                      onPressed: () => Sheet.show(
-                        ctx: context,
-                        sheet: OptionSheet(
-                          title: 'List Filter',
-                          options: ['Everything', 'On List', 'Not On List'],
-                          index: studio.onList == null
-                              ? 0
-                              : studio.onList!
-                                  ? 1
-                                  : 2,
-                          onTap: (val) {
-                            studio.onList = val == 0
-                                ? null
-                                : val == 1
-                                    ? true
-                                    : false;
-                            studio.scrollTo(0);
-                          },
-                        ),
+                OpaqueHeader([
+                  const Spacer(),
+                  IconButton(
+                    tooltip: 'Filter',
+                    padding: const EdgeInsets.all(0),
+                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
+                    icon: const Icon(Icons.filter_alt_outlined),
+                    onPressed: () => Sheet.show(
+                      ctx: context,
+                      sheet: OptionSheet(
+                        title: 'List Filter',
+                        options: ['Everything', 'On List', 'Not On List'],
+                        index: studio.onList == null
+                            ? 0
+                            : studio.onList!
+                                ? 1
+                                : 2,
+                        onTap: (val) {
+                          studio.onList = val == 0
+                              ? null
+                              : val == 1
+                                  ? true
+                                  : false;
+                          studio.scrollTo(0);
+                        },
                       ),
                     ),
-                    IconButton(
-                      tooltip: 'Sort',
-                      icon: const Icon(
-                        FluentIcons.arrow_sort_24_filled,
-                      ),
-                      onPressed: () => Sheet.show(
-                        ctx: context,
-                        sheet: MediaSortSheet(
-                          studio.sort,
-                          (sort) {
-                            studio.sort = sort;
-                            studio.scrollTo(0);
-                          },
-                        ),
-                        isScrollControlled: true,
-                      ),
+                  ),
+                  const SizedBox(width: 15),
+                  IconButton(
+                    tooltip: 'Sort',
+                    padding: const EdgeInsets.all(0),
+                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
+                    icon: const Icon(
+                      FluentIcons.arrow_sort_24_filled,
                     ),
-                  ],
-                ),
+                    onPressed: () => Sheet.show(
+                      ctx: context,
+                      sheet: MediaSortSheet(
+                        studio.sort,
+                        (sort) {
+                          studio.sort = sort;
+                          studio.scrollTo(0);
+                        },
+                      ),
+                      isScrollControlled: true,
+                    ),
+                  ),
+                ]),
                 if (studio.media.categories.isEmpty)
                   SliverFillRemaining(
                     child: Center(

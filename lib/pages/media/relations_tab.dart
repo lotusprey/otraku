@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
@@ -155,7 +156,7 @@ class RelationControls extends StatelessWidget {
 }
 
 class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
-  static const _height = Config.MATERIAL_TAP_TARGET_SIZE + 5;
+  static const _height = 50.0;
 
   final Media media;
   final Function scrollUp;
@@ -170,6 +171,7 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
   ) {
     return Container(
       height: _height,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).backgroundColor,
         boxShadow: [
@@ -202,6 +204,8 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
                 media.model!.characters.items.isNotEmpty &&
                 media.availableLanguages.length > 1)
               return IconButton(
+                padding: const EdgeInsets.all(0),
+                constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
                 icon: const Icon(Icons.language),
                 onPressed: () => Sheet.show(
                   ctx: context,

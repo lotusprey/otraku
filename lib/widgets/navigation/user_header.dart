@@ -40,13 +40,15 @@ class UserHeader extends StatelessWidget {
         if (isMe)
           IconShade(IconButton(
             tooltip: 'Settings',
+            padding: const EdgeInsets.all(0),
+            constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
             icon: const Icon(FluentIcons.settings_24_regular),
             color: Theme.of(context).dividerColor,
             onPressed: () => Get.toNamed(SettingsPage.ROUTE),
           ))
         else if (user != null)
           Padding(
-            padding: const EdgeInsets.only(right: 10, top: 8, bottom: 8),
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
             child: ElevatedButton(
               child: Text(
                 user!.following

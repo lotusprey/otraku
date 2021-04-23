@@ -42,7 +42,7 @@ class MediaControlHeader extends StatelessWidget {
 }
 
 class _ControlHeaderDelegate implements SliverPersistentHeaderDelegate {
-  static const _height = 58.0;
+  static const _height = 50.0;
 
   final String? collectionTag;
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -39,6 +40,8 @@ class _MediaHeaderState extends State<MediaHeader> {
           ? [
               IconButton(
                 tooltip: 'Edit',
+                padding: const EdgeInsets.all(0),
+                constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
                 onPressed: _edit,
                 icon: Icon(
                   overview.entryStatus == null ? Icons.add : Icons.edit,
@@ -47,6 +50,8 @@ class _MediaHeaderState extends State<MediaHeader> {
               ),
               IconButton(
                 tooltip: 'Favourite',
+                padding: const EdgeInsets.all(0),
+                constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
                 onPressed: _toggleFavourite,
                 icon: Icon(
                   overview.isFavourite!

@@ -270,13 +270,14 @@ class Explorer extends ScrollxController implements Filterable {
       scrollTo(0);
       _results.update((r) {
         r!.clear();
-        r.append(items, true);
+        r.append(items, data!['pageInfo']['hasNextPage']);
       });
-      _isLoading.value = false;
     } else
       _results.update(
         (r) => r!.append(items, data!['pageInfo']['hasNextPage']),
       );
+
+    _isLoading.value = false;
   }
 
   Future<void> fetchPage() async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/themes.dart';
 
 class FavouriteButton extends StatefulWidget {
   final int favourites;
@@ -25,7 +26,7 @@ class _FavouriteButtonState extends State<FavouriteButton> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.shrinkPercentage < 0.5)
+        if (widget.shrinkPercentage < 0.5) ...[
           Opacity(
             opacity: 1 - widget.shrinkPercentage * 2,
             child: Text(
@@ -33,8 +34,12 @@ class _FavouriteButtonState extends State<FavouriteButton> {
               style: Theme.of(context).textTheme.bodyText1,
             ),
           ),
+          const SizedBox(width: 15),
+        ],
         IconButton(
           tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
+          padding: const EdgeInsets.all(0),
+          constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
           icon: Icon(
             _isFavourite ? Icons.favorite : Icons.favorite_border,
             color: Theme.of(context).dividerColor,

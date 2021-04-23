@@ -8,7 +8,6 @@ class BubbleTabs<T> extends StatefulWidget {
   final Function(T) onNewValue;
   final Function(T) onSameValue;
   final bool shrinkWrap;
-  final bool padding;
 
   const BubbleTabs({
     required this.options,
@@ -17,7 +16,6 @@ class BubbleTabs<T> extends StatefulWidget {
     required this.onNewValue,
     required this.onSameValue,
     this.shrinkWrap = true,
-    this.padding = true,
   });
 
   @override
@@ -34,9 +32,6 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
           shrinkWrap: widget.shrinkWrap,
           scrollDirection: Axis.horizontal,
           physics: Config.PHYSICS,
-          padding: widget.padding
-              ? const EdgeInsets.symmetric(horizontal: 10)
-              : null,
           itemBuilder: (_, index) => GestureDetector(
             onTap: () {
               if (index != _index) {

@@ -38,14 +38,16 @@ class AboutTab extends StatelessWidget {
         const SizedBox(height: 30),
         Text(
           'Privacy Policy',
+          textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headline5,
         ),
         Text(
           _privacyPolicy,
+          textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyText1,
         ),
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           child: ElevatedButton(
             onPressed: () {
               try {

@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/studio.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/opaque_header.dart';
@@ -55,11 +55,9 @@ class StudioPage extends StatelessWidget {
               if (studio.model != null) ...[
                 OpaqueHeader([
                   const Spacer(),
-                  IconButton(
+                  ActionIcon(
                     tooltip: 'Filter',
-                    padding: const EdgeInsets.all(0),
-                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-                    icon: const Icon(Icons.filter_alt_outlined),
+                    icon: Icons.filter_alt_outlined,
                     onPressed: () => Sheet.show(
                       ctx: context,
                       sheet: OptionSheet(
@@ -82,13 +80,9 @@ class StudioPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 15),
-                  IconButton(
+                  ActionIcon(
                     tooltip: 'Sort',
-                    padding: const EdgeInsets.all(0),
-                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-                    icon: const Icon(
-                      FluentIcons.arrow_sort_24_filled,
-                    ),
+                    icon: FluentIcons.arrow_sort_24_filled,
                     onPressed: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(

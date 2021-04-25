@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/favourite_button.dart';
 
 class TopSliverHeader extends StatelessWidget {
@@ -69,13 +69,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
-            padding: const EdgeInsets.all(0),
-            constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-            icon: Icon(
-              Icons.close,
-              color: Theme.of(context).dividerColor,
-            ),
+          ActionIcon(
+            dimmed: false,
+            tooltip: 'Close',
+            icon: Icons.close_rounded,
             onPressed: () => Navigator.pop(context),
           ),
           if (text != null && isFavourite != null && favourites != null) ...[

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/themes.dart';
+import 'package:otraku/widgets/action_icon.dart';
 
 class FavouriteButton extends StatefulWidget {
   final int favourites;
@@ -36,14 +36,10 @@ class _FavouriteButtonState extends State<FavouriteButton> {
           ),
           const SizedBox(width: 15),
         ],
-        IconButton(
+        ActionIcon(
+          dimmed: false,
           tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
-          padding: const EdgeInsets.all(0),
-          constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-          icon: Icon(
-            _isFavourite ? Icons.favorite : Icons.favorite_border,
-            color: Theme.of(context).dividerColor,
-          ),
+          icon: _isFavourite ? Icons.favorite : Icons.favorite_border,
           onPressed: () =>
               widget.onTap().then((val) => setState(() => _isFavourite = val)),
         ),

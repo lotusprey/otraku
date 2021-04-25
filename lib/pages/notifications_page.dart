@@ -6,6 +6,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/pages/activity_page.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
@@ -21,9 +22,10 @@ class NotificationsPage extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Notifications',
         trailing: [
-          IconButton(
+          ActionIcon(
+            dimmed: false,
             tooltip: 'Filter',
-            icon: const Icon(Icons.filter_alt_outlined),
+            icon: Icons.filter_alt_outlined,
             onPressed: () => Sheet.show(
               ctx: context,
               sheet: OptionSheet(

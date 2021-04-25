@@ -6,6 +6,7 @@ import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -38,12 +39,10 @@ class UserHeader extends StatelessWidget {
       title: user?.name,
       actions: [
         if (isMe)
-          IconShade(IconButton(
+          IconShade(ActionIcon(
+            dimmed: false,
             tooltip: 'Settings',
-            padding: const EdgeInsets.all(0),
-            constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-            icon: const Icon(FluentIcons.settings_24_regular),
-            color: Theme.of(context).dividerColor,
+            icon: FluentIcons.settings_24_regular,
             onPressed: () => Get.toNamed(SettingsPage.ROUTE),
           ))
         else if (user != null)

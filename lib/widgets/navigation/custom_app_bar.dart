@@ -1,6 +1,7 @@
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/widgets/action_icon.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   static const double CUSTOM_APP_BAR_HEIGHT = 50;
@@ -8,16 +9,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData leading;
   final String? title;
   final Widget? titleWidget;
-  final List<Widget>? trailing;
-  final bool wrapTrailing;
+  final List<Widget> trailing;
 
   CustomAppBar({
     this.leading = FluentIcons.arrow_left_24_filled,
     this.title = '',
     this.titleWidget,
-    this.trailing,
-    this.wrapTrailing = true,
-  });
+    this.trailing = const [],
+  }) {
+    const box = SizedBox(width: 15);
+    for (int i = 1; i < trailing.length; i += 2) trailing.insert(i, box);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,16 +36,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            AppBarIcon(IconButton(
+            ActionIcon(
               tooltip: 'Close',
-              icon: Icon(leading),
-              color: Theme.of(context).dividerColor,
+              icon: leading,
+              dimmed: false,
               onPressed: () => Get.back(),
-            )),
+            ),
+            const SizedBox(width: 15),
             Expanded(
               child: titleWidget != null
                   ? titleWidget!
@@ -52,13 +54,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: Theme.of(context).textTheme.headline2,
                     ),
             ),
-            trailing != null
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: wrapTrailing
-                        ? trailing!.map((t) => AppBarIcon(t)).toList()
-                        : trailing!)
-                : const SizedBox(),
+            ...trailing,
           ],
         ),
       ),

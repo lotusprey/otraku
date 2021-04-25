@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/action_icon.dart';
 
 class CustomSliverHeader extends StatelessWidget {
   final double height;
@@ -137,13 +137,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               child: Row(
                 children: [
                   if (implyLeading)
-                    IconShade(IconButton(
+                    IconShade(ActionIcon(
+                      dimmed: false,
                       tooltip: 'Close',
-                      padding: const EdgeInsets.all(0),
-                      constraints:
-                          const BoxConstraints(maxWidth: Style.ICON_BIG),
-                      icon: const Icon(Icons.close),
-                      color: Theme.of(context).dividerColor,
+                      icon: Icons.close,
                       onPressed: () => Get.back(),
                     )),
                   Expanded(
@@ -201,7 +198,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 }
 
 class IconShade extends StatelessWidget {
-  final IconButton iconButton;
+  final ActionIcon iconButton;
   IconShade(this.iconButton);
 
   @override

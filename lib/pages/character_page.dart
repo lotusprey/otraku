@@ -2,9 +2,9 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/controllers/character.dart';
@@ -110,11 +110,9 @@ class CharacterPage extends StatelessWidget {
                     : const SizedBox(),
                 const Spacer(),
                 if (character.availableLanguages.length > 1)
-                  IconButton(
+                  ActionIcon(
                     tooltip: 'Language',
-                    padding: const EdgeInsets.all(0),
-                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-                    icon: const Icon(Icons.language),
+                    icon: Icons.language,
                     onPressed: () => Sheet.show(
                       ctx: context,
                       sheet: OptionSheet(
@@ -128,11 +126,9 @@ class CharacterPage extends StatelessWidget {
                     ),
                   ),
                 const SizedBox(width: 15),
-                IconButton(
+                ActionIcon(
                   tooltip: 'Sort',
-                  padding: const EdgeInsets.all(0),
-                  constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-                  icon: const Icon(FluentIcons.arrow_sort_24_filled),
+                  icon: FluentIcons.arrow_sort_24_filled,
                   onPressed: () => Sheet.show(
                     ctx: context,
                     sheet: MediaSortSheet(

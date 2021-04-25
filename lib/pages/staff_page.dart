@@ -2,10 +2,10 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/staff.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
@@ -109,11 +109,9 @@ class StaffPage extends StatelessWidget {
                         )
                       : const SizedBox(),
                   const Spacer(),
-                  IconButton(
+                  ActionIcon(
                     tooltip: 'Sort',
-                    padding: const EdgeInsets.all(0),
-                    constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-                    icon: const Icon(FluentIcons.arrow_sort_24_filled),
+                    icon: FluentIcons.arrow_sort_24_filled,
                     onPressed: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(

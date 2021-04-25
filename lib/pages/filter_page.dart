@@ -11,6 +11,7 @@ import 'package:otraku/enums/media_status.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/layouts/chip_grid.dart';
@@ -64,22 +65,20 @@ class FilterPage extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Filters',
         trailing: [
-          IconButton(
+          ActionIcon(
+            dimmed: false,
             tooltip: 'Clear',
-            icon: const Icon(Icons.close),
-            color: Theme.of(context).dividerColor,
+            icon: Icons.close,
             onPressed: () {
               filterable.clearAllFilters();
               isDefinitelyInactive(true);
               Navigator.pop(context);
             },
           ),
-          IconButton(
+          ActionIcon(
+            dimmed: false,
             tooltip: 'Apply',
-            icon: Icon(
-              FluentIcons.checkmark_24_filled,
-              color: Theme.of(context).dividerColor,
-            ),
+            icon: FluentIcons.checkmark_24_filled,
             onPressed: () {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);

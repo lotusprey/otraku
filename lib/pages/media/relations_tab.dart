@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
@@ -203,10 +203,9 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
             if (media.relationsTab == Media.REL_CHARACTERS &&
                 media.model!.characters.items.isNotEmpty &&
                 media.availableLanguages.length > 1)
-              return IconButton(
-                padding: const EdgeInsets.all(0),
-                constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
-                icon: const Icon(Icons.language),
+              return ActionIcon(
+                tooltip: 'Language',
+                icon: Icons.language,
                 onPressed: () => Sheet.show(
                   ctx: context,
                   sheet: OptionSheet(

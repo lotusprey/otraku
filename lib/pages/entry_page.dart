@@ -9,6 +9,7 @@ import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -40,76 +41,76 @@ class _EntryPageState extends State<EntryPage> {
         return Scaffold(
           appBar: CustomAppBar(
             title: 'Edit',
-            trailing: [
-              if (model != null) ...[
-                if (model.entryId != null)
-                  IconButton(
-                    tooltip: 'Remove',
-                    icon: const Icon(FluentIcons.delete_24_filled),
-                    color: Theme.of(context).dividerColor,
-                    onPressed: () => showPopUp(
-                      context,
-                      AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: Config.BORDER_RADIUS,
-                        ),
-                        backgroundColor: Theme.of(context).primaryColor,
-                        title: Text(
-                          'Remove entry?',
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
-                        actions: [
-                          TextButton(
-                            child: Text(
-                              'No',
-                              style: TextStyle(
-                                color: Theme.of(context).dividerColor,
-                              ),
+            trailing: model != null
+                ? [
+                    if (model.entryId != null)
+                      ActionIcon(
+                        dimmed: false,
+                        tooltip: 'Remove',
+                        icon: FluentIcons.delete_24_filled,
+                        onPressed: () => showPopUp(
+                          context,
+                          AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: Config.BORDER_RADIUS,
                             ),
-                            onPressed: () => Navigator.of(context).pop(),
+                            backgroundColor: Theme.of(context).primaryColor,
+                            title: Text(
+                              'Remove entry?',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text(
+                                  'No',
+                                  style: TextStyle(
+                                    color: Theme.of(context).dividerColor,
+                                  ),
+                                ),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                              TextButton(
+                                child: Text('Yes'),
+                                onPressed: () {
+                                  Get.find<Collection>(
+                                    tag: model.type == 'ANIME'
+                                        ? Collection.ANIME
+                                        : Collection.MANGA,
+                                  ).removeEntry(entry.oldModel!);
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                  widget.callback?.call(null);
+                                },
+                              ),
+                            ],
                           ),
-                          TextButton(
-                            child: Text('Yes'),
-                            onPressed: () {
-                              Get.find<Collection>(
-                                tag: model.type == 'ANIME'
-                                    ? Collection.ANIME
-                                    : Collection.MANGA,
-                              ).removeEntry(entry.oldModel!);
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              widget.callback?.call(null);
-                            },
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                IconButton(
-                    tooltip: 'Save',
-                    icon: const Icon(FluentIcons.save_24_filled),
-                    color: Theme.of(context).dividerColor,
-                    onPressed: () {
-                      if (entry.oldModel!.status == null &&
-                          entry.model!.status == ListStatus.CURRENT &&
-                          entry.model!.startedAt == null)
-                        entry.model!.startedAt = DateTime.now();
+                    ActionIcon(
+                        dimmed: false,
+                        tooltip: 'Save',
+                        icon: FluentIcons.save_24_filled,
+                        onPressed: () {
+                          if (entry.oldModel!.status == null &&
+                              entry.model!.status == ListStatus.CURRENT &&
+                              entry.model!.startedAt == null)
+                            entry.model!.startedAt = DateTime.now();
 
-                      if (entry.oldModel!.status != ListStatus.COMPLETED &&
-                          entry.model!.status == ListStatus.COMPLETED &&
-                          entry.model!.completedAt == null)
-                        entry.model!.completedAt = DateTime.now();
+                          if (entry.oldModel!.status != ListStatus.COMPLETED &&
+                              entry.model!.status == ListStatus.COMPLETED &&
+                              entry.model!.completedAt == null)
+                            entry.model!.completedAt = DateTime.now();
 
-                      Get.find<Collection>(
-                        tag: model.type == 'ANIME'
-                            ? Collection.ANIME
-                            : Collection.MANGA,
-                      ).updateEntry(entry.oldModel!, model);
-                      Navigator.of(context).pop();
-                      widget.callback?.call(model.status);
-                    }),
-              ],
-            ],
+                          Get.find<Collection>(
+                            tag: model.type == 'ANIME'
+                                ? Collection.ANIME
+                                : Collection.MANGA,
+                          ).updateEntry(entry.oldModel!, model);
+                          Navigator.of(context).pop();
+                          widget.callback?.call(model.status);
+                        }),
+                  ]
+                : [],
           ),
           body: model != null
               ? _Content(model, Get.find<Viewer>().settings!)

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -38,27 +38,19 @@ class _MediaHeaderState extends State<MediaHeader> {
       title: overview?.preferredTitle,
       actions: overview != null
           ? [
-              IconButton(
+              ActionIcon(
+                dimmed: false,
                 tooltip: 'Edit',
-                padding: const EdgeInsets.all(0),
-                constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
                 onPressed: _edit,
-                icon: Icon(
-                  overview.entryStatus == null ? Icons.add : Icons.edit,
-                  color: Theme.of(context).dividerColor,
-                ),
+                icon: overview.entryStatus == null ? Icons.add : Icons.edit,
               ),
-              IconButton(
+              ActionIcon(
+                dimmed: false,
                 tooltip: 'Favourite',
-                padding: const EdgeInsets.all(0),
-                constraints: const BoxConstraints(maxWidth: Style.ICON_BIG),
                 onPressed: _toggleFavourite,
-                icon: Icon(
-                  overview.isFavourite!
-                      ? Icons.favorite
-                      : Icons.favorite_border,
-                  color: Theme.of(context).dividerColor,
-                ),
+                icon: overview.isFavourite!
+                    ? Icons.favorite
+                    : Icons.favorite_border,
               ),
             ]
           : null,

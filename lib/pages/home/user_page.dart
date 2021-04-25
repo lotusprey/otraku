@@ -73,12 +73,10 @@ class UserTab extends StatelessWidget {
                             FluentIcons.comment_24_filled,
                             color: Theme.of(context).accentColor,
                           ),
-                          onPressed: () => id == Client.viewerId
-                              ? Config.setIndex(HomePage.FEED)
-                              : Get.toNamed(
-                                  UserFeedPage.ROUTE,
-                                  arguments: id,
-                                ),
+                          onPressed: () => Get.toNamed(
+                            UserFeedPage.ROUTE,
+                            arguments: id,
+                          ),
                         ),
                         IconButton(
                           icon: Icon(

@@ -110,6 +110,7 @@ class FilterPage extends StatelessWidget {
               },
               onChanged: (val) => changes[Filterable.ON_LIST] = val,
             ),
+          const SizedBox(height: 10),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',

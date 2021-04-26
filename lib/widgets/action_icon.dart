@@ -1,31 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/enums/themes.dart';
 
 class ActionIcon extends StatelessWidget {
   final bool dimmed;
+  final bool active;
   final IconData icon;
   final String tooltip;
-  final void Function() onPressed;
+  final void Function() onTap;
+  final void Function()? onLongPress;
 
   ActionIcon({
     required this.icon,
     required this.tooltip,
-    required this.onPressed,
+    required this.onTap,
     this.dimmed = true,
+    this.active = false,
+    this.onLongPress,
   });
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(icon),
-      tooltip: tooltip,
-      onPressed: onPressed,
-      color: dimmed ? null : Theme.of(context).dividerColor,
-      padding: const EdgeInsets.all(0),
-      constraints: const BoxConstraints(
-        maxHeight: Style.ICON_BIG,
-        maxWidth: Style.ICON_BIG,
-      ),
+    final widget = Icon(
+      icon,
+      color: active
+          ? Theme.of(context).accentColor
+          : dimmed
+              ? null
+              : Theme.of(context).dividerColor,
+    );
+
+    return InkResponse(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: active
+          ? widget
+          : Tooltip(
+              message: tooltip,
+              child: widget,
+            ),
     );
   }
 }

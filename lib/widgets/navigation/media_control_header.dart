@@ -334,10 +334,6 @@ class __FilterState extends State<_Filter> {
               ? setState(() => _active = false)
               : setState(() => _active = _checkIfActive()),
         ]),
-        onLongPress: () {
-          _filterable.clearAllFilters();
-          setState(() => _active = false);
-        },
       );
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([

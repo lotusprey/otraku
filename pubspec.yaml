@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.0.4+9
+version: 1.0.5+10
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -18,8 +18,8 @@ dependencies:
   url_launcher: ^6.0.3
   app_links: ^2.0.0+1
   flutter_widget_from_html_core: ^0.6.0
-  flutter_secure_storage: ^4.1.0
-  fluentui_system_icons: ^1.1.117
+  flutter_secure_storage: ^4.2.0
+  fluentui_system_icons: ^1.1.120
 
 dev_dependencies:
   flutter_test:

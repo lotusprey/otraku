@@ -28,7 +28,7 @@ class MediaControlHeader extends StatelessWidget {
       ActionIcon(
         tooltip: collectionTag == null ? 'Types' : 'Lists',
         icon: FluentIcons.list_24_regular,
-        onPressed: () => Scaffold.of(context).openDrawer(),
+        onTap: () => Scaffold.of(context).openDrawer(),
       ),
       const SizedBox(width: 15),
       if (collectionTag != null)
@@ -106,7 +106,7 @@ class MediaControlHeader extends StatelessWidget {
             return ActionIcon(
               tooltip: 'Sort',
               icon: FluentIcons.arrow_sort_24_regular,
-              onPressed: () => Sheet.show(
+              onTap: () => Sheet.show(
                 ctx: context,
                 sheet: MediaSortSheet(
                   Convert.stringToEnum(
@@ -135,7 +135,7 @@ class MediaControlHeader extends StatelessWidget {
         ActionIcon(
           tooltip: 'Sort',
           icon: FluentIcons.arrow_sort_24_regular,
-          onPressed: () => Sheet.show(
+          onTap: () => Sheet.show(
             ctx: context,
             sheet: CollectionSortSheet(collectionTag),
             isScrollControlled: true,
@@ -232,7 +232,7 @@ class __NavigationState extends State<_Navigation> {
               ActionIcon(
                 tooltip: 'Search',
                 icon: FluentIcons.search_24_regular,
-                onPressed: () => setState(() => _searchMode = true),
+                onTap: () => setState(() => _searchMode = true),
               ),
           ] else
             Expanded(
@@ -324,44 +324,21 @@ class __FilterState extends State<_Filter> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (!_active)
-      return ActionIcon(
+  Widget build(BuildContext context) => ActionIcon(
         tooltip: 'Filter',
+        active: _active,
         icon: Icons.filter_alt_outlined,
-        onPressed: () => _pushPage(context),
-      );
-
-    return Tooltip(
-      message: 'Filter',
-      child: GestureDetector(
-        onTap: () => _pushPage(context),
+        onTap: () => Get.toNamed(FilterPage.ROUTE, arguments: [
+          widget.collectionTag,
+          (definitelyInactive) => definitelyInactive
+              ? setState(() => _active = false)
+              : setState(() => _active = _checkIfActive()),
+        ]),
         onLongPress: () {
           _filterable.clearAllFilters();
           setState(() => _active = false);
         },
-        child: Container(
-          width: Config.MATERIAL_TAP_TARGET_SIZE,
-          decoration: BoxDecoration(
-            color: Theme.of(context).accentColor,
-            borderRadius: Config.BORDER_RADIUS,
-          ),
-          child: Icon(
-            Icons.filter_alt_outlined,
-            color: Theme.of(context).backgroundColor,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _pushPage(BuildContext context) =>
-      Get.toNamed(FilterPage.ROUTE, arguments: [
-        widget.collectionTag,
-        (definitelyInactive) => definitelyInactive
-            ? setState(() => _active = false)
-            : setState(() => _active = _checkIfActive()),
-      ]);
+      );
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([
         Filterable.STATUS_IN,

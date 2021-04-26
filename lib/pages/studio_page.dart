@@ -57,6 +57,7 @@ class StudioPage extends StatelessWidget {
                   const Spacer(),
                   ActionIcon(
                     tooltip: 'Filter',
+                    active: studio.onList != null,
                     icon: Icons.filter_alt_outlined,
                     onTap: () => Sheet.show(
                       ctx: context,

@@ -4,6 +4,7 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/chip_field.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -107,10 +108,11 @@ class _ChipGridState extends State<ChipGrid> {
                       ),
                     ),
                   ),
-                IconButton(
+                const SizedBox(width: 15),
+                ActionIcon(
                   tooltip: 'Options',
-                  icon: Icon(FluentIcons.options_24_regular),
-                  onPressed: () => Sheet.show(
+                  icon: FluentIcons.options_24_regular,
+                  onTap: () => Sheet.show(
                     ctx: context,
                     sheet: widget.tags != null
                         ? _tagSheet()

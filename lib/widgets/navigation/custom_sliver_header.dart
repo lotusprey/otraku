@@ -141,7 +141,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       dimmed: false,
                       tooltip: 'Close',
                       icon: Icons.close,
-                      onPressed: () => Get.back(),
+                      onTap: () => Get.back(),
                     )),
                   Expanded(
                     child: Padding(

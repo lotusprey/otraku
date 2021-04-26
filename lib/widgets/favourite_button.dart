@@ -40,7 +40,7 @@ class _FavouriteButtonState extends State<FavouriteButton> {
           dimmed: false,
           tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
           icon: _isFavourite ? Icons.favorite : Icons.favorite_border,
-          onPressed: () =>
+          onTap: () =>
               widget.onTap().then((val) => setState(() => _isFavourite = val)),
         ),
       ],

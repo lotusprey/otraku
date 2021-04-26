@@ -43,7 +43,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               tooltip: 'Close',
               icon: leading,
               dimmed: false,
-              onPressed: () => Get.back(),
+              onTap: () => Get.back(),
             ),
             const SizedBox(width: 15),
             Expanded(

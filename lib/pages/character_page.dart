@@ -113,7 +113,7 @@ class CharacterPage extends StatelessWidget {
                   ActionIcon(
                     tooltip: 'Language',
                     icon: Icons.language,
-                    onPressed: () => Sheet.show(
+                    onTap: () => Sheet.show(
                       ctx: context,
                       sheet: OptionSheet(
                         title: 'Language',
@@ -129,7 +129,7 @@ class CharacterPage extends StatelessWidget {
                 ActionIcon(
                   tooltip: 'Sort',
                   icon: FluentIcons.arrow_sort_24_filled,
-                  onPressed: () => Sheet.show(
+                  onTap: () => Sheet.show(
                     ctx: context,
                     sheet: MediaSortSheet(
                       character.sort,

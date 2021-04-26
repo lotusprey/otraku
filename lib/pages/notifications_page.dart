@@ -26,7 +26,7 @@ class NotificationsPage extends StatelessWidget {
             dimmed: false,
             tooltip: 'Filter',
             icon: Icons.filter_alt_outlined,
-            onPressed: () => Sheet.show(
+            onTap: () => Sheet.show(
               ctx: context,
               sheet: OptionSheet(
                 title: 'Category',

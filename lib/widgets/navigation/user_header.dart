@@ -43,7 +43,7 @@ class UserHeader extends StatelessWidget {
             dimmed: false,
             tooltip: 'Settings',
             icon: FluentIcons.settings_24_regular,
-            onPressed: () => Get.toNamed(SettingsPage.ROUTE),
+            onTap: () => Get.toNamed(SettingsPage.ROUTE),
           ))
         else if (user != null)
           Padding(

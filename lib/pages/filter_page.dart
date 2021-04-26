@@ -69,7 +69,7 @@ class FilterPage extends StatelessWidget {
             dimmed: false,
             tooltip: 'Clear',
             icon: Icons.close,
-            onPressed: () {
+            onTap: () {
               filterable.clearAllFilters();
               isDefinitelyInactive(true);
               Navigator.pop(context);
@@ -79,7 +79,7 @@ class FilterPage extends StatelessWidget {
             dimmed: false,
             tooltip: 'Apply',
             icon: FluentIcons.checkmark_24_filled,
-            onPressed: () {
+            onTap: () {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 

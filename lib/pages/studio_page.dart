@@ -58,7 +58,7 @@ class StudioPage extends StatelessWidget {
                   ActionIcon(
                     tooltip: 'Filter',
                     icon: Icons.filter_alt_outlined,
-                    onPressed: () => Sheet.show(
+                    onTap: () => Sheet.show(
                       ctx: context,
                       sheet: OptionSheet(
                         title: 'List Filter',
@@ -83,7 +83,7 @@ class StudioPage extends StatelessWidget {
                   ActionIcon(
                     tooltip: 'Sort',
                     icon: FluentIcons.arrow_sort_24_filled,
-                    onPressed: () => Sheet.show(
+                    onTap: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(
                         studio.sort,

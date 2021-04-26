@@ -48,7 +48,7 @@ class _EntryPageState extends State<EntryPage> {
                         dimmed: false,
                         tooltip: 'Remove',
                         icon: FluentIcons.delete_24_filled,
-                        onPressed: () => showPopUp(
+                        onTap: () => showPopUp(
                           context,
                           AlertDialog(
                             shape: RoundedRectangleBorder(
@@ -90,7 +90,7 @@ class _EntryPageState extends State<EntryPage> {
                         dimmed: false,
                         tooltip: 'Save',
                         icon: FluentIcons.save_24_filled,
-                        onPressed: () {
+                        onTap: () {
                           if (entry.oldModel!.status == null &&
                               entry.model!.status == ListStatus.CURRENT &&
                               entry.model!.startedAt == null)

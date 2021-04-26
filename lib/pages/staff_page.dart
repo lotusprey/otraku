@@ -112,7 +112,7 @@ class StaffPage extends StatelessWidget {
                   ActionIcon(
                     tooltip: 'Sort',
                     icon: FluentIcons.arrow_sort_24_filled,
-                    onPressed: () => Sheet.show(
+                    onTap: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(
                         staff.sort,

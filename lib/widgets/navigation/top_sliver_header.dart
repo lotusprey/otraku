@@ -73,7 +73,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
             dimmed: false,
             tooltip: 'Close',
             icon: Icons.close_rounded,
-            onPressed: () => Navigator.pop(context),
+            onTap: () => Navigator.pop(context),
           ),
           if (text != null && isFavourite != null && favourites != null) ...[
             const SizedBox(width: 15),

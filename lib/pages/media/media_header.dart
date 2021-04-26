@@ -41,13 +41,13 @@ class _MediaHeaderState extends State<MediaHeader> {
               ActionIcon(
                 dimmed: false,
                 tooltip: 'Edit',
-                onPressed: _edit,
+                onTap: _edit,
                 icon: overview.entryStatus == null ? Icons.add : Icons.edit,
               ),
               ActionIcon(
                 dimmed: false,
                 tooltip: 'Favourite',
-                onPressed: _toggleFavourite,
+                onTap: _toggleFavourite,
                 icon: overview.isFavourite!
                     ? Icons.favorite
                     : Icons.favorite_border,

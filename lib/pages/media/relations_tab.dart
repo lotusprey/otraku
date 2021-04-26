@@ -206,7 +206,7 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
               return ActionIcon(
                 tooltip: 'Language',
                 icon: Icons.language,
-                onPressed: () => Sheet.show(
+                onTap: () => Sheet.show(
                   ctx: context,
                   sheet: OptionSheet(
                     title: 'Language',

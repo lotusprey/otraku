@@ -36,37 +36,34 @@ class AboutTab extends StatelessWidget {
           style: Theme.of(context).textTheme.subtitle1,
         ),
         const SizedBox(height: 30),
-        Text(
-          'Privacy Policy',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headline5,
-        ),
-        Text(
-          _privacyPolicy,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
         Align(
           alignment: Alignment.center,
           child: ElevatedButton(
+            child: Text('Discord'),
             onPressed: () {
               try {
-                launch('https://anilist.co/terms');
+                launch('https://discord.gg/YN2QWVbFef');
               } catch (err) {
                 Toast.show(context, 'Couldn\'t open link: $err');
               }
             },
-            child: Text('AniList Terms and Privacy'),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: ElevatedButton(
+            child: Text('Privacy Policy'),
+            onPressed: () {
+              try {
+                launch('https://sites.google.com/view/otraku/privacy-policy');
+              } catch (err) {
+                Toast.show(context, 'Couldn\'t open link: $err');
+              }
+            },
           ),
         ),
         SizedBox(height: NavBar.offset(context)),
       ],
     );
   }
-
-  static const _privacyPolicy =
-      'All settings and tokens are saved onto the device.\n'
-      'Otraku does not store, transfer or use your data online.\n'
-      'As a third-party app Otraku uses the AniList API to read and mutate data and it requires you to have an AniList account with which to log in.\n'
-      'You can read the AniList terms & privacy policy down below.';
 }

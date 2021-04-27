@@ -50,7 +50,7 @@ class UserHeader extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8, bottom: 8),
             child: ElevatedButton(
               child: Text(
-                user!.following
+                user!.isFollowing
                     ? user!.follower
                         ? 'Mutual'
                         : 'Unfollow'

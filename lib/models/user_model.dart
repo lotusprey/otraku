@@ -14,13 +14,15 @@ class UserModel {
   final String? description;
   final String? avatar;
   final String? banner;
-  bool following;
+  bool isFollowing;
   final bool follower;
   final bool blocked;
   final int? donatorTier;
   final String? donatorBadge;
   final String? moderatorStatus;
   final bool isMe;
+  final following = PageModel<BrowseResultModel>();
+  final followers = PageModel<BrowseResultModel>();
   final activities = PageModel<ActivityModel>();
   final favourites = [
     PageModel<BrowseResultModel>(),
@@ -41,7 +43,7 @@ class UserModel {
     required this.moderatorStatus,
     this.blocked = false,
     this.follower = false,
-    this.following = false,
+    this.isFollowing = false,
     this.isMe = false,
   });
 
@@ -51,7 +53,7 @@ class UserModel {
         description: map['about'],
         avatar: map['avatar']['large'],
         banner: map['bannerImage'],
-        following: map['isFollowing'] ?? false,
+        isFollowing: map['isFollowing'] ?? false,
         follower: map['isFollower'] ?? false,
         blocked: map['isBlocked'] ?? false,
         donatorTier: map['donatorTier'],
@@ -61,7 +63,7 @@ class UserModel {
       );
 
   void toggleFollow(final Map<String, dynamic> map) =>
-      following = map['isFollowing'] ?? false;
+      isFollowing = map['isFollowing'] ?? false;
 
   void addFavs(final int? index, final Map<String, dynamic>? map) {
     final items = <BrowseResultModel>[];

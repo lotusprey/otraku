@@ -53,7 +53,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                     : Icons.favorite_border,
               ),
             ]
-          : null,
+          : const [],
       background: Stack(
         fit: StackFit.expand,
         children: [

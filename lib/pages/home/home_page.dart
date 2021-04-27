@@ -55,11 +55,11 @@ class HomePage extends StatelessWidget {
         drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
         bottomNavigationBar: NavBar(
           options: {
-            FluentIcons.mail_inbox_24_regular: 'Feed',
-            FluentIcons.movies_and_tv_24_regular: 'Anime',
-            FluentIcons.bookmark_24_regular: 'Manga',
-            Icons.explore_outlined: 'Explore',
-            FluentIcons.person_24_regular: 'Profile',
+            'Feed': FluentIcons.mail_inbox_24_regular,
+            'Anime': FluentIcons.movies_and_tv_24_regular,
+            'Manga': FluentIcons.bookmark_24_regular,
+            'Explore': Icons.explore_outlined,
+            'Profile': FluentIcons.person_24_regular,
           },
           onChanged: (page) => Config.setIndex(page),
           initial: index,

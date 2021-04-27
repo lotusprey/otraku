@@ -23,11 +23,11 @@ class FavouritesPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            FluentIcons.movies_and_tv_24_regular: 'Anime',
-            FluentIcons.bookmark_24_regular: 'Manga',
-            FluentIcons.accessibility_24_regular: 'Characters',
-            FluentIcons.mic_on_24_regular: 'Staff',
-            FluentIcons.building_24_regular: 'Studios',
+            'Anime': FluentIcons.movies_and_tv_24_regular,
+            'Manga': FluentIcons.bookmark_24_regular,
+            'Characters': FluentIcons.accessibility_24_regular,
+            'Staff': FluentIcons.mic_on_24_regular,
+            'Studios': FluentIcons.building_24_regular,
           },
           initial: favourites.pageIndex,
           onChanged: (index) => favourites.pageIndex = index,

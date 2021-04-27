@@ -35,9 +35,9 @@ class MediaPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            FluentIcons.book_information_24_regular: 'Overview',
-            Icons.emoji_people_outlined: 'Relations',
-            Icons.rate_review_outlined: 'Social',
+            'Overview': FluentIcons.book_information_24_regular,
+            'Relations': Icons.emoji_people_outlined,
+            'Social': Icons.rate_review_outlined,
           },
           initial: media.tab,
           onChanged: (index) => media.tab = index,

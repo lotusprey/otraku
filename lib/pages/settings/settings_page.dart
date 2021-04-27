@@ -33,10 +33,10 @@ class SettingsPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            FluentIcons.phone_link_setup_24_regular: 'App',
-            Icons.video_settings: 'Content',
-            Icons.notifications_none: 'Notifications',
-            Icons.account_circle_outlined: 'Profile',
+            'App': FluentIcons.phone_link_setup_24_regular,
+            'Content': Icons.video_settings,
+            'Notifications': Icons.notifications_none,
+            'Profile': Icons.account_circle_outlined,
           },
           onChanged: (page) => settings.pageIndex = page,
           initial: settings.pageIndex,

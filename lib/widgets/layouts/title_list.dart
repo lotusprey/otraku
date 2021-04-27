@@ -18,12 +18,10 @@ class TitleList extends StatelessWidget {
               imageUrl: results[index].text1,
               child: Hero(
                 tag: results[index].id,
-                child: Container(
-                  child: Text(
-                    results[index].text1,
-                    style: Theme.of(context).textTheme.headline3,
-                    maxLines: 2,
-                  ),
+                child: Text(
+                  results[index].text1,
+                  style: Theme.of(context).textTheme.headline2,
+                  maxLines: 2,
                 ),
               ),
             ),

@@ -15,7 +15,7 @@ class UserModel {
   final String? avatar;
   final String? banner;
   bool isFollowing;
-  final bool follower;
+  final bool isFollower;
   final bool blocked;
   final int? donatorTier;
   final String? donatorBadge;
@@ -42,7 +42,7 @@ class UserModel {
     required this.donatorBadge,
     required this.moderatorStatus,
     this.blocked = false,
-    this.follower = false,
+    this.isFollower = false,
     this.isFollowing = false,
     this.isMe = false,
   });
@@ -54,7 +54,7 @@ class UserModel {
         avatar: map['avatar']['large'],
         banner: map['bannerImage'],
         isFollowing: map['isFollowing'] ?? false,
-        follower: map['isFollower'] ?? false,
+        isFollower: map['isFollower'] ?? false,
         blocked: map['isBlocked'] ?? false,
         donatorTier: map['donatorTier'],
         donatorBadge: map['donatorBadge'],

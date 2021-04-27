@@ -7,6 +7,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/favourites.dart';
+import 'package:otraku/controllers/friends.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/controllers/review.dart';
@@ -16,6 +17,7 @@ import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/user_feed.dart';
 import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/pages/friends_page.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/auth_page.dart';
@@ -162,6 +164,16 @@ class App extends StatelessWidget {
             Get.put(
               Favourites(Get.arguments),
               tag: Get.arguments.toString(),
+            );
+          }),
+        ),
+        GetPage(
+          name: FriendsPage.ROUTE,
+          page: () => FriendsPage(Get.arguments[0]),
+          binding: BindingsBuilder(() {
+            Get.put(
+              Friends(Get.arguments[0], Get.arguments[1]),
+              tag: Get.arguments[0].toString(),
             );
           }),
         ),

@@ -123,12 +123,14 @@ class StudioPage extends StatelessWidget {
                     TileGrid(
                       tileData: studio.media.groups[i],
                       tileModel: Config.highTile,
+                      sliver: true,
                     ),
                   ],
                 ] else
                   TileGrid(
                     tileData: studio.media.joined,
                     tileModel: Config.highTile,
+                    sliver: true,
                   ),
                 if (studio.media.hasNextPage)
                   SliverToBoxAdapter(

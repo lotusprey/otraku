@@ -65,6 +65,7 @@ class _ExploreGrid extends StatelessWidget {
         return TileGrid(
           tileData: results,
           tileModel: Config.squareTile,
+          sliver: true,
         );
 
       if (results[0].browsable == Browsable.review) return ReviewGrid(results);
@@ -72,6 +73,7 @@ class _ExploreGrid extends StatelessWidget {
       return TileGrid(
         tileData: results,
         tileModel: Config.highTile,
+        sliver: true,
       );
     });
   }

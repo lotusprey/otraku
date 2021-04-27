@@ -51,7 +51,7 @@ class UserHeader extends StatelessWidget {
             child: ElevatedButton(
               child: Text(
                 user!.isFollowing
-                    ? user!.follower
+                    ? user!.isFollower
                         ? 'Mutual'
                         : 'Unfollow'
                     : 'Follow',

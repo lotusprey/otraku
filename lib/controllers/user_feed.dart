@@ -55,7 +55,6 @@ class UserFeed extends ScrollxController {
   late UserModel _model;
 
   bool get hasNextPage => _model.activities.hasNextPage;
-
   List<ActivityModel> get activities => _model.activities.items;
 
   Future<void> fetchPage() async {
@@ -78,7 +77,6 @@ class UserFeed extends ScrollxController {
   void onInit() {
     super.onInit();
     _model = Get.find<User>(tag: id.toString()).model!;
-    if (_model.activities.items.isEmpty && _model.activities.hasNextPage)
-      fetchPage();
+    if (_model.activities.items.isEmpty) fetchPage();
   }
 }

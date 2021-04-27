@@ -8,8 +8,8 @@ class CustomSliverHeader extends StatelessWidget {
   final double height;
   final Widget? background;
   final Widget? child;
-  final List<Widget>? actions;
   final String? title;
+  final List<Widget> actions;
   final bool actionsScrollFadeIn;
   final bool titleScrollFadeIn;
   final bool implyLeading;
@@ -47,8 +47,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   final double height;
   final Widget? background;
   final Widget? child;
-  final List<Widget>? actions;
   final String? title;
+  final List<Widget> actions;
   final bool actionsScrollFadeIn;
   final bool titleScrollFadeIn;
   final bool implyLeading;
@@ -65,9 +65,9 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     required this.implyLeading,
   }) {
     _middleExtent = (minExtent + maxExtent) * 0.5;
-    if (actions != null && actions!.length > 1) {
+    if (actions.length > 1) {
       const box = SizedBox(width: 15);
-      for (int i = 1; i < actions!.length; i += 2) actions!.insert(i, box);
+      for (int i = 1; i < actions.length; i += 2) actions.insert(i, box);
     }
   }
 
@@ -158,10 +158,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
-                  if (actions != null)
+                  if (actions.isNotEmpty)
                     Opacity(
                       opacity: actionOpacity,
-                      child: Row(children: actions!),
+                      child: Row(children: actions),
                     ),
                 ],
               ),
@@ -210,7 +210,6 @@ class IconShade extends StatelessWidget {
           BoxShadow(
             color: Theme.of(context).backgroundColor,
             blurRadius: 10,
-            spreadRadius: -10,
           ),
         ],
       ),

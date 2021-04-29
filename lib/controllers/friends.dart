@@ -31,9 +31,11 @@ class Friends extends ScrollxController {
   bool get onFollowing => _onFollowing;
   set onFollowing(bool val) {
     _onFollowing = val;
-    if (_onFollowing && _model.following.items.isEmpty) fetchPage();
-    if (!_onFollowing && _model.followers.items.isEmpty) fetchPage();
-    update();
+    scrollTo(0).then((_) {
+      if (_onFollowing && _model.following.items.isEmpty) fetchPage();
+      if (!_onFollowing && _model.followers.items.isEmpty) fetchPage();
+      update();
+    });
   }
 
   bool get hasNextPage {

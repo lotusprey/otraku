@@ -21,8 +21,7 @@ abstract class ScrollxController extends GetxController {
   bool _canLoad = true;
 
   Future<void> _listener() async {
-    if (scrollCtrl.position.pixels >
-            scrollCtrl.position.maxScrollExtent - 100 &&
+    if (scrollCtrl.offset > scrollCtrl.position.maxScrollExtent - 100 &&
         _canLoad &&
         hasNextPage) {
       _canLoad = false;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -205,7 +206,7 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
                 media.availableLanguages.length > 1)
               return ActionIcon(
                 tooltip: 'Language',
-                icon: Icons.language,
+                icon: Ionicons.globe_outline,
                 onTap: () => Sheet.show(
                   ctx: context,
                   sheet: OptionSheet(

@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/controllers/viewer.dart';
@@ -47,7 +47,7 @@ class _EntryPageState extends State<EntryPage> {
                       ActionIcon(
                         dimmed: false,
                         tooltip: 'Remove',
-                        icon: FluentIcons.delete_24_filled,
+                        icon: Ionicons.trash_bin_outline,
                         onTap: () => showPopUp(
                           context,
                           AlertDialog(
@@ -89,7 +89,7 @@ class _EntryPageState extends State<EntryPage> {
                     ActionIcon(
                         dimmed: false,
                         tooltip: 'Save',
-                        icon: FluentIcons.save_24_filled,
+                        icon: Ionicons.save_outline,
                         onTap: () {
                           if (entry.oldModel!.status == null &&
                               entry.model!.status == ListStatus.CURRENT &&

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 
 class DateField extends StatefulWidget {
@@ -29,7 +30,7 @@ class _DateFieldState extends State<DateField> {
 
   Widget _picker(DateTime? initialDate) {
     return IconButton(
-      icon: const Icon(Icons.calendar_today),
+      icon: const Icon(Ionicons.calendar_clear_outline),
       onPressed: () => showDatePicker(
         context: context,
         initialDate: initialDate!,

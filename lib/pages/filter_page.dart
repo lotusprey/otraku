@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -78,7 +77,7 @@ class FilterPage extends StatelessWidget {
           ActionIcon(
             dimmed: false,
             tooltip: 'Apply',
-            icon: FluentIcons.checkmark_24_filled,
+            icon: Icons.done_rounded,
             onTap: () {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);

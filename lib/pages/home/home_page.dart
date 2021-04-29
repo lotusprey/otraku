@@ -1,5 +1,5 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/pages/home/explore_page.dart';
 import 'package:otraku/pages/home/collection_page.dart';
@@ -55,11 +55,11 @@ class HomePage extends StatelessWidget {
         drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
         bottomNavigationBar: NavBar(
           options: {
-            'Feed': FluentIcons.mail_inbox_24_regular,
-            'Anime': FluentIcons.movies_and_tv_24_regular,
-            'Manga': FluentIcons.bookmark_24_regular,
-            'Explore': Icons.explore_outlined,
-            'Profile': FluentIcons.person_24_regular,
+            'Feed': Ionicons.file_tray_outline,
+            'Anime': Ionicons.film_outline,
+            'Manga': Ionicons.bookmark_outline,
+            'Explore': Ionicons.compass_outline,
+            'Profile': Ionicons.person_outline,
           },
           onChanged: (page) => Config.setIndex(page),
           initial: index,

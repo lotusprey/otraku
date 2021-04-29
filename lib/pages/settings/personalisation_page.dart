@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/themes.dart';
@@ -8,7 +9,7 @@ import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class AppSettingsTab extends StatelessWidget {
+class PersonalisationTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView(
         physics: Config.PHYSICS,
@@ -77,8 +78,9 @@ class AppSettingsTab extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: ElevatedButton(
-              child: Text('Log Out'),
+            child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.exit_outline),
+              label: Text('Log Out'),
               onPressed: Client.logOut,
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(

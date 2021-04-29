@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/enums/themes.dart';
@@ -42,7 +42,7 @@ class UserHeader extends StatelessWidget {
           IconShade(ActionIcon(
             dimmed: false,
             tooltip: 'Settings',
-            icon: FluentIcons.settings_24_regular,
+            icon: Ionicons.cog_outline,
             onTap: () => Get.toNamed(SettingsPage.ROUTE),
           ))
         else if (user != null)

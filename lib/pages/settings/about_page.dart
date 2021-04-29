@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -38,8 +39,9 @@ class AboutTab extends StatelessWidget {
         const SizedBox(height: 30),
         Align(
           alignment: Alignment.center,
-          child: ElevatedButton(
-            child: Text('Discord'),
+          child: ElevatedButton.icon(
+            icon: const Icon(Ionicons.logo_discord),
+            label: Text('Discord'),
             onPressed: () {
               try {
                 launch('https://discord.gg/YN2QWVbFef');
@@ -51,8 +53,9 @@ class AboutTab extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.center,
-          child: ElevatedButton(
-            child: Text('Privacy Policy'),
+          child: ElevatedButton.icon(
+            icon: const Icon(Ionicons.finger_print),
+            label: Text('Privacy Policy'),
             onPressed: () {
               try {
                 launch('https://sites.google.com/view/otraku/privacy-policy');

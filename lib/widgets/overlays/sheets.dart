@@ -1,4 +1,3 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -65,7 +64,7 @@ class Sheet extends StatelessWidget {
                 Navigator.pop(context);
               },
               icon: Icon(
-                FluentIcons.checkmark_20_filled,
+                Icons.done_rounded,
                 color: Theme.of(context).accentColor,
                 size: Style.ICON_SMALL,
               ),
@@ -328,7 +327,7 @@ class _SortSheet extends StatelessWidget {
                         child: IconButton(
                           padding: const EdgeInsets.all(0),
                           icon: const Icon(
-                            FluentIcons.arrow_down_20_filled,
+                            Icons.arrow_downward_rounded,
                             size: Style.ICON_SMALL,
                           ),
                           color: Theme.of(context).backgroundColor,
@@ -349,7 +348,7 @@ class _SortSheet extends StatelessWidget {
                         child: IconButton(
                           padding: const EdgeInsets.all(0),
                           icon: const Icon(
-                            FluentIcons.arrow_up_20_filled,
+                            Icons.arrow_upward_rounded,
                             size: Style.ICON_SMALL,
                           ),
                           color: Theme.of(context).backgroundColor,

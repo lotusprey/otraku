@@ -1,7 +1,7 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/staff.dart';
@@ -111,7 +111,7 @@ class StaffPage extends StatelessWidget {
                   const Spacer(),
                   ActionIcon(
                     tooltip: 'Sort',
-                    icon: FluentIcons.arrow_sort_24_filled,
+                    icon: Ionicons.filter_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(

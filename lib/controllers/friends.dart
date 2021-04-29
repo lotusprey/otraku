@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
@@ -23,10 +24,13 @@ class Friends extends ScrollxController {
   Friends(this.id, this._onFollowing);
 
   late UserModel _model;
+  final _keys = [UniqueKey(), UniqueKey()];
   bool _onFollowing;
 
   List<BrowseResultModel> get users =>
       _onFollowing ? _model.following.items : _model.followers.items;
+
+  UniqueKey get key => _keys[_onFollowing ? 0 : 1];
 
   bool get onFollowing => _onFollowing;
   set onFollowing(bool val) {

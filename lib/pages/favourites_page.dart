@@ -16,41 +16,43 @@ class FavouritesPage extends StatelessWidget {
   FavouritesPage(this.id);
 
   @override
-  Widget build(BuildContext context) {
-    return GetBuilder<Favourites>(
-      tag: id.toString(),
-      builder: (favourites) => Scaffold(
-        extendBody: true,
-        bottomNavigationBar: NavBar(
-          options: {
-            'Anime': FluentIcons.movies_and_tv_24_regular,
-            'Manga': FluentIcons.bookmark_24_regular,
-            'Characters': FluentIcons.accessibility_24_regular,
-            'Staff': FluentIcons.mic_on_24_regular,
-            'Studios': FluentIcons.building_24_regular,
-          },
-          initial: favourites.pageIndex,
-          onChanged: (index) => favourites.pageIndex = index,
+  Widget build(BuildContext context) => GetBuilder<Favourites>(
+        tag: id.toString(),
+        builder: (favourites) => Scaffold(
+          extendBody: true,
+          bottomNavigationBar: NavBar(
+            options: {
+              'Anime': FluentIcons.movies_and_tv_24_regular,
+              'Manga': FluentIcons.bookmark_24_regular,
+              'Characters': FluentIcons.accessibility_24_regular,
+              'Staff': FluentIcons.mic_on_24_regular,
+              'Studios': FluentIcons.building_24_regular,
+            },
+            initial: favourites.pageIndex,
+            onChanged: (index) => favourites.pageIndex = index,
+          ),
+          appBar: CustomAppBar(title: 'Favourite ${favourites.pageName}'),
+          body: Padding(
+            padding: EdgeInsets.only(bottom: NavBar.offset(context)),
+            child: AnimatedSwitcher(
+              duration: Config.TAB_SWITCH_DURATION,
+              child: Center(
+                key: favourites.key,
+                child: favourites.favourites.isNotEmpty
+                    ? favourites.pageIndex == UserModel.STUDIO_FAV
+                        ? TitleList(favourites.favourites, sliver: false)
+                        : TileGrid(
+                            tileData: favourites.favourites,
+                            tileModel: Config.highTile,
+                            scrollCtrl: favourites.scrollCtrl,
+                          )
+                    : Text(
+                        'Nothing here',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+              ),
+            ),
+          ),
         ),
-        appBar: CustomAppBar(title: 'Favourite ${favourites.pageName}'),
-        body: Padding(
-          padding: EdgeInsets.only(bottom: NavBar.offset(context)),
-          child: favourites.favourites.isNotEmpty
-              ? favourites.pageIndex == UserModel.STUDIO_FAV
-                  ? TitleList(favourites.favourites, sliver: false)
-                  : TileGrid(
-                      tileData: favourites.favourites,
-                      tileModel: Config.highTile,
-                      scrollCtrl: favourites.scrollCtrl,
-                    )
-              : Center(
-                  child: Text(
-                    'Nothing here',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
+      );
 }

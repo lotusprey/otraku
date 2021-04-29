@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
@@ -36,16 +37,22 @@ class Favourites extends ScrollxController {
 
   late UserModel _model;
   int _pageIndex = UserModel.ANIME_FAV;
+  final _keys = [
+    UniqueKey(),
+    UniqueKey(),
+    UniqueKey(),
+    UniqueKey(),
+    UniqueKey(),
+  ];
 
   bool get hasNextPage => _model.favourites[_pageIndex].hasNextPage;
-
   List<BrowseResultModel> get favourites => _model.favourites[_pageIndex].items;
+  UniqueKey get key => _keys[_pageIndex];
 
   int get pageIndex => _pageIndex;
-
   set pageIndex(int index) {
     _pageIndex = index;
-    update();
+    scrollTo(0).then((_) => update());
   }
 
   String get pageName {

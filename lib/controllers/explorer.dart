@@ -202,6 +202,7 @@ class Explorer extends ScrollxController implements Filterable {
       _isLoading.value = true;
       _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
+      scrollTo(0);
     }
 
     String query;
@@ -266,13 +267,12 @@ class Explorer extends ScrollxController implements Filterable {
     else if (data['reviews'] != null)
       for (final r in data['reviews']) items.add(BrowseResultModel.review(r));
 
-    if (clean) {
-      scrollTo(0);
+    if (clean)
       _results.update((r) {
         r!.clear();
         r.append(items, data!['pageInfo']['hasNextPage']);
       });
-    } else
+    else
       _results.update(
         (r) => r!.append(items, data!['pageInfo']['hasNextPage']),
       );
@@ -281,6 +281,7 @@ class Explorer extends ScrollxController implements Filterable {
   }
 
   Future<void> fetchPage() async {
+    print('fetched');
     _filters[Filterable.PAGE]++;
     await fetch(clean: false);
   }

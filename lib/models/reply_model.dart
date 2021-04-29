@@ -1,14 +1,14 @@
 import 'package:otraku/utils/convert.dart';
 
 class ReplyModel {
-  final int? id;
-  final int? userId;
-  final String? userName;
+  final int id;
+  final int userId;
+  final String userName;
   final String? userImage;
   final String text;
   final String createdAt;
-  int? _likeCount;
-  bool? _isLiked;
+  int likeCount;
+  bool isLiked;
 
   ReplyModel._({
     required this.id,
@@ -17,29 +17,28 @@ class ReplyModel {
     required this.userImage,
     required this.text,
     required this.createdAt,
-    required likes,
-    required liked,
-  }) {
-    _likeCount = likes;
-    _isLiked = liked;
+    this.likeCount = 0,
+    this.isLiked = false,
+  });
+
+  factory ReplyModel(final Map<String, dynamic> map) {
+    if (map['id'] == null || map['user']?['id'] == null)
+      throw ArgumentError.notNull('id/userId');
+
+    return ReplyModel._(
+      id: map['id'],
+      likeCount: map['likeCount'] ?? 0,
+      isLiked: map['isLiked'] ?? false,
+      userId: map['user']['id'],
+      userName: map['user']['name'] ?? '',
+      userImage: map['user']['avatar']['large'],
+      text: map['text'] ?? '',
+      createdAt: Convert.millisecondsToTimeString(map['createdAt']),
+    );
   }
 
-  factory ReplyModel(final Map<String, dynamic> map) => ReplyModel._(
-        id: map['id'],
-        likes: map['likeCount'],
-        liked: map['isLiked'],
-        userId: map['user']['id'],
-        userName: map['user']['name'],
-        userImage: map['user']['avatar']['large'],
-        text: map['text'] ?? '',
-        createdAt: Convert.millisecondsToTimeString(map['createdAt']),
-      );
-
-  int? get likeCount => _likeCount;
-  bool? get isLiked => _isLiked;
-
   void toggleLike(final Map<String, dynamic> map) {
-    _likeCount = map['likeCount'];
-    _isLiked = map['isLiked'];
+    likeCount = map['likeCount'];
+    isLiked = map['isLiked'];
   }
 }

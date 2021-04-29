@@ -131,7 +131,7 @@ class UserReply extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         BrowseIndexer(
-          id: reply.userId!,
+          id: reply.userId,
           imageUrl: reply.userImage,
           browsable: Browsable.user,
           child: Row(
@@ -147,7 +147,7 @@ class UserReply extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Text(
-                reply.userName!,
+                reply.userName,
                 style: Theme.of(context).textTheme.bodyText1,
               ),
             ],
@@ -207,7 +207,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: !widget.reply.isLiked! ? 'Like' : 'Unlike',
+      message: !widget.reply.isLiked ? 'Like' : 'Unlike',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () =>
@@ -216,7 +216,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
           children: [
             Text(
               widget.reply.likeCount.toString(),
-              style: !widget.reply.isLiked!
+              style: !widget.reply.isLiked
                   ? Theme.of(context).textTheme.subtitle2
                   : Theme.of(context)
                       .textTheme
@@ -227,8 +227,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
             Icon(
               Icons.favorite,
               size: Style.ICON_SMALL,
-              color:
-                  widget.reply.isLiked! ? Theme.of(context).errorColor : null,
+              color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
             ),
           ],
         ),

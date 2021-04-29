@@ -51,7 +51,7 @@ class ActivityModel {
   factory ActivityModel(Map<String, dynamic> map) {
     switch (map['type']) {
       case 'TEXT':
-        if (map['user'] == null) return ActivityModel.empty();
+        if (map['user'] == null) throw ArgumentError.notNull('user');
 
         return ActivityModel._(
           id: map['id'],
@@ -76,7 +76,7 @@ class ActivityModel {
         );
       case 'ANIME_LIST':
         if (map['user'] == null || map['media'] == null)
-          return ActivityModel.empty();
+          throw ArgumentError.notNull('user/media');
         final progress =
             map['progress'] != null ? '${map['progress']} of ' : '';
         final status = (map['status'] as String)[0].toUpperCase() +
@@ -105,7 +105,7 @@ class ActivityModel {
         );
       case 'MANGA_LIST':
         if (map['user'] == null || map['media'] == null)
-          return ActivityModel.empty();
+          throw ArgumentError.notNull('user/media');
         final progress =
             map['progress'] != null ? '${map['progress']} of ' : '';
         final status = (map['status'] as String)[0].toUpperCase() +
@@ -134,7 +134,7 @@ class ActivityModel {
         );
       case 'MESSAGE':
         if (map['messenger'] == null || map['recipient'] == null)
-          return ActivityModel.empty();
+          throw ArgumentError.notNull('messenger/recipient');
 
         return ActivityModel._(
           id: map['id'],
@@ -158,26 +158,19 @@ class ActivityModel {
           isSubscribed: map['isSubscribed'] ?? false,
         );
       default:
-        return ActivityModel.empty();
+        throw ArgumentError.notNull('type');
     }
   }
-
-  factory ActivityModel.empty() => ActivityModel._(
-        id: 0,
-        type: ActivityType.TEXT,
-        agentId: null,
-        agentImage: null,
-        agentName: null,
-        createdAt: '',
-      );
-
-  bool get valid => agentId != null;
 
   void appendReplies(final Map<String, dynamic> map) {
     if (map['activityReplies'] == null) return;
 
     final rl = <ReplyModel>[];
-    for (final r in map['activityReplies']) rl.add(ReplyModel(r));
+    for (final r in map['activityReplies'])
+      try {
+        rl.add(ReplyModel(r));
+      } catch (_) {}
+
     replies.append(rl, map['pageInfo']['hasNextPage']);
 
     if (replyCount < replies.items.length) replyCount = replies.items.length;

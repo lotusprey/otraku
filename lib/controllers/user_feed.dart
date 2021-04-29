@@ -66,8 +66,9 @@ class UserFeed extends ScrollxController {
 
     final al = <ActivityModel>[];
     for (final a in data['Page']['activities']) {
-      final m = ActivityModel(a);
-      if (m.valid) al.add(m);
+      try {
+        al.add(ActivityModel(a));
+      } catch (_) {}
     }
     _model.activities.append(al, data['Page']['pageInfo']['hasNextPage']);
     update();

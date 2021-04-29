@@ -223,10 +223,10 @@ class Viewer extends ScrollxController {
 
     final al = <ActivityModel>[];
     for (final a in data['Page']['activities']) {
-      final m = ActivityModel(a);
-      if (!m.valid) continue;
-      al.add(m);
-      _idNotIn.add(al.last.id);
+      try {
+        al.add(ActivityModel(a));
+        _idNotIn.add(al.last.id);
+      } catch (_) {}
     }
 
     _activities.update(

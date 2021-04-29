@@ -57,51 +57,53 @@ class UserTab extends StatelessWidget {
             isMe: id == Client.viewerId,
             avatarUrl: avatarUrl,
           ),
-          SliverPadding(
-            padding: padding,
-            sliver: SliverGrid.extent(
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              maxCrossAxisExtent: 300,
-              childAspectRatio: 4,
-              children: [
-                _Button(
-                  FluentIcons.movies_and_tv_24_filled,
-                  'Anime',
-                  () => id == Client.viewerId
-                      ? Config.setIndex(HomePage.ANIME_LIST)
-                      : _pushCollection(true),
-                ),
-                _Button(
-                  FluentIcons.bookmark_24_filled,
-                  'Manga',
-                  () => id == Client.viewerId
-                      ? Config.setIndex(HomePage.MANGA_LIST)
-                      : _pushCollection(false),
-                ),
-                _Button(
-                  FluentIcons.people_team_20_filled,
-                  'Following',
-                  () => Get.toNamed(FriendsPage.ROUTE, arguments: [id, true]),
-                ),
-                _Button(
-                  FluentIcons.people_audience_20_filled,
-                  'Followers',
-                  () => Get.toNamed(FriendsPage.ROUTE, arguments: [id, false]),
-                ),
-                _Button(
-                  FluentIcons.comment_24_filled,
-                  'User Feed',
-                  () => Get.toNamed(UserFeedPage.ROUTE, arguments: id),
-                ),
-                _Button(
-                  FluentIcons.heart_24_filled,
-                  'Favourites',
-                  () => Get.toNamed(FavouritesPage.ROUTE, arguments: id),
-                ),
-              ],
+          if (user.model != null)
+            SliverPadding(
+              padding: padding,
+              sliver: SliverGrid.extent(
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                maxCrossAxisExtent: 300,
+                childAspectRatio: 4,
+                children: [
+                  _Button(
+                    FluentIcons.movies_and_tv_24_filled,
+                    'Anime',
+                    () => id == Client.viewerId
+                        ? Config.setIndex(HomePage.ANIME_LIST)
+                        : _pushCollection(true),
+                  ),
+                  _Button(
+                    FluentIcons.bookmark_24_filled,
+                    'Manga',
+                    () => id == Client.viewerId
+                        ? Config.setIndex(HomePage.MANGA_LIST)
+                        : _pushCollection(false),
+                  ),
+                  _Button(
+                    FluentIcons.people_team_20_filled,
+                    'Following',
+                    () => Get.toNamed(FriendsPage.ROUTE, arguments: [id, true]),
+                  ),
+                  _Button(
+                    FluentIcons.people_audience_20_filled,
+                    'Followers',
+                    () =>
+                        Get.toNamed(FriendsPage.ROUTE, arguments: [id, false]),
+                  ),
+                  _Button(
+                    FluentIcons.comment_24_filled,
+                    'User Feed',
+                    () => Get.toNamed(UserFeedPage.ROUTE, arguments: id),
+                  ),
+                  _Button(
+                    FluentIcons.heart_24_filled,
+                    'Favourites',
+                    () => Get.toNamed(FavouritesPage.ROUTE, arguments: id),
+                  ),
+                ],
+              ),
             ),
-          ),
           if (user.model?.description != null)
             SliverToBoxAdapter(
               child: Container(

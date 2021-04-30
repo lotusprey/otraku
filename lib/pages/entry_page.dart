@@ -51,7 +51,7 @@ class _EntryPageState extends State<EntryPage> {
                         onTap: () => showPopUp(
                           context,
                           AlertDialog(
-                            shape: RoundedRectangleBorder(
+                            shape: const RoundedRectangleBorder(
                               borderRadius: Config.BORDER_RADIUS,
                             ),
                             backgroundColor: Theme.of(context).primaryColor,

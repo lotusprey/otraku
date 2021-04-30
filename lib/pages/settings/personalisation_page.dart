@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
@@ -19,7 +17,7 @@ class PersonalisationTab extends StatelessWidget {
             children: [
               Flexible(
                 child: DropDownField<int>(
-                  title: 'Theme',
+                  title: 'Theme Mode',
                   initialValue: Config.storage.read(Config.THEME_MODE) ?? 0,
                   items: {'Auto': 0, 'Light': 1, 'Dark': 2},
                   onChanged: (val) {
@@ -76,19 +74,6 @@ class PersonalisationTab extends StatelessWidget {
               Config.updateTheme();
             },
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: ElevatedButton.icon(
-              icon: const Icon(Ionicons.exit_outline),
-              label: Text('Log Out'),
-              onPressed: Client.logOut,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).errorColor,
-                ),
-              ),
-            ),
-          ),
           SizedBox(height: NavBar.offset(context)),
         ],
       );
@@ -114,8 +99,8 @@ class _Radio extends StatefulWidget {
 }
 
 class __RadioState extends State<_Radio> {
-  int? _leftValue;
-  int? _rightValue;
+  late int _leftValue;
+  late int _rightValue;
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +110,10 @@ class __RadioState extends State<_Radio> {
       itemBuilder: (_, index) => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Radio(
+          Radio<int>(
             value: index,
             groupValue: _leftValue,
-            onChanged: (dynamic _) {
+            onChanged: (_) {
               widget.onChangedLeft(index);
               setState(() => _leftValue = index);
             },
@@ -137,10 +122,10 @@ class __RadioState extends State<_Radio> {
             widget.options[index]!,
             style: Theme.of(context).textTheme.bodyText1,
           ),
-          Radio(
+          Radio<int>(
             value: index,
             groupValue: _rightValue,
-            onChanged: (dynamic _) {
+            onChanged: (_) {
               widget.onChangedRight(index);
               setState(() => _rightValue = index);
             },

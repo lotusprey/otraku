@@ -40,41 +40,50 @@ class AboutTab extends StatelessWidget {
         const SizedBox(height: 30),
         Align(
           alignment: Alignment.center,
-          child: ElevatedButton.icon(
-            icon: const Icon(Ionicons.logo_discord),
-            label: Text('Discord'),
-            onPressed: () {
-              try {
-                launch('https://discord.gg/YN2QWVbFef');
-              } catch (err) {
-                Toast.show(context, 'Couldn\'t open link: $err');
-              }
-            },
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.logo_discord),
+              label: Text('Discord'),
+              onPressed: () {
+                try {
+                  launch('https://discord.gg/YN2QWVbFef');
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ),
           ),
         ),
         Align(
           alignment: Alignment.center,
-          child: ElevatedButton.icon(
-            icon: const Icon(Ionicons.finger_print),
-            label: Text('Privacy Policy'),
-            onPressed: () {
-              try {
-                launch('https://sites.google.com/view/otraku/privacy-policy');
-              } catch (err) {
-                Toast.show(context, 'Couldn\'t open link: $err');
-              }
-            },
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.finger_print),
+              label: Text('Privacy Policy'),
+              onPressed: () {
+                try {
+                  launch('https://sites.google.com/view/otraku/privacy-policy');
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ),
           ),
         ),
         Align(
           alignment: Alignment.center,
-          child: ElevatedButton.icon(
-            icon: const Icon(Ionicons.log_out_outline),
-            label: Text('Log Out'),
-            onPressed: Client.logOut,
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
-                Theme.of(context).errorColor,
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.log_out_outline),
+              label: Text('Log Out'),
+              onPressed: Client.logOut,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(
+                  Theme.of(context).errorColor,
+                ),
               ),
             ),
           ),

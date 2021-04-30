@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/enums/browsable.dart';
@@ -25,7 +26,7 @@ class NotificationsPage extends StatelessWidget {
           ActionIcon(
             dimmed: false,
             tooltip: 'Filter',
-            icon: Icons.filter_alt_outlined,
+            icon: Ionicons.funnel_outline,
             onTap: () => Sheet.show(
               ctx: context,
               sheet: OptionSheet(

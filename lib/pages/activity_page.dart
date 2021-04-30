@@ -90,7 +90,7 @@ class ActivityPage extends StatelessWidget {
                     SliverToBoxAdapter(
                         child: Padding(
                       padding: Config.PADDING,
-                      child: ActivityBox(model, canPush: false),
+                      child: ActivityBox(model, canPushPage: false),
                     )),
                     SliverPadding(
                       padding: Config.PADDING,

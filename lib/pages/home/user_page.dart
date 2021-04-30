@@ -63,8 +63,8 @@ class UserTab extends StatelessWidget {
               sliver: SliverGrid.extent(
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
-                maxCrossAxisExtent: 300,
-                childAspectRatio: 4,
+                maxCrossAxisExtent: 200,
+                childAspectRatio: 5,
                 children: [
                   _Button(
                     Ionicons.film,

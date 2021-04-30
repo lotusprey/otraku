@@ -5,6 +5,7 @@ import 'package:otraku/models/helper_models/tile_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class TileGrid extends StatelessWidget {
   final List<BrowseResultModel> tileData;
@@ -28,6 +29,7 @@ class TileGrid extends StatelessWidget {
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
+      bottom: sliver ? 0 : NavBar.offset(context),
       top: 15,
     );
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class TitleList extends StatelessWidget {
   final List<BrowseResultModel> results;
@@ -13,9 +14,19 @@ class TitleList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sidePadding = MediaQuery.of(context).size.width > 620
+        ? (MediaQuery.of(context).size.width - 600) / 2.0
+        : 10.0;
+    final padding = EdgeInsets.only(
+      left: sidePadding,
+      right: sidePadding,
+      bottom: sliver ? 0 : NavBar.offset(context),
+      top: 15,
+    );
+
     if (sliver)
       return SliverPadding(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+        padding: padding,
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
             (_, i) => _Tile(results[i]),
@@ -26,7 +37,7 @@ class TitleList extends StatelessWidget {
       );
 
     return ListView.builder(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+      padding: padding,
       controller: scrollCtrl,
       physics: Config.PHYSICS,
       itemExtent: 60,

@@ -29,23 +29,20 @@ class FriendsPage extends StatelessWidget {
             onChanged: (page) => friends.onFollowing = page == 0 ? true : false,
             initial: friends.onFollowing ? 0 : 1,
           ),
-          body: Padding(
-            padding: EdgeInsets.only(bottom: NavBar.offset(context)),
-            child: AnimatedSwitcher(
-              duration: Config.TAB_SWITCH_DURATION,
-              child: Center(
-                key: friends.key,
-                child: friends.users.isNotEmpty
-                    ? TileGrid(
-                        tileData: friends.users,
-                        tileModel: Config.squareTile,
-                        scrollCtrl: friends.scrollCtrl,
-                      )
-                    : Text(
-                        'No Users',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-              ),
+          body: AnimatedSwitcher(
+            duration: Config.TAB_SWITCH_DURATION,
+            child: Center(
+              key: friends.key,
+              child: friends.users.isNotEmpty
+                  ? TileGrid(
+                      tileData: friends.users,
+                      tileModel: Config.squareTile,
+                      scrollCtrl: friends.scrollCtrl,
+                    )
+                  : Text(
+                      'No Users',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
             ),
           ),
         ),

@@ -32,25 +32,22 @@ class FavouritesPage extends StatelessWidget {
             onChanged: (index) => favourites.pageIndex = index,
           ),
           appBar: CustomAppBar(title: 'Favourite ${favourites.pageName}'),
-          body: Padding(
-            padding: EdgeInsets.only(bottom: NavBar.offset(context)),
-            child: AnimatedSwitcher(
-              duration: Config.TAB_SWITCH_DURATION,
-              child: Center(
-                key: favourites.key,
-                child: favourites.favourites.isNotEmpty
-                    ? favourites.pageIndex == UserModel.STUDIO_FAV
-                        ? TitleList(favourites.favourites, sliver: false)
-                        : TileGrid(
-                            tileData: favourites.favourites,
-                            tileModel: Config.highTile,
-                            scrollCtrl: favourites.scrollCtrl,
-                          )
-                    : Text(
-                        'Nothing here',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-              ),
+          body: AnimatedSwitcher(
+            duration: Config.TAB_SWITCH_DURATION,
+            child: Center(
+              key: favourites.key,
+              child: favourites.favourites.isNotEmpty
+                  ? favourites.pageIndex == UserModel.STUDIO_FAV
+                      ? TitleList(favourites.favourites, sliver: false)
+                      : TileGrid(
+                          tileData: favourites.favourites,
+                          tileModel: Config.highTile,
+                          scrollCtrl: favourites.scrollCtrl,
+                        )
+                  : Text(
+                      'Nothing here',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
             ),
           ),
         ),

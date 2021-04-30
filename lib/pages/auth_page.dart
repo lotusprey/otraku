@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/loader.dart';
@@ -81,8 +82,9 @@ class _AuthPageState extends State<AuthPage> {
                           style: Theme.of(context).textTheme.headline1,
                         ),
                       ),
-                      ElevatedButton(
-                        child: Text('Connect to AniList'),
+                      ElevatedButton.icon(
+                        icon: const Icon(Ionicons.log_in_outline),
+                        label: Text('Connect to AniList'),
                         onPressed: _requestAccessToken,
                       ),
                     ],

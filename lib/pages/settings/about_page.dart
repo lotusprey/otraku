@@ -3,6 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -79,10 +80,35 @@ class AboutTab extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.log_out_outline),
               label: Text('Log Out'),
-              onPressed: Client.logOut,
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
                   Theme.of(context).errorColor,
+                ),
+              ),
+              onPressed: () => showPopUp(
+                context,
+                AlertDialog(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: Config.BORDER_RADIUS,
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor,
+                  title: Text(
+                    'Log out? (Don\'t do it)',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  actions: [
+                    TextButton(
+                      child: Text(
+                        'No',
+                        style: TextStyle(color: Theme.of(context).dividerColor),
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    TextButton(
+                      child: Text('Yes'),
+                      onPressed: Client.logOut,
+                    ),
+                  ],
                 ),
               ),
             ),

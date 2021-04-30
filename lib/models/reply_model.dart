@@ -37,8 +37,13 @@ class ReplyModel {
     );
   }
 
-  void toggleLike(final Map<String, dynamic> map) {
-    likeCount = map['likeCount'];
-    isLiked = map['isLiked'];
+  void toggleLike() {
+    if (isLiked) {
+      isLiked = false;
+      likeCount--;
+    } else {
+      isLiked = true;
+      likeCount++;
+    }
   }
 }

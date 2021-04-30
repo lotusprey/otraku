@@ -210,8 +210,12 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
       message: !widget.reply.isLiked ? 'Like' : 'Unlike',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () =>
-            Activity.toggleReplyLike(widget.reply).then((_) => setState(() {})),
+        onTap: () {
+          setState(() => widget.reply.toggleLike());
+          Activity.toggleReplyLike(widget.reply).then((ok) {
+            if (!ok) setState(() => widget.reply.toggleLike());
+          });
+        },
         child: Row(
           children: [
             Text(

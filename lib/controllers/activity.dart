@@ -14,6 +14,7 @@ class Activity extends ScrollxController {
           replyCount
           likeCount
           isLiked
+          isSubscribed
           createdAt
           user {id name avatar {large}}
           text(asHtml: true)
@@ -24,6 +25,7 @@ class Activity extends ScrollxController {
           replyCount
           likeCount
           isLiked
+          isSubscribed
           createdAt
           user {id name avatar {large}}
           media {id type title{userPreferred} coverImage{large} format}
@@ -36,6 +38,7 @@ class Activity extends ScrollxController {
           replyCount
           likeCount
           isLiked
+          isSubscribed
           createdAt
           recipient {id name avatar {large}}
           messenger {id name avatar {large}}
@@ -115,34 +118,33 @@ class Activity extends ScrollxController {
     update();
   }
 
-  static Future<void> toggleActivityLike(ActivityModel activityModel) async {
+  static Future<bool> toggleSubscription(ActivityModel activityModel) async {
+    print(activityModel.isSubscribed);
+    final data = await Client.request(
+      _toggleSubscriptionMutation,
+      {'id': activityModel.id, 'subscribe': activityModel.isSubscribed},
+      popOnErr: false,
+    );
+    print(data);
+    return data != null;
+  }
+
+  static Future<bool> toggleLike(ActivityModel activityModel) async {
     final data = await Client.request(
       _toggleLikeMutation,
       {'id': activityModel.id, 'type': 'ACTIVITY'},
       popOnErr: false,
     );
-    if (data == null) return;
-    activityModel.toggleLike(data['ToggleLikeV2']);
+    return data != null;
   }
 
-  static Future<void> toggleReplyLike(ReplyModel reply) async {
+  static Future<bool> toggleReplyLike(ReplyModel reply) async {
     final data = await Client.request(
       _toggleLikeMutation,
       {'id': reply.id, 'type': 'ACTIVITY_REPLY'},
       popOnErr: false,
     );
-    if (data == null) return;
-    reply.toggleLike(data['ToggleLikeV2']);
-  }
-
-  static Future<void> toggleSubscription(ActivityModel activityModel) async {
-    final data = await Client.request(
-      _toggleSubscriptionMutation,
-      {'id': activityModel.id, 'subscribe': !activityModel.isSubscribed},
-      popOnErr: false,
-    );
-    if (data == null) return;
-    activityModel.toggleSubscription(data['ToggleActivitySubscription']);
+    return data != null;
   }
 
   @override

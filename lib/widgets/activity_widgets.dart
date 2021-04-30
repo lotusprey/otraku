@@ -145,8 +145,12 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
           message: !widget.activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Activity.toggleSubscription(widget.activity)
-                .then((_) => setState(() {})),
+            onTap: () {
+              setState(() => widget.activity.toggleSubscription());
+              Activity.toggleSubscription(widget.activity).then((ok) {
+                if (!ok) setState(() => widget.activity.toggleSubscription());
+              });
+            },
             child: Icon(
               Ionicons.notifications,
               size: Style.ICON_SMALL,
@@ -195,8 +199,12 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
           message: !widget.activity.isLiked ? 'Like' : 'Unlike',
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Activity.toggleActivityLike(widget.activity)
-                .then((_) => setState(() {})),
+            onTap: () {
+              setState(() => widget.activity.toggleLike());
+              Activity.toggleLike(widget.activity).then((ok) {
+                if (!ok) setState(() => widget.activity.toggleLike());
+              });
+            },
             child: Row(
               children: [
                 Text(

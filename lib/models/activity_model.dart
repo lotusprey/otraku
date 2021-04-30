@@ -176,13 +176,17 @@ class ActivityModel {
     if (replyCount < replies.items.length) replyCount = replies.items.length;
   }
 
-  void toggleLike(final Map<String, dynamic> map) {
-    likeCount = map['likeCount'] ?? 0;
-    isLiked = map['isLiked'] ?? false;
-  }
+  void toggleSubscription() => isSubscribed = !isSubscribed;
 
-  void toggleSubscription(final Map<String, dynamic> map) =>
-      isSubscribed = map['isSubscribed'] ?? false;
+  void toggleLike() {
+    if (isLiked) {
+      isLiked = false;
+      likeCount--;
+    } else {
+      isLiked = true;
+      likeCount++;
+    }
+  }
 
   void updateFrom(ActivityModel model) {
     isSubscribed = model.isSubscribed;

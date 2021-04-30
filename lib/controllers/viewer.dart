@@ -25,6 +25,7 @@ class Viewer extends ScrollxController {
             replyCount
             likeCount
             isLiked
+            isSubscribed
             createdAt
             user {id name avatar {large}}
             text(asHtml: true)
@@ -35,6 +36,7 @@ class Viewer extends ScrollxController {
             replyCount
             likeCount
             isLiked
+            isSubscribed
             createdAt
             user {id name avatar {large}}
             media {id type title{userPreferred} coverImage{large} format}
@@ -47,6 +49,7 @@ class Viewer extends ScrollxController {
             replyCount
             likeCount
             isLiked
+            isSubscribed
             createdAt
             recipient {id name avatar {large}}
             messenger {id name avatar {large}}

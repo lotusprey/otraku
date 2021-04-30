@@ -1,5 +1,5 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
@@ -111,7 +111,7 @@ class _ChipGridState extends State<ChipGrid> {
                 const SizedBox(width: 15),
                 ActionIcon(
                   tooltip: 'Options',
-                  icon: FluentIcons.options_24_regular,
+                  icon: Ionicons.options_outline,
                   onTap: () => Sheet.show(
                     ctx: context,
                     sheet: widget.tags != null

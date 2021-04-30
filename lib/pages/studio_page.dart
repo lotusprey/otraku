@@ -1,7 +1,7 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
@@ -58,7 +58,7 @@ class StudioPage extends StatelessWidget {
                   ActionIcon(
                     tooltip: 'Filter',
                     active: studio.onList != null,
-                    icon: Icons.filter_alt_outlined,
+                    icon: Ionicons.funnel_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
                       sheet: OptionSheet(
@@ -83,7 +83,7 @@ class StudioPage extends StatelessWidget {
                   const SizedBox(width: 15),
                   ActionIcon(
                     tooltip: 'Sort',
-                    icon: FluentIcons.arrow_sort_24_filled,
+                    icon: Ionicons.filter_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(

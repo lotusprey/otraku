@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/pages/notifications_page.dart';
 import 'package:otraku/utils/config.dart';
@@ -79,7 +80,7 @@ class _Header extends StatelessWidget {
         const Spacer(),
         IconButton(
           tooltip: 'Filter',
-          icon: const Icon(Icons.filter_alt_outlined),
+          icon: const Icon(Ionicons.funnel_outline),
           onPressed: () => Sheet.show(
             ctx: context,
             sheet: SelectionSheet(
@@ -104,7 +105,7 @@ class _Header extends StatelessWidget {
                   if (viewer.unreadCount > 0) ...[
                     Positioned(
                       right: 0,
-                      child: const Icon(Icons.notifications_outlined),
+                      child: const Icon(Ionicons.notifications_outline),
                     ),
                     Container(
                       constraints: const BoxConstraints(

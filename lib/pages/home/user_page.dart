@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/pages/friends_page.dart';
@@ -67,37 +67,37 @@ class UserTab extends StatelessWidget {
                 childAspectRatio: 4,
                 children: [
                   _Button(
-                    FluentIcons.movies_and_tv_24_filled,
+                    Ionicons.film,
                     'Anime',
                     () => id == Client.viewerId
                         ? Config.setIndex(HomePage.ANIME_LIST)
                         : _pushCollection(true),
                   ),
                   _Button(
-                    FluentIcons.bookmark_24_filled,
+                    Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
                         ? Config.setIndex(HomePage.MANGA_LIST)
                         : _pushCollection(false),
                   ),
                   _Button(
-                    FluentIcons.people_team_20_filled,
+                    Ionicons.people_circle,
                     'Following',
                     () => Get.toNamed(FriendsPage.ROUTE, arguments: [id, true]),
                   ),
                   _Button(
-                    FluentIcons.people_audience_20_filled,
+                    Ionicons.person_circle,
                     'Followers',
                     () =>
                         Get.toNamed(FriendsPage.ROUTE, arguments: [id, false]),
                   ),
                   _Button(
-                    FluentIcons.comment_24_filled,
+                    Ionicons.chatbox,
                     'User Feed',
                     () => Get.toNamed(UserFeedPage.ROUTE, arguments: id),
                   ),
                   _Button(
-                    FluentIcons.heart_24_filled,
+                    Icons.favorite,
                     'Favourites',
                     () => Get.toNamed(FavouritesPage.ROUTE, arguments: id),
                   ),

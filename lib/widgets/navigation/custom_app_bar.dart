@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/widgets/action_icon.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -12,7 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> trailing;
 
   CustomAppBar({
-    this.leading = FluentIcons.arrow_left_24_filled,
+    this.leading = Ionicons.chevron_back_outline,
     this.title = '',
     this.titleWidget,
     this.trailing = const [],

@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/friends.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
@@ -23,8 +23,8 @@ class FriendsPage extends StatelessWidget {
           ),
           bottomNavigationBar: NavBar(
             options: {
-              'Following': FluentIcons.people_team_20_filled,
-              'Followers': FluentIcons.people_audience_20_regular,
+              'Following': Ionicons.people_circle,
+              'Followers': Ionicons.person_circle,
             },
             onChanged: (page) => friends.onFollowing = page == 0 ? true : false,
             initial: friends.onFollowing ? 0 : 1,

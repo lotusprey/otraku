@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
@@ -181,7 +181,7 @@ class _MediaListTile extends StatelessWidget {
                                 constraints: iconConstraints,
                                 padding: const EdgeInsets.all(0),
                                 icon: const Icon(
-                                  Icons.add_rounded,
+                                  Ionicons.add_outline,
                                   size: Style.ICON_SMALL,
                                 ),
                                 onPressed: () => increment(entry),
@@ -206,8 +206,7 @@ class _MediaListTile extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         const Icon(
-                                          FluentIcons
-                                              .arrow_repeat_all_20_filled,
+                                          Ionicons.repeat,
                                           size: Style.ICON_SMALL,
                                         ),
                                         const SizedBox(width: 5),
@@ -231,7 +230,7 @@ class _MediaListTile extends StatelessWidget {
                                     constraints: iconConstraints,
                                     padding: const EdgeInsets.all(0),
                                     icon: const Icon(
-                                      Icons.comment,
+                                      Ionicons.chatbox,
                                       size: Style.ICON_SMALL,
                                     ),
                                     onPressed: () => showPopUp(

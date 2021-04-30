@@ -1,6 +1,6 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/pages/media/overview_tab.dart';
@@ -35,7 +35,7 @@ class MediaPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            'Overview': FluentIcons.book_information_24_regular,
+            'Overview': Ionicons.book_outline,
             'Relations': Icons.emoji_people_outlined,
             'Social': Icons.rate_review_outlined,
           },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/activity_type.dart';
@@ -208,7 +209,7 @@ class _ActivityBoxState extends State<ActivityBox> {
                           ),
                           const SizedBox(width: 5),
                           const Icon(
-                            Icons.comment,
+                            Ionicons.chatbox,
                             size: Style.ICON_SMALL,
                           ),
                         ],
@@ -286,16 +287,13 @@ class _SubscribeIconState extends State<_SubscribeIcon> {
         behavior: HitTestBehavior.opaque,
         onTap: () => Activity.toggleSubscription(widget.activity)
             .then((_) => setState(() {})),
-        child: !widget.activity.isSubscribed
-            ? Icon(
-                Icons.notifications,
-                size: Style.ICON_SMALL,
-              )
-            : Icon(
-                Icons.notifications_active,
-                size: Style.ICON_SMALL,
-                color: Theme.of(context).accentColor,
-              ),
+        child: Icon(
+          Ionicons.notifications,
+          size: Style.ICON_SMALL,
+          color: !widget.activity.isSubscribed
+              ? null
+              : Theme.of(context).accentColor,
+        ),
       ),
     );
   }

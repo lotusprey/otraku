@@ -1,9 +1,9 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
@@ -27,7 +27,7 @@ class MediaControlHeader extends StatelessWidget {
     final header = TransparentHeader([
       ActionIcon(
         tooltip: collectionTag == null ? 'Types' : 'Lists',
-        icon: FluentIcons.list_24_regular,
+        icon: Ionicons.menu_outline,
         onTap: () => Scaffold.of(context).openDrawer(),
       ),
       const SizedBox(width: 15),
@@ -105,7 +105,7 @@ class MediaControlHeader extends StatelessWidget {
           if (type == Browsable.anime || type == Browsable.manga)
             return ActionIcon(
               tooltip: 'Sort',
-              icon: FluentIcons.arrow_sort_24_regular,
+              icon: Ionicons.filter_outline,
               onTap: () => Sheet.show(
                 ctx: context,
                 sheet: MediaSortSheet(
@@ -134,7 +134,7 @@ class MediaControlHeader extends StatelessWidget {
       ] else ...[
         ActionIcon(
           tooltip: 'Sort',
-          icon: FluentIcons.arrow_sort_24_regular,
+          icon: Ionicons.filter_outline,
           onTap: () => Sheet.show(
             ctx: context,
             sheet: CollectionSortSheet(collectionTag),
@@ -231,7 +231,7 @@ class __NavigationState extends State<_Navigation> {
             if (widget.search != null)
               ActionIcon(
                 tooltip: 'Search',
-                icon: FluentIcons.search_24_regular,
+                icon: Ionicons.search_outline,
                 onTap: () => setState(() => _searchMode = true),
               ),
           ] else
@@ -256,8 +256,7 @@ class __NavigationState extends State<_Navigation> {
                             tooltip: 'Hide',
                             constraints: const BoxConstraints(maxWidth: 40),
                             padding: const EdgeInsets.all(0),
-                            icon:
-                                const Icon(FluentIcons.chevron_right_24_filled),
+                            icon: const Icon(Ionicons.chevron_forward_outline),
                             iconSize: Style.ICON_SMALL,
                             color: Theme.of(context).disabledColor,
                             onPressed: () {
@@ -327,7 +326,7 @@ class __FilterState extends State<_Filter> {
   Widget build(BuildContext context) => ActionIcon(
         tooltip: 'Filter',
         active: _active,
-        icon: Icons.filter_alt_outlined,
+        icon: Ionicons.funnel_outline,
         onTap: () => Get.toNamed(FilterPage.ROUTE, arguments: [
           widget.collectionTag,
           (definitelyInactive) => definitelyInactive

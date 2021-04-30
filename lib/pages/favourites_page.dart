@@ -1,7 +1,7 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/favourites.dart';
+import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
@@ -22,11 +22,11 @@ class FavouritesPage extends StatelessWidget {
           extendBody: true,
           bottomNavigationBar: NavBar(
             options: {
-              'Anime': FluentIcons.movies_and_tv_24_regular,
-              'Manga': FluentIcons.bookmark_24_regular,
-              'Characters': FluentIcons.accessibility_24_regular,
-              'Staff': FluentIcons.mic_on_24_regular,
-              'Studios': FluentIcons.building_24_regular,
+              'Anime': Browsable.anime.icon,
+              'Manga': Browsable.manga.icon,
+              'Characters': Browsable.character.icon,
+              'Staff': Browsable.staff.icon,
+              'Studios': Browsable.studio.icon,
             },
             initial: favourites.pageIndex,
             onChanged: (index) => favourites.pageIndex = index,

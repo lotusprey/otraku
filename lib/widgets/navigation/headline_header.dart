@@ -1,6 +1,7 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:otraku/widgets/action_icon.dart';
 
 class HeadlineHeader extends StatelessWidget {
   final String headline;
@@ -41,13 +42,14 @@ class _Delegate implements SliverPersistentHeaderDelegate {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (canPop)
-              IconButton(
+            if (canPop) ...[
+              ActionIcon(
                 tooltip: 'Close',
-                padding: const EdgeInsets.only(right: 20),
-                icon: const Icon(FluentIcons.arrow_left_24_regular),
-                onPressed: () => Navigator.pop(context),
+                icon: Ionicons.chevron_back_outline,
+                onTap: () => Navigator.pop(context),
               ),
+              const SizedBox(width: 15),
+            ],
             Align(
               alignment: Alignment.centerLeft,
               child: Text(

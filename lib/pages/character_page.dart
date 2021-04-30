@@ -1,7 +1,7 @@
-import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -112,7 +112,7 @@ class CharacterPage extends StatelessWidget {
                 if (character.availableLanguages.length > 1)
                   ActionIcon(
                     tooltip: 'Language',
-                    icon: Icons.language,
+                    icon: Ionicons.globe_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
                       sheet: OptionSheet(
@@ -128,7 +128,7 @@ class CharacterPage extends StatelessWidget {
                 const SizedBox(width: 15),
                 ActionIcon(
                   tooltip: 'Sort',
-                  icon: FluentIcons.arrow_sort_24_filled,
+                  icon: Ionicons.filter_outline,
                   onTap: () => Sheet.show(
                     ctx: context,
                     sheet: MediaSortSheet(

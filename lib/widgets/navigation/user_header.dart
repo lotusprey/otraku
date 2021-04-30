@@ -247,6 +247,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.only(top: 5),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: _animation.value,

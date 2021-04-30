@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -63,6 +64,19 @@ class AboutTab extends StatelessWidget {
                 Toast.show(context, 'Couldn\'t open link: $err');
               }
             },
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: ElevatedButton.icon(
+            icon: const Icon(Ionicons.log_out_outline),
+            label: Text('Log Out'),
+            onPressed: Client.logOut,
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(
+                Theme.of(context).errorColor,
+              ),
+            ),
           ),
         ),
         SizedBox(height: NavBar.offset(context)),

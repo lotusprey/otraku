@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/widgets/navigation/media_control_header.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
+import 'package:otraku/widgets/navigation/control_header.dart';
 import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
@@ -62,7 +62,7 @@ class CollectionTab extends StatelessWidget {
             '${ofAnime ? 'Anime' : 'Manga'} List',
             id != Client.viewerId,
           ),
-          MediaControlHeader(collectionTag),
+          CollectionControlHeader(collectionTag),
           MediaList(collectionTag),
           SliverToBoxAdapter(
             child: SizedBox(height: NavBar.offset(context)),

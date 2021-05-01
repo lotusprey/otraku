@@ -1,109 +1,127 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/enums/themes.dart';
-import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/enums/themes.dart';
+import 'package:otraku/pages/filter_page.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
-import 'package:otraku/pages/filter_page.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/navigation/transparent_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class MediaControlHeader extends StatelessWidget {
-  final String? collectionTag;
-
-  const MediaControlHeader([this.collectionTag]);
+class CollectionControlHeader extends StatelessWidget {
+  final String tag;
+  CollectionControlHeader(this.tag);
 
   @override
   Widget build(BuildContext context) {
-    final header = TransparentHeader([
-      ActionIcon(
-        tooltip: collectionTag == null ? 'Types' : 'Lists',
-        icon: Ionicons.menu_outline,
-        onTap: () => Scaffold.of(context).openDrawer(),
-      ),
-      const SizedBox(width: 15),
-      if (collectionTag != null)
-        Obx(() {
-          final collection = Get.find<Collection>(tag: collectionTag);
-          return _Navigation(
-            scrollToTop: () => collection.scrollTo(0),
-            swipe: (int offset) => collection.listIndex += offset,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    collection.currentName!,
-                    style: Theme.of(context).textTheme.headline2,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+    return GetBuilder<Collection>(
+      tag: tag,
+      builder: (collection) {
+        if (collection.isFullyEmpty) return const SliverToBoxAdapter();
+
+        return TransparentHeader(
+          [
+            ActionIcon(
+              tooltip: 'Lists',
+              icon: Ionicons.menu_outline,
+              onTap: Scaffold.of(context).openDrawer,
+            ),
+            MediaSearchField(
+              scrollToTop: () => collection.scrollTo(0),
+              swipe: (offset) => collection.listIndex += offset,
+              hint: collection.currentName,
+              searchValue: collection.getFilterWithKey(Filterable.SEARCH) ?? '',
+              search: (val) => collection.setFilterWithKey(
+                Filterable.SEARCH,
+                value: val,
+                update: true,
+              ),
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      collection.currentName,
+                      style: Theme.of(context).textTheme.headline2,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                Text(
-                  ' ${collection.currentCount}',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ],
+                  Text(
+                    ' ${collection.currentCount}',
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                ],
+              ),
             ),
-            hint: collection.currentName,
-            searchValue: collection.getFilterWithKey(Filterable.SEARCH),
-            search: (search) => collection.setFilterWithKey(
-              Filterable.SEARCH,
-              value: search,
-              update: true,
+            ActionIcon(
+              tooltip: 'Sort',
+              icon: Ionicons.filter_outline,
+              onTap: () => Sheet.show(
+                ctx: context,
+                sheet: CollectionSortSheet(tag),
+                isScrollControlled: true,
+              ),
             ),
-          );
-        })
-      else
-        Obx(() {
-          final explorer = Get.find<Explorer>();
-          return _Navigation(
+            _Filter(tag),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class ExploreControlHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final explorer = Get.find<Explorer>();
+    return Obx(
+      () => TransparentHeader(
+        [
+          ActionIcon(
+            tooltip: 'Types',
+            icon: Ionicons.menu_outline,
+            onTap: Scaffold.of(context).openDrawer,
+          ),
+          MediaSearchField(
             scrollToTop: () => explorer.scrollTo(0),
-            swipe: (int offset) {
+            swipe: (offset) {
               final index = explorer.type.index + offset;
               if (index >= 0 && index < Browsable.values.length)
                 explorer.type = Browsable.values[index];
             },
+            hint: Convert.clarifyEnum(describeEnum(explorer.type))!,
+            searchValue: explorer.search,
+            search: explorer.type != Browsable.review
+                ? (val) => explorer.search = val
+                : null,
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  explorer.type.icon,
-                  color: Theme.of(context).dividerColor,
-                ),
-                const SizedBox(width: 10),
+                Icon(explorer.type.icon, color: Theme.of(context).dividerColor),
+                const SizedBox(width: 15),
                 Flexible(
                   child: Text(
                     Convert.clarifyEnum(describeEnum(explorer.type))!,
                     style: Theme.of(context).textTheme.headline2,
-                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ],
             ),
-            hint: Convert.clarifyEnum(describeEnum(explorer.type)),
-            searchValue: explorer.search,
-            search: explorer.type != Browsable.review
-                ? (search) => explorer.search = search
-                : null,
-          );
-        }),
-      const SizedBox(width: 15),
-      if (collectionTag == null) ...[
-        Obx(() {
-          final type = Get.find<Explorer>().type;
-          if (type == Browsable.anime || type == Browsable.manga)
-            return ActionIcon(
+          ),
+          if (explorer.type == Browsable.anime ||
+              explorer.type == Browsable.manga) ...[
+            ActionIcon(
               tooltip: 'Sort',
               icon: Ionicons.filter_outline,
               onTap: () => Sheet.show(
@@ -112,7 +130,7 @@ class MediaControlHeader extends StatelessWidget {
                   Convert.stringToEnum(
                     Get.find<Explorer>().getFilterWithKey(Filterable.SORT),
                     MediaSort.values,
-                  ),
+                  )!,
                   (sort) => Get.find<Explorer>().setFilterWithKey(
                     Filterable.SORT,
                     value: describeEnum(sort),
@@ -121,52 +139,24 @@ class MediaControlHeader extends StatelessWidget {
                 ),
                 isScrollControlled: true,
               ),
-            );
-          return const SizedBox();
-        }),
-        const SizedBox(width: 15),
-        Obx(() {
-          final type = Get.find<Explorer>().type;
-          if (type == Browsable.anime || type == Browsable.manga)
-            return _Filter(collectionTag);
-          return const SizedBox();
-        }),
-      ] else ...[
-        ActionIcon(
-          tooltip: 'Sort',
-          icon: Ionicons.filter_outline,
-          onTap: () => Sheet.show(
-            ctx: context,
-            sheet: CollectionSortSheet(collectionTag),
-            isScrollControlled: true,
-          ),
-        ),
-        const SizedBox(width: 15),
-        _Filter(collectionTag),
-      ],
-    ]);
-
-    if (collectionTag == null) return header;
-
-    return Obx(() {
-      final collection = Get.find<Collection>(tag: collectionTag);
-      if (collection.isLoading || collection.isFullyEmpty)
-        return const SliverToBoxAdapter();
-
-      return header;
-    });
+            ),
+            _Filter(null),
+          ],
+        ],
+      ),
+    );
   }
 }
 
-class _Navigation extends StatefulWidget {
-  final Function scrollToTop;
+class MediaSearchField extends StatefulWidget {
+  final Function() scrollToTop;
   final Function(int) swipe;
   final Widget title;
-  final String? hint;
-  final String? searchValue;
+  final String hint;
+  final String searchValue;
   final Function(String)? search;
 
-  _Navigation({
+  MediaSearchField({
     required this.scrollToTop,
     required this.swipe,
     required this.title,
@@ -176,20 +166,20 @@ class _Navigation extends StatefulWidget {
   });
 
   @override
-  __NavigationState createState() => __NavigationState();
+  _MediaSearchFieldState createState() => _MediaSearchFieldState();
 }
 
-class __NavigationState extends State<_Navigation> {
+class _MediaSearchFieldState extends State<MediaSearchField> {
   late bool _empty;
-  late bool _searchMode;
+  late bool _onSearch;
   late TextEditingController _ctrl;
   FocusNode _focus = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _searchMode = widget.searchValue != null && widget.searchValue != '';
-    _ctrl = TextEditingController(text: widget.searchValue ?? '');
+    _onSearch = widget.searchValue != '';
+    _ctrl = TextEditingController(text: widget.searchValue);
     _empty = _ctrl.text.isEmpty;
   }
 
@@ -209,21 +199,20 @@ class __NavigationState extends State<_Navigation> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!_searchMode || widget.search == null) ...[
+          if (!_onSearch || widget.search == null) ...[
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onTap: widget.scrollToTop as void Function()?,
+                onTap: widget.scrollToTop,
                 onHorizontalDragStart: (details) => dragStart = details,
                 onHorizontalDragUpdate: (details) => dragUpdate = details,
                 onHorizontalDragEnd: (_) {
                   if (dragUpdate == null || dragStart == null) return;
                   if (dragUpdate!.globalPosition.dx <
-                      dragStart!.globalPosition.dx) {
+                      dragStart!.globalPosition.dx)
                     widget.swipe(1);
-                  } else {
+                  else
                     widget.swipe(-1);
-                  }
                 },
                 child: widget.title,
               ),
@@ -232,7 +221,7 @@ class __NavigationState extends State<_Navigation> {
               ActionIcon(
                 tooltip: 'Search',
                 icon: Ionicons.search_outline,
-                onTap: () => setState(() => _searchMode = true),
+                onTap: () => setState(() => _onSearch = true),
               ),
           ] else
             Expanded(
@@ -262,7 +251,7 @@ class __NavigationState extends State<_Navigation> {
                             onPressed: () {
                               _focus.canRequestFocus = false;
                               widget.search!('');
-                              setState(() => _searchMode = false);
+                              setState(() => _onSearch = false);
                             },
                           )
                         : IconButton(
@@ -299,10 +288,10 @@ class _Filter extends StatefulWidget {
   _Filter(this.collectionTag);
 
   @override
-  __FilterState createState() => __FilterState();
+  _FilterState createState() => _FilterState();
 }
 
-class __FilterState extends State<_Filter> {
+class _FilterState extends State<_Filter> {
   late Filterable _filterable;
   late bool _active;
 
@@ -329,7 +318,7 @@ class __FilterState extends State<_Filter> {
         icon: Ionicons.funnel_outline,
         onTap: () => Get.toNamed(FilterPage.ROUTE, arguments: [
           widget.collectionTag,
-          (definitelyInactive) => definitelyInactive
+          (bool definitelyInactive) => definitelyInactive
               ? setState(() => _active = false)
               : setState(() => _active = _checkIfActive()),
         ]),

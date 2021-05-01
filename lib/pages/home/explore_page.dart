@@ -6,8 +6,8 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
 import 'package:otraku/widgets/loader.dart';
-import 'package:otraku/widgets/navigation/media_control_header.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
+import 'package:otraku/widgets/navigation/control_header.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/refresh_control.dart';
@@ -25,7 +25,7 @@ class ExploreTab extends StatelessWidget {
       controller: explorer.scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        MediaControlHeader(),
+        ExploreControlHeader(),
         RefreshControl(
           onRefresh: explorer.fetch,
           canRefresh: () => !explorer.isLoading,

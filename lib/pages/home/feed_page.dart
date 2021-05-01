@@ -5,6 +5,7 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/pages/notifications_page.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loader.dart';
@@ -70,18 +71,18 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TransparentHeader([
-        BubbleTabs(
+        BubbleTabs<bool>(
           options: ['Following', 'Global'],
           values: [true, false],
           initial: viewer.onFollowing,
-          onNewValue: (dynamic val) => viewer.updateFilters(following: val),
-          onSameValue: (dynamic _) => viewer.scrollTo(0),
+          onNewValue: (val) => viewer.updateFilters(following: val),
+          onSameValue: (_) => viewer.scrollTo(0),
         ),
         const Spacer(),
-        IconButton(
+        ActionIcon(
           tooltip: 'Filter',
-          icon: const Icon(Ionicons.funnel_outline),
-          onPressed: () => Sheet.show(
+          icon: Ionicons.funnel_outline,
+          onTap: () => Sheet.show(
             ctx: context,
             sheet: SelectionSheet(
               options: ActivityType.values.map((v) => v.text).toList(),

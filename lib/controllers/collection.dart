@@ -139,7 +139,7 @@ class Collection extends ScrollxController implements Filterable {
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<String> get customListNames => [..._customListNames];
   List<ListEntryModel> get entries => _entries();
-  String? get currentName => _lists[_listIndex()].name;
+  String get currentName => _lists[_listIndex()].name;
   ListStatus? get listStatus => _lists[_listIndex()].status;
   int get currentCount => _lists[_listIndex()].entries.length;
   bool get isEmpty => _entries.isEmpty;
@@ -150,6 +150,7 @@ class Collection extends ScrollxController implements Filterable {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
     _listIndex.value = value;
     scrollTo(0);
+    update();
     filter();
   }
 
@@ -167,13 +168,13 @@ class Collection extends ScrollxController implements Filterable {
   }
 
   List<String> get names {
-    List<String> n = [];
+    final n = <String>[];
     for (final list in _lists) n.add(list.name);
     return n;
   }
 
   List<int> get allEntryCounts {
-    List<int> c = [];
+    final c = <int>[];
     for (final list in _lists) c.add(list.entries.length);
     return c;
   }
@@ -237,6 +238,7 @@ class Collection extends ScrollxController implements Filterable {
         ..sort(_filters[Filterable.SORT]));
 
     _listIndex.value = 0;
+    update();
     filter();
     _isLoading.value = false;
   }
@@ -412,17 +414,18 @@ class Collection extends ScrollxController implements Filterable {
   void filter() {
     if (_lists.isEmpty) return;
 
-    final search = (_filters[Filterable.SEARCH] as String?)?.toLowerCase();
     final List<String>? formatIn = _filters[Filterable.FORMAT_IN];
     final List<String>? statusIn = _filters[Filterable.STATUS_IN];
     final List<String>? genreIn = _filters[Filterable.GENRE_IN];
     final List<String>? genreNotIn = _filters[Filterable.GENRE_NOT_IN];
+    final search =
+        (_filters[Filterable.SEARCH] as String?)?.toLowerCase() ?? '';
 
     final list = _lists[_listIndex()];
     final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
-      if (search != null && !entry.title!.toLowerCase().contains(search))
+      if (search != '' && !entry.title!.toLowerCase().contains(search))
         continue;
 
       if (formatIn != null) {

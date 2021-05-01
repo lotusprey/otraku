@@ -406,7 +406,7 @@ class CollectionSortSheet extends StatelessWidget {
 }
 
 class MediaSortSheet extends StatelessWidget {
-  final MediaSort? initial;
+  final MediaSort initial;
   final Function(MediaSort) onTap;
 
   MediaSortSheet(this.initial, this.onTap);
@@ -429,8 +429,8 @@ class MediaSortSheet extends StatelessWidget {
       titleDesc = MediaSort.values[length - 5];
     }
 
-    int currentIndex = initial!.index ~/ 2;
-    bool currentlyDesc = initial!.index % 2 == 0 ? false : true;
+    int currentIndex = initial.index ~/ 2;
+    bool currentlyDesc = initial.index % 2 == 0 ? false : true;
 
     if (currentIndex > (length - 5) ~/ 2) {
       currentIndex = (length - 6) ~/ 2;

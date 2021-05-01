@@ -192,7 +192,7 @@ class Explorer extends ScrollxController implements Filterable {
   }
 
   // ***************************************************************************
-  // DATA FETCHING
+  // FETCHING
   // ***************************************************************************
 
   Future<void> fetch({bool clean = true}) async {

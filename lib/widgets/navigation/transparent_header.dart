@@ -4,7 +4,12 @@ import 'package:otraku/utils/config.dart';
 
 class TransparentHeader extends StatelessWidget {
   final List<Widget> children;
-  TransparentHeader(this.children);
+  TransparentHeader(this.children) {
+    if (children.length > 1) {
+      const box = SizedBox(width: 15);
+      for (int i = 1; i < children.length; i += 2) children.insert(i, box);
+    }
+  }
 
   @override
   Widget build(BuildContext context) =>

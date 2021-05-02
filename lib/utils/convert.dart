@@ -27,7 +27,8 @@ abstract class Convert {
     return str.replaceAll(RegExp(r'<[^>]*>'), '');
   }
 
-  static String? mapToDateString(Map<String, dynamic> map) {
+  static String? mapToDateString(Map<String, dynamic>? map) {
+    if (map == null) return null;
     if (map['year'] == null) return null;
 
     final String? month = _months[map['month']];

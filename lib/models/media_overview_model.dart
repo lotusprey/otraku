@@ -31,8 +31,8 @@ class MediaOverviewModel {
   final String? meanScore;
   final int? popularity;
   final List<String> genres;
-  final Map<String?, int?> studios;
-  final Map<String?, int?> producers;
+  final studios = <String, int>{};
+  final producers = <String, int>{};
   final String? source;
   final String? hashtag;
   final String? countryOfOrigin;
@@ -66,8 +66,6 @@ class MediaOverviewModel {
     required this.meanScore,
     required this.popularity,
     required this.genres,
-    required this.studios,
-    required this.producers,
     required this.source,
     required this.hashtag,
     required this.countryOfOrigin,
@@ -89,18 +87,7 @@ class MediaOverviewModel {
       if (map['seasonYear'] != null) season += ' ${map["seasonYear"]}';
     }
 
-    final Map<String?, int?> studios = {};
-    final Map<String?, int?> producers = {};
-    if (map['studios'] != null) {
-      final List<dynamic> companies = map['studios']['edges'];
-      for (final company in companies)
-        if (company['isMain'])
-          studios[company['node']['name']] = company['node']['id'];
-        else
-          producers[company['node']['name']] = company['node']['id'];
-    }
-
-    return MediaOverviewModel._(
+    final o = MediaOverviewModel._(
       id: map['id'],
       browsable: map['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
       isFavourite: map['isFavourite'],
@@ -132,23 +119,28 @@ class MediaOverviewModel {
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: map['startDate'] != null
-          ? Convert.mapToDateString(map['startDate'])
-          : null,
-      endDate: map['endDate'] != null
-          ? Convert.mapToDateString(map['endDate'])
-          : null,
+      startDate: Convert.mapToDateString(map['startDate']),
+      endDate: Convert.mapToDateString(map['endDate']),
       season: season,
       averageScore:
           map['averageScore'] != null ? '${map["averageScore"]}%' : null,
       meanScore: map['meanScore'] != null ? '${map["meanScore"]}%' : null,
       popularity: map['popularity'],
       genres: List<String>.from(map['genres']),
-      studios: studios,
-      producers: producers,
       source: Convert.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
       countryOfOrigin: map['countryOfOrigin'],
     );
+
+    if (map['studios'] != null) {
+      final List<dynamic> companies = map['studios']['edges'];
+      for (final company in companies)
+        if (company['isMain'])
+          o.studios[company['node']['name']] = company['node']['id'];
+        else
+          o.producers[company['node']['name']] = company['node']['id'];
+    }
+
+    return o;
   }
 }

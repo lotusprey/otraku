@@ -71,8 +71,8 @@ class ListEntryModel {
       );
 
   double progressPercent() {
-    if (nextEpisode != null) return progress / (nextEpisode! - 1);
     if (progressMax != null) return progress / progressMax!;
+    if (nextEpisode != null) return progress / (nextEpisode! - 1);
     return 1;
   }
 

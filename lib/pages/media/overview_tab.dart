@@ -172,11 +172,11 @@ class OverviewTab extends StatelessWidget {
             ),
           const SizedBox(height: 10),
           if (overview.romajiTitle != null)
-            _Tiles('Romaji', [overview.romajiTitle]),
+            _Tiles('Romaji', [overview.romajiTitle!]),
           if (overview.englishTitle != null)
-            _Tiles('English', [overview.englishTitle]),
+            _Tiles('English', [overview.englishTitle!]),
           if (overview.nativeTitle != null)
-            _Tiles('Native', [overview.nativeTitle]),
+            _Tiles('Native', [overview.nativeTitle!]),
           if (overview.synonyms.isNotEmpty)
             _Tiles('Synonyms', overview.synonyms),
         ],
@@ -187,7 +187,7 @@ class OverviewTab extends StatelessWidget {
 
 class _ScrollCards extends StatelessWidget {
   final String title;
-  final List<String?> items;
+  final List<String> items;
   final Function(int) onTap;
   final Function(int)? onLongTap;
 
@@ -229,7 +229,7 @@ class _ScrollCards extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                   ),
                   child: Text(
-                    items[index]!,
+                    items[index],
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ),
@@ -245,14 +245,14 @@ class _ScrollCards extends StatelessWidget {
 
 class _Tiles extends StatelessWidget {
   final String title;
-  final List<String?> items;
+  final List<String> items;
 
   _Tiles(this.title, this.items);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: InputFieldStructure(
         title: title,
         child: ListView.builder(
@@ -268,9 +268,13 @@ class _Tiles extends StatelessWidget {
                 borderRadius: Config.BORDER_RADIUS,
                 color: Theme.of(context).primaryColor,
               ),
-              child: Text(
-                items[index]!,
-                style: Theme.of(context).textTheme.bodyText1,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: Config.PHYSICS,
+                child: Text(
+                  items[index],
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
               ),
             ),
           ),

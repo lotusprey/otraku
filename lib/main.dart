@@ -13,11 +13,13 @@ import 'package:otraku/controllers/notifications.dart';
 import 'package:otraku/controllers/review.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/controllers/staff.dart';
+import 'package:otraku/controllers/statistics.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/user_feed.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/friends_page.dart';
+import 'package:otraku/pages/statistics_page.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/auth_page.dart';
@@ -161,10 +163,7 @@ class App extends StatelessWidget {
           name: FavouritesPage.ROUTE,
           page: () => FavouritesPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(
-              Favourites(Get.arguments),
-              tag: Get.arguments.toString(),
-            );
+            Get.put(Favourites(Get.arguments), tag: Get.arguments.toString());
           }),
         ),
         GetPage(
@@ -181,10 +180,14 @@ class App extends StatelessWidget {
           name: UserFeedPage.ROUTE,
           page: () => UserFeedPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(
-              UserFeed(Get.arguments),
-              tag: Get.arguments.toString(),
-            );
+            Get.put(UserFeed(Get.arguments), tag: Get.arguments.toString());
+          }),
+        ),
+        GetPage(
+          name: StatisticsPage.ROUTE,
+          page: () => StatisticsPage(Get.arguments),
+          binding: BindingsBuilder(() {
+            Get.put(Statistics(Get.arguments), tag: Get.arguments.toString());
           }),
         ),
         GetPage(

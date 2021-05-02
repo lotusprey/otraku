@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/pages/friends_page.dart';
+import 'package:otraku/pages/statistics_page.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/pages/user_feed_page.dart';
@@ -100,6 +101,11 @@ class UserTab extends StatelessWidget {
                     Icons.favorite,
                     'Favourites',
                     () => Get.toNamed(FavouritesPage.ROUTE, arguments: id),
+                  ),
+                  _Button(
+                    Ionicons.stats_chart,
+                    'Statistics',
+                    () => Get.toNamed(StatisticsPage.ROUTE, arguments: id),
                   ),
                 ],
               ),

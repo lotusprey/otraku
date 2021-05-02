@@ -29,6 +29,17 @@ class User extends GetxController {
         donatorTier
         donatorBadge
         moderatorStatus
+        statistics {anime {...stats} manga {...stats}}
+      }
+      fragment stats on UserStatistics {
+        count
+        meanScore
+        standardDeviation
+        minutesWatched
+        episodesWatched
+        chaptersRead
+        volumesRead
+        scores {count meanScore minutesWatched chaptersRead score}
       }
       fragment media on MediaConnection {
         pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}

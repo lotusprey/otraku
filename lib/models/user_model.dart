@@ -1,6 +1,7 @@
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/models/page_model.dart';
+import 'package:otraku/models/statistics_model.dart';
 
 class UserModel {
   static const ANIME_FAV = 0;
@@ -21,6 +22,8 @@ class UserModel {
   final String? donatorBadge;
   final String? moderatorStatus;
   final bool isMe;
+  final StatisticsModel animeStats;
+  final StatisticsModel mangaStats;
   final following = PageModel<BrowseResultModel>();
   final followers = PageModel<BrowseResultModel>();
   final activities = PageModel<ActivityModel>();
@@ -41,6 +44,8 @@ class UserModel {
     required this.donatorTier,
     required this.donatorBadge,
     required this.moderatorStatus,
+    required this.animeStats,
+    required this.mangaStats,
     this.blocked = false,
     this.isFollower = false,
     this.isFollowing = false,
@@ -59,6 +64,8 @@ class UserModel {
         donatorTier: map['donatorTier'],
         donatorBadge: map['donatorBadge'],
         moderatorStatus: map['moderatorStatus'],
+        animeStats: StatisticsModel(map['statistics']['anime']),
+        mangaStats: StatisticsModel(map['statistics']['manga']),
         isMe: me,
       );
 

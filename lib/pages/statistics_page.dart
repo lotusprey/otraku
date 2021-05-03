@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -36,15 +37,53 @@ class StatisticsPage extends StatelessWidget {
               duration: Config.TAB_SWITCH_DURATION,
               child: ListView(
                 key: stats.key,
+                padding:
+                    EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
                 physics: Config.PHYSICS,
                 children: [
+                  _Title('Details'),
                   _Details(stats),
+                  if (stats.model.scores.isNotEmpty) ...[
+                    _Title(
+                      'Score',
+                      BubbleTabs<bool>(
+                        options: stats.onAnime
+                            ? const ['Titles Watched', 'Hours Watched']
+                            : const ['Titles Read', 'Chapters Read'],
+                        values: [true, false],
+                        initial: stats.scoresOnCount,
+                        onNewValue: (val) => stats.scoresOnCount = val,
+                        onSameValue: (_) {},
+                      ),
+                    ),
+                    _ScoreChart(id),
+                  ],
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _Title extends StatelessWidget {
+  final String text;
+  final BubbleTabs? tabs;
+  _Title(this.text, [this.tabs]);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        children: [
+          Text(text, style: Theme.of(context).textTheme.headline3),
+          const Spacer(),
+          if (tabs != null) tabs!,
+        ],
+      ),
     );
   }
 }
@@ -127,6 +166,93 @@ class _Details extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _ScoreChart extends StatelessWidget {
+  final int id;
+  _ScoreChart(this.id);
+
+  @override
+  Widget build(BuildContext context) {
+    final stats = Get.find<Statistics>(tag: id.toString());
+
+    return Obx(
+      () {
+        final scores = stats.model.scores;
+
+        double max = 200.0;
+        if (stats.scoresOnCount) {
+          int maxCount = scores[0].count;
+          for (int i = 1; i < scores.length; i++)
+            if (maxCount < scores[i].count) maxCount = scores[i].count;
+          max /= maxCount;
+        } else {
+          if (stats.onAnime) {
+            int maxMinutes = scores[0].minutesWatched;
+            for (int i = 1; i < scores.length; i++)
+              if (maxMinutes < scores[i].minutesWatched)
+                maxMinutes = scores[i].minutesWatched;
+            max /= maxMinutes;
+          } else {
+            int maxChapters = scores[0].chaptersRead;
+            for (int i = 1; i < scores.length; i++)
+              if (maxChapters < scores[i].chaptersRead)
+                maxChapters = scores[i].chaptersRead;
+            max /= maxChapters;
+          }
+        }
+
+        return SizedBox(
+          height: 280,
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            physics: Config.PHYSICS,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (_, i) {
+              late int number;
+              late double height;
+              if (stats.scoresOnCount) {
+                number = scores[i].count;
+                height = scores[i].count * max;
+              } else {
+                if (stats.onAnime) {
+                  number = scores[i].minutesWatched ~/ 60;
+                  height = scores[i].minutesWatched * max;
+                } else {
+                  number = scores[i].chaptersRead;
+                  height = scores[i].chaptersRead * max;
+                }
+              }
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    number.toString(),
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  Container(
+                    height: height,
+                    margin: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Theme.of(context).accentColor,
+                    ),
+                  ),
+                  Text(
+                    scores[i].score.toString(),
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ],
+              );
+            },
+            itemExtent: 50,
+            itemCount: scores.length,
+          ),
+        );
+      },
     );
   }
 }

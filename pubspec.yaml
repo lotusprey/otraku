@@ -14,7 +14,7 @@ dependencies:
 
   get: ^4.1.4
   get_storage: ^2.0.2
-  http: ^0.13.1
+  http: ^0.13.2
   url_launcher: ^6.0.3
   app_links: ^2.0.0+1
   flutter_widget_from_html_core: ^0.6.1

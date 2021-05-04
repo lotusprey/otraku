@@ -1,3 +1,5 @@
+import 'package:otraku/utils/convert.dart';
+
 class StatisticsModel {
   final int count;
   final double meanScore;
@@ -6,7 +8,10 @@ class StatisticsModel {
   final int episodesWatched;
   final int chaptersRead;
   final int volumesRead;
-  final scores = <ScoreStatistics>[];
+  final scores = <NumberStatistics>[];
+  final formats = <EnumStatistics>[];
+  final statuses = <EnumStatistics>[];
+  final countries = <EnumStatistics>[];
 
   StatisticsModel._({
     required this.count,
@@ -19,7 +24,7 @@ class StatisticsModel {
   });
 
   factory StatisticsModel(Map<String, dynamic> map) {
-    final s = StatisticsModel._(
+    final model = StatisticsModel._(
       count: map['count'],
       meanScore: map['meanScore'].toDouble(),
       standardDeviation: map['standardDeviation'].toDouble(),
@@ -28,31 +33,64 @@ class StatisticsModel {
       chaptersRead: map['chaptersRead'],
       volumesRead: map['volumesRead'],
     );
-    for (final score in map['scores']) s.scores.add(ScoreStatistics(score));
-    return s;
+    for (final s in map['scores'])
+      model.scores.add(NumberStatistics(s, 'score'));
+    for (final f in map['formats'])
+      model.formats.add(EnumStatistics(f, 'format'));
+    for (final s in map['statuses'])
+      model.statuses.add(EnumStatistics(s, 'status'));
+    for (final c in map['countries'])
+      model.countries.add(EnumStatistics(c, 'country'));
+    return model;
   }
 }
 
-class ScoreStatistics {
+class NumberStatistics {
   final int count;
   final double meanScore;
   final int minutesWatched;
   final int chaptersRead;
-  final int score;
+  final int number;
 
-  ScoreStatistics._({
+  NumberStatistics._({
     required this.count,
     required this.meanScore,
     required this.minutesWatched,
     required this.chaptersRead,
-    required this.score,
+    required this.number,
   });
 
-  factory ScoreStatistics(Map<String, dynamic> map) => ScoreStatistics._(
+  factory NumberStatistics(Map<String, dynamic> map, String key) =>
+      NumberStatistics._(
         count: map['count'],
         meanScore: map['meanScore'].toDouble(),
         minutesWatched: map['minutesWatched'],
         chaptersRead: map['chaptersRead'],
-        score: map['score'],
+        number: map[key],
+      );
+}
+
+class EnumStatistics {
+  final int count;
+  final double meanScore;
+  final int minutesWatched;
+  final int chaptersRead;
+  final String value;
+
+  EnumStatistics._({
+    required this.count,
+    required this.meanScore,
+    required this.minutesWatched,
+    required this.chaptersRead,
+    required this.value,
+  });
+
+  factory EnumStatistics(Map<String, dynamic> map, String key) =>
+      EnumStatistics._(
+        count: map['count'],
+        meanScore: map['meanScore'].toDouble(),
+        minutesWatched: map['minutesWatched'],
+        chaptersRead: map['chaptersRead'],
+        value: Convert.clarifyEnum(map[key])!,
       );
 }

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics.dart';
+import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/pie_chart.dart';
 
 class StatisticsPage extends StatelessWidget {
   static const ROUTE = '/statistics';
@@ -57,6 +59,20 @@ class StatisticsPage extends StatelessWidget {
                       ),
                     ),
                     _ScoreChart(id),
+                    GridView.extent(
+                      shrinkWrap: true,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      maxCrossAxisExtent: 400,
+                      childAspectRatio: 2,
+                      padding: Config.PADDING,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _Card(stats.model.formats),
+                        _Card(stats.model.statuses),
+                        _Card(stats.model.countries),
+                      ],
+                    ),
                   ],
                 ],
               ),
@@ -155,10 +171,7 @@ class _Details extends StatelessWidget {
                         titles[i],
                         style: Theme.of(context).textTheme.subtitle1,
                       ),
-                      Text(
-                        subtitles[i].toString(),
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
+                      Text(subtitles[i].toString()),
                     ],
                   ),
                 ],
@@ -242,7 +255,7 @@ class _ScoreChart extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    scores[i].score.toString(),
+                    scores[i].number.toString(),
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                 ],
@@ -253,6 +266,69 @@ class _ScoreChart extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  final List<EnumStatistics> stats;
+  _Card(this.stats);
+
+  @override
+  Widget build(BuildContext context) {
+    final counts = <int>[];
+    final values = <String>[];
+    final colours = <Color>[];
+
+    final offset = stats.length / 2;
+    final division = 1.0 / (stats.length * 2);
+    final colour = HSLColor.fromColor(Theme.of(context).accentColor);
+
+    for (int i = 0; i < stats.length; i++) {
+      counts.add(stats[i].count);
+      values.add(stats[i].value);
+      colours.add(colour.withLightness(division * (i + offset)).toColor());
+    }
+
+    return Container(
+      padding: Config.PADDING,
+      decoration: BoxDecoration(
+        borderRadius: Config.BORDER_RADIUS,
+        color: Theme.of(context).primaryColor,
+      ),
+      child: Row(
+        children: [
+          PieChart(counts, colours),
+          const SizedBox(width: 10),
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                for (int i = 0; i < stats.length; i++)
+                  Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          borderRadius: Config.BORDER_RADIUS,
+                          color: colours[i],
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(child: Text(values[i])),
+                      const SizedBox(width: 5),
+                      Text(
+                        stats[i].count.toString(),
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

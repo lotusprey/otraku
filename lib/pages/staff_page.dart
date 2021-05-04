@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/staff.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
@@ -184,7 +185,7 @@ class _Details extends StatelessWidget {
                         borderRadius: Config.BORDER_RADIUS,
                       ),
                       child: Text(
-                        model.description,
+                        Convert.clearHtml(model.description),
                         overflow: TextOverflow.fade,
                       ),
                     ),

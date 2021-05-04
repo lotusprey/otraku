@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
@@ -202,8 +203,10 @@ class _Details extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                         borderRadius: Config.BORDER_RADIUS,
                       ),
-                      child:
-                          Text(model.description, overflow: TextOverflow.fade),
+                      child: Text(
+                        Convert.clearHtml(model.description),
+                        overflow: TextOverflow.fade,
+                      ),
                     ),
                     onTap: () => showPopUp(
                       context,

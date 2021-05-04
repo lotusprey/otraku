@@ -39,8 +39,10 @@ class StatisticsModel {
       model.formats.add(EnumStatistics(f, 'format'));
     for (final s in map['statuses'])
       model.statuses.add(EnumStatistics(s, 'status'));
-    for (final c in map['countries'])
+    for (final c in map['countries']) {
+      c['country'] = Convert.COUNTRY_CODES[c['country']];
       model.countries.add(EnumStatistics(c, 'country'));
+    }
     return model;
   }
 }

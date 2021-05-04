@@ -129,7 +129,7 @@ class MediaOverviewModel {
       genres: List<String>.from(map['genres']),
       source: Convert.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
-      countryOfOrigin: map['countryOfOrigin'],
+      countryOfOrigin: Convert.COUNTRY_CODES[map['countryOfOrigin']],
     );
 
     if (map['studios'] != null) {

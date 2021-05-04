@@ -25,7 +25,7 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 35,
+        height: 30,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

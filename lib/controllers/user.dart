@@ -41,6 +41,8 @@ class User extends GetxController {
         volumesRead
         scores(sort: MEAN_SCORE) {count meanScore minutesWatched chaptersRead score}
         formats {count meanScore minutesWatched chaptersRead format}
+        statuses {count meanScore minutesWatched chaptersRead status}
+        countries {count meanScore minutesWatched chaptersRead country}
       }
       fragment media on MediaConnection {
         pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}

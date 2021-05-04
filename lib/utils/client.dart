@@ -126,7 +126,7 @@ class Client {
         backgroundColor: Get.theme.backgroundColor,
         titleStyle: Get.theme.textTheme.headline5,
         title: 'Internet connection problem',
-        content: Text(ioErr.toString(), style: Get.theme.textTheme.bodyText1),
+        content: Text(ioErr.toString()),
         actions: [TextButton(child: Text('Ok'), onPressed: Get.back)],
       );
       return;
@@ -147,7 +147,7 @@ class Client {
       titleStyle: Get.theme.textTheme.headline5,
       title:
           ioErr == null ? 'A query error occured' : 'A request error occured',
-      content: Text(text, style: Get.theme.textTheme.bodyText1),
+      content: Text(text),
       actions: [TextButton(child: Text('Sad'), onPressed: Get.back)],
     );
   }

@@ -62,10 +62,7 @@ class _DateFieldState extends State<DateField> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _picker(date),
-                  Text(
-                    '${date!.year}-${date!.month}-${date!.day}',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                  Text('${date!.year}-${date!.month}-${date!.day}'),
                   IconButton(
                     icon: const Icon(Icons.clear),
                     onPressed: () {

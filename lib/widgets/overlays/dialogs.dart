@@ -69,29 +69,21 @@ class ImageDialog extends StatelessWidget {
 class TextDialog extends StatelessWidget {
   final String title;
   final String text;
-
   const TextDialog({required this.title, required this.text});
 
   @override
-  Widget build(BuildContext context) {
-    return _Dialog(
-      title: title,
-      expand: false,
-      child: Text(text, style: Theme.of(context).textTheme.bodyText1),
-    );
-  }
+  Widget build(BuildContext context) =>
+      _Dialog(title: title, expand: false, child: Text(text));
 }
 
 class HtmlDialog extends StatelessWidget {
   final String title;
   final String text;
-
   const HtmlDialog({required this.title, required this.text});
 
   @override
-  Widget build(BuildContext context) {
-    return _Dialog(title: title, expand: true, child: HtmlContent(text));
-  }
+  Widget build(BuildContext context) =>
+      _Dialog(title: title, expand: true, child: HtmlContent(text));
 }
 
 class _Dialog extends StatelessWidget {

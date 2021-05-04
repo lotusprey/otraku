@@ -68,7 +68,7 @@ class Sheet extends StatelessWidget {
                 color: Theme.of(context).accentColor,
                 size: Style.ICON_SMALL,
               ),
-              label: Text('Done', style: Theme.of(context).textTheme.bodyText2),
+              label: Text('Done', style: Theme.of(context).textTheme.bodyText1),
             ),
         ],
       ),
@@ -107,8 +107,8 @@ class OptionSheet extends StatelessWidget {
                   title: Text(
                     options[i],
                     style: i != index
-                        ? Theme.of(context).textTheme.bodyText1
-                        : Theme.of(context).textTheme.bodyText2,
+                        ? Theme.of(context).textTheme.bodyText2
+                        : Theme.of(context).textTheme.bodyText1,
                   ),
                   trailing: Container(
                     height: 25,
@@ -310,8 +310,8 @@ class _SortSheet extends StatelessWidget {
                   title: Text(
                     options[i]!,
                     style: i != index
-                        ? Theme.of(context).textTheme.bodyText1
-                        : Theme.of(context).textTheme.bodyText2,
+                        ? Theme.of(context).textTheme.bodyText2
+                        : Theme.of(context).textTheme.bodyText1,
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,

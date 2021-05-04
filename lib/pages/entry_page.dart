@@ -55,10 +55,7 @@ class _EntryPageState extends State<EntryPage> {
                               borderRadius: Config.BORDER_RADIUS,
                             ),
                             backgroundColor: Theme.of(context).primaryColor,
-                            title: Text(
-                              'Remove entry?',
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
+                            title: Text('Remove entry?'),
                             actions: [
                               TextButton(
                                 child: Text(

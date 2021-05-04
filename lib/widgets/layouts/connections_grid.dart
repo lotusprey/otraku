@@ -88,7 +88,6 @@ class _MediaConnectionTile extends StatelessWidget {
                                 child: Text(
                                   item.text1,
                                   overflow: TextOverflow.fade,
-                                  style: Theme.of(context).textTheme.bodyText1,
                                 ),
                               ),
                               Text(
@@ -129,8 +128,6 @@ class _MediaConnectionTile extends StatelessWidget {
                                     item.others[index].text1,
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.end,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
                                   ),
                                 ),
                                 Text(

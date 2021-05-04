@@ -135,14 +135,13 @@ class _NotificationWidget extends StatelessWidget {
                       RichText(
                         overflow: TextOverflow.fade,
                         text: TextSpan(
-                          style: Theme.of(context).textTheme.bodyText1,
                           children: [
                             for (int i = 0; i < notification.texts.length; i++)
                               TextSpan(
                                 text: notification.texts[i],
                                 style: (i % 2 == 0) ==
                                         notification.markTextOnEvenIndex
-                                    ? Theme.of(context).textTheme.bodyText2
+                                    ? Theme.of(context).textTheme.bodyText1
                                     : null,
                               ),
                           ],

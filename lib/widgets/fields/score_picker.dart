@@ -139,10 +139,7 @@ class _TenScorePickerState extends State<_TenScorePicker> {
         ),
         SizedBox(
           width: 30,
-          child: Text(
-            score.toStringAsFixed(0),
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
+          child: Text(score.toStringAsFixed(0)),
         ),
       ],
     );
@@ -175,10 +172,7 @@ class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
         ),
         SizedBox(
           width: 40,
-          child: Text(
-            score.toStringAsFixed(1),
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
+          child: Text(score.toStringAsFixed(1)),
         ),
       ],
     );

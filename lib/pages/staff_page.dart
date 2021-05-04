@@ -168,7 +168,6 @@ class _Details extends StatelessWidget {
           ),
           Text(
             model.altNames.join(', '),
-            style: Theme.of(context).textTheme.bodyText1,
             textAlign: axis == Axis.vertical ? TextAlign.center : null,
           ),
           const SizedBox(height: 10),
@@ -186,7 +185,6 @@ class _Details extends StatelessWidget {
                       ),
                       child: Text(
                         model.description,
-                        style: Theme.of(context).textTheme.bodyText1,
                         overflow: TextOverflow.fade,
                       ),
                     ),

@@ -133,11 +133,8 @@ class _MediaListTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Flexible(
-                            child: Text(
-                              entry.title!,
-                              style: Theme.of(context).textTheme.bodyText1,
-                              overflow: TextOverflow.fade,
-                            ),
+                            child:
+                                Text(entry.title!, overflow: TextOverflow.fade),
                           ),
                           const SizedBox(height: 5),
                           Text(

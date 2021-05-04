@@ -33,8 +33,8 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
         child: Text(
           key,
           style: widget.items[key] != value
-              ? Theme.of(context).textTheme.bodyText1
-              : Theme.of(context).textTheme.bodyText2,
+              ? Theme.of(context).textTheme.bodyText2
+              : Theme.of(context).textTheme.bodyText1,
         ),
       ));
 

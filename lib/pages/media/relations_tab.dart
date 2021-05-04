@@ -67,12 +67,11 @@ class RelationsTab extends StatelessWidget {
                             children: [
                               Text(
                                 other[index].relationType!,
-                                style: Theme.of(context).textTheme.bodyText2,
+                                style: Theme.of(context).textTheme.bodyText1,
                               ),
                               Flexible(
                                 child: Text(
                                   other[index].text1,
-                                  style: Theme.of(context).textTheme.bodyText1,
                                   overflow: TextOverflow.fade,
                                 ),
                               ),

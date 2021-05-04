@@ -29,10 +29,7 @@ class _FavouriteButtonState extends State<FavouriteButton> {
         if (widget.shrinkPercentage < 0.5) ...[
           Opacity(
             opacity: 1 - widget.shrinkPercentage * 2,
-            child: Text(
-              widget.favourites.toString(),
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+            child: Text(widget.favourites.toString()),
           ),
           const SizedBox(width: 15),
         ],

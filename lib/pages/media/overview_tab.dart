@@ -75,7 +75,6 @@ class OverviewTab extends StatelessWidget {
                     ),
                     child: Text(
                       overview.description,
-                      style: Theme.of(context).textTheme.bodyText1,
                       overflow: TextOverflow.fade,
                       maxLines: 5,
                     ),
@@ -117,10 +116,7 @@ class OverviewTab extends StatelessWidget {
                         ),
                         child: InputFieldStructure(
                           title: infoTitles[i],
-                          child: Text(
-                            infoChildren[i].toString(),
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
+                          child: Text(infoChildren[i].toString()),
                         ),
                       ),
                 ],
@@ -228,10 +224,7 @@ class _ScrollCards extends StatelessWidget {
                     borderRadius: Config.BORDER_RADIUS,
                     color: Theme.of(context).primaryColor,
                   ),
-                  child: Text(
-                    items[index],
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                  child: Text(items[index]),
                 ),
               ),
               itemCount: items.length,
@@ -271,10 +264,7 @@ class _Tiles extends StatelessWidget {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: Config.PHYSICS,
-                child: Text(
-                  items[index],
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
+                child: Text(items[index]),
               ),
             ),
           ),

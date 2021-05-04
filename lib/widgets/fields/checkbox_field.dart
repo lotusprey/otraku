@@ -28,8 +28,8 @@ class _CheckboxFieldState extends State<CheckboxField> {
         title: Text(
           widget.title!,
           style: _value
-              ? Theme.of(context).textTheme.bodyText2
-              : Theme.of(context).textTheme.bodyText1,
+              ? Theme.of(context).textTheme.bodyText1
+              : Theme.of(context).textTheme.bodyText2,
         ),
         activeColor: Theme.of(context).accentColor,
         checkColor: Theme.of(context).backgroundColor,

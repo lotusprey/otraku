@@ -41,7 +41,7 @@ class _AuthPageState extends State<AuthPage> {
         backgroundColor: Get.theme.backgroundColor,
         titleStyle: Get.theme.textTheme.headline6,
         title: 'Could not open AniList',
-        content: Text(err.toString(), style: Get.theme.textTheme.bodyText1),
+        content: Text(err.toString()),
         actions: [TextButton(child: Text('Oh No'), onPressed: Get.back)],
       );
       setState(() => _loading = false);

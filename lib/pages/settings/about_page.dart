@@ -92,10 +92,7 @@ class AboutTab extends StatelessWidget {
                     borderRadius: Config.BORDER_RADIUS,
                   ),
                   backgroundColor: Theme.of(context).primaryColor,
-                  title: Text(
-                    'Log out? (Don\'t do it)',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                  title: Text('Log out? (Don\'t do it)'),
                   actions: [
                     TextButton(
                       child: Text(

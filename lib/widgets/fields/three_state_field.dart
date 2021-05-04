@@ -23,7 +23,7 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      title: Text(widget.title!, style: Theme.of(context).textTheme.bodyText1),
+      title: Text(widget.title!),
       trailing: Container(
         height: 30,
         width: 30,

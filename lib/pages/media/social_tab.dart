@@ -66,10 +66,7 @@ class SocialTab extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          items[index].username,
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
+                        Text(items[index].username),
                       ],
                     ),
                   ),

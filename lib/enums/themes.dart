@@ -250,12 +250,12 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       ),
       bodyText1: TextStyle(
         fontSize: Style.FONT_MEDIUM,
-        color: theme['contrast'],
+        color: theme['accent'],
         fontWeight: FontWeight.normal,
       ),
       bodyText2: TextStyle(
         fontSize: Style.FONT_MEDIUM,
-        color: theme['accent'],
+        color: theme['contrast'],
         fontWeight: FontWeight.normal,
       ),
       subtitle1: TextStyle(

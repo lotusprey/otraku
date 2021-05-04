@@ -145,7 +145,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
                             'Ep ${overview.nextEpisode} in ${overview.timeUntilAiring}',
-                            style: Theme.of(context).textTheme.bodyText2,
+                            style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ),
                       ),

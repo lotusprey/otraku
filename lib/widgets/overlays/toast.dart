@@ -24,7 +24,7 @@ class Toast {
             color: Theme.of(ctx).disabledColor,
             borderRadius: Config.BORDER_RADIUS,
           ),
-          child: Text(text, style: Theme.of(ctx).textTheme.bodyText1),
+          child: Text(text),
         ),
       ),
     );

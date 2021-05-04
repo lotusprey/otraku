@@ -21,10 +21,7 @@ class _SwitchTileState extends State<SwitchTile> {
   @override
   Widget build(BuildContext context) => SwitchListTile.adaptive(
         contentPadding: const EdgeInsets.all(0),
-        title: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
+        title: Text(widget.title),
         value: _value,
         onChanged: (val) {
           setState(() => _value = val);

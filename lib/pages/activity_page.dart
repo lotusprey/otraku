@@ -50,10 +50,7 @@ class ActivityPage extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              Text(
-                                model.agentName!,
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
+                              Text(model.agentName!),
                             ],
                           ),
                         ),
@@ -146,10 +143,7 @@ class UserReply extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              Text(
-                reply.userName,
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
+              Text(reply.userName),
             ],
           ),
         ),

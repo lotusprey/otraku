@@ -41,10 +41,7 @@ class UserActivity extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Text(
-                    activity.agentName!,
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
+                  Text(activity.agentName!),
                 ],
               ),
             ),
@@ -263,13 +260,10 @@ class _MediaBox extends StatelessWidget {
                         overflow: TextOverflow.fade,
                         text: TextSpan(
                           children: [
-                            TextSpan(
-                              text: activity.text,
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
+                            TextSpan(text: activity.text),
                             TextSpan(
                               text: activity.mediaTitle,
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context).textTheme.bodyText1,
                             ),
                           ],
                         ),
@@ -278,10 +272,7 @@ class _MediaBox extends StatelessWidget {
                     if (activity.mediaFormat != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          activity.mediaFormat!,
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
+                        child: Text(activity.mediaFormat!),
                       ),
                   ],
                 ),

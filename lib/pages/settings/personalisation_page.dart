@@ -118,10 +118,7 @@ class __RadioState extends State<_Radio> {
               setState(() => _leftValue = index);
             },
           ),
-          Text(
-            widget.options[index]!,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
+          Text(widget.options[index]!),
           Radio<int>(
             value: index,
             groupValue: _rightValue,

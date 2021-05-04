@@ -72,6 +72,13 @@ abstract class Convert {
     return '${days != 0 ? '${days}d ' : ''}${hours != 0 ? '${hours}h ' : ''}${minutes != 0 ? '${minutes}m' : ''}';
   }
 
+  static const COUNTRY_CODES = {
+    'JP': 'Japan',
+    'CN': 'China',
+    'KR': 'South Korea',
+    'TW': 'Taiwan',
+  };
+
   static const _weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   static const _months = {

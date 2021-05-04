@@ -64,13 +64,13 @@ class StatisticsPage extends StatelessWidget {
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 10,
                       maxCrossAxisExtent: 400,
-                      childAspectRatio: 2,
+                      childAspectRatio: 1.9,
                       padding: Config.PADDING,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        _Card(stats.model.formats),
-                        _Card(stats.model.statuses),
-                        _Card(stats.model.countries),
+                        _Card('Format Distribution', stats.model.formats),
+                        _Card('Status Distribution', stats.model.statuses),
+                        _Card('Country Distribution', stats.model.countries),
                       ],
                     ),
                   ],
@@ -271,8 +271,9 @@ class _ScoreChart extends StatelessWidget {
 }
 
 class _Card extends StatelessWidget {
+  final String title;
   final List<EnumStatistics> stats;
-  _Card(this.stats);
+  _Card(this.title, this.stats);
 
   @override
   Widget build(BuildContext context) {
@@ -290,45 +291,54 @@ class _Card extends StatelessWidget {
       colours.add(colour.withLightness(division * (i + offset)).toColor());
     }
 
-    return Container(
-      padding: Config.PADDING,
-      decoration: BoxDecoration(
-        borderRadius: Config.BORDER_RADIUS,
-        color: Theme.of(context).primaryColor,
-      ),
-      child: Row(
-        children: [
-          PieChart(counts, colours),
-          const SizedBox(width: 10),
-          Flexible(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.headline3),
+        const SizedBox(height: 10),
+        Flexible(
+          child: Container(
+            padding: Config.PADDING,
+            decoration: BoxDecoration(
+              borderRadius: Config.BORDER_RADIUS,
+              color: Theme.of(context).primaryColor,
+            ),
+            child: Row(
               children: [
-                for (int i = 0; i < stats.length; i++)
-                  Row(
+                PieChart(counts, colours),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        width: 30,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          borderRadius: Config.BORDER_RADIUS,
-                          color: colours[i],
+                      for (int i = 0; i < stats.length; i++)
+                        Row(
+                          children: [
+                            Container(
+                              width: 30,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                borderRadius: Config.BORDER_RADIUS,
+                                color: colours[i],
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Expanded(child: Text(values[i])),
+                            const SizedBox(width: 5),
+                            Text(
+                              stats[i].count.toString(),
+                              style: Theme.of(context).textTheme.subtitle1,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      Expanded(child: Text(values[i])),
-                      const SizedBox(width: 5),
-                      Text(
-                        stats[i].count.toString(),
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
                     ],
                   ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

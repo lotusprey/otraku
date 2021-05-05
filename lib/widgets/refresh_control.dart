@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 
-class RefreshControl extends StatelessWidget {
+class SliverRefreshControl extends StatelessWidget {
   final Future<void> Function() onRefresh;
   final bool Function() canRefresh;
 
-  const RefreshControl({
+  const SliverRefreshControl({
     required this.onRefresh,
     required this.canRefresh,
   });

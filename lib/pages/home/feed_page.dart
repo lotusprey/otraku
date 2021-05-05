@@ -27,7 +27,7 @@ class FeedTab extends StatelessWidget {
       slivers: [
         const HeadlineHeader('Feed', false),
         _Header(viewer),
-        RefreshControl(
+        SliverRefreshControl(
           onRefresh: viewer.fetch,
           canRefresh: () => !viewer.isLoading,
         ),

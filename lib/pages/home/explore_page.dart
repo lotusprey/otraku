@@ -26,7 +26,7 @@ class ExploreTab extends StatelessWidget {
       slivers: [
         const HeadlineHeader('Explore', false),
         ExploreControlHeader(),
-        RefreshControl(
+        SliverRefreshControl(
           onRefresh: explorer.fetch,
           canRefresh: () => !explorer.isLoading,
         ),

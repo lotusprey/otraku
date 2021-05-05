@@ -6,7 +6,7 @@ import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/widgets/action_icon.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';

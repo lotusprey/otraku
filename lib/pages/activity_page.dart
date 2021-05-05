@@ -9,7 +9,7 @@ import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 

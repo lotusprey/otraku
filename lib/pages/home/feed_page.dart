@@ -8,7 +8,7 @@ import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/navigation/transparent_header.dart';

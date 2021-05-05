@@ -9,7 +9,7 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 

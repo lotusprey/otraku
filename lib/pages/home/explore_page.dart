@@ -5,7 +5,7 @@ import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/control_header.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';

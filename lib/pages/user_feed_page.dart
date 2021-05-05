@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/user_feed.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 
 class UserFeedPage extends StatelessWidget {

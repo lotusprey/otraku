@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/widgets/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthPage extends StatefulWidget {

@@ -9,13 +9,19 @@ class PieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-        builder: (_, constraints) => SizedBox(
-          height: constraints.maxHeight,
-          width: constraints.maxHeight,
-          child: CustomPaint(
-            foregroundPainter: _PieChartPainter(categories, colours),
-          ),
-        ),
+        builder: (_, constraints) {
+          final size = constraints.maxWidth < constraints.maxHeight
+              ? constraints.maxWidth
+              : constraints.maxHeight;
+
+          return SizedBox(
+            height: size,
+            width: size,
+            child: CustomPaint(
+              foregroundPainter: _PieChartPainter(categories, colours),
+            ),
+          );
+        },
       );
 }
 

@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
@@ -50,8 +51,8 @@ class StatisticsPage extends StatelessWidget {
                       'Score',
                       BubbleTabs<bool>(
                         options: stats.onAnime
-                            ? const ['Titles Watched', 'Hours Watched']
-                            : const ['Titles Read', 'Chapters Read'],
+                            ? const ['Titles', 'Hours']
+                            : const ['Titles', 'Chapters'],
                         values: [true, false],
                         initial: stats.scoresOnCount,
                         onNewValue: (val) => stats.scoresOnCount = val,
@@ -59,12 +60,8 @@ class StatisticsPage extends StatelessWidget {
                       ),
                     ),
                     _ScoreChart(id),
-                    GridView.extent(
+                    GridView(
                       shrinkWrap: true,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      maxCrossAxisExtent: 400,
-                      childAspectRatio: 1.9,
                       padding: Config.PADDING,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
@@ -72,6 +69,11 @@ class StatisticsPage extends StatelessWidget {
                         _Card('Status Distribution', stats.model.statuses),
                         _Card('Country Distribution', stats.model.countries),
                       ],
+                      gridDelegate:
+                          SliverGridDelegateWithMinWidthAndFixedHeight(
+                        minWidth: 340,
+                        height: 250,
+                      ),
                     ),
                   ],
                 ],
@@ -305,9 +307,10 @@ class _Card extends StatelessWidget {
             ),
             child: Row(
               children: [
-                PieChart(counts, colours),
+                Expanded(child: PieChart(counts, colours)),
                 const SizedBox(width: 10),
-                Flexible(
+                SizedBox(
+                  width: 150,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

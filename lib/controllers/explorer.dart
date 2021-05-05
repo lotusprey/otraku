@@ -339,7 +339,10 @@ class Explorer extends ScrollxController implements Filterable {
     super.onInit();
     fetchInitial();
     _search.firstRebuild = false;
-    debounce(_search, (dynamic _) => fetch(),
-        time: const Duration(milliseconds: 600));
+    debounce<String>(
+      _search,
+      (_) => fetch(),
+      time: const Duration(milliseconds: 600),
+    );
   }
 }

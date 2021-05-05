@@ -129,7 +129,6 @@ class OverviewTab extends StatelessWidget {
               items: overview.genres,
               onTap: (index) {
                 final explorable = Get.find<Explorer>();
-                explorable.search = '';
                 explorable.clearAllFilters(update: false);
                 explorable.setFilterWithKey(
                   Filterable.SORT,
@@ -140,6 +139,7 @@ class OverviewTab extends StatelessWidget {
                   value: [overview.genres[index]],
                 );
                 explorable.type = overview.browsable;
+                explorable.search = '';
                 Config.setIndex(HomePage.EXPLORE);
                 Get.until((route) => route.isFirst);
               },

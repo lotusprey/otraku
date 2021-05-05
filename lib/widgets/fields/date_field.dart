@@ -30,6 +30,7 @@ class _DateFieldState extends State<DateField> {
 
   Widget _picker(DateTime? initialDate) {
     return IconButton(
+      tooltip: 'Pick ${widget.helpText}',
       icon: const Icon(Ionicons.calendar_clear_outline),
       onPressed: () => showDatePicker(
         context: context,
@@ -66,6 +67,7 @@ class _DateFieldState extends State<DateField> {
                   _picker(date),
                   Text('${date!.year}-${date!.month}-${date!.day}'),
                   IconButton(
+                    tooltip: 'Pick ${widget.helpText}',
                     icon: const Icon(Icons.clear),
                     onPressed: () {
                       setState(() => date = null);

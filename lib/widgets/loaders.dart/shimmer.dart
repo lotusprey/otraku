@@ -3,20 +3,7 @@ import 'package:flutter/rendering.dart';
 
 class Shimmer extends StatefulWidget {
   final Widget child;
-  final Gradient gradient;
-
-  Shimmer({
-    Key? key,
-    required this.child,
-    required Color primary,
-    required Color secondary,
-  })   : gradient = LinearGradient(
-          begin: const Alignment(-1.0, -0.3),
-          end: const Alignment(1.0, 0.3),
-          colors: [primary, secondary, primary],
-          stops: const [0.1, 0.3, 0.4],
-        ),
-        super(key: key);
+  Shimmer(this.child, {Key? key}) : super(key: key);
 
   @override
   _ShimmerState createState() => _ShimmerState();
@@ -24,6 +11,8 @@ class Shimmer extends StatefulWidget {
 
 class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
+  late Gradient _gradient;
+  bool _initDone = false;
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
@@ -31,8 +20,8 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
         child: widget.child,
         builder: (_, child) => _Shimmer(
           child: child!,
+          gradient: _gradient,
           percent: _ctrl.value,
-          gradient: widget.gradient,
         ),
       );
 
@@ -44,6 +33,28 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
       duration: const Duration(seconds: 1),
       value: 1,
     )..repeat(min: -0.5, max: 1.5);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initDone) {
+      final back = Theme.of(context).primaryColor;
+      final hsl = HSLColor.fromColor(back);
+      final lightness = hsl.lightness;
+      final front = hsl
+          .withLightness(lightness < 0.5 ? lightness + 0.1 : lightness - 0.1)
+          .toColor();
+
+      _gradient = LinearGradient(
+        begin: const Alignment(-1.0, -0.3),
+        end: const Alignment(1.0, 0.3),
+        colors: [back, front, back],
+        stops: const [0.1, 0.3, 0.4],
+      );
+
+      _initDone = true;
+    }
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/friends.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -39,10 +40,12 @@ class FriendsPage extends StatelessWidget {
                       tileModel: Config.squareTile,
                       scrollCtrl: friends.scrollCtrl,
                     )
-                  : Text(
-                      'No Users',
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
+                  : friends.hasNextPage
+                      ? const Center(child: Loader())
+                      : Text(
+                          'No Users',
+                          style: Theme.of(context).textTheme.subtitle2,
+                        ),
             ),
           ),
         ),

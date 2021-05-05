@@ -26,7 +26,7 @@ const _themes = {
   Themes.navy: {
     'background': Color(0xFF0F171E),
     'translucent': Color(0xBB0F171E),
-    'primary': Color(0xFF1D2835),
+    'foreground': Color(0xFF1D2835),
     'highlight': Color(0x4445A0F2),
     'accent': Color(0xFF45A0F2),
     'error': Color(0xFFD74761),
@@ -37,7 +37,7 @@ const _themes = {
   Themes.cyber: {
     'background': Color(0xFF163B3B),
     'translucent': Color(0xBB163B3B),
-    'primary': Color(0xFF1A6157),
+    'foreground': Color(0xFF1A6157),
     'highlight': Color(0x4400E4A3),
     'accent': Color(0xFF00E4A3),
     'error': Color(0xFFD87CAC),
@@ -48,7 +48,7 @@ const _themes = {
   Themes.night: {
     'background': Color(0xFF08123A),
     'translucent': Color(0xBB08123A),
-    'primary': Color(0xFF1E2964),
+    'foreground': Color(0xFF1E2964),
     'highlight': Color(0x4441C0AA),
     'accent': Color(0xFF41C0AA),
     'error': Color(0xFFF445AF),
@@ -59,7 +59,7 @@ const _themes = {
   Themes.amethyst: {
     'background': Color(0xFF1E1E3F),
     'translucent': Color(0xBB1E1E3F),
-    'primary': Color(0xFF2D2B55),
+    'foreground': Color(0xFF2D2B55),
     'highlight': Color(0x44DFCD01),
     'accent': Color(0xFFDFCD01),
     'error': Color(0xFFF94E7E),
@@ -70,7 +70,7 @@ const _themes = {
   Themes.bee: {
     'background': Color(0xFF000000),
     'translucent': Color(0xBB000000),
-    'primary': Color(0xFF141414),
+    'foreground': Color(0xFF141414),
     'highlight': Color(0x44FFDB00),
     'accent': Color(0xFFFFDB00),
     'error': Color(0xFFFF1F39),
@@ -81,7 +81,7 @@ const _themes = {
   Themes.frost: {
     'background': Color(0xFFE0EBF5),
     'translucent': Color(0xBBE0EBF5),
-    'primary': Color(0xFFFAFDFF),
+    'foreground': Color(0xFFFAFDFF),
     'highlight': Color(0x4454B2F1),
     'accent': Color(0xFF54B2F1),
     'error': Color(0xFFE32749),
@@ -109,7 +109,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     brightness: theme['brightness'],
     backgroundColor: theme['background'],
     scaffoldBackgroundColor: theme['background'],
-    primaryColor: theme['primary'],
+    primaryColor: theme['foreground'],
     accentColor: theme['accent'],
     errorColor: theme['error'],
     cardColor: theme['translucent'],
@@ -121,7 +121,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     highlightColor: Colors.transparent,
     colorScheme: ColorScheme(
       brightness: theme['brightness'],
-      surface: theme['primary'],
+      surface: theme['foreground'],
       background: theme['background'],
       primary: theme['accent'],
       primaryVariant: theme['accent'],
@@ -158,7 +158,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     tooltipTheme: TooltipThemeData(
       padding: Config.PADDING,
       decoration: BoxDecoration(
-        color: theme['primary'],
+        color: theme['foreground'],
         borderRadius: Config.BORDER_RADIUS,
         boxShadow: [
           BoxShadow(color: theme['background'], blurRadius: 10),
@@ -174,7 +174,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       thumbColor: theme['accent'],
       overlayColor: theme['highlight'],
       activeTrackColor: theme['accent'],
-      inactiveTrackColor: theme['primary'],
+      inactiveTrackColor: theme['foreground'],
     ),
     radioTheme: RadioThemeData(
       fillColor: MaterialStateProperty.all(theme['accent']),
@@ -183,7 +183,7 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       filled: true,
-      fillColor: theme['primary'],
+      fillColor: theme['foreground'],
       hintStyle: TextStyle(
         fontSize: Style.FONT_MEDIUM,
         color: theme['faded'],

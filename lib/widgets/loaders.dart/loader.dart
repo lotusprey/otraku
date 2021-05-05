@@ -14,9 +14,9 @@ class Loader extends StatelessWidget {
       child: Container(
         width: 60,
         height: 15,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
-          color: Colors.white,
+          color: Theme.of(context).primaryColor,
         ),
       ),
       primary: Theme.of(context).primaryColor,

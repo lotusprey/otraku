@@ -6,92 +6,129 @@ import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class ReviewGrid extends StatelessWidget {
-  final List<BrowseResultModel> results;
+  final List<BrowseResultModel> data;
+  final ScrollController? scrollCtrl;
 
-  ReviewGrid(this.results);
+  ReviewGrid(this.data, {this.scrollCtrl});
 
   @override
   Widget build(BuildContext context) {
+    final sidePadding = MediaQuery.of(context).size.width > 620
+        ? (MediaQuery.of(context).size.width - 600) / 2.0
+        : 10.0;
+    final padding = EdgeInsets.only(
+      left: sidePadding,
+      right: sidePadding,
+      bottom: scrollCtrl == null ? 0 : NavBar.offset(context),
+      top: 15,
+    );
+
+    if (scrollCtrl != null)
+      return GridView.builder(
+        padding: padding,
+        controller: scrollCtrl,
+        physics: Config.PHYSICS,
+        itemCount: data.length,
+        itemBuilder: (_, i) => _Tile(data[i]),
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 200,
+          height: 200,
+        ),
+      );
+
     return SliverPadding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 15),
+      padding: padding,
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, index) => BrowseIndexer(
-            id: results[index].id,
-            imageUrl: results[index].imageUrl,
-            browsable: Browsable.review,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: Config.BORDER_RADIUS,
+          (_, i) => _Tile(data[i]),
+          childCount: data.length,
+        ),
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 200,
+          height: 200,
+        ),
+      ),
+    );
+  }
+}
+
+class _Tile extends StatelessWidget {
+  final BrowseResultModel model;
+  _Tile(this.model);
+
+  @override
+  Widget build(BuildContext context) {
+    return BrowseIndexer(
+      id: model.id,
+      imageUrl: model.imageUrl,
+      browsable: Browsable.review,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: Config.BORDER_RADIUS,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (model.imageUrl != null)
+              Expanded(
+                flex: 2,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.vertical(top: Config.RADIUS),
+                  child: Hero(
+                    tag: model.id,
+                    child: FadeImage(model.imageUrl),
+                  ),
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (results[index].imageUrl != null)
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: Config.PADDING,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                     Expanded(
                       flex: 2,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.vertical(top: Config.RADIUS),
-                        child: Hero(
-                          tag: results[index].id,
-                          child: FadeImage(results[index].imageUrl),
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          model.text1,
+                          style: Theme.of(context).textTheme.headline5,
+                          overflow: TextOverflow.fade,
                         ),
                       ),
                     ),
-                  Expanded(
-                    flex: 3,
-                    child: Padding(
-                      padding: Config.PADDING,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                    const SizedBox(height: 5),
+                    Expanded(
+                      flex: 3,
+                      child: Row(
                         children: [
                           Expanded(
-                            flex: 2,
-                            child: Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Text(
-                                results[index].text1,
-                                style: Theme.of(context).textTheme.headline5,
-                                overflow: TextOverflow.fade,
-                              ),
+                            child: Text(
+                              model.text2!,
+                              style: Theme.of(context).textTheme.subtitle1,
+                              overflow: TextOverflow.fade,
                             ),
                           ),
-                          const SizedBox(height: 5),
-                          Expanded(
-                            flex: 3,
-                            child: Row(
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    results[index].text2!,
-                                    style:
-                                        Theme.of(context).textTheme.subtitle1,
-                                    overflow: TextOverflow.fade,
-                                  ),
+                                Icon(
+                                  Icons.thumbs_up_down_outlined,
+                                  size: Style.ICON_SMALL,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 5,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.thumbs_up_down_outlined,
-                                        size: Style.ICON_SMALL,
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Text(
-                                        results[index].text3!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                      ),
-                                    ],
-                                  ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  model.text3!,
+                                  style: Theme.of(context).textTheme.subtitle1,
                                 ),
                               ],
                             ),
@@ -99,16 +136,11 @@ class ReviewGrid extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          childCount: results.length,
-        ),
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 300,
-          height: 200,
+          ],
         ),
       ),
     );

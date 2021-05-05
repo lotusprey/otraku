@@ -7,10 +7,8 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class TitleList extends StatelessWidget {
   final List<BrowseResultModel> results;
   final ScrollController? scrollCtrl;
-  final bool sliver;
 
-  TitleList(this.results, {this.sliver = true, this.scrollCtrl, UniqueKey? key})
-      : super(key: key);
+  TitleList(this.results, {this.scrollCtrl, UniqueKey? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,29 +18,29 @@ class TitleList extends StatelessWidget {
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
-      bottom: sliver ? 0 : NavBar.offset(context),
+      bottom: scrollCtrl == null ? 0 : NavBar.offset(context),
       top: 15,
     );
 
-    if (sliver)
-      return SliverPadding(
+    if (scrollCtrl != null)
+      return ListView.builder(
         padding: padding,
-        sliver: SliverFixedExtentList(
-          delegate: SliverChildBuilderDelegate(
-            (_, i) => _Tile(results[i]),
-            childCount: results.length,
-          ),
-          itemExtent: 60,
-        ),
+        controller: scrollCtrl,
+        physics: Config.PHYSICS,
+        itemExtent: 60,
+        itemCount: results.length,
+        itemBuilder: (_, i) => _Tile(results[i]),
       );
 
-    return ListView.builder(
+    return SliverPadding(
       padding: padding,
-      controller: scrollCtrl,
-      physics: Config.PHYSICS,
-      itemExtent: 60,
-      itemCount: results.length,
-      itemBuilder: (_, i) => _Tile(results[i]),
+      sliver: SliverFixedExtentList(
+        delegate: SliverChildBuilderDelegate(
+          (_, i) => _Tile(results[i]),
+          childCount: results.length,
+        ),
+        itemExtent: 60,
+      ),
     );
   }
 }

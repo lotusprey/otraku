@@ -10,13 +10,11 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class TileGrid extends StatelessWidget {
   final List<BrowseResultModel> tileData;
   final TileModel tileModel;
-  final bool sliver;
   final ScrollController? scrollCtrl;
 
   TileGrid({
     required this.tileData,
     required this.tileModel,
-    this.sliver = false,
     this.scrollCtrl,
     UniqueKey? key,
   }) : super(key: key);
@@ -29,11 +27,11 @@ class TileGrid extends StatelessWidget {
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
-      bottom: sliver ? 0 : NavBar.offset(context),
+      bottom: scrollCtrl == null ? 0 : NavBar.offset(context),
       top: 15,
     );
 
-    if (!sliver)
+    if (scrollCtrl != null)
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,

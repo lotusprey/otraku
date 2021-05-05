@@ -38,7 +38,7 @@ class FavouritesPage extends StatelessWidget {
               key: favourites.key,
               child: favourites.favourites.isNotEmpty
                   ? favourites.pageIndex == UserModel.STUDIO_FAV
-                      ? TitleList(favourites.favourites, sliver: false)
+                      ? TitleList(favourites.favourites)
                       : TileGrid(
                           tileData: favourites.favourites,
                           tileModel: Config.highTile,

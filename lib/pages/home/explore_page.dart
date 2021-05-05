@@ -62,19 +62,11 @@ class _ExploreGrid extends StatelessWidget {
       if (results[0].browsable == Browsable.studio) return TitleList(results);
 
       if (results[0].browsable == Browsable.user)
-        return TileGrid(
-          tileData: results,
-          tileModel: Config.squareTile,
-          sliver: true,
-        );
+        return TileGrid(tileData: results, tileModel: Config.squareTile);
 
       if (results[0].browsable == Browsable.review) return ReviewGrid(results);
 
-      return TileGrid(
-        tileData: results,
-        tileModel: Config.highTile,
-        sliver: true,
-      );
+      return TileGrid(tileData: results, tileModel: Config.highTile);
     });
   }
 }

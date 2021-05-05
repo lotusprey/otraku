@@ -53,7 +53,8 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
       theme: Config.theme,
-      darkTheme: Config.theme,
+      // TODO a workaround due to getx not being able to change the dark theme
+      themeMode: ThemeMode.light,
       initialRoute: AuthPage.ROUTE,
       getPages: [
         GetPage(name: AuthPage.ROUTE, page: () => AuthPage()),

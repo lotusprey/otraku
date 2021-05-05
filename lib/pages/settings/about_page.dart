@@ -28,7 +28,7 @@ class AboutTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v. 1.0.6',
+            'Otraku - v. 1.0.7',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline5,
           ),

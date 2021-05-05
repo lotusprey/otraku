@@ -21,10 +21,16 @@ class Toast {
           ),
           padding: Config.PADDING,
           decoration: BoxDecoration(
-            color: Theme.of(ctx).disabledColor,
+            color: Theme.of(ctx).primaryColor,
             borderRadius: Config.BORDER_RADIUS,
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(ctx).backgroundColor,
+                blurRadius: 10,
+              ),
+            ],
           ),
-          child: Text(text),
+          child: Text(text, style: Theme.of(ctx).textTheme.bodyText1),
         ),
       ),
     );

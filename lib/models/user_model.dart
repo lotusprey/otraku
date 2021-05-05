@@ -26,6 +26,7 @@ class UserModel {
   final StatisticsModel mangaStats;
   final following = PageModel<BrowseResultModel>();
   final followers = PageModel<BrowseResultModel>();
+  final reviews = PageModel<BrowseResultModel>();
   final activities = PageModel<ActivityModel>();
   final favourites = [
     PageModel<BrowseResultModel>(),

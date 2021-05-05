@@ -17,9 +17,11 @@ import 'package:otraku/controllers/statistics.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/controllers/user_feed.dart';
+import 'package:otraku/controllers/user_reviews.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/friends_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
+import 'package:otraku/pages/user_reviews_page.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/auth_page.dart';
@@ -181,6 +183,13 @@ class App extends StatelessWidget {
           page: () => UserFeedPage(Get.arguments),
           binding: BindingsBuilder(() {
             Get.put(UserFeed(Get.arguments), tag: Get.arguments.toString());
+          }),
+        ),
+        GetPage(
+          name: UserReviewsPage.ROUTE,
+          page: () => UserReviewsPage(Get.arguments),
+          binding: BindingsBuilder(() {
+            Get.put(UserReviews(Get.arguments), tag: Get.arguments.toString());
           }),
         ),
         GetPage(

@@ -24,10 +24,7 @@ class Toast {
             color: Theme.of(ctx).primaryColor,
             borderRadius: Config.BORDER_RADIUS,
             boxShadow: [
-              BoxShadow(
-                color: Theme.of(ctx).backgroundColor,
-                blurRadius: 10,
-              ),
+              BoxShadow(color: Theme.of(ctx).backgroundColor, blurRadius: 10),
             ],
           ),
           child: Text(text, style: Theme.of(ctx).textTheme.bodyText1),

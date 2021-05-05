@@ -13,7 +13,7 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/navigation/transparent_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
-import 'package:otraku/widgets/refresh_control.dart';
+import 'package:otraku/widgets/loaders.dart/refresh_control.dart';
 
 class FeedTab extends StatelessWidget {
   const FeedTab();

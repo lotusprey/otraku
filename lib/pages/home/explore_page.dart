@@ -10,7 +10,7 @@ import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/control_header.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
-import 'package:otraku/widgets/loaders.dart/refresh_control.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class ExploreTab extends StatelessWidget {
   const ExploreTab();

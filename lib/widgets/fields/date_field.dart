@@ -37,8 +37,10 @@ class _DateFieldState extends State<DateField> {
         firstDate: DateTime(1920),
         lastDate: DateTime.now(),
         helpText: widget.helpText,
-        errorFormatText: 'Enter valid date',
         errorInvalidText: 'Enter date in valid range',
+        errorFormatText: 'Enter valid date',
+        confirmText: 'Confirm',
+        cancelText: 'Cancel',
         fieldLabelText: '',
       ).then((pickedDate) {
         if (pickedDate == null) return;

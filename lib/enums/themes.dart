@@ -160,6 +160,9 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
       decoration: BoxDecoration(
         color: theme['primary'],
         borderRadius: Config.BORDER_RADIUS,
+        boxShadow: [
+          BoxShadow(color: theme['background'], blurRadius: 10),
+        ],
       ),
       textStyle: TextStyle(fontSize: Style.FONT_MEDIUM, color: theme['faded']),
     ),

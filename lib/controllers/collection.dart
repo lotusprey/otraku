@@ -134,6 +134,8 @@ class Collection extends ScrollxController implements Filterable {
   // GETTERS & SETTERS
   // ***************************************************************************
 
+  @override
+  bool get hasNextPage => false;
   bool get isLoading => _isLoading();
   int get listIndex => _listIndex();
   ScoreFormat? get scoreFormat => _scoreFormat;
@@ -144,7 +146,6 @@ class Collection extends ScrollxController implements Filterable {
   int get currentCount => _lists[_listIndex()].entries.length;
   bool get isEmpty => _entries.isEmpty;
   bool get isFullyEmpty => _lists.isEmpty;
-  bool get hasNextPage => false;
 
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
@@ -243,6 +244,7 @@ class Collection extends ScrollxController implements Filterable {
     _isLoading.value = false;
   }
 
+  @override
   Future<void> fetchPage() async {}
 
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {

@@ -89,6 +89,8 @@ class Activity extends ScrollxController {
 
   ActivityModel? get model => _model;
   bool get isLoading => _isLoading();
+
+  @override
   bool get hasNextPage => _model!.replies.hasNextPage;
 
   Future<void> fetch() async {
@@ -107,6 +109,7 @@ class Activity extends ScrollxController {
     update();
   }
 
+  @override
   Future<void> fetchPage() async {
     final data = await Client.request(
       _activityQuery,

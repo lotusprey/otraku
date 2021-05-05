@@ -60,6 +60,8 @@ class Studio extends ScrollxController {
 
   StudioModel? get model => _model;
   StudioPageModel get media => _media();
+
+  @override
   bool get hasNextPage => _media().hasNextPage;
 
   MediaSort get sort => _sort;
@@ -106,6 +108,7 @@ class Studio extends ScrollxController {
     _initMedia(data['Studio']['media'], true);
   }
 
+  @override
   Future<void> fetchPage() async {
     final data = await Client.request(
       _studioQuery,

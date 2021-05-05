@@ -91,24 +91,19 @@ class Staff extends ScrollxController {
   MediaSort _sort = MediaSort.POPULARITY_DESC;
 
   StaffModel? get model => _model;
-
   PageModel<Connection> get characters => _characters();
-
   PageModel<Connection> get roles => _roles();
-
-  bool get hasNextPage =>
-      _onCharacters() ? _characters().hasNextPage : _roles().hasNextPage;
-
   bool get onCharacters => _onCharacters();
-
   set onCharacters(bool value) => _onCharacters.value = value;
-
   MediaSort get sort => _sort;
-
   set sort(MediaSort value) {
     _sort = value;
     refetch();
   }
+
+  @override
+  bool get hasNextPage =>
+      _onCharacters() ? _characters().hasNextPage : _roles().hasNextPage;
 
   // ***************************************************************************
   // FETCHING
@@ -150,6 +145,7 @@ class Staff extends ScrollxController {
     _initRoles(data['Staff'], true);
   }
 
+  @override
   Future<void> fetchPage() async {
     final data = await Client.request(_staffQuery, {
       'id': id,

@@ -45,6 +45,7 @@ class Favourites extends ScrollxController {
     UniqueKey(),
   ];
 
+  @override
   bool get hasNextPage => _model.favourites[_pageIndex].hasNextPage;
   List<BrowseResultModel> get favourites => _model.favourites[_pageIndex].items;
   UniqueKey get key => _keys[_pageIndex];
@@ -63,6 +64,7 @@ class Favourites extends ScrollxController {
     return 'Studios';
   }
 
+  @override
   Future<void> fetchPage() async {
     final data = await Client.request(_favouritesQuery, {
       'id': id,

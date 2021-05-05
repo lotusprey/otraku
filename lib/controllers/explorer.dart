@@ -115,9 +115,10 @@ class Explorer extends ScrollxController implements Filterable {
   // GETTERS
   // ***************************************************************************
 
-  bool get isLoading => _isLoading();
-
+  @override
   bool get hasNextPage => _results().hasNextPage;
+
+  bool get isLoading => _isLoading();
 
   Browsable get type => _type();
 
@@ -280,8 +281,8 @@ class Explorer extends ScrollxController implements Filterable {
     _isLoading.value = false;
   }
 
+  @override
   Future<void> fetchPage() async {
-    print('fetched');
     _filters[Filterable.PAGE]++;
     await fetch(clean: false);
   }

@@ -76,6 +76,7 @@ class Character extends ScrollxController {
 
   PageModel<Connection> get manga => _manga();
 
+  @override
   bool get hasNextPage =>
       _onAnime() ? _anime().hasNextPage : _manga().hasNextPage;
 
@@ -142,6 +143,7 @@ class Character extends ScrollxController {
     _initManga(body['Character'], true);
   }
 
+  @override
   Future<void> fetchPage() async {
     final data = await Client.request(_characterQuery, {
       'id': id,

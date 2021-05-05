@@ -137,12 +137,10 @@ class Notifications extends ScrollxController {
   int _filter = 0;
   final _entries = PageModel<NotificationModel>();
 
+  @override
   bool get hasNextPage => _entries.hasNextPage;
-
   int get unreadCount => _unreadCount;
-
   int get filter => _filter;
-
   set filter(int val) {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
@@ -175,6 +173,7 @@ class Notifications extends ScrollxController {
     update();
   }
 
+  @override
   Future<void> fetchPage() async {
     Map<String, dynamic>? data = await Client.request(
       _notificationQuery,

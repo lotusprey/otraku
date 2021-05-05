@@ -42,11 +42,13 @@ class Friends extends ScrollxController {
     });
   }
 
+  @override
   bool get hasNextPage {
     if (_onFollowing) return _model.following.hasNextPage;
     return _model.followers.hasNextPage;
   }
 
+  @override
   Future<void> fetchPage() async {
     Map<String, dynamic>? data = await Client.request(_friendsQuery, {
       'id': id,

@@ -161,6 +161,7 @@ class Media extends ScrollxController {
 
   bool get isLoading => _isLoading;
 
+  @override
   bool get hasNextPage {
     if (_tab() == SOCIAL) return _model?.reviews.hasNextPage ?? false;
 
@@ -206,6 +207,7 @@ class Media extends ScrollxController {
     _isLoading = false;
   }
 
+  @override
   Future<void> fetchPage() async =>
       _tab() == RELATIONS ? fetchRelationPage() : fetchReviewPage();
 

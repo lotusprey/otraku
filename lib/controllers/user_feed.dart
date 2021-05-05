@@ -57,9 +57,11 @@ class UserFeed extends ScrollxController {
 
   late UserModel _model;
 
+  @override
   bool get hasNextPage => _model.activities.hasNextPage;
   List<ActivityModel> get activities => _model.activities.items;
 
+  @override
   Future<void> fetchPage() async {
     final data = await Client.request(_activitiesQuery, {
       'id': id,

@@ -256,12 +256,12 @@ class _Tiles extends StatelessWidget {
             onTap: () => Toast.copy(context, items[index]),
             child: Container(
               margin: const EdgeInsets.only(bottom: 10),
-              padding: Config.PADDING,
               decoration: BoxDecoration(
                 borderRadius: Config.BORDER_RADIUS,
                 color: Theme.of(context).primaryColor,
               ),
               child: SingleChildScrollView(
+                padding: Config.PADDING,
                 scrollDirection: Axis.horizontal,
                 physics: Config.PHYSICS,
                 child: Text(items[index]),

@@ -131,7 +131,7 @@ class _Header extends StatelessWidget {
                       ),
                     ),
                   ] else
-                    const Icon(Icons.notifications_outlined),
+                    const Icon(Ionicons.notifications_outline),
                 ],
               ),
             ),

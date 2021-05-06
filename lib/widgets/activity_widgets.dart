@@ -260,7 +260,10 @@ class _MediaBox extends StatelessWidget {
                         overflow: TextOverflow.fade,
                         text: TextSpan(
                           children: [
-                            TextSpan(text: activity.text),
+                            TextSpan(
+                              text: activity.text,
+                              style: Theme.of(context).textTheme.bodyText2,
+                            ),
                             TextSpan(
                               text: activity.mediaTitle,
                               style: Theme.of(context).textTheme.bodyText1,

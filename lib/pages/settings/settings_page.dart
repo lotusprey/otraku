@@ -13,15 +13,15 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 class SettingsPage extends StatelessWidget {
   static const ROUTE = '/settings';
 
-  static const _pageNames = {
-    0: 'Personalisation',
-    1: 'Content',
-    2: 'Notifications',
-    3: 'About',
-  };
-
   Widget build(BuildContext context) {
-    final tabs = [
+    const pageNames = {
+      0: 'Personalisation',
+      1: 'Content',
+      2: 'Notifications',
+      3: 'About',
+    };
+
+    const tabs = [
       PersonalisationTab(),
       ContentTab(),
       NotificationSettingsTab(),
@@ -41,7 +41,7 @@ class SettingsPage extends StatelessWidget {
           onChanged: (page) => settings.pageIndex = page,
           initial: settings.pageIndex,
         ),
-        appBar: CustomAppBar(title: _pageNames[settings.pageIndex]),
+        appBar: CustomAppBar(title: pageNames[settings.pageIndex]),
         body: AnimatedSwitcher(
           duration: Config.TAB_SWITCH_DURATION,
           child: tabs[settings.pageIndex],

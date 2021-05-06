@@ -9,6 +9,8 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class NotificationSettingsTab extends StatelessWidget {
+  const NotificationSettingsTab();
+
   @override
   Widget build(BuildContext context) {
     final options = Get.find<Settings>().model!.notificationOptions;

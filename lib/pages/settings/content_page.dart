@@ -11,6 +11,8 @@ import 'package:otraku/widgets/fields/switch_tile.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class ContentTab extends StatelessWidget {
+  const ContentTab();
+
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<Settings>();

@@ -8,6 +8,8 @@ import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class PersonalisationTab extends StatelessWidget {
+  const PersonalisationTab();
+
   @override
   Widget build(BuildContext context) => ListView(
         physics: Config.PHYSICS,

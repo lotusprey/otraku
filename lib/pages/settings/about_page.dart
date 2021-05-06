@@ -8,6 +8,8 @@ import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutTab extends StatelessWidget {
+  const AboutTab();
+
   @override
   Widget build(BuildContext context) {
     return ListView(

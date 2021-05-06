@@ -142,7 +142,7 @@ class _NotificationWidget extends StatelessWidget {
                                 style: (i % 2 == 0) ==
                                         notification.markTextOnEvenIndex
                                     ? Theme.of(context).textTheme.bodyText1
-                                    : null,
+                                    : Theme.of(context).textTheme.bodyText2,
                               ),
                           ],
                         ),

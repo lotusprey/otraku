@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/html_content.dart';
 
-void showPopUp(BuildContext ctx, Widget child) =>
+Future<dynamic> showPopUp(BuildContext ctx, Widget child) =>
     showDialog(context: ctx, builder: (ctx) => _PopUpAnimation(child));
 
 class _PopUpAnimation extends StatefulWidget {

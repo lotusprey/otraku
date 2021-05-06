@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings.dart';
 import 'package:otraku/pages/settings/personalisation_page.dart';
@@ -32,10 +33,10 @@ class SettingsPage extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            'Personalisation': Icons.palette_outlined,
-            'Content': Icons.video_settings,
-            'Notifications': Icons.notifications_none,
-            'About': Icons.account_circle_outlined,
+            'Personalisation': Ionicons.color_palette_outline,
+            'Content': Ionicons.tv_outline,
+            'Notifications': Ionicons.notifications_outline,
+            'About': Ionicons.person_circle_outline,
           },
           onChanged: (page) => settings.pageIndex = page,
           initial: settings.pageIndex,

@@ -33,6 +33,7 @@ class EntryPage extends StatefulWidget {
   _EntryPageState createState() => _EntryPageState();
 }
 
+// TODO: update score and so on
 class _EntryPageState extends State<EntryPage> {
   @override
   Widget build(BuildContext context) => GetBuilder<Entry>(builder: (entry) {

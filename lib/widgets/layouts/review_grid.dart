@@ -26,29 +26,28 @@ class ReviewGrid extends StatelessWidget {
       top: 15,
     );
 
+    const gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
+      minWidth: 270,
+      height: 200,
+    );
+
     if (scrollCtrl != null)
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
         physics: Config.PHYSICS,
         itemCount: data.length,
+        gridDelegate: gridDelegate,
         itemBuilder: (_, i) => _Tile(data[i]),
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 200,
-          height: 200,
-        ),
       );
 
     return SliverPadding(
       padding: padding,
       sliver: SliverGrid(
+        gridDelegate: gridDelegate,
         delegate: SliverChildBuilderDelegate(
           (_, i) => _Tile(data[i]),
           childCount: data.length,
-        ),
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 200,
-          height: 200,
         ),
       ),
     );

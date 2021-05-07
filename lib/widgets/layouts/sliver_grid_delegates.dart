@@ -27,12 +27,16 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   @override
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid());
-    int crossAxisCount =
-        constraints.crossAxisExtent ~/ (minWidth + crossAxisSpacing);
-    if (crossAxisCount == 0) crossAxisCount++;
+
+    int crossAxisCount = (constraints.crossAxisExtent + crossAxisSpacing) ~/
+        (minWidth + crossAxisSpacing);
+
+    if (crossAxisCount < 1) crossAxisCount++;
+
     double usableCrossAxisExtent =
         constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
     if (usableCrossAxisExtent < 0.0) usableCrossAxisExtent = 0.0;
+
     final crossAxisExtent = usableCrossAxisExtent / crossAxisCount;
 
     return SliverGridRegularTileLayout(
@@ -88,12 +92,16 @@ class SliverGridDelegateWithMaxWidthAndAddedHeight extends SliverGridDelegate {
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid(constraints.crossAxisExtent));
 
-    final crossAxisCount =
-        (constraints.crossAxisExtent / (maxWidth + crossAxisSpacing)).ceil();
+    final crossAxisCount = ((constraints.crossAxisExtent + crossAxisSpacing) /
+            (maxWidth + crossAxisSpacing))
+        .ceil();
+
     double usableCrossAxisExtent =
         constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
     if (usableCrossAxisExtent < 0.0) usableCrossAxisExtent = 0.0;
+
     final childCrossAxisExtent = usableCrossAxisExtent / crossAxisCount;
+
     final childMainAxisExtent =
         childCrossAxisExtent / rawWHRatio + additionalHeight;
 

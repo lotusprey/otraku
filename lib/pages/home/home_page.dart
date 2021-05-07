@@ -42,11 +42,11 @@ class HomePage extends StatelessWidget {
     ];
 
     const drawers = [
-      const SizedBox(),
+      null,
       const CollectionDrawer(Collection.ANIME),
       const CollectionDrawer(Collection.MANGA),
       const ExploreDrawer(),
-      const SizedBox(),
+      null,
     ];
 
     return WillPopScope(

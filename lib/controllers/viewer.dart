@@ -139,7 +139,10 @@ class Viewer extends ScrollxController {
     refetch();
   }
 
-  void nullifyUnread() => _unreadCount.value = 0;
+  void nullifyUnread() {
+    _unreadCount.value = 0;
+    Config.storage.write(Config.LAST_NOTIFICATION_COUNT, 0);
+  }
 
   // ***************************************************************************
   // FETCHING
@@ -162,6 +165,7 @@ class Viewer extends ScrollxController {
 
     if (_settings == null) _settings = SettingsModel(data['Viewer']);
     _unreadCount.value = data['Viewer']['unreadNotificationCount'];
+    Config.storage.write(Config.LAST_NOTIFICATION_COUNT, _unreadCount());
     update();
 
     _initActivities(data, true);

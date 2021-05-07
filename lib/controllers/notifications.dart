@@ -17,29 +17,34 @@ class Notifications extends ScrollxController {
         pageInfo {hasNextPage}
         notifications(type_in: $filter, resetNotificationCount: true) {
           ... on FollowingNotification {
+            id
             type
             user {id name avatar {large}}
             createdAt
           }
           ... on ActivityMessageNotification {
+            id
             type
             activityId
             user {id name avatar {large}}
             createdAt
           }
           ... on ActivityReplyNotification {
+            id
             type
             activityId
             user {id name avatar {large}}
             createdAt
           }
           ... on ActivityReplySubscribedNotification {
+            id
             type
             activityId
             user {id name avatar {large}}
             createdAt
           }
           ... on ThreadCommentReplyNotification {
+            id
             type
             context
             commentId
@@ -48,12 +53,14 @@ class Notifications extends ScrollxController {
             createdAt
           }
           ... on ActivityMentionNotification {
+            id
             type
             activityId
             user {id name avatar {large}}
             createdAt
           }
           ... on ThreadCommentMentionNotification {
+            id
             type
             commentId
             thread {title}
@@ -61,6 +68,7 @@ class Notifications extends ScrollxController {
             createdAt
           }
           ... on ThreadCommentSubscribedNotification {
+            id
             type
             commentId
             thread {title}
@@ -68,24 +76,28 @@ class Notifications extends ScrollxController {
             createdAt
           }
           ... on ActivityLikeNotification {
+            id
             type
             activityId
             user {id name avatar {large}}
             createdAt
           }
           ... on ActivityReplyLikeNotification {
+            id
             type
             activityId
             user {id name avatar {large}}
             createdAt
           }
           ... on ThreadLikeNotification {
+            id
             type
             thread {id title}
             user {id name avatar {large}}
             createdAt
           }
           ... on ThreadCommentLikeNotification {
+            id
             type
             commentId
             thread {title}
@@ -93,12 +105,14 @@ class Notifications extends ScrollxController {
             createdAt
           }
           ... on AiringNotification {
+            id
             type
             episode
             media {id type bannerImage title {userPreferred} coverImage {large}}
             createdAt
           }
           ... on RelatedMediaAdditionNotification {
+            id
             type
             media {id type bannerImage title {userPreferred} coverImage {large}}
             createdAt
@@ -155,7 +169,7 @@ class Notifications extends ScrollxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    Map<String, dynamic>? data = await Client.request(
+    final data = await Client.request(
       _notificationQuery,
       _filter != 0 ? {'filter': _filters[_filter]} : null,
       popOnErr: false,
@@ -163,12 +177,14 @@ class Notifications extends ScrollxController {
     if (data == null) return;
 
     _unreadCount = _filter == 0 ? data['Viewer']['unreadNotificationCount'] : 0;
-    data = data['Page'];
 
-    final List<NotificationModel> nl = [];
-    for (final n in data!['notifications']) nl.add(NotificationModel(n));
+    final nl = <NotificationModel>[];
+    for (final n in data['Page']['notifications'])
+      try {
+        nl.add(NotificationModel(n));
+      } catch (_) {}
 
-    _entries.append(nl, data['pageInfo']['hasNextPage']);
+    _entries.append(nl, data['Page']['pageInfo']['hasNextPage']);
     Get.find<Viewer>().nullifyUnread();
     update();
   }

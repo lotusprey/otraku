@@ -97,7 +97,7 @@ class _Title extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: [
-          Text(text, style: Theme.of(context).textTheme.headline3),
+          Text(text, style: Theme.of(context).textTheme.headline6),
           const Spacer(),
           if (tabs != null) tabs!,
         ],
@@ -145,41 +145,35 @@ class _Details extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 60,
-      child: ListView(
-        padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
-        physics: Config.PHYSICS,
-        scrollDirection: Axis.horizontal,
-        itemExtent: 200,
-        children: [
-          for (int i = 0; i < icons.length; i++)
-            Container(
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                borderRadius: Config.BORDER_RADIUS,
-                color: Theme.of(context).primaryColor,
-              ),
-              child: Row(
-                children: [
-                  Icon(icons[i]),
-                  const SizedBox(width: 10),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        titles[i],
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                      Text(subtitles[i].toString()),
-                    ],
-                  ),
-                ],
-              ),
+    return GridView.builder(
+      shrinkWrap: true,
+      padding: Config.PADDING,
+      physics: Config.PHYSICS,
+      itemCount: titles.length,
+      itemBuilder: (_, i) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          borderRadius: Config.BORDER_RADIUS,
+          color: Theme.of(context).primaryColor,
+        ),
+        child: Row(
+          children: [
+            Icon(icons[i]),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
+                Text(subtitles[i].toString()),
+              ],
             ),
-        ],
+          ],
+        ),
+      ),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 190,
+        height: 50,
       ),
     );
   }
@@ -296,7 +290,7 @@ class _Card extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.headline3),
+        Text(title, style: Theme.of(context).textTheme.headline6),
         const SizedBox(height: 10),
         Flexible(
           child: Container(

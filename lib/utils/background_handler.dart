@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -13,7 +12,6 @@ const _countQuery = r'''query Count {Viewer {unreadNotificationCount}}''';
 
 const _notificationQuery = r'''
   query Notifications($perPage: Int) {
-    Viewer {unreadNotificationCount}
     Page(perPage: $perPage) {
       notifications(resetNotificationCount: false) {
         ... on FollowingNotification {
@@ -126,58 +124,56 @@ final _notificationPlugin = FlutterLocalNotificationsPlugin();
 
 void _fetch() => Workmanager().executeTask((_, input) async {
       await GetStorage.init();
-      return true;
 
-      // // Log in
-      // if (Client.viewerId == null) {
-      //   final ok = await Client.logIn();
-      //   if (!ok) return false;
-      // }
+      // Log in
+      if (Client.viewerId == null) {
+        final ok = await Client.logIn();
+        if (!ok) return false;
+      }
 
-      // // Get the count of new notifications
-      // final temp = await Client.request(
-      //   _countQuery,
-      //   {},
-      //   popOnErr: false,
-      //   silentErr: true,
-      // );
-      // if (temp == null) return false;
+      // Get the count of new notifications
+      Map<String, dynamic>? data = await Client.request(
+        _countQuery,
+        {},
+        popOnErr: false,
+        silentErr: true,
+      );
+      if (data == null) return false;
 
-      // int count = temp['Viewer']['unreadNotificationCount'];
-      // count -= Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
+      int count = data['Viewer']['unreadNotificationCount'];
+      count -= Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
+      if (count < 1) return true;
 
-      // _notificationPlugin.show(
-      //   0,
-      //   'title',
-      //   'body',
-      //   NotificationDetails(
-      //     android: AndroidNotificationDetails(
-      //       'NOTIFICATIONS',
-      //       'Notifications',
-      //       'Notification channel',
-      //     ),
-      //   ),
-      //   payload: 'count: $count',
-      // );
+      _notificationPlugin.show(
+        0,
+        'title',
+        'body',
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'NOTIFICATIONS',
+            'Notifications',
+            'Notification channel',
+          ),
+        ),
+        payload: 'count: $count',
+      );
 
-      // if (count < 1) return true;
+      // Get new notifications
+      data = await Client.request(
+        _notificationQuery,
+        {'perPage': count},
+        popOnErr: false,
+        silentErr: true,
+      );
+      if (data == null) return false;
 
-      // // Get new notifications
-      // final data = await Client.request(
-      //   _notificationQuery,
-      //   {'perPage': count},
-      //   popOnErr: false,
-      //   silentErr: true,
-      // );
-      // if (data == null) return false;
+      final nl = <NotificationModel>[];
+      for (final n in data['Page']['notifications'])
+        try {
+          nl.add(NotificationModel(n));
+        } catch (_) {}
 
-      // final nl = <NotificationModel>[];
-      // for (final n in data['Page']['notifications'])
-      //   try {
-      //     nl.add(NotificationModel(n));
-      //   } catch (_) {}
-
-      // // Send device notifications
+      // Send device notifications
       // _notificationPlugin.show(
       //   0,
       //   'title',
@@ -191,6 +187,8 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       //   ),
       //   payload: 'notification data',
       // );
+
+      return true;
     });
 
 class BackgroundHandler {

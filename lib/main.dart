@@ -22,6 +22,7 @@ import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/friends_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
 import 'package:otraku/pages/user_reviews_page.dart';
+import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/auth_page.dart';
@@ -43,8 +44,13 @@ import 'package:otraku/pages/settings/settings_page.dart';
 
 Future<void> main() async {
   await GetStorage.init();
+
+  BackgroundHandler.init();
+
   runApp(App());
 }
+
+// TODO getNotificationAppLaunchDetails
 
 class App extends StatelessWidget {
   @override

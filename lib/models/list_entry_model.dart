@@ -50,10 +50,9 @@ class ListEntryModel {
         nextEpisode: map['media']['nextAiringEpisode'] != null
             ? map['media']['nextAiringEpisode']['episode']
             : null,
-        timeUntilAiring: map['media']['nextAiringEpisode'] != null
-            ? Convert.secondsToTimeString(
-                map['media']['nextAiringEpisode']['timeUntilAiring'])
-            : null,
+        timeUntilAiring: Convert.secondsToCountdownString(
+          map['media']['nextAiringEpisode']?['timeUntilAiring'],
+        ),
         format: map['media']['format'],
         status: map['media']['status'],
         progress: map['progress'] ?? 0,

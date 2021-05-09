@@ -111,10 +111,9 @@ class MediaOverviewModel {
       nextEpisode: map['nextAiringEpisode'] != null
           ? map['nextAiringEpisode']['episode']
           : null,
-      timeUntilAiring: map['nextAiringEpisode'] != null
-          ? Convert.secondsToTimeString(
-              map['nextAiringEpisode']['timeUntilAiring'])
-          : null,
+      timeUntilAiring: Convert.secondsToCountdownString(
+        map['nextAiringEpisode']?['timeUntilAiring'],
+      ),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],

@@ -32,9 +32,10 @@ dev_dependencies:
 flutter_icons:
   ios: true
   android: true
-  image_path: "assets/icons/ios_r.png"
+  image_path: "assets/icons/android.png"
+  image_path_ios: "assets/icons/ios.png"
   adaptive_icon_background: "#0F171E"
-  adaptive_icon_foreground: "assets/icons/android_b.png"
+  adaptive_icon_foreground: "assets/icons/android.png"
 
 flutter:
   uses-material-design: true

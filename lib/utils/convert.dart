@@ -59,10 +59,14 @@ abstract class Convert {
   static String millisecondsToTimeString(int? millis) {
     if (millis == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
-    return '${_weekDays[date.weekday - 1]}, ${date.day} ${_months[date.month]} ${date.year}, ${date.hour}:${date.minute}';
+    return '${_weekDays[date.weekday - 1]}, ${date.day} ${_months[date.month]} '
+        '${date.year}, ${date.hour <= 9 ? 0 : ""}${date.hour}:'
+        '${date.minute <= 9 ? 0 : ""}${date.minute}';
   }
 
-  static String secondsToTimeString(int seconds) {
+  static String? secondsToCountdownString(int? seconds) {
+    if (seconds == null) return null;
+
     int minutes = seconds ~/ 60;
     int hours = minutes ~/ 60;
     minutes %= 60;

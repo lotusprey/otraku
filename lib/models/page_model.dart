@@ -18,4 +18,11 @@ class PageModel<T> {
     _hasNextPage = true;
     _nextPage = 1;
   }
+
+  void replace(List<T> moreItems, [bool hasNext = false]) {
+    items.clear();
+    items.addAll(moreItems);
+    _hasNextPage = hasNext;
+    _nextPage = 2;
+  }
 }

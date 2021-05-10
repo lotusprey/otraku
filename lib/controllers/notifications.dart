@@ -184,7 +184,7 @@ class Notifications extends ScrollxController {
         nl.add(NotificationModel(n));
       } catch (_) {}
 
-    _entries.append(nl, data['Page']['pageInfo']['hasNextPage']);
+    _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
     Get.find<Viewer>().nullifyUnread();
     update();
   }

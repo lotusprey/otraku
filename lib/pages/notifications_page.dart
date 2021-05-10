@@ -12,6 +12,7 @@ import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsPage extends StatelessWidget {
   static const ROUTE = '/notifications';
@@ -117,7 +118,15 @@ class _NotificationWidget extends StatelessWidget {
                         parameters: {'id': notification.bodyId.toString()},
                       );
                       return;
+                    case NotificationType.FOLLOWING:
+                      BrowseIndexer.openPage(
+                        id: notification.headId!,
+                        imageUrl: notification.imageUrl,
+                        browsable: Browsable.user,
+                      );
+                      return;
                     default:
+                      Toast.show(context, 'Forum is not supported yet');
                       return;
                   }
                 },

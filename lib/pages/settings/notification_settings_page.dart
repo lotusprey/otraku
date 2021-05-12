@@ -13,56 +13,35 @@ class NotificationSettingsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final options = Get.find<Settings>().model!.notificationOptions;
-    final values = <bool>[];
+    final settings = Get.find<Settings>();
+    final options = settings.model.notificationOptions;
+    final siteValues = <bool>[];
     for (int i = 0; i < NotificationType.values.length - 2; i++)
-      values.add(options[describeEnum(NotificationType.values[i])] ?? false);
+      siteValues.add(
+        options[describeEnum(NotificationType.values[i])] ?? false,
+      );
 
-    const gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-      height: Config.MATERIAL_TAP_TARGET_SIZE,
-      mainAxisSpacing: 0,
-      minWidth: 200,
+    final siteOptions = <Widget>[];
+
+    siteOptions.add(_Title('Users'));
+    siteOptions.add(
+      _Grid(from: 0, to: 1, values: siteValues, onChanged: changeSiteOption),
+    );
+    siteOptions.add(_Title('Activities'));
+    siteOptions.add(
+      _Grid(from: 1, to: 7, values: siteValues, onChanged: changeSiteOption),
+    );
+    siteOptions.add(_Title('Forum'));
+    siteOptions.add(
+      _Grid(from: 7, to: 12, values: siteValues, onChanged: changeSiteOption),
     );
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         physics: Config.PHYSICS,
-        semanticChildCount: 12, // 14,
         slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          ..._segment(
-            title: 'Users',
-            ctx: context,
-            gridDelegate: gridDelegate,
-            indexOffset: 0,
-            count: 1,
-            values: values,
-          ),
-          ..._segment(
-            title: 'Activities',
-            ctx: context,
-            gridDelegate: gridDelegate,
-            indexOffset: 1,
-            count: 6,
-            values: values,
-          ),
-          ..._segment(
-            title: 'Forum',
-            ctx: context,
-            gridDelegate: gridDelegate,
-            indexOffset: 7,
-            count: 5,
-            values: values,
-          ),
-          // ..._segment(
-          //   title: 'Media',
-          //   ctx: context,
-          //   gridDelegate: gridDelegate,
-          //   indexOffset: 12,
-          //   count: 2,
-          //   values: values,
-          // ),
+          ...siteOptions,
           SliverToBoxAdapter(
             child: SizedBox(height: NavBar.offset(context)),
           ),
@@ -71,49 +50,72 @@ class NotificationSettingsTab extends StatelessWidget {
     );
   }
 
-  List<Widget> _segment({
-    required String title,
-    required BuildContext ctx,
-    required SliverGridDelegate gridDelegate,
-    required int indexOffset,
-    required int count,
-    required List<bool> values,
-  }) =>
-      [
-        SliverToBoxAdapter(
-          child: Text(title, style: Theme.of(ctx).textTheme.headline5),
-        ),
-        SliverGrid(
-          delegate: SliverChildBuilderDelegate(
-            (_, i) {
-              final index = indexOffset + i;
-              return CheckboxField(
-                title: NotificationType.values[index].text,
-                initialValue: values[index],
-                onChanged: (val) {
-                  values[index] = val;
-                  const key = 'notificationOptions';
-                  final settings = Get.find<Settings>();
+  void changeSiteOption(List<bool> values) {
+    const key = 'notificationOptions';
+    final settings = Get.find<Settings>();
 
-                  if (settings.changes.containsKey(key))
-                    for (int i = 0; i < values.length; i++)
-                      settings.changes[key][i]['enabled'] = values[i];
-                  else {
-                    final newOptions = [];
-                    for (int i = 0; i < values.length; i++)
-                      newOptions.add({
-                        'type': describeEnum(NotificationType.values[i]),
-                        'enabled': values[i],
-                      });
-                    settings.changes[key] = newOptions;
-                  }
-                },
-              );
-            },
-            childCount: count,
-            semanticIndexOffset: indexOffset,
-          ),
-          gridDelegate: gridDelegate,
+    if (settings.changes.containsKey(key))
+      for (int i = 0; i < values.length; i++)
+        settings.changes[key][i]['enabled'] = values[i];
+    else {
+      final newOptions = [];
+      for (int i = 0; i < values.length; i++)
+        newOptions.add({
+          'type': describeEnum(NotificationType.values[i]),
+          'enabled': values[i],
+        });
+      settings.changes[key] = newOptions;
+    }
+  }
+}
+
+class _Title extends StatelessWidget {
+  final String title;
+  const _Title(this.title);
+
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Text(title, style: Theme.of(context).textTheme.headline5),
         ),
-      ];
+      );
+}
+
+class _Grid extends StatelessWidget {
+  final int from;
+  final int to;
+  final List<bool> values;
+  final Function(List<bool>) onChanged;
+  _Grid({
+    required this.from,
+    required this.to,
+    required this.values,
+    required this.onChanged,
+  });
+
+  static const _gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
+    height: 40,
+    mainAxisSpacing: 0,
+    minWidth: 200,
+  );
+
+  @override
+  Widget build(BuildContext context) => SliverGrid(
+        delegate: SliverChildBuilderDelegate(
+          (_, i) {
+            i += from;
+            return CheckboxField(
+              title: NotificationType.values[i].text,
+              initialValue: values[i],
+              onChanged: (val) {
+                values[i] = val;
+                onChanged(values);
+              },
+            );
+          },
+          childCount: to - from,
+        ),
+        gridDelegate: _gridDelegate,
+      );
 }

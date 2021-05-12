@@ -247,7 +247,15 @@ class _ScoreChart extends StatelessWidget {
                     margin: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Theme.of(context).accentColor,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: const [0.5, 1],
+                        colors: [
+                          Theme.of(context).accentColor,
+                          Theme.of(context).accentColor.withOpacity(0.2),
+                        ],
+                      ),
                     ),
                   ),
                   Text(
@@ -297,7 +305,15 @@ class _Card extends StatelessWidget {
             padding: Config.PADDING,
             decoration: BoxDecoration(
               borderRadius: Config.BORDER_RADIUS,
-              color: Theme.of(context).primaryColor,
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                stops: const [0.5, 1],
+                colors: [
+                  Theme.of(context).primaryColor.withOpacity(0.4),
+                  Theme.of(context).primaryColor,
+                ],
+              ),
             ),
             child: Row(
               children: [

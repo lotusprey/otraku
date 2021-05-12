@@ -19,23 +19,32 @@ class _CheckboxFieldState extends State<CheckboxField> {
   late bool _value;
 
   @override
-  Widget build(BuildContext context) => CheckboxListTile(
-        value: _value,
-        onChanged: (value) {
-          setState(() => _value = value!);
-          widget.onChanged(value!);
-        },
+  Widget build(BuildContext context) => ListTile(
+        contentPadding: const EdgeInsets.all(0),
+        visualDensity: VisualDensity.compact,
+        minVerticalPadding: 0,
+        dense: true,
         title: Text(
           widget.title!,
           style: _value
               ? Theme.of(context).textTheme.bodyText1
               : Theme.of(context).textTheme.bodyText2,
         ),
-        activeColor: Theme.of(context).accentColor,
-        checkColor: Theme.of(context).backgroundColor,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-        dense: true,
+        onTap: onTap,
+        trailing: Checkbox(
+          value: _value,
+          onChanged: (_) => onTap(),
+          activeColor: Theme.of(context).accentColor,
+          checkColor: Theme.of(context).backgroundColor,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.compact,
+        ),
       );
+
+  void onTap() {
+    setState(() => _value = !_value);
+    widget.onChanged(_value);
+  }
 
   @override
   void initState() {

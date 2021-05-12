@@ -95,6 +95,10 @@ class _MediaHeaderState extends State<MediaHeader> {
             Hero(
               tag: widget.media.id,
               child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: Config.BORDER_RADIUS,
+                  color: Theme.of(context).primaryColor,
+                ),
                 height: widget.coverHeight,
                 width: widget.coverWidth,
                 child: ClipRRect(
@@ -102,7 +106,8 @@ class _MediaHeaderState extends State<MediaHeader> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.network(widget.imageUrl!, fit: BoxFit.cover),
+                      if (widget.imageUrl != null)
+                        Image.network(widget.imageUrl!, fit: BoxFit.cover),
                       if (overview != null)
                         GestureDetector(
                           child: Image.network(

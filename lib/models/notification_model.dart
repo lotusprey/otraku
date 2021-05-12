@@ -3,6 +3,7 @@ import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/utils/convert.dart';
 
 class NotificationModel {
+  final int id;
   final NotificationType? type;
   final int? headId;
   final int? bodyId;
@@ -13,6 +14,7 @@ class NotificationModel {
   final Browsable? browsable;
 
   NotificationModel._({
+    required this.id,
     required this.type,
     required this.headId,
     required this.bodyId,
@@ -27,6 +29,7 @@ class NotificationModel {
     switch (map['type']) {
       case 'FOLLOWING':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.FOLLOWING,
           headId: map['user']['id'],
           bodyId: map['user']['id'],
@@ -38,6 +41,7 @@ class NotificationModel {
         );
       case 'ACTIVITY_MESSAGE':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.ACTIVITY_MESSAGE,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -48,6 +52,7 @@ class NotificationModel {
         );
       case 'ACTIVITY_REPLY':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.ACTIVITY_REPLY,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -58,6 +63,7 @@ class NotificationModel {
         );
       case 'ACTIVITY_REPLY_SUBSCRIBED':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.ACTIVITY_REPLY_SUBSCRIBED,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -71,6 +77,7 @@ class NotificationModel {
         );
       case 'THREAD_COMMENT_REPLY':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.THREAD_COMMENT_REPLY,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -88,6 +95,7 @@ class NotificationModel {
         );
       case 'ACTIVITY_MENTION':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.ACTIVITY_MENTION,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -98,6 +106,7 @@ class NotificationModel {
         );
       case 'THREAD_COMMENT_MENTION':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.THREAD_COMMENT_MENTION,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -115,6 +124,7 @@ class NotificationModel {
         );
       case 'THREAD_SUBSCRIBED':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.THREAD_SUBSCRIBED,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -132,6 +142,7 @@ class NotificationModel {
         );
       case 'ACTIVITY_LIKE':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.ACTIVITY_LIKE,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -142,6 +153,7 @@ class NotificationModel {
         );
       case 'ACTIVITY_REPLY_LIKE':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.ACTIVITY_REPLY_LIKE,
           headId: map['user']['id'],
           bodyId: map['activityId'],
@@ -152,6 +164,7 @@ class NotificationModel {
         );
       case 'THREAD_LIKE':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.THREAD_LIKE,
           headId: map['user']['id'],
           bodyId: map['threadId'],
@@ -166,6 +179,7 @@ class NotificationModel {
         );
       case 'THREAD_COMMENT_LIKE':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.THREAD_COMMENT_LIKE,
           headId: map['user']['id'],
           bodyId: map['commentId'],
@@ -183,6 +197,7 @@ class NotificationModel {
         );
       case 'AIRING':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.AIRING,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
@@ -202,6 +217,7 @@ class NotificationModel {
         );
       case 'RELATED_MEDIA_ADDITION':
         return NotificationModel._(
+          id: map['id'],
           type: NotificationType.RELATED_MEDIA_ADDITION,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
@@ -217,15 +233,7 @@ class NotificationModel {
               : Browsable.manga,
         );
       default:
-        return NotificationModel._(
-          type: null,
-          headId: null,
-          bodyId: null,
-          imageUrl: '',
-          texts: const [],
-          markTextOnEvenIndex: false,
-          timestamp: '',
-        );
+        throw ArgumentError.notNull('type');
     }
   }
 }

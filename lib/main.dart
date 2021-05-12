@@ -22,6 +22,7 @@ import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/friends_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
 import 'package:otraku/pages/user_reviews_page.dart';
+import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/auth_page.dart';
@@ -49,11 +50,13 @@ Future<void> main() async {
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    BackgroundHandler.init(context);
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
       theme: Config.theme,
-      // TODO a workaround due to getx not being able to change the dark theme
+      // A workaround due to getx not being able to change the dark theme
       themeMode: ThemeMode.light,
       initialRoute: AuthPage.ROUTE,
       getPages: [

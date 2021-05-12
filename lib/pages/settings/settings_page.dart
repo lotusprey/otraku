@@ -32,7 +32,7 @@ class SettingsPage extends StatelessWidget {
       builder: (settings) => Scaffold(
         extendBody: true,
         bottomNavigationBar: NavBar(
-          options: {
+          options: const {
             'Personalisation': Ionicons.color_palette_outline,
             'Content': Ionicons.tv_outline,
             'Notifications': Ionicons.notifications_outline,

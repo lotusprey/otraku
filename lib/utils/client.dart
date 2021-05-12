@@ -81,6 +81,7 @@ class Client {
     String request,
     Map<String, dynamic>? variables, {
     bool popOnErr = true,
+    bool silentErr = false,
   }) async {
     bool erred = false;
 
@@ -89,12 +90,13 @@ class Client {
       body: json.encode({'query': request, 'variables': variables}),
       headers: _headers,
     ).catchError((err) {
-      _handleErr(popOnErr, ioErr: err as IOException);
+      if (!silentErr) _handleErr(popOnErr, ioErr: err as IOException);
       erred = true;
     });
 
     if (erred || response.body.isEmpty) {
-      _handleErr(popOnErr, apiErr: ['Empty AniList response...']);
+      if (!silentErr)
+        _handleErr(popOnErr, apiErr: ['Empty AniList response...']);
       return null;
     }
 
@@ -105,7 +107,7 @@ class Client {
           .map((e) => e['message'].toString())
           .toList();
 
-      _handleErr(popOnErr, apiErr: messages);
+      if (!silentErr) _handleErr(popOnErr, apiErr: messages);
 
       return null;
     }

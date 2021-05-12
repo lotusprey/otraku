@@ -5,6 +5,7 @@ import 'package:otraku/pages/home/explore_page.dart';
 import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
+import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
@@ -48,6 +49,8 @@ class HomePage extends StatelessWidget {
       const ExploreDrawer(),
       null,
     ];
+
+    BackgroundHandler.checkLaunchedByNotification(context);
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),

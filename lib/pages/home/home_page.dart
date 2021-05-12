@@ -6,12 +6,11 @@ import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 import 'package:otraku/utils/background_handler.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-
-import '../../utils/client.dart';
 
 class HomePage extends StatelessWidget {
   static const ROUTE = '/home';

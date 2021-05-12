@@ -164,7 +164,7 @@ class Viewer extends ScrollxController {
     if (data == null) return;
 
     if (_settings == null) _settings = SettingsModel(data['Viewer']);
-    _unreadCount.value = data['Viewer']['unreadNotificationCount'];
+    _unreadCount.value = data['Viewer']['unreadNotificationCount'] ?? 0;
     Config.storage.write(Config.LAST_NOTIFICATION_COUNT, _unreadCount());
     update();
 

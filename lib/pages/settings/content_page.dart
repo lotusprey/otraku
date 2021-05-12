@@ -22,7 +22,7 @@ class ContentTab extends StatelessWidget {
       children: [
         DropDownField<String>(
           title: 'Title Language',
-          initialValue: settings.model!.titleLanguage,
+          initialValue: settings.model.titleLanguage,
           items: {
             'Romaji': 'ROMAJI',
             'English': 'ENGLISH',
@@ -30,7 +30,7 @@ class ContentTab extends StatelessWidget {
           },
           onChanged: (value) {
             const key = 'titleLanguage';
-            if (value == settings.model!.titleLanguage)
+            if (value == settings.model.titleLanguage)
               settings.changes.remove(key);
             else
               settings.changes[key] = value;
@@ -38,7 +38,7 @@ class ContentTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Airing Anime Notifications',
-          initialValue: settings.model!.airingNotifications,
+          initialValue: settings.model.airingNotifications,
           onChanged: (value) {
             const notifications = 'airingNotifications';
             if (settings.changes.containsKey(notifications))
@@ -49,7 +49,7 @@ class ContentTab extends StatelessWidget {
         ),
         SwitchTile(
           title: '18+ Content',
-          initialValue: settings.model!.displayAdultContent,
+          initialValue: settings.model.displayAdultContent,
           onChanged: (value) {
             const adultContent = 'displayAdultContent';
             if (settings.changes.containsKey(adultContent))
@@ -60,7 +60,7 @@ class ContentTab extends StatelessWidget {
         ),
         DropDownField<ScoreFormat>(
           title: 'Scoring System',
-          initialValue: settings.model!.scoreFormat,
+          initialValue: settings.model.scoreFormat,
           items: Map.fromIterable(
             ScoreFormat.values,
             key: (v) => Convert.clarifyEnum(describeEnum(v))!,
@@ -68,7 +68,7 @@ class ContentTab extends StatelessWidget {
           ),
           onChanged: (value) {
             const key = 'scoreFormat';
-            if (value == settings.model!.scoreFormat)
+            if (value == settings.model.scoreFormat)
               settings.changes.remove(key);
             else
               settings.changes[key] = describeEnum(value);
@@ -77,14 +77,14 @@ class ContentTab extends StatelessWidget {
         const SizedBox(height: 10),
         DropDownField<ListSort>(
           title: 'Default List Order',
-          initialValue: settings.model!.defaultSort,
+          initialValue: settings.model.defaultSort,
           items: Map.fromIterables(
             ListSortHelper.defaultStrings,
             ListSortHelper.defaultEnums,
           ),
           onChanged: (value) {
             const key = 'rowOrder';
-            if (value == settings.model!.defaultSort)
+            if (value == settings.model.defaultSort)
               settings.changes.remove(key);
             else
               settings.changes[key] = value.string;
@@ -92,7 +92,7 @@ class ContentTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Split Completed Anime',
-          initialValue: settings.model!.splitCompletedAnime,
+          initialValue: settings.model.splitCompletedAnime,
           onChanged: (value) {
             const splitAnime = 'splitCompletedAnime';
             if (settings.changes.containsKey(splitAnime))
@@ -103,7 +103,7 @@ class ContentTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Split Completed Manga',
-          initialValue: settings.model!.splitCompletedManga,
+          initialValue: settings.model.splitCompletedManga,
           onChanged: (value) {
             const splitManga = 'splitCompletedManga';
             if (settings.changes.containsKey(splitManga))
@@ -114,7 +114,7 @@ class ContentTab extends StatelessWidget {
         ),
         SwitchTile(
           title: 'Advanced Scoring',
-          initialValue: settings.model!.advancedScoringEnabled,
+          initialValue: settings.model.advancedScoringEnabled,
           onChanged: (value) {
             const advancedScoring = 'advancedScoringEnabled';
             if (settings.changes.containsKey(advancedScoring))

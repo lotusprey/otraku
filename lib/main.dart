@@ -50,8 +50,6 @@ Future<void> main() async {
   runApp(App());
 }
 
-// TODO getNotificationAppLaunchDetails
-
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -59,7 +57,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Otraku',
       theme: Config.theme,
-      // TODO a workaround due to getx not being able to change the dark theme
+      // A workaround due to getx not being able to change the dark theme
       themeMode: ThemeMode.light,
       initialRoute: AuthPage.ROUTE,
       getPages: [

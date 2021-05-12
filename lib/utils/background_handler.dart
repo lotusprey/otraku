@@ -2,11 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
+import 'package:otraku/pages/activity_page.dart';
+import 'package:otraku/pages/home/user_page.dart';
+import 'package:otraku/pages/media/media_page.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
 final _notificationPlugin = FlutterLocalNotificationsPlugin();
@@ -14,15 +19,12 @@ final _notificationPlugin = FlutterLocalNotificationsPlugin();
 class BackgroundHandler {
   BackgroundHandler._();
 
-  static String? _notificationData;
-  static String? get notificationData => _notificationData;
-  static Future<NotificationAppLaunchDetails?> get launchDetails =>
-      _notificationPlugin.getNotificationAppLaunchDetails();
-
   static bool _didInit = false;
+  static bool _didCheckLaunch = false;
 
-  static void init() {
+  static void init(BuildContext ctx) {
     if (_didInit) return;
+    _didInit = true;
 
     _notificationPlugin.initialize(
       InitializationSettings(
@@ -30,10 +32,8 @@ class BackgroundHandler {
         iOS: IOSInitializationSettings(),
         macOS: MacOSInitializationSettings(),
       ),
-      onSelectNotification: (payload) async {
-        debugPrint('notification payload: [$payload]');
-        _notificationData = payload;
-      },
+      onSelectNotification: (payload) async =>
+          _handleNotification(ctx, payload),
     );
 
     Workmanager().initialize(_fetch, isInDebugMode: true);
@@ -44,8 +44,45 @@ class BackgroundHandler {
         'notification',
         constraints: Constraints(networkType: NetworkType.connected),
       );
+  }
 
-    _didInit = true;
+  static void checkLaunchedByNotification(BuildContext ctx) {
+    if (_didCheckLaunch) return;
+    _didCheckLaunch = true;
+
+    _notificationPlugin.getNotificationAppLaunchDetails().then(
+        (launchDetails) => _handleNotification(ctx, launchDetails?.payload));
+  }
+
+  static void _handleNotification(BuildContext ctx, String? payload) {
+    if (payload == null) return;
+
+    final separator = payload.indexOf('/', 1);
+    final route = payload.substring(0, separator);
+    final id = int.tryParse(payload.substring(separator + 1)) ?? -1;
+    if (id < 0) return;
+
+    if (route == '/thread') {
+      showPopUp(
+        ctx,
+        AlertDialog(
+          shape:
+              const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+          backgroundColor: Theme.of(ctx).primaryColor,
+          title: Text('Sorry! Forum is not yet supported!'),
+          actions: [
+            TextButton(child: Text('Ok'), onPressed: Navigator.of(ctx).pop),
+          ],
+        ),
+      );
+      return;
+    }
+
+    Get.toNamed(
+      route,
+      arguments: [id, null, null],
+      parameters: {'id': id.toString()},
+    );
   }
 }
 
@@ -67,8 +104,10 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       );
       if (data == null) return false;
 
-      int count = data['Viewer']['unreadNotificationCount'] ?? 0;
-      count -= Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
+      final int lastCount =
+          Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
+      final int newCount = data['Viewer']['unreadNotificationCount'] ?? 0;
+      final count = newCount - lastCount;
       if (count < 1) return true;
 
       // Get new notifications
@@ -79,6 +118,9 @@ void _fetch() => Workmanager().executeTask((_, input) async {
         silentErr: true,
       );
       if (data == null) return false;
+
+      // Save new notification count
+      Config.storage.write(Config.LAST_NOTIFICATION_COUNT, newCount);
 
       // Show notifications
       for (final n in data['Page']['notifications']) {
@@ -91,23 +133,33 @@ void _fetch() => Workmanager().executeTask((_, input) async {
 
         switch (model.type) {
           case NotificationType.FOLLOWING:
-            _show(model, 'New Follow', '/user/${model.bodyId}');
+            _show(model, 'New Follow', '${UserPage.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_MESSAGE:
-            _show(model, 'New Message', '/activity/${model.bodyId}');
+            _show(
+                model, 'New Message', '${ActivityPage.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_REPLY:
           case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-            _show(model, 'New Reply', '/activity/${model.bodyId}');
+            _show(model, 'New Reply', '${ActivityPage.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_MENTION:
-            _show(model, 'New Mention', '/activity/${model.bodyId}');
+            _show(
+                model, 'New Mention', '${ActivityPage.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_LIKE:
-            _show(model, 'New Activity Like', '/activity/${model.bodyId}');
+            _show(
+              model,
+              'New Activity Like',
+              '${ActivityPage.ROUTE}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
-            _show(model, 'New Reply Like', '/activity/${model.bodyId}');
+            _show(
+              model,
+              'New Reply Like',
+              '${ActivityPage.ROUTE}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
             _show(model, 'New Forum Reply', '/thread/${model.bodyId}');
@@ -125,10 +177,10 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             _show(model, 'New Forum Comment Like', '/thread/${model.bodyId}');
             break;
           case NotificationType.AIRING:
-            _show(model, 'New Episode', '/media/${model.bodyId}');
+            _show(model, 'New Episode', '${MediaPage.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
-            _show(model, 'New Addition', '/media/${model.bodyId}');
+            _show(model, 'New Addition', '${MediaPage.ROUTE}/${model.bodyId}');
             break;
           default:
             break;

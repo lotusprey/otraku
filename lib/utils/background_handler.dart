@@ -107,7 +107,7 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       final int lastCount =
           Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
       final int newCount = data['Viewer']['unreadNotificationCount'] ?? 0;
-      final count = newCount - lastCount;
+      final count = newCount < lastCount ? newCount : newCount - lastCount;
       if (count < 1) return true;
 
       // Get new notifications

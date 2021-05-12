@@ -44,15 +44,14 @@ import 'package:otraku/pages/settings/settings_page.dart';
 
 Future<void> main() async {
   await GetStorage.init();
-
-  BackgroundHandler.init();
-
   runApp(App());
 }
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    BackgroundHandler.init(context);
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Otraku',

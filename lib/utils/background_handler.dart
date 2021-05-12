@@ -6,6 +6,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:workmanager/workmanager.dart';
 
 final _notificationPlugin = FlutterLocalNotificationsPlugin();
@@ -15,6 +16,8 @@ class BackgroundHandler {
 
   static String? _notificationData;
   static String? get notificationData => _notificationData;
+  static Future<NotificationAppLaunchDetails?> get launchDetails =>
+      _notificationPlugin.getNotificationAppLaunchDetails();
 
   static bool _didInit = false;
 
@@ -52,7 +55,7 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       // Log in
       if (Client.viewerId == null) {
         final ok = await Client.logIn();
-        if (!ok) return false;
+        if (!ok) return true;
       }
 
       // Get the count of new notifications
@@ -64,10 +67,9 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       );
       if (data == null) return false;
 
-      int count = data['Viewer']['unreadNotificationCount'];
-      // TODO temp
-      // count -= Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
-      // if (count < 1) return true;
+      int count = data['Viewer']['unreadNotificationCount'] ?? 0;
+      count -= Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
+      if (count < 1) return true;
 
       // Get new notifications
       data = await Client.request(
@@ -78,14 +80,7 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       );
       if (data == null) return false;
 
-      const details = NotificationDetails(
-        android: AndroidNotificationDetails(
-          'NOTIFICATIONS',
-          'Notifications',
-          'Notification channel',
-        ),
-      );
-
+      // Show notifications
       for (final n in data['Page']['notifications']) {
         late NotificationModel model;
         try {
@@ -96,23 +91,44 @@ void _fetch() => Workmanager().executeTask((_, input) async {
 
         switch (model.type) {
           case NotificationType.FOLLOWING:
-            _show(model, 'New Follow', 'user_${model.headId}');
+            _show(model, 'New Follow', '/user/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_MESSAGE:
-            _show(model, 'New Message', 'activity_${model.bodyId}');
+            _show(model, 'New Message', '/activity/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_REPLY:
           case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-            _show(model, 'New Reply', 'activity_${model.bodyId}');
+            _show(model, 'New Reply', '/activity/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_MENTION:
-            _show(model, 'New Mention', 'activity_${model.bodyId}');
+            _show(model, 'New Mention', '/activity/${model.bodyId}');
+            break;
+          case NotificationType.ACTIVITY_LIKE:
+            _show(model, 'New Activity Like', '/activity/${model.bodyId}');
+            break;
+          case NotificationType.ACTIVITY_REPLY_LIKE:
+            _show(model, 'New Reply Like', '/activity/${model.bodyId}');
+            break;
+          case NotificationType.THREAD_COMMENT_REPLY:
+            _show(model, 'New Forum Reply', '/thread/${model.bodyId}');
+            break;
+          case NotificationType.THREAD_COMMENT_MENTION:
+            _show(model, 'New Forum Mention', '/thread/${model.bodyId}');
+            break;
+          case NotificationType.THREAD_SUBSCRIBED:
+            _show(model, 'New Forum Comment', '/thread/${model.bodyId}');
+            break;
+          case NotificationType.THREAD_LIKE:
+            _show(model, 'New Forum Like', '/thread/${model.bodyId}');
+            break;
+          case NotificationType.THREAD_COMMENT_LIKE:
+            _show(model, 'New Forum Comment Like', '/thread/${model.bodyId}');
             break;
           case NotificationType.AIRING:
-            _show(model, 'New Episode', 'media_${model.headId}');
+            _show(model, 'New Episode', '/media/${model.bodyId}');
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
-            _show(model, 'New Addition', 'media_${model.headId}');
+            _show(model, 'New Addition', '/media/${model.bodyId}');
             break;
           default:
             break;
@@ -126,7 +142,7 @@ void _show(NotificationModel model, String title, String payload) =>
     _notificationPlugin.show(
       model.id,
       title,
-      model.texts.join(' '),
+      model.texts.join(),
       _details,
       payload: payload,
     );
@@ -135,7 +151,8 @@ const _details = NotificationDetails(
   android: AndroidNotificationDetails(
     'NOTIFICATIONS',
     'Notifications',
-    'Notification channel',
+    'All Notifications',
+    color: Color(0xFF45A0F2),
   ),
 );
 

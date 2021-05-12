@@ -36,7 +36,7 @@ class BackgroundHandler {
           _handleNotification(ctx, payload),
     );
 
-    Workmanager().initialize(_fetch, isInDebugMode: true);
+    Workmanager().initialize(_fetch);
 
     if (Platform.isAndroid)
       Workmanager().registerPeriodicTask(

@@ -103,7 +103,7 @@ class MediaOverviewModel {
       format: Convert.clarifyEnum(map['format']),
       status: Convert.clarifyEnum(map['status']),
       entryStatus: map['mediaListEntry'] != null
-          ? Convert.stringToEnum(
+          ? Convert.strToEnum(
               map['mediaListEntry']['status'].toString(),
               ListStatus.values,
             )
@@ -111,15 +111,15 @@ class MediaOverviewModel {
       nextEpisode: map['nextAiringEpisode'] != null
           ? map['nextAiringEpisode']['episode']
           : null,
-      timeUntilAiring: Convert.secondsToCountdownString(
+      timeUntilAiring: Convert.secondsToCountdownStr(
         map['nextAiringEpisode']?['timeUntilAiring'],
       ),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: Convert.mapToDateString(map['startDate']),
-      endDate: Convert.mapToDateString(map['endDate']),
+      startDate: Convert.mapToDateStr(map['startDate']),
+      endDate: Convert.mapToDateStr(map['endDate']),
       season: season,
       averageScore:
           map['averageScore'] != null ? '${map["averageScore"]}%' : null,

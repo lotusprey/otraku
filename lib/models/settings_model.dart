@@ -26,7 +26,7 @@ class SettingsModel {
   });
 
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(
-        scoreFormat: Convert.stringToEnum(
+        scoreFormat: Convert.strToEnum(
               map['mediaListOptions']['scoreFormat'],
               ScoreFormat.values,
             ) ??

@@ -36,7 +36,7 @@ class NotificationModel {
           imageUrl: map['user']['avatar']['large'],
           texts: [map['user']['name'], ' followed you.'],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
           browsable: Browsable.user,
         );
       case 'ACTIVITY_MESSAGE':
@@ -48,7 +48,7 @@ class NotificationModel {
           imageUrl: map['user']['avatar']['large'],
           texts: [map['user']['name'], ' sent you a message.'],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'ACTIVITY_REPLY':
         return NotificationModel._(
@@ -59,7 +59,7 @@ class NotificationModel {
           imageUrl: map['user']['avatar']['large'],
           texts: [map['user']['name'], ' replied to your activity.'],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_SUBSCRIBED':
         return NotificationModel._(
@@ -73,7 +73,7 @@ class NotificationModel {
             ' replied to activity you are subscribed to.',
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'THREAD_COMMENT_REPLY':
         return NotificationModel._(
@@ -91,7 +91,7 @@ class NotificationModel {
               ' replied to your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'ACTIVITY_MENTION':
         return NotificationModel._(
@@ -102,7 +102,7 @@ class NotificationModel {
           imageUrl: map['user']['avatar']['large'],
           texts: [map['user']['name'], ' mentioned you in an activity.'],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'THREAD_COMMENT_MENTION':
         return NotificationModel._(
@@ -120,7 +120,7 @@ class NotificationModel {
               ' mentioned you in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'THREAD_SUBSCRIBED':
         return NotificationModel._(
@@ -138,7 +138,7 @@ class NotificationModel {
               ' commented in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'ACTIVITY_LIKE':
         return NotificationModel._(
@@ -149,7 +149,7 @@ class NotificationModel {
           imageUrl: map['user']['avatar']['large'],
           texts: [map['user']['name'], ' liked your activity.'],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_LIKE':
         return NotificationModel._(
@@ -160,7 +160,7 @@ class NotificationModel {
           imageUrl: map['user']['avatar']['large'],
           texts: [map['user']['name'], ' liked your reply.'],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'THREAD_LIKE':
         return NotificationModel._(
@@ -175,7 +175,7 @@ class NotificationModel {
             if (map['thread'] != null) map['thread']['title'],
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'THREAD_COMMENT_LIKE':
         return NotificationModel._(
@@ -193,7 +193,7 @@ class NotificationModel {
               ' liked your comment in a subscribed thread',
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
         );
       case 'AIRING':
         return NotificationModel._(
@@ -210,7 +210,7 @@ class NotificationModel {
             ' aired.',
           ],
           markTextOnEvenIndex: false,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
           browsable: map['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,
@@ -227,7 +227,7 @@ class NotificationModel {
             ' was added to the site.',
           ],
           markTextOnEvenIndex: true,
-          timestamp: Convert.millisecondsToTimeString(map['createdAt']),
+          timestamp: Convert.millisToTimeStr(map['createdAt']),
           browsable: map['media']['type'] == 'ANIME'
               ? Browsable.anime
               : Browsable.manga,

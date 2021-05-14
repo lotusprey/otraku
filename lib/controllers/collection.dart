@@ -208,7 +208,7 @@ class Collection extends ScrollxController implements Filterable {
     final bool splitCompleted =
         metaData['splitCompletedSectionByFormat'] ?? false;
 
-    _scoreFormat = Convert.stringToEnum(
+    _scoreFormat = Convert.strToEnum(
           data['user']['mediaListOptions']['scoreFormat'],
           ScoreFormat.values,
         ) ??
@@ -342,7 +342,7 @@ class Collection extends ScrollxController implements Filterable {
     e.updateProgress(data['SaveMediaListEntry']);
 
     final ListSort sorting = _filters[Filterable.SORT];
-    final ListStatus? entryStatus = Convert.stringToEnum(
+    final ListStatus? entryStatus = Convert.strToEnum(
       e.status,
       ListStatus.values,
     );

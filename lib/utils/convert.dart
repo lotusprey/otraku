@@ -18,7 +18,7 @@ abstract class Convert {
   // as if it was acquired through "describeEnum()"
   // and the values must be the enum
   // values ex. "MyEnum.values"
-  static T? stringToEnum<T>(String? str, List<T> values) =>
+  static T? strToEnum<T>(String? str, List<T> values) =>
       values.firstWhereOrNull((v) => describeEnum(v!) == str);
 
   // Removes all the html tags in a string with regex (copied from the internet)
@@ -27,12 +27,11 @@ abstract class Convert {
     return str.replaceAll(RegExp(r'<[^>]*>'), '');
   }
 
-  static String? mapToDateString(Map<String, dynamic>? map) {
-    if (map == null) return null;
-    if (map['year'] == null) return null;
+  static String? mapToDateStr(Map<String, dynamic>? map) {
+    if (map?['year'] == null) return null;
 
-    final String? month = _months[map['month']];
-    var day = map['day'] ?? '';
+    final String? month = _months[map!['month']];
+    final day = map['day'] ?? '';
 
     if (month == '' && day == '') return '${map['year']}';
 
@@ -50,13 +49,7 @@ abstract class Convert {
     return {'year': date.year, 'month': date.month, 'day': date.day};
   }
 
-  static String millisecondsToDateString(int? millis) {
-    if (millis == null) return '';
-    final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
-    return '${_months[date.month]} ${date.day}, ${date.year}';
-  }
-
-  static String millisecondsToTimeString(int? millis) {
+  static String millisToTimeStr(int? millis) {
     if (millis == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
     return '${_weekDays[date.weekday - 1]}, ${date.day} ${_months[date.month]} '
@@ -64,7 +57,7 @@ abstract class Convert {
         '${date.minute <= 9 ? 0 : ""}${date.minute}';
   }
 
-  static String? secondsToCountdownString(int? seconds) {
+  static String? secondsToCountdownStr(int? seconds) {
     if (seconds == null) return null;
 
     int minutes = seconds ~/ 60;

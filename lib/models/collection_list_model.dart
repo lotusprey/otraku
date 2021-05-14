@@ -23,7 +23,7 @@ class CollectionListModel {
         name: map['name'],
         isCustomList: map['isCustomList'] ?? false,
         status: !map['isCustomList']
-            ? Convert.stringToEnum(map['status'], ListStatus.values)
+            ? Convert.strToEnum(map['status'], ListStatus.values)
             : null,
         splitCompletedListFormat: splitCompleted &&
                 !map['isCustomList'] &&

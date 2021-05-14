@@ -65,7 +65,7 @@ class EntryModel {
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
-      status: Convert.stringToEnum(
+      status: Convert.strToEnum(
         map['mediaListEntry']['status'],
         ListStatus.values,
       ),

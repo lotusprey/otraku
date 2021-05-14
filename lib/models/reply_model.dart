@@ -33,7 +33,7 @@ class ReplyModel {
       userName: map['user']['name'] ?? '',
       userImage: map['user']['avatar']['large'],
       text: map['text'] ?? '',
-      createdAt: Convert.millisecondsToTimeString(map['createdAt']),
+      createdAt: Convert.millisToTimeStr(map['createdAt']),
     );
   }
 

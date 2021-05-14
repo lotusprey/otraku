@@ -127,7 +127,7 @@ class ExploreControlHeader extends StatelessWidget {
               onTap: () => Sheet.show(
                 ctx: context,
                 sheet: MediaSortSheet(
-                  Convert.stringToEnum(
+                  Convert.strToEnum(
                     Get.find<Explorer>().getFilterWithKey(Filterable.SORT),
                     MediaSort.values,
                   )!,

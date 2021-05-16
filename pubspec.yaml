@@ -15,12 +15,12 @@ dependencies:
   http: ^0.13.3
   get: ^4.1.4
   get_storage: ^2.0.2
+  flutter_secure_storage: ^4.2.0
   url_launcher: ^6.0.3
-  app_links: ^2.0.0+1
+  app_links: ^2.1.0
   workmanager: ^0.4.0
   flutter_local_notifications: ^5.0.0+4
   flutter_widget_from_html_core: ^0.6.1+1
-  flutter_secure_storage: ^4.2.0
   ionicons: ^0.1.2
 
 dev_dependencies:

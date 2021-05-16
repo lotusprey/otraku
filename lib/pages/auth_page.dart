@@ -48,7 +48,7 @@ class _AuthPageState extends State<AuthPage> {
       return;
     }
 
-    AppLinks(onAppLink: (Uri uri) {
+    AppLinks(onAppLink: (Uri uri, String str) {
       final link = uri.toString();
       final start = link.indexOf('=') + 1;
       final end = link.indexOf('&');

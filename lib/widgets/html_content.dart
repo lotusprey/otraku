@@ -13,7 +13,7 @@ class HtmlContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return HtmlWidget(
       text,
-      textStyle: Theme.of(context).textTheme.bodyText2!,
+      textStyle: Theme.of(context).textTheme.bodyText2,
       hyperlinkColor: Theme.of(context).accentColor,
       onTapUrl: (url) async {
         try {

@@ -19,7 +19,7 @@ dependencies:
   app_links: ^2.0.0+1
   workmanager: ^0.4.0
   flutter_local_notifications: ^5.0.0+4
-  flutter_widget_from_html_core: ^0.6.1
+  flutter_widget_from_html_core: ^0.6.1+1
   flutter_secure_storage: ^4.2.0
   ionicons: ^0.1.2
 

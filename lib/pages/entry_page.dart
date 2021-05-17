@@ -21,7 +21,7 @@ import 'package:otraku/widgets/fields/number_field.dart';
 import 'package:otraku/widgets/fields/score_picker.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-class EntryPage extends StatefulWidget {
+class EntryPage extends StatelessWidget {
   static const ROUTE = '/edit';
 
   final int mediaId;
@@ -30,13 +30,10 @@ class EntryPage extends StatefulWidget {
   EntryPage(this.mediaId, this.callback);
 
   @override
-  _EntryPageState createState() => _EntryPageState();
-}
-
-// TODO: update score and so on
-class _EntryPageState extends State<EntryPage> {
-  @override
-  Widget build(BuildContext context) => GetBuilder<Entry>(builder: (entry) {
+  Widget build(BuildContext context) {
+    return GetBuilder<Entry>(
+      tag: mediaId.toString(),
+      builder: (entry) {
         final model = entry.model;
 
         return Scaffold(
@@ -77,7 +74,7 @@ class _EntryPageState extends State<EntryPage> {
                                   ).removeEntry(entry.oldModel!);
                                   Navigator.of(context).pop();
                                   Navigator.of(context).pop();
-                                  widget.callback?.call(null);
+                                  callback?.call(null);
                                 },
                               ),
                             ],
@@ -105,7 +102,7 @@ class _EntryPageState extends State<EntryPage> {
                                 : Collection.MANGA,
                           ).updateEntry(entry.oldModel!, model);
                           Navigator.of(context).pop();
-                          widget.callback?.call(model.status);
+                          callback?.call(model.status);
                         }),
                   ]
                 : [],
@@ -114,7 +111,9 @@ class _EntryPageState extends State<EntryPage> {
               ? _Content(model, Get.find<Viewer>().settings!)
               : const SizedBox(),
         );
-      });
+      },
+    );
+  }
 }
 
 class _Content extends StatelessWidget {

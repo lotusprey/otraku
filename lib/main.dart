@@ -161,9 +161,12 @@ class App extends StatelessWidget {
         GetPage(
           name: EntryPage.ROUTE,
           page: () => EntryPage(Get.arguments[0], Get.arguments[2]),
-          binding: BindingsBuilder.put(
-            () => Entry(Get.arguments[0], Get.arguments[1]),
-          ),
+          binding: BindingsBuilder(() {
+            Get.put(
+              Entry(Get.arguments[0], Get.arguments[1]),
+              tag: Get.arguments[0].toString(),
+            );
+          }),
         ),
         GetPage(
           name: FavouritesPage.ROUTE,

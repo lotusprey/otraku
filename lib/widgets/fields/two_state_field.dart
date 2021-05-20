@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/enums/themes.dart';
 
 class TwoStateField extends StatefulWidget {
-  final String? title;
+  final String title;
   final bool initial;
   final Function(bool) onChanged;
 
@@ -24,7 +24,7 @@ class _TwoStateFieldState extends State<TwoStateField> {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      title: Text(widget.title!),
+      title: Text(widget.title, style: Theme.of(context).textTheme.bodyText2),
       trailing: Container(
         height: 30,
         width: 30,

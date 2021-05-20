@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ThreeStateField extends StatefulWidget {
-  final String? title;
+  final String title;
   final int initialState;
   final Function(int) onChanged;
 
@@ -23,7 +23,7 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-      title: Text(widget.title!),
+      title: Text(widget.title, style: Theme.of(context).textTheme.bodyText2),
       trailing: Container(
         height: 30,
         width: 30,

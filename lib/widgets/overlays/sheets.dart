@@ -135,7 +135,7 @@ class OptionSheet extends StatelessWidget {
 }
 
 class SelectionSheet<T> extends StatelessWidget {
-  final List<String?> options;
+  final List<String> options;
   final List<T> values;
   final List<T> inclusive;
   final List<T>? exclusive;

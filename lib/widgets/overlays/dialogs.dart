@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/html_content.dart';

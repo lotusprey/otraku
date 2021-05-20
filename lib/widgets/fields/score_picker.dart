@@ -185,7 +185,7 @@ class _HundredScorePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => NumberField(
-        initialValue: data.score.floor(),
+        value: data.score.floor(),
         maxValue: 100,
         update: (value) => data.score = value.toDouble(),
       );

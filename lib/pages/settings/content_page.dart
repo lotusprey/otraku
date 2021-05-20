@@ -22,7 +22,7 @@ class ContentTab extends StatelessWidget {
       children: [
         DropDownField<String>(
           title: 'Title Language',
-          initialValue: settings.model.titleLanguage,
+          value: settings.model.titleLanguage,
           items: {
             'Romaji': 'ROMAJI',
             'English': 'ENGLISH',
@@ -60,7 +60,7 @@ class ContentTab extends StatelessWidget {
         ),
         DropDownField<ScoreFormat>(
           title: 'Scoring System',
-          initialValue: settings.model.scoreFormat,
+          value: settings.model.scoreFormat,
           items: Map.fromIterable(
             ScoreFormat.values,
             key: (v) => Convert.clarifyEnum(describeEnum(v))!,
@@ -77,7 +77,7 @@ class ContentTab extends StatelessWidget {
         const SizedBox(height: 10),
         DropDownField<ListSort>(
           title: 'Default List Order',
-          initialValue: settings.model.defaultSort,
+          value: settings.model.defaultSort,
           items: Map.fromIterables(
             ListSortHelper.defaultStrings,
             ListSortHelper.defaultEnums,

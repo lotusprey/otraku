@@ -22,7 +22,6 @@ class HtmlContent extends StatelessWidget {
           Toast.show(context, 'Couldn\'t open link: $err');
         }
       },
-      buildAsync: true,
       buildAsyncBuilder: (_, snapshot) =>
           snapshot.data ?? const Center(child: Loader()),
       customStylesBuilder: (element) {

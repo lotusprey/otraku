@@ -20,7 +20,7 @@ class PersonalisationTab extends StatelessWidget {
               Flexible(
                 child: DropDownField<int>(
                   title: 'Theme Mode',
-                  initialValue: Config.storage.read(Config.THEME_MODE) ?? 0,
+                  value: Config.storage.read(Config.THEME_MODE) ?? 0,
                   items: {'Auto': 0, 'Light': 1, 'Dark': 2},
                   onChanged: (val) {
                     Config.storage.write(Config.THEME_MODE, val);
@@ -32,7 +32,7 @@ class PersonalisationTab extends StatelessWidget {
               Flexible(
                 child: DropDownField<int>(
                   title: 'Startup Page',
-                  initialValue: Config.storage.read(Config.STARTUP_PAGE) ??
+                  value: Config.storage.read(Config.STARTUP_PAGE) ??
                       HomePage.ANIME_LIST,
                   items: {
                     'Feed': HomePage.FEED,

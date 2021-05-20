@@ -214,7 +214,8 @@ class Viewer extends ScrollxController {
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
-    final data = await Client.request(_settingsMutation, variables);
+    final data =
+        await Client.request(_settingsMutation, variables, popOnErr: false);
     if (data == null) return false;
     _settings = SettingsModel(data['UpdateUser']);
     return true;

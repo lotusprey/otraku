@@ -102,7 +102,7 @@ class FilterPage extends StatelessWidget {
             DropDownField(
               title: 'List Filter',
               hint: 'Everything',
-              initialValue: changes[Filterable.ON_LIST],
+              value: changes[Filterable.ON_LIST],
               items: {
                 'In My List': true,
                 'Not In My List': false,

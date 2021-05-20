@@ -19,14 +19,11 @@ class DateField extends StatefulWidget {
 
 class _DateFieldState extends State<DateField> {
   final constraints = const BoxConstraints(
-      maxWidth: 30, minHeight: Config.MATERIAL_TAP_TARGET_SIZE);
-  DateTime? date;
+    maxWidth: 30,
+    minHeight: Config.MATERIAL_TAP_TARGET_SIZE,
+  );
 
-  @override
-  void initState() {
-    super.initState();
-    date = widget.date;
-  }
+  DateTime? _date;
 
   Widget _picker(DateTime? initialDate) {
     return IconButton(
@@ -45,7 +42,7 @@ class _DateFieldState extends State<DateField> {
         fieldLabelText: '',
       ).then((pickedDate) {
         if (pickedDate == null) return;
-        setState(() => date = pickedDate);
+        setState(() => _date = pickedDate);
         widget.onChanged(pickedDate);
       }),
       padding: const EdgeInsets.all(0),
@@ -60,17 +57,17 @@ class _DateFieldState extends State<DateField> {
           borderRadius: Config.BORDER_RADIUS,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: date != null
+        child: _date != null
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _picker(date),
-                  Text('${date!.year}-${date!.month}-${date!.day}'),
+                  _picker(_date),
+                  Text('${_date!.year}-${_date!.month}-${_date!.day}'),
                   IconButton(
                     tooltip: 'Pick ${widget.helpText}',
                     icon: const Icon(Icons.clear),
                     onPressed: () {
-                      setState(() => date = null);
+                      setState(() => _date = null);
                       widget.onChanged(null);
                     },
                     padding: const EdgeInsets.all(0),
@@ -80,4 +77,16 @@ class _DateFieldState extends State<DateField> {
               )
             : Row(children: [_picker(DateTime.now())]),
       );
+
+  @override
+  void initState() {
+    super.initState();
+    _date = widget.date;
+  }
+
+  @override
+  void didUpdateWidget(covariant DateField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _date = widget.date;
+  }
 }

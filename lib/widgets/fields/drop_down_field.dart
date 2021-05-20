@@ -4,14 +4,14 @@ import 'package:otraku/widgets/fields/input_field_structure.dart';
 
 class DropDownField<T> extends StatefulWidget {
   final String title;
-  final T? initialValue;
+  final T? value;
   final Map<String, T> items;
   final Function(T) onChanged;
   final String hint;
 
   DropDownField({
     required this.title,
-    required this.initialValue,
+    required this.value,
     required this.items,
     required this.onChanged,
     this.hint = 'Choose',
@@ -22,7 +22,7 @@ class DropDownField<T> extends StatefulWidget {
 }
 
 class _DropDownFieldState<T> extends State<DropDownField<T>> {
-  T? value;
+  T? _value;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
         value: widget.items[key],
         child: Text(
           key,
-          style: widget.items[key] != value
+          style: widget.items[key] != _value
               ? Theme.of(context).textTheme.bodyText2
               : Theme.of(context).textTheme.bodyText1,
         ),
@@ -50,10 +50,10 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
           data: Theme.of(context)
               .copyWith(highlightColor: Theme.of(context).accentColor),
           child: DropdownButton<T>(
-            value: value,
+            value: _value,
             items: items,
             onChanged: (val) {
-              setState(() => value = val!);
+              setState(() => _value = val!);
               widget.onChanged(val!);
             },
             hint: Text(
@@ -73,6 +73,12 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
   @override
   void initState() {
     super.initState();
-    value = widget.initialValue;
+    _value = widget.value;
+  }
+
+  @override
+  void didUpdateWidget(covariant DropDownField<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _value = widget.value;
   }
 }

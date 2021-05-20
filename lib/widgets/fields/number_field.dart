@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:otraku/utils/config.dart';
 
 class NumberField extends StatefulWidget {
-  final num initialValue;
+  final num value;
   final num? maxValue;
   final Function(num) update;
 
   NumberField({
     required this.update,
-    this.initialValue = 0,
+    this.value = 0,
     this.maxValue,
   });
 
@@ -91,8 +91,22 @@ class _NumberFieldState extends State<NumberField> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue.toString());
+    _controller = TextEditingController(text: widget.value.toString());
     _controller.addListener(_validateInput);
+  }
+
+  @override
+  void didUpdateWidget(covariant NumberField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final text = widget.value.toString();
+    _controller.value = _controller.value.copyWith(
+      text: text,
+      selection: TextSelection(
+        baseOffset: text.length,
+        extentOffset: text.length,
+      ),
+      composing: TextRange.empty,
+    );
   }
 
   @override

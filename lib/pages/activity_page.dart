@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/browsable.dart';
@@ -55,8 +56,13 @@ class ActivityPage extends StatelessWidget {
                           ),
                         ),
                         if (model.recieverId != null) ...[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                          if (model.isPrivate)
+                            const Padding(
+                              padding: EdgeInsets.only(left: 5),
+                              child: Icon(Ionicons.eye_off_outline),
+                            ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
                             child: Icon(Icons.arrow_right_alt),
                           ),
                           BrowseIndexer(

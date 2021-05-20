@@ -50,6 +50,7 @@ class Viewer extends ScrollxController {
             likeCount
             isLiked
             isSubscribed
+            isPrivate
             createdAt
             recipient {id name avatar {large}}
             messenger {id name avatar {large}}

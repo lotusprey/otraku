@@ -18,6 +18,7 @@ class ActivityModel {
   final String? mediaImage;
   final String? mediaFormat;
   final Browsable? mediaType;
+  final bool isPrivate;
   final String text;
   final String createdAt;
   final replies = PageModel<ReplyModel>();
@@ -42,6 +43,7 @@ class ActivityModel {
     this.mediaFormat,
     this.mediaType,
     this.text = '',
+    this.isPrivate = false,
     this.replyCount = 0,
     this.likeCount = 0,
     this.isLiked = false,
@@ -150,6 +152,7 @@ class ActivityModel {
           mediaImage: null,
           mediaFormat: null,
           mediaType: null,
+          isPrivate: map['isPrivate'] ?? false,
           text: map['message'] ?? '',
           createdAt: Convert.millisToTimeStr(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,

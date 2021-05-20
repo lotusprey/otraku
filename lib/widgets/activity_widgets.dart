@@ -46,8 +46,13 @@ class UserActivity extends StatelessWidget {
               ),
             ),
             if (activity.recieverId != null) ...[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+              if (activity.isPrivate)
+                const Padding(
+                  padding: EdgeInsets.only(left: 5),
+                  child: Icon(Ionicons.eye_off_outline),
+                ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 5),
                 child: Icon(Icons.arrow_right_alt),
               ),
               BrowseIndexer(

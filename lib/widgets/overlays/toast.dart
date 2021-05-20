@@ -17,7 +17,9 @@ class Toast {
         alignment: Alignment.bottomCenter,
         child: Container(
           margin: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewPadding.bottom + 60,
+            bottom: 70 +
+                MediaQuery.of(ctx).viewPadding.bottom +
+                MediaQuery.of(ctx).viewInsets.bottom,
           ),
           padding: Config.PADDING,
           decoration: BoxDecoration(

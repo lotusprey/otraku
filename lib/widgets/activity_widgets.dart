@@ -25,34 +25,42 @@ class UserActivity extends StatelessWidget {
       children: [
         Row(
           children: [
-            BrowseIndexer(
-              id: activity.agentId!,
-              imageUrl: activity.agentImage,
-              browsable: Browsable.user,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ClipRRect(
-                    borderRadius: Config.BORDER_RADIUS,
-                    child: FadeImage(
-                      activity.agentImage,
-                      height: 50,
-                      width: 50,
+            Flexible(
+              child: BrowseIndexer(
+                id: activity.agentId!,
+                imageUrl: activity.agentImage,
+                browsable: Browsable.user,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: Config.BORDER_RADIUS,
+                      child: FadeImage(
+                        activity.agentImage,
+                        height: 50,
+                        width: 50,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(activity.agentName!),
-                ],
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        activity.agentName!,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             if (activity.recieverId != null) ...[
               if (activity.isPrivate)
                 const Padding(
-                  padding: EdgeInsets.only(left: 5),
+                  padding: EdgeInsets.only(left: 10),
                   child: Icon(Ionicons.eye_off_outline),
                 ),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Icon(Icons.arrow_right_alt),
               ),
               BrowseIndexer(

@@ -32,37 +32,45 @@ class ActivityPage extends StatelessWidget {
               titleWidget: model != null
                   ? Row(
                       children: [
-                        BrowseIndexer(
-                          id: model.agentId!,
-                          imageUrl: model.agentImage,
-                          browsable: Browsable.user,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Hero(
-                                tag: model.agentId!,
-                                child: ClipRRect(
-                                  borderRadius: Config.BORDER_RADIUS,
-                                  child: FadeImage(
-                                    model.agentImage,
-                                    height: 40,
-                                    width: 40,
+                        Flexible(
+                          child: BrowseIndexer(
+                            id: model.agentId!,
+                            imageUrl: model.agentImage,
+                            browsable: Browsable.user,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Hero(
+                                  tag: model.agentId!,
+                                  child: ClipRRect(
+                                    borderRadius: Config.BORDER_RADIUS,
+                                    child: FadeImage(
+                                      model.agentImage,
+                                      height: 40,
+                                      width: 40,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(model.agentName!),
-                            ],
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                    model.agentName!,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         if (model.recieverId != null) ...[
                           if (model.isPrivate)
                             const Padding(
-                              padding: EdgeInsets.only(left: 5),
+                              padding: EdgeInsets.only(left: 10),
                               child: Icon(Ionicons.eye_off_outline),
                             ),
                           const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Icon(Icons.arrow_right_alt),
                           ),
                           BrowseIndexer(

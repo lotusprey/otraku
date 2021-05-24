@@ -1,5 +1,6 @@
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/models/page_model.dart';
@@ -7,6 +8,7 @@ import 'package:otraku/models/page_model.dart';
 class ActivityModel {
   final int id;
   final ActivityType type;
+  final bool deletable;
   final int? agentId;
   final String? agentName;
   final String? agentImage;
@@ -30,6 +32,7 @@ class ActivityModel {
   ActivityModel._({
     required this.id,
     required this.type,
+    required this.deletable,
     required this.agentId,
     required this.agentName,
     required this.agentImage,
@@ -51,6 +54,8 @@ class ActivityModel {
   });
 
   factory ActivityModel(Map<String, dynamic> map) {
+    final myId = Client.viewerId;
+
     switch (map['type']) {
       case 'TEXT':
         if (map['user'] == null) throw ArgumentError.notNull('user');
@@ -58,6 +63,7 @@ class ActivityModel {
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.TEXT,
+          deletable: map['user']['id'] == myId,
           agentId: map['user']['id'],
           agentName: map['user']['name'],
           agentImage: map['user']['avatar']['large'],
@@ -87,6 +93,7 @@ class ActivityModel {
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.ANIME_LIST,
+          deletable: map['user']['id'] == myId,
           agentId: map['user']['id'],
           agentName: map['user']['name'],
           agentImage: map['user']['avatar']['large'],
@@ -116,6 +123,7 @@ class ActivityModel {
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.MANGA_LIST,
+          deletable: map['user']['id'] == myId,
           agentId: map['user']['id'],
           agentName: map['user']['name'],
           agentImage: map['user']['avatar']['large'],
@@ -141,6 +149,8 @@ class ActivityModel {
         return ActivityModel._(
           id: map['id'],
           type: ActivityType.MESSAGE,
+          deletable:
+              map['messenger']['id'] == myId || map['recipient']['id'] == myId,
           agentId: map['messenger']['id'],
           agentName: map['messenger']['name'],
           agentImage: map['messenger']['avatar']['large'],

@@ -15,9 +15,6 @@ class Collection extends ScrollxController implements Filterable {
   // CONSTANTS
   // ***************************************************************************
 
-  static const ANIME = 'anime';
-  static const MANGA = 'manga';
-
   static const _collectionQuery = r'''
     query Collection($userId: Int, $type: MediaType) {
       MediaListCollection(userId: $userId, type: $type) {
@@ -113,6 +110,9 @@ class Collection extends ScrollxController implements Filterable {
   static const _removeEntryMutation = r'''
     mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
   ''';
+
+  static const ANIME = 'anime';
+  static const MANGA = 'manga';
 
   // ***************************************************************************
   // DATA

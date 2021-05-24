@@ -34,7 +34,6 @@ class UserReviews extends ScrollxController {
 
   @override
   Future<void> fetchPage() async {
-    print('called ${_model.reviews.nextPage}');
     final data = await Client.request(_reviewsQuery, {
       'id': id,
       'page': _model.reviews.nextPage,

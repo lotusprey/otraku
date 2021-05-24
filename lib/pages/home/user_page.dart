@@ -4,11 +4,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/user.dart';
 import 'package:otraku/pages/friends_page.dart';
+import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
 import 'package:otraku/pages/user_reviews_page.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
-import 'package:otraku/pages/user_feed_page.dart';
 import 'package:otraku/pages/favourites_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/utils/config.dart';
@@ -96,7 +96,7 @@ class UserTab extends StatelessWidget {
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Get.toNamed(UserFeedPage.ROUTE, arguments: id),
+                    () => Get.toNamed(FeedPage.ROUTE, arguments: id),
                   ),
                   _Button(
                     Icons.favorite,

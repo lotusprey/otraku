@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:otraku/controllers/feed.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/reply_model.dart';
@@ -81,11 +82,15 @@ class Activity extends ScrollxController {
     }
   ''';
 
-  final int _id;
-  Activity(this._id, [this._model, this._callback]);
+  static const _deleteMutation = r'''
+    mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
+  ''';
+
+  final int id;
+  final String? feedTag;
+  Activity(this.id, [this.feedTag]);
 
   ActivityModel? _model;
-  final Function(ActivityModel)? _callback;
   final _isLoading = true.obs;
 
   ActivityModel? get model => _model;
@@ -100,7 +105,7 @@ class Activity extends ScrollxController {
 
     final data = await Client.request(
       _activityQuery,
-      {'id': _id, 'withActivity': true},
+      {'id': id, 'withActivity': true},
     );
     if (data == null) return;
 
@@ -114,7 +119,7 @@ class Activity extends ScrollxController {
   Future<void> fetchPage() async {
     final data = await Client.request(
       _activityQuery,
-      {'id': _id, 'page': _model!.replies.nextPage},
+      {'id': id, 'page': _model!.replies.nextPage},
     );
     if (data == null) return;
 
@@ -123,20 +128,18 @@ class Activity extends ScrollxController {
   }
 
   static Future<bool> toggleSubscription(ActivityModel activityModel) async {
-    print(activityModel.isSubscribed);
     final data = await Client.request(
       _toggleSubscriptionMutation,
       {'id': activityModel.id, 'subscribe': activityModel.isSubscribed},
       popOnErr: false,
     );
-    print(data);
     return data != null;
   }
 
-  static Future<bool> toggleLike(ActivityModel activityModel) async {
+  static Future<bool> toggleLike(ActivityModel am) async {
     final data = await Client.request(
       _toggleLikeMutation,
-      {'id': activityModel.id, 'type': 'ACTIVITY'},
+      {'id': am.id, 'type': 'ACTIVITY'},
       popOnErr: false,
     );
     return data != null;
@@ -151,15 +154,25 @@ class Activity extends ScrollxController {
     return data != null;
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    fetch();
+  void updateModel() {
+    if (feedTag != null) Get.find<Feed>(tag: feedTag).updateActivity(_model!);
+  }
+
+  Future<void> deleteModel() async {
+    if (feedTag != null)
+      await Get.find<Feed>(tag: feedTag).deleteActivity(id);
+    else
+      await Client.request(
+        _deleteMutation,
+        {'id': id},
+        popOnErr: false,
+      );
   }
 
   @override
-  void onClose() {
-    if (_callback != null && _model != null) _callback!(_model!);
-    super.onClose();
+  void onInit() {
+    super.onInit();
+    if (feedTag != null) _model = Get.find<Feed>(tag: feedTag).getActivity(id);
+    fetch();
   }
 }

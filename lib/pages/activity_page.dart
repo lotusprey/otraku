@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity.dart';
+import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/enums/themes.dart';
@@ -12,6 +13,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityPage extends StatelessWidget {
@@ -101,13 +103,13 @@ class ActivityPage extends StatelessWidget {
                     SliverToBoxAdapter(
                         child: Padding(
                       padding: Config.PADDING,
-                      child: ActivityBox(model, canPushPage: false),
+                      child: _ActivityBox(activity),
                     )),
                     SliverPadding(
                       padding: Config.PADDING,
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (_, i) => UserReply(model.replies.items[i]),
+                          (_, i) => _UserReply(model.replies.items[i]),
                           childCount: model.replies.items.length,
                         ),
                       ),
@@ -131,10 +133,175 @@ class ActivityPage extends StatelessWidget {
   }
 }
 
-class UserReply extends StatelessWidget {
+class _ActivityBox extends StatelessWidget {
+  final Activity activity;
+  _ActivityBox(this.activity);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = activity.model!;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: Config.PADDING,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: Config.BORDER_RADIUS,
+      ),
+      child: Column(
+        children: [
+          if (model.type == ActivityType.ANIME_LIST ||
+              model.type == ActivityType.MANGA_LIST)
+            MediaBox(model)
+          else
+            UnconstrainedBox(
+              constrainedAxis: Axis.horizontal,
+              alignment: Alignment.topLeft,
+              child: HtmlContent(model.text),
+            ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                model.createdAt,
+                style: Theme.of(context).textTheme.subtitle2,
+              ),
+              _InteractionButtons(activity),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InteractionButtons extends StatefulWidget {
+  final Activity activity;
+  _InteractionButtons(this.activity);
+  @override
+  __InteractionButtonsState createState() => __InteractionButtonsState();
+}
+
+class __InteractionButtonsState extends State<_InteractionButtons> {
+  @override
+  Widget build(BuildContext context) {
+    final model = widget.activity.model!;
+
+    return Row(
+      children: [
+        if (model.deletable)
+          Tooltip(
+            message: 'Delete',
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              child: const Icon(Ionicons.trash, size: Style.ICON_SMALL),
+              onTap: () => showPopUp(
+                context,
+                AlertDialog(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: Config.BORDER_RADIUS,
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor,
+                  title: Text('Delete?'),
+                  actions: [
+                    TextButton(
+                      child: Text(
+                        'No',
+                        style: TextStyle(color: Theme.of(context).dividerColor),
+                      ),
+                      onPressed: Navigator.of(context).pop,
+                    ),
+                    TextButton(
+                      child: Text('Yes'),
+                      onPressed: () {
+                        widget.activity.deleteModel();
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        const SizedBox(width: 10),
+        Tooltip(
+          message: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              setState(() => model.toggleSubscription());
+              Activity.toggleSubscription(model).then(
+                (ok) => ok
+                    ? widget.activity.updateModel()
+                    : setState(() => model.toggleSubscription()),
+              );
+            },
+            child: Icon(
+              Ionicons.notifications,
+              size: Style.ICON_SMALL,
+              color: !model.isSubscribed ? null : Theme.of(context).accentColor,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Tooltip(
+          message: 'Replies',
+          child: Row(
+            children: [
+              Text(
+                model.replyCount.toString(),
+                style: Theme.of(context).textTheme.subtitle2,
+              ),
+              const SizedBox(width: 5),
+              const Icon(Ionicons.chatbox, size: Style.ICON_SMALL),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Tooltip(
+          message: !model.isLiked ? 'Like' : 'Unlike',
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              setState(() => model.toggleLike());
+              Activity.toggleLike(model).then(
+                (ok) => ok
+                    ? widget.activity.updateModel()
+                    : setState(() => model.toggleLike()),
+              );
+            },
+            child: Row(
+              children: [
+                Text(
+                  model.likeCount.toString(),
+                  style: !model.isLiked
+                      ? Theme.of(context).textTheme.subtitle2
+                      : Theme.of(context)
+                          .textTheme
+                          .subtitle2!
+                          .copyWith(color: Theme.of(context).errorColor),
+                ),
+                const SizedBox(width: 5),
+                Icon(
+                  Icons.favorite,
+                  size: Style.ICON_SMALL,
+                  color: model.isLiked ? Theme.of(context).errorColor : null,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _UserReply extends StatelessWidget {
   final ReplyModel reply;
 
-  UserReply(this.reply);
+  _UserReply(this.reply);
 
   @override
   Widget build(BuildContext context) {

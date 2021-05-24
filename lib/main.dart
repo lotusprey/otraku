@@ -7,6 +7,7 @@ import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/entry.dart';
 import 'package:otraku/controllers/explorer.dart';
 import 'package:otraku/controllers/favourites.dart';
+import 'package:otraku/controllers/feed.dart';
 import 'package:otraku/controllers/friends.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/controllers/notifications.dart';
@@ -16,10 +17,10 @@ import 'package:otraku/controllers/staff.dart';
 import 'package:otraku/controllers/statistics.dart';
 import 'package:otraku/controllers/studio.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/controllers/user_feed.dart';
 import 'package:otraku/controllers/user_reviews.dart';
 import 'package:otraku/controllers/viewer.dart';
 import 'package:otraku/pages/friends_page.dart';
+import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
 import 'package:otraku/pages/user_reviews_page.dart';
 import 'package:otraku/utils/background_handler.dart';
@@ -30,7 +31,6 @@ import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/user_feed_page.dart';
 import 'package:otraku/pages/activity_page.dart';
 import 'package:otraku/pages/character_page.dart';
 import 'package:otraku/pages/entry_page.dart';
@@ -68,6 +68,7 @@ class App extends StatelessWidget {
             Get.put(Collection(Client.viewerId!, true), tag: Collection.ANIME);
             Get.put(Collection(Client.viewerId!, false), tag: Collection.MANGA);
             Get.put(User(Client.viewerId!), tag: Client.viewerId.toString());
+            Get.put(Feed(), tag: Feed.HOME_FEED_TAG);
             Get.put(Explorer());
             Get.put(Viewer());
           }),
@@ -148,7 +149,7 @@ class App extends StatelessWidget {
           page: () => ActivityPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
             Get.put(
-              Activity(Get.arguments[0], Get.arguments[1], Get.arguments[2]),
+              Activity(Get.arguments[0], Get.arguments[1]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -186,10 +187,10 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: UserFeedPage.ROUTE,
-          page: () => UserFeedPage(Get.arguments),
+          name: FeedPage.ROUTE,
+          page: () => FeedPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(UserFeed(Get.arguments), tag: Get.arguments.toString());
+            Get.put(Feed(Get.arguments), tag: Get.arguments.toString());
           }),
         ),
         GetPage(

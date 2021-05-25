@@ -6,7 +6,7 @@ import 'package:otraku/enums/browsable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/models/helper_models/connection.dart';
+import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
 class Staff extends ScrollxController {
@@ -85,14 +85,14 @@ class Staff extends ScrollxController {
   Staff(this.id);
 
   StaffModel? _model;
-  final _characters = PageModel<Connection>().obs;
-  final _roles = PageModel<Connection>().obs;
+  final _characters = PageModel<ConnectionModel>().obs;
+  final _roles = PageModel<ConnectionModel>().obs;
   final _onCharacters = true.obs;
   MediaSort _sort = MediaSort.POPULARITY_DESC;
 
   StaffModel? get model => _model;
-  PageModel<Connection> get characters => _characters();
-  PageModel<Connection> get roles => _roles();
+  PageModel<ConnectionModel> get characters => _characters();
+  PageModel<ConnectionModel> get roles => _roles();
   bool get onCharacters => _onCharacters();
   set onCharacters(bool value) => _onCharacters.value = value;
   MediaSort get sort => _sort;
@@ -180,18 +180,18 @@ class Staff extends ScrollxController {
   void _initCharacters(Map<String, dynamic> data, bool clear) {
     if (clear) _characters().clear();
 
-    final connections = <Connection>[];
+    final connections = <ConnectionModel>[];
     for (final connection in data['characterMedia']['edges'])
       for (final char in connection['characters'])
         if (char != null)
-          connections.add(Connection(
+          connections.add(ConnectionModel(
               id: char['id'],
               title: char['name']['full'],
               imageUrl: char['image']['large'],
               browsable: Browsable.character,
               text2: Convert.clarifyEnum(connection['characterRole']),
               others: [
-                Connection(
+                ConnectionModel(
                   id: connection['node']['id'],
                   title: connection['node']['title']['userPreferred'],
                   imageUrl: connection['node']['coverImage']['large'],
@@ -210,9 +210,9 @@ class Staff extends ScrollxController {
   void _initRoles(Map<String, dynamic> data, bool clear) {
     if (clear) _roles().clear();
 
-    final connections = <Connection>[];
+    final connections = <ConnectionModel>[];
     for (final connection in data['staffMedia']['edges'])
-      connections.add(Connection(
+      connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],

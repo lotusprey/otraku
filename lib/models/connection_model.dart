@@ -1,11 +1,11 @@
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 
-class Connection extends BrowseResultModel {
+class ConnectionModel extends BrowseResultModel {
   final String? text2;
   final String text3;
-  final List<Connection> others;
+  final List<ConnectionModel> others;
 
-  Connection({
+  ConnectionModel({
     this.others = const [],
     this.text2 = '',
     this.text3 = '',

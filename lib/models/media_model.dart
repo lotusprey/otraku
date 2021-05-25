@@ -5,19 +5,19 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_overview_model.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/models/related_review_model.dart';
-import 'package:otraku/models/helper_models/connection.dart';
+import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/models/page_model.dart';
 
 class MediaModel {
   final MediaOverviewModel overview;
   final EntryModel entry;
   final List<RelatedMediaModel> otherMedia;
-  final _characters = PageModel<Connection>().obs;
-  final _staff = PageModel<Connection>().obs;
+  final _characters = PageModel<ConnectionModel>().obs;
+  final _staff = PageModel<ConnectionModel>().obs;
   final _reviews = PageModel<RelatedReviewModel>().obs;
 
-  PageModel<Connection> get characters => _characters();
-  PageModel<Connection> get staff => _staff();
+  PageModel<ConnectionModel> get characters => _characters();
+  PageModel<ConnectionModel> get staff => _staff();
   PageModel<RelatedReviewModel> get reviews => _reviews();
 
   MediaModel._(
@@ -42,15 +42,15 @@ class MediaModel {
     final Map<String, dynamic> map,
     final List<String?> availableLanguages,
   ) {
-    final List<Connection> items = [];
+    final List<ConnectionModel> items = [];
     for (final connection in map['characters']['edges']) {
-      final List<Connection> voiceActors = [];
+      final List<ConnectionModel> voiceActors = [];
       for (final va in connection['voiceActors']) {
         final language = Convert.clarifyEnum(va['language']);
         if (!availableLanguages.contains(language))
           availableLanguages.add(language);
 
-        voiceActors.add(Connection(
+        voiceActors.add(ConnectionModel(
           id: va['id'],
           title: va['name']['full'],
           imageUrl: va['image']['large'],
@@ -59,7 +59,7 @@ class MediaModel {
         ));
       }
 
-      items.add(Connection(
+      items.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['name']['full'],
         text2: Convert.clarifyEnum(connection['role']),
@@ -74,9 +74,9 @@ class MediaModel {
   }
 
   void addStaff(final Map<String, dynamic> map) {
-    final List<Connection> items = [];
+    final List<ConnectionModel> items = [];
     for (final connection in map['staff']['edges'])
-      items.add(Connection(
+      items.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['name']['full'],
         text2: connection['role'],

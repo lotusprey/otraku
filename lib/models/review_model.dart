@@ -1,4 +1,4 @@
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ReviewModel {
@@ -14,7 +14,7 @@ class ReviewModel {
   final String text;
   final String createdAt;
   final int score;
-  final Browsable browsable;
+  final Explorable browsable;
   int rating;
   int totalRating;
   bool? viewerRating;
@@ -58,8 +58,9 @@ class ReviewModel {
             : map['userRating'] == 'DOWN_VOTE'
                 ? false
                 : null,
-        browsable:
-            map['media']['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
+        browsable: map['media']['type'] == 'ANIME'
+            ? Explorable.anime
+            : Explorable.manga,
       );
 
   void updateRating(final Map<String, dynamic> map) {

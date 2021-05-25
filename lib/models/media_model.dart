@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_overview_model.dart';
@@ -54,7 +54,7 @@ class MediaModel {
           id: va['id'],
           title: va['name']['full'],
           imageUrl: va['image']['large'],
-          browsable: Browsable.staff,
+          browsable: Explorable.staff,
           text2: language,
         ));
       }
@@ -65,7 +65,7 @@ class MediaModel {
         text2: Convert.clarifyEnum(connection['role']),
         imageUrl: connection['node']['image']['large'],
         others: voiceActors,
-        browsable: Browsable.character,
+        browsable: Explorable.character,
       ));
     }
     _characters.update(
@@ -81,7 +81,7 @@ class MediaModel {
         title: connection['node']['name']['full'],
         text2: connection['role'],
         imageUrl: connection['node']['image']['large'],
-        browsable: Browsable.staff,
+        browsable: Explorable.staff,
       ));
     _staff.update(
       (s) => s!.append(items, map['staff']['pageInfo']['hasNextPage']),

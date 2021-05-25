@@ -4,7 +4,7 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/review.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -58,7 +58,7 @@ class ReviewPage extends StatelessWidget {
                               onTap: () => BrowseIndexer.openPage(
                                 id: model.userId,
                                 imageUrl: model.userAvatar,
-                                browsable: Browsable.user,
+                                browsable: Explorable.user,
                               ),
                               child: RichText(
                                 textAlign: TextAlign.center,

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
@@ -188,7 +188,7 @@ class Staff extends ScrollxController {
               id: char['id'],
               title: char['name']['full'],
               imageUrl: char['image']['large'],
-              browsable: Browsable.character,
+              browsable: Explorable.character,
               text2: Convert.clarifyEnum(connection['characterRole']),
               others: [
                 ConnectionModel(
@@ -196,8 +196,8 @@ class Staff extends ScrollxController {
                   title: connection['node']['title']['userPreferred'],
                   imageUrl: connection['node']['coverImage']['large'],
                   browsable: connection['node']['type'] == 'ANIME'
-                      ? Browsable.anime
-                      : Browsable.manga,
+                      ? Explorable.anime
+                      : Explorable.manga,
                 ),
               ]));
 
@@ -217,8 +217,8 @@ class Staff extends ScrollxController {
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
         browsable: connection['node']['type'] == 'ANIME'
-            ? Browsable.anime
-            : Browsable.manga,
+            ? Explorable.anime
+            : Explorable.manga,
         text2: Convert.clarifyEnum(connection['staffRole']),
       ));
 

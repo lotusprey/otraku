@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -58,12 +58,12 @@ class _ExploreGrid extends StatelessWidget {
         );
       }
 
-      if (results[0].browsable == Browsable.studio) return TitleList(results);
+      if (results[0].browsable == Explorable.studio) return TitleList(results);
 
-      if (results[0].browsable == Browsable.user)
+      if (results[0].browsable == Explorable.user)
         return TileGrid(models: results, full: false);
 
-      if (results[0].browsable == Browsable.review) return ReviewGrid(results);
+      if (results[0].browsable == Explorable.review) return ReviewGrid(results);
 
       return TileGrid(models: results);
     });

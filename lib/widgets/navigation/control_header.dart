@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/pages/filter_page.dart';
@@ -95,12 +95,12 @@ class ExploreControlHeader extends StatelessWidget {
             scrollToTop: () => explorer.scrollTo(0),
             swipe: (offset) {
               final index = explorer.type.index + offset;
-              if (index >= 0 && index < Browsable.values.length)
-                explorer.type = Browsable.values[index];
+              if (index >= 0 && index < Explorable.values.length)
+                explorer.type = Explorable.values[index];
             },
             hint: Convert.clarifyEnum(describeEnum(explorer.type))!,
             searchValue: explorer.search,
-            search: explorer.type != Browsable.review
+            search: explorer.type != Explorable.review
                 ? (val) => explorer.search = val
                 : null,
             title: Row(
@@ -119,8 +119,8 @@ class ExploreControlHeader extends StatelessWidget {
               ],
             ),
           ),
-          if (explorer.type == Browsable.anime ||
-              explorer.type == Browsable.manga) ...[
+          if (explorer.type == Explorable.anime ||
+              explorer.type == Explorable.manga) ...[
             ActionIcon(
               tooltip: 'Sort',
               icon: Ionicons.filter_outline,

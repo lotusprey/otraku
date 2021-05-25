@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
@@ -99,7 +99,7 @@ class Explorer extends ScrollxController implements Filterable {
 
   final _isLoading = true.obs;
   final _results = PageModel<ExplorableModel>().obs;
-  final _type = Browsable.anime.obs;
+  final _type = Explorable.anime.obs;
   final _search = ''.obs;
   final _genres = <String>[];
   final _tags = <String, List<TagModel>>{};
@@ -120,7 +120,7 @@ class Explorer extends ScrollxController implements Filterable {
 
   bool get isLoading => _isLoading();
 
-  Browsable get type => _type();
+  Explorable get type => _type();
 
   String get search => _search();
 
@@ -134,11 +134,11 @@ class Explorer extends ScrollxController implements Filterable {
   // FUNCTIONS CONTROLLING QUERY VARIABLES
   // ***************************************************************************
 
-  set type(Browsable value) {
+  set type(Explorable value) {
     _type.value = value;
 
-    if (value == Browsable.anime) _filters[Filterable.TYPE] = 'ANIME';
-    if (value == Browsable.manga) _filters[Filterable.TYPE] = 'MANGA';
+    if (value == Explorable.anime) _filters[Filterable.TYPE] = 'ANIME';
+    if (value == Explorable.manga) _filters[Filterable.TYPE] = 'MANGA';
 
     _filters.remove(Filterable.FORMAT_IN);
     fetch();
@@ -208,23 +208,23 @@ class Explorer extends ScrollxController implements Filterable {
 
     String query;
     switch (_type.value) {
-      case Browsable.anime:
-      case Browsable.manga:
+      case Explorable.anime:
+      case Explorable.manga:
         query = _mediaQuery;
         break;
-      case Browsable.character:
+      case Explorable.character:
         query = _charactersQuery;
         break;
-      case Browsable.staff:
+      case Explorable.staff:
         query = _staffQuery;
         break;
-      case Browsable.studio:
+      case Explorable.studio:
         query = _studiosQuery;
         break;
-      case Browsable.user:
+      case Explorable.user:
         query = _usersQuery;
         break;
-      case Browsable.review:
+      case Explorable.review:
         query = _reviewsQuery;
         break;
     }

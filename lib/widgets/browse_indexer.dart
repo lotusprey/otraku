@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/home/home_page.dart';
@@ -15,7 +15,7 @@ import 'package:otraku/pages/studio_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 
 class BrowseIndexer extends StatelessWidget {
-  final Browsable browsable;
+  final Explorable browsable;
   final int id;
   final String? imageUrl;
   final Widget child;
@@ -30,11 +30,11 @@ class BrowseIndexer extends StatelessWidget {
   static void openPage({
     required int id,
     required String? imageUrl,
-    required Browsable browsable,
+    required Explorable browsable,
   }) {
     switch (browsable) {
-      case Browsable.anime:
-      case Browsable.manga:
+      case Explorable.anime:
+      case Explorable.manga:
         Get.toNamed(
           MediaPage.ROUTE,
           arguments: [id, imageUrl],
@@ -42,28 +42,28 @@ class BrowseIndexer extends StatelessWidget {
           preventDuplicates: false,
         );
         return;
-      case Browsable.character:
+      case Explorable.character:
         Get.toNamed(
           CharacterPage.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
         return;
-      case Browsable.staff:
+      case Explorable.staff:
         Get.toNamed(
           StaffPage.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
         return;
-      case Browsable.studio:
+      case Explorable.studio:
         Get.toNamed(
           StudioPage.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
         return;
-      case Browsable.user:
+      case Explorable.user:
         if (id != Client.viewerId)
           Get.toNamed(
             UserPage.ROUTE,
@@ -75,7 +75,7 @@ class BrowseIndexer extends StatelessWidget {
           Get.until((route) => route.isFirst);
         }
         return;
-      case Browsable.review:
+      case Explorable.review:
         Get.toNamed(
           ReviewPage.ROUTE,
           arguments: [id, imageUrl],
@@ -104,7 +104,7 @@ class BrowseIndexer extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () => openPage(id: id, imageUrl: imageUrl, browsable: browsable),
       onLongPress: () {
-        if (browsable == Browsable.anime || browsable == Browsable.manga)
+        if (browsable == Explorable.anime || browsable == Explorable.manga)
           openEditPage(id);
       },
       child: child,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/enums/anime_format.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_status.dart';
@@ -35,8 +35,8 @@ class FilterPage extends StatelessWidget {
 
     final browsable = collectionTag != null
         ? (filterable as Collection).ofAnime
-            ? Browsable.anime
-            : Browsable.manga
+            ? Explorable.anime
+            : Explorable.manga
         : explorer.type;
 
     changes[Filterable.STATUS_IN] = List<String>.from(
@@ -122,14 +122,14 @@ class FilterPage extends StatelessWidget {
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            options: browsable == Browsable.anime
+            options: browsable == Explorable.anime
                 ? AnimeFormat.values
                     .map((f) => Convert.clarifyEnum(describeEnum(f))!)
                     .toList()
                 : MangaFormat.values
                     .map((f) => Convert.clarifyEnum(describeEnum(f))!)
                     .toList(),
-            values: browsable == Browsable.anime
+            values: browsable == Explorable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
                 : MangaFormat.values.map((f) => describeEnum(f)).toList(),
             inclusive: changes[Filterable.FORMAT_IN],

@@ -1,4 +1,4 @@
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 
 class ExplorableModel {
   final int id;
@@ -6,7 +6,7 @@ class ExplorableModel {
   final String? text2;
   final String? text3;
   final String? imageUrl;
-  final Browsable browsable;
+  final Explorable browsable;
 
   ExplorableModel({
     required this.id,
@@ -22,7 +22,7 @@ class ExplorableModel {
         id: map['id'],
         text1: map['title']['userPreferred'],
         imageUrl: map['coverImage']['large'],
-        browsable: map['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
+        browsable: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       );
 
   factory ExplorableModel.anime(final Map<String, dynamic> map) =>
@@ -30,7 +30,7 @@ class ExplorableModel {
         id: map['id'],
         text1: map['title']['userPreferred'],
         imageUrl: map['coverImage']['large'],
-        browsable: Browsable.anime,
+        browsable: Explorable.anime,
       );
 
   factory ExplorableModel.manga(final Map<String, dynamic> map) =>
@@ -38,7 +38,7 @@ class ExplorableModel {
         id: map['id'],
         text1: map['title']['userPreferred'],
         imageUrl: map['coverImage']['large'],
-        browsable: Browsable.manga,
+        browsable: Explorable.manga,
       );
 
   factory ExplorableModel.character(final Map<String, dynamic> map) =>
@@ -46,7 +46,7 @@ class ExplorableModel {
         id: map['id'],
         text1: map['name']['full'],
         imageUrl: map['image']['large'],
-        browsable: Browsable.character,
+        browsable: Explorable.character,
       );
 
   factory ExplorableModel.staff(final Map<String, dynamic> map) =>
@@ -54,14 +54,14 @@ class ExplorableModel {
         id: map['id'],
         text1: map['name']['full'],
         imageUrl: map['image']['large'],
-        browsable: Browsable.staff,
+        browsable: Explorable.staff,
       );
 
   factory ExplorableModel.studio(final Map<String, dynamic> map) =>
       ExplorableModel(
         id: map['id'],
         text1: map['name'],
-        browsable: Browsable.studio,
+        browsable: Explorable.studio,
       );
 
   factory ExplorableModel.user(final Map<String, dynamic> map) =>
@@ -69,7 +69,7 @@ class ExplorableModel {
         id: map['id'],
         text1: map['name'],
         imageUrl: map['avatar']['large'],
-        browsable: Browsable.user,
+        browsable: Explorable.user,
       );
 
   factory ExplorableModel.review(final Map<String, dynamic> map) =>
@@ -80,6 +80,6 @@ class ExplorableModel {
         text2: map['summary'],
         text3: '${map['rating']}/${map['ratingAmount']}',
         imageUrl: map['media']['bannerImage'],
-        browsable: Browsable.review,
+        browsable: Explorable.review,
       );
 }

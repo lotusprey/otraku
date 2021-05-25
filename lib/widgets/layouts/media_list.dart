@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/enums/themes.dart';
@@ -104,7 +104,7 @@ class _MediaListTile extends StatelessWidget {
       ),
       child: BrowseIndexer(
         id: entry.mediaId,
-        browsable: Browsable.anime,
+        browsable: Explorable.anime,
         imageUrl: entry.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

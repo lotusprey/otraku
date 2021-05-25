@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/media_overview_model.dart';
@@ -152,7 +152,7 @@ class OverviewTab extends StatelessWidget {
               onTap: (index) => BrowseIndexer.openPage(
                 id: overview.studios[overview.studios.keys.elementAt(index)]!,
                 imageUrl: overview.studios.keys.elementAt(index),
-                browsable: Browsable.studio,
+                browsable: Explorable.studio,
               ),
             ),
           if (overview.producers.isNotEmpty)
@@ -163,7 +163,7 @@ class OverviewTab extends StatelessWidget {
                 id: overview
                     .producers[overview.producers.keys.elementAt(index)]!,
                 imageUrl: overview.producers.keys.elementAt(index),
-                browsable: Browsable.studio,
+                browsable: Explorable.studio,
               ),
             ),
           const SizedBox(height: 10),

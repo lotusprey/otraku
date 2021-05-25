@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/notifications.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/pages/activity_page.dart';
@@ -81,11 +81,11 @@ class _NotificationWidget extends StatelessWidget {
               onTap: () => BrowseIndexer.openPage(
                 id: notification.headId!,
                 imageUrl: notification.imageUrl,
-                browsable: notification.browsable ?? Browsable.user,
+                browsable: notification.browsable ?? Explorable.user,
               ),
               onLongPress: () {
-                if (notification.browsable == Browsable.anime ||
-                    notification.browsable == Browsable.manga)
+                if (notification.browsable == Explorable.anime ||
+                    notification.browsable == Explorable.manga)
                   BrowseIndexer.openEditPage(notification.headId!);
               },
               child: ClipRRect(
@@ -122,7 +122,7 @@ class _NotificationWidget extends StatelessWidget {
                       BrowseIndexer.openPage(
                         id: notification.headId!,
                         imageUrl: notification.imageUrl,
-                        browsable: Browsable.user,
+                        browsable: Explorable.user,
                       );
                       return;
                     default:
@@ -131,8 +131,8 @@ class _NotificationWidget extends StatelessWidget {
                   }
                 },
                 onLongPress: () {
-                  if (notification.browsable == Browsable.anime ||
-                      notification.browsable == Browsable.manga)
+                  if (notification.browsable == Explorable.anime ||
+                      notification.browsable == Explorable.manga)
                     BrowseIndexer.openEditPage(notification.headId!);
                 },
                 child: Padding(

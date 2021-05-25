@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -114,19 +114,19 @@ class ExploreDrawer extends StatelessWidget {
     return CustomDrawer(
       heading: 'Looking for:',
       index: selected,
-      length: Browsable.values.length,
+      length: Explorable.values.length,
       titleBuilder: (int i) => Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Browsable.values[i].icon,
+            Explorable.values[i].icon,
             color: i != selected
                 ? Theme.of(context).dividerColor
                 : Theme.of(context).accentColor,
           ),
           _space,
           Text(
-            Convert.clarifyEnum(describeEnum(Browsable.values[i]))!,
+            Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
             style: i != selected
                 ? Theme.of(context).textTheme.headline2
                 : Theme.of(context).textTheme.headline1,
@@ -134,7 +134,7 @@ class ExploreDrawer extends StatelessWidget {
         ],
       ),
       subtitleBuilder: (_) => const SizedBox(),
-      onChanged: (int index) => explorable.type = Browsable.values[index],
+      onChanged: (int index) => explorable.type = Explorable.values[index],
     );
   }
 }

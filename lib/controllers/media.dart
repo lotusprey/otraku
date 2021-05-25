@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 import 'package:otraku/models/media_model.dart';
@@ -247,7 +247,7 @@ class Media extends ScrollxController {
 
   Future<bool> toggleFavourite() async =>
       await Client.request(
-        _model!.overview.browsable == Browsable.anime
+        _model!.overview.browsable == Explorable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': id},

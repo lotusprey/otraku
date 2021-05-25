@@ -1,4 +1,4 @@
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/utils/convert.dart';
 
@@ -11,7 +11,7 @@ class NotificationModel {
   final List<String> texts;
   final bool markTextOnEvenIndex;
   final String timestamp;
-  final Browsable? browsable;
+  final Explorable? browsable;
 
   NotificationModel._({
     required this.id,
@@ -37,7 +37,7 @@ class NotificationModel {
           texts: [map['user']['name'], ' followed you.'],
           markTextOnEvenIndex: true,
           timestamp: Convert.millisToTimeStr(map['createdAt']),
-          browsable: Browsable.user,
+          browsable: Explorable.user,
         );
       case 'ACTIVITY_MESSAGE':
         return NotificationModel._(
@@ -212,8 +212,8 @@ class NotificationModel {
           markTextOnEvenIndex: false,
           timestamp: Convert.millisToTimeStr(map['createdAt']),
           browsable: map['media']['type'] == 'ANIME'
-              ? Browsable.anime
-              : Browsable.manga,
+              ? Explorable.anime
+              : Explorable.manga,
         );
       case 'RELATED_MEDIA_ADDITION':
         return NotificationModel._(
@@ -229,8 +229,8 @@ class NotificationModel {
           markTextOnEvenIndex: true,
           timestamp: Convert.millisToTimeStr(map['createdAt']),
           browsable: map['media']['type'] == 'ANIME'
-              ? Browsable.anime
-              : Browsable.manga,
+              ? Explorable.anime
+              : Explorable.manga,
         );
       default:
         throw ArgumentError.notNull('type');

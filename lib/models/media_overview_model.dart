@@ -1,10 +1,10 @@
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/list_status.dart';
 
 class MediaOverviewModel {
   final int id;
-  final Browsable browsable;
+  final Explorable browsable;
   final int? favourites;
   bool? isFavourite;
   final String? preferredTitle;
@@ -89,7 +89,7 @@ class MediaOverviewModel {
 
     final o = MediaOverviewModel._(
       id: map['id'],
-      browsable: map['type'] == 'ANIME' ? Browsable.anime : Browsable.manga,
+      browsable: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       isFavourite: map['isFavourite'],
       favourites: map['favourites'],
       preferredTitle: map['title']['userPreferred'],

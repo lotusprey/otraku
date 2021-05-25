@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
@@ -194,7 +194,7 @@ class Character extends ScrollxController {
           id: va['id'],
           title: va['name']['full'],
           imageUrl: va['image']['large'],
-          browsable: Browsable.staff,
+          browsable: Explorable.staff,
           text2: language,
         ));
       }
@@ -203,7 +203,7 @@ class Character extends ScrollxController {
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
-        browsable: Browsable.anime,
+        browsable: Explorable.anime,
         text2: Convert.clarifyEnum(connection['characterRole']),
         others: voiceActors,
       ));
@@ -226,7 +226,7 @@ class Character extends ScrollxController {
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
-        browsable: Browsable.manga,
+        browsable: Explorable.manga,
         text2: Convert.clarifyEnum(connection['characterRole']),
       ));
 

@@ -1,5 +1,5 @@
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/reply_model.dart';
@@ -19,7 +19,7 @@ class ActivityModel {
   final String? mediaTitle;
   final String? mediaImage;
   final String? mediaFormat;
-  final Browsable? mediaType;
+  final Explorable? mediaType;
   final bool isPrivate;
   final String text;
   final String createdAt;
@@ -104,7 +104,7 @@ class ActivityModel {
           mediaTitle: map['media']['title']['userPreferred'],
           mediaImage: map['media']['coverImage']['large'],
           mediaFormat: Convert.clarifyEnum(map['media']['format']),
-          mediaType: Browsable.anime,
+          mediaType: Explorable.anime,
           text: '$status $progress',
           createdAt: Convert.millisToTimeStr(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
@@ -134,7 +134,7 @@ class ActivityModel {
           mediaTitle: map['media']['title']['userPreferred'],
           mediaImage: map['media']['coverImage']['large'],
           mediaFormat: Convert.clarifyEnum(map['media']['format']),
-          mediaType: Browsable.manga,
+          mediaType: Explorable.manga,
           text: '$status $progress',
           createdAt: Convert.millisToTimeStr(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,

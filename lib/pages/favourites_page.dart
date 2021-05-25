@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/favourites.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
@@ -22,11 +22,11 @@ class FavouritesPage extends StatelessWidget {
           extendBody: true,
           bottomNavigationBar: NavBar(
             options: {
-              'Anime': Browsable.anime.icon,
-              'Manga': Browsable.manga.icon,
-              'Characters': Browsable.character.icon,
-              'Staff': Browsable.staff.icon,
-              'Studios': Browsable.studio.icon,
+              'Anime': Explorable.anime.icon,
+              'Manga': Explorable.manga.icon,
+              'Characters': Explorable.character.icon,
+              'Staff': Explorable.staff.icon,
+              'Studios': Explorable.studio.icon,
             },
             initial: favourites.pageIndex,
             onChanged: (index) => favourites.pageIndex = index,

@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
@@ -38,7 +38,7 @@ class ActivityPage extends StatelessWidget {
                           child: BrowseIndexer(
                             id: model.agentId!,
                             imageUrl: model.agentImage,
-                            browsable: Browsable.user,
+                            browsable: Explorable.user,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -78,7 +78,7 @@ class ActivityPage extends StatelessWidget {
                           BrowseIndexer(
                             id: model.recieverId!,
                             imageUrl: model.recieverImage,
-                            browsable: Browsable.user,
+                            browsable: Explorable.user,
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: FadeImage(
@@ -296,7 +296,7 @@ class _UserReply extends StatelessWidget {
         BrowseIndexer(
           id: reply.userId,
           imageUrl: reply.userImage,
-          browsable: Browsable.user,
+          browsable: Explorable.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

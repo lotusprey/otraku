@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
@@ -63,7 +63,7 @@ class _Tile extends StatelessWidget {
     return BrowseIndexer(
       id: model.id,
       imageUrl: model.imageUrl,
-      browsable: Browsable.review,
+      browsable: Explorable.review,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,

@@ -5,7 +5,7 @@ import 'package:otraku/controllers/activity.dart';
 import 'package:otraku/controllers/feed.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/enums/browsable.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/pages/activity_page.dart';
@@ -32,7 +32,7 @@ class UserActivity extends StatelessWidget {
               child: BrowseIndexer(
                 id: model.agentId!,
                 imageUrl: model.agentImage,
-                browsable: Browsable.user,
+                browsable: Explorable.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -65,7 +65,7 @@ class UserActivity extends StatelessWidget {
               BrowseIndexer(
                 id: model.recieverId!,
                 imageUrl: model.recieverImage,
-                browsable: Browsable.user,
+                browsable: Explorable.user,
                 child: ClipRRect(
                   borderRadius: Config.BORDER_RADIUS,
                   child: FadeImage(model.recieverImage, height: 50, width: 50),

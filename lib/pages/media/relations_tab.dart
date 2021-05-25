@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -29,79 +30,7 @@ class RelationsTab extends StatelessWidget {
           if (other.isEmpty)
             return media.isLoading ? _Empty(null) : _Empty('No related media');
 
-          return SliverGrid(
-            gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-              minWidth: 300,
-              height: Config.highTile.maxWidth / Config.highTile.imgWHRatio,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (_, index) => BrowseIndexer(
-                id: other[index].id,
-                imageUrl: other[index].imageUrl,
-                browsable: other[index].browsable,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Hero(
-                      tag: other[index].id,
-                      child: ClipRRect(
-                        borderRadius: Config.BORDER_RADIUS,
-                        child: Container(
-                          color: Theme.of(context).primaryColor,
-                          child: FadeImage(
-                            other[index].imageUrl,
-                            width: Config.highTile.maxWidth,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                other[index].relationType!,
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                              Flexible(
-                                child: Text(
-                                  other[index].text1,
-                                  overflow: TextOverflow.fade,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (other[index].format != null)
-                                Text(
-                                  other[index].format!,
-                                  style: Theme.of(context).textTheme.subtitle1,
-                                ),
-                              if (other[index].status != null)
-                                Text(
-                                  other[index].status!,
-                                  style: Theme.of(context).textTheme.subtitle1,
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              childCount: other.length,
-            ),
-          );
+          return _RelationsGrid(media.model!.otherMedia);
         }
 
         if (media.relationsTab == Media.REL_CHARACTERS) {
@@ -119,6 +48,85 @@ class RelationsTab extends StatelessWidget {
 
         return ConnectionsGrid(connections: media.model!.staff.items);
       }),
+    );
+  }
+}
+
+class _RelationsGrid extends StatelessWidget {
+  final List<RelatedMediaModel> models;
+  _RelationsGrid(this.models);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 300,
+        height: 190,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (_, index) => BrowseIndexer(
+          id: models[index].id,
+          imageUrl: models[index].imageUrl,
+          browsable: models[index].browsable,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Hero(
+                tag: models[index].id,
+                child: ClipRRect(
+                  borderRadius: Config.BORDER_RADIUS,
+                  child: Container(
+                    color: Theme.of(context).primaryColor,
+                    child: FadeImage(models[index].imageUrl, width: 125),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          models[index].relationType!,
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                        Flexible(
+                          child: Text(
+                            models[index].text1,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (models[index].format != null)
+                          Text(
+                            models[index].format!,
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                        if (models[index].status != null)
+                          Text(
+                            models[index].status!,
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        childCount: models.length,
+      ),
     );
   }
 }

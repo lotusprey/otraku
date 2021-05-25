@@ -71,7 +71,7 @@ class Feed extends ScrollxController {
   bool _isLoading = false;
 
   List<ActivityModel> get activities => _activities().items;
-  List<ActivityType> get typeIn => [...typeIn];
+  List<ActivityType> get typeIn => [..._typeIn];
   set typeIn(List<ActivityType> vals) {
     _typeIn.clear();
     _typeIn.addAll(vals);
@@ -97,7 +97,7 @@ class Feed extends ScrollxController {
     if (clean) {
       scrollTo(0);
       _idNotIn.clear();
-      _activities().clear();
+      _activities.update((a) => a!.clear());
     }
 
     final data = await Client.request(
@@ -165,7 +165,7 @@ class Feed extends ScrollxController {
 
     _typeIn = id == null
         ? [ActivityType.TEXT, ActivityType.ANIME_LIST, ActivityType.MANGA_LIST]
-        : ActivityType.values;
+        : ActivityType.values.toList();
 
     fetchPage();
   }

@@ -36,9 +36,9 @@ class FriendsPage extends StatelessWidget {
               key: friends.key,
               child: friends.users.isNotEmpty
                   ? TileGrid(
-                      tileData: friends.users,
-                      tileModel: Config.squareTile,
+                      models: friends.users,
                       scrollCtrl: friends.scrollCtrl,
+                      full: false,
                     )
                   : friends.hasNextPage
                       ? const Center(child: Loader())

@@ -43,8 +43,7 @@ class FavouritesPage extends StatelessWidget {
                           scrollCtrl: favourites.scrollCtrl,
                         )
                       : TileGrid(
-                          tileData: favourites.favourites,
-                          tileModel: Config.highTile,
+                          models: favourites.favourites,
                           scrollCtrl: favourites.scrollCtrl,
                         )
                   : Text(

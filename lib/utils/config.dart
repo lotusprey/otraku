@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/models/helper_models/tile_model.dart';
 import 'package:otraku/pages/home/home_page.dart';
 
 // Holds constants and configurations that
@@ -50,20 +49,4 @@ class Config {
   }
 
   static void updateTheme() => Get.changeTheme(theme);
-
-  static const highTile = TileModel(
-    maxWidth: 125,
-    imgWHRatio: 0.65,
-    textHeight: 40,
-    fit: BoxFit.cover,
-    needsBackground: true,
-  );
-
-  static const squareTile = TileModel(
-    maxWidth: 125,
-    imgWHRatio: 1,
-    textHeight: 40,
-    fit: BoxFit.contain,
-    needsBackground: false,
-  );
 }

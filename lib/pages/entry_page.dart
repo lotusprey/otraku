@@ -50,36 +50,19 @@ class EntryPage extends StatelessWidget {
                         icon: Ionicons.trash_bin_outline,
                         onTap: () => showPopUp(
                           context,
-                          AlertDialog(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: Config.BORDER_RADIUS,
-                            ),
-                            backgroundColor: Theme.of(context).primaryColor,
-                            title: Text('Remove entry?'),
-                            actions: [
-                              TextButton(
-                                child: Text(
-                                  'No',
-                                  style: TextStyle(
-                                    color: Theme.of(context).dividerColor,
-                                  ),
-                                ),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                              TextButton(
-                                child: Text('Yes'),
-                                onPressed: () {
-                                  Get.find<Collection>(
-                                    tag: model.type == 'ANIME'
-                                        ? Collection.ANIME
-                                        : Collection.MANGA,
-                                  ).removeEntry(entry.oldModel!);
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                  callback?.call(null);
-                                },
-                              ),
-                            ],
+                          ConfirmationDialog(
+                            title: 'Remove entry?',
+                            mainAction: 'Yes',
+                            secondaryAction: 'No',
+                            onConfirm: () {
+                              Get.find<Collection>(
+                                tag: model.type == 'ANIME'
+                                    ? Collection.ANIME
+                                    : Collection.MANGA,
+                              ).removeEntry(entry.oldModel!);
+                              callback?.call(null);
+                              Navigator.of(context).pop();
+                            },
                           ),
                         ),
                       ),

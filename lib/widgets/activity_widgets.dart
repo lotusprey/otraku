@@ -143,28 +143,11 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
               child: const Icon(Ionicons.trash, size: Style.ICON_SMALL),
               onTap: () => showPopUp(
                 context,
-                AlertDialog(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: Config.BORDER_RADIUS,
-                  ),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  title: Text('Delete?'),
-                  actions: [
-                    TextButton(
-                      child: Text(
-                        'No',
-                        style: TextStyle(color: Theme.of(context).dividerColor),
-                      ),
-                      onPressed: Navigator.of(context).pop,
-                    ),
-                    TextButton(
-                      child: Text('Yes'),
-                      onPressed: () {
-                        widget.feed.deleteActivity(widget.model.id);
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
+                ConfirmationDialog(
+                  title: 'Delete?',
+                  mainAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: () => widget.feed.deleteActivity(widget.model.id),
                 ),
               ),
             ),

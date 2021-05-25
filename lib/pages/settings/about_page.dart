@@ -89,22 +89,11 @@ class AboutTab extends StatelessWidget {
               ),
               onPressed: () => showPopUp(
                 context,
-                AlertDialog(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: Config.BORDER_RADIUS,
-                  ),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  title: Text('Log out? (Don\'t do it)'),
-                  actions: [
-                    TextButton(
-                      child: Text(
-                        'No',
-                        style: TextStyle(color: Theme.of(context).dividerColor),
-                      ),
-                      onPressed: Navigator.of(context).pop,
-                    ),
-                    TextButton(child: Text('Yes'), onPressed: Client.logOut),
-                  ],
+                ConfirmationDialog(
+                  title: 'Log out? (Don\'t do it)',
+                  mainAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: Client.logOut,
                 ),
               ),
             ),

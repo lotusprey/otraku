@@ -87,26 +87,11 @@ class HomePage extends StatelessWidget {
 
     await showPopUp(
       ctx,
-      AlertDialog(
-        shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-        backgroundColor: Theme.of(ctx).primaryColor,
-        title: Text('Exit?'),
-        actions: [
-          TextButton(
-            child: Text(
-              'Never',
-              style: TextStyle(color: Theme.of(ctx).dividerColor),
-            ),
-            onPressed: () => Navigator.of(ctx).pop(),
-          ),
-          TextButton(
-            child: Text('Yes'),
-            onPressed: () {
-              ok = true;
-              Navigator.of(ctx).pop();
-            },
-          ),
-        ],
+      ConfirmationDialog(
+        title: 'Exit?',
+        mainAction: 'Yes',
+        secondaryAction: 'Never',
+        onConfirm: () => ok = true,
       ),
     );
 

@@ -65,14 +65,9 @@ class BackgroundHandler {
     if (route == '/thread') {
       showPopUp(
         ctx,
-        AlertDialog(
-          shape:
-              const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-          backgroundColor: Theme.of(ctx).primaryColor,
-          title: Text('Sorry! Forum is not yet supported!'),
-          actions: [
-            TextButton(child: Text('Ok'), onPressed: Navigator.of(ctx).pop),
-          ],
+        ConfirmationDialog(
+          title: 'Sorry! Forum is not yet supported!',
+          mainAction: 'Ok',
         ),
       );
       return;

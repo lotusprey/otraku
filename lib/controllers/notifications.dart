@@ -172,7 +172,6 @@ class Notifications extends ScrollxController {
     final data = await Client.request(
       _notificationQuery,
       _filter != 0 ? {'filter': _filters[_filter]} : null,
-      popOnErr: false,
     );
     if (data == null) return;
 
@@ -197,7 +196,6 @@ class Notifications extends ScrollxController {
         'page': _entries.nextPage,
         if (_filter != 0) 'filter': _filters[_filter],
       },
-      popOnErr: false,
     );
     if (data == null) return;
 

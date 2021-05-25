@@ -28,8 +28,7 @@ class FeedPage extends StatelessWidget {
     final feed = Get.find<Feed>(tag: id.toString());
 
     return Scaffold(
-      // TODO add type filter
-      appBar: CustomAppBar(title: 'Activities'),
+      appBar: CustomAppBar(title: 'Activities', trailing: [_Filter(feed)]),
       body: SafeArea(
         child: Obx(
           () {
@@ -83,13 +82,18 @@ class FeedTab extends StatelessWidget {
             () {
               final activities = feed.activities;
 
-              if (feed.isLoading) return const Center(child: Loader());
+              if (feed.isLoading)
+                return const SliverFillRemaining(
+                  child: Center(child: Loader()),
+                );
 
               if (activities.isEmpty)
-                return Center(
-                  child: Text(
-                    'No Activities',
-                    style: Theme.of(context).textTheme.subtitle1,
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      'No Activities',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
                   ),
                 );
 
@@ -127,21 +131,7 @@ class _Header extends StatelessWidget {
         onSameValue: (_) => feed.scrollTo(0),
       ),
       const Spacer(),
-      ActionIcon(
-        tooltip: 'Filter',
-        icon: Ionicons.funnel_outline,
-        onTap: () => Sheet.show(
-          ctx: context,
-          sheet: SelectionSheet<ActivityType>(
-            options: ActivityType.values.map((v) => v.text).toList(),
-            values: ActivityType.values,
-            inclusive: feed.typeIn,
-            onDone: (typeIn, _) => feed.typeIn = typeIn,
-            fixHeight: true,
-          ),
-          isScrollControlled: true,
-        ),
-      ),
+      _Filter(feed),
       Tooltip(
         message: 'Notifications',
         child: GestureDetector(
@@ -183,5 +173,29 @@ class _Header extends StatelessWidget {
         ),
       ),
     ]);
+  }
+}
+
+class _Filter extends StatelessWidget {
+  final Feed feed;
+  _Filter(this.feed);
+
+  @override
+  Widget build(BuildContext context) {
+    return ActionIcon(
+      tooltip: 'Filter',
+      icon: Ionicons.funnel_outline,
+      onTap: () => Sheet.show(
+        ctx: context,
+        sheet: SelectionSheet<ActivityType>(
+          options: ActivityType.values.map((v) => v.text).toList(),
+          values: ActivityType.values,
+          inclusive: feed.typeIn,
+          onDone: (typeIn, _) => feed.typeIn = typeIn,
+          fixHeight: true,
+        ),
+        isScrollControlled: true,
+      ),
+    );
   }
 }

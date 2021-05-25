@@ -139,16 +139,15 @@ class _Header extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Container(
-                      height: 10,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Theme.of(context).backgroundColor,
-                          ],
-                        ),
+                        color: Theme.of(context).backgroundColor,
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 15,
+                            spreadRadius: 25,
+                            color: Theme.of(context).backgroundColor,
+                          ),
+                        ],
                       ),
                     ),
                   ),

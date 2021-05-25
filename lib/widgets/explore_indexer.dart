@@ -14,13 +14,13 @@ import 'package:otraku/pages/staff_page.dart';
 import 'package:otraku/pages/studio_page.dart';
 import 'package:otraku/pages/home/user_page.dart';
 
-class BrowseIndexer extends StatelessWidget {
+class ExploreIndexer extends StatelessWidget {
   final Explorable browsable;
   final int id;
   final String? imageUrl;
   final Widget child;
 
-  BrowseIndexer({
+  ExploreIndexer({
     required this.browsable,
     required this.id,
     required this.imageUrl,

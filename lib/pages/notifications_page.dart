@@ -8,7 +8,7 @@ import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/pages/activity_page.dart';
 import 'package:otraku/widgets/action_icon.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -78,7 +78,7 @@ class _NotificationWidget extends StatelessWidget {
         child: Row(
           children: [
             GestureDetector(
-              onTap: () => BrowseIndexer.openPage(
+              onTap: () => ExploreIndexer.openPage(
                 id: notification.headId!,
                 imageUrl: notification.imageUrl,
                 browsable: notification.browsable ?? Explorable.user,
@@ -86,7 +86,7 @@ class _NotificationWidget extends StatelessWidget {
               onLongPress: () {
                 if (notification.browsable == Explorable.anime ||
                     notification.browsable == Explorable.manga)
-                  BrowseIndexer.openEditPage(notification.headId!);
+                  ExploreIndexer.openEditPage(notification.headId!);
               },
               child: ClipRRect(
                 child: FadeImage(notification.imageUrl, width: 70),
@@ -100,7 +100,7 @@ class _NotificationWidget extends StatelessWidget {
                   switch (notification.type) {
                     case NotificationType.AIRING:
                     case NotificationType.RELATED_MEDIA_ADDITION:
-                      BrowseIndexer.openPage(
+                      ExploreIndexer.openPage(
                         id: notification.bodyId!,
                         imageUrl: notification.imageUrl,
                         browsable: notification.browsable!,
@@ -119,7 +119,7 @@ class _NotificationWidget extends StatelessWidget {
                       );
                       return;
                     case NotificationType.FOLLOWING:
-                      BrowseIndexer.openPage(
+                      ExploreIndexer.openPage(
                         id: notification.headId!,
                         imageUrl: notification.imageUrl,
                         browsable: Explorable.user,
@@ -133,7 +133,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.browsable == Explorable.anime ||
                       notification.browsable == Explorable.manga)
-                    BrowseIndexer.openEditPage(notification.headId!);
+                    ExploreIndexer.openEditPage(notification.headId!);
                 },
                 child: Padding(
                   padding: Config.PADDING,

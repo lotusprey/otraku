@@ -6,7 +6,7 @@ import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/widgets/action_icon.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -64,7 +64,7 @@ class _RelationsGrid extends StatelessWidget {
         height: 190,
       ),
       delegate: SliverChildBuilderDelegate(
-        (_, index) => BrowseIndexer(
+        (_, index) => ExploreIndexer(
           id: models[index].id,
           imageUrl: models[index].imageUrl,
           browsable: models[index].browsable,

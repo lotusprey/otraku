@@ -8,7 +8,7 @@ import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/media_overview_model.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -149,7 +149,7 @@ class OverviewTab extends StatelessWidget {
             _ScrollCards(
               title: 'Studios',
               items: overview.studios.keys.toList(),
-              onTap: (index) => BrowseIndexer.openPage(
+              onTap: (index) => ExploreIndexer.openPage(
                 id: overview.studios[overview.studios.keys.elementAt(index)]!,
                 imageUrl: overview.studios.keys.elementAt(index),
                 browsable: Explorable.studio,
@@ -159,7 +159,7 @@ class OverviewTab extends StatelessWidget {
             _ScrollCards(
               title: 'Producers',
               items: overview.producers.keys.toList(),
-              onTap: (index) => BrowseIndexer.openPage(
+              onTap: (index) => ExploreIndexer.openPage(
                 id: overview
                     .producers[overview.producers.keys.elementAt(index)]!,
                 imageUrl: overview.producers.keys.elementAt(index),

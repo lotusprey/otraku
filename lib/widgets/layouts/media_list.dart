@@ -10,7 +10,7 @@ import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaList extends StatelessWidget {
@@ -102,7 +102,7 @@ class _MediaListTile extends StatelessWidget {
         color: Theme.of(context).primaryColor,
         borderRadius: Config.BORDER_RADIUS,
       ),
-      child: BrowseIndexer(
+      child: ExploreIndexer(
         id: entry.mediaId,
         browsable: Explorable.anime,
         imageUrl: entry.cover,

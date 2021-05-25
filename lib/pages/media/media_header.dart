@@ -3,7 +3,7 @@ import 'package:otraku/controllers/media.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/action_icon.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -211,7 +211,7 @@ class _MediaHeaderState extends State<MediaHeader> {
     );
   }
 
-  void _edit() => BrowseIndexer.openEditPage(
+  void _edit() => ExploreIndexer.openEditPage(
         widget.media.model!.overview.id,
         widget.media.model!.entry,
         (ListStatus? status) =>

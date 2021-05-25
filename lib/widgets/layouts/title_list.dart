@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class TitleList extends StatelessWidget {
@@ -51,7 +51,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BrowseIndexer(
+    return ExploreIndexer(
       browsable: data.browsable,
       id: data.id,
       imageUrl: data.text1,

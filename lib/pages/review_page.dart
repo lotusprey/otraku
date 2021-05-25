@@ -5,7 +5,7 @@ import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/review.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -42,7 +42,7 @@ class ReviewPage extends StatelessWidget {
                         sliver: SliverList(
                           delegate: SliverChildListDelegate.fixed([
                             GestureDetector(
-                              onTap: () => BrowseIndexer.openPage(
+                              onTap: () => ExploreIndexer.openPage(
                                 id: model.mediaId,
                                 imageUrl: model.mediaCover,
                                 browsable: model.browsable,
@@ -55,7 +55,7 @@ class ReviewPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 5),
                             GestureDetector(
-                              onTap: () => BrowseIndexer.openPage(
+                              onTap: () => ExploreIndexer.openPage(
                                 id: model.userId,
                                 imageUrl: model.userAvatar,
                                 browsable: Explorable.user,

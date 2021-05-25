@@ -8,7 +8,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -35,7 +35,7 @@ class ActivityPage extends StatelessWidget {
                   ? Row(
                       children: [
                         Flexible(
-                          child: BrowseIndexer(
+                          child: ExploreIndexer(
                             id: model.agentId!,
                             imageUrl: model.agentImage,
                             browsable: Explorable.user,
@@ -75,7 +75,7 @@ class ActivityPage extends StatelessWidget {
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Icon(Icons.arrow_right_alt),
                           ),
-                          BrowseIndexer(
+                          ExploreIndexer(
                             id: model.recieverId!,
                             imageUrl: model.recieverImage,
                             browsable: Explorable.user,
@@ -293,7 +293,7 @@ class _UserReply extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        BrowseIndexer(
+        ExploreIndexer(
           id: reply.userId,
           imageUrl: reply.userImage,
           browsable: Explorable.user,

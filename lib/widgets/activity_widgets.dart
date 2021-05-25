@@ -9,7 +9,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/pages/activity_page.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -29,7 +29,7 @@ class UserActivity extends StatelessWidget {
         Row(
           children: [
             Flexible(
-              child: BrowseIndexer(
+              child: ExploreIndexer(
                 id: model.agentId!,
                 imageUrl: model.agentImage,
                 browsable: Explorable.user,
@@ -62,7 +62,7 @@ class UserActivity extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Icon(Icons.arrow_right_alt),
               ),
-              BrowseIndexer(
+              ExploreIndexer(
                 id: model.recieverId!,
                 imageUrl: model.recieverImage,
                 browsable: Explorable.user,
@@ -246,7 +246,7 @@ class MediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BrowseIndexer(
+    return ExploreIndexer(
       id: activity.mediaId!,
       imageUrl: activity.mediaImage,
       browsable: activity.mediaType!,

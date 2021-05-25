@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/widgets/browse_indexer.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
@@ -48,7 +48,7 @@ class SocialTab extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BrowseIndexer(
+                  ExploreIndexer(
                     id: items[index].userId,
                     imageUrl: items[index].avatar,
                     browsable: Explorable.user,
@@ -73,7 +73,7 @@ class SocialTab extends StatelessWidget {
                   const SizedBox(height: 5),
                   clipper,
                   Expanded(
-                    child: BrowseIndexer(
+                    child: ExploreIndexer(
                       id: items[index].reviewId,
                       imageUrl: media.model!.overview.banner,
                       browsable: Explorable.review,

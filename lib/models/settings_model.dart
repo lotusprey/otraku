@@ -6,23 +6,25 @@ class SettingsModel {
   final ScoreFormat scoreFormat;
   final ListSort defaultSort;
   final String? titleLanguage;
-  final Map<String?, bool?> notificationOptions;
+  final int activityMergeTime;
   final bool splitCompletedAnime;
   final bool splitCompletedManga;
   final bool displayAdultContent;
   final bool airingNotifications;
   final bool advancedScoringEnabled;
+  final Map<String?, bool?> notificationOptions;
 
   SettingsModel._({
     required this.scoreFormat,
     required this.defaultSort,
     required this.titleLanguage,
-    required this.notificationOptions,
+    required this.activityMergeTime,
     required this.splitCompletedAnime,
     required this.splitCompletedManga,
     required this.airingNotifications,
     required this.displayAdultContent,
     required this.advancedScoringEnabled,
+    required this.notificationOptions,
   });
 
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(
@@ -34,11 +36,7 @@ class SettingsModel {
         defaultSort:
             ListSortHelper.getEnum(map['mediaListOptions']['rowOrder']),
         titleLanguage: map['options']['titleLanguage'],
-        notificationOptions: Map.fromIterable(
-          map['options']['notificationOptions'],
-          key: (n) => n['type'],
-          value: (n) => n['enabled'],
-        ),
+        activityMergeTime: map['options']['activityMergeTime'] ?? 720,
         splitCompletedAnime: map['mediaListOptions']['animeList']
                 ['splitCompletedSectionByFormat'] ??
             false,
@@ -50,5 +48,10 @@ class SettingsModel {
         advancedScoringEnabled: map['mediaListOptions']['animeList']
                 ['advancedScoringEnabled'] ??
             false,
+        notificationOptions: Map.fromIterable(
+          map['options']['notificationOptions'],
+          key: (n) => n['type'],
+          value: (n) => n['enabled'],
+        ),
       );
 }

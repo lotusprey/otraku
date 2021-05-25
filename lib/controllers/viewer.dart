@@ -10,6 +10,7 @@ class Viewer extends GetxController {
         unreadNotificationCount
         options {
           titleLanguage 
+          activityMergeTime
           displayAdultContent
           airingNotifications
           notificationOptions {type enabled}
@@ -25,17 +26,18 @@ class Viewer extends GetxController {
   ''';
 
   static const _settingsMutation = r'''
-    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, 
+    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $activityMergeTime: Int, 
         $displayAdultContent: Boolean, $airingNotifications: Boolean, $scoreFormat: ScoreFormat, $rowOrder: String, 
         $notificationOptions: [NotificationOptionInput], $splitCompletedAnime: Boolean, 
         $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean) {
-      UpdateUser(about: $about, titleLanguage: $titleLanguage, 
+      UpdateUser(about: $about, titleLanguage: $titleLanguage, activityMergeTime: $activityMergeTime, 
           displayAdultContent: $displayAdultContent, airingNotifications: $airingNotifications,
           scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
           animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, advancedScoringEnabled: $advancedScoringEnabled},
           mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga, advancedScoringEnabled: $advancedScoringEnabled}) {
         options {
-          titleLanguage 
+          titleLanguage
+          activityMergeTime
           displayAdultContent
           airingNotifications
           notificationOptions {type enabled}

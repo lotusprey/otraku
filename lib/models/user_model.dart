@@ -1,4 +1,3 @@
-import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/statistics_model.dart';
@@ -27,7 +26,6 @@ class UserModel {
   final following = PageModel<BrowseResultModel>();
   final followers = PageModel<BrowseResultModel>();
   final reviews = PageModel<BrowseResultModel>();
-  final activities = PageModel<ActivityModel>();
   final favourites = [
     PageModel<BrowseResultModel>(),
     PageModel<BrowseResultModel>(),

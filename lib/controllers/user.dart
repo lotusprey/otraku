@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
 
@@ -65,7 +64,6 @@ class User extends GetxController {
   UserModel? _model;
 
   UserModel? get model => _model;
-  List<ActivityModel> get activities => _model!.activities.items;
 
   // ***************************************************************************
   // FETCHING

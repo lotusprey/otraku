@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
@@ -47,7 +47,7 @@ class Favourites extends ScrollxController {
 
   @override
   bool get hasNextPage => _model.favourites[_pageIndex].hasNextPage;
-  List<BrowseResultModel> get favourites => _model.favourites[_pageIndex].items;
+  List<ExplorableModel> get favourites => _model.favourites[_pageIndex].items;
   UniqueKey get key => _keys[_pageIndex];
 
   int get pageIndex => _pageIndex;

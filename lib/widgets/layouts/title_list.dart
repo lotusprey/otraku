@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class TitleList extends StatelessWidget {
-  final List<BrowseResultModel> results;
+  final List<ExplorableModel> results;
   final ScrollController? scrollCtrl;
 
   TitleList(this.results, {this.scrollCtrl, UniqueKey? key}) : super(key: key);
@@ -46,7 +46,7 @@ class TitleList extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  final BrowseResultModel data;
+  final ExplorableModel data;
   _Tile(this.data);
 
   @override

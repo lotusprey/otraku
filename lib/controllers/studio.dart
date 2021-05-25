@@ -5,7 +5,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/studio_page_model.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
 class Studio extends ScrollxController {
@@ -142,7 +142,7 @@ class Studio extends ScrollxController {
     if (clear) _media().clear();
 
     final categories = <String>[];
-    final results = <List<BrowseResultModel>>[];
+    final results = <List<ExplorableModel>>[];
 
     for (final node in data['nodes']) {
       final String category =
@@ -154,7 +154,7 @@ class Studio extends ScrollxController {
         results.add([]);
       }
 
-      results.last.add(BrowseResultModel.anime(node));
+      results.last.add(ExplorableModel.anime(node));
     }
 
     _media.update((m) => m!.append(

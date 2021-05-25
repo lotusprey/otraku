@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
@@ -27,7 +27,7 @@ class Friends extends ScrollxController {
   final _keys = [UniqueKey(), UniqueKey()];
   bool _onFollowing;
 
-  List<BrowseResultModel> get users =>
+  List<ExplorableModel> get users =>
       _onFollowing ? _model.following.items : _model.followers.items;
 
   UniqueKey get key => _keys[_onFollowing ? 0 : 1];
@@ -59,17 +59,17 @@ class Friends extends ScrollxController {
     });
     if (data == null) return;
 
-    final users = <BrowseResultModel>[];
+    final users = <ExplorableModel>[];
     if (_onFollowing) {
       for (final u in data['following']['following'])
-        users.add(BrowseResultModel.user(u));
+        users.add(ExplorableModel.user(u));
       _model.following.append(
         users,
         data['following']['pageInfo']['hasNextPage'],
       );
     } else {
       for (final u in data['followers']['followers'])
-        users.add(BrowseResultModel.user(u));
+        users.add(ExplorableModel.user(u));
       _model.followers.append(
         users,
         data['followers']['pageInfo']['hasNextPage'],

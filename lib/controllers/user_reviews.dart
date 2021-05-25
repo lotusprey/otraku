@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/user.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
@@ -30,7 +30,7 @@ class UserReviews extends ScrollxController {
 
   @override
   bool get hasNextPage => _model.reviews.hasNextPage;
-  List<BrowseResultModel> get reviews => _model.reviews.items;
+  List<ExplorableModel> get reviews => _model.reviews.items;
 
   @override
   Future<void> fetchPage() async {
@@ -40,9 +40,8 @@ class UserReviews extends ScrollxController {
     });
     if (data == null) return;
 
-    final rl = <BrowseResultModel>[];
-    for (final r in data['Page']['reviews'])
-      rl.add(BrowseResultModel.review(r));
+    final rl = <ExplorableModel>[];
+    for (final r in data['Page']['reviews']) rl.add(ExplorableModel.review(r));
     _model.reviews.append(rl, data['Page']['pageInfo']['hasNextPage']);
     update();
   }

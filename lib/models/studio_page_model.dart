@@ -1,8 +1,8 @@
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 
 class StudioPageModel {
   final categories = <String>[];
-  final groups = <List<BrowseResultModel>>[];
+  final groups = <List<ExplorableModel>>[];
   bool _hasNextPage = true;
   int _nextPage = 1;
 
@@ -16,15 +16,15 @@ class StudioPageModel {
     return count;
   }
 
-  List<BrowseResultModel> get joined {
-    final all = <BrowseResultModel>[];
+  List<ExplorableModel> get joined {
+    final all = <ExplorableModel>[];
     for (final group in groups) all.addAll(group);
     return all;
   }
 
   void append(
     List<String> moreCategories,
-    List<List<BrowseResultModel>> moreMedia,
+    List<List<ExplorableModel>> moreMedia,
     bool hasNext,
   ) {
     if (categories.isNotEmpty && categories.last == moreCategories.first) {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/models/helper_models/browse_result_model.dart';
+import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class TileGrid extends StatelessWidget {
-  final List<BrowseResultModel> models;
+  final List<ExplorableModel> models;
   final bool full;
   final ScrollController? scrollCtrl;
 
@@ -60,7 +60,7 @@ class TileGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  final BrowseResultModel data;
+  final ExplorableModel data;
   final bool full;
 
   _Tile(this.data, this.full);

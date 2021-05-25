@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/helper_models/browse_result_model.dart';
-import 'package:otraku/models/helper_models/tile_model.dart';
 import 'package:otraku/widgets/browse_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class TileGrid extends StatelessWidget {
-  final List<BrowseResultModel> tileData;
-  final TileModel tileModel;
+  final List<BrowseResultModel> models;
+  final bool full;
   final ScrollController? scrollCtrl;
 
   TileGrid({
-    required this.tileData,
-    required this.tileModel,
+    required this.models,
+    this.full = true,
     this.scrollCtrl,
     UniqueKey? key,
   }) : super(key: key);
@@ -31,31 +30,29 @@ class TileGrid extends StatelessWidget {
       top: 15,
     );
 
+    final gridDelegate = SliverGridDelegateWithMaxWidthAndAddedHeight(
+      maxWidth: 125,
+      additionalHeight: 40,
+      rawWHRatio: full ? 0.65 : 1.0,
+    );
+
     if (scrollCtrl != null)
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
         physics: Config.PHYSICS,
-        itemCount: tileData.length,
-        itemBuilder: (_, i) => _Tile(tileData[i], tileModel),
-        gridDelegate: SliverGridDelegateWithMaxWidthAndAddedHeight(
-          maxWidth: tileModel.maxWidth,
-          additionalHeight: tileModel.textHeight,
-          rawWHRatio: tileModel.imgWHRatio,
-        ),
+        itemCount: models.length,
+        gridDelegate: gridDelegate,
+        itemBuilder: (_, i) => _Tile(models[i], full),
       );
 
     return SliverPadding(
       padding: padding,
       sliver: SliverGrid(
+        gridDelegate: gridDelegate,
         delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(tileData[i], tileModel),
-          childCount: tileData.length,
-        ),
-        gridDelegate: SliverGridDelegateWithMaxWidthAndAddedHeight(
-          maxWidth: tileModel.maxWidth,
-          additionalHeight: tileModel.textHeight,
-          rawWHRatio: tileModel.imgWHRatio,
+          (_, i) => _Tile(models[i], full),
+          childCount: models.length,
         ),
       ),
     );
@@ -64,8 +61,9 @@ class TileGrid extends StatelessWidget {
 
 class _Tile extends StatelessWidget {
   final BrowseResultModel data;
-  final TileModel tileModel;
-  _Tile(this.data, this.tileModel);
+  final bool full;
+
+  _Tile(this.data, this.full);
 
   @override
   Widget build(BuildContext context) {
@@ -81,12 +79,10 @@ class _Tile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: Config.BORDER_RADIUS,
                 child: Container(
-                  color: tileModel.needsBackground
-                      ? Theme.of(context).primaryColor
-                      : null,
+                  color: full ? Theme.of(context).primaryColor : null,
                   child: FadeImage(
                     data.imageUrl,
-                    fit: tileModel.fit,
+                    fit: full ? BoxFit.cover : BoxFit.contain,
                   ),
                 ),
               ),
@@ -94,7 +90,7 @@ class _Tile extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           SizedBox(
-            height: tileModel.textHeight,
+            height: 35,
             child: Text(
               data.text1,
               overflow: TextOverflow.ellipsis,

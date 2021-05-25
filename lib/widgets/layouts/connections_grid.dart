@@ -28,7 +28,7 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
           ),
           childCount: widget.connections.length,
         ),
-        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
           minWidth: 300,
           height: 110,
         ),

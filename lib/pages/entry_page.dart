@@ -127,7 +127,8 @@ class _Content extends StatelessWidget {
                   avg += v;
                   count++;
                 }
-              avg /= count;
+
+              if (count > 0) avg /= count;
 
               if (model.score != avg) {
                 model.score = avg;
@@ -175,7 +176,8 @@ class _Content extends StatelessWidget {
                   }
 
                   if (old.status != model.status &&
-                      model.status == ListStatus.COMPLETED) {
+                      model.status == ListStatus.COMPLETED &&
+                      model.completedAt == null) {
                     model.completedAt = DateTime.now();
                     entry.update([Entry.COMPLETE_DATE_ID]);
                     String text = 'Completed date changed';

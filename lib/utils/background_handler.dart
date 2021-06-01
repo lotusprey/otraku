@@ -27,7 +27,7 @@ class BackgroundHandler {
     _didInit = true;
 
     _notificationPlugin.initialize(
-      InitializationSettings(
+      const InitializationSettings(
         android: AndroidInitializationSettings('notification_icon'),
         iOS: IOSInitializationSettings(),
         macOS: MacOSInitializationSettings(),
@@ -190,18 +190,16 @@ void _show(NotificationModel model, String title, String payload) =>
       model.id,
       title,
       model.texts.join(),
-      _details,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'NOTIFICATIONS',
+          'Notifications',
+          'All Notifications',
+          color: Color(0xFF45A0F2),
+        ),
+      ),
       payload: payload,
     );
-
-const _details = NotificationDetails(
-  android: AndroidNotificationDetails(
-    'NOTIFICATIONS',
-    'Notifications',
-    'All Notifications',
-    color: Color(0xFF45A0F2),
-  ),
-);
 
 const _countQuery = 'query Count {Viewer {unreadNotificationCount}}';
 

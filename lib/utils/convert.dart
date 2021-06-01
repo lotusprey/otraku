@@ -16,21 +16,20 @@ abstract class Convert {
 
   // Transforms a string into enum. The string must be
   // as if it was acquired through "describeEnum()"
-  // and the values must be the enum
-  // values ex. "MyEnum.values"
+  // and the values must be the enum values
   static T? strToEnum<T>(String? str, List<T> values) =>
       values.firstWhereOrNull((v) => describeEnum(v!) == str);
 
-  // Removes all the html tags in a string with regex (copied from the internet)
+  // Removes all html tags
   static String clearHtml(String? str) {
     if (str == null) return '';
-    return str.replaceAll(RegExp(r'<[^>]*>'), '');
+    return str.replaceAll(RegExp(r'<[^>]+>'), '');
   }
 
   static String? mapToDateStr(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
 
-    final String? month = _months[map!['month']];
+    final String? month = _MONTHS[map!['month']];
     final day = map['day'] ?? '';
 
     if (month == '' && day == '') return '${map['year']}';
@@ -52,7 +51,7 @@ abstract class Convert {
   static String millisToTimeStr(int? millis) {
     if (millis == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
-    return '${_weekDays[date.weekday - 1]}, ${date.day} ${_months[date.month]} '
+    return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} ${_MONTHS[date.month]} '
         '${date.year}, ${date.hour <= 9 ? 0 : ""}${date.hour}:'
         '${date.minute <= 9 ? 0 : ""}${date.minute}';
   }
@@ -76,9 +75,9 @@ abstract class Convert {
     'TW': 'Taiwan',
   };
 
-  static const _weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  static const _months = {
+  static const _MONTHS = {
     1: 'Jan',
     2: 'Feb',
     3: 'Mar',

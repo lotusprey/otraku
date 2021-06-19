@@ -297,7 +297,7 @@ class _Content extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           _FieldGrid([
             InputFieldStructure(
-              title: 'Start Date',
+              title: 'Started',
               child: GetBuilder<Entry>(
                 id: Entry.START_DATE_ID,
                 tag: model.mediaId.toString(),
@@ -314,12 +314,12 @@ class _Content extends StatelessWidget {
                       Toast.show(context, 'Status changed');
                     }
                   },
-                  helpText: 'Start Date',
+                  helpText: 'Started',
                 ),
               ),
             ),
             InputFieldStructure(
-              title: 'Completed Date',
+              title: 'Completed',
               child: GetBuilder<Entry>(
                 id: Entry.COMPLETE_DATE_ID,
                 tag: model.mediaId.toString(),
@@ -347,7 +347,7 @@ class _Content extends StatelessWidget {
                       Toast.show(context, text);
                     }
                   },
-                  helpText: 'Completed Date',
+                  helpText: 'Completed',
                 ),
               ),
             ),

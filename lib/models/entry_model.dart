@@ -71,7 +71,7 @@ class EntryModel {
       ),
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],
-      progressVolumes: map['mediaListEntry']['volumes'] ?? 0,
+      progressVolumes: map['mediaListEntry']['progressVolumes'] ?? 0,
       progressVolumesMax: map['volumes'],
       score: map['mediaListEntry']['score'].toDouble(),
       repeat: map['mediaListEntry']['repeat'],

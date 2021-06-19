@@ -7,7 +7,21 @@ packages:
       name: app_links
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "2.2.0"
+  app_links_platform_interface:
+    dependency: transitive
+    description:
+      name: app_links_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
+  app_links_web:
+    dependency: transitive
+    description:
+      name: app_links_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   archive:
     dependency: transitive
     description:
@@ -419,7 +433,7 @@ packages:
       name: workmanager
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.4.1"
   xdg_directories:
     dependency: transitive
     description:

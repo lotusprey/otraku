@@ -75,14 +75,6 @@ class UserActivity extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 5),
-        ClipPath(
-          clipper: TriangleClip(),
-          child: Container(
-            width: 50,
-            height: 10,
-            color: Theme.of(context).primaryColor,
-          ),
-        ),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: Config.PADDING,
@@ -272,11 +264,11 @@ class MediaBox extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: activity.text,
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
                             TextSpan(
                               text: activity.mediaTitle,
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                           ],
                         ),
@@ -285,7 +277,10 @@ class MediaBox extends StatelessWidget {
                     if (activity.mediaFormat != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
-                        child: Text(activity.mediaFormat!),
+                        child: Text(
+                          activity.mediaFormat!,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
                       ),
                   ],
                 ),

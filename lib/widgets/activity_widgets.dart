@@ -13,7 +13,6 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/triangle_clip.dart';
 
 class UserActivity extends StatelessWidget {
   final Feed feed;

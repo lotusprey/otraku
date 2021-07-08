@@ -281,19 +281,7 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counts = <int>[];
-    final values = <String>[];
-    final colours = <Color>[];
-
-    final offset = stats.length / 2;
-    final division = 1.0 / (stats.length * 2);
-    final colour = HSLColor.fromColor(Theme.of(context).accentColor);
-
-    for (int i = 0; i < stats.length; i++) {
-      counts.add(stats[i].count);
-      values.add(stats[i].value);
-      colours.add(colour.withLightness(division * (i + offset)).toColor());
-    }
+    final counts = stats.map((s) => s.count).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +305,7 @@ class _Card extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Expanded(child: PieChart(counts, colours)),
+                PieChart(counts),
                 const SizedBox(width: 10),
                 SizedBox(
                   width: 150,
@@ -327,16 +315,7 @@ class _Card extends StatelessWidget {
                       for (int i = 0; i < stats.length; i++)
                         Row(
                           children: [
-                            Container(
-                              width: 30,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                borderRadius: Config.BORDER_RADIUS,
-                                color: colours[i],
-                              ),
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(child: Text(values[i])),
+                            Expanded(child: Text(stats[i].value)),
                             const SizedBox(width: 5),
                             Text(
                               stats[i].count.toString(),

@@ -42,9 +42,9 @@ class MediaModel {
     final Map<String, dynamic> map,
     final List<String?> availableLanguages,
   ) {
-    final List<ConnectionModel> items = [];
+    final items = <ConnectionModel>[];
     for (final connection in map['characters']['edges']) {
-      final List<ConnectionModel> voiceActors = [];
+      final voiceActors = <ConnectionModel>[];
       for (final va in connection['voiceActors']) {
         final language = Convert.clarifyEnum(va['language']);
         if (!availableLanguages.contains(language))
@@ -68,13 +68,14 @@ class MediaModel {
         browsable: Explorable.character,
       ));
     }
+
     _characters.update(
       (c) => c!.append(items, map['characters']['pageInfo']['hasNextPage']),
     );
   }
 
   void addStaff(final Map<String, dynamic> map) {
-    final List<ConnectionModel> items = [];
+    final items = <ConnectionModel>[];
     for (final connection in map['staff']['edges'])
       items.add(ConnectionModel(
         id: connection['node']['id'],
@@ -83,14 +84,19 @@ class MediaModel {
         imageUrl: connection['node']['image']['large'],
         browsable: Explorable.staff,
       ));
+
     _staff.update(
       (s) => s!.append(items, map['staff']['pageInfo']['hasNextPage']),
     );
   }
 
   void addReviews(final Map<String, dynamic> map) {
-    final List<RelatedReviewModel> items = [];
-    for (final r in map['reviews']['nodes']) items.add(RelatedReviewModel(r));
+    final items = <RelatedReviewModel>[];
+    for (final r in map['reviews']['nodes'])
+      try {
+        items.add(RelatedReviewModel(r));
+      } catch (_) {}
+
     _reviews.update(
       (r) => r!.append(items, map['reviews']['pageInfo']['hasNextPage']),
     );

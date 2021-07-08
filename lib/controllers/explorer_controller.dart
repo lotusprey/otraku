@@ -10,7 +10,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
 // Searches and filters items from the Browsable enum
-class Explorer extends ScrollxController implements Filterable {
+class ExplorerController extends ScrollxController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

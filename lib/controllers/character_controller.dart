@@ -9,7 +9,7 @@ import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Character extends ScrollxController {
+class CharacterController extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -60,7 +60,7 @@ class Character extends ScrollxController {
   // ***************************************************************************
 
   final int id;
-  Character(this.id);
+  CharacterController(this.id);
 
   CharacterModel? _model;
   final _anime = PageModel<ConnectionModel>().obs;

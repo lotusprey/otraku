@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/entry.dart';
-import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/controllers/entry_controller.dart';
+import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/models/settings_model.dart';
@@ -32,8 +32,8 @@ class EntryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<Entry>(
-      id: Entry.MAIN_ID,
+    return GetBuilder<EntryController>(
+      id: EntryController.MAIN_ID,
       tag: mediaId.toString(),
       builder: (entry) {
         final model = entry.model;
@@ -55,10 +55,10 @@ class EntryPage extends StatelessWidget {
                             mainAction: 'Yes',
                             secondaryAction: 'No',
                             onConfirm: () {
-                              Get.find<Collection>(
+                              Get.find<CollectionController>(
                                 tag: model.type == 'ANIME'
-                                    ? Collection.ANIME
-                                    : Collection.MANGA,
+                                    ? CollectionController.ANIME
+                                    : CollectionController.MANGA,
                               ).removeEntry(entry.oldModel!);
                               callback?.call(null);
                               Navigator.of(context).pop();
@@ -71,10 +71,10 @@ class EntryPage extends StatelessWidget {
                         tooltip: 'Save',
                         icon: Ionicons.save_outline,
                         onTap: () {
-                          Get.find<Collection>(
+                          Get.find<CollectionController>(
                             tag: model.type == 'ANIME'
-                                ? Collection.ANIME
-                                : Collection.MANGA,
+                                ? CollectionController.ANIME
+                                : CollectionController.MANGA,
                           ).updateEntry(entry.oldModel!, model);
 
                           Navigator.of(context).pop();
@@ -84,7 +84,7 @@ class EntryPage extends StatelessWidget {
                 : [],
           ),
           body: model != null
-              ? _Content(entry, Get.find<Viewer>().settings!)
+              ? _Content(entry, Get.find<ViewerController>().settings!)
               : const Center(child: Loader()),
         );
       },
@@ -93,7 +93,7 @@ class EntryPage extends StatelessWidget {
 }
 
 class _Content extends StatelessWidget {
-  final Entry entry;
+  final EntryController entry;
   final SettingsModel settings;
   _Content(this.entry, this.settings);
 
@@ -132,7 +132,7 @@ class _Content extends StatelessWidget {
 
               if (model.score != avg) {
                 model.score = avg;
-                entry.update([Entry.SCORE_ID]);
+                entry.update([EntryController.SCORE_ID]);
               }
             },
           ),
@@ -148,8 +148,8 @@ class _Content extends StatelessWidget {
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           _FieldGrid([
-            GetBuilder<Entry>(
-              id: Entry.STATUS_ID,
+            GetBuilder<EntryController>(
+              id: EntryController.STATUS_ID,
               tag: model.mediaId.toString(),
               builder: (_) => DropDownField<ListStatus>(
                 hint: 'Add',
@@ -170,7 +170,7 @@ class _Content extends StatelessWidget {
                       model.status == ListStatus.CURRENT &&
                       model.startedAt == null) {
                     model.startedAt = DateTime.now();
-                    entry.update([Entry.START_DATE_ID]);
+                    entry.update([EntryController.START_DATE_ID]);
                     Toast.show(context, 'Start date changed');
                     return;
                   }
@@ -179,13 +179,13 @@ class _Content extends StatelessWidget {
                       model.status == ListStatus.COMPLETED &&
                       model.completedAt == null) {
                     model.completedAt = DateTime.now();
-                    entry.update([Entry.COMPLETE_DATE_ID]);
+                    entry.update([EntryController.COMPLETE_DATE_ID]);
                     String text = 'Completed date changed';
 
                     if (model.progressMax != null &&
                         model.progress < model.progressMax!) {
                       model.progress = model.progressMax!;
-                      entry.update([Entry.PROGRESS_ID]);
+                      entry.update([EntryController.PROGRESS_ID]);
                       text = 'Completed date & progress changed';
                     }
 
@@ -196,8 +196,8 @@ class _Content extends StatelessWidget {
             ),
             InputFieldStructure(
               title: 'Progress',
-              child: GetBuilder<Entry>(
-                id: Entry.PROGRESS_ID,
+              child: GetBuilder<EntryController>(
+                id: EntryController.PROGRESS_ID,
                 tag: model.mediaId.toString(),
                 builder: (_) => NumberField(
                   value: model.progress,
@@ -213,14 +213,14 @@ class _Content extends StatelessWidget {
                       if (old.status == model.status &&
                           old.status != ListStatus.COMPLETED) {
                         model.status = ListStatus.COMPLETED;
-                        entry.update([Entry.STATUS_ID]);
+                        entry.update([EntryController.STATUS_ID]);
                         text = 'Status changed';
                       }
 
                       if (old.completedAt == model.completedAt &&
                           old.completedAt == null) {
                         model.completedAt = DateTime.now();
-                        entry.update([Entry.COMPLETE_DATE_ID]);
+                        entry.update([EntryController.COMPLETE_DATE_ID]);
                         text = text == null
                             ? 'Completed date changed'
                             : 'Status & Completed date changed';
@@ -237,13 +237,13 @@ class _Content extends StatelessWidget {
                           (old.status == null ||
                               old.status == ListStatus.PLANNING)) {
                         model.status = ListStatus.CURRENT;
-                        entry.update([Entry.STATUS_ID]);
+                        entry.update([EntryController.STATUS_ID]);
                         text = 'Status changed';
                       }
 
                       if (old.startedAt == null && model.startedAt == null) {
                         model.startedAt = DateTime.now();
-                        entry.update([Entry.START_DATE_ID]);
+                        entry.update([EntryController.START_DATE_ID]);
                         text = text == null
                             ? 'Start date changed'
                             : 'Status & start date changed';
@@ -277,8 +277,8 @@ class _Content extends StatelessWidget {
           SliverToBoxAdapter(
             child: InputFieldStructure(
               title: 'Score',
-              child: GetBuilder<Entry>(
-                id: Entry.SCORE_ID,
+              child: GetBuilder<EntryController>(
+                id: EntryController.SCORE_ID,
                 tag: model.mediaId.toString(),
                 builder: (_) => ScorePicker(model),
               ),
@@ -298,8 +298,8 @@ class _Content extends StatelessWidget {
           _FieldGrid([
             InputFieldStructure(
               title: 'Started',
-              child: GetBuilder<Entry>(
-                id: Entry.START_DATE_ID,
+              child: GetBuilder<EntryController>(
+                id: EntryController.START_DATE_ID,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.startedAt,
@@ -310,7 +310,7 @@ class _Content extends StatelessWidget {
 
                     if (old.status == null && model.status == null) {
                       model.status = ListStatus.CURRENT;
-                      entry.update([Entry.STATUS_ID]);
+                      entry.update([EntryController.STATUS_ID]);
                       Toast.show(context, 'Status changed');
                     }
                   },
@@ -320,8 +320,8 @@ class _Content extends StatelessWidget {
             ),
             InputFieldStructure(
               title: 'Completed',
-              child: GetBuilder<Entry>(
-                id: Entry.COMPLETE_DATE_ID,
+              child: GetBuilder<EntryController>(
+                id: EntryController.COMPLETE_DATE_ID,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.completedAt,
@@ -334,13 +334,13 @@ class _Content extends StatelessWidget {
                         old.status != ListStatus.REPEATING &&
                         old.status == model.status) {
                       model.status = ListStatus.COMPLETED;
-                      entry.update([Entry.STATUS_ID]);
+                      entry.update([EntryController.STATUS_ID]);
                       String text = 'Status changed';
 
                       if (model.progressMax != null &&
                           model.progress < model.progressMax!) {
                         model.progress = model.progressMax!;
-                        entry.update([Entry.PROGRESS_ID]);
+                        entry.update([EntryController.PROGRESS_ID]);
                         text = 'Status & progress changed';
                       }
 

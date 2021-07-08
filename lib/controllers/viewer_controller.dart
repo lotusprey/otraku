@@ -3,7 +3,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/settings_model.dart';
 
-class Viewer extends GetxController {
+class ViewerController extends GetxController {
   static const _viewerQuery = r'''
     query ViewerData {
       Viewer {

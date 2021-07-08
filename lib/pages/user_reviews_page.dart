@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user_reviews.dart';
+import 'package:otraku/controllers/user_reviews_controller.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
@@ -16,7 +16,7 @@ class UserReviewsPage extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(title: 'Reviews'),
       body: SafeArea(
-        child: GetBuilder<UserReviews>(
+        child: GetBuilder<UserReviewsController>(
           tag: id.toString(),
           builder: (feed) {
             if (feed.reviews.isEmpty) {

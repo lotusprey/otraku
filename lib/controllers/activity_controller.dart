@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/feed.dart';
+import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Activity extends ScrollxController {
+class ActivityController extends ScrollxController {
   static const _activityQuery = r'''
     query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
       Activity(id: $id) @include(if: $withActivity) {
@@ -88,7 +88,7 @@ class Activity extends ScrollxController {
 
   final int id;
   final String? feedTag;
-  Activity(this.id, [this.feedTag]);
+  ActivityController(this.id, [this.feedTag]);
 
   ActivityModel? _model;
   final _isLoading = true.obs;
@@ -155,12 +155,13 @@ class Activity extends ScrollxController {
   }
 
   void updateModel() {
-    if (feedTag != null) Get.find<Feed>(tag: feedTag).updateActivity(_model!);
+    if (feedTag != null)
+      Get.find<FeedController>(tag: feedTag).updateActivity(_model!);
   }
 
   Future<void> deleteModel() async {
     if (feedTag != null)
-      await Get.find<Feed>(tag: feedTag).deleteActivity(id);
+      await Get.find<FeedController>(tag: feedTag).deleteActivity(id);
     else
       await Client.request(
         _deleteMutation,
@@ -172,7 +173,8 @@ class Activity extends ScrollxController {
   @override
   void onInit() {
     super.onInit();
-    if (feedTag != null) _model = Get.find<Feed>(tag: feedTag).getActivity(id);
+    if (feedTag != null)
+      _model = Get.find<FeedController>(tag: feedTag).getActivity(id);
     fetch();
   }
 }

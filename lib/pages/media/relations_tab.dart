@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/media.dart';
+import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -15,7 +15,7 @@ import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class RelationsTab extends StatelessWidget {
-  final Media media;
+  final MediaController media;
 
   RelationsTab(this.media);
 
@@ -24,7 +24,7 @@ class RelationsTab extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
       sliver: Obx(() {
-        if (media.relationsTab == Media.REL_MEDIA) {
+        if (media.relationsTab == MediaController.REL_MEDIA) {
           final other = media.model!.otherMedia;
 
           if (other.isEmpty)
@@ -33,7 +33,7 @@ class RelationsTab extends StatelessWidget {
           return _RelationsGrid(media.model!.otherMedia);
         }
 
-        if (media.relationsTab == Media.REL_CHARACTERS) {
+        if (media.relationsTab == MediaController.REL_CHARACTERS) {
           if (media.model!.characters.items.isEmpty)
             return media.isLoading ? _Empty(null) : _Empty('No Characters');
 
@@ -151,7 +151,7 @@ class _Empty extends StatelessWidget {
 }
 
 class RelationControls extends StatelessWidget {
-  final Media media;
+  final MediaController media;
   final Function scrollUp;
 
   RelationControls(this.media, this.scrollUp);
@@ -166,7 +166,7 @@ class RelationControls extends StatelessWidget {
 class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
   static const _height = 50.0;
 
-  final Media media;
+  final MediaController media;
   final Function scrollUp;
 
   _RelationControlsDelegate(this.media, this.scrollUp);
@@ -196,9 +196,9 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
           BubbleTabs(
             options: ['Media', 'Characters', 'Staff'],
             values: [
-              Media.REL_MEDIA,
-              Media.REL_CHARACTERS,
-              Media.REL_STAFF,
+              MediaController.REL_MEDIA,
+              MediaController.REL_CHARACTERS,
+              MediaController.REL_STAFF,
             ],
             initial: media.relationsTab,
             onNewValue: (dynamic val) {
@@ -208,7 +208,7 @@ class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
             onSameValue: (dynamic _) => scrollUp(),
           ),
           Obx(() {
-            if (media.relationsTab == Media.REL_CHARACTERS &&
+            if (media.relationsTab == MediaController.REL_CHARACTERS &&
                 media.model!.characters.items.isNotEmpty &&
                 media.availableLanguages.length > 1)
               return ActionIcon(

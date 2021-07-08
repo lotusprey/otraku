@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/score_format.dart';
@@ -20,7 +20,7 @@ class MediaList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<Collection>(tag: collectionTag);
+    final collection = Get.find<CollectionController>(tag: collectionTag);
     final sidePadding = MediaQuery.of(context).size.width > 620
         ? (MediaQuery.of(context).size.width - 600) / 2.0
         : 10.0;

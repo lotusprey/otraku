@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/activity.dart';
-import 'package:otraku/controllers/feed.dart';
+import 'package:otraku/controllers/activity_controller.dart';
+import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/explorable.dart';
@@ -15,7 +15,7 @@ import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class UserActivity extends StatelessWidget {
-  final Feed feed;
+  final FeedController feed;
   final ActivityModel model;
 
   UserActivity({required this.feed, required this.model});
@@ -112,7 +112,7 @@ class UserActivity extends StatelessWidget {
 }
 
 class _InteractionButtons extends StatefulWidget {
-  final Feed feed;
+  final FeedController feed;
   final ActivityModel model;
 
   _InteractionButtons(this.feed, this.model);
@@ -150,7 +150,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() => widget.model.toggleSubscription());
-              Activity.toggleSubscription(widget.model).then(
+              ActivityController.toggleSubscription(widget.model).then(
                 (ok) => ok
                     ? widget.feed.updateActivity(widget.model)
                     : setState(() => widget.model.toggleSubscription()),
@@ -174,7 +174,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
               ActivityPage.ROUTE,
               arguments: [
                 widget.model.id,
-                widget.feed.id?.toString() ?? Feed.HOME_FEED_TAG,
+                widget.feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
               ],
               parameters: {'id': widget.model.id.toString()},
             ),
@@ -197,7 +197,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() => widget.model.toggleLike());
-              Activity.toggleLike(widget.model).then(
+              ActivityController.toggleLike(widget.model).then(
                 (ok) => ok
                     ? widget.feed.updateActivity(widget.model)
                     : setState(() => widget.model.toggleLike()),

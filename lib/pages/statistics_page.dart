@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/statistics.dart';
+import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -18,7 +18,7 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<Statistics>(
+    return GetBuilder<StatisticsController>(
       tag: id.toString(),
       builder: (stats) {
         return Scaffold(
@@ -107,7 +107,7 @@ class _Title extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
-  final Statistics stats;
+  final StatisticsController stats;
   final icons = <IconData>[];
   final titles = <String>[];
   final subtitles = <num>[];
@@ -185,7 +185,7 @@ class _ScoreChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stats = Get.find<Statistics>(tag: id.toString());
+    final stats = Get.find<StatisticsController>(tag: id.toString());
 
     return Obx(
       () {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/studio.dart';
+import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -22,7 +22,7 @@ class StudioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final studio = Get.find<Studio>(tag: id.toString());
+    final studio = Get.find<StudioController>(tag: id.toString());
 
     return Scaffold(
       body: SafeArea(

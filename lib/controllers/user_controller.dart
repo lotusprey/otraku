@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
 
-class User extends GetxController {
+class UserController extends GetxController {
   static const _userQuery = r'''
       query User($id: Int) {
         User(id: $id) {
@@ -59,7 +59,7 @@ class User extends GetxController {
       r'''mutation FollowUser($id: Int) {ToggleFollow(userId: $id) {isFollowing}}''';
 
   final int id;
-  User(this.id);
+  UserController(this.id);
 
   UserModel? _model;
 

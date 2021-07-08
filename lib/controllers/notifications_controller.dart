@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Notifications extends ScrollxController {
+class NotificationsController extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -184,7 +184,7 @@ class Notifications extends ScrollxController {
       } catch (_) {}
 
     _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
-    Get.find<Viewer>().nullifyUnread();
+    Get.find<ViewerController>().nullifyUnread();
     update();
   }
 

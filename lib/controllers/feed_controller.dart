@@ -7,7 +7,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Feed extends ScrollxController {
+class FeedController extends ScrollxController {
   static const _activitiesQuery = r'''
     query Activities($userId: Int, $page: Int = 1, $idNotIn: [Int], $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
       Page(page: $page) {
@@ -62,7 +62,7 @@ class Feed extends ScrollxController {
   static const HOME_FEED_TAG = 'Feed';
 
   final int? id;
-  Feed([this.id]);
+  FeedController([this.id]);
 
   final _activities = PageModel<ActivityModel>().obs;
   final _idNotIn = <int>[];

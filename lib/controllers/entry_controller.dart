@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/entry_model.dart';
 
-class Entry extends GetxController {
+class EntryController extends GetxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -47,7 +47,7 @@ class Entry extends GetxController {
   // ***************************************************************************
 
   final int _id;
-  Entry(this._id, [this._model]);
+  EntryController(this._id, [this._model]);
 
   EntryModel? _model;
   EntryModel? _copy;
@@ -68,8 +68,10 @@ class Entry extends GetxController {
 
     if (_model!.customLists.isEmpty) {
       final customLists = Map.fromIterable(
-        Get.find<Collection>(
-          tag: _model!.type == 'ANIME' ? Collection.ANIME : Collection.MANGA,
+        Get.find<CollectionController>(
+          tag: _model!.type == 'ANIME'
+              ? CollectionController.ANIME
+              : CollectionController.MANGA,
         ).customListNames,
         key: (k) => k.toString(),
         value: (_) => false,

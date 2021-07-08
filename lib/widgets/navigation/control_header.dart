@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
@@ -22,7 +22,7 @@ class CollectionControlHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<Collection>(
+    return GetBuilder<CollectionController>(
       tag: tag,
       builder: (collection) {
         if (collection.isFullyEmpty) return const SliverToBoxAdapter();
@@ -82,7 +82,7 @@ class CollectionControlHeader extends StatelessWidget {
 class ExploreControlHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<Explorer>();
+    final explorer = Get.find<ExplorerController>();
     return Obx(
       () => TransparentHeader(
         [
@@ -128,10 +128,11 @@ class ExploreControlHeader extends StatelessWidget {
                 ctx: context,
                 sheet: MediaSortSheet(
                   Convert.strToEnum(
-                    Get.find<Explorer>().getFilterWithKey(Filterable.SORT),
+                    Get.find<ExplorerController>()
+                        .getFilterWithKey(Filterable.SORT),
                     MediaSort.values,
                   )!,
-                  (sort) => Get.find<Explorer>().setFilterWithKey(
+                  (sort) => Get.find<ExplorerController>().setFilterWithKey(
                     Filterable.SORT,
                     value: describeEnum(sort),
                     update: true,
@@ -299,9 +300,9 @@ class _FilterState extends State<_Filter> {
   void initState() {
     super.initState();
     if (widget.collectionTag != null)
-      _filterable = Get.find<Collection>(tag: widget.collectionTag);
+      _filterable = Get.find<CollectionController>(tag: widget.collectionTag);
     else
-      _filterable = Get.find<Explorer>();
+      _filterable = Get.find<ExplorerController>();
     _active = _checkIfActive();
   }
 

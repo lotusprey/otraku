@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/settings.dart';
+import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -13,7 +13,7 @@ class NotificationSettingsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<Settings>();
+    final settings = Get.find<SettingsController>();
     final options = settings.model.notificationOptions;
     final siteValues = <bool>[];
     for (int i = 0; i < NotificationType.values.length - 2; i++)
@@ -52,7 +52,7 @@ class NotificationSettingsTab extends StatelessWidget {
 
   void changeSiteOption(List<bool> values) {
     const key = 'notificationOptions';
-    final settings = Get.find<Settings>();
+    final settings = Get.find<SettingsController>();
 
     if (settings.changes.containsKey(key))
       for (int i = 0; i < values.length; i++)

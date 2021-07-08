@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
@@ -16,7 +16,7 @@ class ExploreTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<Explorer>();
+    final explorer = Get.find<ExplorerController>();
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
@@ -40,7 +40,7 @@ class ExploreTab extends StatelessWidget {
 class _ExploreGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<Explorer>();
+    final explorer = Get.find<ExplorerController>();
 
     return Obx(() {
       if (explorer.isLoading)
@@ -78,8 +78,8 @@ class _EndOfListLoader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Obx(
-            () => Get.find<Explorer>().hasNextPage &&
-                    !Get.find<Explorer>().isLoading
+            () => Get.find<ExplorerController>().hasNextPage &&
+                    !Get.find<ExplorerController>().isLoading
                 ? Loader()
                 : const SizedBox(),
           ),

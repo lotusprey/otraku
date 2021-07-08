@@ -8,7 +8,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/controllers/character.dart';
+import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
@@ -25,7 +25,7 @@ class CharacterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final character = Get.find<Character>(tag: id.toString());
+    final character = Get.find<CharacterController>(tag: id.toString());
     final axis = MediaQuery.of(context).size.width > 450
         ? Axis.horizontal
         : Axis.vertical;
@@ -40,7 +40,7 @@ class CharacterPage extends StatelessWidget {
           physics: Config.PHYSICS,
           controller: character.scrollCtrl,
           slivers: [
-            GetBuilder<Character>(
+            GetBuilder<CharacterController>(
               tag: id.toString(),
               builder: (c) => TopSliverHeader(
                 toggleFavourite: c.toggleFavourite,
@@ -50,7 +50,7 @@ class CharacterPage extends StatelessWidget {
                     '${c.model?.firstName} ${c.model?.middleName} ${c.model?.lastName}',
               ),
             ),
-            GetBuilder<Character>(
+            GetBuilder<CharacterController>(
               tag: id.toString(),
               builder: (c) => SliverPadding(
                 padding: Config.PADDING,

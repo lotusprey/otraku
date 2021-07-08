@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/pages/settings/settings_page.dart';
@@ -57,7 +57,8 @@ class UserHeader extends StatelessWidget {
                     : 'Follow',
                 style: TextStyle(fontSize: Style.FONT_MEDIUM),
               ),
-              onPressed: Get.find<User>(tag: id.toString()).toggleFollow,
+              onPressed:
+                  Get.find<UserController>(tag: id.toString()).toggleFollow,
             ),
           )
       ],

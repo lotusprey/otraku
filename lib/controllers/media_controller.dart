@@ -4,7 +4,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 import 'package:otraku/models/media_model.dart';
 
-class Media extends ScrollxController {
+class MediaController extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -136,7 +136,7 @@ class Media extends ScrollxController {
   // ***************************************************************************
 
   final int id;
-  Media(this.id);
+  MediaController(this.id);
 
   MediaModel? _model;
   final _tab = OVERVIEW.obs;

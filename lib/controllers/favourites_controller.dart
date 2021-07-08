@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Favourites extends ScrollxController {
+class FavouritesController extends ScrollxController {
   static const _favouritesQuery = r'''
     query Favourites($id: Int, $page: Int, $withAnime: Boolean = false, $withManga: Boolean = false, 
         $withCharacters: Boolean = false, $withStaff: Boolean = false, $withStudios: Boolean = false) {
@@ -33,7 +33,7 @@ class Favourites extends ScrollxController {
   ''';
 
   final int id;
-  Favourites(this.id);
+  FavouritesController(this.id);
 
   late UserModel _model;
   int _pageIndex = UserModel.ANIME_FAV;
@@ -84,6 +84,6 @@ class Favourites extends ScrollxController {
   @override
   void onInit() {
     super.onInit();
-    _model = Get.find<User>(tag: id.toString()).model!;
+    _model = Get.find<UserController>(tag: id.toString()).model!;
   }
 }

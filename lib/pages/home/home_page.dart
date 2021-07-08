@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/pages/home/explore_page.dart';
 import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/pages/home/feed_page.dart';
@@ -28,13 +28,13 @@ class HomePage extends StatelessWidget {
       CollectionTab(
         ofAnime: true,
         id: Client.viewerId!,
-        collectionTag: Collection.ANIME,
+        collectionTag: CollectionController.ANIME,
         key: UniqueKey(),
       ),
       CollectionTab(
         ofAnime: false,
         id: Client.viewerId!,
-        collectionTag: Collection.MANGA,
+        collectionTag: CollectionController.MANGA,
         key: UniqueKey(),
       ),
       const ExploreTab(),
@@ -43,8 +43,8 @@ class HomePage extends StatelessWidget {
 
     const drawers = [
       null,
-      const CollectionDrawer(Collection.ANIME),
-      const CollectionDrawer(Collection.MANGA),
+      const CollectionDrawer(CollectionController.ANIME),
+      const CollectionDrawer(CollectionController.MANGA),
       const ExploreDrawer(),
       null,
     ];

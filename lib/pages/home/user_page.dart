@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/pages/friends_page.dart';
 import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
@@ -48,7 +48,7 @@ class UserTab extends StatelessWidget {
       top: 15,
     );
 
-    return GetBuilder<User>(
+    return GetBuilder<UserController>(
       tag: id.toString(),
       builder: (user) => CustomScrollView(
         physics: Config.PHYSICS,
@@ -135,7 +135,8 @@ class UserTab extends StatelessWidget {
   }
 
   void _pushCollection(bool ofAnime) {
-    final collectionTag = '${ofAnime ? Collection.ANIME : Collection.MANGA}$id';
+    final collectionTag =
+        '${ofAnime ? CollectionController.ANIME : CollectionController.MANGA}$id';
     Get.toNamed(
       CollectionPage.ROUTE,
       arguments: [id, ofAnime, collectionTag],

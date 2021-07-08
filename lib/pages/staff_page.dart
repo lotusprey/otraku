@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/staff.dart';
+import 'package:otraku/controllers/staff_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
@@ -25,7 +25,7 @@ class StaffPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final staff = Get.find<Staff>(tag: id.toString());
+    final staff = Get.find<StaffController>(tag: id.toString());
     final axis = MediaQuery.of(context).size.width > 450
         ? Axis.horizontal
         : Axis.vertical;
@@ -40,7 +40,7 @@ class StaffPage extends StatelessWidget {
           physics: Config.PHYSICS,
           controller: staff.scrollCtrl,
           slivers: [
-            GetBuilder<Staff>(
+            GetBuilder<StaffController>(
               tag: id.toString(),
               builder: (s) => TopSliverHeader(
                 toggleFavourite: s.toggleFavourite,
@@ -50,7 +50,7 @@ class StaffPage extends StatelessWidget {
                     '${s.model?.firstName} ${s.model?.middleName} ${s.model?.lastName}',
               ),
             ),
-            GetBuilder<Staff>(
+            GetBuilder<StaffController>(
               tag: id.toString(),
               builder: (s) => SliverPadding(
                 padding: Config.PADDING,

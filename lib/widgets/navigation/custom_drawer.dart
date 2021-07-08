@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 
@@ -77,7 +77,7 @@ class CollectionDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<Collection>(tag: collectionTag);
+    final collection = Get.find<CollectionController>(tag: collectionTag);
     final selected = collection.listIndex;
     final names = collection.names;
     final counts = collection.allEntryCounts;
@@ -108,7 +108,7 @@ class ExploreDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorable = Get.find<Explorer>();
+    final explorable = Get.find<ExplorerController>();
     final selected = explorable.type.index;
 
     return CustomDrawer(

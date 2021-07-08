@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/filterable.dart';
 
-class Settings extends GetxController {
+class SettingsController extends GetxController {
   final changes = <String, dynamic>{};
   late SettingsModel _model;
   int _pageIndex = 0;
@@ -20,32 +20,37 @@ class Settings extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _model = Get.find<Viewer>().settings!;
+    _model = Get.find<ViewerController>().settings!;
   }
 
   @override
   void onClose() async {
     if (changes.length > 0) {
-      final ok = await Get.find<Viewer>().updateSettings(changes);
+      final ok = await Get.find<ViewerController>().updateSettings(changes);
       if (ok) {
         if (changes.containsKey('displayAdultContent')) {
           if (changes['displayAdultContent'])
-            Get.find<Explorer>().setFilterWithKey(Filterable.IS_ADULT);
+            Get.find<ExplorerController>()
+                .setFilterWithKey(Filterable.IS_ADULT);
           else
-            Get.find<Explorer>()
+            Get.find<ExplorerController>()
                 .setFilterWithKey(Filterable.IS_ADULT, value: false);
         }
 
         if (changes.containsKey('scoreFormat') ||
             changes.containsKey('titleLanguage')) {
-          Get.find<Collection>(tag: Collection.ANIME).fetch();
-          Get.find<Collection>(tag: Collection.MANGA).fetch();
+          Get.find<CollectionController>(tag: CollectionController.ANIME)
+              .fetch();
+          Get.find<CollectionController>(tag: CollectionController.MANGA)
+              .fetch();
         } else {
           if (changes.containsKey('splitCompletedAnime'))
-            Get.find<Collection>(tag: Collection.ANIME).fetch();
+            Get.find<CollectionController>(tag: CollectionController.ANIME)
+                .fetch();
 
           if (changes.containsKey('splitCompletedManga'))
-            Get.find<Collection>(tag: Collection.MANGA).fetch();
+            Get.find<CollectionController>(tag: CollectionController.MANGA)
+                .fetch();
         }
       }
     }

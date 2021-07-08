@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/friends.dart';
+import 'package:otraku/controllers/friends_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -15,7 +15,7 @@ class FriendsPage extends StatelessWidget {
   FriendsPage(this.id);
 
   @override
-  Widget build(BuildContext context) => GetBuilder<Friends>(
+  Widget build(BuildContext context) => GetBuilder<FriendsController>(
         tag: id.toString(),
         builder: (friends) => Scaffold(
           extendBody: true,

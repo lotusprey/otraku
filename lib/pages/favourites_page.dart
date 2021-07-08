@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:otraku/controllers/favourites.dart';
+import 'package:otraku/controllers/favourites_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/user_model.dart';
@@ -16,7 +16,7 @@ class FavouritesPage extends StatelessWidget {
   FavouritesPage(this.id);
 
   @override
-  Widget build(BuildContext context) => GetBuilder<Favourites>(
+  Widget build(BuildContext context) => GetBuilder<FavouritesController>(
         tag: id.toString(),
         builder: (favourites) => Scaffold(
           extendBody: true,

@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/client.dart';
 
-class Review extends GetxController {
+class ReviewController extends GetxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -39,7 +39,7 @@ class Review extends GetxController {
   // ***************************************************************************
 
   final int _id;
-  Review(this._id);
+  ReviewController(this._id);
 
   ReviewModel? _model;
 

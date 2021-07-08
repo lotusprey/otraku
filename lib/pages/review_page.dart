@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/review.dart';
+import 'package:otraku/controllers/review_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -22,7 +22,7 @@ class ReviewPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         body: SafeArea(
           bottom: false,
-          child: GetBuilder<Review>(
+          child: GetBuilder<ReviewController>(
               tag: id.toString(),
               builder: (review) {
                 final model = review.model;
@@ -214,5 +214,6 @@ class _RateButtonsState extends State<_RateButtons> {
   }
 
   Future<void> _rate(bool? rating) async =>
-      await Get.find<Review>(tag: widget.model.id.toString()).rate(rating);
+      await Get.find<ReviewController>(tag: widget.model.id.toString())
+          .rate(rating);
 }

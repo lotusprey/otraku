@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/settings.dart';
+import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
@@ -15,7 +15,7 @@ class ContentTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<Settings>();
+    final settings = Get.find<SettingsController>();
     return ListView(
       physics: Config.PHYSICS,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),

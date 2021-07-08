@@ -9,7 +9,7 @@ import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Staff extends ScrollxController {
+class StaffController extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -82,7 +82,7 @@ class Staff extends ScrollxController {
   // ***************************************************************************
 
   final int id;
-  Staff(this.id);
+  StaffController(this.id);
 
   StaffModel? _model;
   final _characters = PageModel<ConnectionModel>().obs;

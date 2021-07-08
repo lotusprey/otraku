@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/notifications.dart';
+import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
@@ -19,7 +19,7 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifications = Get.find<Notifications>();
+    final notifications = Get.find<NotificationsController>();
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Notifications',
@@ -41,7 +41,7 @@ class NotificationsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: GetBuilder<Notifications>(builder: (notifications) {
+      body: GetBuilder<NotificationsController>(builder: (notifications) {
         final entries = notifications.entries;
         return ListView.builder(
           padding: Config.PADDING,

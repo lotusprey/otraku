@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/settings.dart';
+import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/pages/settings/personalisation_page.dart';
 import 'package:otraku/pages/settings/content_page.dart';
 import 'package:otraku/pages/settings/notification_settings_page.dart';
@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
       AboutTab(),
     ];
 
-    return GetBuilder<Settings>(
+    return GetBuilder<SettingsController>(
       builder: (settings) => Scaffold(
         extendBody: true,
         bottomNavigationBar: NavBar(

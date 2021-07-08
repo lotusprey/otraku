@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:otraku/controllers/activity.dart';
-import 'package:otraku/controllers/character.dart';
-import 'package:otraku/controllers/collection.dart';
-import 'package:otraku/controllers/entry.dart';
-import 'package:otraku/controllers/explorer.dart';
-import 'package:otraku/controllers/favourites.dart';
-import 'package:otraku/controllers/feed.dart';
-import 'package:otraku/controllers/friends.dart';
-import 'package:otraku/controllers/media.dart';
-import 'package:otraku/controllers/notifications.dart';
-import 'package:otraku/controllers/review.dart';
-import 'package:otraku/controllers/settings.dart';
-import 'package:otraku/controllers/staff.dart';
-import 'package:otraku/controllers/statistics.dart';
-import 'package:otraku/controllers/studio.dart';
-import 'package:otraku/controllers/user.dart';
-import 'package:otraku/controllers/user_reviews.dart';
-import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/controllers/activity_controller.dart';
+import 'package:otraku/controllers/character_controller.dart';
+import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/controllers/entry_controller.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/favourites_controller.dart';
+import 'package:otraku/controllers/feed_controller.dart';
+import 'package:otraku/controllers/friends_controller.dart';
+import 'package:otraku/controllers/media_controller.dart';
+import 'package:otraku/controllers/notifications_controller.dart';
+import 'package:otraku/controllers/review_controller.dart';
+import 'package:otraku/controllers/settings_controller.dart';
+import 'package:otraku/controllers/staff_controller.dart';
+import 'package:otraku/controllers/statistics_controller.dart';
+import 'package:otraku/controllers/studio_controller.dart';
+import 'package:otraku/controllers/user_controller.dart';
+import 'package:otraku/controllers/user_reviews_controller.dart';
+import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/pages/friends_page.dart';
 import 'package:otraku/pages/home/feed_page.dart';
 import 'package:otraku/pages/statistics_page.dart';
@@ -65,19 +65,23 @@ class App extends StatelessWidget {
           name: HomePage.ROUTE,
           page: () => HomePage(),
           binding: BindingsBuilder(() {
-            Get.put(Collection(Client.viewerId!, true), tag: Collection.ANIME);
-            Get.put(Collection(Client.viewerId!, false), tag: Collection.MANGA);
-            Get.put(User(Client.viewerId!), tag: Client.viewerId.toString());
-            Get.put(Feed(), tag: Feed.HOME_FEED_TAG);
-            Get.put(Explorer());
-            Get.put(Viewer());
+            Get.put(CollectionController(Client.viewerId!, true),
+                tag: CollectionController.ANIME);
+            Get.put(CollectionController(Client.viewerId!, false),
+                tag: CollectionController.MANGA);
+            Get.put(UserController(Client.viewerId!),
+                tag: Client.viewerId.toString());
+            Get.put(FeedController(), tag: FeedController.HOME_FEED_TAG);
+            Get.put(ExplorerController());
+            Get.put(ViewerController());
           }),
         ),
         GetPage(
           name: UserPage.ROUTE,
           page: () => UserPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
-            Get.put(User(Get.arguments[0]), tag: Get.arguments[0].toString());
+            Get.put(UserController(Get.arguments[0]),
+                tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
@@ -89,7 +93,7 @@ class App extends StatelessWidget {
           ),
           binding: BindingsBuilder(() {
             Get.put(
-              Collection(Get.arguments[0], Get.arguments[1]),
+              CollectionController(Get.arguments[0], Get.arguments[1]),
               tag: Get.arguments[2],
             );
           }),
@@ -99,7 +103,7 @@ class App extends StatelessWidget {
           page: () => MediaPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
-              Media(Get.arguments[0]),
+              MediaController(Get.arguments[0]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -109,7 +113,7 @@ class App extends StatelessWidget {
           page: () => CharacterPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
-              Character(Get.arguments[0]),
+              CharacterController(Get.arguments[0]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -119,7 +123,7 @@ class App extends StatelessWidget {
           page: () => StaffPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
-              Staff(Get.arguments[0]),
+              StaffController(Get.arguments[0]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -129,7 +133,7 @@ class App extends StatelessWidget {
           page: () => StudioPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
-              Studio(Get.arguments[0]),
+              StudioController(Get.arguments[0]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -139,7 +143,7 @@ class App extends StatelessWidget {
           page: () => ReviewPage(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
-              Review(Get.arguments[0]),
+              ReviewController(Get.arguments[0]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -149,7 +153,7 @@ class App extends StatelessWidget {
           page: () => ActivityPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
             Get.put(
-              Activity(Get.arguments[0], Get.arguments[1]),
+              ActivityController(Get.arguments[0], Get.arguments[1]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -157,14 +161,14 @@ class App extends StatelessWidget {
         GetPage(
           name: NotificationsPage.ROUTE,
           page: () => NotificationsPage(),
-          binding: BindingsBuilder.put(() => Notifications()),
+          binding: BindingsBuilder.put(() => NotificationsController()),
         ),
         GetPage(
           name: EntryPage.ROUTE,
           page: () => EntryPage(Get.arguments[0], Get.arguments[2]),
           binding: BindingsBuilder(() {
             Get.put(
-              Entry(Get.arguments[0], Get.arguments[1]),
+              EntryController(Get.arguments[0], Get.arguments[1]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -173,7 +177,8 @@ class App extends StatelessWidget {
           name: FavouritesPage.ROUTE,
           page: () => FavouritesPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(Favourites(Get.arguments), tag: Get.arguments.toString());
+            Get.put(FavouritesController(Get.arguments),
+                tag: Get.arguments.toString());
           }),
         ),
         GetPage(
@@ -181,7 +186,7 @@ class App extends StatelessWidget {
           page: () => FriendsPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
             Get.put(
-              Friends(Get.arguments[0], Get.arguments[1]),
+              FriendsController(Get.arguments[0], Get.arguments[1]),
               tag: Get.arguments[0].toString(),
             );
           }),
@@ -190,21 +195,24 @@ class App extends StatelessWidget {
           name: FeedPage.ROUTE,
           page: () => FeedPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(Feed(Get.arguments), tag: Get.arguments.toString());
+            Get.put(FeedController(Get.arguments),
+                tag: Get.arguments.toString());
           }),
         ),
         GetPage(
           name: UserReviewsPage.ROUTE,
           page: () => UserReviewsPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(UserReviews(Get.arguments), tag: Get.arguments.toString());
+            Get.put(UserReviewsController(Get.arguments),
+                tag: Get.arguments.toString());
           }),
         ),
         GetPage(
           name: StatisticsPage.ROUTE,
           page: () => StatisticsPage(Get.arguments),
           binding: BindingsBuilder(() {
-            Get.put(Statistics(Get.arguments), tag: Get.arguments.toString());
+            Get.put(StatisticsController(Get.arguments),
+                tag: Get.arguments.toString());
           }),
         ),
         GetPage(
@@ -214,7 +222,7 @@ class App extends StatelessWidget {
         GetPage(
           name: SettingsPage.ROUTE,
           page: () => SettingsPage(),
-          binding: BindingsBuilder.put(() => Settings()),
+          binding: BindingsBuilder.put(() => SettingsController()),
         ),
       ],
     );

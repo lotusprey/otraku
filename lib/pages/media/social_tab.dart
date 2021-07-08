@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/media.dart';
+import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -9,7 +9,7 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
 class SocialTab extends StatelessWidget {
-  final Media media;
+  final MediaController media;
 
   SocialTab(this.media);
 

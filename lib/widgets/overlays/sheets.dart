@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/enums/list_sort.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
@@ -377,7 +377,7 @@ class CollectionSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<Collection>(tag: collectionTag);
+    final collection = Get.find<CollectionController>(tag: collectionTag);
 
     final mediaSort = collection.getFilterWithKey(Filterable.SORT);
     final currentIndex = mediaSort.index ~/ 2;
@@ -414,7 +414,7 @@ class MediaSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final length = MediaSort.values.length;
-    final prefTitle = Get.find<Viewer>().settings!.titleLanguage!;
+    final prefTitle = Get.find<ViewerController>().settings!.titleLanguage!;
     MediaSort titleAsc;
     MediaSort titleDesc;
 

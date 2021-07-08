@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/controllers/media.dart';
+import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -9,7 +9,7 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaHeader extends StatefulWidget {
-  final Media media;
+  final MediaController media;
   final String? imageUrl;
   final double coverWidth;
   final double coverHeight;

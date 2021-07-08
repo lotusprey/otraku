@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/enums/anime_format.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_status.dart';
-import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -26,15 +26,15 @@ class FilterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final changes = <String, dynamic>{};
-    final explorer = Get.find<Explorer>();
+    final explorer = Get.find<ExplorerController>();
     Filterable filterable;
     if (collectionTag != null)
-      filterable = Get.find<Collection>(tag: collectionTag);
+      filterable = Get.find<CollectionController>(tag: collectionTag);
     else
       filterable = explorer;
 
     final browsable = collectionTag != null
-        ? (filterable as Collection).ofAnime
+        ? (filterable as CollectionController).ofAnime
             ? Explorable.anime
             : Explorable.manga
         : explorer.type;
@@ -82,8 +82,8 @@ class FilterPage extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (filterable is Explorer) filterable.fetch();
-              if (filterable is Collection) {
+              if (filterable is ExplorerController) filterable.fetch();
+              if (filterable is CollectionController) {
                 filterable.scrollTo(0);
                 filterable.filter();
               }

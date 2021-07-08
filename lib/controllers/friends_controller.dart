@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Friends extends ScrollxController {
+class FriendsController extends ScrollxController {
   static const _friendsQuery = r'''
     query Friends($id: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
       following: Page(page: $page) @include(if: $withFollowing) {
@@ -21,7 +21,7 @@ class Friends extends ScrollxController {
   ''';
 
   final int id;
-  Friends(this.id, this._onFollowing);
+  FriendsController(this.id, this._onFollowing);
 
   late UserModel _model;
   final _keys = [UniqueKey(), UniqueKey()];
@@ -82,7 +82,7 @@ class Friends extends ScrollxController {
   @override
   void onInit() {
     super.onInit();
-    _model = Get.find<User>(tag: id.toString()).model!;
+    _model = Get.find<UserController>(tag: id.toString()).model!;
     if (_onFollowing && _model.following.items.isEmpty ||
         !_onFollowing && _model.followers.items.isEmpty) fetchPage();
   }

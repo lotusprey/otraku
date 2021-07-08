@@ -1,13 +1,13 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class UserReviews extends ScrollxController {
+class UserReviewsController extends ScrollxController {
   static const _reviewsQuery = r'''
-    query Activities($id: Int, $page: Int = 1) {
+    query UserReviews($id: Int, $page: Int = 1) {
       Page(page: $page) {
         pageInfo {hasNextPage}
         reviews(userId: $id, sort: CREATED_AT_DESC) {
@@ -24,7 +24,7 @@ class UserReviews extends ScrollxController {
   ''';
 
   final int id;
-  UserReviews(this.id);
+  UserReviewsController(this.id);
 
   late UserModel _model;
 
@@ -49,7 +49,7 @@ class UserReviews extends ScrollxController {
   @override
   void onInit() {
     super.onInit();
-    _model = Get.find<User>(tag: id.toString()).model!;
+    _model = Get.find<UserController>(tag: id.toString()).model!;
     if (_model.reviews.items.isEmpty) fetchPage();
   }
 }

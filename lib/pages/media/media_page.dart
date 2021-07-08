@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/media.dart';
+import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/pages/media/overview_tab.dart';
 import 'package:otraku/pages/media/relations_tab.dart';
@@ -29,7 +29,7 @@ class MediaPage extends StatelessWidget {
     final headerHeight = bannerHeight + coverHeight * 0.6;
     final pageTop = headerHeight - Config.MATERIAL_TAP_TARGET_SIZE;
 
-    return GetBuilder<Media>(
+    return GetBuilder<MediaController>(
       tag: id.toString(),
       builder: (media) => Scaffold(
         extendBody: true,
@@ -58,14 +58,14 @@ class MediaPage extends StatelessWidget {
               ),
               if (media.model != null) ...[
                 Obx(
-                  () => media.tab == Media.RELATIONS
+                  () => media.tab == MediaController.RELATIONS
                       ? RelationControls(media, () => media.scrollTo(pageTop))
                       : placeHolder,
                 ),
                 Obx(() {
-                  if (media.tab == Media.OVERVIEW)
+                  if (media.tab == MediaController.OVERVIEW)
                     return OverviewTab(media.model!.overview);
-                  else if (media.tab == Media.RELATIONS)
+                  else if (media.tab == MediaController.RELATIONS)
                     return RelationsTab(media);
                   else
                     return SocialTab(media);

@@ -8,7 +8,7 @@ import 'package:otraku/models/studio_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Studio extends ScrollxController {
+class StudioController extends ScrollxController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -51,7 +51,7 @@ class Studio extends ScrollxController {
   // ***************************************************************************
 
   final int id;
-  Studio(this.id);
+  StudioController(this.id);
 
   StudioModel? _model;
   final _media = StudioPageModel().obs;

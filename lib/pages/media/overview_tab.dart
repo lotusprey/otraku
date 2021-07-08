@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/explorer.dart';
+import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -128,7 +128,7 @@ class OverviewTab extends StatelessWidget {
               title: 'Genres',
               items: overview.genres,
               onTap: (index) {
-                final explorable = Get.find<Explorer>();
+                final explorable = Get.find<ExplorerController>();
                 explorable.clearAllFilters(update: false);
                 explorable.setFilterWithKey(
                   Filterable.SORT,

@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user.dart';
+import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/models/user_model.dart';
 
-class Statistics extends GetxController {
-  Statistics(this.id);
+class StatisticsController extends GetxController {
+  StatisticsController(this.id);
   final int id;
   final _scoresOnCount = true.obs;
   final _keys = [UniqueKey(), UniqueKey()];
@@ -27,6 +27,6 @@ class Statistics extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _model = Get.find<User>(tag: id.toString()).model!;
+    _model = Get.find<UserController>(tag: id.toString()).model!;
   }
 }

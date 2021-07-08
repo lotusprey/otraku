@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection.dart';
+import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/control_header.dart';
 import 'package:otraku/widgets/navigation/custom_drawer.dart';
@@ -56,7 +56,8 @@ class CollectionTab extends StatelessWidget {
         physics: const BouncingScrollPhysics(
           parent: AlwaysScrollableScrollPhysics(),
         ),
-        controller: Get.find<Collection>(tag: collectionTag).scrollCtrl,
+        controller:
+            Get.find<CollectionController>(tag: collectionTag).scrollCtrl,
         slivers: [
           HeadlineHeader(
             '${ofAnime ? 'Anime' : 'Manga'} List',

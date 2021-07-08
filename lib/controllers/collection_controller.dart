@@ -10,7 +10,7 @@ import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/scroll_x_controller.dart';
 
-class Collection extends ScrollxController implements Filterable {
+class CollectionController extends ScrollxController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
@@ -128,7 +128,7 @@ class Collection extends ScrollxController implements Filterable {
   final _customListNames = <String>[];
   ScoreFormat? _scoreFormat;
 
-  Collection(this.userId, this.ofAnime);
+  CollectionController(this.userId, this.ofAnime);
 
   // ***************************************************************************
   // GETTERS & SETTERS

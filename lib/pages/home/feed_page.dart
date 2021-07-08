@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/feed.dart';
+import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/pages/notifications_page.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/viewer.dart';
+import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
@@ -25,7 +25,7 @@ class FeedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feed = Get.find<Feed>(tag: id.toString());
+    final feed = Get.find<FeedController>(tag: id.toString());
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Activities', trailing: [_Filter(feed)]),
@@ -64,7 +64,7 @@ class FeedTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feed = Get.find<Feed>(tag: Feed.HOME_FEED_TAG);
+    final feed = Get.find<FeedController>(tag: FeedController.HOME_FEED_TAG);
 
     return CustomScrollView(
       controller: feed.scrollCtrl,
@@ -115,12 +115,12 @@ class FeedTab extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  final Feed feed;
+  final FeedController feed;
   _Header(this.feed);
 
   @override
   Widget build(BuildContext context) {
-    final viewer = Get.find<Viewer>();
+    final viewer = Get.find<ViewerController>();
 
     return TransparentHeader([
       BubbleTabs<bool>(
@@ -177,7 +177,7 @@ class _Header extends StatelessWidget {
 }
 
 class _Filter extends StatelessWidget {
-  final Feed feed;
+  final FeedController feed;
   _Filter(this.feed);
 
   @override

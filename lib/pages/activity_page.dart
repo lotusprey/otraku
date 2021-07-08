@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/activity.dart';
+import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
@@ -25,7 +25,7 @@ class ActivityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<Activity>(
+    return GetBuilder<ActivityController>(
         tag: id.toString(),
         builder: (activity) {
           final model = activity.model;
@@ -134,7 +134,7 @@ class ActivityPage extends StatelessWidget {
 }
 
 class _ActivityBox extends StatelessWidget {
-  final Activity activity;
+  final ActivityController activity;
   _ActivityBox(this.activity);
 
   @override
@@ -177,7 +177,7 @@ class _ActivityBox extends StatelessWidget {
 }
 
 class _InteractionButtons extends StatefulWidget {
-  final Activity activity;
+  final ActivityController activity;
   _InteractionButtons(this.activity);
   @override
   __InteractionButtonsState createState() => __InteractionButtonsState();
@@ -217,7 +217,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() => model.toggleSubscription());
-              Activity.toggleSubscription(model).then(
+              ActivityController.toggleSubscription(model).then(
                 (ok) => ok
                     ? widget.activity.updateModel()
                     : setState(() => model.toggleSubscription()),
@@ -251,7 +251,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() => model.toggleLike());
-              Activity.toggleLike(model).then(
+              ActivityController.toggleLike(model).then(
                 (ok) => ok
                     ? widget.activity.updateModel()
                     : setState(() => model.toggleLike()),
@@ -372,7 +372,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
         behavior: HitTestBehavior.opaque,
         onTap: () {
           setState(() => widget.reply.toggleLike());
-          Activity.toggleReplyLike(widget.reply).then((ok) {
+          ActivityController.toggleReplyLike(widget.reply).then((ok) {
             if (!ok) setState(() => widget.reply.toggleLike());
           });
         },

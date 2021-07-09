@@ -25,9 +25,8 @@ class UserPage extends StatelessWidget {
   const UserPage(this.id, this.avatarUrl);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: UserTab(id, avatarUrl)));
-  }
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: UserTab(id, avatarUrl)));
 }
 
 class UserTab extends StatelessWidget {
@@ -96,22 +95,22 @@ class UserTab extends StatelessWidget {
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Get.toNamed(FeedPage.ROUTE, arguments: id),
+                    () => Get.toNamed(FeedPage.ROUTE, arguments: [id]),
                   ),
                   _Button(
                     Icons.favorite,
                     'Favourites',
-                    () => Get.toNamed(FavouritesPage.ROUTE, arguments: id),
+                    () => Get.toNamed(FavouritesPage.ROUTE, arguments: [id]),
                   ),
                   _Button(
                     Ionicons.stats_chart,
                     'Statistics',
-                    () => Get.toNamed(StatisticsPage.ROUTE, arguments: id),
+                    () => Get.toNamed(StatisticsPage.ROUTE, arguments: [id]),
                   ),
                   _Button(
                     Icons.rate_review,
                     'Reviews',
-                    () => Get.toNamed(UserReviewsPage.ROUTE, arguments: id),
+                    () => Get.toNamed(UserReviewsPage.ROUTE, arguments: [id]),
                   ),
                 ],
               ),

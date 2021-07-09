@@ -175,10 +175,10 @@ class App extends StatelessWidget {
         ),
         GetPage(
           name: FavouritesPage.ROUTE,
-          page: () => FavouritesPage(Get.arguments),
+          page: () => FavouritesPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
-            Get.put(FavouritesController(Get.arguments),
-                tag: Get.arguments.toString());
+            Get.put(FavouritesController(Get.arguments[0]),
+                tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
@@ -193,26 +193,26 @@ class App extends StatelessWidget {
         ),
         GetPage(
           name: FeedPage.ROUTE,
-          page: () => FeedPage(Get.arguments),
+          page: () => FeedPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
-            Get.put(FeedController(Get.arguments),
-                tag: Get.arguments.toString());
+            Get.put(FeedController(Get.arguments[0]),
+                tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
           name: UserReviewsPage.ROUTE,
-          page: () => UserReviewsPage(Get.arguments),
+          page: () => UserReviewsPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
-            Get.put(UserReviewsController(Get.arguments),
-                tag: Get.arguments.toString());
+            Get.put(UserReviewsController(Get.arguments[0]),
+                tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
           name: StatisticsPage.ROUTE,
-          page: () => StatisticsPage(Get.arguments),
+          page: () => StatisticsPage(Get.arguments[0]),
           binding: BindingsBuilder(() {
-            Get.put(StatisticsController(Get.arguments),
-                tag: Get.arguments.toString());
+            Get.put(StatisticsController(Get.arguments[0]),
+                tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(

@@ -71,7 +71,7 @@ class App extends StatelessWidget {
                 tag: CollectionController.MANGA);
             Get.put(UserController(Client.viewerId!),
                 tag: Client.viewerId.toString());
-            Get.put(FeedController(), tag: FeedController.HOME_FEED_TAG);
+            Get.put(FeedController(null), tag: FeedController.HOME_FEED_TAG);
             Get.put(ExplorerController());
             Get.put(ViewerController());
           }),
@@ -89,7 +89,7 @@ class App extends StatelessWidget {
           page: () => CollectionPage(
             id: Get.arguments[0],
             ofAnime: Get.arguments[1],
-            collectionTag: Get.arguments[2],
+            ctrlTag: Get.arguments[2],
           ),
           binding: BindingsBuilder(() {
             Get.put(

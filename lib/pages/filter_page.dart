@@ -19,7 +19,7 @@ class FilterPage extends StatelessWidget {
   static const ROUTE = '/filters';
 
   final String? collectionTag;
-  final Function(bool) isDefinitelyInactive;
+  final void Function(bool) isDefinitelyInactive;
 
   FilterPage(this.collectionTag, this.isDefinitelyInactive);
 

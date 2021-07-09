@@ -14,24 +14,24 @@ class CollectionPage extends StatelessWidget {
 
   final int id;
   final bool ofAnime;
-  final String collectionTag;
+  final String ctrlTag;
 
   CollectionPage({
     required this.id,
     required this.ofAnime,
-    required this.collectionTag,
+    required this.ctrlTag,
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
-      drawer: CollectionDrawer(collectionTag),
+      drawer: CollectionDrawer(ctrlTag),
       body: SafeArea(
         child: CollectionTab(
           id: id,
           ofAnime: ofAnime,
-          collectionTag: collectionTag,
+          collectionTag: ctrlTag,
           key: null,
         ),
       ),

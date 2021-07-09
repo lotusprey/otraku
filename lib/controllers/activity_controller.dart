@@ -88,7 +88,7 @@ class ActivityController extends ScrollxController {
 
   final int id;
   final String? feedTag;
-  ActivityController(this.id, [this.feedTag]);
+  ActivityController(this.id, this.feedTag);
 
   ActivityModel? _model;
   final _isLoading = true.obs;

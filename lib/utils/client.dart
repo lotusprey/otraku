@@ -26,10 +26,10 @@ class Client {
   };
 
   static String? _accessToken;
-
   static int? _viewerId;
   static int? get viewerId => _viewerId;
 
+  // Sets new credentials, when acquiring a token.
   static setCredentials(String token, int expiration) {
     _accessToken = token;
     FlutterSecureStorage().write(key: _TOKEN_KEY, value: _accessToken);
@@ -41,8 +41,10 @@ class Client {
     );
   }
 
+  // Verifies credentials.
   static Future<bool> logIn() async {
     if (_accessToken == null) {
+      // Check the token's expiration date.
       final int? millis = Config.storage.read(_EXPIRATION_KEY);
       if (millis != null) {
         final date = DateTime.fromMillisecondsSinceEpoch(millis);
@@ -54,11 +56,15 @@ class Client {
         }
       }
 
+      // Try to acquire the token from the secure storage.
       _accessToken = await FlutterSecureStorage().read(key: _TOKEN_KEY);
       if (_accessToken == null) return false;
     }
 
-    _viewerId = Config.storage.read(_ID_KEY);
+    // Try to acquire the viewer's id from the storage.
+    if (_viewerId == null) _viewerId = Config.storage.read(_ID_KEY);
+
+    // Fetch the viewer's id, if needed.
     if (_viewerId == null) {
       final data = await request(_idQuery, null, popOnErr: false);
       if (data == null) return false;
@@ -69,6 +75,7 @@ class Client {
     return true;
   }
 
+  // Clears all data and logs out.
   static Future<void> logOut() async {
     FlutterSecureStorage().deleteAll();
     Config.storage.erase();
@@ -77,6 +84,10 @@ class Client {
     Get.offAllNamed(AuthPage.ROUTE);
   }
 
+  // The app needs both the accessToken and the viewer id.
+  static bool loggedIn() => _accessToken != null && _viewerId != null;
+
+  // Sends a request to the site.
   static Future<Map<String, dynamic>?> request(
     String request,
     Map<String, dynamic>? variables, {

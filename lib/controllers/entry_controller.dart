@@ -47,7 +47,7 @@ class EntryController extends GetxController {
   // ***************************************************************************
 
   final int _id;
-  EntryController(this._id, [this._model]);
+  EntryController(this._id, this._model);
 
   EntryModel? _model;
   EntryModel? _copy;

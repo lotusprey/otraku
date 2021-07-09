@@ -18,7 +18,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class FeedPage extends StatelessWidget {
-  static const ROUTE = '/activities';
+  static const ROUTE = '/feed';
 
   final int id;
   FeedPage(this.id);

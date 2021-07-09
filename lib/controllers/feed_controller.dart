@@ -62,7 +62,7 @@ class FeedController extends ScrollxController {
   static const HOME_FEED_TAG = 'Feed';
 
   final int? id;
-  FeedController([this.id]);
+  FeedController(this.id);
 
   final _activities = PageModel<ActivityModel>().obs;
   final _idNotIn = <int>[];

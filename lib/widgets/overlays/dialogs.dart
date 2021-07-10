@@ -64,9 +64,7 @@ class ConfirmationDialog extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       title: Text(title, style: Theme.of(context).textTheme.headline5),
-      content: content != null
-          ? Text(content!, style: Theme.of(context).textTheme.bodyText1)
-          : null,
+      content: content != null ? Text(content!) : null,
       actions: [
         if (secondaryAction != null)
           TextButton(

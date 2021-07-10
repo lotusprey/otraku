@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/pages/auth_page.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class Client {
   Client._();
@@ -88,6 +89,9 @@ class Client {
   static bool loggedIn() => _accessToken != null && _viewerId != null;
 
   // Sends a request to the site.
+  // popOnErr - after confirmation, not only the dialog, but the page too should
+  // be popped.
+  // silentErr - No need of a dialog on error.
   static Future<Map<String, dynamic>?> request(
     String request,
     Map<String, dynamic>? variables, {
@@ -126,42 +130,41 @@ class Client {
     return body['data'];
   }
 
+  // Handle errors that have occured after fetching.
   static void _handleErr(
     bool popOnErr, {
     IOException? ioErr,
     List<String>? apiErr,
   }) {
-    if (popOnErr) Get.back();
-
     if (ioErr != null && ioErr is SocketException) {
-      Get.defaultDialog(
-        radius: 10,
-        backgroundColor: Get.theme.backgroundColor,
-        titleStyle: Get.theme.textTheme.headline5,
+      Navigation.it.dialog(ConfirmationDialog(
+        content: ioErr.toString(),
         title: 'Internet connection problem',
-        content: Text(ioErr.toString()),
-        actions: [TextButton(child: Text('Ok'), onPressed: Get.back)],
-      );
+        mainAction: 'Ok',
+        onConfirm: () {
+          if (popOnErr) Navigation.it.closeOverlay();
+        },
+      ));
       return;
     }
 
     if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
-      Get.offAllNamed(AuthPage.ROUTE);
+      Navigation.it.setPage(Navigation.authRoute);
       return;
     }
 
     final text = ioErr?.toString() ?? apiErr!.join('\n');
 
-    Get.defaultDialog(
-      radius: 10,
-      backgroundColor: Get.theme.backgroundColor,
-      titleStyle: Get.theme.textTheme.headline5,
+    Navigation.it.dialog(ConfirmationDialog(
+      content: text,
       title:
           ioErr == null ? 'A query error occured' : 'A request error occured',
-      content: Text(text),
-      actions: [TextButton(child: Text('Sad'), onPressed: Get.back)],
-    );
+      mainAction: 'Sad',
+      onConfirm: () {
+        if (popOnErr) Navigation.it.closeOverlay();
+      },
+    ));
   }
 }

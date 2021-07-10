@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/pages/friends_page.dart';
-import 'package:otraku/pages/home/feed_page.dart';
-import 'package:otraku/pages/statistics_page.dart';
-import 'package:otraku/pages/user_reviews_page.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
-import 'package:otraku/pages/favourites_page.dart';
 import 'package:otraku/pages/home/home_page.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/pages/home/collection_page.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -72,45 +66,55 @@ class UserTab extends StatelessWidget {
                     'Anime',
                     () => id == Client.viewerId
                         ? Config.setIndex(HomePage.ANIME_LIST)
-                        : _pushCollection(true),
+                        : Navigation.it.push(
+                            Navigation.collectionRoute,
+                            args: [id, true],
+                          ),
                   ),
                   _Button(
                     Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
                         ? Config.setIndex(HomePage.MANGA_LIST)
-                        : _pushCollection(false),
+                        : Navigation.it.push(
+                            Navigation.collectionRoute,
+                            args: [id, false],
+                          ),
                   ),
                   _Button(
                     Ionicons.people_circle,
                     'Following',
-                    () => Get.toNamed(FriendsPage.ROUTE, arguments: [id, true]),
+                    () => Navigation.it
+                        .push(Navigation.friendsRoute, args: [id, true]),
                   ),
                   _Button(
                     Ionicons.person_circle,
                     'Followers',
-                    () =>
-                        Get.toNamed(FriendsPage.ROUTE, arguments: [id, false]),
+                    () => Navigation.it
+                        .push(Navigation.friendsRoute, args: [id, false]),
                   ),
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Get.toNamed(FeedPage.ROUTE, arguments: [id]),
+                    () => Navigation.it.push(Navigation.feedRoute, args: [id]),
                   ),
                   _Button(
                     Icons.favorite,
                     'Favourites',
-                    () => Get.toNamed(FavouritesPage.ROUTE, arguments: [id]),
+                    () => Navigation.it
+                        .push(Navigation.favouritesRoute, args: [id]),
                   ),
                   _Button(
                     Ionicons.stats_chart,
                     'Statistics',
-                    () => Get.toNamed(StatisticsPage.ROUTE, arguments: [id]),
+                    () => Navigation.it
+                        .push(Navigation.statisticsRoute, args: [id]),
                   ),
                   _Button(
                     Icons.rate_review,
                     'Reviews',
-                    () => Get.toNamed(UserReviewsPage.ROUTE, arguments: [id]),
+                    () => Navigation.it
+                        .push(Navigation.userReviewsRoute, args: [id]),
                   ),
                 ],
               ),
@@ -130,16 +134,6 @@ class UserTab extends StatelessWidget {
           SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
         ],
       ),
-    );
-  }
-
-  void _pushCollection(bool ofAnime) {
-    final collectionTag =
-        '${ofAnime ? CollectionController.ANIME : CollectionController.MANGA}$id';
-    Get.toNamed(
-      CollectionPage.ROUTE,
-      arguments: [id, ofAnime, collectionTag],
-      preventDuplicates: false,
     );
   }
 }

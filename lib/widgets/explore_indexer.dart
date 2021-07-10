@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/pages/character_page.dart';
-import 'package:otraku/pages/entry_page.dart';
-import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/review_page.dart';
-import 'package:otraku/pages/staff_page.dart';
-import 'package:otraku/pages/studio_page.dart';
-import 'package:otraku/pages/home/user_page.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable browsable;
@@ -35,52 +28,27 @@ class ExploreIndexer extends StatelessWidget {
     switch (browsable) {
       case Explorable.anime:
       case Explorable.manga:
-        Get.toNamed(
-          MediaPage.ROUTE,
-          arguments: [id, imageUrl],
-          parameters: {'id': id.toString()},
-          preventDuplicates: false,
-        );
+        Navigation.it.push(Navigation.mediaRoute, args: [id, imageUrl]);
         return;
       case Explorable.character:
-        Get.toNamed(
-          CharacterPage.ROUTE,
-          arguments: [id, imageUrl],
-          parameters: {'id': id.toString()},
-        );
+        Navigation.it.push(Navigation.characterRoute, args: [id, imageUrl]);
         return;
       case Explorable.staff:
-        Get.toNamed(
-          StaffPage.ROUTE,
-          arguments: [id, imageUrl],
-          parameters: {'id': id.toString()},
-        );
+        Navigation.it.push(Navigation.staffRoute, args: [id, imageUrl]);
         return;
       case Explorable.studio:
-        Get.toNamed(
-          StudioPage.ROUTE,
-          arguments: [id, imageUrl],
-          parameters: {'id': id.toString()},
-        );
+        Navigation.it.push(Navigation.studioRoute, args: [id, imageUrl]);
         return;
       case Explorable.user:
         if (id != Client.viewerId)
-          Get.toNamed(
-            UserPage.ROUTE,
-            arguments: [id, imageUrl],
-            parameters: {'id': id.toString()},
-          );
+          Navigation.it.push(Navigation.userRoute, args: [id, imageUrl]);
         else {
           Config.setIndex(HomePage.PROFILE);
-          Get.until((route) => route.isFirst);
+          Navigation.it.popToFirst();
         }
         return;
       case Explorable.review:
-        Get.toNamed(
-          ReviewPage.ROUTE,
-          arguments: [id, imageUrl],
-          parameters: {'id': id.toString()},
-        );
+        Navigation.it.push(Navigation.reviewRoute, args: [id, imageUrl]);
         return;
       default:
         return;
@@ -92,11 +60,7 @@ class ExploreIndexer extends StatelessWidget {
     EntryModel? entry,
     Function(ListStatus?)? fn,
   ]) =>
-      Get.toNamed(
-        EntryPage.ROUTE,
-        arguments: [id, entry, fn],
-        parameters: {'id': id.toString()},
-      );
+      Navigation.it.push(Navigation.entryRoute, args: [id, entry, fn]);
 
   @override
   Widget build(BuildContext context) {

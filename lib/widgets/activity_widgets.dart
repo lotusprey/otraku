@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/activity_model.dart';
-import 'package:otraku/pages/activity_page.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -170,14 +169,10 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
           message: 'Replies',
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Get.toNamed(
-              ActivityPage.ROUTE,
-              arguments: [
-                widget.model.id,
-                widget.feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
-              ],
-              parameters: {'id': widget.model.id.toString()},
-            ),
+            onTap: () => Navigation.it.push(Navigation.activityRoute, args: [
+              widget.model.id,
+              widget.feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
+            ]),
             child: Row(
               children: [
                 Text(

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/pages/notifications_page.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -135,7 +135,7 @@ class _Header extends StatelessWidget {
       Tooltip(
         message: 'Notifications',
         child: GestureDetector(
-          onTap: () => Get.toNamed(NotificationsPage.ROUTE),
+          onTap: () => Navigation.it.push(Navigation.notificationsRoute),
           child: Obx(
             () => Stack(
               children: [

@@ -3,17 +3,17 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/html_content.dart';
 
 Future<dynamic> showPopUp(BuildContext ctx, Widget child) =>
-    showDialog(context: ctx, builder: (ctx) => _PopUpAnimation(child));
+    showDialog(context: ctx, builder: (ctx) => PopUpAnimation(child));
 
-class _PopUpAnimation extends StatefulWidget {
+class PopUpAnimation extends StatefulWidget {
   final Widget child;
-  const _PopUpAnimation(this.child);
+  const PopUpAnimation(this.child);
 
   @override
-  __PopUpAnimationState createState() => __PopUpAnimationState();
+  _PopUpAnimationState createState() => _PopUpAnimationState();
 }
 
-class __PopUpAnimationState extends State<_PopUpAnimation>
+class _PopUpAnimationState extends State<PopUpAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _anim;

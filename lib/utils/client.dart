@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
@@ -136,14 +137,16 @@ class Client {
     IOException? ioErr,
     List<String>? apiErr,
   }) {
+    if (popOnErr) {
+      final context = Navigation.it.ctx;
+      if (context != null) Navigator.pop(context);
+    }
+
     if (ioErr != null && ioErr is SocketException) {
       Navigation.it.dialog(ConfirmationDialog(
         content: ioErr.toString(),
         title: 'Internet connection problem',
         mainAction: 'Ok',
-        onConfirm: () {
-          if (popOnErr) Navigation.it.closeOverlay();
-        },
       ));
       return;
     }
@@ -162,9 +165,6 @@ class Client {
       title:
           ioErr == null ? 'A query error occured' : 'A request error occured',
       mainAction: 'Sad',
-      onConfirm: () {
-        if (popOnErr) Navigation.it.closeOverlay();
-      },
     ));
   }
 }

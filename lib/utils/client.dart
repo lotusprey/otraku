@@ -3,11 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/pages/auth_page.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class Client {
@@ -83,7 +81,7 @@ class Client {
     Config.storage.erase();
     _accessToken = null;
     _viewerId = null;
-    Get.offAllNamed(AuthPage.ROUTE);
+    Navigation.it.setPage(Navigation.authRoute);
   }
 
   // The app needs both the accessToken and the viewer id.

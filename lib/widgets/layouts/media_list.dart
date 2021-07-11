@@ -20,14 +20,14 @@ class MediaList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<CollectionController>(tag: collectionTag);
+    final collectionCtrl = Get.find<CollectionController>(tag: collectionTag);
     final sidePadding = MediaQuery.of(context).size.width > 620
         ? (MediaQuery.of(context).size.width - 600) / 2.0
         : 10.0;
 
     return Obx(() {
-      if (collection.isFullyEmpty) {
-        if (collection.isLoading)
+      if (collectionCtrl.isFullyEmpty) {
+        if (collectionCtrl.isLoading)
           return const SliverFillRemaining(child: Center(child: Loader()));
 
         return SliverFillRemaining(
@@ -36,7 +36,7 @@ class MediaList extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'No ${collection.ofAnime ? 'Anime' : 'Manga'}',
+                  'No ${collectionCtrl.ofAnime ? 'Anime' : 'Manga'}',
                   style: Theme.of(context).textTheme.subtitle1,
                 ),
               ],
@@ -45,17 +45,17 @@ class MediaList extends StatelessWidget {
         );
       }
 
-      if (collection.isEmpty)
+      if (collectionCtrl.isEmpty)
         return SliverFillRemaining(
           child: Center(
             child: Text(
-              'No ${collection.ofAnime ? 'Anime' : 'Manga'} Results',
+              'No ${collectionCtrl.ofAnime ? 'Anime' : 'Manga'} Results',
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
         );
 
-      final entries = collection.entries;
+      final entries = collectionCtrl.entries;
 
       return SliverPadding(
         padding: EdgeInsets.only(
@@ -65,11 +65,7 @@ class MediaList extends StatelessWidget {
         ),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (_, i) => _MediaListTile(
-              entries[i],
-              collection.scoreFormat!,
-              collection.updateProgress,
-            ),
+            (_, i) => _MediaListTile(entries[i], collectionCtrl),
             childCount: entries.length,
           ),
           itemExtent: 150,
@@ -81,20 +77,22 @@ class MediaList extends StatelessWidget {
 
 class _MediaListTile extends StatelessWidget {
   final ListEntryModel entry;
-  final ScoreFormat scoreFormat;
-  final Function(ListEntryModel) increment;
+  final CollectionController collectionCtrl;
 
-  _MediaListTile(this.entry, this.scoreFormat, this.increment);
+  _MediaListTile(this.entry, this.collectionCtrl);
 
   @override
   Widget build(BuildContext context) {
-    final details = <String>[Convert.clarifyEnum(entry.format).toString()];
-    if (entry.timeUntilAiring != null)
-      details.add(' • Ep ${entry.nextEpisode} in ${entry.timeUntilAiring}');
-    if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
-      details.add(' • ${entry.nextEpisode! - 1 - entry.progress} ep behind');
+    // Format and time until airing of airing anime.
+    final mainDetail = entry.timeUntilAiring == null
+        ? Convert.clarifyEnum(entry.format)!
+        : '${Convert.clarifyEnum(entry.format)} • Ep ${entry.nextEpisode} in ${entry.timeUntilAiring}';
 
-    const iconConstraints = BoxConstraints(maxHeight: Style.ICON_SMALL);
+    // Episodes left of airing anime.
+    final secondaryDetail =
+        entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress
+            ? ' • ${entry.nextEpisode! - 1 - entry.progress} ep behind'
+            : null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -137,61 +135,52 @@ class _MediaListTile extends StatelessWidget {
                                 Text(entry.title!, overflow: TextOverflow.fade),
                           ),
                           const SizedBox(height: 5),
-                          Text(
-                            details.join(),
-                            style: Theme.of(context).textTheme.subtitle2,
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: mainDetail,
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                ),
+                                TextSpan(
+                                  text: secondaryDetail,
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
+                      ),
+                    ),
+                    Container(
+                      height: 5,
+                      margin: const EdgeInsets.symmetric(vertical: 3),
+                      decoration: BoxDecoration(
+                        borderRadius: Config.BORDER_RADIUS,
+                        gradient: LinearGradient(
+                          colors: [
+                            Theme.of(context).disabledColor,
+                            Theme.of(context).disabledColor,
+                            Theme.of(context).backgroundColor,
+                            Theme.of(context).backgroundColor,
+                          ],
+                          stops: [
+                            0.0,
+                            entry.progressPercent(),
+                            entry.progressPercent(),
+                            1.0,
+                          ],
+                        ),
                       ),
                     ),
                     Row(
                       children: [
                         Flexible(
-                          flex: 3,
-                          child: Container(
-                            height: 5,
-                            margin: const EdgeInsets.symmetric(vertical: 3),
-                            decoration: BoxDecoration(
-                              borderRadius: Config.BORDER_RADIUS,
-                              gradient: LinearGradient(
-                                colors: [
-                                  Theme.of(context).disabledColor,
-                                  Theme.of(context).disabledColor,
-                                  Theme.of(context).backgroundColor,
-                                  Theme.of(context).backgroundColor,
-                                ],
-                                stops: [
-                                  0.0,
-                                  entry.progressPercent(),
-                                  entry.progressPercent(),
-                                  1.0,
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (entry.canIncrement())
-                          Flexible(
-                            child: Center(
-                              child: IconButton(
-                                tooltip: 'Increment Progress',
-                                constraints: iconConstraints,
-                                padding: const EdgeInsets.all(0),
-                                icon: const Icon(
-                                  Ionicons.add_outline,
-                                  size: Style.ICON_SMALL,
-                                ),
-                                onPressed: () => increment(entry),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
                           child: Center(
-                            child: scoreFormat.getWidget(context, entry.score),
+                            child: Tooltip(
+                              message: 'Score',
+                              child: _buildScore(context),
+                            ),
                           ),
                         ),
                         Flexible(
@@ -211,7 +200,7 @@ class _MediaListTile extends StatelessWidget {
                                           entry.repeat.toString(),
                                           style: Theme.of(context)
                                               .textTheme
-                                              .subtitle1,
+                                              .subtitle2,
                                         ),
                                       ],
                                     ),
@@ -224,7 +213,9 @@ class _MediaListTile extends StatelessWidget {
                             child: entry.notes != null
                                 ? IconButton(
                                     tooltip: 'Comment',
-                                    constraints: iconConstraints,
+                                    constraints: const BoxConstraints(
+                                      maxHeight: Style.ICON_SMALL,
+                                    ),
                                     padding: const EdgeInsets.all(0),
                                     icon: const Icon(
                                       Ionicons.chatbox,
@@ -243,14 +234,9 @@ class _MediaListTile extends StatelessWidget {
                         ),
                         Flexible(
                           child: Center(
-                            child: Tooltip(
-                              message: 'Progress',
-                              child: Text(
-                                entry.progress != entry.progressMax
-                                    ? '${entry.progress}/${entry.progressMax ?? '?'}'
-                                    : entry.progress.toString(),
-                                style: Theme.of(context).textTheme.subtitle2,
-                              ),
+                            child: _ProgressButton(
+                              entry,
+                              collectionCtrl.updateProgress,
                             ),
                           ),
                         ),
@@ -262,6 +248,103 @@ class _MediaListTile extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildScore(BuildContext context) {
+    if (entry.score == 0) return const SizedBox();
+
+    switch (collectionCtrl.scoreFormat) {
+      case ScoreFormat.POINT_3:
+        if (entry.score == 3)
+          return const Icon(
+            Icons.sentiment_very_satisfied,
+            size: Style.ICON_SMALL,
+          );
+
+        if (entry.score == 2)
+          return const Icon(Icons.sentiment_neutral, size: Style.ICON_SMALL);
+
+        return const Icon(
+          Icons.sentiment_very_dissatisfied,
+          size: Style.ICON_SMALL,
+        );
+      case ScoreFormat.POINT_5:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_rounded, size: Style.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              entry.score.toStringAsFixed(0),
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ],
+        );
+      case ScoreFormat.POINT_10_DECIMAL:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              entry.score.toStringAsFixed(
+                entry.score.truncate() == entry.score ? 0 : 1,
+              ),
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ],
+        );
+      default:
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
+            const SizedBox(width: 5),
+            Text(
+              entry.score.toStringAsFixed(0),
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ],
+        );
+    }
+  }
+}
+
+class _ProgressButton extends StatelessWidget {
+  final ListEntryModel entry;
+  final void Function(ListEntryModel) increment;
+  _ProgressButton(this.entry, this.increment);
+
+  @override
+  Widget build(BuildContext context) {
+    if (entry.progress == entry.progressMax)
+      return Tooltip(
+        message: 'Progress',
+        child: Text(
+          entry.progress.toString(),
+          style: Theme.of(context).textTheme.subtitle2,
+        ),
+      );
+
+    return GestureDetector(
+      onTap: () => increment(entry),
+      child: Row(
+        children: [
+          Tooltip(
+            message: 'Progress',
+            child: Text(
+              '${entry.progress}/${entry.progressMax ?? "?"}',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+          const SizedBox(width: 5),
+          Tooltip(
+            message: 'Increment Progress',
+            child: const Icon(Ionicons.add_outline, size: Style.ICON_SMALL),
+          ),
+        ],
       ),
     );
   }

@@ -79,6 +79,9 @@ class Navigation extends RouterDelegate<String>
   final _pages = <RoutePage>[];
   final _key = GlobalKey<NavigatorState>();
 
+  // Gets the current context.
+  BuildContext? get ctx => _key.currentContext;
+
   @override
   GlobalKey<NavigatorState> get navigatorKey => _key;
 
@@ -89,7 +92,7 @@ class Navigation extends RouterDelegate<String>
       pages: List.of(_pages),
       onPopPage: (route, result) {
         if (!route.didPop(result)) return false;
-        return pop();
+        return _pop();
       },
     );
   }
@@ -289,7 +292,11 @@ class Navigation extends RouterDelegate<String>
   }
 
   // Pops a page and deletes related controllers, if possible.
-  bool pop({bool notify = true}) {
+  //
+  // It's private, as using Navigator.pop(context) is preferred. This is due
+  // to a tricky error that may occur when a page is popped too early. When
+  // context isn't available in the scope, use Navigation.ctx to acquire it.
+  bool _pop({bool notify = true}) {
     if (_pages.length <= 1) return false;
 
     switch (_pages.last.name) {
@@ -374,7 +381,7 @@ class Navigation extends RouterDelegate<String>
 
   // Pops pages, until there is one left.
   void popToFirst() {
-    while (pop(notify: false)) {}
+    while (_pop(notify: false)) {}
     notifyListeners();
   }
 
@@ -417,7 +424,7 @@ class Navigation extends RouterDelegate<String>
   }
 
   @override
-  Future<bool> popRoute() => SynchronousFuture(pop());
+  Future<bool> popRoute() => SynchronousFuture(_pop());
 
   @override
   Future<void> setNewRoutePath(String route) {
@@ -429,7 +436,7 @@ class Navigation extends RouterDelegate<String>
     return SynchronousFuture(null);
   }
 
-  // This override may be needed in the future.
+  // This override will be needed in the future for web.
   // @override
   // T? get currentConfiguration => null;
 

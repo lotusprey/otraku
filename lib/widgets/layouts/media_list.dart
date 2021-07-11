@@ -175,7 +175,14 @@ class _MediaListTile extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        Flexible(child: Center(child: _buildScore(context))),
+                        Flexible(
+                          child: Center(
+                            child: Tooltip(
+                              message: 'Score',
+                              child: _buildScore(context),
+                            ),
+                          ),
+                        ),
                         Flexible(
                           child: Center(
                             child: entry.repeat > 0

@@ -81,7 +81,7 @@ class Client {
     Config.storage.erase();
     _accessToken = null;
     _viewerId = null;
-    Navigation.it.setPage(Navigation.authRoute);
+    Navigation.it.setBasePage(Navigation.authRoute);
   }
 
   // The app needs both the accessToken and the viewer id.
@@ -152,7 +152,7 @@ class Client {
     if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
-      Navigation.it.setPage(Navigation.authRoute);
+      Navigation.it.setBasePage(Navigation.authRoute);
       return;
     }
 

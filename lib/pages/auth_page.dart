@@ -24,7 +24,7 @@ class _AuthPageState extends State<AuthPage> {
   void _verify() => Client.logIn().then(
         (loggedIn) => loggedIn
             ? WidgetsBinding.instance!.addPostFrameCallback(
-                (_) => Navigation.it.setPage(Navigation.homeRoute),
+                (_) => Navigation.it.setBasePage(Navigation.homeRoute),
               )
             : setState(() => _loading = false),
       );
@@ -49,8 +49,7 @@ class _AuthPageState extends State<AuthPage> {
       return;
     }
 
-    AppLinks(onAppLink: (Uri uri, String str) {
-      final link = uri.toString();
+    AppLinks(onAppLink: (Uri _, String link) {
       final start = link.indexOf('=') + 1;
       final end = link.indexOf('&');
       Client.setCredentials(

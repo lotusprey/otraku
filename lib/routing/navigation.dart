@@ -102,7 +102,6 @@ class Navigation extends RouterDelegate<String>
 
   // Pushes a page and adds related controllers, if needed.
   void push(String route, {List<dynamic> args = const [], bool notify = true}) {
-    print('pushing $route');
     switch (route) {
       case authRoute:
         _add(route, AuthPage(), args, null);
@@ -385,27 +384,17 @@ class Navigation extends RouterDelegate<String>
     notifyListeners();
   }
 
-  // Replaces all pages above the base one with a new set of pages.
-  void setTopPages(List<String> routes) {
-    popToFirst();
-    for (final route in routes) push(route, notify: false);
-    notifyListeners();
-  }
-
   // Replaces all pages with a new page.
-  void setPage(String route) {
-    print('setPage $route');
+  void setBasePage(String route) {
     Get.reset();
     _pages.clear();
     push(route);
   }
 
-  // Replaces all pages with a new set of pages.
-  void setPages(List<String> routes) {
-    Get.reset();
-    _pages.clear();
-    for (final route in routes) push(route, notify: false);
-    notifyListeners();
+  // Replaces all pages above the base one with a new page.
+  void setTopPage(String route) {
+    popToFirst();
+    push(route);
   }
 
   // Checks if this page is the only one with these route and tag. If it isn't,
@@ -429,10 +418,13 @@ class Navigation extends RouterDelegate<String>
   @override
   Future<void> setNewRoutePath(String route) {
     print('setNewRoutePath $route');
+    if (route == authRoute && Client.loggedIn()) return SynchronousFuture(null);
+
     if (route == authRoute || route == homeRoute)
-      setPage(route);
+      setBasePage(route);
     else
-      setTopPages([route]);
+      setTopPage(route);
+
     return SynchronousFuture(null);
   }
 

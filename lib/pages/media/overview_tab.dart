@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
@@ -141,7 +142,7 @@ class OverviewTab extends StatelessWidget {
                 explorable.type = overview.browsable;
                 explorable.search = '';
                 Config.setIndex(HomePage.EXPLORE);
-                Get.until((route) => route.isFirst);
+                Navigation.it.popToFirst();
               },
               onLongTap: (index) => Toast.copy(context, overview.genres[index]),
             ),

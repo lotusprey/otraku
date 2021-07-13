@@ -19,28 +19,28 @@ import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/controllers/user_reviews_controller.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
-import 'package:otraku/pages/friends_page.dart';
-import 'package:otraku/pages/home/feed_page.dart';
-import 'package:otraku/pages/statistics_page.dart';
-import 'package:otraku/pages/user_reviews_page.dart';
+import 'package:otraku/views/friends_view.dart';
+import 'package:otraku/views/home/feed_view.dart';
+import 'package:otraku/views/statistics_view.dart';
+import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/pages/auth_page.dart';
-import 'package:otraku/pages/home/collection_page.dart';
-import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/pages/home/user_page.dart';
-import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/activity_page.dart';
-import 'package:otraku/pages/character_page.dart';
-import 'package:otraku/pages/entry_page.dart';
-import 'package:otraku/pages/favourites_page.dart';
-import 'package:otraku/pages/filter_page.dart';
-import 'package:otraku/pages/notifications_page.dart';
-import 'package:otraku/pages/review_page.dart';
-import 'package:otraku/pages/staff_page.dart';
-import 'package:otraku/pages/studio_page.dart';
-import 'package:otraku/pages/settings/settings_page.dart';
+import 'package:otraku/views/auth_view.dart';
+import 'package:otraku/views/home/collection_view.dart';
+import 'package:otraku/views/home/home_view.dart';
+import 'package:otraku/views/home/user_view.dart';
+import 'package:otraku/views/media/media_view.dart';
+import 'package:otraku/views/activity_view.dart';
+import 'package:otraku/views/character_view.dart';
+import 'package:otraku/views/entry_view.dart';
+import 'package:otraku/views/favourites_view.dart';
+import 'package:otraku/views/filter_view.dart';
+import 'package:otraku/views/notifications_view.dart';
+import 'package:otraku/views/review_view.dart';
+import 'package:otraku/views/staff_view.dart';
+import 'package:otraku/views/studio_view.dart';
+import 'package:otraku/views/settings/settings_view.dart';
 
 Future<void> main() async {
   await GetStorage.init();
@@ -58,12 +58,12 @@ class App extends StatelessWidget {
       theme: Config.theme,
       // A workaround due to getx not being able to change the dark theme
       themeMode: ThemeMode.light,
-      initialRoute: AuthPage.ROUTE,
+      initialRoute: AuthView.ROUTE,
       getPages: [
-        GetPage(name: AuthPage.ROUTE, page: () => AuthPage()),
+        GetPage(name: AuthView.ROUTE, page: () => AuthView()),
         GetPage(
-          name: HomePage.ROUTE,
-          page: () => HomePage(),
+          name: HomeView.ROUTE,
+          page: () => HomeView(),
           binding: BindingsBuilder(() {
             Get.put(CollectionController(Client.viewerId!, true),
                 tag: CollectionController.ANIME);
@@ -77,16 +77,16 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: UserPage.ROUTE,
-          page: () => UserPage(Get.arguments[0], Get.arguments[1]),
+          name: UserView.ROUTE,
+          page: () => UserView(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(UserController(Get.arguments[0]),
                 tag: Get.arguments[0].toString());
           }),
         ),
         GetPage(
-          name: CollectionPage.ROUTE,
-          page: () => CollectionPage(
+          name: CollectionView.ROUTE,
+          page: () => CollectionView(
             id: Get.arguments[0],
             ofAnime: Get.arguments[1],
             ctrlTag: Get.arguments[2],
@@ -99,8 +99,8 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: MediaPage.ROUTE,
-          page: () => MediaPage(Get.arguments[0], Get.arguments[1]),
+          name: MediaView.ROUTE,
+          page: () => MediaView(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
               MediaController(Get.arguments[0]),
@@ -109,8 +109,8 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: CharacterPage.ROUTE,
-          page: () => CharacterPage(Get.arguments[0], Get.arguments[1]),
+          name: CharacterView.ROUTE,
+          page: () => CharacterView(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
               CharacterController(Get.arguments[0]),
@@ -119,8 +119,8 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: StaffPage.ROUTE,
-          page: () => StaffPage(Get.arguments[0], Get.arguments[1]),
+          name: StaffView.ROUTE,
+          page: () => StaffView(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
               StaffController(Get.arguments[0]),
@@ -129,8 +129,8 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: StudioPage.ROUTE,
-          page: () => StudioPage(Get.arguments[0], Get.arguments[1]),
+          name: StudioView.ROUTE,
+          page: () => StudioView(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
               StudioController(Get.arguments[0]),
@@ -139,8 +139,8 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: ReviewPage.ROUTE,
-          page: () => ReviewPage(Get.arguments[0], Get.arguments[1]),
+          name: ReviewView.ROUTE,
+          page: () => ReviewView(Get.arguments[0], Get.arguments[1]),
           binding: BindingsBuilder(() {
             Get.put(
               ReviewController(Get.arguments[0]),
@@ -149,8 +149,8 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: ActivityPage.ROUTE,
-          page: () => ActivityPage(Get.arguments[0]),
+          name: ActivityView.ROUTE,
+          page: () => ActivityView(Get.arguments[0]),
           binding: BindingsBuilder(() {
             Get.put(
               ActivityController(Get.arguments[0], Get.arguments[1]),
@@ -159,13 +159,13 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: NotificationsPage.ROUTE,
-          page: () => NotificationsPage(),
+          name: NotificationsView.ROUTE,
+          page: () => NotificationsView(),
           binding: BindingsBuilder.put(() => NotificationsController()),
         ),
         GetPage(
-          name: EntryPage.ROUTE,
-          page: () => EntryPage(Get.arguments[0], Get.arguments[2]),
+          name: EntryView.ROUTE,
+          page: () => EntryView(Get.arguments[0], Get.arguments[2]),
           binding: BindingsBuilder(() {
             Get.put(
               EntryController(Get.arguments[0], Get.arguments[1]),
@@ -174,16 +174,16 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: FavouritesPage.ROUTE,
-          page: () => FavouritesPage(Get.arguments),
+          name: FavouritesView.ROUTE,
+          page: () => FavouritesView(Get.arguments),
           binding: BindingsBuilder(() {
             Get.put(FavouritesController(Get.arguments),
                 tag: Get.arguments.toString());
           }),
         ),
         GetPage(
-          name: FriendsPage.ROUTE,
-          page: () => FriendsPage(Get.arguments[0]),
+          name: FriendsView.ROUTE,
+          page: () => FriendsView(Get.arguments[0]),
           binding: BindingsBuilder(() {
             Get.put(
               FriendsController(Get.arguments[0], Get.arguments[1]),
@@ -192,36 +192,36 @@ class App extends StatelessWidget {
           }),
         ),
         GetPage(
-          name: FeedPage.ROUTE,
-          page: () => FeedPage(Get.arguments),
+          name: FeedView.ROUTE,
+          page: () => FeedView(Get.arguments),
           binding: BindingsBuilder(() {
             Get.put(FeedController(Get.arguments),
                 tag: Get.arguments.toString());
           }),
         ),
         GetPage(
-          name: UserReviewsPage.ROUTE,
-          page: () => UserReviewsPage(Get.arguments),
+          name: UserReviewsView.ROUTE,
+          page: () => UserReviewsView(Get.arguments),
           binding: BindingsBuilder(() {
             Get.put(UserReviewsController(Get.arguments),
                 tag: Get.arguments.toString());
           }),
         ),
         GetPage(
-          name: StatisticsPage.ROUTE,
-          page: () => StatisticsPage(Get.arguments),
+          name: StatisticsView.ROUTE,
+          page: () => StatisticsView(Get.arguments),
           binding: BindingsBuilder(() {
             Get.put(StatisticsController(Get.arguments),
                 tag: Get.arguments.toString());
           }),
         ),
         GetPage(
-          name: FilterPage.ROUTE,
-          page: () => FilterPage(Get.arguments[0], Get.arguments[1]),
+          name: FilterView.ROUTE,
+          page: () => FilterView(Get.arguments[0], Get.arguments[1]),
         ),
         GetPage(
-          name: SettingsPage.ROUTE,
-          page: () => SettingsPage(),
+          name: SettingsView.ROUTE,
+          page: () => SettingsView(),
           binding: BindingsBuilder.put(() => SettingsController()),
         ),
       ],

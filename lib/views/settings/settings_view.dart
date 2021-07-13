@@ -3,14 +3,14 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings_controller.dart';
-import 'package:otraku/pages/settings/personalisation_page.dart';
-import 'package:otraku/pages/settings/content_page.dart';
-import 'package:otraku/pages/settings/notification_settings_page.dart';
-import 'package:otraku/pages/settings/about_page.dart';
+import 'package:otraku/views/settings/personalisation_tab.dart';
+import 'package:otraku/views/settings/content_tab.dart';
+import 'package:otraku/views/settings/notification_settings_tab.dart';
+import 'package:otraku/views/settings/about_tab.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsView extends StatelessWidget {
   static const ROUTE = '/settings';
 
   Widget build(BuildContext context) {

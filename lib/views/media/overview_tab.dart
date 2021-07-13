@@ -7,7 +7,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/media_overview_model.dart';
-import 'package:otraku/pages/home/home_page.dart';
+import 'package:otraku/views/home/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -140,7 +140,7 @@ class OverviewTab extends StatelessWidget {
                 );
                 explorable.type = overview.browsable;
                 explorable.search = '';
-                Config.setIndex(HomePage.EXPLORE);
+                Config.setIndex(HomeView.EXPLORE);
                 Get.until((route) => route.isFirst);
               },
               onLongTap: (index) => Toast.copy(context, overview.genres[index]),

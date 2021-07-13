@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/pages/activity_page.dart';
-import 'package:otraku/pages/home/user_page.dart';
-import 'package:otraku/pages/media/media_page.dart';
+import 'package:otraku/views/activity_view.dart';
+import 'package:otraku/views/home/user_view.dart';
+import 'package:otraku/views/media/media_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -128,32 +128,32 @@ void _fetch() => Workmanager().executeTask((_, input) async {
 
         switch (model.type) {
           case NotificationType.FOLLOWING:
-            _show(model, 'New Follow', '${UserPage.ROUTE}/${model.bodyId}');
+            _show(model, 'New Follow', '${UserView.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_MESSAGE:
             _show(
-                model, 'New Message', '${ActivityPage.ROUTE}/${model.bodyId}');
+                model, 'New Message', '${ActivityView.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_REPLY:
           case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-            _show(model, 'New Reply', '${ActivityPage.ROUTE}/${model.bodyId}');
+            _show(model, 'New Reply', '${ActivityView.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_MENTION:
             _show(
-                model, 'New Mention', '${ActivityPage.ROUTE}/${model.bodyId}');
+                model, 'New Mention', '${ActivityView.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.ACTIVITY_LIKE:
             _show(
               model,
               'New Activity Like',
-              '${ActivityPage.ROUTE}/${model.bodyId}',
+              '${ActivityView.ROUTE}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
             _show(
               model,
               'New Reply Like',
-              '${ActivityPage.ROUTE}/${model.bodyId}',
+              '${ActivityView.ROUTE}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
@@ -172,10 +172,10 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             _show(model, 'New Forum Comment Like', '/thread/${model.bodyId}');
             break;
           case NotificationType.AIRING:
-            _show(model, 'New Episode', '${MediaPage.ROUTE}/${model.bodyId}');
+            _show(model, 'New Episode', '${MediaView.ROUTE}/${model.bodyId}');
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
-            _show(model, 'New Addition', '${MediaPage.ROUTE}/${model.bodyId}');
+            _show(model, 'New Addition', '${MediaView.ROUTE}/${model.bodyId}');
             break;
           default:
             break;

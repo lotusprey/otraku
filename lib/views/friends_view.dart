@@ -8,11 +8,11 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class FriendsPage extends StatelessWidget {
+class FriendsView extends StatelessWidget {
   static const ROUTE = '/friends';
 
   final int id;
-  FriendsPage(this.id);
+  FriendsView(this.id);
 
   @override
   Widget build(BuildContext context) => GetBuilder<FriendsController>(

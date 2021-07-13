@@ -5,11 +5,11 @@ import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 
-class UserReviewsPage extends StatelessWidget {
+class UserReviewsView extends StatelessWidget {
   static const ROUTE = '/reviews';
 
   final int id;
-  UserReviewsPage(this.id);
+  UserReviewsView(this.id);
 
   @override
   Widget build(BuildContext context) {

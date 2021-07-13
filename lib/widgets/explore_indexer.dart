@@ -4,14 +4,14 @@ import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/pages/character_page.dart';
-import 'package:otraku/pages/entry_page.dart';
-import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/review_page.dart';
-import 'package:otraku/pages/staff_page.dart';
-import 'package:otraku/pages/studio_page.dart';
-import 'package:otraku/pages/home/user_page.dart';
+import 'package:otraku/views/home/home_view.dart';
+import 'package:otraku/views/character_view.dart';
+import 'package:otraku/views/entry_view.dart';
+import 'package:otraku/views/media/media_view.dart';
+import 'package:otraku/views/review_view.dart';
+import 'package:otraku/views/staff_view.dart';
+import 'package:otraku/views/studio_view.dart';
+import 'package:otraku/views/home/user_view.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable browsable;
@@ -35,7 +35,7 @@ class ExploreIndexer extends StatelessWidget {
       case Explorable.anime:
       case Explorable.manga:
         Get.toNamed(
-          MediaPage.ROUTE,
+          MediaView.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
           preventDuplicates: false,
@@ -43,21 +43,21 @@ class ExploreIndexer extends StatelessWidget {
         return;
       case Explorable.character:
         Get.toNamed(
-          CharacterPage.ROUTE,
+          CharacterView.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
         return;
       case Explorable.staff:
         Get.toNamed(
-          StaffPage.ROUTE,
+          StaffView.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
         return;
       case Explorable.studio:
         Get.toNamed(
-          StudioPage.ROUTE,
+          StudioView.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
@@ -65,18 +65,18 @@ class ExploreIndexer extends StatelessWidget {
       case Explorable.user:
         if (id != Client.viewerId)
           Get.toNamed(
-            UserPage.ROUTE,
+            UserView.ROUTE,
             arguments: [id, imageUrl],
             parameters: {'id': id.toString()},
           );
         else {
-          Config.setIndex(HomePage.PROFILE);
+          Config.setIndex(HomeView.PROFILE);
           Get.until((route) => route.isFirst);
         }
         return;
       case Explorable.review:
         Get.toNamed(
-          ReviewPage.ROUTE,
+          ReviewView.ROUTE,
           arguments: [id, imageUrl],
           parameters: {'id': id.toString()},
         );
@@ -92,7 +92,7 @@ class ExploreIndexer extends StatelessWidget {
     Function(EntryModel)? fn,
   ]) =>
       Get.toNamed(
-        EntryPage.ROUTE,
+        EntryView.ROUTE,
         arguments: [id, entry, fn],
         parameters: {'id': id.toString()},
       );

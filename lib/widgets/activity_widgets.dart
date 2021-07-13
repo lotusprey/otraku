@@ -8,7 +8,7 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/activity_model.dart';
-import 'package:otraku/pages/activity_page.dart';
+import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -171,7 +171,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => Get.toNamed(
-              ActivityPage.ROUTE,
+              ActivityView.ROUTE,
               arguments: [
                 widget.model.id,
                 widget.feed.id?.toString() ?? FeedController.HOME_FEED_TAG,

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/pages/home/home_page.dart';
+import 'package:otraku/views/home/home_view.dart';
 
 // Holds constants and configurations that
 // are utilised throughout the whole app.
@@ -28,7 +28,7 @@ class Config {
   static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
   static final storage = GetStorage();
   static final _index =
-      ValueNotifier<int>(storage.read(STARTUP_PAGE) ?? HomePage.ANIME_LIST);
+      ValueNotifier<int>(storage.read(STARTUP_PAGE) ?? HomeView.ANIME_LIST);
 
   static ValueNotifier<int> get index => _index;
   static setIndex(final int val) {

@@ -23,13 +23,13 @@ import 'package:otraku/widgets/fields/score_picker.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class EntryPage extends StatelessWidget {
+class EntryView extends StatelessWidget {
   static const ROUTE = '/edit';
 
   final int mediaId;
   final Function(EntryModel)? callback;
 
-  EntryPage(this.mediaId, this.callback);
+  EntryView(this.mediaId, this.callback);
 
   @override
   Widget build(BuildContext context) {

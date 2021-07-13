@@ -2,30 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/models/character_model.dart';
+import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/controllers/staff_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class CharacterPage extends StatelessWidget {
-  static const ROUTE = '/character';
+class StaffView extends StatelessWidget {
+  static const ROUTE = '/staff';
 
   final int id;
   final String imageUrl;
 
-  CharacterPage(this.id, this.imageUrl);
+  StaffView(this.id, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
-    final character = Get.find<CharacterController>(tag: id.toString());
+    final staff = Get.find<StaffController>(tag: id.toString());
     final axis = MediaQuery.of(context).size.width > 450
         ? Axis.horizontal
         : Axis.vertical;
@@ -38,21 +38,21 @@ class CharacterPage extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
-          controller: character.scrollCtrl,
+          controller: staff.scrollCtrl,
           slivers: [
-            GetBuilder<CharacterController>(
+            GetBuilder<StaffController>(
               tag: id.toString(),
-              builder: (c) => TopSliverHeader(
-                toggleFavourite: c.toggleFavourite,
-                isFavourite: c.model?.isFavourite,
-                favourites: c.model?.favourites,
+              builder: (s) => TopSliverHeader(
+                toggleFavourite: s.toggleFavourite,
+                isFavourite: s.model?.isFavourite,
+                favourites: s.model?.favourites,
                 text:
-                    '${c.model?.firstName} ${c.model?.middleName} ${c.model?.lastName}',
+                    '${s.model?.firstName} ${s.model?.middleName} ${s.model?.lastName}',
               ),
             ),
-            GetBuilder<CharacterController>(
+            GetBuilder<StaffController>(
               tag: id.toString(),
-              builder: (c) => SliverPadding(
+              builder: (s) => SliverPadding(
                 padding: Config.PADDING,
                 sliver: SliverToBoxAdapter(
                   child: SizedBox(
@@ -64,7 +64,7 @@ class CharacterPage extends StatelessWidget {
                       children: [
                         GestureDetector(
                           child: Hero(
-                            tag: c.id,
+                            tag: s.id,
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: Image.network(
@@ -79,7 +79,7 @@ class CharacterPage extends StatelessWidget {
                               showPopUp(context, ImageDialog(imageUrl)),
                         ),
                         const SizedBox(height: 10, width: 10),
-                        if (c.model != null) _Details(c.model!, axis),
+                        if (s.model != null) _Details(staff.model!, axis),
                       ],
                     ),
                   ),
@@ -87,66 +87,50 @@ class CharacterPage extends StatelessWidget {
               ),
             ),
             Obx(() {
-              if (character.anime.items.isEmpty &&
-                  character.manga.items.isEmpty)
+              if (staff.characters.items.isEmpty && staff.roles.items.isEmpty)
                 return const SliverToBoxAdapter();
 
               final offset =
                   (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
                       Config.PADDING.top * 2;
 
-              return OpaqueHeader([
-                character.anime.items.isNotEmpty &&
-                        character.manga.items.isNotEmpty
-                    ? BubbleTabs<bool>(
-                        options: const ['Anime', 'Manga'],
-                        values: const [true, false],
-                        initial: true,
-                        onNewValue: (value) {
-                          character.onAnime = value;
-                          character.scrollTo(offset);
-                        },
-                        onSameValue: (_) => character.scrollTo(offset),
-                      )
-                    : const SizedBox(),
-                const Spacer(),
-                if (character.availableLanguages.length > 1)
+              return OpaqueHeader(
+                [
+                  staff.characters.items.isNotEmpty &&
+                          staff.roles.items.isNotEmpty
+                      ? BubbleTabs<bool>(
+                          options: const ['Characters', 'Staff Roles'],
+                          values: const [true, false],
+                          initial: true,
+                          onNewValue: (value) {
+                            staff.onCharacters = value;
+                            staff.scrollTo(offset);
+                          },
+                          onSameValue: (_) => staff.scrollTo(offset),
+                        )
+                      : const SizedBox(),
+                  const Spacer(),
                   ActionIcon(
-                    tooltip: 'Language',
-                    icon: Ionicons.globe_outline,
+                    tooltip: 'Sort',
+                    icon: Ionicons.filter_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
-                      sheet: OptionSheet(
-                        title: 'Language',
-                        options: character.availableLanguages,
-                        index: character.languageIndex,
-                        onTap: (index) => character.staffLanguage =
-                            character.availableLanguages[index],
+                      sheet: MediaSortSheet(
+                        staff.sort,
+                        (sort) {
+                          staff.sort = sort;
+                          staff.scrollTo(offset);
+                        },
                       ),
                       isScrollControlled: true,
                     ),
                   ),
-                const SizedBox(width: 15),
-                ActionIcon(
-                  tooltip: 'Sort',
-                  icon: Ionicons.filter_outline,
-                  onTap: () => Sheet.show(
-                    ctx: context,
-                    sheet: MediaSortSheet(
-                      character.sort,
-                      (sort) {
-                        character.sort = sort;
-                        character.scrollTo(offset);
-                      },
-                    ),
-                    isScrollControlled: true,
-                  ),
-                ),
-              ]);
+                ],
+              );
             }),
             Obx(() {
               final connections =
-                  character.onAnime ? character.anime : character.manga;
+                  staff.onCharacters ? staff.characters : staff.roles;
 
               if (connections.items.isEmpty) return const SliverToBoxAdapter();
 
@@ -157,10 +141,7 @@ class CharacterPage extends StatelessWidget {
                   right: 10,
                   bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                 ),
-                sliver: ConnectionsGrid(
-                  connections: connections.items,
-                  preferredSubtitle: character.staffLanguage,
-                ),
+                sliver: ConnectionsGrid(connections: connections.items),
               );
             }),
           ],
@@ -171,7 +152,7 @@ class CharacterPage extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
-  final CharacterModel model;
+  final StaffModel model;
   final Axis axis;
   _Details(this.model, this.axis);
 

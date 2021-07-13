@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/pages/home/explore_page.dart';
-import 'package:otraku/pages/home/collection_page.dart';
-import 'package:otraku/pages/home/feed_page.dart';
-import 'package:otraku/pages/home/user_page.dart';
+import 'package:otraku/views/home/explore_tab.dart';
+import 'package:otraku/views/home/collection_view.dart';
+import 'package:otraku/views/home/feed_view.dart';
+import 'package:otraku/views/home/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
@@ -12,7 +12,7 @@ import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-class HomePage extends StatelessWidget {
+class HomeView extends StatelessWidget {
   static const ROUTE = '/home';
 
   static const FEED = 0;

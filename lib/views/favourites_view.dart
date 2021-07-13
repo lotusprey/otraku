@@ -9,11 +9,11 @@ import 'package:otraku/widgets/layouts/title_list.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class FavouritesPage extends StatelessWidget {
+class FavouritesView extends StatelessWidget {
   static const ROUTE = '/favourites';
 
   final int id;
-  FavouritesPage(this.id);
+  FavouritesView(this.id);
 
   @override
   Widget build(BuildContext context) => GetBuilder<FavouritesController>(

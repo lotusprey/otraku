@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/pages/auth_page.dart';
+import 'package:otraku/views/auth_view.dart';
 
 class Client {
   Client._();
@@ -81,7 +81,7 @@ class Client {
     Config.storage.erase();
     _accessToken = null;
     _viewerId = null;
-    Get.offAllNamed(AuthPage.ROUTE);
+    Get.offAllNamed(AuthView.ROUTE);
   }
 
   // The app needs both the accessToken and the viewer id.
@@ -148,7 +148,7 @@ class Client {
     if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
-      Get.offAllNamed(AuthPage.ROUTE);
+      Get.offAllNamed(AuthView.ROUTE);
       return;
     }
 

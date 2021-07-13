@@ -12,13 +12,13 @@ import 'package:otraku/widgets/navigation/opaque_header.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class StudioPage extends StatelessWidget {
+class StudioView extends StatelessWidget {
   static const ROUTE = '/studio';
 
   final int id;
   final String name;
 
-  StudioPage(this.id, this.name);
+  StudioView(this.id, this.name);
 
   @override
   Widget build(BuildContext context) {

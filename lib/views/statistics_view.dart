@@ -10,11 +10,11 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/pie_chart.dart';
 
-class StatisticsPage extends StatelessWidget {
+class StatisticsView extends StatelessWidget {
   static const ROUTE = '/statistics';
 
   final int id;
-  StatisticsPage(this.id);
+  StatisticsView(this.id);
 
   @override
   Widget build(BuildContext context) {

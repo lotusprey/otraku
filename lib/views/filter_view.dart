@@ -15,13 +15,13 @@ import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/layouts/chip_grid.dart';
 
-class FilterPage extends StatelessWidget {
+class FilterView extends StatelessWidget {
   static const ROUTE = '/filters';
 
   final String? collectionTag;
   final void Function(bool) isDefinitelyInactive;
 
-  FilterPage(this.collectionTag, this.isDefinitelyInactive);
+  FilterView(this.collectionTag, this.isDefinitelyInactive);
 
   @override
   Widget build(BuildContext context) {

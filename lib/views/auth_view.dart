@@ -4,26 +4,26 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/pages/home/home_page.dart';
+import 'package:otraku/views/home/home_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AuthPage extends StatefulWidget {
+class AuthView extends StatefulWidget {
   static const ROUTE = '/auth';
 
-  const AuthPage();
+  const AuthView();
 
   @override
-  _AuthPageState createState() => _AuthPageState();
+  _AuthViewState createState() => _AuthViewState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthViewState extends State<AuthView> {
   bool _loading = true;
 
   void _verify() => Client.logIn().then(
         (loggedIn) => loggedIn
-            ? Get.offAllNamed(HomePage.ROUTE)
+            ? Get.offAllNamed(HomeView.ROUTE)
             : setState(() => _loading = false),
       );
 

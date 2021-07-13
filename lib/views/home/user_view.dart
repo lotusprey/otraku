@@ -3,26 +3,26 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/pages/friends_page.dart';
-import 'package:otraku/pages/home/feed_page.dart';
-import 'package:otraku/pages/statistics_page.dart';
-import 'package:otraku/pages/user_reviews_page.dart';
+import 'package:otraku/views/friends_view.dart';
+import 'package:otraku/views/home/feed_view.dart';
+import 'package:otraku/views/statistics_view.dart';
+import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
-import 'package:otraku/pages/favourites_page.dart';
-import 'package:otraku/pages/home/home_page.dart';
+import 'package:otraku/views/favourites_view.dart';
+import 'package:otraku/views/home/home_view.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/pages/home/collection_page.dart';
+import 'package:otraku/views/home/collection_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class UserPage extends StatelessWidget {
+class UserView extends StatelessWidget {
   static const ROUTE = '/user';
 
   final int id;
   final String? avatarUrl;
 
-  const UserPage(this.id, this.avatarUrl);
+  const UserView(this.id, this.avatarUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -72,46 +72,46 @@ class UserTab extends StatelessWidget {
                     Ionicons.film,
                     'Anime',
                     () => id == Client.viewerId
-                        ? Config.setIndex(HomePage.ANIME_LIST)
+                        ? Config.setIndex(HomeView.ANIME_LIST)
                         : _pushCollection(true),
                   ),
                   _Button(
                     Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
-                        ? Config.setIndex(HomePage.MANGA_LIST)
+                        ? Config.setIndex(HomeView.MANGA_LIST)
                         : _pushCollection(false),
                   ),
                   _Button(
                     Ionicons.people_circle,
                     'Following',
-                    () => Get.toNamed(FriendsPage.ROUTE, arguments: [id, true]),
+                    () => Get.toNamed(FriendsView.ROUTE, arguments: [id, true]),
                   ),
                   _Button(
                     Ionicons.person_circle,
                     'Followers',
                     () =>
-                        Get.toNamed(FriendsPage.ROUTE, arguments: [id, false]),
+                        Get.toNamed(FriendsView.ROUTE, arguments: [id, false]),
                   ),
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Get.toNamed(FeedPage.ROUTE, arguments: id),
+                    () => Get.toNamed(FeedView.ROUTE, arguments: id),
                   ),
                   _Button(
                     Icons.favorite,
                     'Favourites',
-                    () => Get.toNamed(FavouritesPage.ROUTE, arguments: id),
+                    () => Get.toNamed(FavouritesView.ROUTE, arguments: id),
                   ),
                   _Button(
                     Ionicons.stats_chart,
                     'Statistics',
-                    () => Get.toNamed(StatisticsPage.ROUTE, arguments: id),
+                    () => Get.toNamed(StatisticsView.ROUTE, arguments: id),
                   ),
                   _Button(
                     Icons.rate_review,
                     'Reviews',
-                    () => Get.toNamed(UserReviewsPage.ROUTE, arguments: id),
+                    () => Get.toNamed(UserReviewsView.ROUTE, arguments: id),
                   ),
                 ],
               ),
@@ -138,7 +138,7 @@ class UserTab extends StatelessWidget {
     final collectionTag =
         '${ofAnime ? CollectionController.ANIME : CollectionController.MANGA}$id';
     Get.toNamed(
-      CollectionPage.ROUTE,
+      CollectionView.ROUTE,
       arguments: [id, ofAnime, collectionTag],
       preventDuplicates: false,
     );

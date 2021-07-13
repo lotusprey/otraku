@@ -16,12 +16,12 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
-class ActivityPage extends StatelessWidget {
+class ActivityView extends StatelessWidget {
   static const ROUTE = '/activity';
 
   final int id;
 
-  ActivityPage(this.id);
+  ActivityView(this.id);
 
   @override
   Widget build(BuildContext context) {

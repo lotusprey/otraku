@@ -10,13 +10,13 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 
-class ReviewPage extends StatelessWidget {
+class ReviewView extends StatelessWidget {
   static const ROUTE = '/review';
 
   final int id;
   final String? bannerUrl;
 
-  ReviewPage(this.id, this.bannerUrl);
+  ReviewView(this.id, this.bannerUrl);
 
   @override
   Widget build(BuildContext context) => Scaffold(

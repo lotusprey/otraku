@@ -3,7 +3,6 @@ import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/pages/home/home_page.dart';
 
@@ -58,7 +57,7 @@ class ExploreIndexer extends StatelessWidget {
   static void openEditPage(
     int id, [
     EntryModel? entry,
-    Function(ListStatus?)? fn,
+    Function(EntryModel)? fn,
   ]) =>
       Navigation.it.push(Navigation.entryRoute, args: [id, entry, fn]);
 

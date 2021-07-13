@@ -10,7 +10,7 @@ import 'package:otraku/models/page_model.dart';
 
 class MediaModel {
   final MediaOverviewModel overview;
-  final EntryModel entry;
+  late EntryModel entry;
   final List<RelatedMediaModel> otherMedia;
   final _characters = PageModel<ConnectionModel>().obs;
   final _staff = PageModel<ConnectionModel>().obs;

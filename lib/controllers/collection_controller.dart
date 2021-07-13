@@ -73,6 +73,7 @@ class CollectionController extends ScrollxController implements Filterable {
         repeat: $repeat, private: $private, notes: $notes,
         hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
         startedAt: $startedAt, completedAt: $completedAt, advancedScores: $advancedScores) {
+          id
           mediaId
           status
           score
@@ -260,6 +261,9 @@ class CollectionController extends ScrollxController implements Filterable {
 
     final data = await Client.request(_updateEntryMutation, newEntry.toMap());
     if (data == null) return;
+
+    // Update the entry model (necessary for the updateEntry() caller).
+    newEntry.entryId = data['SaveMediaListEntry']['id'];
 
     final entry = ListEntryModel(data['SaveMediaListEntry']);
 

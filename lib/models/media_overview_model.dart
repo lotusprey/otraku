@@ -1,12 +1,11 @@
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/list_status.dart';
 
 class MediaOverviewModel {
   final int id;
   final Explorable browsable;
   final int? favourites;
-  bool? isFavourite;
+  bool isFavourite;
   final String? preferredTitle;
   final String? romajiTitle;
   final String? englishTitle;
@@ -17,7 +16,6 @@ class MediaOverviewModel {
   final String description;
   final String? format;
   final String? status;
-  ListStatus? entryStatus;
   final int? nextEpisode;
   final String? timeUntilAiring;
   final int? episodes;
@@ -52,7 +50,6 @@ class MediaOverviewModel {
     required this.description,
     required this.format,
     required this.status,
-    required this.entryStatus,
     required this.nextEpisode,
     required this.timeUntilAiring,
     required this.episodes,
@@ -90,7 +87,7 @@ class MediaOverviewModel {
     final o = MediaOverviewModel._(
       id: map['id'],
       browsable: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
-      isFavourite: map['isFavourite'],
+      isFavourite: map['isFavourite'] ?? false,
       favourites: map['favourites'],
       preferredTitle: map['title']['userPreferred'],
       romajiTitle: map['title']['romaji'],
@@ -102,12 +99,6 @@ class MediaOverviewModel {
       description: Convert.clearHtml(map['description']),
       format: Convert.clarifyEnum(map['format']),
       status: Convert.clarifyEnum(map['status']),
-      entryStatus: map['mediaListEntry'] != null
-          ? Convert.strToEnum(
-              map['mediaListEntry']['status'].toString(),
-              ListStatus.values,
-            )
-          : null,
       nextEpisode: map['nextAiringEpisode'] != null
           ? map['nextAiringEpisode']['episode']
           : null,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
@@ -9,7 +9,7 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaHeader extends StatefulWidget {
-  final MediaController media;
+  final MediaController ctrl;
   final String? imageUrl;
   final double coverWidth;
   final double coverHeight;
@@ -17,7 +17,7 @@ class MediaHeader extends StatefulWidget {
   final double height;
 
   MediaHeader({
-    required this.media,
+    required this.ctrl,
     required this.imageUrl,
     required this.coverWidth,
     required this.coverHeight,
@@ -32,7 +32,7 @@ class MediaHeader extends StatefulWidget {
 class _MediaHeaderState extends State<MediaHeader> {
   @override
   Widget build(BuildContext context) {
-    final overview = widget.media.model?.overview;
+    final overview = widget.ctrl.model?.overview;
     return CustomSliverHeader(
       height: widget.height,
       title: overview?.preferredTitle,
@@ -42,13 +42,15 @@ class _MediaHeaderState extends State<MediaHeader> {
                 dimmed: false,
                 tooltip: 'Edit',
                 onTap: _edit,
-                icon: overview.entryStatus == null ? Icons.add : Icons.edit,
+                icon: widget.ctrl.model!.entry.status == null
+                    ? Icons.add
+                    : Icons.edit,
               ),
               ActionIcon(
                 dimmed: false,
                 tooltip: 'Favourite',
                 onTap: _toggleFavourite,
-                icon: overview.isFavourite!
+                icon: overview.isFavourite
                     ? Icons.favorite
                     : Icons.favorite_border,
               ),
@@ -93,7 +95,7 @@ class _MediaHeaderState extends State<MediaHeader> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Hero(
-              tag: widget.media.id,
+              tag: widget.ctrl.id,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
@@ -168,7 +170,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                   horizontal: 10,
                                 ),
                                 child: Icon(
-                                  overview.entryStatus == null
+                                  widget.ctrl.model!.entry.status == null
                                       ? Icons.add
                                       : Icons.edit,
                                 ),
@@ -186,7 +188,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                   horizontal: 10,
                                 ),
                                 child: Icon(
-                                  overview.isFavourite!
+                                  overview.isFavourite
                                       ? Icons.favorite
                                       : Icons.favorite_border,
                                 ),
@@ -212,16 +214,15 @@ class _MediaHeaderState extends State<MediaHeader> {
   }
 
   void _edit() => ExploreIndexer.openEditPage(
-        widget.media.model!.overview.id,
-        widget.media.model!.entry,
-        (ListStatus? status) =>
-            setState(() => widget.media.model!.overview.entryStatus = status),
+        widget.ctrl.model!.overview.id,
+        widget.ctrl.model!.entry,
+        (EntryModel entry) => setState(() => widget.ctrl.model!.entry = entry),
       );
 
-  void _toggleFavourite() => widget.media.toggleFavourite().then((ok) => ok
+  void _toggleFavourite() => widget.ctrl.toggleFavourite().then((ok) => ok
       ? setState(
-          () => widget.media.model!.overview.isFavourite =
-              !widget.media.model!.overview.isFavourite!,
+          () => widget.ctrl.model!.overview.isFavourite =
+              !widget.ctrl.model!.overview.isFavourite,
         )
       : null);
 }

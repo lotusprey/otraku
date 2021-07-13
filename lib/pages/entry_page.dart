@@ -6,6 +6,7 @@ import 'package:otraku/controllers/entry_controller.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -26,7 +27,7 @@ class EntryPage extends StatelessWidget {
   static const ROUTE = '/edit';
 
   final int mediaId;
-  final Function(ListStatus?)? callback;
+  final Function(EntryModel)? callback;
 
   EntryPage(this.mediaId, this.callback);
 
@@ -35,8 +36,8 @@ class EntryPage extends StatelessWidget {
     return GetBuilder<EntryController>(
       id: EntryController.MAIN_ID,
       tag: mediaId.toString(),
-      builder: (entry) {
-        final model = entry.model;
+      builder: (entryCtrl) {
+        final model = entryCtrl.model;
 
         return Scaffold(
           appBar: CustomAppBar(
@@ -59,8 +60,8 @@ class EntryPage extends StatelessWidget {
                                 tag: model.type == 'ANIME'
                                     ? CollectionController.ANIME
                                     : CollectionController.MANGA,
-                              ).removeEntry(entry.oldModel!);
-                              callback?.call(null);
+                              ).removeEntry(entryCtrl.oldModel!);
+                              callback?.call(EntryModel.empty(model));
                               Navigator.of(context).pop();
                             },
                           ),
@@ -75,16 +76,16 @@ class EntryPage extends StatelessWidget {
                             tag: model.type == 'ANIME'
                                 ? CollectionController.ANIME
                                 : CollectionController.MANGA,
-                          ).updateEntry(entry.oldModel!, model);
-
-                          Navigator.of(context).pop();
-                          callback?.call(model.status);
+                          ).updateEntry(entryCtrl.oldModel!, model).then((_) {
+                            callback?.call(model);
+                            Navigator.of(context).pop();
+                          });
                         }),
                   ]
                 : [],
           ),
           body: model != null
-              ? _Content(entry, Get.find<ViewerController>().settings!)
+              ? _Content(entryCtrl, Get.find<ViewerController>().settings!)
               : const Center(child: Loader()),
         );
       },

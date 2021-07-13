@@ -49,7 +49,7 @@ class MediaPage extends StatelessWidget {
             controller: media.scrollCtrl,
             slivers: [
               MediaHeader(
-                media: media,
+                ctrl: media,
                 imageUrl: coverUrl,
                 coverWidth: coverWidth,
                 coverHeight: coverHeight,

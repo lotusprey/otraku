@@ -4,7 +4,7 @@ import 'package:otraku/enums/list_status.dart';
 
 class EntryModel {
   final int mediaId;
-  final int? entryId;
+  int? entryId;
   final String? type;
   ListStatus? status;
   int progress;
@@ -111,6 +111,13 @@ class EntryModel {
         hiddenFromStatusLists: copy.hiddenFromStatusLists,
         advancedScores: {...copy.advancedScores},
         customLists: {...copy.customLists},
+      );
+
+  factory EntryModel.empty(final EntryModel copy) => EntryModel._(
+        type: copy.type,
+        mediaId: copy.mediaId,
+        progressMax: copy.progressMax,
+        progressVolumesMax: copy.progressVolumesMax,
       );
 
   Map<String, dynamic> toMap() => {

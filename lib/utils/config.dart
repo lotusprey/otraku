@@ -8,6 +8,15 @@ import 'package:otraku/views/home_view.dart';
 
 // Holds constants and configurations utilised throughout the whole app.
 class Config {
+  // Storage keys.
+  static const STARTUP_PAGE = 'startupPage';
+  static const THEME_MODE = 'themeMode';
+  static const LIGHT_THEME = 'theme1';
+  static const DARK_THEME = 'theme2';
+  static const FOLLOWING_FEED = 'feedMode';
+  static const LAST_NOTIFICATION_COUNT = 'lastNotificationCount';
+
+  // Constants.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = Radius.circular(10);
@@ -15,14 +24,6 @@ class Config {
   static const PHYSICS = BouncingScrollPhysics();
   static const FADE_DURATION = Duration(milliseconds: 300);
   static const TAB_SWITCH_DURATION = Duration(milliseconds: 200);
-
-  // Storage keys
-  static const STARTUP_PAGE = 'startupPage';
-  static const THEME_MODE = 'themeMode';
-  static const LIGHT_THEME = 'theme1';
-  static const DARK_THEME = 'theme2';
-  static const FOLLOWING_FEED = 'feedMode';
-  static const LAST_NOTIFICATION_COUNT = 'lastNotificationCount';
 
   static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
   static final storage = GetStorage();

@@ -24,8 +24,6 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class EntryView extends StatelessWidget {
-  static const ROUTE = '/edit';
-
   final int mediaId;
   final Function(EntryModel)? callback;
 

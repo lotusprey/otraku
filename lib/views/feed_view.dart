@@ -18,8 +18,6 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class FeedView extends StatelessWidget {
-  static const ROUTE = '/feed';
-
   final int id;
   FeedView(this.id);
 

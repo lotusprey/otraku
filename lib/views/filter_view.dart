@@ -16,8 +16,6 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/layouts/chip_grid.dart';
 
 class FilterView extends StatelessWidget {
-  static const ROUTE = '/filters';
-
   final String? collectionTag;
   final void Function(bool) isDefinitelyInactive;
 

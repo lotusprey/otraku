@@ -10,8 +10,6 @@ import 'package:otraku/widgets/navigation/headline_header.dart';
 import '../utils/client.dart';
 
 class CollectionView extends StatelessWidget {
-  static const ROUTE = '/collection';
-
   final int id;
   final bool ofAnime;
   final String ctrlTag;

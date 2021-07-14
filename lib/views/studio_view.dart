@@ -13,8 +13,6 @@ import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StudioView extends StatelessWidget {
-  static const ROUTE = '/studio';
-
   final int id;
   final String name;
 

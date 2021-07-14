@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -15,8 +15,6 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends StatelessWidget {
-  static const ROUTE = '/notifications';
-
   @override
   Widget build(BuildContext context) {
     final notifications = Get.find<NotificationsController>();
@@ -112,10 +110,9 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.ACTIVITY_REPLY:
                     case NotificationType.ACTIVITY_REPLY_LIKE:
                     case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                      Get.toNamed(
-                        ActivityView.ROUTE,
-                        arguments: [notification.bodyId, null, null],
-                        parameters: {'id': notification.bodyId.toString()},
+                      Navigation.it.push(
+                        Navigation.activityRoute,
+                        args: [notification.bodyId, null],
                       );
                       return;
                     case NotificationType.FOLLOWING:

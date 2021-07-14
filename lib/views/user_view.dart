@@ -11,8 +11,6 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class UserView extends StatelessWidget {
-  static const ROUTE = '/user';
-
   final int id;
   final String? avatarUrl;
 

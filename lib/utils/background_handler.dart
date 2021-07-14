@@ -6,9 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/views/activity_view.dart';
-import 'package:otraku/views/user_view.dart';
-import 'package:otraku/views/media_view.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -128,54 +126,92 @@ void _fetch() => Workmanager().executeTask((_, input) async {
 
         switch (model.type) {
           case NotificationType.FOLLOWING:
-            _show(model, 'New Follow', '${UserView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Follow',
+              '${Navigation.userRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_MESSAGE:
             _show(
-                model, 'New Message', '${ActivityView.ROUTE}/${model.bodyId}');
+              model,
+              'New Message',
+              '${Navigation.activityRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_REPLY:
           case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-            _show(model, 'New Reply', '${ActivityView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Reply',
+              '${Navigation.activityRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_MENTION:
             _show(
-                model, 'New Mention', '${ActivityView.ROUTE}/${model.bodyId}');
+              model,
+              'New Mention',
+              '${Navigation.activityRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_LIKE:
             _show(
               model,
               'New Activity Like',
-              '${ActivityView.ROUTE}/${model.bodyId}',
+              '${Navigation.activityRoute}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
             _show(
               model,
               'New Reply Like',
-              '${ActivityView.ROUTE}/${model.bodyId}',
+              '${Navigation.activityRoute}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
             _show(model, 'New Forum Reply', '/thread/${model.bodyId}');
             break;
           case NotificationType.THREAD_COMMENT_MENTION:
-            _show(model, 'New Forum Mention', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Mention',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_SUBSCRIBED:
-            _show(model, 'New Forum Comment', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Comment',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_LIKE:
-            _show(model, 'New Forum Like', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Like',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_COMMENT_LIKE:
-            _show(model, 'New Forum Comment Like', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Comment Like',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.AIRING:
-            _show(model, 'New Episode', '${MediaView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Episode',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
-            _show(model, 'New Addition', '${MediaView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Addition',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
             break;
           default:
             break;

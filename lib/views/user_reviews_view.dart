@@ -6,8 +6,6 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 
 class UserReviewsView extends StatelessWidget {
-  static const ROUTE = '/reviews';
-
   final int id;
   UserReviewsView(this.id);
 

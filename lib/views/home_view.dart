@@ -13,8 +13,6 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends StatelessWidget {
-  static const ROUTE = '/home';
-
   static const FEED = 0;
   static const ANIME_LIST = 1;
   static const MANGA_LIST = 2;

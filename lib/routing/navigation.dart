@@ -74,6 +74,7 @@ class Navigation extends RouterDelegate<String>
   static const filtersRoute = '/filters';
   static const unknownRoute = '/404';
   static const splashRoute = '/splash';
+  static const threadRoute = '/thread';
 
   final _pages = <RoutePage>[];
   final _key = GlobalKey<NavigatorState>();

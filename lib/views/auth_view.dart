@@ -10,8 +10,6 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthView extends StatefulWidget {
-  static const ROUTE = '/auth';
-
   const AuthView();
 
   @override

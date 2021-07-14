@@ -19,8 +19,24 @@ extension Style on Themes {
   static const FONT_MEDIUM = 15.0;
   static const FONT_SMALL = 13.0;
 
+  SystemUiOverlayStyle get overlayStyle {
+    final Map<String, dynamic> theme = _themes[this]!;
+
+    final brightness = theme['brightness'] == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+
+    return SystemUiOverlayStyle(
+      systemNavigationBarColor: theme['background'],
+      systemNavigationBarIconBrightness: brightness,
+      statusBarColor: theme['background'],
+      statusBarIconBrightness: brightness,
+      statusBarBrightness: theme['brightness'],
+    );
+  }
+
   ThemeData get themeData {
-    _setOverlay(_themes[this]!);
+    _setOverlay(overlayStyle);
     return _buildTheme(_themes[this]!);
   }
 }
@@ -94,19 +110,8 @@ const _themes = {
   },
 };
 
-void _setOverlay(Map<String, dynamic> theme) {
-  final brightness = theme['brightness'] == Brightness.dark
-      ? Brightness.light
-      : Brightness.dark;
-
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarColor: theme['background'],
-    systemNavigationBarIconBrightness: brightness,
-    statusBarColor: theme['background'],
-    statusBarIconBrightness: brightness,
-    statusBarBrightness: theme['brightness'],
-  ));
-}
+void _setOverlay(SystemUiOverlayStyle style) =>
+    SystemChrome.setSystemUIOverlayStyle(style);
 
 ThemeData _buildTheme(Map<String, dynamic> theme) => ThemeData(
       fontFamily: 'Rubik',

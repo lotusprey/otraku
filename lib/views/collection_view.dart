@@ -7,7 +7,7 @@ import 'package:otraku/widgets/navigation/custom_drawer.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 
-import '../../utils/client.dart';
+import '../utils/client.dart';
 
 class CollectionView extends StatelessWidget {
   static const ROUTE = '/collection';

@@ -9,12 +9,13 @@ class RouteParser extends RouteInformationParser<String> {
     RouteInformation routeInformation,
   ) async {
     print('parser ${routeInformation.location}');
+
     if (routeInformation.location == null) return Navigation.authRoute;
 
     final uri = Uri.parse(routeInformation.location!);
     if (uri.pathSegments.isEmpty) return Navigation.authRoute;
 
-    return uri.pathSegments[0];
+    return '/${uri.pathSegments[0]}';
   }
 
   @override

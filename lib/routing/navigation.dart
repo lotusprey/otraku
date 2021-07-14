@@ -35,11 +35,9 @@ import 'package:otraku/views/media_view.dart';
 import 'package:otraku/views/notifications_view.dart';
 import 'package:otraku/views/review_view.dart';
 import 'package:otraku/views/settings_view.dart';
-import 'package:otraku/views/splash_view.dart';
 import 'package:otraku/views/staff_view.dart';
 import 'package:otraku/views/statistics_view.dart';
 import 'package:otraku/views/studio_view.dart';
-import 'package:otraku/views/unknown_view.dart';
 import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/routing/route_page.dart';
@@ -48,7 +46,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 class Navigation extends RouterDelegate<String>
     with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
   Navigation._() {
-    push(splashRoute);
+    push(authRoute);
   }
 
   static final it = Navigation._();
@@ -72,8 +70,6 @@ class Navigation extends RouterDelegate<String>
   static const userReviewsRoute = '/userReviews';
   static const activityRoute = '/activity';
   static const filtersRoute = '/filters';
-  static const unknownRoute = '/404';
-  static const splashRoute = '/splash';
   static const threadRoute = '/thread';
 
   final _pages = <RoutePage>[];
@@ -279,11 +275,7 @@ class Navigation extends RouterDelegate<String>
           null,
         );
         break;
-      case splashRoute:
-        _add(splashRoute, const SplashView(), args, null);
-        break;
       default:
-        _add(unknownRoute, const UnknownView(), args, null);
         break;
     }
 
@@ -418,8 +410,16 @@ class Navigation extends RouterDelegate<String>
   @override
   Future<void> setNewRoutePath(String route) {
     print('setNewRoutePath $route');
-    if (route == authRoute && Client.loggedIn()) return SynchronousFuture(null);
 
+    // Don't go to authentication if the user is authenticated or already there.
+    if (route == authRoute) {
+      if (_pages.isNotEmpty && _pages.last.name == authRoute)
+        return SynchronousFuture(null);
+
+      if (Client.loggedIn()) return SynchronousFuture(null);
+    }
+
+    // Only auth and home pages can be at the root.
     if (route == authRoute || route == homeRoute)
       setBasePage(route);
     else

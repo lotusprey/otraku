@@ -70,7 +70,7 @@ class ExploreIndexer extends StatelessWidget {
             parameters: {'id': id.toString()},
           );
         else {
-          Config.setIndex(HomeView.PROFILE);
+          Config.setHomeIndex(HomeView.PROFILE);
           Get.until((route) => route.isFirst);
         }
         return;

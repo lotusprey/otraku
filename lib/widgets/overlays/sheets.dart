@@ -380,8 +380,8 @@ class CollectionSortSheet extends StatelessWidget {
     final collection = Get.find<CollectionController>(tag: collectionTag);
 
     final mediaSort = collection.getFilterWithKey(Filterable.SORT);
-    final currentIndex = mediaSort.index ~/ 2;
-    final currentlyDesc = mediaSort.index % 2 == 0 ? false : true;
+    final currentIndex = mediaSort.homeIndex ~/ 2;
+    final currentlyDesc = mediaSort.homeIndex % 2 == 0 ? false : true;
 
     List<String?> options = [];
     for (int i = 0; i < ListSort.values.length; i += 2) {

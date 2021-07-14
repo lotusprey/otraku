@@ -72,14 +72,14 @@ class HomeUserView extends StatelessWidget {
                     Ionicons.film,
                     'Anime',
                     () => id == Client.viewerId
-                        ? Config.setIndex(HomeView.ANIME_LIST)
+                        ? Config.setHomeIndex(HomeView.ANIME_LIST)
                         : _pushCollection(true),
                   ),
                   _Button(
                     Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
-                        ? Config.setIndex(HomeView.MANGA_LIST)
+                        ? Config.setHomeIndex(HomeView.MANGA_LIST)
                         : _pushCollection(false),
                   ),
                   _Button(

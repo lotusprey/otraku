@@ -140,7 +140,7 @@ class MediaInfoView extends StatelessWidget {
                 );
                 explorable.type = overview.browsable;
                 explorable.search = '';
-                Config.setIndex(HomeView.EXPLORE);
+                Config.setHomeIndex(HomeView.EXPLORE);
                 Get.until((route) => route.isFirst);
               },
               onLongTap: (index) => Toast.copy(context, overview.genres[index]),

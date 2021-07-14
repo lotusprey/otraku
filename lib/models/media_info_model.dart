@@ -1,7 +1,7 @@
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 
-class MediaOverviewModel {
+class MediaInfoModel {
   final int id;
   final Explorable browsable;
   final int? favourites;
@@ -35,7 +35,7 @@ class MediaOverviewModel {
   final String? hashtag;
   final String? countryOfOrigin;
 
-  MediaOverviewModel._({
+  MediaInfoModel._({
     required this.id,
     required this.browsable,
     required this.favourites,
@@ -68,7 +68,7 @@ class MediaOverviewModel {
     required this.countryOfOrigin,
   });
 
-  factory MediaOverviewModel(Map<String, dynamic> map) {
+  factory MediaInfoModel(Map<String, dynamic> map) {
     String? duration;
     if (map['duration'] != null) {
       int time = map['duration'];
@@ -84,7 +84,7 @@ class MediaOverviewModel {
       if (map['seasonYear'] != null) season += ' ${map["seasonYear"]}';
     }
 
-    final o = MediaOverviewModel._(
+    final o = MediaInfoModel._(
       id: map['id'],
       browsable: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       isFavourite: map['isFavourite'] ?? false,

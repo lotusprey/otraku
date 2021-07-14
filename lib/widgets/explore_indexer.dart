@@ -4,14 +4,14 @@ import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/views/home/home_view.dart';
+import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/entry_view.dart';
-import 'package:otraku/views/media/media_view.dart';
+import 'package:otraku/views/media_view.dart';
 import 'package:otraku/views/review_view.dart';
 import 'package:otraku/views/staff_view.dart';
 import 'package:otraku/views/studio_view.dart';
-import 'package:otraku/views/home/user_view.dart';
+import 'package:otraku/views/user_view.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable browsable;

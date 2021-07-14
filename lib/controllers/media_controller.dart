@@ -247,7 +247,7 @@ class MediaController extends ScrollxController {
 
   Future<bool> toggleFavourite() async =>
       await Client.request(
-        _model!.overview.browsable == Explorable.anime
+        _model!.info.browsable == Explorable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': id},

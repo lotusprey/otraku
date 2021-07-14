@@ -32,7 +32,7 @@ class MediaHeader extends StatefulWidget {
 class _MediaHeaderState extends State<MediaHeader> {
   @override
   Widget build(BuildContext context) {
-    final overview = widget.ctrl.model?.overview;
+    final overview = widget.ctrl.model?.info;
     return CustomSliverHeader(
       height: widget.height,
       title: overview?.preferredTitle,
@@ -214,15 +214,15 @@ class _MediaHeaderState extends State<MediaHeader> {
   }
 
   void _edit() => ExploreIndexer.openEditPage(
-        widget.ctrl.model!.overview.id,
+        widget.ctrl.model!.info.id,
         widget.ctrl.model!.entry,
         (EntryModel entry) => setState(() => widget.ctrl.model!.entry = entry),
       );
 
   void _toggleFavourite() => widget.ctrl.toggleFavourite().then((ok) => ok
       ? setState(
-          () => widget.ctrl.model!.overview.isFavourite =
-              !widget.ctrl.model!.overview.isFavourite,
+          () => widget.ctrl.model!.info.isFavourite =
+              !widget.ctrl.model!.info.isFavourite,
         )
       : null);
 }

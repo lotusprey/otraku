@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/views/home/explore_tab.dart';
-import 'package:otraku/views/home/collection_view.dart';
-import 'package:otraku/views/home/feed_view.dart';
-import 'package:otraku/views/home/user_view.dart';
+import 'package:otraku/views/explore_view.dart';
+import 'package:otraku/views/collection_view.dart';
+import 'package:otraku/views/feed_view.dart';
+import 'package:otraku/views/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
@@ -24,21 +24,21 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      const FeedTab(),
-      CollectionTab(
+      const HomeFeedView(),
+      HomeCollectionView(
         ofAnime: true,
         id: Client.viewerId!,
         collectionTag: CollectionController.ANIME,
         key: UniqueKey(),
       ),
-      CollectionTab(
+      HomeCollectionView(
         ofAnime: false,
         id: Client.viewerId!,
         collectionTag: CollectionController.MANGA,
         key: UniqueKey(),
       ),
-      const ExploreTab(),
-      UserTab(Client.viewerId!, null),
+      const ExploreView(),
+      HomeUserView(Client.viewerId!, null),
     ];
 
     const drawers = [

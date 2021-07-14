@@ -59,8 +59,8 @@ class FeedView extends StatelessWidget {
   }
 }
 
-class FeedTab extends StatelessWidget {
-  const FeedTab();
+class HomeFeedView extends StatelessWidget {
+  const HomeFeedView();
 
   @override
   Widget build(BuildContext context) {

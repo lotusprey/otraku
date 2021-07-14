@@ -11,8 +11,8 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
-class ExploreTab extends StatelessWidget {
-  const ExploreTab();
+class ExploreView extends StatelessWidget {
+  const ExploreView();
 
   @override
   Widget build(BuildContext context) {

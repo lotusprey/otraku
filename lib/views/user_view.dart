@@ -4,15 +4,15 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/views/friends_view.dart';
-import 'package:otraku/views/home/feed_view.dart';
+import 'package:otraku/views/feed_view.dart';
 import 'package:otraku/views/statistics_view.dart';
 import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/views/favourites_view.dart';
-import 'package:otraku/views/home/home_view.dart';
+import 'package:otraku/views/home_view.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/views/home/collection_view.dart';
+import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -26,15 +26,15 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: UserTab(id, avatarUrl)));
+    return Scaffold(body: SafeArea(child: HomeUserView(id, avatarUrl)));
   }
 }
 
-class UserTab extends StatelessWidget {
+class HomeUserView extends StatelessWidget {
   final int id;
   final String? avatarUrl;
 
-  const UserTab(this.id, this.avatarUrl);
+  const HomeUserView(this.id, this.avatarUrl);
 
   @override
   Widget build(BuildContext context) {

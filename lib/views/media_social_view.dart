@@ -8,10 +8,10 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
-class SocialTab extends StatelessWidget {
+class MediaSocialView extends StatelessWidget {
   final MediaController media;
 
-  SocialTab(this.media);
+  MediaSocialView(this.media);
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,7 @@ class SocialTab extends StatelessWidget {
                   Expanded(
                     child: ExploreIndexer(
                       id: items[index].reviewId,
-                      imageUrl: media.model!.overview.banner,
+                      imageUrl: media.model!.info.banner,
                       browsable: Explorable.review,
                       child: Container(
                         width: double.infinity,

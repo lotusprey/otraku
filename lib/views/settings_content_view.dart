@@ -10,8 +10,8 @@ import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/switch_tile.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class ContentTab extends StatelessWidget {
-  const ContentTab();
+class SettingsContentView extends StatelessWidget {
+  const SettingsContentView();
 
   @override
   Widget build(BuildContext context) {

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/views/home/home_view.dart';
+import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class PersonalisationTab extends StatelessWidget {
-  const PersonalisationTab();
+class SettingsAppView extends StatelessWidget {
+  const SettingsAppView();
 
   @override
   Widget build(BuildContext context) => ListView(

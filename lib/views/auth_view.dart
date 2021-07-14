@@ -4,7 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/views/home/home_view.dart';
+import 'package:otraku/views/home_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:url_launcher/url_launcher.dart';

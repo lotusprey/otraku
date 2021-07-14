@@ -14,10 +14,10 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class RelationsTab extends StatelessWidget {
+class MediaRelationsView extends StatelessWidget {
   final MediaController media;
 
-  RelationsTab(this.media);
+  MediaRelationsView(this.media);
 
   @override
   Widget build(BuildContext context) {

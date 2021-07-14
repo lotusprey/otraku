@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/views/media/overview_tab.dart';
-import 'package:otraku/views/media/relations_tab.dart';
-import 'package:otraku/views/media/social_tab.dart';
+import 'package:otraku/views/media_info_view.dart';
+import 'package:otraku/views/media_relations_view.dart';
+import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/views/media/media_header.dart';
+import 'package:otraku/widgets/navigation/media_header.dart';
 
 class MediaView extends StatelessWidget {
   static const ROUTE = '/media';
@@ -64,11 +64,11 @@ class MediaView extends StatelessWidget {
                 ),
                 Obx(() {
                   if (media.tab == MediaController.OVERVIEW)
-                    return OverviewTab(media.model!.overview);
+                    return MediaInfoView(media.model!.info);
                   else if (media.tab == MediaController.RELATIONS)
-                    return RelationsTab(media);
+                    return MediaRelationsView(media);
                   else
-                    return SocialTab(media);
+                    return MediaSocialView(media);
                 }),
               ],
               SliverToBoxAdapter(

@@ -5,7 +5,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/user_model.dart';
-import 'package:otraku/views/settings/settings_view.dart';
+import 'package:otraku/views/settings_view.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';

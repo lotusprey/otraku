@@ -2,14 +2,14 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/models/media_overview_model.dart';
+import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/models/page_model.dart';
 
 class MediaModel {
-  final MediaOverviewModel overview;
+  final MediaInfoModel info;
   late EntryModel entry;
   final List<RelatedMediaModel> otherMedia;
   final _characters = PageModel<ConnectionModel>().obs;
@@ -21,7 +21,7 @@ class MediaModel {
   PageModel<RelatedReviewModel> get reviews => _reviews();
 
   MediaModel._(
-    this.overview,
+    this.info,
     this.entry,
     this.otherMedia,
   );
@@ -32,7 +32,7 @@ class MediaModel {
       other.add(RelatedMediaModel(relation));
 
     return MediaModel._(
-      MediaOverviewModel(map),
+      MediaInfoModel(map),
       EntryModel(map),
       other,
     )..addReviews(map);

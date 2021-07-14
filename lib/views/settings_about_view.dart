@@ -7,8 +7,8 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutTab extends StatelessWidget {
-  const AboutTab();
+class SettingsAboutView extends StatelessWidget {
+  const SettingsAboutView();
 
   @override
   Widget build(BuildContext context) {

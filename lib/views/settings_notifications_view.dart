@@ -8,8 +8,8 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
-class NotificationSettingsTab extends StatelessWidget {
-  const NotificationSettingsTab();
+class SettingsNotificationsView extends StatelessWidget {
+  const SettingsNotificationsView();
 
   @override
   Widget build(BuildContext context) {

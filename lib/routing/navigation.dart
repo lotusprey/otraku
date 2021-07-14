@@ -19,29 +19,28 @@ import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/controllers/user_reviews_controller.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
-import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/pages/activity_page.dart';
-import 'package:otraku/pages/auth_page.dart';
-import 'package:otraku/pages/character_page.dart';
-import 'package:otraku/pages/entry_page.dart';
-import 'package:otraku/pages/favourites_page.dart';
-import 'package:otraku/pages/filter_page.dart';
-import 'package:otraku/pages/friends_page.dart';
-import 'package:otraku/pages/home/collection_page.dart';
-import 'package:otraku/pages/home/feed_page.dart';
-import 'package:otraku/pages/home/home_page.dart';
-import 'package:otraku/pages/home/user_page.dart';
-import 'package:otraku/pages/media/media_page.dart';
-import 'package:otraku/pages/notifications_page.dart';
-import 'package:otraku/pages/review_page.dart';
-import 'package:otraku/pages/settings/settings_page.dart';
-import 'package:otraku/pages/splash_page.dart';
-import 'package:otraku/pages/staff_page.dart';
-import 'package:otraku/pages/statistics_page.dart';
-import 'package:otraku/pages/studio_page.dart';
-import 'package:otraku/pages/unknown_page.dart';
-import 'package:otraku/pages/user_reviews_page.dart';
+import 'package:otraku/views/activity_view.dart';
+import 'package:otraku/views/auth_view.dart';
+import 'package:otraku/views/character_view.dart';
+import 'package:otraku/views/entry_view.dart';
+import 'package:otraku/views/favourites_view.dart';
+import 'package:otraku/views/filter_view.dart';
+import 'package:otraku/views/friends_view.dart';
+import 'package:otraku/views/collection_view.dart';
+import 'package:otraku/views/feed_view.dart';
+import 'package:otraku/views/home_view.dart';
+import 'package:otraku/views/user_view.dart';
+import 'package:otraku/views/media_view.dart';
+import 'package:otraku/views/notifications_view.dart';
+import 'package:otraku/views/review_view.dart';
+import 'package:otraku/views/settings_view.dart';
+import 'package:otraku/views/splash_view.dart';
+import 'package:otraku/views/staff_view.dart';
+import 'package:otraku/views/statistics_view.dart';
+import 'package:otraku/views/studio_view.dart';
+import 'package:otraku/views/unknown_view.dart';
+import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/routing/route_page.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -104,7 +103,7 @@ class Navigation extends RouterDelegate<String>
   void push(String route, {List<dynamic> args = const [], bool notify = true}) {
     switch (route) {
       case authRoute:
-        _add(route, AuthPage(), args, null);
+        _add(route, AuthView(), args, null);
         break;
       case homeRoute:
         Get.put(
@@ -122,15 +121,15 @@ class Navigation extends RouterDelegate<String>
         Get.put(FeedController(null), tag: FeedController.HOME_FEED_TAG);
         Get.put(ExplorerController());
         Get.put(ViewerController());
-        _add(route, HomePage(), args, null);
+        _add(route, HomeView(), args, null);
         break;
       case settingsRoute:
         Get.put(SettingsController());
-        _add(route, SettingsPage(), args, null);
+        _add(route, SettingsView(), args, null);
         break;
       case notificationsRoute:
         Get.put(NotificationsController());
-        _add(route, NotificationsPage(), args, null);
+        _add(route, NotificationsView(), args, null);
         break;
       case collectionRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! bool) return;
@@ -143,7 +142,7 @@ class Navigation extends RouterDelegate<String>
         Get.put(CollectionController(id, ofAnime), tag: tag);
         _add(
           route,
-          CollectionPage(id: id, ofAnime: ofAnime, ctrlTag: tag),
+          CollectionView(id: id, ofAnime: ofAnime, ctrlTag: tag),
           args,
           tag,
         );
@@ -155,19 +154,19 @@ class Navigation extends RouterDelegate<String>
         final String? image = args[1];
 
         Get.put(MediaController(id), tag: id.toString());
-        _add(route, MediaPage(id, image), args, id.toString());
+        _add(route, MediaView(id, image), args, id.toString());
         break;
       case entryRoute:
         if (args.length < 3 || args[0] is! int || args[1] is! EntryModel?)
           return;
-        if (args[2] is! Function(ListStatus?)?) return;
+        if (args[2] is! Function(EntryModel)?) return;
 
         final int id = args[0];
         final EntryModel? model = args[1];
-        final Function(ListStatus?)? callback = args[2];
+        final Function(EntryModel)? callback = args[2];
 
         Get.put(EntryController(id, model), tag: id.toString());
-        _add(route, EntryPage(id, callback), args, id.toString());
+        _add(route, EntryView(id, callback), args, id.toString());
         break;
       case characterRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String) return;
@@ -176,7 +175,7 @@ class Navigation extends RouterDelegate<String>
         final String image = args[1];
 
         Get.put(CharacterController(id), tag: id.toString());
-        _add(route, CharacterPage(id, image), args, id.toString());
+        _add(route, CharacterView(id, image), args, id.toString());
         break;
       case staffRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String) return;
@@ -185,7 +184,7 @@ class Navigation extends RouterDelegate<String>
         final String image = args[1];
 
         Get.put(StaffController(id), tag: id.toString());
-        _add(route, StaffPage(id, image), args, id.toString());
+        _add(route, StaffView(id, image), args, id.toString());
         break;
       case studioRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String) return;
@@ -194,7 +193,7 @@ class Navigation extends RouterDelegate<String>
         final String name = args[1];
 
         Get.put(StudioController(id), tag: id.toString());
-        _add(route, StudioPage(id, name), args, id.toString());
+        _add(route, StudioView(id, name), args, id.toString());
         break;
       case reviewRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String?) return;
@@ -203,7 +202,7 @@ class Navigation extends RouterDelegate<String>
         final String? image = args[1];
 
         Get.put(ReviewController(id), tag: id.toString());
-        _add(route, ReviewPage(id, image), args, id.toString());
+        _add(route, ReviewView(id, image), args, id.toString());
         break;
       case userRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String?) return;
@@ -212,7 +211,7 @@ class Navigation extends RouterDelegate<String>
         final String? image = args[1];
 
         Get.put(UserController(id), tag: id.toString());
-        _add(route, UserPage(id, image), args, id.toString());
+        _add(route, UserView(id, image), args, id.toString());
         break;
       case feedRoute:
         if (args.length < 1 || args[0] is! int) return;
@@ -220,7 +219,7 @@ class Navigation extends RouterDelegate<String>
         final int id = args[0];
 
         Get.put(FeedController(id), tag: id.toString());
-        _add(route, FeedPage(id), args, id.toString());
+        _add(route, FeedView(id), args, id.toString());
         break;
       case favouritesRoute:
         if (args.length < 1 || args[0] is! int) return;
@@ -228,7 +227,7 @@ class Navigation extends RouterDelegate<String>
         final int id = args[0];
 
         Get.put(FavouritesController(id), tag: id.toString());
-        _add(route, FavouritesPage(id), args, id.toString());
+        _add(route, FavouritesView(id), args, id.toString());
         break;
       case friendsRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! bool) return;
@@ -237,7 +236,7 @@ class Navigation extends RouterDelegate<String>
         final bool onFollowing = args[1];
 
         Get.put(FriendsController(id, onFollowing), tag: id.toString());
-        _add(route, FriendsPage(id), args, id.toString());
+        _add(route, FriendsView(id), args, id.toString());
         break;
       case statisticsRoute:
         if (args.length < 1 || args[0] is! int) return;
@@ -245,7 +244,7 @@ class Navigation extends RouterDelegate<String>
         final int id = args[0];
 
         Get.put(StatisticsController(id), tag: id.toString());
-        _add(route, StatisticsPage(id), args, id.toString());
+        _add(route, StatisticsView(id), args, id.toString());
         break;
       case userReviewsRoute:
         if (args.length < 1 || args[0] is! int) return;
@@ -253,7 +252,7 @@ class Navigation extends RouterDelegate<String>
         final int id = args[0];
 
         Get.put(UserReviewsController(id), tag: id.toString());
-        _add(route, UserReviewsPage(id), args, id.toString());
+        _add(route, UserReviewsView(id), args, id.toString());
         break;
       case activityRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String?) return;
@@ -262,7 +261,7 @@ class Navigation extends RouterDelegate<String>
         final String? feedTag = args[1];
 
         Get.put(ActivityController(id, feedTag), tag: id.toString());
-        _add(route, ActivityPage(id), args, id.toString());
+        _add(route, ActivityView(id), args, id.toString());
         break;
       case filtersRoute:
         if (args.length < 2 ||
@@ -274,16 +273,16 @@ class Navigation extends RouterDelegate<String>
 
         _add(
           route,
-          FilterPage(collectionTag, isDefinitelyInactive),
+          FilterView(collectionTag, isDefinitelyInactive),
           args,
           null,
         );
         break;
       case splashRoute:
-        _add(splashRoute, const SplashPage(), args, null);
+        _add(splashRoute, const SplashView(), args, null);
         break;
       default:
-        _add(unknownRoute, const UnknownPage(), args, null);
+        _add(unknownRoute, const UnknownView(), args, null);
         break;
     }
 

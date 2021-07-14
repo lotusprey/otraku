@@ -4,7 +4,7 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/pages/home/home_page.dart';
+import 'package:otraku/views/home_view.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable browsable;
@@ -42,7 +42,7 @@ class ExploreIndexer extends StatelessWidget {
         if (id != Client.viewerId)
           Navigation.it.push(Navigation.userRoute, args: [id, imageUrl]);
         else {
-          Config.setIndex(HomePage.PROFILE);
+          Config.setIndex(HomeView.PROFILE);
           Navigation.it.popToFirst();
         }
         return;

@@ -15,7 +15,7 @@ class RouteParser extends RouteInformationParser<String> {
     final uri = Uri.parse(routeInformation.location!);
     if (uri.pathSegments.isEmpty) return Navigation.authRoute;
 
-    return '/${uri.pathSegments[0]}';
+    return uri.pathSegments[0];
   }
 
   @override

@@ -51,26 +51,26 @@ class Navigation extends RouterDelegate<String>
 
   static final it = Navigation._();
 
-  static const authRoute = '/auth';
-  static const homeRoute = '/home';
-  static const settingsRoute = '/settings';
-  static const notificationsRoute = '/notifications';
-  static const collectionRoute = '/collection';
-  static const mediaRoute = '/media';
-  static const entryRoute = '/entry';
-  static const characterRoute = '/character';
-  static const staffRoute = '/staff';
-  static const studioRoute = '/studio';
-  static const reviewRoute = '/review';
-  static const userRoute = '/user';
-  static const feedRoute = '/feed';
-  static const favouritesRoute = '/favourites';
-  static const friendsRoute = '/friends';
-  static const statisticsRoute = '/statistics';
-  static const userReviewsRoute = '/userReviews';
-  static const activityRoute = '/activity';
-  static const filtersRoute = '/filters';
-  static const threadRoute = '/thread';
+  static const authRoute = 'auth';
+  static const homeRoute = 'home';
+  static const settingsRoute = 'settings';
+  static const notificationsRoute = 'notifications';
+  static const collectionRoute = 'collection';
+  static const mediaRoute = 'media';
+  static const entryRoute = 'entry';
+  static const characterRoute = 'character';
+  static const staffRoute = 'staff';
+  static const studioRoute = 'studio';
+  static const reviewRoute = 'review';
+  static const userRoute = 'user';
+  static const feedRoute = 'feed';
+  static const favouritesRoute = 'favourites';
+  static const friendsRoute = 'friends';
+  static const statisticsRoute = 'statistics';
+  static const userReviewsRoute = 'userReviews';
+  static const activityRoute = 'activity';
+  static const filtersRoute = 'filters';
+  static const threadRoute = 'thread';
 
   final _pages = <RoutePage>[];
   final _key = GlobalKey<NavigatorState>();

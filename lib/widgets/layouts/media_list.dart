@@ -329,6 +329,7 @@ class _ProgressButton extends StatelessWidget {
       );
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => increment(entry),
       child: Row(
         children: [

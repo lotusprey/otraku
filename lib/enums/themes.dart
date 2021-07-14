@@ -19,7 +19,10 @@ extension Style on Themes {
   static const FONT_MEDIUM = 15.0;
   static const FONT_SMALL = 13.0;
 
-  ThemeData get themeData => _buildTheme(_themes[this]!);
+  ThemeData get themeData {
+    _setOverlay(_themes[this]!);
+    return _buildTheme(_themes[this]!);
+  }
 }
 
 const _themes = {
@@ -91,7 +94,7 @@ const _themes = {
   },
 };
 
-ThemeData _buildTheme(Map<String, dynamic> theme) {
+void _setOverlay(Map<String, dynamic> theme) {
   final brightness = theme['brightness'] == Brightness.dark
       ? Brightness.light
       : Brightness.dark;
@@ -103,178 +106,179 @@ ThemeData _buildTheme(Map<String, dynamic> theme) {
     statusBarIconBrightness: brightness,
     statusBarBrightness: theme['brightness'],
   ));
-
-  return ThemeData(
-    fontFamily: 'Rubik',
-    brightness: theme['brightness'],
-    backgroundColor: theme['background'],
-    scaffoldBackgroundColor: theme['background'],
-    primaryColor: theme['foreground'],
-    accentColor: theme['accent'],
-    errorColor: theme['error'],
-    cardColor: theme['translucent'],
-    dividerColor: theme['contrast'],
-    disabledColor: theme['faded'],
-    unselectedWidgetColor: theme['faded'],
-    toggleableActiveColor: theme['accent'],
-    splashColor: Colors.transparent,
-    highlightColor: Colors.transparent,
-    colorScheme: ColorScheme(
-      brightness: theme['brightness'],
-      surface: theme['foreground'],
-      background: theme['background'],
-      primary: theme['accent'],
-      primaryVariant: theme['accent'],
-      secondary: theme['error'],
-      secondaryVariant: theme['error'],
-      error: theme['error'],
-      onSurface: theme['contrast'],
-      onBackground: theme['contrast'],
-      onPrimary: theme['background'],
-      onSecondary: theme['background'],
-      onError: theme['background'],
-    ),
-    textSelectionTheme: TextSelectionThemeData(
-      cursorColor: theme['accent'],
-      selectionColor: theme['highlight'],
-      selectionHandleColor: theme['accent'],
-    ),
-    dialogTheme: DialogTheme(
-      elevation: 10,
-      backgroundColor: theme['background'],
-      shape: RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-      titleTextStyle: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['contrast'],
-        fontWeight: FontWeight.w500,
-      ),
-      contentTextStyle: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['contrast'],
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-    iconTheme: IconThemeData(color: theme['faded'], size: Style.ICON_BIG),
-    tooltipTheme: TooltipThemeData(
-      padding: Config.PADDING,
-      decoration: BoxDecoration(
-        color: theme['foreground'],
-        borderRadius: Config.BORDER_RADIUS,
-        boxShadow: [
-          BoxShadow(color: theme['background'], blurRadius: 10),
-        ],
-      ),
-      textStyle: TextStyle(fontSize: Style.FONT_MEDIUM, color: theme['faded']),
-    ),
-    scrollbarTheme: ScrollbarThemeData(
-      radius: Config.RADIUS,
-      thumbColor: MaterialStateProperty.all(theme['faded']),
-    ),
-    sliderTheme: SliderThemeData(
-      thumbColor: theme['accent'],
-      overlayColor: theme['highlight'],
-      activeTrackColor: theme['accent'],
-      inactiveTrackColor: theme['foreground'],
-    ),
-    radioTheme: RadioThemeData(
-      fillColor: MaterialStateProperty.all(theme['accent']),
-      overlayColor: MaterialStateProperty.all(theme['highlight']),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      isDense: true,
-      filled: true,
-      fillColor: theme['foreground'],
-      hintStyle: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['faded'],
-        fontWeight: FontWeight.normal,
-      ),
-      border: const OutlineInputBorder(
-        borderRadius: Config.BORDER_RADIUS,
-        borderSide: BorderSide.none,
-      ),
-    ),
-    textButtonTheme: TextButtonThemeData(
-      style: ButtonStyle(
-        textStyle: MaterialStateProperty.all(TextStyle(
-          fontSize: Style.FONT_MEDIUM,
-        )),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: Config.BORDER_RADIUS,
-        )),
-        foregroundColor: MaterialStateProperty.all(theme['accent']),
-        overlayColor: MaterialStateProperty.all(theme['highlight']),
-      ),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ButtonStyle(
-        textStyle: MaterialStateProperty.all(TextStyle(
-          fontSize: Style.FONT_MEDIUM,
-          fontWeight: FontWeight.w500,
-        )),
-        backgroundColor: MaterialStateProperty.all(theme['accent']),
-        foregroundColor: MaterialStateProperty.all(theme['background']),
-        overlayColor: MaterialStateProperty.all(theme['highlight']),
-        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-          borderRadius: Config.BORDER_RADIUS,
-        )),
-      ),
-    ),
-    textTheme: TextTheme(
-      headline1: TextStyle(
-        fontSize: Style.FONT_BIG,
-        color: theme['accent'],
-        fontWeight: FontWeight.w500,
-      ),
-      headline2: TextStyle(
-        fontSize: Style.FONT_BIG,
-        color: theme['contrast'],
-        fontWeight: FontWeight.w500,
-      ),
-      headline3: TextStyle(
-        fontSize: Style.FONT_BIG,
-        color: theme['faded'],
-        fontWeight: FontWeight.w500,
-      ),
-      headline4: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['accent'],
-        fontWeight: FontWeight.w500,
-      ),
-      headline5: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['contrast'],
-        fontWeight: FontWeight.w500,
-      ),
-      headline6: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['faded'],
-        fontWeight: FontWeight.w500,
-      ),
-      bodyText1: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['accent'],
-        fontWeight: FontWeight.normal,
-      ),
-      bodyText2: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['contrast'],
-        fontWeight: FontWeight.normal,
-      ),
-      subtitle1: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['faded'],
-      ),
-      subtitle2: TextStyle(
-        fontSize: Style.FONT_SMALL,
-        color: theme['faded'],
-        fontWeight: FontWeight.normal,
-      ),
-      button: TextStyle(
-        fontSize: Style.FONT_MEDIUM,
-        color: theme['background'],
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-  );
 }
+
+ThemeData _buildTheme(Map<String, dynamic> theme) => ThemeData(
+      fontFamily: 'Rubik',
+      brightness: theme['brightness'],
+      backgroundColor: theme['background'],
+      scaffoldBackgroundColor: theme['background'],
+      primaryColor: theme['foreground'],
+      accentColor: theme['accent'],
+      errorColor: theme['error'],
+      cardColor: theme['translucent'],
+      dividerColor: theme['contrast'],
+      disabledColor: theme['faded'],
+      unselectedWidgetColor: theme['faded'],
+      toggleableActiveColor: theme['accent'],
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      colorScheme: ColorScheme(
+        brightness: theme['brightness'],
+        surface: theme['foreground'],
+        background: theme['background'],
+        primary: theme['accent'],
+        primaryVariant: theme['accent'],
+        secondary: theme['error'],
+        secondaryVariant: theme['error'],
+        error: theme['error'],
+        onSurface: theme['contrast'],
+        onBackground: theme['contrast'],
+        onPrimary: theme['background'],
+        onSecondary: theme['background'],
+        onError: theme['background'],
+      ),
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: theme['accent'],
+        selectionColor: theme['highlight'],
+        selectionHandleColor: theme['accent'],
+      ),
+      dialogTheme: DialogTheme(
+        elevation: 10,
+        backgroundColor: theme['background'],
+        shape: RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+        titleTextStyle: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['contrast'],
+          fontWeight: FontWeight.w500,
+        ),
+        contentTextStyle: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['contrast'],
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      iconTheme: IconThemeData(color: theme['faded'], size: Style.ICON_BIG),
+      tooltipTheme: TooltipThemeData(
+        padding: Config.PADDING,
+        decoration: BoxDecoration(
+          color: theme['foreground'],
+          borderRadius: Config.BORDER_RADIUS,
+          boxShadow: [
+            BoxShadow(color: theme['background'], blurRadius: 10),
+          ],
+        ),
+        textStyle:
+            TextStyle(fontSize: Style.FONT_MEDIUM, color: theme['faded']),
+      ),
+      scrollbarTheme: ScrollbarThemeData(
+        radius: Config.RADIUS,
+        thumbColor: MaterialStateProperty.all(theme['faded']),
+      ),
+      sliderTheme: SliderThemeData(
+        thumbColor: theme['accent'],
+        overlayColor: theme['highlight'],
+        activeTrackColor: theme['accent'],
+        inactiveTrackColor: theme['foreground'],
+      ),
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.all(theme['accent']),
+        overlayColor: MaterialStateProperty.all(theme['highlight']),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        isDense: true,
+        filled: true,
+        fillColor: theme['foreground'],
+        hintStyle: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['faded'],
+          fontWeight: FontWeight.normal,
+        ),
+        border: const OutlineInputBorder(
+          borderRadius: Config.BORDER_RADIUS,
+          borderSide: BorderSide.none,
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.all(TextStyle(
+            fontSize: Style.FONT_MEDIUM,
+          )),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: Config.BORDER_RADIUS,
+          )),
+          foregroundColor: MaterialStateProperty.all(theme['accent']),
+          overlayColor: MaterialStateProperty.all(theme['highlight']),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.all(TextStyle(
+            fontSize: Style.FONT_MEDIUM,
+            fontWeight: FontWeight.w500,
+          )),
+          backgroundColor: MaterialStateProperty.all(theme['accent']),
+          foregroundColor: MaterialStateProperty.all(theme['background']),
+          overlayColor: MaterialStateProperty.all(theme['highlight']),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            borderRadius: Config.BORDER_RADIUS,
+          )),
+        ),
+      ),
+      textTheme: TextTheme(
+        headline1: TextStyle(
+          fontSize: Style.FONT_BIG,
+          color: theme['accent'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline2: TextStyle(
+          fontSize: Style.FONT_BIG,
+          color: theme['contrast'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline3: TextStyle(
+          fontSize: Style.FONT_BIG,
+          color: theme['faded'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline4: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['accent'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline5: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['contrast'],
+          fontWeight: FontWeight.w500,
+        ),
+        headline6: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['faded'],
+          fontWeight: FontWeight.w500,
+        ),
+        bodyText1: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['accent'],
+          fontWeight: FontWeight.normal,
+        ),
+        bodyText2: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['contrast'],
+          fontWeight: FontWeight.normal,
+        ),
+        subtitle1: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['faded'],
+        ),
+        subtitle2: TextStyle(
+          fontSize: Style.FONT_SMALL,
+          color: theme['faded'],
+          fontWeight: FontWeight.normal,
+        ),
+        button: TextStyle(
+          fontSize: Style.FONT_MEDIUM,
+          color: theme['background'],
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+    );

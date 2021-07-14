@@ -42,7 +42,7 @@ class ExploreIndexer extends StatelessWidget {
         if (id != Client.viewerId)
           Navigation.it.push(Navigation.userRoute, args: [id, imageUrl]);
         else {
-          Config.setIndex(HomeView.PROFILE);
+          Config.setHomeIndex(HomeView.PROFILE);
           Navigation.it.popToFirst();
         }
         return;

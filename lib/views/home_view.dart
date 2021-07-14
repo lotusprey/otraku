@@ -52,7 +52,7 @@ class HomeView extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
       child: ValueListenableBuilder<int>(
-        valueListenable: Config.index,
+        valueListenable: Config.homeIndex,
         builder: (_, index, __) => Scaffold(
           extendBody: true,
           drawerScrimColor: Theme.of(context).primaryColor.withAlpha(150),
@@ -64,7 +64,7 @@ class HomeView extends StatelessWidget {
               'Explore': Ionicons.compass_outline,
               'Profile': Ionicons.person_outline,
             },
-            onChanged: (page) => Config.setIndex(page),
+            onChanged: (page) => Config.setHomeIndex(page),
             initial: index,
           ),
           drawer: drawers[index],

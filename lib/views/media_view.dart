@@ -35,7 +35,7 @@ class MediaView extends StatelessWidget {
         extendBody: true,
         bottomNavigationBar: NavBar(
           options: {
-            'Overview': Ionicons.book_outline,
+            'Info': Ionicons.book_outline,
             'Relations': Icons.emoji_people_outlined,
             'Social': Icons.rate_review_outlined,
           },
@@ -63,7 +63,7 @@ class MediaView extends StatelessWidget {
                       : placeHolder,
                 ),
                 Obx(() {
-                  if (media.tab == MediaController.OVERVIEW)
+                  if (media.tab == MediaController.Info)
                     return MediaInfoView(media.model!.info);
                   else if (media.tab == MediaController.RELATIONS)
                     return MediaRelationsView(media);

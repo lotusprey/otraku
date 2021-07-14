@@ -15,9 +15,9 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaInfoView extends StatelessWidget {
-  final MediaInfoModel overview;
+  final MediaInfoModel info;
 
-  MediaInfoView(this.overview);
+  MediaInfoView(this.info);
 
   @override
   Widget build(BuildContext context) {
@@ -42,27 +42,27 @@ class MediaInfoView extends StatelessWidget {
       'Origin'
     ];
     final infoChildren = [
-      overview.format,
-      overview.status,
-      overview.episodes,
-      overview.duration,
-      overview.chapters,
-      overview.volumes,
-      overview.startDate,
-      overview.endDate,
-      overview.season,
-      overview.averageScore,
-      overview.meanScore,
-      overview.popularity,
-      overview.favourites,
-      overview.source,
-      overview.countryOfOrigin,
+      info.format,
+      info.status,
+      info.episodes,
+      info.duration,
+      info.chapters,
+      info.volumes,
+      info.startDate,
+      info.endDate,
+      info.season,
+      info.averageScore,
+      info.meanScore,
+      info.popularity,
+      info.favourites,
+      info.source,
+      info.countryOfOrigin,
     ];
 
     return SliverList(
       delegate: SliverChildListDelegate(
         [
-          if (overview.description.isNotEmpty)
+          if (info.description.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
               child: InputFieldStructure(
@@ -75,7 +75,7 @@ class MediaInfoView extends StatelessWidget {
                       borderRadius: Config.BORDER_RADIUS,
                     ),
                     child: Text(
-                      overview.description,
+                      info.description,
                       overflow: TextOverflow.fade,
                       maxLines: 5,
                     ),
@@ -84,7 +84,7 @@ class MediaInfoView extends StatelessWidget {
                     context,
                     TextDialog(
                       title: 'Description',
-                      text: overview.description,
+                      text: info.description,
                     ),
                   ),
                 ),
@@ -124,10 +124,10 @@ class MediaInfoView extends StatelessWidget {
               ),
             ),
           ),
-          if (overview.genres.isNotEmpty)
+          if (info.genres.isNotEmpty)
             _ScrollCards(
               title: 'Genres',
-              items: overview.genres,
+              items: info.genres,
               onTap: (index) {
                 final explorable = Get.find<ExplorerController>();
                 explorable.clearAllFilters(update: false);
@@ -137,45 +137,41 @@ class MediaInfoView extends StatelessWidget {
                 );
                 explorable.setFilterWithKey(
                   Filterable.GENRE_IN,
-                  value: [overview.genres[index]],
+                  value: [info.genres[index]],
                 );
-                explorable.type = overview.browsable;
+                explorable.type = info.browsable;
                 explorable.search = '';
                 Config.setHomeIndex(HomeView.EXPLORE);
                 Navigation.it.popToFirst();
               },
-              onLongTap: (index) => Toast.copy(context, overview.genres[index]),
+              onLongTap: (index) => Toast.copy(context, info.genres[index]),
             ),
-          if (overview.studios.isNotEmpty)
+          if (info.studios.isNotEmpty)
             _ScrollCards(
               title: 'Studios',
-              items: overview.studios.keys.toList(),
+              items: info.studios.keys.toList(),
               onTap: (index) => ExploreIndexer.openPage(
-                id: overview.studios[overview.studios.keys.elementAt(index)]!,
-                imageUrl: overview.studios.keys.elementAt(index),
+                id: info.studios[info.studios.keys.elementAt(index)]!,
+                imageUrl: info.studios.keys.elementAt(index),
                 browsable: Explorable.studio,
               ),
             ),
-          if (overview.producers.isNotEmpty)
+          if (info.producers.isNotEmpty)
             _ScrollCards(
               title: 'Producers',
-              items: overview.producers.keys.toList(),
+              items: info.producers.keys.toList(),
               onTap: (index) => ExploreIndexer.openPage(
-                id: overview
-                    .producers[overview.producers.keys.elementAt(index)]!,
-                imageUrl: overview.producers.keys.elementAt(index),
+                id: info.producers[info.producers.keys.elementAt(index)]!,
+                imageUrl: info.producers.keys.elementAt(index),
                 browsable: Explorable.studio,
               ),
             ),
           const SizedBox(height: 10),
-          if (overview.romajiTitle != null)
-            _Tiles('Romaji', [overview.romajiTitle!]),
-          if (overview.englishTitle != null)
-            _Tiles('English', [overview.englishTitle!]),
-          if (overview.nativeTitle != null)
-            _Tiles('Native', [overview.nativeTitle!]),
-          if (overview.synonyms.isNotEmpty)
-            _Tiles('Synonyms', overview.synonyms),
+          if (info.romajiTitle != null) _Tiles('Romaji', [info.romajiTitle!]),
+          if (info.englishTitle != null)
+            _Tiles('English', [info.englishTitle!]),
+          if (info.nativeTitle != null) _Tiles('Native', [info.nativeTitle!]),
+          if (info.synonyms.isNotEmpty) _Tiles('Synonyms', info.synonyms),
         ],
       ),
     );

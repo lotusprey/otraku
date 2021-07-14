@@ -32,11 +32,11 @@ class MediaHeader extends StatefulWidget {
 class _MediaHeaderState extends State<MediaHeader> {
   @override
   Widget build(BuildContext context) {
-    final overview = widget.ctrl.model?.info;
+    final info = widget.ctrl.model?.info;
     return CustomSliverHeader(
       height: widget.height,
-      title: overview?.preferredTitle,
-      actions: overview != null
+      title: info?.preferredTitle,
+      actions: info != null
           ? [
               ActionIcon(
                 dimmed: false,
@@ -50,9 +50,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                 dimmed: false,
                 tooltip: 'Favourite',
                 onTap: _toggleFavourite,
-                icon: overview.isFavourite
-                    ? Icons.favorite
-                    : Icons.favorite_border,
+                icon: info.isFavourite ? Icons.favorite : Icons.favorite_border,
               ),
             ]
           : const [],
@@ -62,10 +60,10 @@ class _MediaHeaderState extends State<MediaHeader> {
           DecoratedBox(
             decoration: BoxDecoration(color: Theme.of(context).primaryColor),
           ),
-          if (overview?.banner != null)
+          if (info?.banner != null)
             Column(
               children: [
-                Expanded(child: FadeImage(overview!.banner)),
+                Expanded(child: FadeImage(info!.banner)),
                 SizedBox(height: widget.height - widget.bannerHeight),
               ],
             ),
@@ -110,14 +108,14 @@ class _MediaHeaderState extends State<MediaHeader> {
                     children: [
                       if (widget.imageUrl != null)
                         Image.network(widget.imageUrl!, fit: BoxFit.cover),
-                      if (overview != null)
+                      if (info != null)
                         GestureDetector(
                           child: Image.network(
-                            overview.cover!,
+                            info.cover!,
                             fit: BoxFit.cover,
                           ),
                           onTap: () =>
-                              showPopUp(context, ImageDialog(overview.cover!)),
+                              showPopUp(context, ImageDialog(info.cover!)),
                         ),
                     ],
                   ),
@@ -125,7 +123,7 @@ class _MediaHeaderState extends State<MediaHeader> {
               ),
             ),
             const SizedBox(width: 10),
-            if (overview != null)
+            if (info != null)
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -134,7 +132,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                     Flexible(
                       flex: 2,
                       child: Text(
-                        overview.preferredTitle!,
+                        info.preferredTitle!,
                         style: Theme.of(context).textTheme.headline2!.copyWith(
                           shadows: [
                             Shadow(
@@ -146,12 +144,12 @@ class _MediaHeaderState extends State<MediaHeader> {
                         overflow: TextOverflow.fade,
                       ),
                     ),
-                    if (overview.nextEpisode != null)
+                    if (info.nextEpisode != null)
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
-                            'Ep ${overview.nextEpisode} in ${overview.timeUntilAiring}',
+                            'Ep ${info.nextEpisode} in ${info.timeUntilAiring}',
                             style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ),
@@ -188,7 +186,7 @@ class _MediaHeaderState extends State<MediaHeader> {
                                   horizontal: 10,
                                 ),
                                 child: Icon(
-                                  overview.isFavourite
+                                  info.isFavourite
                                       ? Icons.favorite
                                       : Icons.favorite_border,
                                 ),

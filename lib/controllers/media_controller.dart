@@ -124,7 +124,7 @@ class MediaController extends ScrollxController {
     }
   ''';
 
-  static const OVERVIEW = 0;
+  static const Info = 0;
   static const RELATIONS = 1;
   static const SOCIAL = 2;
   static const REL_MEDIA = 0;
@@ -139,7 +139,7 @@ class MediaController extends ScrollxController {
   MediaController(this.id);
 
   MediaModel? _model;
-  final _tab = OVERVIEW.obs;
+  final _tab = Info.obs;
   final _relationsTab = REL_MEDIA.obs;
   final _staffLanguage = 'Japanese'.obs;
   final _availableLanguages = <String>[];

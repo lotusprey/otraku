@@ -47,7 +47,7 @@ class HomeView extends StatelessWidget {
       null,
     ];
 
-    BackgroundHandler.checkLaunchedByNotification(context);
+    BackgroundHandler.checkLaunchedByNotification();
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),

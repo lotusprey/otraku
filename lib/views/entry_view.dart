@@ -40,47 +40,7 @@ class EntryView extends StatelessWidget {
         return Scaffold(
           appBar: CustomAppBar(
             title: 'Edit',
-            trailing: model != null
-                ? [
-                    if (model.entryId != null)
-                      ActionIcon(
-                        dimmed: false,
-                        tooltip: 'Remove',
-                        icon: Ionicons.trash_bin_outline,
-                        onTap: () => showPopUp(
-                          context,
-                          ConfirmationDialog(
-                            title: 'Remove entry?',
-                            mainAction: 'Yes',
-                            secondaryAction: 'No',
-                            onConfirm: () {
-                              Get.find<CollectionController>(
-                                tag: model.type == 'ANIME'
-                                    ? CollectionController.ANIME
-                                    : CollectionController.MANGA,
-                              ).removeEntry(entryCtrl.oldModel!);
-                              callback?.call(EntryModel.empty(model));
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                      ),
-                    ActionIcon(
-                        dimmed: false,
-                        tooltip: 'Save',
-                        icon: Ionicons.save_outline,
-                        onTap: () {
-                          Get.find<CollectionController>(
-                            tag: model.type == 'ANIME'
-                                ? CollectionController.ANIME
-                                : CollectionController.MANGA,
-                          ).updateEntry(entryCtrl.oldModel!, model).then((_) {
-                            callback?.call(model);
-                            Navigator.of(context).pop();
-                          });
-                        }),
-                  ]
-                : [],
+            actionWidget: _Actions(entryCtrl, callback),
           ),
           body: model != null
               ? _Content(entryCtrl, Get.find<ViewerController>().settings!)
@@ -88,6 +48,74 @@ class EntryView extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _Actions extends StatefulWidget {
+  final EntryController ctrl;
+  final Function(EntryModel)? callback;
+
+  _Actions(this.ctrl, this.callback);
+  @override
+  __ActionsState createState() => __ActionsState();
+}
+
+class __ActionsState extends State<_Actions> {
+  bool _loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = widget.ctrl;
+    final actions = <Widget>[];
+    if (ctrl.model != null) {
+      if (_loading) {
+        actions.add(const Loader());
+      } else {
+        if (ctrl.model!.entryId != null) {
+          actions.add(ActionIcon(
+            dimmed: false,
+            tooltip: 'Remove',
+            icon: Ionicons.trash_bin_outline,
+            onTap: () => showPopUp(
+              context,
+              ConfirmationDialog(
+                title: 'Remove entry?',
+                mainAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: () {
+                  Get.find<CollectionController>(
+                    tag: ctrl.model!.type == 'ANIME'
+                        ? CollectionController.ANIME
+                        : CollectionController.MANGA,
+                  ).removeEntry(ctrl.oldModel!);
+                  widget.callback?.call(EntryModel.empty(ctrl.model!));
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ));
+          actions.add(const SizedBox(width: 15));
+        }
+
+        actions.add(ActionIcon(
+            dimmed: false,
+            tooltip: 'Save',
+            icon: Ionicons.save_outline,
+            onTap: () {
+              setState(() => _loading = true);
+              Get.find<CollectionController>(
+                tag: ctrl.model!.type == 'ANIME'
+                    ? CollectionController.ANIME
+                    : CollectionController.MANGA,
+              ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
+                widget.callback?.call(ctrl.model!);
+                Navigator.of(context).pop();
+              });
+            }));
+      }
+    }
+
+    return Row(children: actions);
   }
 }
 

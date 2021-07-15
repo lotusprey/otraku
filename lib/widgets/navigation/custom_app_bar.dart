@@ -8,12 +8,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData leading;
   final String? title;
   final Widget? titleWidget;
+  final Widget? actionWidget;
   final List<Widget> trailing;
 
   CustomAppBar({
     this.leading = Ionicons.chevron_back_outline,
     this.title = '',
     this.titleWidget,
+    this.actionWidget,
     this.trailing = const [],
   }) {
     const box = SizedBox(width: 15);
@@ -53,7 +55,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: Theme.of(context).textTheme.headline2,
                     ),
             ),
-            ...trailing,
+            if (actionWidget != null) actionWidget! else ...trailing,
           ],
         ),
       ),

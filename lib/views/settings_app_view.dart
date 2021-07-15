@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
@@ -20,11 +21,11 @@ class SettingsAppView extends StatelessWidget {
               Flexible(
                 child: DropDownField<int>(
                   title: 'Theme Mode',
-                  value: Config.storage.read(Config.THEME_MODE) ?? 0,
+                  value: Theming.it.mode.index,
                   items: {'Auto': 0, 'Light': 1, 'Dark': 2},
                   onChanged: (val) {
-                    Config.storage.write(Config.THEME_MODE, val);
-                    Config.updateTheme();
+                    Config.storage.write(Theming.THEME_MODE, val);
+                    Theming.it.setMode(val);
                   },
                 ),
               ),
@@ -65,15 +66,15 @@ class SettingsAppView extends StatelessWidget {
             options: Themes.values
                 .map((t) => Convert.clarifyEnum(describeEnum(t)))
                 .toList(),
-            leftValue: Config.storage.read(Config.LIGHT_THEME) ?? 0,
-            rightValue: Config.storage.read(Config.DARK_THEME) ?? 0,
-            onChangedLeft: (value) {
-              Config.storage.write(Config.LIGHT_THEME, value);
-              Config.updateTheme();
+            leftValue: Theming.it.light.index,
+            rightValue: Theming.it.dark.index,
+            onChangedLeft: (val) {
+              Config.storage.write(Theming.LIGHT_THEME, val);
+              Theming.it.setLight(val);
             },
-            onChangedRight: (value) {
-              Config.storage.write(Config.DARK_THEME, value);
-              Config.updateTheme();
+            onChangedRight: (val) {
+              Config.storage.write(Theming.DARK_THEME, val);
+              Theming.it.setDark(val);
             },
           ),
           SizedBox(height: NavBar.offset(context)),

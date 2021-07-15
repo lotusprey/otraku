@@ -19,8 +19,10 @@ extension Style on Themes {
   static const FONT_MEDIUM = 15.0;
   static const FONT_SMALL = 13.0;
 
+  Map<String, dynamic> get _theme => _themes[this]!;
+
   SystemUiOverlayStyle get overlayStyle {
-    final Map<String, dynamic> theme = _themes[this]!;
+    final theme = _theme;
 
     final brightness = theme['brightness'] == Brightness.dark
         ? Brightness.light
@@ -36,84 +38,9 @@ extension Style on Themes {
   }
 
   ThemeData get themeData {
-    _setOverlay(overlayStyle);
-    return _buildTheme(_themes[this]!);
-  }
-}
+    final theme = _theme;
 
-const _themes = {
-  Themes.navy: {
-    'background': Color(0xFF0F171E),
-    'translucent': Color(0xBB0F171E),
-    'foreground': Color(0xFF1D2835),
-    'highlight': Color(0x4445A0F2),
-    'accent': Color(0xFF45A0F2),
-    'error': Color(0xFFD74761),
-    'faded': Color(0xFF56789F),
-    'contrast': Color(0xFFCAD5E2),
-    'brightness': Brightness.dark,
-  },
-  Themes.cyber: {
-    'background': Color(0xFF163B3B),
-    'translucent': Color(0xBB163B3B),
-    'foreground': Color(0xFF1A6157),
-    'highlight': Color(0x4400E4A3),
-    'accent': Color(0xFF00E4A3),
-    'error': Color(0xFFD87CAC),
-    'faded': Color(0xFF85D6C2),
-    'contrast': Color(0xFFFFFEFF),
-    'brightness': Brightness.dark,
-  },
-  Themes.night: {
-    'background': Color(0xFF08123A),
-    'translucent': Color(0xBB08123A),
-    'foreground': Color(0xFF1E2964),
-    'highlight': Color(0x4441C0AA),
-    'accent': Color(0xFF41C0AA),
-    'error': Color(0xFFF445AF),
-    'faded': Color(0xFF6B80DB),
-    'contrast': Color(0xFFEBFFFA),
-    'brightness': Brightness.dark,
-  },
-  Themes.amethyst: {
-    'background': Color(0xFF1E1E3F),
-    'translucent': Color(0xBB1E1E3F),
-    'foreground': Color(0xFF2D2B55),
-    'highlight': Color(0x44DFCD01),
-    'accent': Color(0xFFDFCD01),
-    'error': Color(0xFFF94E7E),
-    'faded': Color(0xFFA7A0F8),
-    'contrast': Color(0xFFE8D9FC),
-    'brightness': Brightness.dark,
-  },
-  Themes.bee: {
-    'background': Color(0xFF000000),
-    'translucent': Color(0xBB000000),
-    'foreground': Color(0xFF141414),
-    'highlight': Color(0x44FFDB00),
-    'accent': Color(0xFFFFDB00),
-    'error': Color(0xFFFF1F39),
-    'faded': Color(0xFF999999),
-    'contrast': Color(0xFFFFFFD6),
-    'brightness': Brightness.dark,
-  },
-  Themes.frost: {
-    'background': Color(0xFFE0EBF5),
-    'translucent': Color(0xBBE0EBF5),
-    'foreground': Color(0xFFFAFDFF),
-    'highlight': Color(0x4454B2F1),
-    'accent': Color(0xFF54B2F1),
-    'error': Color(0xFFE32749),
-    'faded': Color(0xFF3D5D7B),
-    'contrast': Color(0xFF1B2937),
-    'brightness': Brightness.light,
-  },
-};
-
-void _setOverlay(SystemUiOverlayStyle style) =>
-    SystemChrome.setSystemUIOverlayStyle(style);
-
-ThemeData _buildTheme(Map<String, dynamic> theme) => ThemeData(
+    return ThemeData(
       fontFamily: 'Rubik',
       brightness: theme['brightness'],
       backgroundColor: theme['background'],
@@ -287,3 +214,74 @@ ThemeData _buildTheme(Map<String, dynamic> theme) => ThemeData(
         ),
       ),
     );
+  }
+}
+
+const _themes = {
+  Themes.navy: {
+    'background': Color(0xFF0F171E),
+    'translucent': Color(0xBB0F171E),
+    'foreground': Color(0xFF1D2835),
+    'highlight': Color(0x4445A0F2),
+    'accent': Color(0xFF45A0F2),
+    'error': Color(0xFFD74761),
+    'faded': Color(0xFF56789F),
+    'contrast': Color(0xFFCAD5E2),
+    'brightness': Brightness.dark,
+  },
+  Themes.cyber: {
+    'background': Color(0xFF163B3B),
+    'translucent': Color(0xBB163B3B),
+    'foreground': Color(0xFF1A6157),
+    'highlight': Color(0x4400E4A3),
+    'accent': Color(0xFF00E4A3),
+    'error': Color(0xFFD87CAC),
+    'faded': Color(0xFF85D6C2),
+    'contrast': Color(0xFFFFFEFF),
+    'brightness': Brightness.dark,
+  },
+  Themes.night: {
+    'background': Color(0xFF08123A),
+    'translucent': Color(0xBB08123A),
+    'foreground': Color(0xFF1E2964),
+    'highlight': Color(0x4441C0AA),
+    'accent': Color(0xFF41C0AA),
+    'error': Color(0xFFF445AF),
+    'faded': Color(0xFF6B80DB),
+    'contrast': Color(0xFFEBFFFA),
+    'brightness': Brightness.dark,
+  },
+  Themes.amethyst: {
+    'background': Color(0xFF1E1E3F),
+    'translucent': Color(0xBB1E1E3F),
+    'foreground': Color(0xFF2D2B55),
+    'highlight': Color(0x44DFCD01),
+    'accent': Color(0xFFDFCD01),
+    'error': Color(0xFFF94E7E),
+    'faded': Color(0xFFA7A0F8),
+    'contrast': Color(0xFFE8D9FC),
+    'brightness': Brightness.dark,
+  },
+  Themes.bee: {
+    'background': Color(0xFF000000),
+    'translucent': Color(0xBB000000),
+    'foreground': Color(0xFF141414),
+    'highlight': Color(0x44FFDB00),
+    'accent': Color(0xFFFFDB00),
+    'error': Color(0xFFFF1F39),
+    'faded': Color(0xFF999999),
+    'contrast': Color(0xFFFFFFD6),
+    'brightness': Brightness.dark,
+  },
+  Themes.frost: {
+    'background': Color(0xFFE0EBF5),
+    'translucent': Color(0xBBE0EBF5),
+    'foreground': Color(0xFFFAFDFF),
+    'highlight': Color(0x4454B2F1),
+    'accent': Color(0xFF54B2F1),
+    'error': Color(0xFFE32749),
+    'faded': Color(0xFF3D5D7B),
+    'contrast': Color(0xFF1B2937),
+    'brightness': Brightness.light,
+  },
+};

@@ -9,8 +9,6 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class FriendsView extends StatelessWidget {
-  static const ROUTE = '/friends';
-
   final int id;
   FriendsView(this.id);
 

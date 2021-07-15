@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/views/notifications_view.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -18,8 +18,6 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class FeedView extends StatelessWidget {
-  static const ROUTE = '/feed';
-
   final int id;
   FeedView(this.id);
 
@@ -135,7 +133,7 @@ class _Header extends StatelessWidget {
       Tooltip(
         message: 'Notifications',
         child: GestureDetector(
-          onTap: () => Get.toNamed(NotificationsView.ROUTE),
+          onTap: () => Navigation.it.push(Navigation.notificationsRoute),
           child: Obx(
             () => Stack(
               children: [

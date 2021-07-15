@@ -16,8 +16,6 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StaffView extends StatelessWidget {
-  static const ROUTE = '/staff';
-
   final int id;
   final String imageUrl;
 

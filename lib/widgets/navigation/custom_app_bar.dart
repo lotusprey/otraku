@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/widgets/action_icon.dart';
 
@@ -9,12 +8,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final IconData leading;
   final String? title;
   final Widget? titleWidget;
+  final Widget? actionWidget;
   final List<Widget> trailing;
 
   CustomAppBar({
     this.leading = Ionicons.chevron_back_outline,
     this.title = '',
     this.titleWidget,
+    this.actionWidget,
     this.trailing = const [],
   }) {
     const box = SizedBox(width: 15);
@@ -43,7 +44,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               tooltip: 'Close',
               icon: leading,
               dimmed: false,
-              onTap: () => Get.back(),
+              onTap: Navigator.of(context).pop,
             ),
             const SizedBox(width: 15),
             Expanded(
@@ -54,7 +55,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: Theme.of(context).textTheme.headline2,
                     ),
             ),
-            ...trailing,
+            if (actionWidget != null) actionWidget! else ...trailing,
           ],
         ),
       ),

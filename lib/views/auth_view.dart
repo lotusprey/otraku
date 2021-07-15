@@ -2,16 +2,14 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/views/home_view.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AuthView extends StatefulWidget {
-  static const ROUTE = '/auth';
-
   const AuthView();
 
   @override
@@ -23,7 +21,9 @@ class _AuthViewState extends State<AuthView> {
 
   void _verify() => Client.logIn().then(
         (loggedIn) => loggedIn
-            ? Get.offAllNamed(HomeView.ROUTE)
+            ? WidgetsBinding.instance!.addPostFrameCallback(
+                (_) => Navigation.it.setBasePage(Navigation.homeRoute),
+              )
             : setState(() => _loading = false),
       );
 
@@ -36,20 +36,18 @@ class _AuthViewState extends State<AuthView> {
     try {
       await launch(redirectUrl);
     } catch (err) {
-      Get.defaultDialog(
-        radius: 10,
-        backgroundColor: Get.theme.backgroundColor,
-        titleStyle: Get.theme.textTheme.headline6,
-        title: 'Could not open AniList',
-        content: Text(err.toString()),
-        actions: [TextButton(child: Text('Oh No'), onPressed: Get.back)],
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not open AniList',
+          mainAction: 'Oh No',
+        ),
       );
       setState(() => _loading = false);
       return;
     }
 
-    AppLinks(onAppLink: (Uri uri, String str) {
-      final link = uri.toString();
+    AppLinks(onAppLink: (Uri _, String link) {
       final start = link.indexOf('=') + 1;
       final end = link.indexOf('&');
       Client.setCredentials(

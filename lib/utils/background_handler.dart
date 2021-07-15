@@ -2,13 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/views/activity_view.dart';
-import 'package:otraku/views/user_view.dart';
-import 'package:otraku/views/media_view.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -22,7 +19,7 @@ class BackgroundHandler {
   static bool _didInit = false;
   static bool _didCheckLaunch = false;
 
-  static void init(BuildContext ctx) {
+  static void init() {
     if (_didInit) return;
     _didInit = true;
 
@@ -32,8 +29,7 @@ class BackgroundHandler {
         iOS: IOSInitializationSettings(),
         macOS: MacOSInitializationSettings(),
       ),
-      onSelectNotification: (payload) async =>
-          _handleNotification(ctx, payload),
+      onSelectNotification: (payload) async => _handleNotification(payload),
     );
 
     Workmanager().initialize(_fetch);
@@ -46,23 +42,28 @@ class BackgroundHandler {
       );
   }
 
-  static void checkLaunchedByNotification(BuildContext ctx) {
+  static void checkLaunchedByNotification() {
     if (_didCheckLaunch) return;
     _didCheckLaunch = true;
 
-    _notificationPlugin.getNotificationAppLaunchDetails().then(
-        (launchDetails) => _handleNotification(ctx, launchDetails?.payload));
+    _notificationPlugin
+        .getNotificationAppLaunchDetails()
+        .then((launchDetails) => _handleNotification(launchDetails?.payload));
   }
 
-  static void _handleNotification(BuildContext ctx, String? payload) {
-    if (payload == null) return;
+  static void _handleNotification(String? link) {
+    if (link == null) return;
 
-    final separator = payload.indexOf('/', 1);
-    final route = payload.substring(0, separator);
-    final id = int.tryParse(payload.substring(separator + 1)) ?? -1;
+    final uri = Uri.parse(link);
+    if (uri.pathSegments.length < 2) return;
+
+    final id = int.tryParse(uri.pathSegments[1]) ?? -1;
     if (id < 0) return;
 
-    if (route == '/thread') {
+    if (uri.pathSegments[0] == Navigation.threadRoute) {
+      final ctx = Navigation.it.ctx;
+      if (ctx == null) return;
+
       showPopUp(
         ctx,
         ConfirmationDialog(
@@ -73,11 +74,7 @@ class BackgroundHandler {
       return;
     }
 
-    Get.toNamed(
-      route,
-      arguments: [id, null, null],
-      parameters: {'id': id.toString()},
-    );
+    Navigation.it.push(uri.pathSegments[0], args: [id, null, null]);
   }
 }
 
@@ -128,54 +125,96 @@ void _fetch() => Workmanager().executeTask((_, input) async {
 
         switch (model.type) {
           case NotificationType.FOLLOWING:
-            _show(model, 'New Follow', '${UserView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Follow',
+              '${Navigation.userRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_MESSAGE:
             _show(
-                model, 'New Message', '${ActivityView.ROUTE}/${model.bodyId}');
+              model,
+              'New Message',
+              '${Navigation.activityRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_REPLY:
           case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-            _show(model, 'New Reply', '${ActivityView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Reply',
+              '${Navigation.activityRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_MENTION:
             _show(
-                model, 'New Mention', '${ActivityView.ROUTE}/${model.bodyId}');
+              model,
+              'New Mention',
+              '${Navigation.activityRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.ACTIVITY_LIKE:
             _show(
               model,
               'New Activity Like',
-              '${ActivityView.ROUTE}/${model.bodyId}',
+              '${Navigation.activityRoute}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
             _show(
               model,
               'New Reply Like',
-              '${ActivityView.ROUTE}/${model.bodyId}',
+              '${Navigation.activityRoute}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
-            _show(model, 'New Forum Reply', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Reply',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_COMMENT_MENTION:
-            _show(model, 'New Forum Mention', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Mention',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_SUBSCRIBED:
-            _show(model, 'New Forum Comment', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Comment',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_LIKE:
-            _show(model, 'New Forum Like', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Like',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_COMMENT_LIKE:
-            _show(model, 'New Forum Comment Like', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Comment Like',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.AIRING:
-            _show(model, 'New Episode', '${MediaView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Episode',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
-            _show(model, 'New Addition', '${MediaView.ROUTE}/${model.bodyId}');
+            _show(
+              model,
+              'New Addition',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
             break;
           default:
             break;

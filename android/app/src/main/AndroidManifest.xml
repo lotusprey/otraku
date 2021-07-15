@@ -35,11 +35,13 @@
                     <category android:name="android.intent.category.LAUNCHER"/>
                </intent-filter>
                <!-- Deep Link -> -->
+               <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
                <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="app" android:host="otraku" />
+                    <data android:scheme="app" android:host="otraku" android:pathPrefix="/auth" />
+                    <data android:scheme="https" android:host="anilist.co" />
                </intent-filter>
                <!-- <- Deep Link -->
           </activity>

@@ -7,6 +7,7 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaHeader extends StatefulWidget {
   final MediaController ctrl;
@@ -131,17 +132,22 @@ class _MediaHeaderState extends State<MediaHeader> {
                   children: [
                     Flexible(
                       flex: 2,
-                      child: Text(
-                        info.preferredTitle!,
-                        style: Theme.of(context).textTheme.headline2!.copyWith(
-                          shadows: [
-                            Shadow(
-                              color: Theme.of(context).backgroundColor,
-                              blurRadius: 10,
-                            ),
-                          ],
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => Toast.copy(context, info.preferredTitle!),
+                        child: Text(
+                          info.preferredTitle!,
+                          style:
+                              Theme.of(context).textTheme.headline2!.copyWith(
+                            shadows: [
+                              Shadow(
+                                color: Theme.of(context).backgroundColor,
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                          overflow: TextOverflow.fade,
                         ),
-                        overflow: TextOverflow.fade,
                       ),
                     ),
                     if (info.nextEpisode != null)

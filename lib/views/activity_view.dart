@@ -17,8 +17,6 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityView extends StatelessWidget {
-  static const ROUTE = '/activity';
-
   final int id;
 
   ActivityView(this.id);

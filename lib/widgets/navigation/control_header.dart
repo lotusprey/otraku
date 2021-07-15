@@ -8,7 +8,7 @@ import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
-import 'package:otraku/views/filter_view.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -317,12 +317,15 @@ class _FilterState extends State<_Filter> {
         tooltip: 'Filter',
         active: _active,
         icon: Ionicons.funnel_outline,
-        onTap: () => Get.toNamed(FilterView.ROUTE, arguments: [
-          widget.collectionTag,
-          (bool definitelyInactive) => definitelyInactive
-              ? setState(() => _active = false)
-              : setState(() => _active = _checkIfActive()),
-        ]),
+        onTap: () => Navigation.it.push(
+          Navigation.filtersRoute,
+          args: [
+            widget.collectionTag,
+            (bool definitelyInactive) => definitelyInactive
+                ? setState(() => _active = false)
+                : setState(() => _active = _checkIfActive()),
+          ],
+        ),
       );
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([

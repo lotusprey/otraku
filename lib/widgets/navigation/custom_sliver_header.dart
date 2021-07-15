@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/action_icon.dart';
@@ -142,7 +141,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       dimmed: false,
                       tooltip: 'Close',
                       icon: Ionicons.chevron_back_outline,
-                      onTap: () => Get.back(),
+                      onTap: Navigator.of(context).pop,
                     )),
                   Expanded(
                     child: Padding(

@@ -10,8 +10,6 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class FavouritesView extends StatelessWidget {
-  static const ROUTE = '/favourites';
-
   final int id;
   FavouritesView(this.id);
 

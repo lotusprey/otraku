@@ -11,8 +11,6 @@ import 'package:otraku/widgets/navigation/custom_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsView extends StatelessWidget {
-  static const ROUTE = '/settings';
-
   Widget build(BuildContext context) {
     const pageNames = {
       0: 'Personalisation',

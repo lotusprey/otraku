@@ -11,8 +11,6 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/pie_chart.dart';
 
 class StatisticsView extends StatelessWidget {
-  static const ROUTE = '/statistics';
-
   final int id;
   StatisticsView(this.id);
 

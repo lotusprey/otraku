@@ -10,8 +10,6 @@ import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 
 class MediaView extends StatelessWidget {
-  static const ROUTE = '/media';
-
   final int id;
   final String? coverUrl;
 
@@ -33,14 +31,16 @@ class MediaView extends StatelessWidget {
       tag: id.toString(),
       builder: (media) => Scaffold(
         extendBody: true,
-        bottomNavigationBar: NavBar(
-          options: {
-            'Info': Ionicons.book_outline,
-            'Relations': Icons.emoji_people_outlined,
-            'Social': Icons.rate_review_outlined,
-          },
-          initial: media.tab,
-          onChanged: (index) => media.tab = index,
+        bottomNavigationBar: Obx(
+          () => NavBar(
+            options: {
+              'Info': Ionicons.book_outline,
+              'Relations': Icons.emoji_people_outlined,
+              'Social': Icons.rate_review_outlined,
+            },
+            initial: media.tab,
+            onChanged: (index) => media.tab = index,
+          ),
         ),
         body: SafeArea(
           bottom: false,

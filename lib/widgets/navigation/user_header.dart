@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/user_model.dart';
-import 'package:otraku/views/settings_view.dart';
 import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -43,7 +43,7 @@ class UserHeader extends StatelessWidget {
             dimmed: false,
             tooltip: 'Settings',
             icon: Ionicons.cog_outline,
-            onTap: () => Get.toNamed(SettingsView.ROUTE),
+            onTap: () => Navigation.it.push(Navigation.settingsRoute),
           ))
         else if (user != null)
           Padding(

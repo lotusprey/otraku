@@ -16,8 +16,6 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CharacterView extends StatelessWidget {
-  static const ROUTE = '/character';
-
   final int id;
   final String imageUrl;
 

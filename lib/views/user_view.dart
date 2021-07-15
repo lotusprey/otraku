@@ -1,33 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/views/friends_view.dart';
-import 'package:otraku/views/feed_view.dart';
-import 'package:otraku/views/statistics_view.dart';
-import 'package:otraku/views/user_reviews_view.dart';
+import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
-import 'package:otraku/views/favourites_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class UserView extends StatelessWidget {
-  static const ROUTE = '/user';
-
   final int id;
   final String? avatarUrl;
 
   const UserView(this.id, this.avatarUrl);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: HomeUserView(id, avatarUrl)));
-  }
+  Widget build(BuildContext context) =>
+      Scaffold(body: SafeArea(child: HomeUserView(id, avatarUrl)));
 }
 
 class HomeUserView extends StatelessWidget {
@@ -73,45 +64,55 @@ class HomeUserView extends StatelessWidget {
                     'Anime',
                     () => id == Client.viewerId
                         ? Config.setHomeIndex(HomeView.ANIME_LIST)
-                        : _pushCollection(true),
+                        : Navigation.it.push(
+                            Navigation.collectionRoute,
+                            args: [id, true],
+                          ),
                   ),
                   _Button(
                     Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
                         ? Config.setHomeIndex(HomeView.MANGA_LIST)
-                        : _pushCollection(false),
+                        : Navigation.it.push(
+                            Navigation.collectionRoute,
+                            args: [id, false],
+                          ),
                   ),
                   _Button(
                     Ionicons.people_circle,
                     'Following',
-                    () => Get.toNamed(FriendsView.ROUTE, arguments: [id, true]),
+                    () => Navigation.it
+                        .push(Navigation.friendsRoute, args: [id, true]),
                   ),
                   _Button(
                     Ionicons.person_circle,
                     'Followers',
-                    () =>
-                        Get.toNamed(FriendsView.ROUTE, arguments: [id, false]),
+                    () => Navigation.it
+                        .push(Navigation.friendsRoute, args: [id, false]),
                   ),
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Get.toNamed(FeedView.ROUTE, arguments: id),
+                    () => Navigation.it.push(Navigation.feedRoute, args: [id]),
                   ),
                   _Button(
                     Icons.favorite,
                     'Favourites',
-                    () => Get.toNamed(FavouritesView.ROUTE, arguments: id),
+                    () => Navigation.it
+                        .push(Navigation.favouritesRoute, args: [id]),
                   ),
                   _Button(
                     Ionicons.stats_chart,
                     'Statistics',
-                    () => Get.toNamed(StatisticsView.ROUTE, arguments: id),
+                    () => Navigation.it
+                        .push(Navigation.statisticsRoute, args: [id]),
                   ),
                   _Button(
                     Icons.rate_review,
                     'Reviews',
-                    () => Get.toNamed(UserReviewsView.ROUTE, arguments: id),
+                    () => Navigation.it
+                        .push(Navigation.userReviewsRoute, args: [id]),
                   ),
                 ],
               ),
@@ -131,16 +132,6 @@ class HomeUserView extends StatelessWidget {
           SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
         ],
       ),
-    );
-  }
-
-  void _pushCollection(bool ofAnime) {
-    final collectionTag =
-        '${ofAnime ? CollectionController.ANIME : CollectionController.MANGA}$id';
-    Get.toNamed(
-      CollectionView.ROUTE,
-      arguments: [id, ofAnime, collectionTag],
-      preventDuplicates: false,
     );
   }
 }

@@ -99,12 +99,9 @@ class MediaInfoModel {
       description: Convert.clearHtml(map['description']),
       format: Convert.clarifyEnum(map['format']),
       status: Convert.clarifyEnum(map['status']),
-      nextEpisode: map['nextAiringEpisode'] != null
-          ? map['nextAiringEpisode']['episode']
-          : null,
-      timeUntilAiring: Convert.secondsToCountdownStr(
-        map['nextAiringEpisode']?['timeUntilAiring'],
-      ),
+      nextEpisode: map['nextAiringEpisode']?['episode'],
+      timeUntilAiring:
+          Convert.timeUntilTimestamp(map['nextAiringEpisode']?['airingAt']),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],

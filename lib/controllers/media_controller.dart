@@ -29,7 +29,7 @@ class MediaController extends ScrollxController {
       bannerImage
       isFavourite
       favourites
-      nextAiringEpisode {episode timeUntilAiring}
+      nextAiringEpisode {episode airingAt}
       description
       format
       status(version: 2)

@@ -45,7 +45,7 @@ class CollectionController extends ScrollxController implements Filterable {
               chapters
               volumes
               coverImage {large}
-              nextAiringEpisode {timeUntilAiring episode}
+              nextAiringEpisode {episode airingAt}
               genres
             }
           }
@@ -95,7 +95,7 @@ class CollectionController extends ScrollxController implements Filterable {
             chapters
             volumes
             coverImage {large}
-            nextAiringEpisode {timeUntilAiring episode}
+            nextAiringEpisode {episode airingAt}
             genres
           }
         }

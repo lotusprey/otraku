@@ -84,9 +84,10 @@ class _MediaListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Format and time until airing of airing anime.
-    final mainDetail = entry.timeUntilAiring == null
+    final mainDetail = entry.airingAt == null
         ? Convert.clarifyEnum(entry.format)!
-        : '${Convert.clarifyEnum(entry.format)} • Ep ${entry.nextEpisode} in ${entry.timeUntilAiring}';
+        : '${Convert.clarifyEnum(entry.format)} • Ep ${entry.nextEpisode} in '
+            '${Convert.timeUntilTimestamp(entry.airingAt)}';
 
     // Episodes left of airing anime.
     final secondaryDetail =

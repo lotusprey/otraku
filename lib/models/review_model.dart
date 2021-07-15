@@ -49,7 +49,7 @@ class ReviewModel {
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',
-        createdAt: Convert.millisToTimeStr(map['createdAt']),
+        createdAt: Convert.millisToStr(map['createdAt']),
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,
         totalRating: map['ratingAmount'] ?? 0,

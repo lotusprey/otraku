@@ -8,9 +8,7 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-class Client {
-  Client._();
-
+abstract class Client {
   static final _url = Uri.parse('https://graphql.anilist.co');
 
   static const _idQuery = 'query Id {Viewer {id}}';

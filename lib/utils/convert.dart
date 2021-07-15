@@ -16,16 +16,17 @@ abstract class Convert {
 
   // Transforms a string into enum. The string must be
   // as if it was acquired through "describeEnum()"
-  // and the values must be the enum values
+  // and the values must be the enum values.
   static T? strToEnum<T>(String? str, List<T> values) =>
       values.firstWhereOrNull((v) => describeEnum(v!) == str);
 
-  // Removes all html tags
+  // Removes all html tags.
   static String clearHtml(String? str) {
     if (str == null) return '';
     return str.replaceAll(RegExp(r'<[^>]+>'), '');
   }
 
+  // Converts a map (representing a date) to String.
   static String? mapToDateStr(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
 
@@ -37,35 +38,41 @@ abstract class Convert {
     return '$month $day, ${map['year']}';
   }
 
+  // Converts a map (representing a date) to DateTime.
   static DateTime? mapToDateTime(Map<String, dynamic> map) {
     if (map['year'] == null || map['month'] == null || map['day'] == null)
       return null;
     return DateTime(map['year'], map['month'], map['day']);
   }
 
+  // Converts DateTime to map.
   static Map<String, int>? dateTimeToMap(DateTime? date) {
     if (date == null) return null;
     return {'year': date.year, 'month': date.month, 'day': date.day};
   }
 
-  static String millisToTimeStr(int? millis) {
-    if (millis == null) return '';
-    final date = DateTime.fromMillisecondsSinceEpoch(millis * 1000);
+  // Timestamp string from seconds.
+  static String millisToStr(int? seconds) {
+    if (seconds == null) return '';
+    final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
     return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} ${_MONTHS[date.month]} '
         '${date.year}, ${date.hour <= 9 ? 0 : ""}${date.hour}:'
         '${date.minute <= 9 ? 0 : ""}${date.minute}';
   }
 
-  static String? secondsToCountdownStr(int? seconds) {
+  // Time until a given timestamp of seconds.
+  static String? timeUntilTimestamp(int? seconds) {
     if (seconds == null) return null;
 
-    int minutes = seconds ~/ 60;
+    final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
+    int minutes = date.difference(DateTime.now()).inMinutes;
     int hours = minutes ~/ 60;
     minutes %= 60;
     int days = hours ~/ 24;
     hours %= 24;
-
-    return '${days != 0 ? '${days}d ' : ''}${hours != 0 ? '${hours}h ' : ''}${minutes != 0 ? '${minutes}m' : ''}';
+    return '${days < 1 ? "" : "$days d "}'
+        '${hours < 1 ? "" : "$hours h "}'
+        '${minutes < 1 ? "" : "$minutes m"}';
   }
 
   static const COUNTRY_CODES = {

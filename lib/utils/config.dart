@@ -10,6 +10,7 @@ abstract class Config {
   static const STARTUP_PAGE = 'startupPage';
   static const FOLLOWING_FEED = 'feedMode';
   static const LAST_NOTIFICATION_COUNT = 'lastNotificationCount';
+  static const CLOCK_TYPE = '12hourClock';
 
   // Constants.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;

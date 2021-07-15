@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
+import 'package:otraku/utils/config.dart';
 
 abstract class Convert {
   // Replaces _ with [blank_space] and makes each word
@@ -55,6 +56,17 @@ abstract class Convert {
   static String millisToStr(int? seconds) {
     if (seconds == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
+
+    if (Config.storage.read(Config.CLOCK_TYPE) ?? false) {
+      final overflows = date.hour > 12;
+      return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} '
+          '${_MONTHS[date.month]} ${date.year}, '
+          '${(date.hour <= 9 || overflows && date.hour - 12 <= 9) ? 0 : ""}'
+          '${overflows ? date.hour - 12 : date.hour}:'
+          '${date.minute <= 9 ? 0 : ""}${date.minute} '
+          '${overflows ? "PM" : "AM"}';
+    }
+
     return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} ${_MONTHS[date.month]} '
         '${date.year}, ${date.hour <= 9 ? 0 : ""}${date.hour}:'
         '${date.minute <= 9 ? 0 : ""}${date.minute}';

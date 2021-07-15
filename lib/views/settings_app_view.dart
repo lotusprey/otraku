@@ -6,6 +6,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/fields/switch_tile.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsAppView extends StatelessWidget {
@@ -47,6 +48,12 @@ class SettingsAppView extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 10),
+          SwitchTile(
+            title: '12 Hour Clock',
+            initialValue: Config.storage.read(Config.CLOCK_TYPE) ?? false,
+            onChanged: (val) => Config.storage.write(Config.CLOCK_TYPE, val),
           ),
           const SizedBox(height: 10),
           Row(
@@ -108,6 +115,7 @@ class __RadioState extends State<_Radio> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      padding: const EdgeInsets.all(0),
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (_, index) => Row(

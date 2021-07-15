@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
@@ -20,7 +19,7 @@ class BackgroundHandler {
   static bool _didInit = false;
   static bool _didCheckLaunch = false;
 
-  static void init(BuildContext ctx) {
+  static void init() {
     if (_didInit) return;
     _didInit = true;
 
@@ -30,8 +29,7 @@ class BackgroundHandler {
         iOS: IOSInitializationSettings(),
         macOS: MacOSInitializationSettings(),
       ),
-      onSelectNotification: (payload) async =>
-          _handleNotification(ctx, payload),
+      onSelectNotification: (payload) async => _handleNotification(payload),
     );
 
     Workmanager().initialize(_fetch);
@@ -44,23 +42,28 @@ class BackgroundHandler {
       );
   }
 
-  static void checkLaunchedByNotification(BuildContext ctx) {
+  static void checkLaunchedByNotification() {
     if (_didCheckLaunch) return;
     _didCheckLaunch = true;
 
-    _notificationPlugin.getNotificationAppLaunchDetails().then(
-        (launchDetails) => _handleNotification(ctx, launchDetails?.payload));
+    _notificationPlugin
+        .getNotificationAppLaunchDetails()
+        .then((launchDetails) => _handleNotification(launchDetails?.payload));
   }
 
-  static void _handleNotification(BuildContext ctx, String? payload) {
-    if (payload == null) return;
+  static void _handleNotification(String? link) {
+    if (link == null) return;
 
-    final separator = payload.indexOf('/', 1);
-    final route = payload.substring(0, separator);
-    final id = int.tryParse(payload.substring(separator + 1)) ?? -1;
+    final uri = Uri.parse(link);
+    if (uri.pathSegments.length < 2) return;
+
+    final id = int.tryParse(uri.pathSegments[1]) ?? -1;
     if (id < 0) return;
 
-    if (route == '/thread') {
+    if (uri.pathSegments[0] == Navigation.threadRoute) {
+      final ctx = Navigation.it.ctx;
+      if (ctx == null) return;
+
       showPopUp(
         ctx,
         ConfirmationDialog(
@@ -71,11 +74,7 @@ class BackgroundHandler {
       return;
     }
 
-    Get.toNamed(
-      route,
-      arguments: [id, null, null],
-      parameters: {'id': id.toString()},
-    );
+    Navigation.it.push(uri.pathSegments[0], args: [id, null, null]);
   }
 }
 
@@ -169,7 +168,11 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
-            _show(model, 'New Forum Reply', '/thread/${model.bodyId}');
+            _show(
+              model,
+              'New Forum Reply',
+              '${Navigation.threadRoute}/${model.bodyId}',
+            );
             break;
           case NotificationType.THREAD_COMMENT_MENTION:
             _show(

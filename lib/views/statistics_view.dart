@@ -303,7 +303,7 @@ class _Card extends StatelessWidget {
             ),
             child: Row(
               children: [
-                PieChart(counts),
+                Flexible(child: PieChart(counts)),
                 const SizedBox(width: 10),
                 SizedBox(
                   width: 150,

@@ -30,7 +30,7 @@ class SettingsAboutView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v. 1.0.9',
+            'Otraku - v. 1.1.0',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline5,
           ),

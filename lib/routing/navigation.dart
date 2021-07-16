@@ -409,8 +409,6 @@ class Navigation extends RouterDelegate<String>
 
   @override
   Future<void> setNewRoutePath(String route) {
-    print('setNewRoutePath $route');
-
     // Don't go to authentication if the user is authenticated or already there.
     if (route == authRoute) {
       if (_pages.isNotEmpty && _pages.last.name == authRoute)

@@ -1,5 +1,5 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/list_entry_model.dart';
 
@@ -43,7 +43,7 @@ class CollectionListModel {
       }
   }
 
-  void insertSorted(final ListEntryModel item, final ListSort? s) {
+  void insertSorted(final ListEntryModel item, final EntrySort? s) {
     final compare = _compareFn(s);
     for (int i = 0; i < entries.length; i++)
       if (compare(item, entries[i]) <= 0) {
@@ -53,69 +53,69 @@ class CollectionListModel {
     entries.add(item);
   }
 
-  void sort(final ListSort? s) => entries.sort(_compareFn(s));
+  void sort(final EntrySort? s) => entries.sort(_compareFn(s));
 
-  int Function(ListEntryModel, ListEntryModel) _compareFn(final ListSort? s) {
+  int Function(ListEntryModel, ListEntryModel) _compareFn(final EntrySort? s) {
     switch (s) {
-      case ListSort.TITLE:
+      case EntrySort.TITLE:
         return (a, b) => a.title!.compareTo(b.title!);
-      case ListSort.TITLE_DESC:
+      case EntrySort.TITLE_DESC:
         return (a, b) => b.title!.compareTo(a.title!);
-      case ListSort.SCORE:
+      case EntrySort.SCORE:
         return (a, b) {
           final comparison = a.score.compareTo(b.score);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.SCORE_DESC:
+      case EntrySort.SCORE_DESC:
         return (a, b) {
           final comparison = b.score.compareTo(a.score);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.UPDATED_AT:
+      case EntrySort.UPDATED_AT:
         return (a, b) {
           final comparison = a.updatedAt!.compareTo(b.updatedAt!);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.UPDATED_AT_DESC:
+      case EntrySort.UPDATED_AT_DESC:
         return (a, b) {
           final comparison = b.updatedAt!.compareTo(a.updatedAt!);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.CREATED_AT:
+      case EntrySort.CREATED_AT:
         return (a, b) {
           final comparison = a.createdAt!.compareTo(b.createdAt!);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.CREATED_AT_DESC:
+      case EntrySort.CREATED_AT_DESC:
         return (a, b) {
           final comparison = b.createdAt!.compareTo(a.createdAt!);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.PROGRESS:
+      case EntrySort.PROGRESS:
         return (a, b) {
           final comparison = a.progress.compareTo(b.progress);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.PROGRESS_DESC:
+      case EntrySort.PROGRESS_DESC:
         return (a, b) {
           final comparison = b.progress.compareTo(a.progress);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.REPEAT:
+      case EntrySort.REPEAT:
         return (a, b) {
           final comparison = a.repeat.compareTo(b.repeat);
           if (comparison != 0) return comparison;
           return a.title!.compareTo(b.title!);
         };
-      case ListSort.REPEAT_DESC:
+      case EntrySort.REPEAT_DESC:
         return (a, b) {
           final comparison = b.repeat.compareTo(a.repeat);
           if (comparison != 0) return comparison;

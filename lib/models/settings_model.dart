@@ -1,10 +1,10 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 
 class SettingsModel {
   final ScoreFormat scoreFormat;
-  final ListSort defaultSort;
+  final EntrySort defaultSort;
   final String? titleLanguage;
   final int activityMergeTime;
   final bool splitCompletedAnime;
@@ -34,7 +34,7 @@ class SettingsModel {
             ) ??
             ScoreFormat.POINT_10,
         defaultSort:
-            ListSortHelper.getEnum(map['mediaListOptions']['rowOrder']),
+            EntrySortHelper.getEnum(map['mediaListOptions']['rowOrder']),
         titleLanguage: map['options']['titleLanguage'],
         activityMergeTime: map['options']['activityMergeTime'] ?? 720,
         splitCompletedAnime: map['mediaListOptions']['animeList']

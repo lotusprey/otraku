@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings_controller.dart';
-import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -115,12 +115,12 @@ class SettingsContentView extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Flexible(
-              child: DropDownField<ListSort>(
+              child: DropDownField<EntrySort>(
                 title: 'Default List Order',
                 value: settings.model.defaultSort,
                 items: Map.fromIterables(
-                  ListSortHelper.defaultStrings,
-                  ListSortHelper.defaultEnums,
+                  EntrySortHelper.defaultStrings,
+                  EntrySortHelper.defaultEnums,
                 ),
                 onChanged: (val) {
                   const key = 'rowOrder';

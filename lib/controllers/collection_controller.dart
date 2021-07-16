@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
@@ -215,7 +215,7 @@ class CollectionController extends ScrollxController implements Filterable {
         ) ??
         ScoreFormat.POINT_10_DECIMAL;
 
-    _filters[Filterable.SORT] = ListSortHelper.getEnum(
+    _filters[Filterable.SORT] = EntrySortHelper.getEnum(
       data['user']['mediaListOptions']['rowOrder'],
     );
 
@@ -345,14 +345,14 @@ class CollectionController extends ScrollxController implements Filterable {
 
     e.updateProgress(data['SaveMediaListEntry']);
 
-    final ListSort sorting = _filters[Filterable.SORT];
+    final EntrySort sorting = _filters[Filterable.SORT];
     final ListStatus? entryStatus = Convert.strToEnum(
       e.status,
       ListStatus.values,
     );
 
     // If sorting doesn't depend on progress, replace entry
-    if (sorting != ListSort.PROGRESS && sorting != ListSort.PROGRESS_DESC)
+    if (sorting != EntrySort.PROGRESS && sorting != EntrySort.PROGRESS_DESC)
       for (final list in _lists) {
         if (list.status != null && list.status != entryStatus) continue;
 

@@ -17,7 +17,7 @@ class PieChart extends StatelessWidget {
               radius: 0.8,
               colors: [
                 Theme.of(context).accentColor,
-                Theme.of(context).accentColor.withAlpha(50),
+                Theme.of(context).accentColor.withAlpha(100),
               ],
               stops: const [0.5, 1.0],
             ),

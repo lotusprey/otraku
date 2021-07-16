@@ -138,14 +138,17 @@ class _MediaListTile extends StatelessWidget {
                           const SizedBox(height: 5),
                           RichText(
                             text: TextSpan(
+                              style: Theme.of(context).textTheme.subtitle2,
                               children: [
                                 TextSpan(
                                   text: mainDetail,
-                                  style: Theme.of(context).textTheme.subtitle1,
                                 ),
                                 TextSpan(
                                   text: secondaryDetail,
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      ?.copyWith(fontSize: Style.FONT_SMALL),
                                 ),
                               ],
                             ),

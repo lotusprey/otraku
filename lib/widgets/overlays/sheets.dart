@@ -5,7 +5,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
-import 'package:otraku/enums/list_sort.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -371,7 +371,7 @@ class _SortSheet extends StatelessWidget {
 }
 
 class CollectionSortSheet extends StatelessWidget {
-  final String? collectionTag;
+  final String collectionTag;
 
   CollectionSortSheet(this.collectionTag);
 
@@ -379,14 +379,13 @@ class CollectionSortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final collection = Get.find<CollectionController>(tag: collectionTag);
 
-    final mediaSort = collection.getFilterWithKey(Filterable.SORT);
-    final currentIndex = mediaSort.homeIndex ~/ 2;
-    final currentlyDesc = mediaSort.homeIndex % 2 == 0 ? false : true;
+    final EntrySort entrySort = collection.getFilterWithKey(Filterable.SORT);
+    final currentIndex = entrySort.index ~/ 2;
+    final currentlyDesc = entrySort.index % 2 == 0 ? false : true;
 
-    List<String?> options = [];
-    for (int i = 0; i < ListSort.values.length; i += 2) {
-      options.add(Convert.clarifyEnum(describeEnum(ListSort.values[i])));
-    }
+    final options = <String>[];
+    for (int i = 0; i < EntrySort.values.length; i += 2)
+      options.add(Convert.clarifyEnum(describeEnum(EntrySort.values[i]))!);
 
     return _SortSheet(
       options: options,
@@ -396,8 +395,8 @@ class CollectionSortSheet extends StatelessWidget {
         collection.setFilterWithKey(
           Filterable.SORT,
           value: desc
-              ? ListSort.values[index * 2 + 1]
-              : ListSort.values[index * 2],
+              ? EntrySort.values[index * 2 + 1]
+              : EntrySort.values[index * 2],
         );
         collection.sort();
       },
@@ -432,14 +431,11 @@ class MediaSortSheet extends StatelessWidget {
     int currentIndex = initial.index ~/ 2;
     bool currentlyDesc = initial.index % 2 == 0 ? false : true;
 
-    if (currentIndex > (length - 5) ~/ 2) {
-      currentIndex = (length - 6) ~/ 2;
-    }
+    if (currentIndex > (length - 5) ~/ 2) currentIndex = (length - 6) ~/ 2;
 
-    List<String?> options = [];
-    for (int i = 0; i < length - 6; i += 2) {
-      options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i])));
-    }
+    final options = <String>[];
+    for (int i = 0; i < length - 6; i += 2)
+      options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
     options.add('Title');
 
     return _SortSheet(
@@ -447,19 +443,12 @@ class MediaSortSheet extends StatelessWidget {
       index: currentIndex,
       desc: currentlyDesc,
       onTap: (index, desc) {
-        if (index != options.length - 1) {
-          if (desc) {
-            onTap(MediaSort.values[index * 2 + 1]);
-          } else {
-            onTap(MediaSort.values[index * 2]);
-          }
-        } else {
-          if (desc) {
-            onTap(titleDesc);
-          } else {
-            onTap(titleAsc);
-          }
-        }
+        if (index != options.length - 1)
+          desc
+              ? onTap(MediaSort.values[index * 2 + 1])
+              : onTap(MediaSort.values[index * 2]);
+        else
+          desc ? onTap(titleDesc) : onTap(titleAsc);
       },
     );
   }

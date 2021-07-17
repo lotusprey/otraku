@@ -268,14 +268,13 @@ class MediaBox extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (activity.mediaFormat != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          activity.mediaFormat!,
-                          style: Theme.of(context).textTheme.subtitle1,
-                        ),
+                    if (activity.mediaFormat != null) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        activity.mediaFormat!,
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
+                    ],
                   ],
                 ),
               ),

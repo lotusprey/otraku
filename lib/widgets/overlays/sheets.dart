@@ -28,7 +28,7 @@ class Sheet extends StatelessWidget {
 
   final Widget child;
   final double? height;
-  final Function? onDone;
+  final void Function()? onDone;
 
   Sheet({
     required this.child,
@@ -179,11 +179,11 @@ class SelectionSheet<T> extends StatelessWidget {
                           ? 2
                           : 0,
                   onChanged: (state) {
-                    if (state == 0) {
+                    if (state == 0)
                       exclusive!.remove(values[index]);
-                    } else if (state == 1) {
+                    else if (state == 1)
                       inclusive.add(values[index]);
-                    } else {
+                    else {
                       inclusive.remove(values[index]);
                       exclusive!.add(values[index]);
                     }
@@ -269,8 +269,8 @@ class TagSelectionSheet extends StatelessWidget {
 }
 
 class _SortSheet extends StatelessWidget {
-  final List<String?> options;
-  final int? index;
+  final List<String> options;
+  final int index;
   final bool desc;
   final Function(int, bool) onTap;
 
@@ -308,7 +308,7 @@ class _SortSheet extends StatelessWidget {
                 itemBuilder: (_, i) => ListTile(
                   dense: true,
                   title: Text(
-                    options[i]!,
+                    options[i],
                     style: i != index
                         ? Theme.of(context).textTheme.bodyText2
                         : Theme.of(context).textTheme.bodyText1,
@@ -372,7 +372,6 @@ class _SortSheet extends StatelessWidget {
 
 class CollectionSortSheet extends StatelessWidget {
   final String collectionTag;
-
   CollectionSortSheet(this.collectionTag);
 
   @override
@@ -406,8 +405,7 @@ class CollectionSortSheet extends StatelessWidget {
 
 class MediaSortSheet extends StatelessWidget {
   final MediaSort initial;
-  final Function(MediaSort) onTap;
-
+  final void Function(MediaSort) onTap;
   MediaSortSheet(this.initial, this.onTap);
 
   @override

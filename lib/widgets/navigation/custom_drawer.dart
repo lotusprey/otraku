@@ -11,7 +11,7 @@ class CustomDrawer extends StatelessWidget {
   final String heading;
   final int index;
   final int length;
-  final Function(int) onChanged;
+  final void Function(int) onChanged;
   final Widget Function(int) titleBuilder;
   final Widget Function(int) subtitleBuilder;
 
@@ -72,7 +72,6 @@ class CustomDrawer extends StatelessWidget {
 
 class CollectionDrawer extends StatelessWidget {
   final String? collectionTag;
-
   const CollectionDrawer(this.collectionTag);
 
   @override
@@ -86,7 +85,7 @@ class CollectionDrawer extends StatelessWidget {
       heading: '${collection.totalEntryCount} Total',
       index: collection.listIndex,
       length: names.length,
-      onChanged: (int index) => collection.listIndex = index,
+      onChanged: (int i) => collection.listIndex = i,
       titleBuilder: (int i) => Text(
         names[i],
         style: i != selected
@@ -102,8 +101,6 @@ class CollectionDrawer extends StatelessWidget {
 }
 
 class ExploreDrawer extends StatelessWidget {
-  final _space = const SizedBox(width: 10);
-
   const ExploreDrawer();
 
   @override
@@ -124,7 +121,7 @@ class ExploreDrawer extends StatelessWidget {
                 ? Theme.of(context).dividerColor
                 : Theme.of(context).accentColor,
           ),
-          _space,
+          const SizedBox(width: 10),
           Text(
             Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
             style: i != selected
@@ -134,7 +131,7 @@ class ExploreDrawer extends StatelessWidget {
         ],
       ),
       subtitleBuilder: (_) => const SizedBox(),
-      onChanged: (int index) => explorable.type = Explorable.values[index],
+      onChanged: (int i) => explorable.type = Explorable.values[i],
     );
   }
 }

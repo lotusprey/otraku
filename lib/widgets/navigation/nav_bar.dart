@@ -3,7 +3,7 @@ import 'package:otraku/utils/config.dart';
 
 class NavBar extends StatefulWidget {
   final Map<String, IconData> options;
-  final Function(int) onChanged;
+  final void Function(int) onChanged;
   final int initial;
 
   NavBar({
@@ -37,34 +37,59 @@ class _NavBarState extends State<NavBar> {
   }
 
   @override
-  Widget build(BuildContext context) => ClipRect(
-        child: BackdropFilter(
-          filter: Config.filter,
-          child: Container(
-            height: MediaQuery.of(context).viewPadding.bottom + 50,
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewPadding.bottom,
-            ),
-            width: double.infinity,
-            color: Theme.of(context).cardColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                for (int i = 0; i < widget.options.length; i++)
-                  IconButton(
-                    icon: Icon(widget.options.values.elementAt(i)),
-                    tooltip: widget.options.keys.elementAt(i),
-                    color: i != _index ? null : Theme.of(context).accentColor,
-                    onPressed: () {
-                      if (i != _index) {
-                        widget.onChanged(i);
-                        setState(() => _index = i);
-                      }
-                    },
+  Widget build(BuildContext context) {
+    final full =
+        MediaQuery.of(context).size.width > widget.options.length * 130;
+
+    return ClipRect(
+      child: BackdropFilter(
+        filter: Config.filter,
+        child: Container(
+          height: MediaQuery.of(context).viewPadding.bottom + 50,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom,
+          ),
+          color: Theme.of(context).cardColor,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (int i = 0; i < widget.options.length; i++)
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    if (i == _index) return;
+                    widget.onChanged(i);
+                    setState(() => _index = i);
+                  },
+                  child: SizedBox(
+                    height: double.infinity,
+                    width: full ? 130 : 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          widget.options.values.elementAt(i),
+                          color: i != _index
+                              ? null
+                              : Theme.of(context).accentColor,
+                        ),
+                        if (full) ...[
+                          const SizedBox(width: 5),
+                          Text(
+                            widget.options.keys.elementAt(i),
+                            style: i != _index
+                                ? Theme.of(context).textTheme.subtitle1
+                                : Theme.of(context).textTheme.bodyText1,
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }

@@ -178,71 +178,53 @@ class _MediaListTile extends StatelessWidget {
                       ),
                     ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(
-                          child: Center(
-                            child: Tooltip(
-                              message: 'Score',
-                              child: _buildScore(context),
+                        Tooltip(message: 'Score', child: _buildScore(context)),
+                        if (entry.repeat > 0)
+                          Tooltip(
+                            message: 'Repeats',
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Ionicons.repeat,
+                                  size: Style.ICON_SMALL,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  entry.repeat.toString(),
+                                  style: Theme.of(context).textTheme.subtitle2,
+                                ),
+                              ],
                             ),
-                          ),
-                        ),
-                        Flexible(
-                          child: Center(
-                            child: entry.repeat > 0
-                                ? Tooltip(
-                                    message: 'Repeats',
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Ionicons.repeat,
-                                          size: Style.ICON_SMALL,
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Text(
-                                          entry.repeat.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subtitle2,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                        Flexible(
-                          child: Center(
-                            child: entry.notes != null
-                                ? IconButton(
-                                    tooltip: 'Comment',
-                                    constraints: const BoxConstraints(
-                                      maxHeight: Style.ICON_SMALL,
-                                    ),
-                                    padding: const EdgeInsets.all(0),
-                                    icon: const Icon(
-                                      Ionicons.chatbox,
-                                      size: Style.ICON_SMALL,
-                                    ),
-                                    onPressed: () => showPopUp(
-                                      context,
-                                      TextDialog(
-                                        title: 'Comment',
-                                        text: entry.notes!,
-                                      ),
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                        Flexible(
-                          child: Center(
-                            child: _ProgressButton(
-                              entry,
-                              collectionCtrl.updateProgress,
+                          )
+                        else
+                          const SizedBox(),
+                        if (entry.notes != null)
+                          IconButton(
+                            tooltip: 'Comment',
+                            constraints: const BoxConstraints(
+                              maxHeight: Style.ICON_SMALL,
                             ),
-                          ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            icon: const Icon(
+                              Ionicons.chatbox,
+                              size: Style.ICON_SMALL,
+                            ),
+                            onPressed: () => showPopUp(
+                              context,
+                              TextDialog(
+                                title: 'Comment',
+                                text: entry.notes!,
+                              ),
+                            ),
+                          )
+                        else
+                          const SizedBox(),
+                        _ProgressButton(
+                          entry,
+                          collectionCtrl.updateProgress,
                         ),
                       ],
                     ),

@@ -41,7 +41,6 @@ import 'package:otraku/views/studio_view.dart';
 import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/routing/route_page.dart';
-import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class Navigation extends RouterDelegate<String>
     with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
@@ -405,7 +404,11 @@ class Navigation extends RouterDelegate<String>
   }
 
   @override
-  Future<bool> popRoute() => SynchronousFuture(_pop());
+  Future<bool> popRoute() async {
+    if (_key.currentContext == null) return SynchronousFuture(true);
+
+    return Navigator.maybePop(_key.currentContext!);
+  }
 
   @override
   Future<void> setNewRoutePath(String route) {
@@ -429,34 +432,4 @@ class Navigation extends RouterDelegate<String>
   // This override will be needed in the future for web.
   // @override
   // T? get currentConfiguration => null;
-
-  // Shows a dialog, by wrapping the passed child with a PopUpAnimation.
-  Future<T?> dialog<T>(Widget child) {
-    if (_pages.isEmpty) return Future.value(null);
-
-    final overlayCtx = _overlayCtx;
-    if (overlayCtx == null) return Future.value(null);
-
-    if (_key.currentContext == null) return Future.value(null);
-
-    return Navigator.of(overlayCtx, rootNavigator: true).push(DialogRoute<T>(
-      context: _key.currentContext!,
-      builder: (_) => PopUpAnimation(child),
-    ));
-  }
-
-  // Pops an overlay.
-  void closeOverlay() {
-    final overlayCtx = _overlayCtx;
-    if (overlayCtx == null) return;
-
-    Navigator.of(overlayCtx, rootNavigator: true).pop();
-  }
-
-  // Gets the current overlay context.
-  BuildContext? get _overlayCtx {
-    BuildContext? overlay;
-    _key.currentState?.overlay?.context.visitChildElements((e) => overlay = e);
-    return overlay;
-  }
 }

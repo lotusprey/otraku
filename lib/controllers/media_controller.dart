@@ -145,6 +145,7 @@ class MediaController extends ScrollxController {
   final _staffLanguage = 'Japanese'.obs;
   final _availableLanguages = <String>[];
   bool _isLoading = false;
+  bool showSpoilerTags = false;
 
   int get tab => _tab;
   set tab(int val) {

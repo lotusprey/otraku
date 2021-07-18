@@ -1,4 +1,5 @@
 import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/convert.dart';
 
 class MediaInfoModel {
@@ -31,6 +32,7 @@ class MediaInfoModel {
   final List<String> genres;
   final studios = <String, int>{};
   final producers = <String, int>{};
+  final tags = <TagModel>[];
   final String? source;
   final String? hashtag;
   final String? countryOfOrigin;
@@ -84,7 +86,7 @@ class MediaInfoModel {
       if (map['seasonYear'] != null) season += ' ${map["seasonYear"]}';
     }
 
-    final o = MediaInfoModel._(
+    final model = MediaInfoModel._(
       id: map['id'],
       browsable: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       isFavourite: map['isFavourite'] ?? false,
@@ -123,11 +125,14 @@ class MediaInfoModel {
       final List<dynamic> companies = map['studios']['edges'];
       for (final company in companies)
         if (company['isMain'])
-          o.studios[company['node']['name']] = company['node']['id'];
+          model.studios[company['node']['name']] = company['node']['id'];
         else
-          o.producers[company['node']['name']] = company['node']['id'];
+          model.producers[company['node']['name']] = company['node']['id'];
     }
 
-    return o;
+    if (map['tags'] != null)
+      for (final tag in map['tags']) model.tags.add(TagModel(tag));
+
+    return model;
   }
 }

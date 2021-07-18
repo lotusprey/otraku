@@ -83,17 +83,17 @@ class _MediaListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Format and time until airing of airing anime.
-    final mainDetail = entry.airingAt == null
-        ? Convert.clarifyEnum(entry.format)!
-        : '${Convert.clarifyEnum(entry.format)} • Ep ${entry.nextEpisode} in '
+    final format = Convert.clarifyEnum(entry.format);
+    final timeUntilAiring = entry.airingAt == null
+        ? null
+        : '${format == null ? "" : ' • '}'
+            'Ep ${entry.nextEpisode} in '
             '${Convert.timeUntilTimestamp(entry.airingAt)}';
-
-    // Episodes left of airing anime.
-    final secondaryDetail =
-        entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress
-            ? ' • ${entry.nextEpisode! - 1 - entry.progress} ep behind'
-            : null;
+    final episodesBehind =
+        entry.nextEpisode == null || entry.nextEpisode! - 1 <= entry.progress
+            ? null
+            : '${format == null && entry.airingAt == null ? "" : ' • '}'
+                '${entry.nextEpisode! - 1 - entry.progress} ep behind';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -140,11 +140,10 @@ class _MediaListTile extends StatelessWidget {
                             text: TextSpan(
                               style: Theme.of(context).textTheme.subtitle2,
                               children: [
+                                TextSpan(text: format),
+                                TextSpan(text: timeUntilAiring),
                                 TextSpan(
-                                  text: mainDetail,
-                                ),
-                                TextSpan(
-                                  text: secondaryDetail,
+                                  text: episodesBehind,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1

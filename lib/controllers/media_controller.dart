@@ -46,6 +46,7 @@ class MediaController extends ScrollxController {
       endDate {year month day}
       genres
       studios {edges {isMain node {id name}}}
+      tags {name description rank isMediaSpoiler isGeneralSpoiler}
       source
       hashtag
       countryOfOrigin
@@ -124,7 +125,7 @@ class MediaController extends ScrollxController {
     }
   ''';
 
-  static const Info = 0;
+  static const INFO = 0;
   static const RELATIONS = 1;
   static const SOCIAL = 2;
   static const REL_MEDIA = 0;
@@ -139,14 +140,17 @@ class MediaController extends ScrollxController {
   MediaController(this.id);
 
   MediaModel? _model;
-  final _tab = Info.obs;
+  int _tab = INFO;
   final _relationsTab = REL_MEDIA.obs;
   final _staffLanguage = 'Japanese'.obs;
   final _availableLanguages = <String>[];
   bool _isLoading = false;
 
-  int get tab => _tab();
-  set tab(int value) => _tab.value = value;
+  int get tab => _tab;
+  set tab(int val) {
+    _tab = val;
+    update();
+  }
 
   int get relationsTab => _relationsTab();
   set relationsTab(final int val) {
@@ -163,13 +167,13 @@ class MediaController extends ScrollxController {
 
   @override
   bool get hasNextPage {
-    if (_tab() == SOCIAL) return _model?.reviews.hasNextPage ?? false;
+    if (_tab == SOCIAL) return _model?.reviews.hasNextPage ?? false;
 
-    if (_tab() == RELATIONS) {
-      if (_tab() == REL_CHARACTERS)
+    if (_tab == RELATIONS) {
+      if (_tab == REL_CHARACTERS)
         return _model?.characters.hasNextPage ?? false;
 
-      if (_tab() == REL_STAFF) return _model?.characters.hasNextPage ?? false;
+      if (_tab == REL_STAFF) return _model?.characters.hasNextPage ?? false;
     }
 
     return false;
@@ -209,7 +213,7 @@ class MediaController extends ScrollxController {
 
   @override
   Future<void> fetchPage() async =>
-      _tab() == RELATIONS ? fetchRelationPage() : fetchReviewPage();
+      _tab == RELATIONS ? fetchRelationPage() : fetchReviewPage();
 
   Future<void> fetchRelationPage() async {
     final ofCharacters = _relationsTab() == REL_CHARACTERS;

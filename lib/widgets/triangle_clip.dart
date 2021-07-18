@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class TriangleClip extends CustomClipper<Path> {
+  const TriangleClip();
+
   @override
   Path getClip(Size size) {
     final path = Path();

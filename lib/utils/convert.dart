@@ -82,9 +82,9 @@ abstract class Convert {
     minutes %= 60;
     int days = hours ~/ 24;
     hours %= 24;
-    return '${days < 1 ? "" : "$days d "}'
-        '${hours < 1 ? "" : "$hours h "}'
-        '${minutes < 1 ? "" : "$minutes m"}';
+    return '${days < 1 ? "" : "${days}d "}'
+        '${hours < 1 ? "" : "${hours}h "}'
+        '${minutes < 1 ? "" : "${minutes}m"}';
   }
 
   static const COUNTRY_CODES = {

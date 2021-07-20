@@ -249,7 +249,7 @@ class CollectionController extends ScrollxController implements Filterable {
   Future<void> fetchPage() async {}
 
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
-    // Update database item
+    // Update database item.
     final oldCustomLists = oldEntry.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
@@ -270,7 +270,7 @@ class CollectionController extends ScrollxController implements Filterable {
     for (int i = 0; i < newCustomLists.length; i++)
       newCustomLists[i] = newCustomLists[i].toLowerCase();
 
-    // Remove from old status list
+    // Remove from old status list.
     if (!oldEntry.hiddenFromStatusLists)
       for (final list in _lists)
         if (oldEntry.status != null &&
@@ -281,7 +281,7 @@ class CollectionController extends ScrollxController implements Filterable {
           break;
         }
 
-    // Remove from old custom lists
+    // Remove from old custom lists.
     if (oldCustomLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < oldCustomLists.length; i++)
@@ -291,7 +291,7 @@ class CollectionController extends ScrollxController implements Filterable {
             break;
           }
 
-    // Add to new status list
+    // Add to new status list.
     if (!newEntry.hiddenFromStatusLists) {
       bool added = false;
       for (final list in _lists)
@@ -308,7 +308,7 @@ class CollectionController extends ScrollxController implements Filterable {
       }
     }
 
-    // Add to new custom lists
+    // Add to new custom lists.
     if (newCustomLists.isNotEmpty) {
       for (final list in _lists)
         for (int i = 0; i < newCustomLists.length; i++)
@@ -323,7 +323,7 @@ class CollectionController extends ScrollxController implements Filterable {
       }
     }
 
-    // Remove empty lists
+    // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex.value) _listIndex.value--;
@@ -351,8 +351,11 @@ class CollectionController extends ScrollxController implements Filterable {
       ListStatus.values,
     );
 
-    // If sorting doesn't depend on progress, replace entry
-    if (sorting != EntrySort.PROGRESS && sorting != EntrySort.PROGRESS_DESC)
+    // If sorting doesn't depend on progress or updated time, replace entry.
+    if (sorting != EntrySort.PROGRESS &&
+        sorting != EntrySort.PROGRESS_DESC &&
+        sorting != EntrySort.UPDATED_AT &&
+        sorting != EntrySort.UPDATED_AT_DESC)
       for (final list in _lists) {
         if (list.status != null && list.status != entryStatus) continue;
 
@@ -362,7 +365,7 @@ class CollectionController extends ScrollxController implements Filterable {
             break;
           }
       }
-    // Otherwise, remove and insert sorted
+    // Otherwise, remove and insert sorted.
     else
       for (final list in _lists) {
         if (list.status != null && list.status != entryStatus) continue;
@@ -375,7 +378,7 @@ class CollectionController extends ScrollxController implements Filterable {
           }
       }
 
-    // Replace in filtered
+    // Replace in filtered.
     for (int i = 0; i < _entries.length; i++)
       if (_entries[i].mediaId == e.mediaId) {
         _entries[i] = e;

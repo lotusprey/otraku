@@ -54,11 +54,11 @@ class Theming with ChangeNotifier {
         : _mode == ThemeMode.dark;
 
     _theme = isDark ? _dark : _light;
+    SystemChrome.setSystemUIOverlayStyle(_theme.overlayStyle);
   }
 
   void refresh() {
     _setTheme();
-    SystemChrome.setSystemUIOverlayStyle(_theme.overlayStyle);
     notifyListeners();
   }
 }

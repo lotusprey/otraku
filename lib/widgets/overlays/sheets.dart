@@ -18,12 +18,14 @@ class Sheet extends StatelessWidget {
     required BuildContext ctx,
     required Widget sheet,
     bool isScrollControlled = false,
+    Color? barrierColour,
   }) =>
       showModalBottomSheet(
         context: ctx,
         builder: (_) => sheet,
         isScrollControlled: isScrollControlled,
         backgroundColor: Colors.transparent,
+        barrierColor: barrierColour,
       );
 
   final Widget child;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// An implementation of FloatingActionButton.
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;

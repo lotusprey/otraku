@@ -162,13 +162,6 @@ class CollectionController extends ScrollxController implements Filterable {
     filter();
   }
 
-  int get totalEntryCount {
-    int c = 0;
-    for (final list in _lists)
-      if (list.status != null) c += list.entries.length;
-    return c;
-  }
-
   List<String> get names {
     final n = <String>[];
     for (final list in _lists) n.add(list.name);

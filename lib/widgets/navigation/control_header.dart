@@ -29,11 +29,6 @@ class CollectionControlHeader extends StatelessWidget {
 
         return TransparentHeader(
           [
-            ActionIcon(
-              tooltip: 'Lists',
-              icon: Ionicons.menu_outline,
-              onTap: Scaffold.of(context).openDrawer,
-            ),
             MediaSearchField(
               scrollToTop: () => collection.scrollTo(0),
               swipe: (offset) => collection.listIndex += offset,
@@ -86,11 +81,6 @@ class ExploreControlHeader extends StatelessWidget {
     return Obx(
       () => TransparentHeader(
         [
-          ActionIcon(
-            tooltip: 'Types',
-            icon: Ionicons.menu_outline,
-            onTap: Scaffold.of(context).openDrawer,
-          ),
           MediaSearchField(
             scrollToTop: () => explorer.scrollTo(0),
             swipe: (offset) {

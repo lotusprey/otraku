@@ -19,12 +19,12 @@ class _ExpandableFieldState extends State<ExpandableField> {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,
           borderRadius: Config.BORDER_RADIUS,
         ),
         child: TextField(
+          decoration: const InputDecoration(contentPadding: EdgeInsets.all(10)),
           scrollPhysics: Config.PHYSICS,
           controller: _controller,
           onChanged: (text) => widget.onChanged(text),

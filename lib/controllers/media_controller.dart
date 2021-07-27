@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 import 'package:otraku/models/media_model.dart';
 
-class MediaController extends ScrollxController {
+class MediaController extends OverscrollController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

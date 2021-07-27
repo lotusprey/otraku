@@ -3,9 +3,9 @@ import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 
-class UserReviewsController extends ScrollxController {
+class UserReviewsController extends OverscrollController {
   static const _reviewsQuery = r'''
     query UserReviews($id: Int, $page: Int = 1) {
       Page(page: $page) {

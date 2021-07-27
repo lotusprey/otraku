@@ -7,9 +7,9 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 
-class StaffController extends ScrollxController {
+class StaffController extends OverscrollController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

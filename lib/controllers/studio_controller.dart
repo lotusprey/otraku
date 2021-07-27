@@ -6,9 +6,9 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/studio_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 
-class StudioController extends ScrollxController {
+class StudioController extends OverscrollController {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

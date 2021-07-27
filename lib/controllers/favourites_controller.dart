@@ -4,9 +4,9 @@ import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 
-class FavouritesController extends ScrollxController {
+class FavouritesController extends OverscrollController {
   static const _favouritesQuery = r'''
     query Favourites($id: Int, $page: Int, $withAnime: Boolean = false, $withManga: Boolean = false, 
         $withCharacters: Boolean = false, $withStaff: Boolean = false, $withStudios: Boolean = false) {

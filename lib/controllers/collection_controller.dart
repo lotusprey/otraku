@@ -8,9 +8,9 @@ import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 
-class CollectionController extends ScrollxController implements Filterable {
+class CollectionController extends OverscrollController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

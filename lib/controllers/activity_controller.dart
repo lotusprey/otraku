@@ -3,9 +3,9 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/reply_model.dart';
-import 'package:otraku/utils/scroll_x_controller.dart';
+import 'package:otraku/utils/overscroll_controller.dart';
 
-class ActivityController extends ScrollxController {
+class ActivityController extends OverscrollController {
   static const _activityQuery = r'''
     query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
       Activity(id: $id) @include(if: $withActivity) {

@@ -92,6 +92,7 @@ class HomeView extends StatelessWidget {
         () => ActionButton(
           tooltip: 'Types',
           icon: ctrl.type.icon,
+          scrollCtrl: ctrl.scrollCtrl,
           onTap: () => Sheet.show(
             ctx: ctx,
             sheet: ExploreBottomDrawer(ctx),

@@ -81,6 +81,7 @@ class CollectionActionButton extends StatelessWidget {
     return ActionButton(
       tooltip: 'Lists',
       icon: Ionicons.menu_outline,
+      scrollCtrl: Get.find<CollectionController>(tag: collectionTag).scrollCtrl,
       onTap: () => Sheet.show(
         ctx: context,
         sheet: CollectionBottomDrawer(context, collectionTag),

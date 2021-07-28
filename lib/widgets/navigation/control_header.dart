@@ -29,32 +29,35 @@ class CollectionControlHeader extends StatelessWidget {
 
         return TransparentHeader(
           [
-            MediaSearchField(
-              scrollToTop: () => collection.scrollTo(0),
-              swipe: (offset) => collection.listIndex += offset,
-              hint: collection.currentName,
-              searchValue: collection.getFilterWithKey(Filterable.SEARCH) ?? '',
-              search: (val) => collection.setFilterWithKey(
-                Filterable.SEARCH,
-                value: val,
-                update: true,
-              ),
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      collection.currentName,
-                      style: Theme.of(context).textTheme.headline2,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+            Obx(
+              () => MediaSearchField(
+                scrollToTop: () => collection.scrollTo(0),
+                swipe: (offset) => collection.listIndex += offset,
+                hint: collection.currentName,
+                searchValue:
+                    collection.getFilterWithKey(Filterable.SEARCH) ?? '',
+                search: (val) => collection.setFilterWithKey(
+                  Filterable.SEARCH,
+                  value: val,
+                  update: true,
+                ),
+                title: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        collection.currentName,
+                        style: Theme.of(context).textTheme.headline2,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  Text(
-                    ' ${collection.currentCount}',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                ],
+                    Text(
+                      ' ${collection.currentCount}',
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                  ],
+                ),
               ),
             ),
             ActionIcon(

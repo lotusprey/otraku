@@ -243,31 +243,28 @@ class CollectionController extends OverscrollController implements Filterable {
 
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
     // Update database item.
+    final data = await Client.request(_updateEntryMutation, newEntry.toMap());
+    if (data == null) return;
+
+    final entry = ListEntryModel(data['SaveMediaListEntry']);
+
+    // Update the entry model (necessary for the updateEntry() caller).
+    newEntry.entryId = data['SaveMediaListEntry']['id'];
+
+    // Find from which custom lists to remove the item and in which to add it.
     final oldCustomLists = oldEntry.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
     final newCustomLists = newEntry.customLists.entries
         .where((e) => e.value)
-        .map((e) => e.key)
+        .map((e) => e.key.toLowerCase())
         .toList();
 
-    final data = await Client.request(_updateEntryMutation, newEntry.toMap());
-    if (data == null) return;
-
-    // Update the entry model (necessary for the updateEntry() caller).
-    newEntry.entryId = data['SaveMediaListEntry']['id'];
-
-    final entry = ListEntryModel(data['SaveMediaListEntry']);
-
-    for (int i = 0; i < newCustomLists.length; i++)
-      newCustomLists[i] = newCustomLists[i].toLowerCase();
-
     // Remove from old status list.
-    if (!oldEntry.hiddenFromStatusLists)
+    if (oldEntry.status != null && !oldEntry.hiddenFromStatusLists)
       for (final list in _lists)
-        if (oldEntry.status != null &&
-            oldEntry.status == list.status &&
+        if (oldEntry.status == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.removeByMediaId(entry.mediaId);
@@ -319,7 +316,7 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex.value) _listIndex.value--;
+        if (i <= _listIndex.value && i != 0) _listIndex.value--;
         _lists.removeAt(i--);
       }
 

@@ -7,10 +7,9 @@ import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -19,11 +18,10 @@ class NotificationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final notifications = Get.find<NotificationsController>();
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: ShadowAppBar(
         title: 'Notifications',
-        trailing: [
-          ActionIcon(
-            dimmed: false,
+        actions: [
+          AppBarIcon(
             tooltip: 'Filter',
             icon: Ionicons.funnel_outline,
             onTap: () => Sheet.show(

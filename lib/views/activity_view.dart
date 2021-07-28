@@ -12,7 +12,7 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
@@ -28,7 +28,7 @@ class ActivityView extends StatelessWidget {
         builder: (activity) {
           final model = activity.model;
           return Scaffold(
-            appBar: CustomAppBar(
+            appBar: ShadowAppBar(
               titleWidget: model != null
                   ? Row(
                       children: [

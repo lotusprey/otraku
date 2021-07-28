@@ -9,14 +9,13 @@ import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/expandable_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 import 'package:otraku/widgets/fields/score_picker.dart';
@@ -38,9 +37,9 @@ class EntryView extends StatelessWidget {
         final model = entryCtrl.model;
 
         return Scaffold(
-          appBar: CustomAppBar(
+          appBar: ShadowAppBar(
             title: 'Edit',
-            actionWidget: _Actions(entryCtrl, callback),
+            actions: [_Actions(entryCtrl, callback)],
           ),
           body: model != null
               ? _Content(entryCtrl, Get.find<ViewerController>().settings!)
@@ -67,15 +66,15 @@ class __ActionsState extends State<_Actions> {
   Widget build(BuildContext context) {
     final ctrl = widget.ctrl;
     final actions = <Widget>[];
+
     if (ctrl.model != null) {
-      if (_loading) {
-        actions.add(const Loader());
-      } else {
-        if (ctrl.model!.entryId != null) {
-          actions.add(ActionIcon(
-            dimmed: false,
-            tooltip: 'Remove',
+      if (_loading)
+        actions.add(const Padding(padding: Config.PADDING, child: Loader()));
+      else {
+        if (ctrl.model!.entryId != null)
+          actions.add(AppBarIcon(
             icon: Ionicons.trash_bin_outline,
+            tooltip: 'Remove',
             onTap: () => showPopUp(
               context,
               ConfirmationDialog(
@@ -94,13 +93,10 @@ class __ActionsState extends State<_Actions> {
               ),
             ),
           ));
-          actions.add(const SizedBox(width: 15));
-        }
 
-        actions.add(ActionIcon(
-            dimmed: false,
-            tooltip: 'Save',
+        actions.add(AppBarIcon(
             icon: Ionicons.save_outline,
+            tooltip: 'Save',
             onTap: () {
               setState(() => _loading = true);
               Get.find<CollectionController>(

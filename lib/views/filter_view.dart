@@ -10,9 +10,8 @@ import 'package:otraku/enums/media_status.dart';
 import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/layouts/chip_grid.dart';
 
 class FilterView extends StatelessWidget {
@@ -59,11 +58,10 @@ class FilterView extends StatelessWidget {
         filterable.getFilterWithKey(Filterable.ON_LIST);
 
     return Scaffold(
-      appBar: CustomAppBar(
+      appBar: ShadowAppBar(
         title: 'Filters',
-        trailing: [
-          ActionIcon(
-            dimmed: false,
+        actions: [
+          AppBarIcon(
             tooltip: 'Clear',
             icon: Icons.close,
             onTap: () {
@@ -72,8 +70,7 @@ class FilterView extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          ActionIcon(
-            dimmed: false,
+          AppBarIcon(
             tooltip: 'Apply',
             icon: Icons.done_rounded,
             onTap: () {

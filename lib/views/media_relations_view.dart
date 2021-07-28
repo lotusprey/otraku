@@ -5,7 +5,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
@@ -13,6 +12,7 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaRelationsView extends StatelessWidget {
@@ -28,10 +28,46 @@ class MediaRelationsView extends StatelessWidget {
       controller: ctrl.scrollCtrl,
       slivers: [
         header,
-        SliverPersistentHeader(
-          delegate: _RelationControlsDelegate(ctrl, scrollUp),
-          pinned: true,
-        ),
+        SliverShadowAppBar([
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: BubbleTabs(
+              options: ['Media', 'Characters', 'Staff'],
+              values: [
+                MediaController.REL_MEDIA,
+                MediaController.REL_CHARACTERS,
+                MediaController.REL_STAFF,
+              ],
+              initial: ctrl.relationsTab,
+              onNewValue: (dynamic val) {
+                scrollUp();
+                ctrl.relationsTab = val;
+              },
+              onSameValue: (dynamic _) => scrollUp(),
+            ),
+          ),
+          Obx(() {
+            if (ctrl.relationsTab == MediaController.REL_CHARACTERS &&
+                ctrl.model!.characters.items.isNotEmpty &&
+                ctrl.availableLanguages.length > 1)
+              return AppBarIcon(
+                tooltip: 'Language',
+                icon: Ionicons.globe_outline,
+                onTap: () => Sheet.show(
+                  ctx: context,
+                  sheet: OptionSheet(
+                    title: 'Language',
+                    options: ctrl.availableLanguages,
+                    index: ctrl.languageIndex,
+                    onTap: (index) =>
+                        ctrl.staffLanguage = ctrl.availableLanguages[index],
+                  ),
+                  isScrollControlled: true,
+                ),
+              );
+            return const SizedBox();
+          }),
+        ]),
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
           sliver: Obx(() {
@@ -66,100 +102,6 @@ class MediaRelationsView extends StatelessWidget {
       ],
     );
   }
-}
-
-class _RelationControlsDelegate implements SliverPersistentHeaderDelegate {
-  static const _height = 50.0;
-
-  final MediaController ctrl;
-  final Function scrollUp;
-
-  _RelationControlsDelegate(this.ctrl, this.scrollUp);
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return Container(
-      height: _height,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).backgroundColor,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          )
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          BubbleTabs(
-            options: ['Media', 'Characters', 'Staff'],
-            values: [
-              MediaController.REL_MEDIA,
-              MediaController.REL_CHARACTERS,
-              MediaController.REL_STAFF,
-            ],
-            initial: ctrl.relationsTab,
-            onNewValue: (dynamic val) {
-              scrollUp();
-              ctrl.relationsTab = val;
-            },
-            onSameValue: (dynamic _) => scrollUp(),
-          ),
-          Obx(() {
-            if (ctrl.relationsTab == MediaController.REL_CHARACTERS &&
-                ctrl.model!.characters.items.isNotEmpty &&
-                ctrl.availableLanguages.length > 1)
-              return ActionIcon(
-                tooltip: 'Language',
-                icon: Ionicons.globe_outline,
-                onTap: () => Sheet.show(
-                  ctx: context,
-                  sheet: OptionSheet(
-                    title: 'Language',
-                    options: ctrl.availableLanguages,
-                    index: ctrl.languageIndex,
-                    onTap: (index) =>
-                        ctrl.staffLanguage = ctrl.availableLanguages[index],
-                  ),
-                  isScrollControlled: true,
-                ),
-              );
-            return const SizedBox();
-          }),
-        ],
-      ),
-    );
-  }
-
-  @override
-  double get maxExtent => _height;
-
-  @override
-  double get minExtent => _height;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
-
-  @override
-  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
-      null;
-
-  @override
-  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
-
-  @override
-  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
-
-  @override
-  TickerProvider? get vsync => null;
 }
 
 class _RelationsGrid extends StatelessWidget {

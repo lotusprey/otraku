@@ -6,11 +6,10 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/navigation/transparent_header.dart';
@@ -26,7 +25,7 @@ class FeedView extends StatelessWidget {
     final feed = Get.find<FeedController>(tag: id.toString());
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Activities', trailing: [_Filter(feed)]),
+      appBar: ShadowAppBar(title: 'Activities', actions: [_Filter(feed)]),
       body: SafeArea(
         child: Obx(
           () {
@@ -130,17 +129,20 @@ class _Header extends StatelessWidget {
       ),
       const Spacer(),
       _Filter(feed),
-      Tooltip(
-        message: 'Notifications',
-        child: GestureDetector(
-          onTap: () => Navigation.it.push(Navigation.notificationsRoute),
-          child: Obx(
-            () => Stack(
-              children: [
-                if (viewer.unreadCount > 0) ...[
+      if (viewer.unreadCount > 0)
+        Tooltip(
+          message: 'Notifications',
+          child: GestureDetector(
+            onTap: () => Navigation.it.push(Navigation.notificationsRoute),
+            child: Obx(
+              () => Stack(
+                children: [
                   Positioned(
                     right: 0,
-                    child: const Icon(Ionicons.notifications_outline),
+                    child: Icon(
+                      Ionicons.notifications_outline,
+                      color: Theme.of(context).dividerColor,
+                    ),
                   ),
                   Container(
                     constraints: const BoxConstraints(
@@ -163,13 +165,17 @@ class _Header extends StatelessWidget {
                       ),
                     ),
                   ),
-                ] else
-                  const Icon(Ionicons.notifications_outline),
-              ],
+                ],
+              ),
             ),
           ),
+        )
+      else
+        AppBarIcon(
+          tooltip: 'Notifications',
+          icon: Ionicons.notifications_outline,
+          onTap: () => Navigation.it.push(Navigation.notificationsRoute),
         ),
-      ),
     ]);
   }
 }
@@ -180,7 +186,7 @@ class _Filter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionIcon(
+    return AppBarIcon(
       tooltip: 'Filter',
       icon: Ionicons.funnel_outline,
       onTap: () => Sheet.show(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/widgets/action_icon.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 
 class FavouriteButton extends StatefulWidget {
   final int favourites;
@@ -31,10 +31,8 @@ class _FavouriteButtonState extends State<FavouriteButton> {
             opacity: 1 - widget.shrinkPercentage * 2,
             child: Text(widget.favourites.toString()),
           ),
-          const SizedBox(width: 15),
         ],
-        ActionIcon(
-          dimmed: false,
+        AppBarIcon(
           tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
           icon: _isFavourite ? Icons.favorite : Icons.favorite_border,
           onTap: () =>

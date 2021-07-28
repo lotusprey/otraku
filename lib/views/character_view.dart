@@ -5,12 +5,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
-import 'package:otraku/widgets/navigation/opaque_header.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -93,23 +92,26 @@ class CharacterView extends StatelessWidget {
                   (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
                       Config.PADDING.top * 2;
 
-              return OpaqueHeader([
+              return SliverShadowAppBar([
                 character.anime.items.isNotEmpty &&
                         character.manga.items.isNotEmpty
-                    ? BubbleTabs<bool>(
-                        options: const ['Anime', 'Manga'],
-                        values: const [true, false],
-                        initial: true,
-                        onNewValue: (value) {
-                          character.onAnime = value;
-                          character.scrollTo(offset);
-                        },
-                        onSameValue: (_) => character.scrollTo(offset),
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: BubbleTabs<bool>(
+                          options: const ['Anime', 'Manga'],
+                          values: const [true, false],
+                          initial: true,
+                          onNewValue: (value) {
+                            character.onAnime = value;
+                            character.scrollTo(offset);
+                          },
+                          onSameValue: (_) => character.scrollTo(offset),
+                        ),
                       )
                     : const SizedBox(),
                 const Spacer(),
                 if (character.availableLanguages.length > 1)
-                  ActionIcon(
+                  AppBarIcon(
                     tooltip: 'Language',
                     icon: Ionicons.globe_outline,
                     onTap: () => Sheet.show(
@@ -124,8 +126,7 @@ class CharacterView extends StatelessWidget {
                       isScrollControlled: true,
                     ),
                   ),
-                const SizedBox(width: 15),
-                ActionIcon(
+                AppBarIcon(
                   tooltip: 'Sort',
                   icon: Ionicons.filter_outline,
                   onTap: () => Sheet.show(

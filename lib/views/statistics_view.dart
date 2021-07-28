@@ -6,7 +6,7 @@ import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/pie_chart.dart';
 
@@ -21,7 +21,7 @@ class StatisticsView extends StatelessWidget {
       builder: (stats) {
         return Scaffold(
           extendBody: true,
-          appBar: CustomAppBar(
+          appBar: ShadowAppBar(
             title: stats.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
           bottomNavigationBar: NavBar(

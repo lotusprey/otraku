@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/user_reviews_controller.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 
 class UserReviewsView extends StatelessWidget {
   final int id;
@@ -12,7 +12,7 @@ class UserReviewsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Reviews'),
+      appBar: ShadowAppBar(title: 'Reviews'),
       body: SafeArea(
         child: GetBuilder<UserReviewsController>(
           tag: id.toString(),

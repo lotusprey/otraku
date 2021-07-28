@@ -5,7 +5,7 @@ import 'package:otraku/controllers/friends_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class FriendsView extends StatelessWidget {
@@ -17,7 +17,7 @@ class FriendsView extends StatelessWidget {
         tag: id.toString(),
         builder: (friends) => Scaffold(
           extendBody: true,
-          appBar: CustomAppBar(
+          appBar: ShadowAppBar(
             title: friends.onFollowing ? 'Following' : 'Followers',
           ),
           bottomNavigationBar: NavBar(

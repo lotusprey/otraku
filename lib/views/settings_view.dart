@@ -7,7 +7,7 @@ import 'package:otraku/views/settings_app_view.dart';
 import 'package:otraku/views/settings_content_view.dart';
 import 'package:otraku/views/settings_notifications_view.dart';
 import 'package:otraku/views/settings_about_view.dart';
-import 'package:otraku/widgets/navigation/custom_app_bar.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsView extends StatelessWidget {
@@ -34,7 +34,7 @@ class SettingsView extends StatelessWidget {
           onChanged: (page) => settings.pageIndex = page,
           initial: settings.pageIndex,
         ),
-        appBar: CustomAppBar(title: _pageNames[settings.pageIndex]),
+        appBar: ShadowAppBar(title: _pageNames[settings.pageIndex]),
         body: AnimatedSwitcher(
           duration: Config.TAB_SWITCH_DURATION,
           child: _tabs[settings.pageIndex],

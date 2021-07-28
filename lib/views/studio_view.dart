@@ -5,10 +5,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/opaque_header.dart';
+import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -51,11 +50,10 @@ class StudioView extends StatelessWidget {
                 ),
               ),
               if (studio.model != null) ...[
-                OpaqueHeader([
+                SliverShadowAppBar([
                   const Spacer(),
-                  ActionIcon(
+                  AppBarIcon(
                     tooltip: 'Filter',
-                    active: studio.onList != null,
                     icon: Ionicons.funnel_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
@@ -78,8 +76,7 @@ class StudioView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 15),
-                  ActionIcon(
+                  AppBarIcon(
                     tooltip: 'Sort',
                     icon: Ionicons.filter_outline,
                     onTap: () => Sheet.show(

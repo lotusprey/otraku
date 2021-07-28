@@ -316,7 +316,7 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex.value && i != 0) _listIndex.value--;
+        if (i <= _listIndex.value && _listIndex() != 0) _listIndex.value--;
         _lists.removeAt(i--);
       }
 
@@ -326,9 +326,10 @@ class CollectionController extends OverscrollController implements Filterable {
   Future<void> updateProgress(ListEntryModel e) async {
     if (e.progress == e.progressMax) return;
 
+    // Update database item.
     final data = await Client.request(
       _updateProgressMutation,
-      e.progressToMap(),
+      {'mediaId': e.mediaId, 'progress': e.progress + 1},
       popOnErr: false,
     );
     if (data == null) return;
@@ -377,6 +378,7 @@ class CollectionController extends OverscrollController implements Filterable {
   }
 
   Future<void> removeEntry(EntryModel entry) async {
+    // Update database item.
     final data = await Client.request(
       _removeEntryMutation,
       {'entryId': entry.entryId},
@@ -386,20 +388,31 @@ class CollectionController extends OverscrollController implements Filterable {
     if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
       return;
 
-    final List<String> customLists = [];
-    for (final cl in entry.customLists.entries)
-      if (cl.value) customLists.add(cl.key.toLowerCase());
+    final customLists = entry.customLists.entries
+        .where((e) => e.value)
+        .map((e) => e.key.toLowerCase())
+        .toList();
 
-    for (final list in _lists)
-      if ((!entry.hiddenFromStatusLists &&
-              entry.status == list.status &&
-              !list.isCustomList) ||
-          (list.isCustomList && customLists.contains(list.name.toLowerCase())))
-        list.removeByMediaId(entry.mediaId);
+    // Remove from status list.
+    if (!entry.hiddenFromStatusLists)
+      for (final list in _lists)
+        if (!list.isCustomList && list.status == entry.status)
+          list.removeByMediaId(entry.mediaId);
 
+    // Remove from custom lists.
+    if (customLists.isNotEmpty)
+      for (final list in _lists)
+        for (int i = 0; i < customLists.length; i++)
+          if (customLists[i] == list.name.toLowerCase()) {
+            list.removeByMediaId(entry.mediaId);
+            customLists.removeAt(i);
+            break;
+          }
+
+    // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex.value) _listIndex.value--;
+        if (i <= _listIndex.value && _listIndex() != 0) _listIndex.value--;
         _lists.removeAt(i--);
       }
 

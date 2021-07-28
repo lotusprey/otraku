@@ -71,8 +71,5 @@ class ListEntryModel {
     return 1;
   }
 
-  Map<String, int> progressToMap() =>
-      {'mediaId': mediaId, 'progress': progress + 1};
-
   void updateProgress(Map<String, dynamic> map) => progress = map['progress'];
 }

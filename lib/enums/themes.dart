@@ -150,7 +150,7 @@ extension Style on Themes {
           backgroundColor: MaterialStateProperty.all(theme['accent']),
           foregroundColor: MaterialStateProperty.all(theme['background']),
           overlayColor: MaterialStateProperty.all(theme['highlight']),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          shape: MaterialStateProperty.all(const RoundedRectangleBorder(
             borderRadius: Config.BORDER_RADIUS,
           )),
         ),

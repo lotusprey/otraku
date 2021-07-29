@@ -220,8 +220,9 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                 ),
             ] else
               Expanded(
-                child: SizedBox(
+                child: Container(
                   height: 35,
+                  padding: const EdgeInsets.only(right: 10),
                   child: TextField(
                     controller: _ctrl,
                     focusNode: _focus,

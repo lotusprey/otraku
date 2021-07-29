@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/favourite_button.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 
+// This is to be merged into SliverShadowAppBar, after
+// changes in how favouriting is handled take place.
 class TopSliverHeader extends StatelessWidget {
   final String? text;
   final bool? isFavourite;

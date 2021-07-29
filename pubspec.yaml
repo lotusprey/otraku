@@ -17,7 +17,7 @@ dependencies:
   get_storage: ^2.0.3
   flutter_secure_storage: ^4.2.0
   url_launcher: ^6.0.9
-  app_links: ^2.2.0
+  app_links: ^2.2.0 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
   workmanager: ^0.4.1
   flutter_local_notifications: ^6.1.0
   flutter_widget_from_html_core: ^0.6.1+4

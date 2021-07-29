@@ -7,7 +7,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 

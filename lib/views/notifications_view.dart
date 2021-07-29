@@ -9,7 +9,7 @@ import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 

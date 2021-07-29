@@ -18,7 +18,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: _AppBarBody([
+      child: _ShadowBody([
         AppBarIcon(
           icon: Ionicons.chevron_back_outline,
           tooltip: 'Close',
@@ -59,7 +59,7 @@ class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) =>
-      _AppBarBody(children);
+      _ShadowBody(children);
 
   @override
   double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
@@ -85,9 +85,9 @@ class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
   TickerProvider? get vsync => null;
 }
 
-class _AppBarBody extends StatelessWidget {
+class _ShadowBody extends StatelessWidget {
   final List<Widget> children;
-  const _AppBarBody(this.children);
+  const _ShadowBody(this.children);
 
   @override
   Widget build(BuildContext context) {
@@ -103,23 +103,79 @@ class _AppBarBody extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: children,
-      ),
+      child: Row(children: children),
     );
   }
+}
+
+class SliverTransparentAppBar extends StatelessWidget {
+  final List<Widget> children;
+  const SliverTransparentAppBar(this.children);
+
+  @override
+  Widget build(BuildContext context) => SliverPersistentHeader(
+        delegate: _SliverTransparentAppBarDelegate(children),
+        pinned: true,
+      );
+}
+
+class _SliverTransparentAppBarDelegate
+    implements SliverPersistentHeaderDelegate {
+  final List<Widget> children;
+  _SliverTransparentAppBarDelegate(this.children);
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) =>
+      ClipRect(
+        child: BackdropFilter(
+          filter: Config.filter,
+          child: Container(
+            height: Config.MATERIAL_TAP_TARGET_SIZE,
+            color: Theme.of(context).cardColor,
+            child: Row(children: children),
+          ),
+        ),
+      );
+
+  @override
+  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+
+  @override
+  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
+
+  @override
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
+      null;
+
+  @override
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
+
+  @override
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration => null;
+
+  @override
+  TickerProvider? get vsync => null;
 }
 
 class AppBarIcon extends StatelessWidget {
   final IconData icon;
   final String tooltip;
+  final Color? colour;
   final void Function() onTap;
 
   const AppBarIcon({
     required this.icon,
     required this.tooltip,
     required this.onTap,
+    this.colour,
   });
 
   @override
@@ -129,7 +185,7 @@ class AppBarIcon extends StatelessWidget {
       tooltip: tooltip,
       onPressed: onTap,
       iconSize: Style.ICON_BIG,
-      color: Theme.of(context).dividerColor,
+      color: colour ?? Theme.of(context).dividerColor,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
       padding: Config.PADDING,
     );

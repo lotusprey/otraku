@@ -12,7 +12,7 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaRelationsView extends StatelessWidget {
@@ -29,23 +29,21 @@ class MediaRelationsView extends StatelessWidget {
       slivers: [
         header,
         SliverShadowAppBar([
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: BubbleTabs(
-              options: ['Media', 'Characters', 'Staff'],
-              values: [
-                MediaController.REL_MEDIA,
-                MediaController.REL_CHARACTERS,
-                MediaController.REL_STAFF,
-              ],
-              initial: ctrl.relationsTab,
-              onNewValue: (dynamic val) {
-                scrollUp();
-                ctrl.relationsTab = val;
-              },
-              onSameValue: (dynamic _) => scrollUp(),
-            ),
+          BubbleTabs(
+            options: ['Media', 'Characters', 'Staff'],
+            values: [
+              MediaController.REL_MEDIA,
+              MediaController.REL_CHARACTERS,
+              MediaController.REL_STAFF,
+            ],
+            initial: ctrl.relationsTab,
+            onNewValue: (dynamic val) {
+              scrollUp();
+              ctrl.relationsTab = val;
+            },
+            onSameValue: (dynamic _) => scrollUp(),
           ),
+          const Spacer(),
           Obx(() {
             if (ctrl.relationsTab == MediaController.REL_CHARACTERS &&
                 ctrl.model!.characters.items.isNotEmpty &&

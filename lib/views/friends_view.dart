@@ -5,7 +5,7 @@ import 'package:otraku/controllers/friends_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class FriendsView extends StatelessWidget {

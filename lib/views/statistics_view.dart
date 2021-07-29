@@ -6,7 +6,7 @@ import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/pie_chart.dart';
 
@@ -91,15 +91,15 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: Row(
-        children: [
-          Text(text, style: Theme.of(context).textTheme.headline6),
-          const Spacer(),
-          if (tabs != null) tabs!,
-        ],
-      ),
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Text(text, style: Theme.of(context).textTheme.headline6),
+        ),
+        const Spacer(),
+        if (tabs != null) tabs!,
+      ],
     );
   }
 }

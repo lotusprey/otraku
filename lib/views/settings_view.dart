@@ -7,7 +7,7 @@ import 'package:otraku/views/settings_app_view.dart';
 import 'package:otraku/views/settings_content_view.dart';
 import 'package:otraku/views/settings_notifications_view.dart';
 import 'package:otraku/views/settings_about_view.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsView extends StatelessWidget {

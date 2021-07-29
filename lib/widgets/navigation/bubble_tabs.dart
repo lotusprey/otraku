@@ -24,7 +24,8 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
   int? _index;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         height: 30,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

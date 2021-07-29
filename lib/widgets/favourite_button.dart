@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class FavouriteButton extends StatefulWidget {
   final int favourites;

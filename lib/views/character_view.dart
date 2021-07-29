@@ -9,7 +9,7 @@ import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -95,18 +95,15 @@ class CharacterView extends StatelessWidget {
               return SliverShadowAppBar([
                 character.anime.items.isNotEmpty &&
                         character.manga.items.isNotEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: BubbleTabs<bool>(
-                          options: const ['Anime', 'Manga'],
-                          values: const [true, false],
-                          initial: true,
-                          onNewValue: (value) {
-                            character.onAnime = value;
-                            character.scrollTo(offset);
-                          },
-                          onSameValue: (_) => character.scrollTo(offset),
-                        ),
+                    ? BubbleTabs<bool>(
+                        options: const ['Anime', 'Manga'],
+                        values: const [true, false],
+                        initial: true,
+                        onNewValue: (value) {
+                          character.onAnime = value;
+                          character.scrollTo(offset);
+                        },
+                        onSameValue: (_) => character.scrollTo(offset),
                       )
                     : const SizedBox(),
                 const Spacer(),

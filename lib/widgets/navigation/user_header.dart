@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/enums/themes.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -48,15 +48,22 @@ class UserHeader extends StatelessWidget {
           )
         else if (user != null)
           Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 8),
-            child: ElevatedButton(
-              child: Text(
+            padding: const EdgeInsets.all(10),
+            child: ElevatedButton.icon(
+              icon: Icon(
+                user!.isFollowing
+                    ? Ionicons.person_remove_outline
+                    : Ionicons.person_add_outline,
+                size: Style.ICON_SMALL,
+              ),
+              label: Text(
                 user!.isFollowing
                     ? user!.isFollower
                         ? 'Mutual'
-                        : 'Unfollow'
-                    : 'Follow',
-                style: TextStyle(fontSize: Style.FONT_MEDIUM),
+                        : 'Following'
+                    : user!.isFollower
+                        ? 'Follower'
+                        : 'Follow',
               ),
               onPressed:
                   Get.find<UserController>(tag: id.toString()).toggleFollow,

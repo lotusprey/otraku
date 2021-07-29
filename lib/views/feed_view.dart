@@ -9,10 +9,9 @@ import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_widgets.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/shadow_app_bar.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
-import 'package:otraku/widgets/navigation/transparent_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
@@ -119,7 +118,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewer = Get.find<ViewerController>();
 
-    return TransparentHeader([
+    return SliverTransparentAppBar([
       BubbleTabs<bool>(
         options: ['Following', 'Global'],
         values: [true, false],
@@ -130,42 +129,46 @@ class _Header extends StatelessWidget {
       const Spacer(),
       _Filter(feed),
       if (viewer.unreadCount > 0)
-        Tooltip(
-          message: 'Notifications',
-          child: GestureDetector(
-            onTap: () => Navigation.it.push(Navigation.notificationsRoute),
-            child: Obx(
-              () => Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    child: Icon(
-                      Ionicons.notifications_outline,
-                      color: Theme.of(context).dividerColor,
-                    ),
-                  ),
-                  Container(
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                      maxHeight: 20,
-                    ),
-                    margin: const EdgeInsets.only(right: 15, bottom: 5),
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).errorColor,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        viewer.unreadCount.toString(),
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                              color: Theme.of(context).backgroundColor,
-                            ),
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Tooltip(
+            message: 'Notifications',
+            child: GestureDetector(
+              onTap: () => Navigation.it.push(Navigation.notificationsRoute),
+              child: Obx(
+                () => Stack(
+                  children: [
+                    Positioned(
+                      right: 0,
+                      child: Icon(
+                        Ionicons.notifications_outline,
+                        color: Theme.of(context).dividerColor,
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      constraints: const BoxConstraints(
+                        minWidth: 20,
+                        minHeight: 20,
+                        maxHeight: 20,
+                      ),
+                      margin: const EdgeInsets.only(right: 15, bottom: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).errorColor,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          viewer.unreadCount.toString(),
+                          style:
+                              Theme.of(context).textTheme.subtitle2!.copyWith(
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

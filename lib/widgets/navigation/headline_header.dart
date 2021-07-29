@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/widgets/action_icon.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class HeadlineHeader extends StatelessWidget {
   final String headline;
@@ -37,36 +38,39 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) =>
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+      Container(
+        height: Config.MATERIAL_TAP_TARGET_SIZE,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (canPop) ...[
-              ActionIcon(
+              AppBarIcon(
                 tooltip: 'Close',
                 icon: Ionicons.chevron_back_outline,
                 onTap: () => Navigator.pop(context),
               ),
-              const SizedBox(width: 15),
-            ],
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
+              Text(
                 headline,
                 style: Theme.of(context).textTheme.headline3,
                 textAlign: TextAlign.center,
               ),
-            ),
+            ] else
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  headline,
+                  style: Theme.of(context).textTheme.headline3,
+                  textAlign: TextAlign.center,
+                ),
+              ),
           ],
         ),
       );
 
   @override
-  double get maxExtent => 30;
+  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => 30;
+  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => true;

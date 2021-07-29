@@ -4,8 +4,8 @@ import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/fields/chip_field.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ChipGrid extends StatefulWidget {
@@ -96,6 +96,9 @@ class _ChipGridState extends State<ChipGrid> {
                         widget.exclusive?.clear();
                       }),
                       child: Container(
+                        height: Style.ICON_BIG,
+                        width: Style.ICON_BIG,
+                        margin: Config.PADDING,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Theme.of(context).disabledColor,
@@ -109,9 +112,10 @@ class _ChipGridState extends State<ChipGrid> {
                     ),
                   ),
                 const SizedBox(width: 15),
-                ActionIcon(
+                AppBarIcon(
                   tooltip: 'Options',
                   icon: Ionicons.options_outline,
+                  colour: Theme.of(context).disabledColor,
                   onTap: () => Sheet.show(
                     ctx: context,
                     sheet: widget.tags != null

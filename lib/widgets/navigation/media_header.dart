@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/action_icon.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -39,16 +39,14 @@ class _MediaHeaderState extends State<MediaHeader> {
       title: info?.preferredTitle,
       actions: info != null
           ? [
-              ActionIcon(
-                dimmed: false,
+              AppBarIcon(
                 tooltip: 'Edit',
                 onTap: _edit,
                 icon: widget.ctrl.model!.entry.status == null
                     ? Icons.add
                     : Icons.edit,
               ),
-              ActionIcon(
-                dimmed: false,
+              AppBarIcon(
                 tooltip: 'Favourite',
                 onTap: _toggleFavourite,
                 icon: info.isFavourite ? Icons.favorite : Icons.favorite_border,

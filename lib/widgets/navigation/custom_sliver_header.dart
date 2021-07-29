@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/action_icon.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class CustomSliverHeader extends StatelessWidget {
   final double height;
@@ -65,10 +65,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     required this.implyLeading,
   }) {
     _middleExtent = (minExtent + maxExtent) * 0.5;
-    if (actions.length > 1) {
-      const box = SizedBox(width: 15);
-      for (int i = 1; i < actions.length; i += 2) actions.insert(i, box);
-    }
   }
 
   @override
@@ -131,31 +127,29 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               ),
             Positioned(
               top: 0,
-              left: 10,
-              right: 10,
+              left: 0,
+              right: 0,
               height: minExtent,
               child: Row(
                 children: [
                   if (implyLeading)
-                    IconShade(ActionIcon(
-                      dimmed: false,
-                      tooltip: 'Close',
-                      icon: Ionicons.chevron_back_outline,
-                      onTap: Navigator.of(context).pop,
-                    )),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Opacity(
-                        opacity: titleOpacity,
-                        child: title != null
-                            ? Text(
-                                title!,
-                                style: Theme.of(context).textTheme.headline5,
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : const SizedBox(),
+                    Shade(
+                      AppBarIcon(
+                        tooltip: 'Close',
+                        icon: Ionicons.chevron_back_outline,
+                        onTap: Navigator.of(context).pop,
                       ),
+                    ),
+                  Expanded(
+                    child: Opacity(
+                      opacity: titleOpacity,
+                      child: title != null
+                          ? Text(
+                              title!,
+                              style: Theme.of(context).textTheme.headline5,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : const SizedBox(),
                     ),
                   ),
                   if (actions.isNotEmpty)
@@ -197,9 +191,9 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   TickerProvider? get vsync => null;
 }
 
-class IconShade extends StatelessWidget {
-  final ActionIcon iconButton;
-  IconShade(this.iconButton);
+class Shade extends StatelessWidget {
+  final Widget child;
+  Shade(this.child);
 
   @override
   Widget build(BuildContext context) {
@@ -210,10 +204,11 @@ class IconShade extends StatelessWidget {
           BoxShadow(
             color: Theme.of(context).backgroundColor,
             blurRadius: 10,
+            spreadRadius: -5,
           ),
         ],
       ),
-      child: iconButton,
+      child: child,
     );
   }
 }

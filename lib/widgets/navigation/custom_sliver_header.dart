@@ -141,16 +141,21 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       ),
                     ),
                   Expanded(
-                    child: Opacity(
-                      opacity: titleOpacity,
-                      child: title != null
-                          ? Text(
-                              title!,
-                              style: Theme.of(context).textTheme.headline5,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : const SizedBox(),
-                    ),
+                    child: title != null
+                        ? Padding(
+                            padding: implyLeading
+                                ? const EdgeInsets.only(left: 0)
+                                : const EdgeInsets.only(left: 10),
+                            child: Opacity(
+                              opacity: titleOpacity,
+                              child: Text(
+                                title!,
+                                style: Theme.of(context).textTheme.headline5,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
                   ),
                   if (actions.isNotEmpty)
                     Opacity(

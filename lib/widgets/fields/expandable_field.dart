@@ -29,7 +29,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
           controller: _controller,
           onChanged: (text) => widget.onChanged(text),
           minLines: 1,
-          maxLines: 5,
+          maxLines: 10,
         ),
       );
 

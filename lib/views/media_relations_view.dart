@@ -75,7 +75,7 @@ class MediaRelationsView extends StatelessWidget {
               if (other.isEmpty)
                 return ctrl.isLoading
                     ? _Empty(null)
-                    : _Empty('No related ctrl');
+                    : _Empty('No Related Media');
 
               return _RelationsGrid(ctrl.model!.otherMedia);
             }

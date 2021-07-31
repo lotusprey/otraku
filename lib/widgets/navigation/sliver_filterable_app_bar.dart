@@ -15,9 +15,9 @@ import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class CollectionControlHeader extends StatelessWidget {
+class SliverCollectionAppBar extends StatelessWidget {
   final String tag;
-  CollectionControlHeader(this.tag);
+  SliverCollectionAppBar(this.tag);
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,7 @@ class CollectionControlHeader extends StatelessWidget {
                 isScrollControlled: true,
               ),
             ),
-            _Filter(tag),
+            _FilterIcon(tag),
           ],
         );
       },
@@ -76,7 +76,7 @@ class CollectionControlHeader extends StatelessWidget {
   }
 }
 
-class ExploreControlHeader extends StatelessWidget {
+class SliverExploreAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final explorer = Get.find<ExplorerController>();
@@ -133,7 +133,7 @@ class ExploreControlHeader extends StatelessWidget {
                 isScrollControlled: true,
               ),
             ),
-            _Filter(null),
+            _FilterIcon(null),
           ],
         ],
       ),
@@ -280,16 +280,16 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
   }
 }
 
-class _Filter extends StatefulWidget {
+class _FilterIcon extends StatefulWidget {
   final String? collectionTag;
 
-  _Filter(this.collectionTag);
+  _FilterIcon(this.collectionTag);
 
   @override
-  _FilterState createState() => _FilterState();
+  _FilterIconState createState() => _FilterIconState();
 }
 
-class _FilterState extends State<_Filter> {
+class _FilterIconState extends State<_FilterIcon> {
   late Filterable _filterable;
   late bool _active;
 
@@ -304,7 +304,7 @@ class _FilterState extends State<_Filter> {
   }
 
   @override
-  void didUpdateWidget(covariant _Filter oldWidget) {
+  void didUpdateWidget(covariant _FilterIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
     _active = _checkIfActive();
   }

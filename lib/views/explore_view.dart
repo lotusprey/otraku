@@ -6,7 +6,7 @@ import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/control_header.dart';
+import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
@@ -24,7 +24,7 @@ class ExploreView extends StatelessWidget {
       controller: explorer.scrollCtrl,
       slivers: [
         const HeadlineHeader('Explore', false),
-        ExploreControlHeader(),
+        SliverExploreAppBar(),
         SliverRefreshControl(
           onRefresh: explorer.fetch,
           canRefresh: () => !explorer.isLoading,

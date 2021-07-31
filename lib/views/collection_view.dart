@@ -5,7 +5,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/widgets/bottom_drawer.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/control_header.dart';
+import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -63,7 +63,7 @@ class HomeCollectionView extends StatelessWidget {
             '${ofAnime ? 'Anime' : 'Manga'} List',
             id != Client.viewerId,
           ),
-          CollectionControlHeader(collectionTag),
+          SliverCollectionAppBar(collectionTag),
           MediaList(collectionTag),
           SliverToBoxAdapter(
             child: SizedBox(height: NavBar.offset(context)),

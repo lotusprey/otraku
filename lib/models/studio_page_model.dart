@@ -1,5 +1,6 @@
 import 'package:otraku/models/explorable_model.dart';
 
+// TODO: Merge into StudioModel.
 class StudioPageModel {
   final categories = <String>[];
   final groups = <List<ExplorableModel>>[];

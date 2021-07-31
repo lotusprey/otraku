@@ -3,7 +3,7 @@ import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/models/collection_list_model.dart';
+import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -121,7 +121,7 @@ class CollectionController extends OverscrollController implements Filterable {
 
   final int userId;
   final bool ofAnime;
-  final _lists = <CollectionListModel>[];
+  final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[].obs;
   final _listIndex = 0.obs;
   final _filters = <String, dynamic>{};
@@ -224,13 +224,11 @@ class CollectionController extends OverscrollController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(CollectionListModel(l, splitCompleted)
-        ..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
     }
 
     for (final l in data['lists'])
-      _lists.add(CollectionListModel(l, splitCompleted)
-        ..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
     _listIndex.value = 0;
     update();

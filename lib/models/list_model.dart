@@ -3,14 +3,14 @@ import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/models/list_entry_model.dart';
 
-class CollectionListModel {
+class ListModel {
   final String name;
   final ListStatus? status;
   final bool isCustomList;
   final String? splitCompletedListFormat;
   final List<ListEntryModel> entries;
 
-  CollectionListModel._({
+  ListModel._({
     required this.name,
     required this.isCustomList,
     required this.entries,
@@ -18,8 +18,8 @@ class CollectionListModel {
     this.splitCompletedListFormat,
   });
 
-  factory CollectionListModel(Map<String, dynamic> map, bool splitCompleted) =>
-      CollectionListModel._(
+  factory ListModel(Map<String, dynamic> map, bool splitCompleted) =>
+      ListModel._(
         name: map['name'],
         isCustomList: map['isCustomList'] ?? false,
         status: !map['isCustomList']

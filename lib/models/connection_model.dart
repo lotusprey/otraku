@@ -1,5 +1,6 @@
 import 'package:otraku/models/explorable_model.dart';
 
+// TODO: Extending ExplorableModel is unnecessary. Must be simplified.
 class ConnectionModel extends ExplorableModel {
   final String? text2;
   final String text3;

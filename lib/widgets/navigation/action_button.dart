@@ -48,24 +48,21 @@ class _ActionButtonState extends State<ActionButton>
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _animation,
-      child: FadeTransition(
-        opacity: _animation,
-        child: SizedBox(
-          width: 60,
-          height: 60,
-          child: Tooltip(
-            message: widget.tooltip,
-            child: Material(
-              color: Theme.of(context).backgroundColor,
-              elevation: 5,
-              shadowColor: Theme.of(context).backgroundColor.withOpacity(0.5),
+      child: SizedBox(
+        width: 60,
+        height: 60,
+        child: Tooltip(
+          message: widget.tooltip,
+          child: Material(
+            color: Theme.of(context).backgroundColor,
+            elevation: 5,
+            shadowColor: Theme.of(context).backgroundColor.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(30),
+            child: InkWell(
               borderRadius: BorderRadius.circular(30),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(30),
-                onTap: widget.onTap,
-                splashColor: Theme.of(context).primaryColor,
-                child: Icon(widget.icon, color: Theme.of(context).accentColor),
-              ),
+              onTap: widget.onTap,
+              splashColor: Theme.of(context).primaryColor,
+              child: Icon(widget.icon, color: Theme.of(context).accentColor),
             ),
           ),
         ),

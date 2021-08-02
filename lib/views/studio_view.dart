@@ -92,7 +92,7 @@ class StudioView extends StatelessWidget {
                     ),
                   ),
                 ]),
-                if (studio.media.categories.isEmpty)
+                if (studio.media.names.isEmpty)
                   SliverFillRemaining(
                     child: Center(
                       child: Text(
@@ -105,12 +105,12 @@ class StudioView extends StatelessWidget {
                     studio.sort == MediaSort.START_DATE_DESC ||
                     studio.sort == MediaSort.END_DATE ||
                     studio.sort == MediaSort.END_DATE_DESC) ...[
-                  for (int i = 0; i < studio.media.categories.length; i++) ...[
+                  for (int i = 0; i < studio.media.names.length; i++) ...[
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: Config.PADDING,
                         child: Text(
-                          studio.media.categories[i],
+                          studio.media.names[i],
                           style: Theme.of(context).textTheme.headline3,
                         ),
                       ),

@@ -11,7 +11,7 @@ class NotificationModel {
   final List<String> texts;
   final bool markTextOnEvenIndex;
   final String timestamp;
-  final Explorable? browsable;
+  final Explorable? explorable;
 
   NotificationModel._({
     required this.id,
@@ -22,7 +22,7 @@ class NotificationModel {
     required this.texts,
     required this.markTextOnEvenIndex,
     required this.timestamp,
-    this.browsable,
+    this.explorable,
   });
 
   factory NotificationModel(final Map<String, dynamic> map) {
@@ -37,7 +37,7 @@ class NotificationModel {
           texts: [map['user']['name'], ' followed you.'],
           markTextOnEvenIndex: true,
           timestamp: Convert.millisToStr(map['createdAt']),
-          browsable: Explorable.user,
+          explorable: Explorable.user,
         );
       case 'ACTIVITY_MESSAGE':
         return NotificationModel._(
@@ -211,7 +211,7 @@ class NotificationModel {
           ],
           markTextOnEvenIndex: false,
           timestamp: Convert.millisToStr(map['createdAt']),
-          browsable: map['media']['type'] == 'ANIME'
+          explorable: map['media']['type'] == 'ANIME'
               ? Explorable.anime
               : Explorable.manga,
         );
@@ -228,7 +228,7 @@ class NotificationModel {
           ],
           markTextOnEvenIndex: true,
           timestamp: Convert.millisToStr(map['createdAt']),
-          browsable: map['media']['type'] == 'ANIME'
+          explorable: map['media']['type'] == 'ANIME'
               ? Explorable.anime
               : Explorable.manga,
         );

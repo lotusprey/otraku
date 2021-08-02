@@ -52,7 +52,7 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExploreIndexer(
-      browsable: data.browsable,
+      explorable: data.explorable,
       id: data.id,
       imageUrl: data.text1,
       child: Hero(

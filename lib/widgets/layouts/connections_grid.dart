@@ -65,7 +65,7 @@ class _MediaConnectionTile extends StatelessWidget {
             Expanded(
               child: ExploreIndexer(
                 id: item.id,
-                browsable: item.type,
+                explorable: item.type,
                 imageUrl: item.imageUrl,
                 child: Container(
                   color: Colors.transparent,
@@ -110,7 +110,7 @@ class _MediaConnectionTile extends StatelessWidget {
               Expanded(
                 child: ExploreIndexer(
                   id: item.other[index].id,
-                  browsable: item.other[index].type,
+                  explorable: item.other[index].type,
                   imageUrl: item.other[index].imageUrl,
                   child: Container(
                     color: Colors.transparent,

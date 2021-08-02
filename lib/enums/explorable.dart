@@ -11,7 +11,7 @@ enum Explorable {
   review,
 }
 
-extension BrowsableExtension on Explorable {
+extension ExplorableExtension on Explorable {
   static const _icons = {
     Explorable.anime: Ionicons.film_outline,
     Explorable.manga: Ionicons.bookmark_outline,

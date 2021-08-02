@@ -103,7 +103,7 @@ class _MediaListTile extends StatelessWidget {
       ),
       child: ExploreIndexer(
         id: entry.mediaId,
-        browsable: Explorable.anime,
+        explorable: Explorable.anime,
         imageUrl: entry.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

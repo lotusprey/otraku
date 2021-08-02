@@ -36,7 +36,7 @@ class ActivityView extends StatelessWidget {
                           child: ExploreIndexer(
                             id: model.agentId!,
                             imageUrl: model.agentImage,
-                            browsable: Explorable.user,
+                            explorable: Explorable.user,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -76,7 +76,7 @@ class ActivityView extends StatelessWidget {
                           ExploreIndexer(
                             id: model.recieverId!,
                             imageUrl: model.recieverImage,
-                            browsable: Explorable.user,
+                            explorable: Explorable.user,
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: FadeImage(
@@ -294,7 +294,7 @@ class _UserReply extends StatelessWidget {
         ExploreIndexer(
           id: reply.userId,
           imageUrl: reply.userImage,
-          browsable: Explorable.user,
+          explorable: Explorable.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

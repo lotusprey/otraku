@@ -57,7 +57,7 @@ class MediaSocialView extends StatelessWidget {
                       ExploreIndexer(
                         id: items[index].userId,
                         imageUrl: items[index].avatar,
-                        browsable: Explorable.user,
+                        explorable: Explorable.user,
                         child: Row(
                           children: [
                             Hero(
@@ -82,7 +82,7 @@ class MediaSocialView extends StatelessWidget {
                         child: ExploreIndexer(
                           id: items[index].reviewId,
                           imageUrl: ctrl.model!.info.banner,
-                          browsable: Explorable.review,
+                          explorable: Explorable.review,
                           child: Container(
                             width: double.infinity,
                             padding: Config.PADDING,

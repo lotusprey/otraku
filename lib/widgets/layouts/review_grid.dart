@@ -63,7 +63,7 @@ class _Tile extends StatelessWidget {
     return ExploreIndexer(
       id: model.id,
       imageUrl: model.imageUrl,
-      browsable: Explorable.review,
+      explorable: Explorable.review,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).primaryColor,

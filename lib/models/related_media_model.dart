@@ -14,8 +14,8 @@ class RelatedMediaModel extends ExplorableModel {
     required int id,
     required String title,
     required String? imageUrl,
-    required Explorable browsable,
-  }) : super(id: id, text1: title, imageUrl: imageUrl, browsable: browsable);
+    required Explorable explorable,
+  }) : super(id: id, text1: title, imageUrl: imageUrl, explorable: explorable);
 
   factory RelatedMediaModel(Map<String, dynamic> map) => RelatedMediaModel._(
         id: map['node']['id'],
@@ -24,7 +24,7 @@ class RelatedMediaModel extends ExplorableModel {
         format: Convert.clarifyEnum(map['node']['format']),
         status: Convert.clarifyEnum(map['node']['status']),
         imageUrl: map['node']['coverImage']['large'],
-        browsable: map['node']['type'] == 'ANIME'
+        explorable: map['node']['type'] == 'ANIME'
             ? Explorable.anime
             : Explorable.manga,
       );

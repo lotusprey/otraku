@@ -7,13 +7,13 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/views/home_view.dart';
 
 class ExploreIndexer extends StatelessWidget {
-  final Explorable browsable;
+  final Explorable explorable;
   final int id;
   final String? imageUrl;
   final Widget child;
 
   ExploreIndexer({
-    required this.browsable,
+    required this.explorable,
     required this.id,
     required this.imageUrl,
     required this.child,
@@ -22,9 +22,9 @@ class ExploreIndexer extends StatelessWidget {
   static void openPage({
     required int id,
     required String? imageUrl,
-    required Explorable browsable,
+    required Explorable explorable,
   }) {
-    switch (browsable) {
+    switch (explorable) {
       case Explorable.anime:
       case Explorable.manga:
         Navigation.it.push(Navigation.mediaRoute, args: [id, imageUrl]);
@@ -65,9 +65,9 @@ class ExploreIndexer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => openPage(id: id, imageUrl: imageUrl, browsable: browsable),
+      onTap: () => openPage(id: id, imageUrl: imageUrl, explorable: explorable),
       onLongPress: () {
-        if (browsable == Explorable.anime || browsable == Explorable.manga)
+        if (explorable == Explorable.anime || explorable == Explorable.manga)
           openEditPage(id);
       },
       child: child,

@@ -58,12 +58,13 @@ class _ExploreGrid extends StatelessWidget {
         );
       }
 
-      if (results[0].browsable == Explorable.studio) return TitleList(results);
+      if (results[0].explorable == Explorable.studio) return TitleList(results);
 
-      if (results[0].browsable == Explorable.user)
+      if (results[0].explorable == Explorable.user)
         return TileGrid(models: results, full: false);
 
-      if (results[0].browsable == Explorable.review) return ReviewGrid(results);
+      if (results[0].explorable == Explorable.review)
+        return ReviewGrid(results);
 
       return TileGrid(models: results);
     });

@@ -30,7 +30,7 @@ class FilterView extends StatelessWidget {
     else
       filterable = explorer;
 
-    final browsable = collectionTag != null
+    final explorable = collectionTag != null
         ? (filterable as CollectionController).ofAnime
             ? Explorable.anime
             : Explorable.manga
@@ -117,14 +117,14 @@ class FilterView extends StatelessWidget {
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            options: browsable == Explorable.anime
+            options: explorable == Explorable.anime
                 ? AnimeFormat.values
                     .map((f) => Convert.clarifyEnum(describeEnum(f))!)
                     .toList()
                 : MangaFormat.values
                     .map((f) => Convert.clarifyEnum(describeEnum(f))!)
                     .toList(),
-            values: browsable == Explorable.anime
+            values: explorable == Explorable.anime
                 ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
                 : MangaFormat.values.map((f) => describeEnum(f)).toList(),
             inclusive: changes[Filterable.FORMAT_IN],

@@ -43,7 +43,7 @@ class ReviewView extends StatelessWidget {
                               onTap: () => ExploreIndexer.openPage(
                                 id: model.mediaId,
                                 imageUrl: model.mediaCover,
-                                browsable: model.browsable,
+                                explorable: model.explorable,
                               ),
                               child: Text(
                                 model.mediaTitle,
@@ -56,7 +56,7 @@ class ReviewView extends StatelessWidget {
                               onTap: () => ExploreIndexer.openPage(
                                 id: model.userId,
                                 imageUrl: model.userAvatar,
-                                browsable: Explorable.user,
+                                explorable: Explorable.user,
                               ),
                               child: RichText(
                                 textAlign: TextAlign.center,

@@ -9,7 +9,7 @@ import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
-// Searches and filters items from the Browsable enum
+// Searches and filters items from the Explorable enum
 class ExplorerController extends OverscrollController implements Filterable {
   // ***************************************************************************
   // CONSTANTS

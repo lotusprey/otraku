@@ -30,7 +30,7 @@ class UserActivity extends StatelessWidget {
               child: ExploreIndexer(
                 id: model.agentId!,
                 imageUrl: model.agentImage,
-                browsable: Explorable.user,
+                explorable: Explorable.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -63,7 +63,7 @@ class UserActivity extends StatelessWidget {
               ExploreIndexer(
                 id: model.recieverId!,
                 imageUrl: model.recieverImage,
-                browsable: Explorable.user,
+                explorable: Explorable.user,
                 child: ClipRRect(
                   borderRadius: Config.BORDER_RADIUS,
                   child: FadeImage(model.recieverImage, height: 50, width: 50),
@@ -235,7 +235,7 @@ class MediaBox extends StatelessWidget {
     return ExploreIndexer(
       id: activity.mediaId!,
       imageUrl: activity.mediaImage,
-      browsable: activity.mediaType!,
+      explorable: activity.mediaType!,
       child: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: 108),
         child: Row(

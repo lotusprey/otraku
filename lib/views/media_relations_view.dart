@@ -117,7 +117,7 @@ class _RelationsGrid extends StatelessWidget {
         (_, index) => ExploreIndexer(
           id: models[index].id,
           imageUrl: models[index].imageUrl,
-          browsable: models[index].browsable,
+          explorable: models[index].explorable,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

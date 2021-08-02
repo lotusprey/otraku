@@ -194,8 +194,8 @@ class CharacterController extends OverscrollController {
           id: va['id'],
           title: va['name']['full'],
           imageUrl: va['image']['large'],
-          browsable: Explorable.staff,
-          text2: language,
+          type: Explorable.staff,
+          subtitle: language,
         ));
       }
 
@@ -203,9 +203,9 @@ class CharacterController extends OverscrollController {
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
-        browsable: Explorable.anime,
-        text2: Convert.clarifyEnum(connection['characterRole']),
-        others: voiceActors,
+        type: Explorable.anime,
+        subtitle: Convert.clarifyEnum(connection['characterRole']),
+        other: voiceActors,
       ));
     }
 
@@ -226,8 +226,8 @@ class CharacterController extends OverscrollController {
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
-        browsable: Explorable.manga,
-        text2: Convert.clarifyEnum(connection['characterRole']),
+        type: Explorable.manga,
+        subtitle: Convert.clarifyEnum(connection['characterRole']),
       ));
 
     _manga.update(

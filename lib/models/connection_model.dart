@@ -1,18 +1,19 @@
-import 'package:otraku/models/explorable_model.dart';
+import 'package:otraku/enums/explorable.dart';
 
-// TODO: Extending ExplorableModel is unnecessary. Must be simplified.
-class ConnectionModel extends ExplorableModel {
-  final String? text2;
-  final String text3;
-  final List<ConnectionModel> others;
+class ConnectionModel {
+  final int id;
+  final Explorable type;
+  final String imageUrl;
+  final String title;
+  final String? subtitle;
+  final List<ConnectionModel> other;
 
   ConnectionModel({
-    this.others = const [],
-    this.text2 = '',
-    this.text3 = '',
-    required id,
-    required title,
-    required imageUrl,
-    required browsable,
-  }) : super(id: id, text1: title, imageUrl: imageUrl, browsable: browsable);
+    required this.id,
+    required this.type,
+    required this.imageUrl,
+    required this.title,
+    this.subtitle,
+    this.other = const [],
+  });
 }

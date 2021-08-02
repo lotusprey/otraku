@@ -54,18 +54,18 @@ class MediaModel {
           id: va['id'],
           title: va['name']['full'],
           imageUrl: va['image']['large'],
-          browsable: Explorable.staff,
-          text2: language,
+          type: Explorable.staff,
+          subtitle: language,
         ));
       }
 
       items.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['name']['full'],
-        text2: Convert.clarifyEnum(connection['role']),
         imageUrl: connection['node']['image']['large'],
-        others: voiceActors,
-        browsable: Explorable.character,
+        subtitle: Convert.clarifyEnum(connection['role']),
+        type: Explorable.character,
+        other: voiceActors,
       ));
     }
 
@@ -80,9 +80,9 @@ class MediaModel {
       items.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['name']['full'],
-        text2: connection['role'],
+        subtitle: connection['role'],
         imageUrl: connection['node']['image']['large'],
-        browsable: Explorable.staff,
+        type: Explorable.staff,
       ));
 
     _staff.update(

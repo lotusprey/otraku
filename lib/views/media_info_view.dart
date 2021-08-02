@@ -144,7 +144,7 @@ class MediaInfoView extends StatelessWidget {
                 Filterable.GENRE_IN,
                 value: [info.genres[index]],
               );
-              explorable.type = info.browsable;
+              explorable.type = info.type;
               explorable.search = '';
               Config.setHomeIndex(HomeView.EXPLORE);
               Navigation.it.popToFirst();
@@ -157,7 +157,7 @@ class MediaInfoView extends StatelessWidget {
             onTap: (index) => ExploreIndexer.openPage(
               id: info.studios[info.studios.keys.elementAt(index)]!,
               imageUrl: info.studios.keys.elementAt(index),
-              browsable: Explorable.studio,
+              explorable: Explorable.studio,
             ),
           ),
         if (info.producers.isNotEmpty)
@@ -167,7 +167,7 @@ class MediaInfoView extends StatelessWidget {
             onTap: (index) => ExploreIndexer.openPage(
               id: info.producers[info.producers.keys.elementAt(index)]!,
               imageUrl: info.producers.keys.elementAt(index),
-              browsable: Explorable.studio,
+              explorable: Explorable.studio,
             ),
           ),
         if (info.romajiTitle != null) ...[
@@ -331,7 +331,23 @@ class __TagsState extends State<_Tags> {
       delegate = SliverChildBuilderDelegate(
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => showPopUp(
+          onTap: () {
+            final explorable = Get.find<ExplorerController>();
+            explorable.clearAllFilters(update: false);
+            explorable.setFilterWithKey(
+              Filterable.SORT,
+              value: describeEnum(MediaSort.TRENDING_DESC),
+            );
+            explorable.setFilterWithKey(
+              Filterable.TAG_IN,
+              value: [tags[i].name],
+            );
+            explorable.type = ctrl.model!.info.type;
+            explorable.search = '';
+            Config.setHomeIndex(HomeView.EXPLORE);
+            Navigation.it.popToFirst();
+          },
+          onLongPress: () => showPopUp(
             context,
             TextDialog(title: tags[i].name, text: tags[i].desciption),
           ),
@@ -391,7 +407,23 @@ class __TagsState extends State<_Tags> {
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => showPopUp(
+            onTap: () {
+              final explorable = Get.find<ExplorerController>();
+              explorable.clearAllFilters(update: false);
+              explorable.setFilterWithKey(
+                Filterable.SORT,
+                value: describeEnum(MediaSort.TRENDING_DESC),
+              );
+              explorable.setFilterWithKey(
+                Filterable.TAG_IN,
+                value: [tags[i].name],
+              );
+              explorable.type = ctrl.model!.info.type;
+              explorable.search = '';
+              Config.setHomeIndex(HomeView.EXPLORE);
+              Navigation.it.popToFirst();
+            },
+            onLongPress: () => showPopUp(
               context,
               TextDialog(title: tags[i].name, text: tags[i].desciption),
             ),

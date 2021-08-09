@@ -14,13 +14,15 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaList extends StatelessWidget {
-  final String? collectionTag;
+  final String collectionTag;
 
   MediaList(this.collectionTag);
 
   @override
   Widget build(BuildContext context) {
     final collectionCtrl = Get.find<CollectionController>(tag: collectionTag);
+    final isMe = collectionTag == CollectionController.ANIME ||
+        collectionTag == CollectionController.MANGA;
     final sidePadding = MediaQuery.of(context).size.width > 620
         ? (MediaQuery.of(context).size.width - 600) / 2.0
         : 10.0;
@@ -65,7 +67,7 @@ class MediaList extends StatelessWidget {
         ),
         sliver: SliverFixedExtentList(
           delegate: SliverChildBuilderDelegate(
-            (_, i) => _MediaListTile(entries[i], collectionCtrl),
+            (_, i) => _MediaListTile(entries[i], collectionCtrl, isMe),
             childCount: entries.length,
           ),
           itemExtent: 150,
@@ -78,8 +80,9 @@ class MediaList extends StatelessWidget {
 class _MediaListTile extends StatelessWidget {
   final ListEntryModel entry;
   final CollectionController collectionCtrl;
+  final bool isMe;
 
-  _MediaListTile(this.entry, this.collectionCtrl);
+  _MediaListTile(this.entry, this.collectionCtrl, this.isMe);
 
   @override
   Widget build(BuildContext context) {
@@ -221,9 +224,9 @@ class _MediaListTile extends StatelessWidget {
                           )
                         else
                           const SizedBox(),
-                        _ProgressButton(
+                        _Progress(
                           entry,
-                          collectionCtrl.updateProgress,
+                          isMe ? collectionCtrl.updateProgress : null,
                         ),
                       ],
                     ),
@@ -297,40 +300,35 @@ class _MediaListTile extends StatelessWidget {
   }
 }
 
-class _ProgressButton extends StatelessWidget {
+class _Progress extends StatelessWidget {
   final ListEntryModel entry;
-  final void Function(ListEntryModel) increment;
-  _ProgressButton(this.entry, this.increment);
+  final void Function(ListEntryModel)? increment;
+  _Progress(this.entry, this.increment);
 
   @override
   Widget build(BuildContext context) {
-    if (entry.progress == entry.progressMax)
-      return Tooltip(
-        message: 'Progress',
-        child: Text(
-          entry.progress.toString(),
-          style: Theme.of(context).textTheme.subtitle2,
-        ),
-      );
+    final text = Text(
+      entry.progress == entry.progressMax
+          ? entry.progress.toString()
+          : '${entry.progress}/${entry.progressMax ?? "?"}',
+      style: Theme.of(context).textTheme.subtitle2,
+    );
+
+    if (increment == null || entry.progress == entry.progressMax)
+      return Tooltip(message: 'Progress', child: text);
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => increment(entry),
-      child: Row(
-        children: [
-          Tooltip(
-            message: 'Progress',
-            child: Text(
-              '${entry.progress}/${entry.progressMax ?? "?"}',
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-          ),
-          const SizedBox(width: 5),
-          Tooltip(
-            message: 'Increment Progress',
-            child: const Icon(Ionicons.add_outline, size: Style.ICON_SMALL),
-          ),
-        ],
+      onTap: () => increment!(entry),
+      child: Tooltip(
+        message: 'Increment Progress',
+        child: Row(
+          children: [
+            text,
+            const SizedBox(width: 5),
+            const Icon(Ionicons.add_outline, size: Style.ICON_SMALL),
+          ],
+        ),
       ),
     );
   }

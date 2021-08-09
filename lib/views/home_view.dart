@@ -12,6 +12,7 @@ import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/bottom_drawer.dart';
+import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -50,14 +51,9 @@ class HomeView extends StatelessWidget {
       onWillPop: () => _onWillPop(context),
       child: ValueListenableBuilder<int>(
         valueListenable: Config.homeIndex,
-        builder: (_, index, __) => Scaffold(
-          extendBody: true,
-          floatingActionButton: _actionButton(context),
-          floatingActionButtonLocation:
-              (Config.storage.read(Config.LEFT_HANDED) ?? false)
-                  ? FloatingActionButtonLocation.startFloat
-                  : FloatingActionButtonLocation.endFloat,
-          bottomNavigationBar: NavBar(
+        builder: (_, index, __) => NavScaffold(
+          floating: _actionButton(context),
+          navBar: NavBar(
             options: {
               'Feed': Ionicons.file_tray_outline,
               'Anime': Ionicons.film_outline,
@@ -68,12 +64,9 @@ class HomeView extends StatelessWidget {
             onChanged: (page) => Config.setHomeIndex(page),
             initial: index,
           ),
-          body: SafeArea(
-            bottom: false,
-            child: AnimatedSwitcher(
-              duration: Config.TAB_SWITCH_DURATION,
-              child: tabs[index],
-            ),
+          child: AnimatedSwitcher(
+            duration: Config.TAB_SWITCH_DURATION,
+            child: tabs[index],
           ),
         ),
       ),

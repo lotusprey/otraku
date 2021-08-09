@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
+import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_relations_view.dart';
 import 'package:otraku/views/media_social_view.dart';
+import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
+import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 
@@ -37,32 +42,87 @@ class MediaView extends StatelessWidget {
 
     return GetBuilder<MediaController>(
       tag: id.toString(),
-      builder: (ctrl) => Scaffold(
-        extendBody: true,
-        bottomNavigationBar: NavBar(
-          options: {
-            'Info': Ionicons.book_outline,
-            'Relations': Icons.emoji_people_outlined,
-            'Social': Icons.rate_review_outlined,
-          },
-          initial: ctrl.tab,
-          onChanged: (index) => ctrl.tab = index,
-        ),
-        body: SafeArea(
-          bottom: false,
-          child: ctrl.model == null
-              ? CustomScrollView(slivers: [header])
-              : ctrl.tab == MediaController.INFO
-                  ? MediaInfoView(ctrl, header)
-                  : ctrl.tab == MediaController.RELATIONS
-                      ? MediaRelationsView(
-                          ctrl,
-                          header,
-                          () => ctrl.scrollTo(pageTop),
-                        )
-                      : MediaSocialView(ctrl, header),
+      builder: (ctrl) {
+        if (ctrl.model == null)
+          return Scaffold(
+            body: SafeArea(
+              child: CustomScrollView(
+                slivers: [
+                  header,
+                  const SliverFillRemaining(child: Center(child: Loader())),
+                ],
+              ),
+            ),
+          );
+
+        return NavScaffold(
+          floating: _ActionButtons(ctrl),
+          navBar: NavBar(
+            options: {
+              'Info': Ionicons.book_outline,
+              'Relations': Icons.emoji_people_outlined,
+              'Social': Icons.rate_review_outlined,
+            },
+            initial: ctrl.tab,
+            onChanged: (index) => ctrl.tab = index,
+          ),
+          child: ctrl.tab == MediaController.INFO
+              ? MediaInfoView(ctrl, header)
+              : ctrl.tab == MediaController.RELATIONS
+                  ? MediaRelationsView(
+                      ctrl,
+                      header,
+                      () => ctrl.scrollTo(pageTop),
+                    )
+                  : MediaSocialView(ctrl, header),
+        );
+      },
+    );
+  }
+}
+
+class _ActionButtons extends StatefulWidget {
+  final MediaController ctrl;
+  _ActionButtons(this.ctrl);
+
+  @override
+  __ActionButtonsState createState() => __ActionButtonsState();
+}
+
+class __ActionButtonsState extends State<_ActionButtons> {
+  @override
+  Widget build(BuildContext context) {
+    final model = widget.ctrl.model!;
+
+    List<Widget> children = [
+      ActionButton(
+        scrollCtrl: widget.ctrl.scrollCtrl,
+        icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
+        tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
+        onTap: () => widget.ctrl.toggleFavourite().then(
+              (ok) => ok
+                  ? setState(
+                      () => model.info.isFavourite = !model.info.isFavourite,
+                    )
+                  : null,
+            ),
+      ),
+      const SizedBox(width: 10),
+      ActionButton(
+        scrollCtrl: widget.ctrl.scrollCtrl,
+        icon: model.entry.status == null ? Icons.add : Icons.edit,
+        tooltip: model.entry.status == null ? 'Add' : 'Edit',
+        onTap: () => ExploreIndexer.openEditPage(
+          model.info.id,
+          model.entry,
+          (EntryModel entry) => setState(() => model.entry = entry),
         ),
       ),
-    );
+    ];
+
+    if (Config.storage.read(Config.LEFT_HANDED) ?? false)
+      children = children.reversed.toList();
+
+    return Row(mainAxisSize: MainAxisSize.min, children: children);
   }
 }

@@ -46,7 +46,6 @@ abstract class OverscrollController extends GetxController {
 
   @override
   void onClose() {
-    scrollCtrl.removeListener(_listener);
     scrollCtrl.dispose();
     super.onClose();
   }

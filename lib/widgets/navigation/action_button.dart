@@ -85,7 +85,10 @@ class _ActionButtonState extends State<ActionButton>
 
   @override
   void dispose() {
-    widget.scrollCtrl.removeListener(_visibility);
+    // Remove the listener, unless the controller has already been disposed.
+    if (widget.scrollCtrl.hasClients)
+      widget.scrollCtrl.removeListener(_visibility);
+
     _animationCtrl.dispose();
     super.dispose();
   }

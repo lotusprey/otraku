@@ -6,16 +6,16 @@ import 'package:otraku/utils/config.dart';
 
 class Theming with ChangeNotifier {
   // Storage keys.
-  static const THEME_MODE = 'themeMode';
-  static const LIGHT_THEME = 'theme1';
-  static const DARK_THEME = 'theme2';
+  static const _THEME_MODE = 'themeMode';
+  static const _LIGHT_THEME = 'theme1';
+  static const _DARK_THEME = 'theme2';
 
   static final it = Theming._();
 
   Theming._() {
-    _mode = ThemeMode.values[(Config.storage.read(THEME_MODE) ?? 0)];
-    _light = Themes.values[(Config.storage.read(LIGHT_THEME)) ?? 0];
-    _dark = Themes.values[(Config.storage.read(DARK_THEME)) ?? 0];
+    _mode = ThemeMode.values[(Config.storage.read(_THEME_MODE) ?? 0)];
+    _light = Themes.values[(Config.storage.read(_LIGHT_THEME)) ?? 0];
+    _dark = Themes.values[(Config.storage.read(_DARK_THEME)) ?? 0];
     _setTheme();
   }
 
@@ -31,18 +31,21 @@ class Theming with ChangeNotifier {
 
   void setMode(int i) {
     if (i < 0 || i > ThemeMode.values.length || i == _mode.index) return;
+    Config.storage.write(_THEME_MODE, i);
     _mode = ThemeMode.values[i];
     refresh();
   }
 
   void setLight(int i) {
     if (i < 0 || i > Themes.values.length || i == _light.index) return;
+    Config.storage.write(_LIGHT_THEME, i);
     _light = Themes.values[i];
     refresh();
   }
 
   void setDark(int i) {
     if (i < 0 || i > Themes.values.length || i == _dark.index) return;
+    Config.storage.write(_DARK_THEME, i);
     _dark = Themes.values[i];
     refresh();
   }

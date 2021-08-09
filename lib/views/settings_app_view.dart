@@ -24,10 +24,7 @@ class SettingsAppView extends StatelessWidget {
                   title: 'Theme Mode',
                   value: Theming.it.mode.index,
                   items: {'Auto': 0, 'Light': 1, 'Dark': 2},
-                  onChanged: (val) {
-                    Config.storage.write(Theming.THEME_MODE, val);
-                    Theming.it.setMode(val);
-                  },
+                  onChanged: (val) => Theming.it.setMode(val),
                 ),
               ),
               const SizedBox(width: 10),
@@ -50,6 +47,11 @@ class SettingsAppView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
+          SwitchTile(
+            title: 'Left-Handed Mode',
+            initialValue: Config.storage.read(Config.LEFT_HANDED) ?? false,
+            onChanged: (val) => Config.storage.write(Config.LEFT_HANDED, val),
+          ),
           SwitchTile(
             title: '12 Hour Clock',
             initialValue: Config.storage.read(Config.CLOCK_TYPE) ?? false,
@@ -75,14 +77,8 @@ class SettingsAppView extends StatelessWidget {
                 .toList(),
             leftValue: Theming.it.light.index,
             rightValue: Theming.it.dark.index,
-            onChangedLeft: (val) {
-              Config.storage.write(Theming.LIGHT_THEME, val);
-              Theming.it.setLight(val);
-            },
-            onChangedRight: (val) {
-              Config.storage.write(Theming.DARK_THEME, val);
-              Theming.it.setDark(val);
-            },
+            onChangedLeft: (val) => Theming.it.setLight(val),
+            onChangedRight: (val) => Theming.it.setDark(val),
           ),
           SizedBox(height: NavBar.offset(context)),
         ],

@@ -11,6 +11,7 @@ abstract class Config {
   static const FOLLOWING_FEED = 'feedMode';
   static const LAST_NOTIFICATION_COUNT = 'lastNotificationCount';
   static const CLOCK_TYPE = '12hourClock';
+  static const LEFT_HANDED = 'leftHanded';
 
   // Constants.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;

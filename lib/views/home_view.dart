@@ -53,6 +53,10 @@ class HomeView extends StatelessWidget {
         builder: (_, index, __) => Scaffold(
           extendBody: true,
           floatingActionButton: _actionButton(context),
+          floatingActionButtonLocation:
+              (Config.storage.read(Config.LEFT_HANDED) ?? false)
+                  ? FloatingActionButtonLocation.startFloat
+                  : FloatingActionButtonLocation.endFloat,
           bottomNavigationBar: NavBar(
             options: {
               'Feed': Ionicons.file_tray_outline,

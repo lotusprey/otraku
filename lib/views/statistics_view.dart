@@ -18,42 +18,42 @@ class StatisticsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<StatisticsController>(
       tag: id.toString(),
-      builder: (stats) {
+      builder: (ctrl) {
         return Scaffold(
           extendBody: true,
           appBar: ShadowAppBar(
-            title: stats.onAnime ? 'Anime Statistics' : 'Manga Statistics',
+            title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
           bottomNavigationBar: NavBar(
             options: {
               'Anime': Ionicons.film_outline,
               'Manga': Ionicons.bookmark_outline,
             },
-            onChanged: (page) => stats.onAnime = page == 0 ? true : false,
-            initial: stats.onAnime ? 0 : 1,
+            onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
+            initial: ctrl.onAnime ? 0 : 1,
           ),
           body: SafeArea(
             bottom: false,
             child: AnimatedSwitcher(
               duration: Config.TAB_SWITCH_DURATION,
               child: ListView(
-                key: stats.key,
+                key: ctrl.key,
                 padding:
                     EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
                 physics: Config.PHYSICS,
                 children: [
                   _Title('Details'),
-                  _Details(stats),
-                  if (stats.model.scores.isNotEmpty) ...[
+                  _Details(ctrl),
+                  if (ctrl.model.scores.isNotEmpty) ...[
                     _Title(
                       'Score',
                       BubbleTabs<bool>(
-                        options: stats.onAnime
+                        options: ctrl.onAnime
                             ? const ['Titles', 'Hours']
                             : const ['Titles', 'Chapters'],
                         values: [true, false],
-                        initial: stats.scoresOnCount,
-                        onNewValue: (val) => stats.scoresOnCount = val,
+                        current: () => ctrl.scoresOnCount,
+                        onNewValue: (val) => ctrl.scoresOnCount = val,
                         onSameValue: (_) {},
                       ),
                     ),
@@ -63,9 +63,9 @@ class StatisticsView extends StatelessWidget {
                       padding: Config.PADDING,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        _Card('Format Distribution', stats.model.formats),
-                        _Card('Status Distribution', stats.model.statuses),
-                        _Card('Country Distribution', stats.model.countries),
+                        _Card('Format Distribution', ctrl.model.formats),
+                        _Card('Status Distribution', ctrl.model.statuses),
+                        _Card('Country Distribution', ctrl.model.countries),
                       ],
                       gridDelegate:
                           SliverGridDelegateWithMinWidthAndFixedHeight(

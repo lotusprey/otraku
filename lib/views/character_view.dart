@@ -98,7 +98,7 @@ class CharacterView extends StatelessWidget {
                     ? BubbleTabs<bool>(
                         options: const ['Anime', 'Manga'],
                         values: const [true, false],
-                        initial: true,
+                        current: () => true,
                         onNewValue: (value) {
                           character.onAnime = value;
                           character.scrollTo(offset);

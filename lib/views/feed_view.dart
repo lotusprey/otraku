@@ -122,7 +122,7 @@ class _Header extends StatelessWidget {
       BubbleTabs<bool>(
         options: ['Following', 'Global'],
         values: [true, false],
-        initial: feed.onFollowing,
+        current: () => feed.onFollowing,
         onNewValue: (val) => feed.onFollowing = val,
         onSameValue: (_) => feed.scrollTo(0),
       ),

@@ -97,7 +97,7 @@ class StaffView extends StatelessWidget {
                     ? BubbleTabs<bool>(
                         options: const ['Characters', 'Staff Roles'],
                         values: const [true, false],
-                        initial: true,
+                        current: () => true,
                         onNewValue: (value) {
                           staff.onCharacters = value;
                           staff.scrollTo(offset);

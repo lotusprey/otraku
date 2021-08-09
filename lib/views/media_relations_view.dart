@@ -36,7 +36,7 @@ class MediaRelationsView extends StatelessWidget {
               MediaController.REL_CHARACTERS,
               MediaController.REL_STAFF,
             ],
-            initial: ctrl.relationsTab,
+            current: () => ctrl.relationsTab,
             onNewValue: (dynamic val) {
               scrollUp();
               ctrl.relationsTab = val;

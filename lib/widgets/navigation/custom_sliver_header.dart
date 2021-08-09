@@ -10,8 +10,6 @@ class CustomSliverHeader extends StatelessWidget {
   final Widget? child;
   final String? title;
   final List<Widget> actions;
-  final bool actionsScrollFadeIn;
-  final bool titleScrollFadeIn;
   final bool implyLeading;
 
   CustomSliverHeader({
@@ -20,8 +18,6 @@ class CustomSliverHeader extends StatelessWidget {
     this.background,
     this.title,
     this.actions = const [],
-    this.actionsScrollFadeIn = true,
-    this.titleScrollFadeIn = true,
     this.implyLeading = true,
   });
 
@@ -35,8 +31,6 @@ class CustomSliverHeader extends StatelessWidget {
         child: child,
         actions: actions,
         title: title,
-        actionsScrollFadeIn: actionsScrollFadeIn,
-        titleScrollFadeIn: titleScrollFadeIn,
         implyLeading: implyLeading,
       ),
     );
@@ -49,8 +43,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   final Widget? child;
   final String? title;
   final List<Widget> actions;
-  final bool actionsScrollFadeIn;
-  final bool titleScrollFadeIn;
   final bool implyLeading;
   late double _middleExtent;
 
@@ -60,8 +52,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     required this.child,
     required this.actions,
     required this.title,
-    required this.actionsScrollFadeIn,
-    required this.titleScrollFadeIn,
     required this.implyLeading,
   }) {
     _middleExtent = (minExtent + maxExtent) * 0.5;
@@ -74,12 +64,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final currentExtent = maxExtent - shrinkOffset;
-    final titleOpacity = !titleScrollFadeIn || currentExtent <= minExtent
-        ? 1.0
-        : 1.0 - currentExtent / maxExtent;
-    final actionOpacity = !actionsScrollFadeIn || currentExtent <= minExtent
-        ? 1.0
-        : 1.0 - currentExtent / maxExtent;
+    final titleOpacity =
+        currentExtent <= minExtent ? 1.0 : 1.0 - currentExtent / maxExtent;
     final headerOpacity = currentExtent >= _middleExtent
         ? 0.0
         : currentExtent <= minExtent
@@ -157,11 +143,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                           )
                         : const SizedBox(),
                   ),
-                  if (actions.isNotEmpty)
-                    Opacity(
-                      opacity: actionOpacity,
-                      child: Row(children: actions),
-                    ),
+                  ...actions,
                 ],
               ),
             ),

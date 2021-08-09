@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -37,22 +34,6 @@ class _MediaHeaderState extends State<MediaHeader> {
     return CustomSliverHeader(
       height: widget.height,
       title: info?.preferredTitle,
-      actions: info != null
-          ? [
-              AppBarIcon(
-                tooltip: 'Edit',
-                onTap: _edit,
-                icon: widget.ctrl.model!.entry.status == null
-                    ? Icons.add
-                    : Icons.edit,
-              ),
-              AppBarIcon(
-                tooltip: 'Favourite',
-                onTap: _toggleFavourite,
-                icon: info.isFavourite ? Icons.favorite : Icons.favorite_border,
-              ),
-            ]
-          : const [],
       background: Stack(
         fit: StackFit.expand,
         children: [
@@ -158,54 +139,6 @@ class _MediaHeaderState extends State<MediaHeader> {
                           ),
                         ),
                       ),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              clipBehavior: Clip.hardEdge,
-                              onPressed: _edit,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                                child: Icon(
-                                  widget.ctrl.model!.entry.status == null
-                                      ? Icons.add
-                                      : Icons.edit,
-                                ),
-                              ),
-                              style: ButtonStyle(
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            ElevatedButton(
-                              clipBehavior: Clip.hardEdge,
-                              onPressed: _toggleFavourite,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                                child: Icon(
-                                  info.isFavourite
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                ),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(
-                                  Theme.of(context).errorColor,
-                                ),
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -214,17 +147,4 @@ class _MediaHeaderState extends State<MediaHeader> {
       ),
     );
   }
-
-  void _edit() => ExploreIndexer.openEditPage(
-        widget.ctrl.model!.info.id,
-        widget.ctrl.model!.entry,
-        (EntryModel entry) => setState(() => widget.ctrl.model!.entry = entry),
-      );
-
-  void _toggleFavourite() => widget.ctrl.toggleFavourite().then((ok) => ok
-      ? setState(
-          () => widget.ctrl.model!.info.isFavourite =
-              !widget.ctrl.model!.info.isFavourite,
-        )
-      : null);
 }

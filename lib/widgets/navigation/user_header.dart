@@ -35,7 +35,6 @@ class UserHeader extends StatelessWidget {
     return CustomSliverHeader(
       height: height,
       implyLeading: !isMe,
-      actionsScrollFadeIn: false,
       title: user?.name,
       actions: [
         if (isMe)

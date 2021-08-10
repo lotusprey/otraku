@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explorer_controller.dart';
 import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/widgets/bottom_drawer.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
+import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreView extends StatelessWidget {
   const ExploreView();
@@ -84,6 +87,28 @@ class _EndOfListLoader extends StatelessWidget {
                 ? Loader()
                 : const SizedBox(),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ExploreActionButton extends StatelessWidget {
+  const ExploreActionButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<ExplorerController>();
+    return Obx(
+      () => ActionButton(
+        tooltip: 'Types',
+        icon: ctrl.type.icon,
+        scrollCtrl: ctrl.scrollCtrl,
+        onTap: () => Sheet.show(
+          ctx: context,
+          sheet: ExploreBottomDrawer(context),
+          isScrollControlled: true,
+          barrierColour: Theme.of(context).primaryColor.withAlpha(150),
         ),
       ),
     );

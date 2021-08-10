@@ -166,19 +166,17 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
   late bool _empty;
   late bool _onSearch;
   late TextEditingController _ctrl;
-  FocusNode _focus = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _onSearch = widget.searchValue != '';
     _ctrl = TextEditingController(text: widget.searchValue);
+    _onSearch = widget.search != null && widget.searchValue != '';
     _empty = _ctrl.text.isEmpty;
   }
 
   @override
   void dispose() {
-    _focus.dispose();
     _ctrl.dispose();
     super.dispose();
   }
@@ -194,7 +192,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (!_onSearch || widget.search == null) ...[
+            if (!_onSearch) ...[
               Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -225,7 +223,6 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                   padding: const EdgeInsets.only(right: 10),
                   child: TextField(
                     controller: _ctrl,
-                    focusNode: _focus,
                     autofocus: true,
                     scrollPhysics: Config.PHYSICS,
                     cursorColor: Theme.of(context).accentColor,
@@ -245,11 +242,8 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                                   const Icon(Ionicons.chevron_forward_outline),
                               iconSize: Style.ICON_SMALL,
                               color: Theme.of(context).disabledColor,
-                              onPressed: () {
-                                _focus.canRequestFocus = false;
-                                widget.search!('');
-                                setState(() => _onSearch = false);
-                              },
+                              onPressed: () =>
+                                  setState(() => _onSearch = false),
                             )
                           : IconButton(
                               tooltip: 'Clear',

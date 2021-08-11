@@ -113,17 +113,6 @@ class ExploreActionButton extends StatelessWidget {
           ),
         ),
       ),
-      // ActionButton(
-      //   tooltip: 'Types',
-      //   icon: ctrl.type.icon,
-      //   scrollCtrl: ctrl.scrollCtrl,
-      //   onTap: () => Sheet.show(
-      //     ctx: context,
-      //     sheet: ExploreBottomDrawer(context),
-      //     isScrollControlled: true,
-      //     barrierColour: Theme.of(context).primaryColor.withAlpha(150),
-      //   ),
-      // ),
     );
   }
 }

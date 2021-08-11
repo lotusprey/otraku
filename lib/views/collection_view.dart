@@ -78,16 +78,29 @@ class CollectionActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionButton(
-      tooltip: 'Lists',
-      icon: Ionicons.menu_outline,
+    return FloatingListener(
       scrollCtrl: Get.find<CollectionController>(tag: collectionTag).scrollCtrl,
-      onTap: () => Sheet.show(
-        ctx: context,
-        sheet: CollectionBottomDrawer(context, collectionTag),
-        barrierColour: Theme.of(context).primaryColor.withAlpha(150),
-        isScrollControlled: true,
+      child: ActionButton(
+        tooltip: 'Lists',
+        icon: Ionicons.menu_outline,
+        onTap: () => Sheet.show(
+          ctx: context,
+          sheet: CollectionBottomDrawer(context, collectionTag),
+          barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+          isScrollControlled: true,
+        ),
       ),
     );
+    // return ActionButton(
+    //   tooltip: 'Lists',
+    //   icon: Ionicons.menu_outline,
+    //   scrollCtrl: Get.find<CollectionController>(tag: collectionTag).scrollCtrl,
+    //   onTap: () => Sheet.show(
+    //     ctx: context,
+    //     sheet: CollectionBottomDrawer(context, collectionTag),
+    //     barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+    //     isScrollControlled: true,
+    //   ),
+    // );
   }
 }

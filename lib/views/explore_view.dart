@@ -100,17 +100,30 @@ class ExploreActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = Get.find<ExplorerController>();
     return Obx(
-      () => ActionButton(
-        tooltip: 'Types',
-        icon: ctrl.type.icon,
+      () => FloatingListener(
         scrollCtrl: ctrl.scrollCtrl,
-        onTap: () => Sheet.show(
-          ctx: context,
-          sheet: ExploreBottomDrawer(context),
-          isScrollControlled: true,
-          barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+        child: ActionButton(
+          tooltip: 'Types',
+          icon: ctrl.type.icon,
+          onTap: () => Sheet.show(
+            ctx: context,
+            sheet: ExploreBottomDrawer(context),
+            isScrollControlled: true,
+            barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+          ),
         ),
       ),
+      // ActionButton(
+      //   tooltip: 'Types',
+      //   icon: ctrl.type.icon,
+      //   scrollCtrl: ctrl.scrollCtrl,
+      //   onTap: () => Sheet.show(
+      //     ctx: context,
+      //     sheet: ExploreBottomDrawer(context),
+      //     isScrollControlled: true,
+      //     barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+      //   ),
+      // ),
     );
   }
 }

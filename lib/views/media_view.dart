@@ -96,7 +96,6 @@ class __ActionButtonsState extends State<_ActionButtons> {
 
     List<Widget> children = [
       ActionButton(
-        scrollCtrl: widget.ctrl.scrollCtrl,
         icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
         tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
         onTap: () => widget.ctrl.toggleFavourite().then(
@@ -109,7 +108,6 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ),
       const SizedBox(width: 10),
       ActionButton(
-        scrollCtrl: widget.ctrl.scrollCtrl,
         icon: model.entry.status == null ? Icons.add : Icons.edit,
         tooltip: model.entry.status == null ? 'Add' : 'Edit',
         onTap: () => ExploreIndexer.openEditPage(
@@ -123,6 +121,9 @@ class __ActionButtonsState extends State<_ActionButtons> {
     if (Config.storage.read(Config.LEFT_HANDED) ?? false)
       children = children.reversed.toList();
 
-    return Row(mainAxisSize: MainAxisSize.min, children: children);
+    return FloatingListener(
+      scrollCtrl: widget.ctrl.scrollCtrl,
+      child: Row(mainAxisSize: MainAxisSize.min, children: children),
+    );
   }
 }

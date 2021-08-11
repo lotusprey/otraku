@@ -286,10 +286,16 @@ class Navigation extends RouterDelegate<String>
   // It's private, as using Navigator.pop(context) is preferred. This is due
   // to a tricky error that may occur when a page is popped too early. When
   // context isn't available in the scope, use Navigation.ctx to acquire it.
+  //
+  // Controllers are deleted after the page is popped,
+  // as some widgets may depend on them.
   bool _pop({bool notify = true}) {
     if (_pages.length <= 1) return false;
 
-    switch (_pages.last.name) {
+    final page = _pages.removeLast();
+    if (notify) notifyListeners();
+
+    switch (page.name) {
       case homeRoute:
         Get.delete<CollectionController>(tag: CollectionController.ANIME);
         Get.delete<CollectionController>(tag: CollectionController.MANGA);
@@ -305,67 +311,55 @@ class Navigation extends RouterDelegate<String>
         Get.delete<NotificationsController>();
         break;
       case collectionRoute:
-        if (_lastPageIsUnique())
-          Get.delete<CollectionController>(tag: _pages.last.tag);
+        if (_isPageUnique(page))
+          Get.delete<CollectionController>(tag: page.tag);
         break;
       case mediaRoute:
-        if (_lastPageIsUnique())
-          Get.delete<MediaController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<MediaController>(tag: page.tag);
         break;
       case entryRoute:
-        if (_lastPageIsUnique())
-          Get.delete<EntryController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<EntryController>(tag: page.tag);
         break;
       case characterRoute:
-        if (_lastPageIsUnique())
-          Get.delete<CharacterController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<CharacterController>(tag: page.tag);
         break;
       case staffRoute:
-        if (_lastPageIsUnique())
-          Get.delete<StaffController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<StaffController>(tag: page.tag);
         break;
       case studioRoute:
-        if (_lastPageIsUnique())
-          Get.delete<StudioController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<StudioController>(tag: page.tag);
         break;
       case reviewRoute:
-        if (_lastPageIsUnique())
-          Get.delete<ReviewController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<ReviewController>(tag: page.tag);
         break;
       case userRoute:
-        if (_lastPageIsUnique())
-          Get.delete<UserController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<UserController>(tag: page.tag);
         break;
       case feedRoute:
-        if (_lastPageIsUnique())
-          Get.delete<FeedController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<FeedController>(tag: page.tag);
         break;
       case favouritesRoute:
-        if (_lastPageIsUnique())
-          Get.delete<FavouritesController>(tag: _pages.last.tag);
+        if (_isPageUnique(page))
+          Get.delete<FavouritesController>(tag: page.tag);
         break;
       case friendsRoute:
-        if (_lastPageIsUnique())
-          Get.delete<FriendsController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<FriendsController>(tag: page.tag);
         break;
       case statisticsRoute:
-        if (_lastPageIsUnique())
-          Get.delete<StatisticsController>(tag: _pages.last.tag);
+        if (_isPageUnique(page))
+          Get.delete<StatisticsController>(tag: page.tag);
         break;
       case userReviewsRoute:
-        if (_lastPageIsUnique())
-          Get.delete<UserReviewsController>(tag: _pages.last.tag);
+        if (_isPageUnique(page))
+          Get.delete<UserReviewsController>(tag: page.tag);
         break;
       case activityRoute:
-        if (_lastPageIsUnique())
-          Get.delete<ActivityController>(tag: _pages.last.tag);
+        if (_isPageUnique(page)) Get.delete<ActivityController>(tag: page.tag);
         break;
       default:
         break;
     }
 
-    _pages.removeLast();
-    if (notify) notifyListeners();
     return true;
   }
 
@@ -388,17 +382,20 @@ class Navigation extends RouterDelegate<String>
     push(route);
   }
 
-  // Checks if this page is the only one with these route and tag. If it isn't,
-  // its controller shouldn't be deleted, when the page is popped.
-  // This function should only be called for pages with uniquely
-  // tagged controllers.
-  bool _lastPageIsUnique() {
-    if (_pages.last.tag == null) return false;
+  // Checks if there is a page with the same name & tag in the stack as [page].
+  // If there is, its controller(s) shouldn't be deleted, on [page] pop.
+  //
+  // When calling this function, [page] shouldn't be
+  // in the stack (it should already be popped).
+  //
+  // This function is meant for pages
+  // with uniquely tagged controllers.
+  bool _isPageUnique(RoutePage page) {
+    if (page.tag == null) return false;
 
-    final name = _pages.last.name;
-    final tag = _pages.last.tag;
-    for (int i = 0; i < _pages.length - 1; i++)
-      if (_pages[i].name == name && _pages[i].tag == tag) return false;
+    for (int i = 0; i < _pages.length; i++)
+      if (_pages[i].name == page.name && _pages[i].tag == page.tag)
+        return false;
 
     return true;
   }

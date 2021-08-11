@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 // A Get controller that can fetch data on overscroll.
 abstract class OverscrollController extends GetxController {
-  final scrollCtrl = MultiPosScrollCtrl();
+  final scrollCtrl = MultiScrollController();
 
   Future<void> scrollTo(double offset) async {
     if (!scrollCtrl.hasClients) return;
@@ -51,7 +51,7 @@ abstract class OverscrollController extends GetxController {
   }
 }
 
-class MultiPosScrollCtrl extends ScrollController {
+class MultiScrollController extends ScrollController {
   // Returns the last attached ScrollPosition.
   // This was necessary, because it's possible that there would be multiple
   // pages using the same OverscrollController and consecutively, using the same
@@ -64,5 +64,16 @@ class MultiPosScrollCtrl extends ScrollController {
       'ScrollController not attached to any scroll views.',
     );
     return positions.last;
+  }
+
+  // Used to determine if this has been disposed.
+  bool _mounted = true;
+
+  bool get mounted => _mounted;
+
+  @override
+  void dispose() {
+    _mounted = false;
+    super.dispose();
   }
 }

@@ -39,6 +39,14 @@ class HomeView extends StatelessWidget {
       HomeUserView(Client.viewerId!, null),
     ];
 
+    final fabs = [
+      null,
+      CollectionActionButton(CollectionController.ANIME, key: UniqueKey()),
+      CollectionActionButton(CollectionController.MANGA, key: UniqueKey()),
+      ExploreActionButton(),
+      null,
+    ];
+
     BackgroundHandler.checkLaunchedByNotification();
 
     return WillPopScope(
@@ -46,7 +54,7 @@ class HomeView extends StatelessWidget {
       child: ValueListenableBuilder<int>(
         valueListenable: Config.homeIndex,
         builder: (_, index, __) => NavScaffold(
-          floating: _actionButton(context),
+          floating: fabs[index],
           navBar: NavBar(
             options: {
               'Feed': Ionicons.file_tray_outline,
@@ -65,21 +73,6 @@ class HomeView extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget? _actionButton(BuildContext ctx) {
-    final index = Config.homeIndex.value;
-
-    if (index == ANIME_LIST || index == MANGA_LIST)
-      return CollectionActionButton(
-        index == ANIME_LIST
-            ? CollectionController.ANIME
-            : CollectionController.MANGA,
-      );
-
-    if (index == EXPLORE) return ExploreActionButton();
-
-    return null;
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {

@@ -74,7 +74,8 @@ class HomeCollectionView extends StatelessWidget {
 
 class CollectionActionButton extends StatelessWidget {
   final String collectionTag;
-  const CollectionActionButton(this.collectionTag);
+  const CollectionActionButton(this.collectionTag, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

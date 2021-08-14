@@ -63,6 +63,23 @@ class SettingsAboutView extends StatelessWidget {
           child: SizedBox(
             width: 200,
             child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.logo_github),
+              label: Text('Source Code'),
+              onPressed: () {
+                try {
+                  launch('https://github.com/lotusgate/otraku');
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
               icon: const Icon(Ionicons.finger_print),
               label: Text('Privacy Policy'),
               onPressed: () {

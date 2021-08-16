@@ -5,6 +5,7 @@ import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
@@ -19,12 +20,11 @@ class StatisticsView extends StatelessWidget {
     return GetBuilder<StatisticsController>(
       tag: id.toString(),
       builder: (ctrl) {
-        return Scaffold(
-          extendBody: true,
+        return NavScaffold(
           appBar: ShadowAppBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
-          bottomNavigationBar: NavBar(
+          navBar: NavBar(
             options: {
               'Anime': Ionicons.film_outline,
               'Manga': Ionicons.bookmark_outline,
@@ -32,51 +32,43 @@ class StatisticsView extends StatelessWidget {
             onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
             initial: ctrl.onAnime ? 0 : 1,
           ),
-          body: SafeArea(
-            bottom: false,
-            child: AnimatedSwitcher(
-              duration: Config.TAB_SWITCH_DURATION,
-              child: ListView(
-                key: ctrl.key,
-                padding:
-                    EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
-                physics: Config.PHYSICS,
-                children: [
-                  _Title('Details'),
-                  _Details(ctrl),
-                  if (ctrl.model.scores.isNotEmpty) ...[
-                    _Title(
-                      'Score',
-                      BubbleTabs<bool>(
-                        options: ctrl.onAnime
-                            ? const ['Titles', 'Hours']
-                            : const ['Titles', 'Chapters'],
-                        values: [true, false],
-                        current: () => ctrl.scoresOnCount,
-                        onNewValue: (val) => ctrl.scoresOnCount = val,
-                        onSameValue: (_) {},
-                      ),
-                    ),
-                    _ScoreChart(id),
-                    GridView(
-                      shrinkWrap: true,
-                      padding: Config.PADDING,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _Card('Format Distribution', ctrl.model.formats),
-                        _Card('Status Distribution', ctrl.model.statuses),
-                        _Card('Country Distribution', ctrl.model.countries),
-                      ],
-                      gridDelegate:
-                          SliverGridDelegateWithMinWidthAndFixedHeight(
-                        minWidth: 340,
-                        height: 250,
-                      ),
-                    ),
+          child: ListView(
+            key: ctrl.key,
+            padding: EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
+            physics: Config.PHYSICS,
+            children: [
+              _Title('Details'),
+              _Details(ctrl),
+              if (ctrl.model.scores.isNotEmpty) ...[
+                _Title(
+                  'Score',
+                  BubbleTabs<bool>(
+                    options: ctrl.onAnime
+                        ? const ['Titles', 'Hours']
+                        : const ['Titles', 'Chapters'],
+                    values: [true, false],
+                    current: () => ctrl.scoresOnCount,
+                    onNewValue: (val) => ctrl.scoresOnCount = val,
+                    onSameValue: (_) {},
+                  ),
+                ),
+                _ScoreChart(id),
+                GridView(
+                  shrinkWrap: true,
+                  padding: Config.PADDING,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _Card('Format Distribution', ctrl.model.formats),
+                    _Card('Status Distribution', ctrl.model.statuses),
+                    _Card('Country Distribution', ctrl.model.countries),
                   ],
-                ],
-              ),
-            ),
+                  gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+                    minWidth: 340,
+                    height: 250,
+                  ),
+                ),
+              ],
+            ],
           ),
         );
       },

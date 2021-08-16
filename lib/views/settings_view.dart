@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/views/settings_app_view.dart';
 import 'package:otraku/views/settings_content_view.dart';
 import 'package:otraku/views/settings_notifications_view.dart';
 import 'package:otraku/views/settings_about_view.dart';
+import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -22,9 +22,8 @@ class SettingsView extends StatelessWidget {
     ];
 
     return GetBuilder<SettingsController>(
-      builder: (settings) => Scaffold(
-        extendBody: true,
-        bottomNavigationBar: NavBar(
+      builder: (settings) => NavScaffold(
+        navBar: NavBar(
           options: const {
             'App': Ionicons.color_palette_outline,
             'Content': Ionicons.tv_outline,
@@ -35,10 +34,7 @@ class SettingsView extends StatelessWidget {
           initial: settings.pageIndex,
         ),
         appBar: ShadowAppBar(title: _pageNames[settings.pageIndex]),
-        body: AnimatedSwitcher(
-          duration: Config.TAB_SWITCH_DURATION,
-          child: _tabs[settings.pageIndex],
-        ),
+        child: _tabs[settings.pageIndex],
       ),
     );
   }

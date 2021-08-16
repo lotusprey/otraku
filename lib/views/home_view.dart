@@ -54,6 +54,7 @@ class HomeView extends StatelessWidget {
       child: ValueListenableBuilder<int>(
         valueListenable: Config.homeIndex,
         builder: (_, index, __) => NavScaffold(
+          child: tabs[index],
           floating: fabs[index],
           navBar: NavBar(
             options: {
@@ -65,10 +66,6 @@ class HomeView extends StatelessWidget {
             },
             onChanged: (page) => Config.setHomeIndex(page),
             initial: index,
-          ),
-          child: AnimatedSwitcher(
-            duration: Config.TAB_SWITCH_DURATION,
-            child: tabs[index],
           ),
         ),
       ),

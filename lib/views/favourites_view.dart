@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/favourites_controller.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/layouts/title_list.dart';
+import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -16,9 +16,8 @@ class FavouritesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<FavouritesController>(
         tag: id.toString(),
-        builder: (favourites) => Scaffold(
-          extendBody: true,
-          bottomNavigationBar: NavBar(
+        builder: (favourites) => NavScaffold(
+          navBar: NavBar(
             options: {
               'Anime': Explorable.anime.icon,
               'Manga': Explorable.manga.icon,
@@ -30,26 +29,24 @@ class FavouritesView extends StatelessWidget {
             onChanged: (index) => favourites.pageIndex = index,
           ),
           appBar: ShadowAppBar(title: 'Favourite ${favourites.pageName}'),
-          body: AnimatedSwitcher(
-            duration: Config.TAB_SWITCH_DURATION,
-            child: Center(
-              key: favourites.key,
-              child: favourites.favourites.isNotEmpty
-                  ? favourites.pageIndex == UserModel.STUDIO_FAV
-                      ? TitleList(
-                          favourites.favourites,
-                          scrollCtrl: favourites.scrollCtrl,
-                        )
-                      : TileGrid(
-                          models: favourites.favourites,
-                          scrollCtrl: favourites.scrollCtrl,
-                        )
-                  : Text(
-                      'Nothing here',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-            ),
-          ),
+          child: favourites.favourites.isNotEmpty
+              ? favourites.pageIndex == UserModel.STUDIO_FAV
+                  ? TitleList(
+                      favourites.favourites,
+                      scrollCtrl: favourites.scrollCtrl,
+                      key: favourites.key,
+                    )
+                  : TileGrid(
+                      models: favourites.favourites,
+                      scrollCtrl: favourites.scrollCtrl,
+                      key: favourites.key,
+                    )
+              : Center(
+                  child: Text(
+                    'Nothing here',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ),
         ),
       );
 }

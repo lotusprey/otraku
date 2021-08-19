@@ -4,7 +4,7 @@ import 'package:otraku/utils/convert.dart';
 
 class NotificationModel {
   final int id;
-  final NotificationType? type;
+  final NotificationType type;
   final int? headId;
   final int? bodyId;
   final String? imageUrl;

@@ -50,26 +50,26 @@ class Navigation extends RouterDelegate<String>
 
   static final it = Navigation._();
 
-  static const authRoute = 'auth';
-  static const homeRoute = 'home';
-  static const settingsRoute = 'settings';
-  static const notificationsRoute = 'notifications';
-  static const collectionRoute = 'collection';
-  static const mediaRoute = 'media';
-  static const entryRoute = 'entry';
-  static const characterRoute = 'character';
-  static const staffRoute = 'staff';
-  static const studioRoute = 'studio';
-  static const reviewRoute = 'review';
-  static const userRoute = 'user';
-  static const feedRoute = 'feed';
-  static const favouritesRoute = 'favourites';
-  static const friendsRoute = 'friends';
-  static const statisticsRoute = 'statistics';
-  static const userReviewsRoute = 'userReviews';
-  static const activityRoute = 'activity';
-  static const filtersRoute = 'filters';
-  static const threadRoute = 'thread';
+  static const authRoute = '/auth';
+  static const homeRoute = '/home';
+  static const settingsRoute = '/settings';
+  static const notificationsRoute = '/notifications';
+  static const collectionRoute = '/collection';
+  static const mediaRoute = '/media';
+  static const entryRoute = '/entry';
+  static const characterRoute = '/character';
+  static const staffRoute = '/staff';
+  static const studioRoute = '/studio';
+  static const reviewRoute = '/review';
+  static const userRoute = '/user';
+  static const feedRoute = '/feed';
+  static const favouritesRoute = '/favourites';
+  static const friendsRoute = '/friends';
+  static const statisticsRoute = '/statistics';
+  static const userReviewsRoute = '/userReviews';
+  static const activityRoute = '/activity';
+  static const filtersRoute = '/filters';
+  static const threadRoute = '/thread';
 
   final _pages = <RoutePage>[];
   final _key = GlobalKey<NavigatorState>();
@@ -382,24 +382,6 @@ class Navigation extends RouterDelegate<String>
     push(route);
   }
 
-  // Checks if there is a page with the same name & tag in the stack as [page].
-  // If there is, its controller(s) shouldn't be deleted, on [page] pop.
-  //
-  // When calling this function, [page] shouldn't be
-  // in the stack (it should already be popped).
-  //
-  // This function is meant for pages
-  // with uniquely tagged controllers.
-  bool _isPageUnique(RoutePage page) {
-    if (page.tag == null) return false;
-
-    for (int i = 0; i < _pages.length; i++)
-      if (_pages[i].name == page.name && _pages[i].tag == page.tag)
-        return false;
-
-    return true;
-  }
-
   @override
   Future<bool> popRoute() async {
     if (_key.currentContext == null) return SynchronousFuture(true);
@@ -424,6 +406,24 @@ class Navigation extends RouterDelegate<String>
       setTopPage(route);
 
     return SynchronousFuture(null);
+  }
+
+  // Checks if there is a page with the same name & tag in the stack as [page].
+  // If there is, its controller(s) shouldn't be deleted, on [page] pop.
+  //
+  // When calling this function, [page] shouldn't be
+  // in the stack (it should already be popped).
+  //
+  // This function is meant for pages
+  // with uniquely tagged controllers.
+  bool _isPageUnique(RoutePage page) {
+    if (page.tag == null) return false;
+
+    for (int i = 0; i < _pages.length; i++)
+      if (_pages[i].name == page.name && _pages[i].tag == page.tag)
+        return false;
+
+    return true;
   }
 
   // This override will be needed in the future for web.

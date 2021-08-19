@@ -20,6 +20,7 @@ class ActivityModel {
   final String? mediaImage;
   final String? mediaFormat;
   final Explorable? mediaType;
+  final String? siteUrl;
   final bool isPrivate;
   final String text;
   final String createdAt;
@@ -45,6 +46,7 @@ class ActivityModel {
     this.mediaImage,
     this.mediaFormat,
     this.mediaType,
+    this.siteUrl,
     this.text = '',
     this.isPrivate = false,
     this.replyCount = 0,
@@ -75,6 +77,7 @@ class ActivityModel {
           mediaImage: null,
           mediaFormat: null,
           mediaType: null,
+          siteUrl: map['siteUrl'],
           text: map['text'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
@@ -105,6 +108,7 @@ class ActivityModel {
           mediaImage: map['media']['coverImage']['large'],
           mediaFormat: Convert.clarifyEnum(map['media']['format']),
           mediaType: Explorable.anime,
+          siteUrl: map['siteUrl'],
           text: '$status $progress',
           createdAt: Convert.millisToStr(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
@@ -135,6 +139,7 @@ class ActivityModel {
           mediaImage: map['media']['coverImage']['large'],
           mediaFormat: Convert.clarifyEnum(map['media']['format']),
           mediaType: Explorable.manga,
+          siteUrl: map['siteUrl'],
           text: '$status $progress',
           createdAt: Convert.millisToStr(map['createdAt']),
           replyCount: map['replyCount'] ?? 0,
@@ -162,6 +167,7 @@ class ActivityModel {
           mediaImage: null,
           mediaFormat: null,
           mediaType: null,
+          siteUrl: map['siteUrl'],
           isPrivate: map['isPrivate'] ?? false,
           text: map['message'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),

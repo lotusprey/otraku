@@ -21,6 +21,7 @@ class FeedController extends OverscrollController {
             isLiked
             isSubscribed
             createdAt
+            siteUrl
             user {id name avatar {large}}
             text(asHtml: true)
           }
@@ -32,6 +33,7 @@ class FeedController extends OverscrollController {
             isLiked
             isSubscribed
             createdAt
+            siteUrl
             user {id name avatar {large}}
             media {id type title{userPreferred} coverImage{large} format}
             progress
@@ -46,6 +48,7 @@ class FeedController extends OverscrollController {
             isSubscribed
             isPrivate
             createdAt
+            siteUrl
             recipient {id name avatar {large}}
             messenger {id name avatar {large}}
             message(asHtml: true)

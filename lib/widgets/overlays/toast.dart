@@ -46,7 +46,7 @@ class Toast {
     _busy = false;
   }
 
-  static void copy(final BuildContext ctx, final String? text) =>
+  static void copy(final BuildContext ctx, final String text) =>
       Clipboard.setData(ClipboardData(text: text))
           .then((_) => show(ctx, 'Copied'));
 }

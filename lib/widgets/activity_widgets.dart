@@ -12,12 +12,15 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class UserActivity extends StatelessWidget {
+class ActivityBox extends StatelessWidget {
   final FeedController feed;
   final ActivityModel model;
 
-  UserActivity({required this.feed, required this.model});
+  ActivityBox({required this.feed, required this.model});
 
   @override
   Widget build(BuildContext context) {
@@ -73,36 +76,30 @@ class UserActivity extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 5),
-        Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: Config.PADDING,
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-            borderRadius: Config.BORDER_RADIUS,
-          ),
-          child: Column(
-            children: [
-              if (model.type == ActivityType.ANIME_LIST ||
-                  model.type == ActivityType.MANGA_LIST)
-                MediaBox(model)
-              else
-                UnconstrainedBox(
-                  constrainedAxis: Axis.horizontal,
-                  alignment: Alignment.topLeft,
-                  child: HtmlContent(model.text),
-                ),
-              const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    model.createdAt,
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                  _InteractionButtons(feed, model),
-                ],
-              ),
-            ],
+        ActivityBoxBody(
+          model,
+          InteractionButtons(
+            model: model,
+            delete: () => feed.deleteActivity(model.id),
+            toggleLike: () async {
+              await ActivityController.toggleLike(model).then(
+                (ok) => ok ? feed.updateActivity(model) : model.toggleLike(),
+              );
+            },
+            toggleSubscribtion: () {
+              ActivityController.toggleSubscription(model).then(
+                (ok) => ok
+                    ? feed.updateActivity(model)
+                    : model.toggleSubscription(),
+              );
+            },
+            pushActivityPage: () => Navigation.it.push(
+              Navigation.activityRoute,
+              args: [
+                model.id,
+                feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
+              ],
+            ),
           ),
         ),
       ],
@@ -110,69 +107,188 @@ class UserActivity extends StatelessWidget {
   }
 }
 
-class _InteractionButtons extends StatefulWidget {
-  final FeedController feed;
+class ActivityBoxBody extends StatelessWidget {
   final ActivityModel model;
+  final Widget interactions;
+  ActivityBoxBody(this.model, this.interactions);
 
-  _InteractionButtons(this.feed, this.model);
-
-  @override
-  __InteractionButtonsState createState() => __InteractionButtonsState();
-}
-
-class __InteractionButtonsState extends State<_InteractionButtons> {
   @override
   Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: Config.PADDING,
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: Config.BORDER_RADIUS,
+      ),
+      child: Column(
+        children: [
+          if (model.type == ActivityType.ANIME_LIST ||
+              model.type == ActivityType.MANGA_LIST)
+            ActivityBoxBodyMedia(model)
+          else
+            UnconstrainedBox(
+              constrainedAxis: Axis.horizontal,
+              alignment: Alignment.topLeft,
+              child: HtmlContent(model.text),
+            ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                model.createdAt,
+                style: Theme.of(context).textTheme.subtitle2,
+              ),
+              interactions,
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class InteractionButtons extends StatefulWidget {
+  final ActivityModel model;
+  final void Function() delete;
+  final void Function() toggleSubscribtion;
+
+  // setState(() {}) is called after the future is resolved, in case the
+  // toggling was unsuccessful.
+  final Future<void> Function() toggleLike;
+
+  // If the user is on a feed page, this should open an activity page. If the
+  // user is on an activity page, this should be null.
+  final void Function()? pushActivityPage;
+
+  InteractionButtons({
+    required this.model,
+    required this.delete,
+    required this.toggleLike,
+    required this.toggleSubscribtion,
+    this.pushActivityPage,
+  });
+
+  @override
+  _InteractionButtonsState createState() => _InteractionButtonsState();
+}
+
+class _InteractionButtonsState extends State<InteractionButtons> {
+  @override
+  Widget build(BuildContext context) {
+    final model = widget.model;
+
     return Row(
       children: [
-        if (widget.model.deletable)
-          Tooltip(
-            message: 'Delete',
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              child: const Icon(Ionicons.trash, size: Style.ICON_SMALL),
-              onTap: () => showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Delete?',
-                  mainAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: () => widget.feed.deleteActivity(widget.model.id),
+        IconButton(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          constraints: const BoxConstraints(maxHeight: Style.ICON_SMALL),
+          tooltip: 'More',
+          icon: const Icon(
+            Ionicons.ellipsis_horizontal,
+            size: Style.ICON_SMALL,
+          ),
+          onPressed: () => Sheet.show(
+            ctx: context,
+            sheet: Sheet(
+              height:
+                  Config.MATERIAL_TAP_TARGET_SIZE * (model.deletable ? 4 : 3),
+              child: ListTileTheme(
+                dense: true,
+                iconColor: Theme.of(context).dividerColor,
+                child: Column(
+                  children: [
+                    if (model.deletable)
+                      ListTile(
+                        leading: const Icon(Ionicons.trash),
+                        title: Text(
+                          'Delete',
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Delete?',
+                              mainAction: 'Yes',
+                              secondaryAction: 'No',
+                              onConfirm: () {
+                                widget.delete();
+
+                                // If an activityPage cannot be pushed, it's
+                                // already opened and should be closed.
+                                if (widget.pushActivityPage == null)
+                                  Navigator.pop(context);
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    ListTile(
+                      leading: Icon(
+                        !model.isSubscribed
+                            ? Ionicons.notifications_outline
+                            : Ionicons.notifications_off_outline,
+                      ),
+                      title: Text(
+                        !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        model.toggleSubscription();
+                        widget.toggleSubscribtion();
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Ionicons.clipboard_outline),
+                      title: Text(
+                        'Copy Link',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        if (model.siteUrl == null) {
+                          Toast.show(context, 'Url is null');
+                          return;
+                        }
+
+                        Toast.copy(context, model.siteUrl!);
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Ionicons.link),
+                      title: Text(
+                        'Open in Browser',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        if (model.siteUrl == null) {
+                          Toast.show(context, 'Url is null');
+                          return;
+                        }
+
+                        try {
+                          launch(model.siteUrl!);
+                        } catch (err) {
+                          Toast.show(context, 'Couldn\'t open link: $err');
+                        }
+                      },
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        const SizedBox(width: 10),
-        Tooltip(
-          message: !widget.model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              setState(() => widget.model.toggleSubscription());
-              ActivityController.toggleSubscription(widget.model).then(
-                (ok) => ok
-                    ? widget.feed.updateActivity(widget.model)
-                    : setState(() => widget.model.toggleSubscription()),
-              );
-            },
-            child: Icon(
-              Ionicons.notifications,
-              size: Style.ICON_SMALL,
-              color: !widget.model.isSubscribed
-                  ? null
-                  : Theme.of(context).accentColor,
-            ),
-          ),
         ),
-        const SizedBox(width: 10),
         Tooltip(
           message: 'Replies',
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Navigation.it.push(Navigation.activityRoute, args: [
-              widget.model.id,
-              widget.feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
-            ]),
+            onTap: widget.pushActivityPage,
             child: Row(
               children: [
                 Text(
@@ -192,11 +308,7 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               setState(() => widget.model.toggleLike());
-              ActivityController.toggleLike(widget.model).then(
-                (ok) => ok
-                    ? widget.feed.updateActivity(widget.model)
-                    : setState(() => widget.model.toggleLike()),
-              );
+              widget.toggleLike().then((_) => setState(() {}));
             },
             child: Row(
               children: [
@@ -226,9 +338,9 @@ class __InteractionButtonsState extends State<_InteractionButtons> {
   }
 }
 
-class MediaBox extends StatelessWidget {
+class ActivityBoxBodyMedia extends StatelessWidget {
   final ActivityModel activity;
-  MediaBox(this.activity);
+  ActivityBoxBodyMedia(this.activity);
 
   @override
   Widget build(BuildContext context) {

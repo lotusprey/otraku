@@ -45,7 +45,7 @@ class FeedView extends StatelessWidget {
               padding: Config.PADDING,
               controller: feed.scrollCtrl,
               itemBuilder: (_, i) =>
-                  UserActivity(feed: feed, model: feed.activities[i]),
+                  ActivityBox(feed: feed, model: feed.activities[i]),
               itemCount: feed.activities.length,
             );
           },
@@ -95,7 +95,7 @@ class HomeFeedView extends StatelessWidget {
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (_, i) => UserActivity(feed: feed, model: activities[i]),
+                  (_, i) => ActivityBox(feed: feed, model: activities[i]),
                   childCount: activities.length,
                 ),
               );

@@ -7,7 +7,7 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';

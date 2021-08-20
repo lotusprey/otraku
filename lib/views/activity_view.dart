@@ -6,7 +6,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/reply_model.dart';
-import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';

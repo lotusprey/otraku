@@ -226,7 +226,7 @@ class _MediaListTile extends StatelessWidget {
                           const SizedBox(),
                         _Progress(
                           entry,
-                          isMe ? collectionCtrl.updateProgress : null,
+                          isMe ? collectionCtrl.incrementProgress : null,
                         ),
                       ],
                     ),

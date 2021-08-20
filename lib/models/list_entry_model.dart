@@ -1,3 +1,4 @@
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
@@ -11,10 +12,11 @@ class ListEntryModel {
   final int? createdAt;
   final int? updatedAt;
   final List<String> genres;
-  int progress;
+  final int progress;
   final int? progressMax;
-  int progressVolumes;
+  final int progressVolumes;
   final int? progressVolumesMax;
+  final ListStatus? listStatus;
   double score;
   int repeat;
   String? notes;
@@ -27,6 +29,7 @@ class ListEntryModel {
     required this.cover,
     required this.format,
     required this.status,
+    required this.listStatus,
     required this.nextEpisode,
     required this.airingAt,
     required this.createdAt,
@@ -56,6 +59,7 @@ class ListEntryModel {
         progressVolumes: map['progressVolumes'] ?? 0,
         progressVolumesMax: map['media']['volumes'],
         score: map['score'].toDouble(),
+        listStatus: Convert.strToEnum(map['status'], ListStatus.values),
         startDate: Convert.mapToDateTime(map['startedAt']),
         endDate: Convert.mapToDateTime(map['completedAt']),
         repeat: map['repeat'] ?? 0,
@@ -70,6 +74,4 @@ class ListEntryModel {
     if (nextEpisode != null) return progress / (nextEpisode! - 1);
     return 1;
   }
-
-  void updateProgress(Map<String, dynamic> map) => progress = map['progress'];
 }

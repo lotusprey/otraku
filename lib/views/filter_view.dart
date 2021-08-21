@@ -13,6 +13,7 @@ import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grid.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FilterView extends StatelessWidget {
   final String? collectionTag;
@@ -22,9 +23,9 @@ class FilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final changes = <String, dynamic>{};
     final explorer = Get.find<ExplorerController>();
     Filterable filterable;
+
     if (collectionTag != null)
       filterable = Get.find<CollectionController>(tag: collectionTag);
     else
@@ -36,6 +37,8 @@ class FilterView extends StatelessWidget {
             : Explorable.manga
         : explorer.type;
 
+    // Track filter changes.
+    final changes = <String, dynamic>{};
     changes[Filterable.STATUS_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.STATUS_IN) ?? [],
     );
@@ -56,6 +59,30 @@ class FilterView extends StatelessWidget {
     );
     changes[Filterable.ON_LIST] =
         filterable.getFilterWithKey(Filterable.ON_LIST);
+
+    // Statuses.
+    final statusOptions = <String>[];
+    final statusValues = <String>[];
+    for (final s in MediaStatus.values) {
+      statusValues.add(describeEnum(s));
+      statusOptions.add(Convert.clarifyEnum(statusValues.last)!);
+    }
+
+    // Formats.
+    final formatOptions = <String>[];
+    final formatValues = <String>[];
+    final iterable = explorable == Explorable.anime
+        ? AnimeFormat.values
+        : MangaFormat.values;
+    for (final f in iterable) {
+      formatValues.add(describeEnum(f));
+      formatOptions.add(Convert.clarifyEnum(formatValues.last)!);
+    }
+
+    // Tags.
+    final tags = <String>[];
+    if (collectionTag == null)
+      for (final v in explorer.tags.values) for (final t in v) tags.add(t.name);
 
     return Scaffold(
       appBar: ShadowAppBar(
@@ -105,45 +132,86 @@ class FilterView extends StatelessWidget {
               onChanged: (val) => changes[Filterable.ON_LIST] = val,
             ),
           const SizedBox(height: 10),
-          ChipGrid(
+          ChipG(
             title: 'Status',
             placeholder: 'statuses',
-            options: MediaStatus.values
-                .map((s) => Convert.clarifyEnum(describeEnum(s))!)
-                .toList(),
-            values: MediaStatus.values.map((s) => describeEnum(s)).toList(),
+            options: statusOptions,
+            values: statusValues,
             inclusive: changes[Filterable.STATUS_IN],
+            sheet: ({
+              required List<String> inclusive,
+              required List<String>? exclusive,
+              required void Function(List<String>, List<String>?) onDone,
+            }) =>
+                SelectionSheet(
+              options: statusOptions,
+              values: statusValues,
+              inclusive: inclusive,
+              exclusive: exclusive != null ? exclusive : null,
+              fixHeight: statusOptions.length <= 10,
+              onDone: onDone,
+            ),
           ),
-          ChipGrid(
+          ChipG(
             title: 'Format',
             placeholder: 'formats',
-            options: explorable == Explorable.anime
-                ? AnimeFormat.values
-                    .map((f) => Convert.clarifyEnum(describeEnum(f))!)
-                    .toList()
-                : MangaFormat.values
-                    .map((f) => Convert.clarifyEnum(describeEnum(f))!)
-                    .toList(),
-            values: explorable == Explorable.anime
-                ? AnimeFormat.values.map((f) => describeEnum(f)).toList()
-                : MangaFormat.values.map((f) => describeEnum(f)).toList(),
+            options: formatOptions,
+            values: formatValues,
             inclusive: changes[Filterable.FORMAT_IN],
+            sheet: ({
+              required List<String> inclusive,
+              required List<String>? exclusive,
+              required void Function(List<String>, List<String>?) onDone,
+            }) =>
+                SelectionSheet(
+              options: formatOptions,
+              values: formatValues,
+              inclusive: inclusive,
+              exclusive: exclusive != null ? exclusive : null,
+              fixHeight: formatOptions.length <= 10,
+              onDone: onDone,
+            ),
           ),
-          ChipGrid(
+          ChipG(
             title: 'Genres',
             placeholder: 'genres',
             options: explorer.genres,
             values: explorer.genres,
             inclusive: changes[Filterable.GENRE_IN],
             exclusive: changes[Filterable.GENRE_NOT_IN],
+            sheet: ({
+              required List<String> inclusive,
+              required List<String>? exclusive,
+              required void Function(List<String>, List<String>?) onDone,
+            }) =>
+                SelectionSheet(
+              options: explorer.genres,
+              values: explorer.genres,
+              inclusive: inclusive,
+              exclusive: exclusive != null ? exclusive : null,
+              fixHeight: explorer.genres.length <= 10,
+              onDone: onDone,
+            ),
           ),
           if (collectionTag == null)
-            ChipGrid(
+            ChipG(
               title: 'Tags',
               placeholder: 'tags',
+              options: tags,
+              values: tags,
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
-              tags: explorer.tags,
+              sheet: ({
+                required List<String> inclusive,
+                required List<String>? exclusive,
+                required void Function(List<String>, List<String>?) onDone,
+              }) =>
+                  TagSelectionSheet(
+                tags: explorer.tags,
+                inclusive: inclusive,
+                exclusive: exclusive!,
+                onDone: onDone,
+              ),
             ),
         ],
       ),

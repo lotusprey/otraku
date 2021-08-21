@@ -166,12 +166,9 @@ class SelectionSheet<T> extends StatelessWidget {
               ? TwoStateField(
                   title: options[index],
                   initial: inclusive.contains(values[index]),
-                  onChanged: (val) {
-                    if (val)
-                      inclusive.add(values[index]);
-                    else
-                      inclusive.remove(values[index]);
-                  },
+                  onChanged: (val) => val
+                      ? inclusive.add(values[index])
+                      : inclusive.remove(values[index]),
                 )
               : ThreeStateField(
                   title: options[index],

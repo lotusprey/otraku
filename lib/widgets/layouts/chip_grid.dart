@@ -5,41 +5,36 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/chip_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
-class ChipG extends StatefulWidget {
+class ChipGrid extends StatefulWidget {
   final String title;
   final String placeholder;
-  final List<String> options;
-  final List<String> values;
   final List<String> inclusive;
   final List<String>? exclusive;
 
-  // This returns the widget passed to Sheet.show(), presenting the list of
-  // options. It accepts copies of the current inclusive and exclusive, as well
-  // as a callback function, which is triggered when the sheet selection is
-  // successfully modified and accepts the new inclusive and exclusive.
-  final Widget Function({
+  // This opens the sheet of options. It accepts copies of the current inclusive
+  // and exclusive, as well as a callback function, which is triggered when the
+  // user confirms new changes, that accepts the new inclusive and
+  // exclusive.
+  final void Function({
     required List<String> inclusive,
     required List<String>? exclusive,
     required void Function(List<String>, List<String>?) onDone,
-  }) sheet;
+  }) openSheet;
 
-  ChipG({
+  ChipGrid({
     required this.title,
     required this.placeholder,
-    required this.sheet,
-    required this.options,
-    required this.values,
+    required this.openSheet,
     required this.inclusive,
     this.exclusive,
   });
 
   @override
-  _ChipGState createState() => _ChipGState();
+  _ChipGridState createState() => _ChipGridState();
 }
 
-class _ChipGState extends State<ChipG> {
+class _ChipGridState extends State<ChipGrid> {
   @override
   Widget build(BuildContext context) {
     final chips = <ChipField>[];
@@ -123,25 +118,21 @@ class _ChipGState extends State<ChipG> {
               tooltip: 'Options',
               icon: Ionicons.options_outline,
               colour: Theme.of(context).disabledColor,
-              onTap: () => Sheet.show(
-                ctx: context,
-                sheet: widget.sheet(
-                  inclusive: [...widget.inclusive],
-                  exclusive:
-                      widget.exclusive != null ? [...widget.exclusive!] : null,
-                  onDone: (List<String> inclusive, List<String>? exclusive) {
-                    setState(() {
-                      widget.inclusive.clear();
-                      for (final i in inclusive) widget.inclusive.add(i);
+              onTap: () => widget.openSheet(
+                inclusive: [...widget.inclusive],
+                exclusive:
+                    widget.exclusive != null ? [...widget.exclusive!] : null,
+                onDone: (List<String> inclusive, List<String>? exclusive) {
+                  setState(() {
+                    widget.inclusive.clear();
+                    for (final i in inclusive) widget.inclusive.add(i);
 
-                      if (widget.exclusive == null) return;
+                    if (widget.exclusive == null) return;
 
-                      widget.exclusive!.clear();
-                      for (final e in exclusive!) widget.exclusive!.add(e);
-                    });
-                  },
-                ),
-                isScrollControlled: widget.options.length <= 10,
+                    widget.exclusive!.clear();
+                    for (final e in exclusive!) widget.exclusive!.add(e);
+                  });
+                },
               ),
             ),
           ],

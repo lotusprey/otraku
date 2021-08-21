@@ -132,85 +132,93 @@ class FilterView extends StatelessWidget {
               onChanged: (val) => changes[Filterable.ON_LIST] = val,
             ),
           const SizedBox(height: 10),
-          ChipG(
+          ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
-            options: statusOptions,
-            values: statusValues,
             inclusive: changes[Filterable.STATUS_IN],
-            sheet: ({
+            openSheet: ({
               required List<String> inclusive,
               required List<String>? exclusive,
               required void Function(List<String>, List<String>?) onDone,
             }) =>
-                SelectionSheet(
-              options: statusOptions,
-              values: statusValues,
-              inclusive: inclusive,
-              exclusive: exclusive != null ? exclusive : null,
-              fixHeight: statusOptions.length <= 10,
-              onDone: onDone,
+                Sheet.show(
+              ctx: context,
+              sheet: SelectionSheet(
+                options: statusOptions,
+                values: statusValues,
+                inclusive: inclusive,
+                exclusive: exclusive != null ? exclusive : null,
+                fixHeight: statusOptions.length <= 10,
+                onDone: onDone,
+              ),
+              isScrollControlled: statusOptions.length <= 10,
             ),
           ),
-          ChipG(
+          ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            options: formatOptions,
-            values: formatValues,
             inclusive: changes[Filterable.FORMAT_IN],
-            sheet: ({
+            openSheet: ({
               required List<String> inclusive,
               required List<String>? exclusive,
               required void Function(List<String>, List<String>?) onDone,
             }) =>
-                SelectionSheet(
-              options: formatOptions,
-              values: formatValues,
-              inclusive: inclusive,
-              exclusive: exclusive != null ? exclusive : null,
-              fixHeight: formatOptions.length <= 10,
-              onDone: onDone,
+                Sheet.show(
+              ctx: context,
+              sheet: SelectionSheet(
+                options: formatOptions,
+                values: formatValues,
+                inclusive: inclusive,
+                exclusive: exclusive != null ? exclusive : null,
+                fixHeight: formatOptions.length <= 10,
+                onDone: onDone,
+              ),
+              isScrollControlled: formatOptions.length <= 10,
             ),
           ),
-          ChipG(
+          ChipGrid(
             title: 'Genres',
             placeholder: 'genres',
-            options: explorer.genres,
-            values: explorer.genres,
             inclusive: changes[Filterable.GENRE_IN],
             exclusive: changes[Filterable.GENRE_NOT_IN],
-            sheet: ({
+            openSheet: ({
               required List<String> inclusive,
               required List<String>? exclusive,
               required void Function(List<String>, List<String>?) onDone,
             }) =>
-                SelectionSheet(
-              options: explorer.genres,
-              values: explorer.genres,
-              inclusive: inclusive,
-              exclusive: exclusive != null ? exclusive : null,
-              fixHeight: explorer.genres.length <= 10,
-              onDone: onDone,
+                Sheet.show(
+              ctx: context,
+              sheet: SelectionSheet(
+                options: explorer.genres,
+                values: explorer.genres,
+                inclusive: inclusive,
+                exclusive: exclusive != null ? exclusive : null,
+                fixHeight: explorer.genres.length <= 10,
+                onDone: onDone,
+              ),
+              isScrollControlled: false,
             ),
           ),
           if (collectionTag == null)
-            ChipG(
+            ChipGrid(
               title: 'Tags',
               placeholder: 'tags',
-              options: tags,
-              values: tags,
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
-              sheet: ({
+              openSheet: ({
                 required List<String> inclusive,
                 required List<String>? exclusive,
                 required void Function(List<String>, List<String>?) onDone,
               }) =>
-                  TagSelectionSheet(
-                tags: explorer.tags,
-                inclusive: inclusive,
-                exclusive: exclusive!,
-                onDone: onDone,
+                  Sheet.show(
+                ctx: context,
+                sheet: TagSelectionSheet(
+                  tags: explorer.tags,
+                  inclusive: inclusive,
+                  exclusive: exclusive!,
+                  onDone: onDone,
+                ),
+                isScrollControlled: false,
               ),
             ),
         ],

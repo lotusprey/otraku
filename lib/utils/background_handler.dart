@@ -76,7 +76,7 @@ class BackgroundHandler {
       return;
     }
 
-    Navigation.it.push(uri.pathSegments[0], args: [id, null, null]);
+    Navigation.it.push('/${uri.pathSegments[0]}', args: [id, null, null]);
   }
 }
 

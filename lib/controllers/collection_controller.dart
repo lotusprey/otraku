@@ -432,31 +432,15 @@ class CollectionController extends OverscrollController implements Filterable {
       if (search != '' && !entry.title!.toLowerCase().contains(search))
         continue;
 
-      if (formatIn != null) {
-        bool isIn = false;
-        for (final format in formatIn)
-          if (entry.format == format) {
-            isIn = true;
-            break;
-          }
-        if (!isIn) continue;
-      }
+      if (formatIn != null && !formatIn.contains(entry.format)) continue;
 
-      if (statusIn != null) {
-        bool isIn = false;
-        for (final status in statusIn)
-          if (entry.status == status) {
-            isIn = true;
-            break;
-          }
-        if (!isIn) continue;
-      }
+      if (statusIn != null && !statusIn.contains(entry.status)) continue;
 
       if (genreIn != null) {
-        bool isIn = false;
-        for (final genre in entry.genres)
-          if (genreIn.contains(genre)) {
-            isIn = true;
+        bool isIn = true;
+        for (final genre in genreIn)
+          if (!entry.genres.contains(genre)) {
+            isIn = false;
             break;
           }
         if (!isIn) continue;
@@ -464,8 +448,8 @@ class CollectionController extends OverscrollController implements Filterable {
 
       if (genreNotIn != null) {
         bool isIn = false;
-        for (final genre in entry.genres)
-          if (genreNotIn.contains(genre)) {
+        for (final genre in genreNotIn)
+          if (entry.genres.contains(genre)) {
             isIn = true;
             break;
           }

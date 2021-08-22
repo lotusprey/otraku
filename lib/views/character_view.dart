@@ -13,6 +13,7 @@ import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class CharacterView extends StatelessWidget {
   final int id;
@@ -177,10 +178,16 @@ class _Details extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            '${model.firstName} ${model.middleName} ${model.lastName}',
-            style: Theme.of(context).textTheme.headline2,
-            textAlign: axis == Axis.vertical ? TextAlign.center : null,
+          GestureDetector(
+            onTap: () => Toast.copy(
+              context,
+              '${model.firstName} ${model.middleName} ${model.lastName}',
+            ),
+            child: Text(
+              '${model.firstName} ${model.middleName} ${model.lastName}',
+              style: Theme.of(context).textTheme.headline2,
+              textAlign: axis == Axis.vertical ? TextAlign.center : null,
+            ),
           ),
           Text(
             model.altNames.join(', '),

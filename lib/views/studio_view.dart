@@ -10,6 +10,7 @@ import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class StudioView extends StatelessWidget {
   final int id;
@@ -19,7 +20,7 @@ class StudioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final studio = Get.find<StudioController>(tag: id.toString());
+    final ctrl = Get.find<StudioController>(tag: id.toString());
 
     return Scaffold(
       body: SafeArea(
@@ -27,29 +28,32 @@ class StudioView extends StatelessWidget {
         child: Obx(
           () => CustomScrollView(
             physics: Config.PHYSICS,
-            controller: studio.scrollCtrl,
-            semanticChildCount: studio.media.mediaCount,
+            controller: ctrl.scrollCtrl,
+            semanticChildCount: ctrl.media.mediaCount,
             slivers: [
               TopSliverHeader(
-                toggleFavourite: studio.toggleFavourite,
-                isFavourite: studio.model?.isFavourite,
-                favourites: studio.model?.favourites,
-                text: studio.model?.name,
+                toggleFavourite: ctrl.toggleFavourite,
+                isFavourite: ctrl.model?.isFavourite,
+                favourites: ctrl.model?.favourites,
+                text: ctrl.model?.name,
               ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: Config.PADDING,
-                  child: Hero(
-                    tag: id,
-                    child: Text(
-                      name,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline2,
+                  child: GestureDetector(
+                    onTap: () => Toast.copy(context, name),
+                    child: Hero(
+                      tag: id,
+                      child: Text(
+                        name,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headline2,
+                      ),
                     ),
                   ),
                 ),
               ),
-              if (studio.model != null) ...[
+              if (ctrl.model != null) ...[
                 SliverShadowAppBar([
                   const Spacer(),
                   AppBarIcon(
@@ -60,18 +64,18 @@ class StudioView extends StatelessWidget {
                       sheet: OptionSheet(
                         title: 'List Filter',
                         options: ['Everything', 'On List', 'Not On List'],
-                        index: studio.onList == null
+                        index: ctrl.onList == null
                             ? 0
-                            : studio.onList!
+                            : ctrl.onList!
                                 ? 1
                                 : 2,
                         onTap: (val) {
-                          studio.onList = val == 0
+                          ctrl.onList = val == 0
                               ? null
                               : val == 1
                                   ? true
                                   : false;
-                          studio.scrollTo(0);
+                          ctrl.scrollTo(0);
                         },
                       ),
                     ),
@@ -82,17 +86,17 @@ class StudioView extends StatelessWidget {
                     onTap: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(
-                        studio.sort,
+                        ctrl.sort,
                         (sort) {
-                          studio.sort = sort;
-                          studio.scrollTo(0);
+                          ctrl.sort = sort;
+                          ctrl.scrollTo(0);
                         },
                       ),
                       isScrollControlled: true,
                     ),
                   ),
                 ]),
-                if (studio.media.names.isEmpty)
+                if (ctrl.media.names.isEmpty)
                   SliverFillRemaining(
                     child: Center(
                       child: Text(
@@ -101,25 +105,25 @@ class StudioView extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (studio.sort == MediaSort.START_DATE ||
-                    studio.sort == MediaSort.START_DATE_DESC ||
-                    studio.sort == MediaSort.END_DATE ||
-                    studio.sort == MediaSort.END_DATE_DESC) ...[
-                  for (int i = 0; i < studio.media.names.length; i++) ...[
+                if (ctrl.sort == MediaSort.START_DATE ||
+                    ctrl.sort == MediaSort.START_DATE_DESC ||
+                    ctrl.sort == MediaSort.END_DATE ||
+                    ctrl.sort == MediaSort.END_DATE_DESC) ...[
+                  for (int i = 0; i < ctrl.media.names.length; i++) ...[
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: Config.PADDING,
                         child: Text(
-                          studio.media.names[i],
+                          ctrl.media.names[i],
                           style: Theme.of(context).textTheme.headline3,
                         ),
                       ),
                     ),
-                    TileGrid(models: studio.media.groups[i]),
+                    TileGrid(models: ctrl.media.groups[i]),
                   ],
                 ] else
-                  TileGrid(models: studio.media.joined),
-                if (studio.media.hasNextPage)
+                  TileGrid(models: ctrl.media.joined),
+                if (ctrl.media.hasNextPage)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),

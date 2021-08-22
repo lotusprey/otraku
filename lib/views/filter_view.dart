@@ -7,7 +7,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_status.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -23,7 +23,7 @@ class FilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExplorerController>();
+    final explorer = Get.find<ExploreController>();
     Filterable filterable;
 
     if (collectionTag != null)
@@ -110,7 +110,7 @@ class FilterView extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (filterable is ExplorerController) filterable.fetch();
+              if (filterable is ExploreController) filterable.fetch();
               if (filterable is CollectionController) {
                 filterable.scrollTo(0);
                 filterable.filter();

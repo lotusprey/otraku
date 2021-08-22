@@ -5,7 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -134,7 +134,7 @@ class MediaInfoView extends StatelessWidget {
             title: 'Genres',
             items: info.genres,
             onTap: (index) {
-              final explorable = Get.find<ExplorerController>();
+              final explorable = Get.find<ExploreController>();
               explorable.clearAllFilters(update: false);
               explorable.setFilterWithKey(
                 Filterable.SORT,
@@ -332,7 +332,7 @@ class __TagsState extends State<_Tags> {
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            final explorable = Get.find<ExplorerController>();
+            final explorable = Get.find<ExploreController>();
             explorable.clearAllFilters(update: false);
             explorable.setFilterWithKey(
               Filterable.SORT,
@@ -408,7 +408,7 @@ class __TagsState extends State<_Tags> {
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              final explorable = Get.find<ExplorerController>();
+              final explorable = Get.find<ExploreController>();
               explorable.clearAllFilters(update: false);
               explorable.setFilterWithKey(
                 Filterable.SORT,

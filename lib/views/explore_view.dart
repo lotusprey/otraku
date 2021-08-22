@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/bottom_drawer.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
@@ -19,7 +19,7 @@ class ExploreView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExplorerController>();
+    final explorer = Get.find<ExploreController>();
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
@@ -43,7 +43,7 @@ class ExploreView extends StatelessWidget {
 class _ExploreGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExplorerController>();
+    final explorer = Get.find<ExploreController>();
 
     return Obx(() {
       if (explorer.isLoading)
@@ -82,8 +82,8 @@ class _EndOfListLoader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Obx(
-            () => Get.find<ExplorerController>().hasNextPage &&
-                    !Get.find<ExplorerController>().isLoading
+            () => Get.find<ExploreController>().hasNextPage &&
+                    !Get.find<ExploreController>().isLoading
                 ? Loader()
                 : const SizedBox(),
           ),
@@ -98,7 +98,7 @@ class ExploreActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ExplorerController>();
+    final ctrl = Get.find<ExploreController>();
     return Obx(
       () => FloatingListener(
         scrollCtrl: ctrl.scrollCtrl,

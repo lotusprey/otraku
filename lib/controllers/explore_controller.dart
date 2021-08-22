@@ -10,7 +10,7 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 // Searches and filters items from the Explorable enum
-class ExplorerController extends OverscrollController implements Filterable {
+class ExploreController extends OverscrollController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************

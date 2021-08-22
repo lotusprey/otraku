@@ -5,7 +5,7 @@ import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/entry_controller.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/favourites_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/friends_controller.dart';
@@ -115,7 +115,7 @@ class Navigation extends RouterDelegate<String>
           tag: Client.viewerId.toString(),
         );
         Get.put(FeedController(null), tag: FeedController.HOME_FEED_TAG);
-        Get.put(ExplorerController());
+        Get.put(ExploreController());
         Get.put(ViewerController());
         _add(route, HomeView(), args, null);
         break;
@@ -301,7 +301,7 @@ class Navigation extends RouterDelegate<String>
         Get.delete<CollectionController>(tag: CollectionController.MANGA);
         Get.delete<UserController>(tag: Client.viewerId.toString());
         Get.delete<FeedController>(tag: FeedController.HOME_FEED_TAG);
-        Get.delete<ExplorerController>();
+        Get.delete<ExploreController>();
         Get.delete<ViewerController>();
         break;
       case settingsRoute:

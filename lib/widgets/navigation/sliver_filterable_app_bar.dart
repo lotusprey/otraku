@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/enums/themes.dart';
@@ -79,7 +79,7 @@ class SliverCollectionAppBar extends StatelessWidget {
 class SliverExploreAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExplorerController>();
+    final explorer = Get.find<ExploreController>();
     return Obx(
       () => SliverTransparentAppBar(
         [
@@ -120,11 +120,11 @@ class SliverExploreAppBar extends StatelessWidget {
                 ctx: context,
                 sheet: MediaSortSheet(
                   Convert.strToEnum(
-                    Get.find<ExplorerController>()
+                    Get.find<ExploreController>()
                         .getFilterWithKey(Filterable.SORT),
                     MediaSort.values,
                   )!,
-                  (sort) => Get.find<ExplorerController>().setFilterWithKey(
+                  (sort) => Get.find<ExploreController>().setFilterWithKey(
                     Filterable.SORT,
                     value: describeEnum(sort),
                     update: true,
@@ -293,7 +293,7 @@ class _FilterIconState extends State<_FilterIcon> {
     if (widget.collectionTag != null)
       _filterable = Get.find<CollectionController>(tag: widget.collectionTag);
     else
-      _filterable = Get.find<ExplorerController>();
+      _filterable = Get.find<ExploreController>();
     _active = _checkIfActive();
   }
 

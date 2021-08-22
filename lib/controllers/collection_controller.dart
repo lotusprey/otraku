@@ -108,7 +108,7 @@ class CollectionController extends OverscrollController implements Filterable {
   final _entries = <ListEntryModel>[].obs;
   final _listIndex = 0.obs;
   final _filters = <String, dynamic>{};
-  final _isLoading = false.obs;
+  final _isLoading = true.obs;
   final _customListNames = <String>[];
   ScoreFormat? _scoreFormat;
 
@@ -128,14 +128,12 @@ class CollectionController extends OverscrollController implements Filterable {
   String get currentName => _lists[_listIndex()].name;
   ListStatus? get listStatus => _lists[_listIndex()].status;
   int get currentCount => _lists[_listIndex()].entries.length;
-  bool get isEmpty => _entries.isEmpty;
-  bool get isFullyEmpty => _lists.isEmpty;
+  bool get isEmpty => _lists.isEmpty;
 
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
     _listIndex.value = value;
     scrollTo(0);
-    update();
     filter();
   }
 
@@ -214,7 +212,6 @@ class CollectionController extends OverscrollController implements Filterable {
       _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
     _listIndex.value = 0;
-    update();
     filter();
     _isLoading.value = false;
   }

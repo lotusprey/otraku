@@ -10,7 +10,6 @@ import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -26,7 +25,6 @@ class ExploreView extends StatelessWidget {
       ),
       controller: explorer.scrollCtrl,
       slivers: [
-        const HeadlineHeader('Explore', false),
         SliverExploreAppBar(),
         SliverRefreshControl(
           onRefresh: explorer.fetch,

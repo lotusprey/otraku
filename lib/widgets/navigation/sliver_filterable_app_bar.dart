@@ -17,62 +17,67 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
   final String tag;
-  SliverCollectionAppBar(this.tag);
+  final bool canPop;
+  SliverCollectionAppBar(this.tag, this.canPop);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CollectionController>(
-      tag: tag,
-      builder: (collection) {
-        if (collection.isFullyEmpty) return const SliverToBoxAdapter();
+    final ctrl = Get.find<CollectionController>(tag: tag);
 
-        return SliverTransparentAppBar(
-          [
-            Obx(
-              () => MediaSearchField(
-                scrollToTop: () => collection.scrollTo(0),
-                swipe: (offset) => collection.listIndex += offset,
-                hint: collection.currentName,
-                searchValue:
-                    collection.getFilterWithKey(Filterable.SEARCH) ?? '',
-                search: (val) => collection.setFilterWithKey(
-                  Filterable.SEARCH,
-                  value: val,
-                  update: true,
-                ),
-                title: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        collection.currentName,
-                        style: Theme.of(context).textTheme.headline2,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Text(
-                      ' ${collection.currentCount}',
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                  ],
+    final leading = canPop
+        ? AppBarIcon(
+            tooltip: 'Close',
+            icon: Ionicons.chevron_back_outline,
+            onTap: () => Navigator.pop(context),
+          )
+        : const SizedBox(width: 10);
+
+    return Obx(() {
+      if (ctrl.isLoading || ctrl.isEmpty)
+        return SliverTransparentAppBar([leading]);
+
+      return SliverTransparentAppBar([
+        leading,
+        MediaSearchField(
+          scrollToTop: () => ctrl.scrollTo(0),
+          swipe: (offset) => ctrl.listIndex += offset,
+          hint: ctrl.currentName,
+          searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
+          search: (val) => ctrl.setFilterWithKey(
+            Filterable.SEARCH,
+            value: val,
+            update: true,
+          ),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  ctrl.currentName,
+                  style: Theme.of(context).textTheme.headline2,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-            AppBarIcon(
-              tooltip: 'Sort',
-              icon: Ionicons.filter_outline,
-              onTap: () => Sheet.show(
-                ctx: context,
-                sheet: CollectionSortSheet(tag),
-                isScrollControlled: true,
+              Text(
+                ' ${ctrl.currentCount}',
+                style: Theme.of(context).textTheme.headline6,
               ),
-            ),
-            _FilterIcon(tag),
-          ],
-        );
-      },
-    );
+            ],
+          ),
+        ),
+        AppBarIcon(
+          tooltip: 'Sort',
+          icon: Ionicons.filter_outline,
+          onTap: () => Sheet.show(
+            ctx: context,
+            sheet: CollectionSortSheet(tag),
+            isScrollControlled: true,
+          ),
+        ),
+        _FilterIcon(tag),
+      ]);
+    });
   }
 }
 
@@ -83,6 +88,7 @@ class SliverExploreAppBar extends StatelessWidget {
     return Obx(
       () => SliverTransparentAppBar(
         [
+          const SizedBox(width: 10),
           MediaSearchField(
             scrollToTop: () => explorer.scrollTo(0),
             swipe: (offset) {
@@ -187,83 +193,78 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
     DragUpdateDetails? dragUpdate;
 
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (!_onSearch) ...[
-              Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: widget.scrollToTop,
-                  onHorizontalDragStart: (details) => dragStart = details,
-                  onHorizontalDragUpdate: (details) => dragUpdate = details,
-                  onHorizontalDragEnd: (_) {
-                    if (dragUpdate == null || dragStart == null) return;
-                    if (dragUpdate!.globalPosition.dx <
-                        dragStart!.globalPosition.dx)
-                      widget.swipe(1);
-                    else
-                      widget.swipe(-1);
-                  },
-                  child: widget.title,
-                ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          if (!_onSearch) ...[
+            Expanded(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: widget.scrollToTop,
+                onHorizontalDragStart: (details) => dragStart = details,
+                onHorizontalDragUpdate: (details) => dragUpdate = details,
+                onHorizontalDragEnd: (_) {
+                  if (dragUpdate == null || dragStart == null) return;
+                  if (dragUpdate!.globalPosition.dx <
+                      dragStart!.globalPosition.dx)
+                    widget.swipe(1);
+                  else
+                    widget.swipe(-1);
+                },
+                child: widget.title,
               ),
-              if (widget.search != null)
-                AppBarIcon(
-                  tooltip: 'Search',
-                  icon: Ionicons.search_outline,
-                  onTap: () => setState(() => _onSearch = true),
-                ),
-            ] else
-              Expanded(
-                child: Container(
-                  height: 35,
-                  padding: const EdgeInsets.only(right: 10),
-                  child: TextField(
-                    controller: _ctrl,
-                    autofocus: true,
-                    scrollPhysics: Config.PHYSICS,
-                    cursorColor: Theme.of(context).accentColor,
-                    style: Theme.of(context).textTheme.headline6,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(30),
-                    ],
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      hintText: widget.hint,
-                      suffixIcon: _empty
-                          ? IconButton(
-                              tooltip: 'Hide',
-                              constraints: const BoxConstraints(maxWidth: 40),
-                              padding: const EdgeInsets.all(0),
-                              icon:
-                                  const Icon(Ionicons.chevron_forward_outline),
-                              iconSize: Style.ICON_SMALL,
-                              color: Theme.of(context).disabledColor,
-                              onPressed: () =>
-                                  setState(() => _onSearch = false),
-                            )
-                          : IconButton(
-                              tooltip: 'Clear',
-                              constraints: const BoxConstraints(maxWidth: 40),
-                              padding: const EdgeInsets.all(0),
-                              icon: const Icon(Icons.close_rounded),
-                              iconSize: Style.ICON_SMALL,
-                              color: Theme.of(context).disabledColor,
-                              onPressed: () {
-                                _ctrl.clear();
-                                _update('');
-                              },
-                            ),
-                    ),
-                    onChanged: (text) => _update(text),
+            ),
+            if (widget.search != null)
+              AppBarIcon(
+                tooltip: 'Search',
+                icon: Ionicons.search_outline,
+                onTap: () => setState(() => _onSearch = true),
+              ),
+          ] else
+            Expanded(
+              child: Container(
+                height: 35,
+                padding: const EdgeInsets.only(right: 10),
+                child: TextField(
+                  controller: _ctrl,
+                  autofocus: true,
+                  scrollPhysics: Config.PHYSICS,
+                  cursorColor: Theme.of(context).accentColor,
+                  style: Theme.of(context).textTheme.headline6,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(30),
+                  ],
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.only(left: 10),
+                    hintText: widget.hint,
+                    suffixIcon: _empty
+                        ? IconButton(
+                            tooltip: 'Hide',
+                            constraints: const BoxConstraints(maxWidth: 40),
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Ionicons.chevron_forward_outline),
+                            iconSize: Style.ICON_SMALL,
+                            color: Theme.of(context).disabledColor,
+                            onPressed: () => setState(() => _onSearch = false),
+                          )
+                        : IconButton(
+                            tooltip: 'Clear',
+                            constraints: const BoxConstraints(maxWidth: 40),
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Icons.close_rounded),
+                            iconSize: Style.ICON_SMALL,
+                            color: Theme.of(context).disabledColor,
+                            onPressed: () {
+                              _ctrl.clear();
+                              _update('');
+                            },
+                          ),
                   ),
+                  onChanged: (text) => _update(text),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }

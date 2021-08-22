@@ -11,7 +11,6 @@ import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
@@ -66,7 +65,6 @@ class HomeFeedView extends StatelessWidget {
       controller: feed.scrollCtrl,
       physics: Config.PHYSICS,
       slivers: [
-        const HeadlineHeader('Feed', false),
         _Header(feed),
         SliverRefreshControl(
           onRefresh: () => feed.fetchPage(clean: true),

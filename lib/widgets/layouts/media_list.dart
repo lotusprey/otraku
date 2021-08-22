@@ -28,7 +28,7 @@ class MediaList extends StatelessWidget {
         : 10.0;
 
     return Obx(() {
-      if (collectionCtrl.isFullyEmpty) {
+      if (collectionCtrl.isEmpty) {
         if (collectionCtrl.isLoading)
           return const SliverFillRemaining(child: Center(child: Loader()));
 
@@ -47,7 +47,7 @@ class MediaList extends StatelessWidget {
         );
       }
 
-      if (collectionCtrl.isEmpty)
+      if (collectionCtrl.entries.isEmpty)
         return SliverFillRemaining(
           child: Center(
             child: Text(

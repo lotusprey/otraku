@@ -4,9 +4,9 @@ import 'package:otraku/widgets/fields/input_field_structure.dart';
 
 class DropDownField<T> extends StatefulWidget {
   final String title;
-  final T? value;
+  final T value;
   final Map<String, T> items;
-  final Function(T) onChanged;
+  final void Function(T) onChanged;
   final String hint;
 
   DropDownField({
@@ -22,7 +22,7 @@ class DropDownField<T> extends StatefulWidget {
 }
 
 class _DropDownFieldState<T> extends State<DropDownField<T>> {
-  T? _value;
+  late T _value;
 
   @override
   Widget build(BuildContext context) {
@@ -46,25 +46,22 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
           color: Theme.of(context).primaryColor,
           borderRadius: Config.BORDER_RADIUS,
         ),
-        child: Theme(
-          data: Theme.of(context)
-              .copyWith(highlightColor: Theme.of(context).accentColor),
-          child: DropdownButton<T>(
-            value: _value,
-            items: items,
-            onChanged: (val) {
-              setState(() => _value = val!);
-              widget.onChanged(val!);
-            },
-            hint: Text(
-              widget.hint,
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-            iconEnabledColor: Theme.of(context).disabledColor,
-            dropdownColor: Theme.of(context).primaryColor,
-            underline: const SizedBox(),
-            isExpanded: true,
+        child: DropdownButton<T>(
+          value: _value,
+          items: items,
+          onChanged: (val) {
+            final v = val as T;
+            setState(() => _value = v);
+            widget.onChanged(v);
+          },
+          hint: Text(
+            widget.hint,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
+          iconEnabledColor: Theme.of(context).disabledColor,
+          dropdownColor: Theme.of(context).primaryColor,
+          underline: const SizedBox(),
+          isExpanded: true,
         ),
       ),
     );

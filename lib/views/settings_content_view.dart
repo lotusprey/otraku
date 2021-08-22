@@ -23,7 +23,7 @@ class SettingsContentView extends StatelessWidget {
         Row(
           children: [
             Flexible(
-              child: DropDownField<String>(
+              child: DropDownField(
                 title: 'Title Language',
                 value: settings.model.titleLanguage,
                 items: const {
@@ -42,7 +42,7 @@ class SettingsContentView extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Flexible(
-              child: DropDownField<int>(
+              child: DropDownField(
                 title: 'Activity Merge Time',
                 value: settings.model.activityMergeTime,
                 items: const {

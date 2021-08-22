@@ -23,7 +23,7 @@ class SettingsAppView extends StatelessWidget {
                 child: DropDownField<int>(
                   title: 'Theme Mode',
                   value: Theming.it.mode.index,
-                  items: {'Auto': 0, 'Light': 1, 'Dark': 2},
+                  items: const {'Auto': 0, 'Light': 1, 'Dark': 2},
                   onChanged: (val) => Theming.it.setMode(val),
                 ),
               ),

@@ -174,7 +174,7 @@ class _Content extends StatelessWidget {
             GetBuilder<EntryController>(
               id: EntryController.STATUS_ID,
               tag: model.mediaId.toString(),
-              builder: (_) => DropDownField<ListStatus>(
+              builder: (_) => DropDownField<ListStatus?>(
                 hint: 'Add',
                 title: 'Status',
                 value: model.status,

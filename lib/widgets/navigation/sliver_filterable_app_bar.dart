@@ -221,46 +221,54 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                 onTap: () => setState(() => _onSearch = true),
               ),
           ] else
-            Expanded(
-              child: Container(
-                height: 35,
-                padding: const EdgeInsets.only(right: 10),
-                child: TextField(
-                  controller: _ctrl,
-                  autofocus: true,
-                  scrollPhysics: Config.PHYSICS,
-                  cursorColor: Theme.of(context).accentColor,
-                  style: Theme.of(context).textTheme.headline6,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(30),
-                  ],
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.only(left: 10),
-                    hintText: widget.hint,
-                    suffixIcon: _empty
-                        ? IconButton(
-                            tooltip: 'Hide',
-                            constraints: const BoxConstraints(maxWidth: 40),
-                            padding: const EdgeInsets.all(0),
-                            icon: const Icon(Ionicons.chevron_forward_outline),
-                            iconSize: Style.ICON_SMALL,
-                            color: Theme.of(context).disabledColor,
-                            onPressed: () => setState(() => _onSearch = false),
-                          )
-                        : IconButton(
-                            tooltip: 'Clear',
-                            constraints: const BoxConstraints(maxWidth: 40),
-                            padding: const EdgeInsets.all(0),
-                            icon: const Icon(Icons.close_rounded),
-                            iconSize: Style.ICON_SMALL,
-                            color: Theme.of(context).disabledColor,
-                            onPressed: () {
-                              _ctrl.clear();
-                              _update('');
-                            },
-                          ),
+            WillPopScope(
+              onWillPop: () {
+                setState(() => _onSearch = false);
+                return Future.value(false);
+              },
+              child: Expanded(
+                child: Container(
+                  height: 35,
+                  padding: const EdgeInsets.only(right: 10),
+                  child: TextField(
+                    controller: _ctrl,
+                    autofocus: true,
+                    scrollPhysics: Config.PHYSICS,
+                    cursorColor: Theme.of(context).accentColor,
+                    style: Theme.of(context).textTheme.headline6,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(30),
+                    ],
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.only(left: 10),
+                      hintText: widget.hint,
+                      suffixIcon: _empty
+                          ? IconButton(
+                              tooltip: 'Hide',
+                              constraints: const BoxConstraints(maxWidth: 40),
+                              padding: const EdgeInsets.all(0),
+                              icon:
+                                  const Icon(Ionicons.chevron_forward_outline),
+                              iconSize: Style.ICON_SMALL,
+                              color: Theme.of(context).disabledColor,
+                              onPressed: () =>
+                                  setState(() => _onSearch = false),
+                            )
+                          : IconButton(
+                              tooltip: 'Clear',
+                              constraints: const BoxConstraints(maxWidth: 40),
+                              padding: const EdgeInsets.all(0),
+                              icon: const Icon(Icons.close_rounded),
+                              iconSize: Style.ICON_SMALL,
+                              color: Theme.of(context).disabledColor,
+                              onPressed: () {
+                                _ctrl.clear();
+                                _update('');
+                              },
+                            ),
+                    ),
+                    onChanged: (text) => _update(text),
                   ),
-                  onChanged: (text) => _update(text),
                 ),
               ),
             ),

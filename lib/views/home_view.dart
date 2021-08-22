@@ -10,7 +10,6 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends StatelessWidget {
   static const FEED = 0;
@@ -49,42 +48,23 @@ class HomeView extends StatelessWidget {
 
     BackgroundHandler.checkLaunchedByNotification();
 
-    return WillPopScope(
-      onWillPop: () => _onWillPop(context),
-      child: ValueListenableBuilder<int>(
-        valueListenable: Config.homeIndex,
-        builder: (_, index, __) => NavScaffold(
-          child: tabs[index],
-          floating: fabs[index],
-          navBar: NavBar(
-            options: {
-              'Feed': Ionicons.file_tray_outline,
-              'Anime': Ionicons.film_outline,
-              'Manga': Ionicons.bookmark_outline,
-              'Explore': Ionicons.compass_outline,
-              'Profile': Ionicons.person_outline,
-            },
-            onChanged: (page) => Config.setHomeIndex(page),
-            initial: index,
-          ),
+    return ValueListenableBuilder<int>(
+      valueListenable: Config.homeIndex,
+      builder: (_, index, __) => NavScaffold(
+        child: tabs[index],
+        floating: fabs[index],
+        navBar: NavBar(
+          options: {
+            'Feed': Ionicons.file_tray_outline,
+            'Anime': Ionicons.film_outline,
+            'Manga': Ionicons.bookmark_outline,
+            'Explore': Ionicons.compass_outline,
+            'Profile': Ionicons.person_outline,
+          },
+          onChanged: (page) => Config.setHomeIndex(page),
+          initial: index,
         ),
       ),
     );
-  }
-
-  Future<bool> _onWillPop(BuildContext ctx) async {
-    bool ok = false;
-
-    await showPopUp(
-      ctx,
-      ConfirmationDialog(
-        title: 'Exit?',
-        mainAction: 'Yes',
-        secondaryAction: 'Never',
-        onConfirm: () => ok = true,
-      ),
-    );
-
-    return ok;
   }
 }

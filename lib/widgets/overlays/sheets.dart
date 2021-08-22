@@ -410,7 +410,7 @@ class MediaSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final length = MediaSort.values.length;
-    final prefTitle = Get.find<ViewerController>().settings!.titleLanguage!;
+    final prefTitle = Get.find<ViewerController>().settings!.titleLanguage;
     MediaSort titleAsc;
     MediaSort titleDesc;
 

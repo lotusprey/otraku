@@ -56,8 +56,8 @@ class MultiScrollController extends ScrollController {
   // This was necessary, because it's possible that there would be multiple
   // pages using the same OverscrollController and consecutively, using the same
   // ScrollController. The ScrollController position getter works with only 1
-  // ScrollPosition attached, so that required the addition of a last
-  // position getter.
+  // ScrollPosition attached, so that required the addition of the following
+  // getter.
   ScrollPosition get lastPos {
     assert(
       positions.isNotEmpty,
@@ -67,9 +67,9 @@ class MultiScrollController extends ScrollController {
   }
 
   // Used to determine if this has been disposed.
-  bool _mounted = true;
-
   bool get mounted => _mounted;
+
+  bool _mounted = true;
 
   @override
   void dispose() {

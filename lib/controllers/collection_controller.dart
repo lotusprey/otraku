@@ -86,6 +86,7 @@ class CollectionController extends OverscrollController implements Filterable {
         coverImage {large}
         nextAiringEpisode {episode airingAt}
         genres
+        countryOfOrigin
       }
     }
   ''';
@@ -418,6 +419,7 @@ class CollectionController extends OverscrollController implements Filterable {
   void filter() {
     if (_lists.isEmpty) return;
 
+    final String? country = _filters[Filterable.COUNTRY];
     final List<String>? formatIn = _filters[Filterable.FORMAT_IN];
     final List<String>? statusIn = _filters[Filterable.STATUS_IN];
     final List<String>? genreIn = _filters[Filterable.GENRE_IN];
@@ -431,6 +433,8 @@ class CollectionController extends OverscrollController implements Filterable {
     for (final entry in list.entries) {
       if (search != '' && !entry.title!.toLowerCase().contains(search))
         continue;
+
+      if (country != null && entry.country != country) continue;
 
       if (formatIn != null && !formatIn.contains(entry.format)) continue;
 
@@ -483,6 +487,7 @@ class CollectionController extends OverscrollController implements Filterable {
 
   @override
   void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
+        Filterable.COUNTRY,
         Filterable.STATUS_IN,
         Filterable.FORMAT_IN,
         Filterable.GENRE_IN,

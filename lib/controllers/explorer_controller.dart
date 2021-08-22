@@ -168,13 +168,14 @@ class ExplorerController extends OverscrollController implements Filterable {
 
   @override
   void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
+        Filterable.ON_LIST,
+        Filterable.COUNTRY,
         Filterable.STATUS_IN,
         Filterable.FORMAT_IN,
         Filterable.GENRE_IN,
         Filterable.GENRE_NOT_IN,
         Filterable.TAG_IN,
         Filterable.TAG_NOT_IN,
-        Filterable.ON_LIST,
       ], update: update);
 
   @override

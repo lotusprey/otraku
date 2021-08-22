@@ -320,12 +320,13 @@ class _FilterIconState extends State<_FilterIcon> {
       );
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([
+        Filterable.ON_LIST,
+        Filterable.COUNTRY,
         Filterable.STATUS_IN,
         Filterable.FORMAT_IN,
         Filterable.GENRE_IN,
         Filterable.GENRE_NOT_IN,
         Filterable.TAG_IN,
         Filterable.TAG_NOT_IN,
-        Filterable.ON_LIST,
       ]);
 }

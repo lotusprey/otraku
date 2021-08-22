@@ -57,8 +57,14 @@ class FilterView extends StatelessWidget {
     changes[Filterable.TAG_NOT_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.TAG_NOT_IN) ?? [],
     );
+    changes[Filterable.COUNTRY] =
+        filterable.getFilterWithKey(Filterable.COUNTRY);
     changes[Filterable.ON_LIST] =
         filterable.getFilterWithKey(Filterable.ON_LIST);
+
+    // Countries.
+    final countries = <String, String?>{'All': null};
+    for (final e in Convert.COUNTRY_CODES.entries) countries[e.value] = e.key;
 
     // Statuses.
     final statusOptions = <String>[];
@@ -123,14 +129,21 @@ class FilterView extends StatelessWidget {
           if (collectionTag == null)
             DropDownField(
               title: 'List Filter',
-              hint: 'Everything',
               value: changes[Filterable.ON_LIST],
               items: {
+                'All': null,
                 'In My List': true,
                 'Not In My List': false,
               },
               onChanged: (val) => changes[Filterable.ON_LIST] = val,
             ),
+          const SizedBox(height: 10),
+          DropDownField(
+            title: 'Country',
+            value: changes[Filterable.COUNTRY],
+            items: countries,
+            onChanged: (val) => changes[Filterable.COUNTRY] = val,
+          ),
           const SizedBox(height: 10),
           ChipGrid(
             title: 'Status',

@@ -125,12 +125,12 @@ class _ChipGridState extends State<ChipGrid> {
                 onDone: (List<String> inclusive, List<String>? exclusive) {
                   setState(() {
                     widget.inclusive.clear();
-                    for (final i in inclusive) widget.inclusive.add(i);
+                    widget.inclusive.addAll(inclusive);
 
                     if (widget.exclusive == null) return;
 
                     widget.exclusive!.clear();
-                    for (final e in exclusive!) widget.exclusive!.add(e);
+                    widget.exclusive!.addAll(exclusive!);
                   });
                 },
               ),

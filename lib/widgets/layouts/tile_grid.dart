@@ -93,7 +93,7 @@ class _Tile extends StatelessWidget {
             height: 35,
             child: Text(
               data.text1,
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.fade,
               maxLines: 2,
               style: Theme.of(context).textTheme.subtitle1,
             ),

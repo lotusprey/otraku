@@ -10,8 +10,7 @@ abstract class OverscrollController extends GetxController {
 
     if (scrollCtrl.lastPos.pixels > offset + 100)
       scrollCtrl.lastPos.jumpTo(offset + 100);
-
-    if (scrollCtrl.lastPos.pixels < offset - 100)
+    else if (scrollCtrl.lastPos.pixels < offset - 100)
       scrollCtrl.lastPos.jumpTo(offset - 100);
 
     await scrollCtrl.lastPos.animateTo(

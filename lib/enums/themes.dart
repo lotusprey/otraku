@@ -115,6 +115,14 @@ extension Style on Themes {
         fillColor: MaterialStateProperty.all(theme['accent']),
         overlayColor: MaterialStateProperty.all(theme['highlight']),
       ),
+      switchTheme: SwitchThemeData(
+        trackColor: MaterialStateProperty.resolveWith(
+          (states) => states.contains(MaterialState.selected)
+              ? theme['accent']
+              : theme['faded'],
+        ),
+        thumbColor: MaterialStateProperty.all(theme['contrast']),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,
         filled: true,

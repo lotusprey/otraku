@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SwitchTile extends StatefulWidget {
   final String title;
   final bool initialValue;
-  final Function(bool) onChanged;
+  final void Function(bool) onChanged;
 
   SwitchTile({
     required this.title,

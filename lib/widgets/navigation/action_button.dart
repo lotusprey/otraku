@@ -17,6 +17,7 @@ class _FloatingListenerState extends State<FloatingListener>
   late AnimationController _animationCtrl;
   late Animation<double> _animation;
 
+  bool _visible = true;
   double _lastOffset = 0;
 
   void _visibility() {
@@ -30,25 +31,32 @@ class _FloatingListenerState extends State<FloatingListener>
     final dif = pos.pixels - _lastOffset;
     if (dif > 10) {
       _lastOffset = widget.scrollCtrl.lastPos.pixels;
-      _animationCtrl.forward();
+      _animationCtrl.forward().then((_) => setState(() => _visible = false));
     } else if (dif < -10) {
       _lastOffset = widget.scrollCtrl.lastPos.pixels;
+      setState(() => _visible = true);
       _animationCtrl.reverse();
     }
   }
 
   @override
-  Widget build(BuildContext context) =>
-      ScaleTransition(scale: _animation, child: widget.child);
+  Widget build(BuildContext context) {
+    if (!_visible) return const SizedBox();
+
+    return ScaleTransition(
+      scale: _animation,
+      child: FadeTransition(opacity: _animation, child: widget.child),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _animationCtrl = AnimationController(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _animation = Tween(begin: 1.0, end: 0.0).animate(_animationCtrl);
+    _animation = Tween(begin: 1.0, end: 0.5).animate(_animationCtrl);
 
     widget.scrollCtrl.addListener(_visibility);
   }
@@ -63,6 +71,8 @@ class _FloatingListenerState extends State<FloatingListener>
   }
 }
 
+const _ACTION_BUTTON_SIZE = 56.0;
+
 // Used tipically as a floating action button.
 class ActionButton extends StatelessWidget {
   final IconData icon;
@@ -76,23 +86,110 @@ class ActionButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        width: 60,
-        height: 60,
-        child: Tooltip(
-          message: tooltip,
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _ACTION_BUTTON_SIZE,
+      height: _ACTION_BUTTON_SIZE,
+      child: Tooltip(
+        message: tooltip,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 8,
+                color: Theme.of(context).backgroundColor,
+              ),
+            ],
+          ),
           child: Material(
-            elevation: 5,
-            color: Theme.of(context).backgroundColor,
-            shadowColor: Theme.of(context).backgroundColor.withOpacity(0.5),
+            color: Theme.of(context).primaryColor,
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(30),
-              splashColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).backgroundColor,
               child: Icon(icon, color: Theme.of(context).accentColor),
             ),
           ),
         ),
-      );
+      ),
+    );
+  }
 }
+
+// class ActionBar extends StatefulWidget {
+//   final Map<String, IconData> items;
+//   final void Function(int) onChanged;
+//   final void Function() onSame;
+//   final int Function() current;
+
+//   const ActionBar({
+//     required this.items,
+//     required this.onChanged,
+//     required this.onSame,
+//     required this.current,
+//   });
+
+//   @override
+//   _ActionBarState createState() => _ActionBarState();
+// }
+
+// class _ActionBarState extends State<ActionBar> {
+//   late int _index;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _index = widget.current();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final radius = BorderRadius.circular(20);
+
+//     return Container(
+//       height: _ACTION_BUTTON_SIZE,
+//       decoration: BoxDecoration(
+//         color: Theme.of(context).primaryColor,
+//         borderRadius: radius,
+//         boxShadow: [
+//           BoxShadow(
+//             blurRadius: 8,
+//             color: Theme.of(context).backgroundColor,
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         children: [
+//           for (int i = 0; i < widget.items.length; i++)
+//             if (i != _index)
+//               IconButton(
+//                 icon: Icon(widget.items.values.elementAt(i)),
+//                 tooltip: widget.items.keys.elementAt(i),
+//                 color: Theme.of(context).accentColor,
+//                 onPressed: () {
+//                   setState(() => _index = i);
+//                   widget.onChanged(i);
+//                 },
+//               )
+//             else
+//               Container(
+//                 width: _ACTION_BUTTON_SIZE,
+//                 height: _ACTION_BUTTON_SIZE,
+//                 decoration: BoxDecoration(
+//                   color: Theme.of(context).accentColor,
+//                   borderRadius: radius,
+//                 ),
+//                 child: IconButton(
+//                   icon: Icon(widget.items.values.elementAt(i)),
+//                   tooltip: widget.items.keys.elementAt(i),
+//                   color: Theme.of(context).backgroundColor,
+//                   onPressed: widget.onSame,
+//                 ),
+//               )
+//         ],
+//       ),
+//     );
+//   }
+// }

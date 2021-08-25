@@ -274,7 +274,7 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Config.MATERIAL_TAP_TARGET_SIZE,
+            height: Config.MATERIAL_TAP_TARGET_SIZE + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
@@ -287,7 +287,7 @@ class _Titles extends StatelessWidget {
                   padding: Config.PADDING,
                   scrollDirection: Axis.horizontal,
                   physics: Config.PHYSICS,
-                  child: Text(titles[i]),
+                  child: Center(child: Text(titles[i])),
                 ),
               ),
             ),

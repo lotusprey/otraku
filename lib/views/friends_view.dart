@@ -20,7 +20,7 @@ class FriendsView extends StatelessWidget {
             title: friends.onFollowing ? 'Following' : 'Followers',
           ),
           navBar: NavBar(
-            options: {
+            items: {
               'Following': Ionicons.people_circle,
               'Followers': Ionicons.person_circle,
             },

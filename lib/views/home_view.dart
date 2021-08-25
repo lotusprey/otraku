@@ -54,7 +54,7 @@ class HomeView extends StatelessWidget {
         child: tabs[index],
         floating: fabs[index],
         navBar: NavBar(
-          options: {
+          items: {
             'Feed': Ionicons.file_tray_outline,
             'Anime': Ionicons.film_outline,
             'Manga': Ionicons.bookmark_outline,

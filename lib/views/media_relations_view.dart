@@ -37,11 +37,11 @@ class MediaRelationsView extends StatelessWidget {
               MediaController.REL_STAFF,
             ],
             current: () => ctrl.relationsTab,
-            onNewValue: (dynamic val) {
+            onNewValue: (int val) {
               scrollUp();
               ctrl.relationsTab = val;
             },
-            onSameValue: (dynamic _) => scrollUp(),
+            onSameValue: (_) => scrollUp(),
           ),
           const Spacer(),
           Obx(() {

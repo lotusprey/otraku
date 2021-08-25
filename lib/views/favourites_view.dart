@@ -18,7 +18,7 @@ class FavouritesView extends StatelessWidget {
         tag: id.toString(),
         builder: (favourites) => NavScaffold(
           navBar: NavBar(
-            options: {
+            items: {
               'Anime': Explorable.anime.icon,
               'Manga': Explorable.manga.icon,
               'Characters': Explorable.character.icon,

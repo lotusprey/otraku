@@ -56,9 +56,9 @@ class MediaView extends StatelessWidget {
           );
 
         return NavScaffold(
-          floating: _ActionButtons(ctrl),
+          floating: _ActionButtons(ctrl, pageTop),
           navBar: NavBar(
-            options: {
+            items: {
               'Info': Ionicons.book_outline,
               'Relations': Icons.emoji_people_outlined,
               'Social': Icons.rate_review_outlined,
@@ -83,7 +83,9 @@ class MediaView extends StatelessWidget {
 
 class _ActionButtons extends StatefulWidget {
   final MediaController ctrl;
-  _ActionButtons(this.ctrl);
+  final double scrollTop;
+
+  _ActionButtons(this.ctrl, this.scrollTop);
 
   @override
   __ActionButtonsState createState() => __ActionButtonsState();

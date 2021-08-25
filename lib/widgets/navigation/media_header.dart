@@ -6,7 +6,7 @@ import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class MediaHeader extends StatefulWidget {
+class MediaHeader extends StatelessWidget {
   final MediaController ctrl;
   final String? imageUrl;
   final double coverWidth;
@@ -24,15 +24,10 @@ class MediaHeader extends StatefulWidget {
   });
 
   @override
-  _MediaHeaderState createState() => _MediaHeaderState();
-}
-
-class _MediaHeaderState extends State<MediaHeader> {
-  @override
   Widget build(BuildContext context) {
-    final info = widget.ctrl.model?.info;
+    final info = ctrl.model?.info;
     return CustomSliverHeader(
-      height: widget.height,
+      height: height,
       title: info?.preferredTitle,
       background: Stack(
         fit: StackFit.expand,
@@ -44,7 +39,7 @@ class _MediaHeaderState extends State<MediaHeader> {
             Column(
               children: [
                 Expanded(child: FadeImage(info!.banner)),
-                SizedBox(height: widget.height - widget.bannerHeight),
+                SizedBox(height: height - bannerHeight),
               ],
             ),
           Positioned(
@@ -52,7 +47,7 @@ class _MediaHeaderState extends State<MediaHeader> {
             right: 0,
             bottom: 0,
             child: Container(
-              height: widget.height - widget.bannerHeight,
+              height: height - bannerHeight,
               decoration: BoxDecoration(
                 color: Theme.of(context).backgroundColor,
                 boxShadow: [
@@ -73,21 +68,21 @@ class _MediaHeaderState extends State<MediaHeader> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Hero(
-              tag: widget.ctrl.id,
+              tag: ctrl.id,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
                   color: Theme.of(context).primaryColor,
                 ),
-                height: widget.coverHeight,
-                width: widget.coverWidth,
+                height: coverHeight,
+                width: coverWidth,
                 child: ClipRRect(
                   borderRadius: Config.BORDER_RADIUS,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (widget.imageUrl != null)
-                        Image.network(widget.imageUrl!, fit: BoxFit.cover),
+                      if (imageUrl != null)
+                        Image.network(imageUrl!, fit: BoxFit.cover),
                       if (info != null)
                         GestureDetector(
                           child: Image.network(

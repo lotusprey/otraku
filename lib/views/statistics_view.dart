@@ -25,7 +25,7 @@ class StatisticsView extends StatelessWidget {
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
           navBar: NavBar(
-            options: {
+            items: {
               'Anime': Ionicons.film_outline,
               'Manga': Ionicons.bookmark_outline,
             },

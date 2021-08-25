@@ -24,7 +24,7 @@ class SettingsView extends StatelessWidget {
     return GetBuilder<SettingsController>(
       builder: (settings) => NavScaffold(
         navBar: NavBar(
-          options: const {
+          items: const {
             'App': Ionicons.color_palette_outline,
             'Content': Ionicons.tv_outline,
             'Notifications': Ionicons.notifications_outline,

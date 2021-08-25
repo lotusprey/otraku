@@ -13,6 +13,7 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaView extends StatelessWidget {
   final int id;
@@ -94,13 +95,40 @@ class _ActionButtons extends StatefulWidget {
 class __ActionButtonsState extends State<_ActionButtons> {
   @override
   Widget build(BuildContext context) {
-    final model = widget.ctrl.model!;
+    final ctrl = widget.ctrl;
+    final model = ctrl.model!;
 
     List<Widget> children = [
+      if (ctrl.tab == MediaController.RELATIONS) ...[
+        Obx(
+          () {
+            if (ctrl.relationsTab != MediaController.REL_CHARACTERS ||
+                model.characters.items.isEmpty ||
+                ctrl.availableLanguages.length < 2) return const SizedBox();
+
+            return ActionButton(
+              tooltip: 'Language',
+              icon: Ionicons.globe_outline,
+              onTap: () => Sheet.show(
+                ctx: context,
+                sheet: OptionSheet(
+                  title: 'Language',
+                  options: ctrl.availableLanguages,
+                  index: ctrl.languageIndex,
+                  onTap: (index) =>
+                      ctrl.staffLanguage = ctrl.availableLanguages[index],
+                ),
+                isScrollControlled: true,
+              ),
+            );
+          },
+        ),
+        const SizedBox(width: 10),
+      ],
       ActionButton(
         icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
         tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-        onTap: () => widget.ctrl.toggleFavourite().then(
+        onTap: () => ctrl.toggleFavourite().then(
               (ok) => ok
                   ? setState(
                       () => model.info.isFavourite = !model.info.isFavourite,
@@ -124,7 +152,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
       children = children.reversed.toList();
 
     return FloatingListener(
-      scrollCtrl: widget.ctrl.scrollCtrl,
+      scrollCtrl: ctrl.scrollCtrl,
       child: Row(mainAxisSize: MainAxisSize.min, children: children),
     );
   }

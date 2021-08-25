@@ -117,12 +117,12 @@ class _Header extends StatelessWidget {
     final viewer = Get.find<ViewerController>();
 
     return SliverTransparentAppBar([
-      BubbleTabs<bool>(
-        options: ['Following', 'Global'],
-        values: [true, false],
+      BubbleTabs(
+        items: const {'Following': true, 'Global': false},
         current: () => feed.onFollowing,
-        onNewValue: (val) => feed.onFollowing = val,
-        onSameValue: (_) => feed.scrollTo(0),
+        onChanged: (bool val) => feed.onFollowing = val,
+        onSame: () => feed.scrollTo(0),
+        itemWidth: 90,
       ),
       const Spacer(),
       _Filter(feed),

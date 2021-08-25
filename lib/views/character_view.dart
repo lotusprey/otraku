@@ -96,15 +96,15 @@ class CharacterView extends StatelessWidget {
               return SliverShadowAppBar([
                 character.anime.items.isNotEmpty &&
                         character.manga.items.isNotEmpty
-                    ? BubbleTabs<bool>(
-                        options: const ['Anime', 'Manga'],
-                        values: const [true, false],
+                    ? BubbleTabs(
+                        items: const {'Anime': true, 'Manga': false},
                         current: () => true,
-                        onNewValue: (value) {
+                        onChanged: (bool value) {
                           character.onAnime = value;
                           character.scrollTo(offset);
                         },
-                        onSameValue: (_) => character.scrollTo(offset),
+                        onSame: () => character.scrollTo(offset),
+                        itemWidth: 80,
                       )
                     : const SizedBox(),
                 const Spacer(),

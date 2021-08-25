@@ -24,6 +24,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
           borderRadius: Config.BORDER_RADIUS,
         ),
         child: TextField(
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: const InputDecoration(contentPadding: EdgeInsets.all(10)),
           scrollPhysics: Config.PHYSICS,
           controller: _controller,

@@ -95,15 +95,15 @@ class StaffView extends StatelessWidget {
               return SliverShadowAppBar([
                 staff.characters.items.isNotEmpty &&
                         staff.roles.items.isNotEmpty
-                    ? BubbleTabs<bool>(
-                        options: const ['Characters', 'Staff Roles'],
-                        values: const [true, false],
+                    ? BubbleTabs(
+                        items: const {'Characters': true, 'Staff Roles': false},
                         current: () => true,
-                        onNewValue: (value) {
+                        onChanged: (bool value) {
                           staff.onCharacters = value;
                           staff.scrollTo(offset);
                         },
-                        onSameValue: (_) => staff.scrollTo(offset),
+                        onSame: () => staff.scrollTo(offset),
+                        itemWidth: 100,
                       )
                     : const SizedBox(),
                 const Spacer(),

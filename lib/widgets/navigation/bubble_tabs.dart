@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 
 class BubbleTabs<T> extends StatefulWidget {
-  final List<String> options;
-  final List<T> values;
+  final Map<String, T> items;
   final T Function() current;
-  final Function(T) onNewValue;
-  final Function(T)? onSameValue;
+  final void Function(T) onChanged;
+  final void Function() onSame;
+  final double itemWidth;
 
-  const BubbleTabs({
-    required this.options,
-    required this.values,
+  BubbleTabs({
+    required this.items,
     required this.current,
-    required this.onNewValue,
-    required this.onSameValue,
+    required this.onChanged,
+    required this.onSame,
+    required this.itemWidth,
   });
 
   @override
@@ -21,37 +21,46 @@ class BubbleTabs<T> extends StatefulWidget {
 }
 
 class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
-  late int _index;
+  late T _val;
 
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        height: 30,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < widget.options.length; i++) ...[
-              GestureDetector(
+  void initState() {
+    super.initState();
+    _val = widget.current();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final values = widget.items.values;
+
+    return Container(
+      height: 30,
+      width: widget.itemWidth * values.length + 20,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Row(
+        children: [
+          for (int i = 0; i < widget.items.length; i++)
+            Flexible(
+              child: GestureDetector(
                 onTap: () {
-                  if (_index != i) {
-                    setState(() => _index = i);
-                    widget.onNewValue(widget.values[i]);
+                  if (_val != values.elementAt(i)) {
+                    widget.onChanged(values.elementAt(i));
+                    setState(() => _val = values.elementAt(i));
                   } else
-                    widget.onSameValue?.call(widget.values[i]);
+                    widget.onSame();
                 },
                 child: AnimatedContainer(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   duration: const Duration(milliseconds: 300),
                   decoration: BoxDecoration(
-                    color: _index != i
+                    color: _val != values.elementAt(i)
                         ? Colors.transparent
                         : Theme.of(context).accentColor,
                     borderRadius: Config.BORDER_RADIUS,
                   ),
                   child: Text(
-                    widget.options[i],
-                    style: _index != i
+                    widget.items.keys.elementAt(i),
+                    style: _val != values.elementAt(i)
                         ? Theme.of(context).textTheme.headline5
                         : Theme.of(context)
                             .textTheme
@@ -60,15 +69,9 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
                   ),
                 ),
               ),
-            ]
-          ],
-        ),
-      );
-
-  @override
-  void initState() {
-    super.initState();
-    _index = widget.values.indexOf(widget.current());
-    if (_index == -1) _index = 0;
+            ),
+        ],
+      ),
+    );
   }
 }

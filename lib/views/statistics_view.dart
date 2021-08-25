@@ -43,13 +43,13 @@ class StatisticsView extends StatelessWidget {
                 _Title(
                   'Score',
                   BubbleTabs<bool>(
-                    options: ctrl.onAnime
-                        ? const ['Titles', 'Hours']
-                        : const ['Titles', 'Chapters'],
-                    values: [true, false],
+                    items: ctrl.onAnime
+                        ? const {'Titles': true, 'Hours': false}
+                        : const {'Titles': true, 'Chapters': false},
                     current: () => ctrl.scoresOnCount,
-                    onNewValue: (val) => ctrl.scoresOnCount = val,
-                    onSameValue: (_) {},
+                    onChanged: (val) => ctrl.scoresOnCount = val,
+                    onSame: () {},
+                    itemWidth: 80,
                   ),
                 ),
                 _ScoreChart(id),

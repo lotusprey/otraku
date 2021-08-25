@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media_controller.dart';
@@ -13,7 +12,6 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaRelationsView extends StatelessWidget {
   final MediaController ctrl;
@@ -29,42 +27,22 @@ class MediaRelationsView extends StatelessWidget {
       slivers: [
         header,
         SliverShadowAppBar([
+          const Spacer(),
           BubbleTabs(
-            options: ['Media', 'Characters', 'Staff'],
-            values: [
-              MediaController.REL_MEDIA,
-              MediaController.REL_CHARACTERS,
-              MediaController.REL_STAFF,
-            ],
+            items: const {
+              'Media': MediaController.REL_MEDIA,
+              'Characters': MediaController.REL_CHARACTERS,
+              'Staff': MediaController.REL_STAFF,
+            },
             current: () => ctrl.relationsTab,
-            onNewValue: (int val) {
+            onChanged: (int val) {
               scrollUp();
               ctrl.relationsTab = val;
             },
-            onSameValue: (_) => scrollUp(),
+            onSame: scrollUp,
+            itemWidth: 100,
           ),
           const Spacer(),
-          Obx(() {
-            if (ctrl.relationsTab == MediaController.REL_CHARACTERS &&
-                ctrl.model!.characters.items.isNotEmpty &&
-                ctrl.availableLanguages.length > 1)
-              return AppBarIcon(
-                tooltip: 'Language',
-                icon: Ionicons.globe_outline,
-                onTap: () => Sheet.show(
-                  ctx: context,
-                  sheet: OptionSheet(
-                    title: 'Language',
-                    options: ctrl.availableLanguages,
-                    index: ctrl.languageIndex,
-                    onTap: (index) =>
-                        ctrl.staffLanguage = ctrl.availableLanguages[index],
-                  ),
-                  isScrollControlled: true,
-                ),
-              );
-            return const SizedBox();
-          }),
         ]),
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),

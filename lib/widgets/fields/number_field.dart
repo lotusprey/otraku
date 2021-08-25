@@ -40,7 +40,7 @@ class _NumberFieldState extends State<NumberField> {
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
                 ],
                 textAlign: TextAlign.center,
-                cursorColor: Theme.of(context).accentColor,
+                style: Theme.of(context).textTheme.bodyText2,
                 decoration: const InputDecoration(border: InputBorder.none),
                 onChanged: (value) => _validateInput(),
               ),

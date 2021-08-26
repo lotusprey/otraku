@@ -19,7 +19,7 @@ class ThemeModel {
 
   Color get translucent => background.withAlpha(190);
 
-  Color get highlight => secondaryVariant.withAlpha(190);
+  Color get highlight => primary.withAlpha(100);
 
   SystemUiOverlayStyle get overlayStyle {
     final overlayBrightness =
@@ -108,7 +108,11 @@ class ThemeModel {
             (states) =>
                 states.contains(MaterialState.selected) ? secondary : primary,
           ),
-          thumbColor: MaterialStateProperty.all(primary),
+          thumbColor: MaterialStateProperty.resolveWith(
+            (states) => states.contains(MaterialState.selected)
+                ? secondaryVariant
+                : primaryVariant,
+          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           isDense: true,
@@ -126,10 +130,10 @@ class ThemeModel {
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(TextStyle(
+            textStyle: MaterialStateProperty.all(const TextStyle(
               fontSize: Theming.FONT_MEDIUM,
             )),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
               borderRadius: Config.BORDER_RADIUS,
             )),
             foregroundColor: MaterialStateProperty.all(secondary),
@@ -138,7 +142,7 @@ class ThemeModel {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(TextStyle(
+            textStyle: MaterialStateProperty.all(const TextStyle(
               fontSize: Theming.FONT_MEDIUM,
               fontWeight: FontWeight.w500,
             )),
@@ -236,12 +240,12 @@ class ThemeModel {
     required Color onError,
   }) {
     HSLColor hsl = HSLColor.fromColor(primary);
-    final primaryVariant = hsl.lightness < 1.0
+    final primaryVariant = hsl.lightness < 0.1
         ? primary
         : hsl.withLightness(hsl.lightness - 0.1).toColor();
 
     hsl = HSLColor.fromColor(secondary);
-    final secondaryVariant = hsl.lightness < 1.0
+    final secondaryVariant = hsl.lightness < 0.1
         ? secondary
         : hsl.withLightness(hsl.lightness - 0.1).toColor();
 

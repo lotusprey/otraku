@@ -55,7 +55,7 @@ class SettingsAppView extends StatelessWidget {
             children: [
               Flexible(
                 child: DropDownField<int>(
-                  title: 'Default Explore Option',
+                  title: 'Default Explorable',
                   value: Config.storage.read(Config.DEFAULT_EXPLORE) ?? 0,
                   items: Map.fromIterable(
                     Explorable.values,

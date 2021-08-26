@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -48,6 +51,25 @@ class SettingsAppView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
+          Row(
+            children: [
+              Flexible(
+                child: DropDownField<int>(
+                  title: 'Default Explore Option',
+                  value: Config.storage.read(Config.DEFAULT_EXPLORE) ?? 0,
+                  items: Map.fromIterable(
+                    Explorable.values,
+                    key: (e) => Convert.clarifyEnum(describeEnum(e))!,
+                    value: (e) => e.index,
+                  ),
+                  onChanged: (val) =>
+                      Config.storage.write(Config.DEFAULT_EXPLORE, val),
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Flexible(child: SizedBox()),
+            ],
+          ),
           SwitchTile(
             title: 'Left-Handed Mode',
             initialValue: Config.storage.read(Config.LEFT_HANDED) ?? false,

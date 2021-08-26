@@ -12,6 +12,7 @@ abstract class Config {
   static const LAST_NOTIFICATION_COUNT = 'lastNotificationCount';
   static const CLOCK_TYPE = '12hourClock';
   static const LEFT_HANDED = 'leftHanded';
+  static const DEFAULT_EXPLORE = 'defaultExplore';
 
   // Constants.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;

@@ -4,6 +4,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -99,10 +100,12 @@ class ExploreController extends OverscrollController implements Filterable {
 
   final _isLoading = true.obs;
   final _results = PageModel<ExplorableModel>().obs;
-  final _type = Explorable.anime.obs;
   final _search = ''.obs;
   final _genres = <String>[];
   final _tags = <String, List<TagModel>>{};
+  final _type = Explorable.values
+      .elementAt(Config.storage.read(Config.DEFAULT_EXPLORE) ?? 0)
+      .obs;
   int _concurrentFetches = 0;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
@@ -131,7 +134,7 @@ class ExploreController extends OverscrollController implements Filterable {
   Map<String, List<TagModel>> get tags => _tags;
 
   // ***************************************************************************
-  // FUNCTIONS CONTROLLING QUERY VARIABLES
+  // FILTERING
   // ***************************************************************************
 
   set type(Explorable value) {
@@ -288,57 +291,37 @@ class ExploreController extends OverscrollController implements Filterable {
     await fetch(clean: false);
   }
 
-  //Fetches genres, tags and initial media
-  Future<void> fetchInitial() async {
-    _isLoading.value = true;
+  @override
+  void onInit() {
+    super.onInit();
 
     const query = '''
         query Filters {
           Viewer {options {displayAdultContent}}
           GenreCollection
           MediaTagCollection {name description category isGeneralSpoiler}
-          Page(page: 1, perPage: 30) {
-            media(sort: TRENDING_DESC, type: ANIME) {
-              id
-              title {userPreferred}
-              coverImage {large}
-            }
-          }
         }
       ''';
 
-    final data = await Client.request(query, null, popOnErr: false);
-    if (data == null) return;
+    Client.request(query, null, popOnErr: false).then((data) {
+      if (data == null) return;
 
-    if (!data['Viewer']['options']['displayAdultContent'])
-      _filters[Filterable.IS_ADULT] = false;
+      if (!data['Viewer']['options']['displayAdultContent'])
+        _filters[Filterable.IS_ADULT] = false;
 
-    for (final g in data['GenreCollection']) _genres.add(g.toString());
+      for (final g in data['GenreCollection']) _genres.add(g.toString());
 
-    for (final t in data['MediaTagCollection']) {
-      final category = t['category'] ?? 'Other';
-      if (!_tags.containsKey(category))
-        _tags[category] = [TagModel(t)];
-      else
-        _tags[category]!.add(TagModel(t));
-    }
+      for (final t in data['MediaTagCollection']) {
+        final category = t['category'] ?? 'Other';
+        if (!_tags.containsKey(category))
+          _tags[category] = [TagModel(t)];
+        else
+          _tags[category]!.add(TagModel(t));
+      }
 
-    final items = <ExplorableModel>[];
-    final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
+      fetch();
+    });
 
-    for (final a in data['Page']['media']) {
-      items.add(ExplorableModel.anime(a));
-      idNotIn.add(a['id']);
-    }
-
-    _results.update((r) => r!.append(items, true));
-    _isLoading.value = false;
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-    fetchInitial();
     _search.firstRebuild = false;
     debounce<String>(
       _search,

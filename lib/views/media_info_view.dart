@@ -84,7 +84,7 @@ class MediaInfoView extends StatelessWidget {
                   child: Container(
                     padding: Config.PADDING,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: Config.BORDER_RADIUS,
                     ),
                     child: Text(
@@ -118,7 +118,7 @@ class MediaInfoView extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: InputFieldStructure(
                   title: infoTitles[i],
@@ -248,7 +248,7 @@ class _ScrollCards extends StatelessWidget {
                     padding: Config.PADDING,
                     decoration: BoxDecoration(
                       borderRadius: Config.BORDER_RADIUS,
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                     child: Text(items[index]),
                   ),
@@ -281,7 +281,7 @@ class _Titles extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: SingleChildScrollView(
                   padding: Config.PADDING,
@@ -355,7 +355,7 @@ class __TagsState extends State<_Tags> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: Config.BORDER_RADIUS,
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
               children: [
@@ -385,7 +385,7 @@ class __TagsState extends State<_Tags> {
       final spoilerStyle = Theme.of(context)
           .textTheme
           .bodyText2!
-          .copyWith(color: Theme.of(context).errorColor);
+          .copyWith(color: Theme.of(context).colorScheme.error);
 
       delegate = SliverChildBuilderDelegate(
         (_, i) {
@@ -393,7 +393,7 @@ class __TagsState extends State<_Tags> {
             return TextButton.icon(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.surface,
                 ),
               ),
               onPressed: () => setState(
@@ -431,7 +431,7 @@ class __TagsState extends State<_Tags> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 borderRadius: Config.BORDER_RADIUS,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.surface,
               ),
               child: Row(
                 children: [

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -53,7 +53,7 @@ class UserHeader extends StatelessWidget {
                 user!.isFollowing
                     ? Ionicons.person_remove_outline
                     : Ionicons.person_add_outline,
-                size: Style.ICON_SMALL,
+                size: Theming.ICON_SMALL,
               ),
               label: Text(
                 user!.isFollowing
@@ -73,7 +73,8 @@ class UserHeader extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           DecoratedBox(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            decoration:
+                BoxDecoration(color: Theme.of(context).colorScheme.surface),
           ),
           if (user?.banner != null)
             Column(
@@ -89,12 +90,12 @@ class UserHeader extends StatelessWidget {
             child: Container(
               height: height - bannerHeight,
               decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).colorScheme.background,
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 15,
                     spreadRadius: 25,
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                   ),
                 ],
               ),
@@ -145,7 +146,7 @@ class UserHeader extends StatelessWidget {
                               Theme.of(context).textTheme.headline2!.copyWith(
                             shadows: [
                               Shadow(
-                                color: Theme.of(context).backgroundColor,
+                                color: Theme.of(context).colorScheme.background,
                                 blurRadius: 10,
                               ),
                             ],
@@ -163,7 +164,7 @@ class UserHeader extends StatelessWidget {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).accentColor,
+                              color: Theme.of(context).colorScheme.secondary,
                               borderRadius: Config.BORDER_RADIUS,
                             ),
                             child: Text(

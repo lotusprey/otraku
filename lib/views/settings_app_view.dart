@@ -1,7 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
@@ -20,11 +17,15 @@ class SettingsAppView extends StatelessWidget {
           Row(
             children: [
               Flexible(
-                child: DropDownField<int>(
+                child: DropDownField<ThemeMode>(
                   title: 'Theme Mode',
-                  value: Theming.it.mode.index,
-                  items: const {'Auto': 0, 'Light': 1, 'Dark': 2},
-                  onChanged: (val) => Theming.it.setMode(val),
+                  value: Theming.it.mode,
+                  items: const {
+                    'Auto': ThemeMode.system,
+                    'Light': ThemeMode.light,
+                    'Dark': ThemeMode.dark,
+                  },
+                  onChanged: (val) => Theming.it.mode = val,
                 ),
               ),
               const SizedBox(width: 10),
@@ -72,13 +73,11 @@ class SettingsAppView extends StatelessWidget {
             ],
           ),
           _Radio(
-            options: Themes.values
-                .map((t) => Convert.clarifyEnum(describeEnum(t)))
-                .toList(),
-            leftValue: Theming.it.light.index,
-            rightValue: Theming.it.dark.index,
-            onChangedLeft: (val) => Theming.it.setLight(val),
-            onChangedRight: (val) => Theming.it.setDark(val),
+            options: Theming.names,
+            leftValue: Theming.it.light,
+            rightValue: Theming.it.dark,
+            onChangedLeft: (val) => Theming.it.light = val,
+            onChangedRight: (val) => Theming.it.dark = val,
           ),
           SizedBox(height: NavBar.offset(context)),
         ],
@@ -86,7 +85,7 @@ class SettingsAppView extends StatelessWidget {
 }
 
 class _Radio extends StatefulWidget {
-  final List<String?> options;
+  final List<String> options;
   final int leftValue;
   final int rightValue;
   final Function(int) onChangedLeft;
@@ -125,7 +124,7 @@ class __RadioState extends State<_Radio> {
               setState(() => _leftValue = index);
             },
           ),
-          Text(widget.options[index]!),
+          Text(widget.options[index]),
           Radio<int>(
             value: index,
             groupValue: _rightValue,

@@ -43,7 +43,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: Config.BORDER_RADIUS,
         ),
         child: DropdownButton<T>(
@@ -58,8 +58,8 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
             widget.hint,
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          iconEnabledColor: Theme.of(context).disabledColor,
-          dropdownColor: Theme.of(context).primaryColor,
+          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          dropdownColor: Theme.of(context).colorScheme.surface,
           underline: const SizedBox(),
           isExpanded: true,
         ),

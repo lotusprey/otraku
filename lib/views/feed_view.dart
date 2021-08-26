@@ -146,7 +146,7 @@ class _Header extends StatelessWidget {
                     right: 0,
                     child: Icon(
                       Ionicons.notifications_outline,
-                      color: Theme.of(context).dividerColor,
+                      color: Theme.of(context).colorScheme.onBackground,
                     ),
                   ),
                   Container(
@@ -158,14 +158,14 @@ class _Header extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 15, bottom: 5),
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).errorColor,
+                      color: Theme.of(context).colorScheme.error,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
                       child: Text(
                         viewer.unreadCount.toString(),
                         style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                              color: Theme.of(context).backgroundColor,
+                              color: Theme.of(context).colorScheme.background,
                             ),
                       ),
                     ),

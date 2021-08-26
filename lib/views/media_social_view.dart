@@ -21,7 +21,7 @@ class MediaSocialView extends StatelessWidget {
       child: Container(
         width: 50,
         height: 10,
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.surface,
       ),
     );
 
@@ -87,7 +87,7 @@ class MediaSocialView extends StatelessWidget {
                             width: double.infinity,
                             padding: Config.PADDING,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).colorScheme.surface,
                               borderRadius: Config.BORDER_RADIUS,
                             ),
                             child: Text(

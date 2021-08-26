@@ -446,7 +446,7 @@ class _CheckboxGrid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (_, index) => CheckboxField(
           title: map.entries.elementAt(index).key,
-          initialValue: map.entries.elementAt(index).value,
+          initial: map.entries.elementAt(index).value,
           onChanged: (val) => onChanged(map.entries.elementAt(index).key, val),
         ),
         childCount: map.length,

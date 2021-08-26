@@ -6,8 +6,8 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/activity_model.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -118,7 +118,7 @@ class ActivityBoxBody extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: Config.PADDING,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: Column(
@@ -183,11 +183,11 @@ class _InteractionButtonsState extends State<InteractionButtons> {
       children: [
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          constraints: const BoxConstraints(maxHeight: Style.ICON_SMALL),
+          constraints: const BoxConstraints(maxHeight: Theming.ICON_SMALL),
           tooltip: 'More',
           icon: const Icon(
             Ionicons.ellipsis_horizontal,
-            size: Style.ICON_SMALL,
+            size: Theming.ICON_SMALL,
           ),
           onPressed: () => Sheet.show(
             ctx: context,
@@ -196,7 +196,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   Config.MATERIAL_TAP_TARGET_SIZE * (model.deletable ? 4 : 3),
               child: ListTileTheme(
                 dense: true,
-                iconColor: Theme.of(context).dividerColor,
+                iconColor: Theme.of(context).colorScheme.onBackground,
                 child: Column(
                   children: [
                     if (model.deletable)
@@ -296,7 +296,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 const SizedBox(width: 5),
-                const Icon(Ionicons.chatbox, size: Style.ICON_SMALL),
+                const Icon(Ionicons.chatbox, size: Theming.ICON_SMALL),
               ],
             ),
           ),
@@ -319,14 +319,14 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                       : Theme.of(context)
                           .textTheme
                           .subtitle2!
-                          .copyWith(color: Theme.of(context).errorColor),
+                          .copyWith(color: Theme.of(context).colorScheme.error),
                 ),
                 const SizedBox(width: 5),
                 Icon(
                   Icons.favorite,
-                  size: Style.ICON_SMALL,
+                  size: Theming.ICON_SMALL,
                   color: widget.model.isLiked
-                      ? Theme.of(context).errorColor
+                      ? Theme.of(context).colorScheme.error
                       : null,
                 ),
               ],

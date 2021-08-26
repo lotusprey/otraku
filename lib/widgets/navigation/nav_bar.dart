@@ -70,7 +70,7 @@ class _NavBarState extends State<NavBar> {
                           widget.items.values.elementAt(i),
                           color: i != _index
                               ? null
-                              : Theme.of(context).accentColor,
+                              : Theme.of(context).colorScheme.secondary,
                         ),
                         if (full) ...[
                           const SizedBox(width: 5),

@@ -76,7 +76,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             blurRadius: 7,
             offset: const Offset(0, 3),
           )
@@ -106,7 +106,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Theme.of(context)
-                        .backgroundColor
+                        .colorScheme
+                        .background
                         .withAlpha((headerOpacity * 255).ceil()),
                   ),
                 ),
@@ -189,7 +190,7 @@ class Shade extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             blurRadius: 10,
             spreadRadius: -5,
           ),

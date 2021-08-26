@@ -4,8 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/reply_model.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -182,14 +182,14 @@ class _UserReply extends StatelessWidget {
           child: Container(
             width: 50,
             height: 10,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: Config.PADDING,
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: Config.BORDER_RADIUS,
           ),
           child: Column(
@@ -248,13 +248,15 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
                   : Theme.of(context)
                       .textTheme
                       .subtitle2!
-                      .copyWith(color: Theme.of(context).errorColor),
+                      .copyWith(color: Theme.of(context).colorScheme.error),
             ),
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Style.ICON_SMALL,
-              color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
+              size: Theming.ICON_SMALL,
+              color: widget.reply.isLiked
+                  ? Theme.of(context).colorScheme.error
+                  : null,
             ),
           ],
         ),

@@ -54,18 +54,16 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
                   duration: const Duration(milliseconds: 300),
                   decoration: BoxDecoration(
                     color: _val != values.elementAt(i)
-                        ? Colors.transparent
-                        : Theme.of(context).accentColor,
+                        ? null
+                        : Theme.of(context).colorScheme.secondary,
                     borderRadius: Config.BORDER_RADIUS,
                   ),
                   child: Text(
                     widget.items.keys.elementAt(i),
                     style: _val != values.elementAt(i)
                         ? Theme.of(context).textTheme.headline5
-                        : Theme.of(context)
-                            .textTheme
-                            .headline5!
-                            .copyWith(color: Theme.of(context).backgroundColor),
+                        : Theme.of(context).textTheme.headline5!.copyWith(
+                            color: Theme.of(context).colorScheme.background),
                   ),
                 ),
               ),

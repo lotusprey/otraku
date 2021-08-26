@@ -144,7 +144,7 @@ class _Details extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
@@ -242,8 +242,11 @@ class _ScoreChart extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         stops: const [0.5, 1],
                         colors: [
-                          Theme.of(context).accentColor,
-                          Theme.of(context).accentColor.withOpacity(0.2),
+                          Theme.of(context).colorScheme.secondary,
+                          Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.2),
                         ],
                       ),
                     ),
@@ -288,8 +291,8 @@ class _Card extends StatelessWidget {
                 end: Alignment.centerRight,
                 stops: const [0.5, 1],
                 colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.4),
-                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.surface.withOpacity(0.4),
+                  Theme.of(context).colorScheme.surface,
                 ],
               ),
             ),

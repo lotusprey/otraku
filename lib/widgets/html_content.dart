@@ -14,7 +14,7 @@ class HtmlContent extends StatelessWidget {
     return HtmlWidget(
       text,
       textStyle: Theme.of(context).textTheme.bodyText2,
-      hyperlinkColor: Theme.of(context).accentColor,
+      hyperlinkColor: Theme.of(context).colorScheme.secondary,
       onTapUrl: (url) async {
         try {
           await launch(url);
@@ -41,7 +41,7 @@ class HtmlContent extends StatelessWidget {
             width: double.infinity,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
-              color: Theme.of(context).disabledColor,
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: Config.BORDER_RADIUS,
             ),
           );

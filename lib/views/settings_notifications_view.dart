@@ -77,7 +77,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.headline5),
+          child: Text(title, style: Theme.of(context).textTheme.headline6),
         ),
       );
 }
@@ -107,7 +107,7 @@ class _Grid extends StatelessWidget {
             i += from;
             return CheckboxField(
               title: NotificationType.values[i].text,
-              initialValue: values[i],
+              initial: values[i],
               onChanged: (val) {
                 values[i] = val;
                 onChanged(values);

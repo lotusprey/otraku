@@ -79,7 +79,7 @@ class _Tile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: Config.BORDER_RADIUS,
                 child: Container(
-                  color: full ? Theme.of(context).primaryColor : null,
+                  color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(
                     data.imageUrl,
                     fit: full ? BoxFit.cover : BoxFit.contain,

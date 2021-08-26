@@ -203,7 +203,7 @@ class _Details extends StatelessWidget {
                     child: Container(
                       padding: Config.PADDING,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: Config.BORDER_RADIUS,
                       ),
                       child: Text(

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CheckboxField extends StatefulWidget {
-  final String? title;
-  final bool initialValue;
-  final Function(bool) onChanged;
+  final String title;
+  final bool initial;
+  final void Function(bool) onChanged;
 
   CheckboxField({
     required this.title,
     required this.onChanged,
-    this.initialValue = false,
+    this.initial = false,
   });
 
   @override
@@ -25,23 +25,21 @@ class _CheckboxFieldState extends State<CheckboxField> {
         minVerticalPadding: 0,
         dense: true,
         title: Text(
-          widget.title!,
-          style: _value
-              ? Theme.of(context).textTheme.bodyText1
-              : Theme.of(context).textTheme.bodyText2,
+          widget.title,
+          style: Theme.of(context).textTheme.bodyText2,
         ),
-        onTap: onTap,
+        onTap: _onTap,
         trailing: Checkbox(
           value: _value,
-          onChanged: (_) => onTap(),
-          activeColor: Theme.of(context).accentColor,
-          checkColor: Theme.of(context).backgroundColor,
+          onChanged: (_) => _onTap(),
+          activeColor: Theme.of(context).colorScheme.secondary,
+          checkColor: Theme.of(context).colorScheme.background,
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           visualDensity: VisualDensity.compact,
         ),
       );
 
-  void onTap() {
+  void _onTap() {
     setState(() => _value = !_value);
     widget.onChanged(_value);
   }
@@ -49,6 +47,6 @@ class _CheckboxFieldState extends State<CheckboxField> {
   @override
   void initState() {
     super.initState();
-    _value = widget.initialValue;
+    _value = widget.initial;
   }
 }

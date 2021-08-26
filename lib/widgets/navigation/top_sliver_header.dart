@@ -58,10 +58,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     return Container(
       height: Config.MATERIAL_TAP_TARGET_SIZE,
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             blurRadius: 7,
             offset: const Offset(0, 3),
           ),

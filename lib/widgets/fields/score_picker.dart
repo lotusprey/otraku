@@ -40,8 +40,8 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return IconButton(
       icon: icon,
       color: score == index
-          ? Theme.of(context).accentColor
-          : Theme.of(context).disabledColor,
+          ? Theme.of(context).colorScheme.secondary
+          : Theme.of(context).colorScheme.primary,
       onPressed: () => score == index
           ? setState(() => widget.data.score = 0)
           : setState(() => widget.data.score = index.toDouble()),
@@ -54,7 +54,7 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: Row(
@@ -83,7 +83,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
       icon: score >= index
           ? const Icon(Icons.star)
           : const Icon(Icons.star_border),
-      color: Theme.of(context).accentColor,
+      color: Theme.of(context).colorScheme.secondary,
       onPressed: () => score != index
           ? setState(() => widget.data.score = index.toDouble())
           : setState(() => widget.data.score = 0),
@@ -96,7 +96,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: Row(

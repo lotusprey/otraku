@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/routing/route_parser.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/background_handler.dart';

@@ -82,7 +82,7 @@ class CollectionActionButton extends StatelessWidget {
         onTap: () => Sheet.show(
           ctx: context,
           sheet: CollectionBottomDrawer(context, collectionTag),
-          barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+          barrierColour: Theme.of(context).colorScheme.surface.withAlpha(150),
           isScrollControlled: true,
         ),
       ),

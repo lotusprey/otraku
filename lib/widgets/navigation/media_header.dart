@@ -33,7 +33,8 @@ class MediaHeader extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           DecoratedBox(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            decoration:
+                BoxDecoration(color: Theme.of(context).colorScheme.surface),
           ),
           if (info?.banner != null)
             Column(
@@ -49,12 +50,12 @@ class MediaHeader extends StatelessWidget {
             child: Container(
               height: height - bannerHeight,
               decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).colorScheme.background,
                 boxShadow: [
                   BoxShadow(
                     blurRadius: 15,
                     spreadRadius: 25,
-                    color: Theme.of(context).backgroundColor,
+                    color: Theme.of(context).colorScheme.background,
                   ),
                 ],
               ),
@@ -72,7 +73,7 @@ class MediaHeader extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 height: coverHeight,
                 width: coverWidth,
@@ -115,7 +116,7 @@ class MediaHeader extends StatelessWidget {
                               Theme.of(context).textTheme.headline2!.copyWith(
                             shadows: [
                               Shadow(
-                                color: Theme.of(context).backgroundColor,
+                                color: Theme.of(context).colorScheme.background,
                                 blurRadius: 10,
                               ),
                             ],

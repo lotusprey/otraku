@@ -61,7 +61,7 @@ class ConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       title: Text(title, style: Theme.of(context).textTheme.headline5),
       content: content != null ? Text(content!) : null,
@@ -70,7 +70,8 @@ class ConfirmationDialog extends StatelessWidget {
           TextButton(
             child: Text(
               secondaryAction!,
-              style: TextStyle(color: Theme.of(context).dividerColor),
+              style:
+                  TextStyle(color: Theme.of(context).colorScheme.onBackground),
             ),
             onPressed: Navigator.of(context).pop,
           ),
@@ -143,7 +144,7 @@ class _Dialog extends StatelessWidget {
     return Dialog(
       elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.background,
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
@@ -154,7 +155,7 @@ class _Dialog extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).colorScheme.background,
               ),
               padding: Config.PADDING,
               child: Text(title, style: Theme.of(context).textTheme.subtitle1),
@@ -166,7 +167,7 @@ class _Dialog extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius:
                       const BorderRadius.vertical(bottom: Config.RADIUS),
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: Scrollbar(
                   child: SingleChildScrollView(

@@ -98,18 +98,18 @@ class ActionButton extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 blurRadius: 10,
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ],
           ),
           child: Material(
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.background,
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(30),
-              splashColor: Theme.of(context).backgroundColor,
-              child: Icon(icon, color: Theme.of(context).accentColor),
+              splashColor: Theme.of(context).colorScheme.primary,
+              child: Icon(icon, color: Theme.of(context).colorScheme.secondary),
             ),
           ),
         ),
@@ -151,12 +151,12 @@ class ActionButton extends StatelessWidget {
 //     return Container(
 //       height: _ACTION_BUTTON_SIZE,
 //       decoration: BoxDecoration(
-//         color: Theme.of(context).primaryColor,
+//         color: Theme.of(context).colorScheme.background,
 //         borderRadius: radius,
 //         boxShadow: [
 //           BoxShadow(
 //             blurRadius: 10,
-//             color: Theme.of(context).backgroundColor,
+//             color: Theme.of(context).colorScheme.primary,
 //           ),
 //         ],
 //       ),
@@ -167,7 +167,7 @@ class ActionButton extends StatelessWidget {
 //               IconButton(
 //                 icon: Icon(widget.items.values.elementAt(i)),
 //                 tooltip: widget.items.keys.elementAt(i),
-//                 color: Theme.of(context).accentColor,
+//                 color: Theme.of(context).colorScheme.secondary,
 //                 onPressed: () {
 //                   setState(() => _index = i);
 //                   widget.onChanged(i);
@@ -178,13 +178,13 @@ class ActionButton extends StatelessWidget {
 //                 width: _ACTION_BUTTON_SIZE,
 //                 height: _ACTION_BUTTON_SIZE,
 //                 decoration: BoxDecoration(
-//                   color: Theme.of(context).accentColor,
+//                   color: Theme.of(context).colorScheme.surface,
 //                   borderRadius: radius,
 //                 ),
 //                 child: IconButton(
 //                   icon: Icon(widget.items.values.elementAt(i)),
 //                   tooltip: widget.items.keys.elementAt(i),
-//                   color: Theme.of(context).backgroundColor,
+//                   color: Theme.of(context).colorScheme.secondary,
 //                   onPressed: widget.onSame,
 //                 ),
 //               )

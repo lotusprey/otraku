@@ -107,7 +107,7 @@ class ExploreActionButton extends StatelessWidget {
             ctx: context,
             sheet: ExploreBottomDrawer(context),
             isScrollControlled: true,
-            barrierColour: Theme.of(context).primaryColor.withAlpha(150),
+            barrierColour: Theme.of(context).colorScheme.surface.withAlpha(150),
           ),
         ),
       ),

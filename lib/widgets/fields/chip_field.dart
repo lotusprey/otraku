@@ -30,10 +30,10 @@ class _ChipFieldState extends State<ChipField> {
         },
         child: Chip(
           backgroundColor: _isPositive
-              ? Theme.of(context).accentColor
-              : Theme.of(context).errorColor,
+              ? Theme.of(context).colorScheme.secondary
+              : Theme.of(context).colorScheme.error,
           label: Text(widget.title, style: Theme.of(context).textTheme.button),
-          deleteIconColor: Theme.of(context).backgroundColor,
+          deleteIconColor: Theme.of(context).colorScheme.background,
           onDeleted: widget.onRemoved as void Function()?,
         ),
       );

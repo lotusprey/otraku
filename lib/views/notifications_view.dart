@@ -69,7 +69,7 @@ class _NotificationWidget extends StatelessWidget {
         height: 90,
         decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
@@ -165,7 +165,7 @@ class _NotificationWidget extends StatelessWidget {
                 width: 10,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   borderRadius: BorderRadius.horizontal(right: Config.RADIUS),
                 ),
               ),

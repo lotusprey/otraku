@@ -16,15 +16,15 @@ class PieChart extends StatelessWidget {
               center: const Alignment(-0.5, -0.5),
               radius: 0.8,
               colors: [
-                Theme.of(context).accentColor,
-                Theme.of(context).accentColor.withAlpha(100),
+                Theme.of(context).colorScheme.secondary,
+                Theme.of(context).colorScheme.secondary.withAlpha(100),
               ],
               stops: const [0.5, 1.0],
             ),
           ),
           child: CustomPaint(
             foregroundPainter: _LineOverlay(
-              Theme.of(context).primaryColor,
+              Theme.of(context).colorScheme.surface,
               categories,
             ),
           ),

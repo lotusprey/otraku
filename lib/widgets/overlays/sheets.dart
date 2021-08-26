@@ -7,9 +7,9 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fields/three_state_field.dart';
 import 'package:otraku/widgets/fields/two_state_field.dart';
 
@@ -53,7 +53,7 @@ class Sheet extends StatelessWidget {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: Column(
@@ -67,8 +67,8 @@ class Sheet extends StatelessWidget {
               },
               icon: Icon(
                 Icons.done_rounded,
-                color: Theme.of(context).accentColor,
-                size: Style.ICON_SMALL,
+                color: Theme.of(context).colorScheme.secondary,
+                size: Theming.ICON_SMALL,
               ),
               label: Text('Done', style: Theme.of(context).textTheme.bodyText1),
             ),
@@ -118,8 +118,8 @@ class OptionSheet extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: i != index
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).accentColor,
+                          ? Theme.of(context).colorScheme.surface
+                          : Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   onTap: () {
@@ -320,16 +320,16 @@ class _SortSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: i != index || !desc
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).accentColor,
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(context).colorScheme.secondary,
                         ),
                         child: IconButton(
                           padding: const EdgeInsets.all(0),
                           icon: const Icon(
                             Icons.arrow_downward_rounded,
-                            size: Style.ICON_SMALL,
+                            size: Theming.ICON_SMALL,
                           ),
-                          color: Theme.of(context).backgroundColor,
+                          color: Theme.of(context).colorScheme.background,
                           onPressed: () {
                             onTap(i, true);
                             Navigator.pop(context);
@@ -341,16 +341,16 @@ class _SortSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: i != index || desc
-                              ? Theme.of(context).primaryColor
-                              : Theme.of(context).accentColor,
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(context).colorScheme.secondary,
                         ),
                         child: IconButton(
                           padding: const EdgeInsets.all(0),
                           icon: const Icon(
                             Icons.arrow_upward_rounded,
-                            size: Style.ICON_SMALL,
+                            size: Theming.ICON_SMALL,
                           ),
-                          color: Theme.of(context).backgroundColor,
+                          color: Theme.of(context).colorScheme.background,
                           onPressed: () {
                             onTap(i, false);
                             Navigator.pop(context);

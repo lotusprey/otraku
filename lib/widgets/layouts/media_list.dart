@@ -5,9 +5,9 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/score_format.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
@@ -101,7 +101,7 @@ class _MediaListTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: Config.BORDER_RADIUS,
       ),
       child: ExploreIndexer(
@@ -116,7 +116,7 @@ class _MediaListTile extends StatelessWidget {
               child: ClipRRect(
                 child: Container(
                   width: 95,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                   child: FadeImage(entry.cover),
                 ),
                 borderRadius: Config.BORDER_RADIUS,
@@ -150,7 +150,7 @@ class _MediaListTile extends StatelessWidget {
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1
-                                      ?.copyWith(fontSize: Style.FONT_SMALL),
+                                      ?.copyWith(fontSize: Theming.FONT_SMALL),
                                 ),
                               ],
                             ),
@@ -165,10 +165,10 @@ class _MediaListTile extends StatelessWidget {
                         borderRadius: Config.BORDER_RADIUS,
                         gradient: LinearGradient(
                           colors: [
-                            Theme.of(context).disabledColor,
-                            Theme.of(context).disabledColor,
-                            Theme.of(context).backgroundColor,
-                            Theme.of(context).backgroundColor,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.primary,
+                            Theme.of(context).colorScheme.background,
+                            Theme.of(context).colorScheme.background,
                           ],
                           stops: [
                             0.0,
@@ -191,7 +191,7 @@ class _MediaListTile extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Ionicons.repeat,
-                                  size: Style.ICON_SMALL,
+                                  size: Theming.ICON_SMALL,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
@@ -207,12 +207,12 @@ class _MediaListTile extends StatelessWidget {
                           IconButton(
                             tooltip: 'Comment',
                             constraints: const BoxConstraints(
-                              maxHeight: Style.ICON_SMALL,
+                              maxHeight: Theming.ICON_SMALL,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             icon: const Icon(
                               Ionicons.chatbox,
-                              size: Style.ICON_SMALL,
+                              size: Theming.ICON_SMALL,
                             ),
                             onPressed: () => showPopUp(
                               context,
@@ -248,21 +248,21 @@ class _MediaListTile extends StatelessWidget {
         if (entry.score == 3)
           return const Icon(
             Icons.sentiment_very_satisfied,
-            size: Style.ICON_SMALL,
+            size: Theming.ICON_SMALL,
           );
 
         if (entry.score == 2)
-          return const Icon(Icons.sentiment_neutral, size: Style.ICON_SMALL);
+          return const Icon(Icons.sentiment_neutral, size: Theming.ICON_SMALL);
 
         return const Icon(
           Icons.sentiment_very_dissatisfied,
-          size: Style.ICON_SMALL,
+          size: Theming.ICON_SMALL,
         );
       case ScoreFormat.POINT_5:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, size: Style.ICON_SMALL),
+            const Icon(Icons.star_rounded, size: Theming.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(0),
@@ -274,7 +274,7 @@ class _MediaListTile extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Theming.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(
@@ -288,7 +288,7 @@ class _MediaListTile extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Style.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Theming.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(0),
@@ -326,7 +326,7 @@ class _Progress extends StatelessWidget {
           children: [
             text,
             const SizedBox(width: 5),
-            const Icon(Ionicons.add_outline, size: Style.ICON_SMALL),
+            const Icon(Ionicons.add_outline, size: Theming.ICON_SMALL),
           ],
         ),
       ),

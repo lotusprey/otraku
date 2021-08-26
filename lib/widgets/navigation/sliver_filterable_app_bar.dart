@@ -7,11 +7,11 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -104,7 +104,8 @@ class SliverExploreAppBar extends StatelessWidget {
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(explorer.type.icon, color: Theme.of(context).dividerColor),
+                Icon(explorer.type.icon,
+                    color: Theme.of(context).colorScheme.onBackground),
                 const SizedBox(width: 15),
                 Flexible(
                   child: Text(
@@ -234,7 +235,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                     controller: _ctrl,
                     autofocus: true,
                     scrollPhysics: Config.PHYSICS,
-                    cursorColor: Theme.of(context).accentColor,
+                    cursorColor: Theme.of(context).colorScheme.secondary,
                     style: Theme.of(context).textTheme.headline6,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(30),
@@ -249,8 +250,8 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                               padding: const EdgeInsets.all(0),
                               icon:
                                   const Icon(Ionicons.chevron_forward_outline),
-                              iconSize: Style.ICON_SMALL,
-                              color: Theme.of(context).disabledColor,
+                              iconSize: Theming.ICON_SMALL,
+                              color: Theme.of(context).colorScheme.primary,
                               onPressed: () =>
                                   setState(() => _onSearch = false),
                             )
@@ -259,8 +260,8 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                               constraints: const BoxConstraints(maxWidth: 40),
                               padding: const EdgeInsets.all(0),
                               icon: const Icon(Icons.close_rounded),
-                              iconSize: Style.ICON_SMALL,
-                              color: Theme.of(context).disabledColor,
+                              iconSize: Theming.ICON_SMALL,
+                              color: Theme.of(context).colorScheme.primary,
                               onPressed: () {
                                 _ctrl.clear();
                                 _update('');
@@ -325,7 +326,7 @@ class _FilterIconState extends State<_FilterIcon> {
                 : setState(() => _active = _checkIfActive()),
           ],
         ),
-        colour: _active ? Theme.of(context).accentColor : null,
+        colour: _active ? Theme.of(context).colorScheme.secondary : null,
       );
 
   bool _checkIfActive() => _filterable.anyActiveFilterFrom([

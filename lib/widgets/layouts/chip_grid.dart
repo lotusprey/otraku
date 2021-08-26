@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fields/chip_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
@@ -99,17 +99,17 @@ class _ChipGridState extends State<ChipGrid> {
                     widget.exclusive?.clear();
                   }),
                   child: Container(
-                    height: Style.ICON_BIG,
-                    width: Style.ICON_BIG,
+                    height: Theming.ICON_BIG,
+                    width: Theming.ICON_BIG,
                     margin: Config.PADDING,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Theme.of(context).disabledColor,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     child: Icon(
                       Icons.close,
-                      color: Theme.of(context).backgroundColor,
-                      size: Style.ICON_SMALL,
+                      color: Theme.of(context).colorScheme.background,
+                      size: Theming.ICON_SMALL,
                     ),
                   ),
                 ),
@@ -117,7 +117,7 @@ class _ChipGridState extends State<ChipGrid> {
             AppBarIcon(
               tooltip: 'Options',
               icon: Ionicons.options_outline,
-              colour: Theme.of(context).disabledColor,
+              colour: Theme.of(context).colorScheme.primary,
               onTap: () => widget.openSheet(
                 inclusive: [...widget.inclusive],
                 exclusive:

@@ -39,7 +39,7 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initDone) {
-      final back = Theme.of(context).primaryColor;
+      final back = Theme.of(context).colorScheme.surface;
       final hsl = HSLColor.fromColor(back);
       final lightness = hsl.lightness;
       final front = hsl

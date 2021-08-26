@@ -101,7 +101,7 @@ class SettingsAboutView extends StatelessWidget {
               label: Text('Log Out'),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).errorColor,
+                  Theme.of(context).colorScheme.error,
                 ),
               ),
               onPressed: () => showPopUp(

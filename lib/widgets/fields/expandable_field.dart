@@ -20,7 +20,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: Config.BORDER_RADIUS,
         ),
         child: TextField(

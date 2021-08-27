@@ -225,6 +225,8 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
             WillPopScope(
               onWillPop: () {
                 setState(() => _onSearch = false);
+                _ctrl.clear();
+                _update('');
                 return Future.value(false);
               },
               child: Expanded(

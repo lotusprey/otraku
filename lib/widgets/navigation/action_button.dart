@@ -97,8 +97,8 @@ class ActionButton extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                blurRadius: 10,
-                color: Theme.of(context).colorScheme.primary,
+                blurRadius: 5,
+                color: Theme.of(context).colorScheme.primary.withAlpha(100),
               ),
             ],
           ),
@@ -155,8 +155,8 @@ class ActionButton extends StatelessWidget {
 //         borderRadius: radius,
 //         boxShadow: [
 //           BoxShadow(
-//             blurRadius: 10,
-//             color: Theme.of(context).colorScheme.primary,
+//             blurRadius: 5,
+//             color: Theme.of(context).colorScheme.primary.withAlpha(100),
 //           ),
 //         ],
 //       ),

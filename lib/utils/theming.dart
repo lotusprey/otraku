@@ -74,7 +74,12 @@ class Theming with ChangeNotifier {
     notifyListeners();
   }
 
-  static List<String> get names => _themes.keys.toList();
+  // Used for DropDownField.
+  static Map<String, int> get options {
+    final map = <String, int>{};
+    for (int i = 0; i < _themes.length; i++) map[_themes.keys.elementAt(i)] = i;
+    return map;
+  }
 
   static final _themes = {
     'Navy': ThemeModel(

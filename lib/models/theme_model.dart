@@ -212,7 +212,7 @@ class ThemeModel {
         ),
       );
 
-  ThemeModel._({
+  const ThemeModel._({
     required this.brightness,
     required this.background,
     required this.onBackground,

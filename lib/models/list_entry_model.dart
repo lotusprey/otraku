@@ -3,7 +3,7 @@ import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
   final int mediaId;
-  final String? title;
+  final String title;
   final String? cover;
   final String? format;
   final String? status;

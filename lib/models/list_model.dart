@@ -58,68 +58,94 @@ class ListModel {
   int Function(ListEntryModel, ListEntryModel) _compareFn(final EntrySort? s) {
     switch (s) {
       case EntrySort.TITLE:
-        return (a, b) => a.title!.compareTo(b.title!);
+        return (a, b) => a.title.compareTo(b.title);
       case EntrySort.TITLE_DESC:
-        return (a, b) => b.title!.compareTo(a.title!);
+        return (a, b) => b.title.compareTo(a.title);
       case EntrySort.SCORE:
         return (a, b) {
           final comparison = a.score.compareTo(b.score);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.SCORE_DESC:
         return (a, b) {
           final comparison = b.score.compareTo(a.score);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.UPDATED_AT:
         return (a, b) {
           final comparison = a.updatedAt!.compareTo(b.updatedAt!);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.UPDATED_AT_DESC:
         return (a, b) {
           final comparison = b.updatedAt!.compareTo(a.updatedAt!);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.CREATED_AT:
         return (a, b) {
           final comparison = a.createdAt!.compareTo(b.createdAt!);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.CREATED_AT_DESC:
         return (a, b) {
           final comparison = b.createdAt!.compareTo(a.createdAt!);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.PROGRESS:
         return (a, b) {
           final comparison = a.progress.compareTo(b.progress);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.PROGRESS_DESC:
         return (a, b) {
           final comparison = b.progress.compareTo(a.progress);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.REPEAT:
         return (a, b) {
           final comparison = a.repeat.compareTo(b.repeat);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
         };
       case EntrySort.REPEAT_DESC:
         return (a, b) {
           final comparison = b.repeat.compareTo(a.repeat);
           if (comparison != 0) return comparison;
-          return a.title!.compareTo(b.title!);
+          return a.title.compareTo(b.title);
+        };
+      case EntrySort.AIRING_AT:
+        return (a, b) {
+          if (a.airingAt == null) {
+            if (b.airingAt == null) return a.title.compareTo(b.title);
+            return 1;
+          }
+
+          if (b.airingAt == null) return -1;
+
+          final comparison = a.airingAt!.compareTo(b.airingAt!);
+          if (comparison != 0) return comparison;
+          return a.title.compareTo(b.title);
+        };
+      case EntrySort.AIRING_AT_DESC:
+        return (a, b) {
+          if (b.airingAt == null) {
+            if (a.airingAt == null) return a.title.compareTo(b.title);
+            return -1;
+          }
+
+          if (a.airingAt == null) return 1;
+
+          final comparison = b.airingAt!.compareTo(a.airingAt!);
+          if (comparison != 0) return comparison;
+          return a.title.compareTo(b.title);
         };
       default:
         return (_, __) => 0;

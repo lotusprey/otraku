@@ -428,8 +428,7 @@ class CollectionController extends OverscrollController implements Filterable {
     final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
-      if (search != '' && !entry.title!.toLowerCase().contains(search))
-        continue;
+      if (search != '' && !entry.title.toLowerCase().contains(search)) continue;
 
       if (country != null && entry.country != country) continue;
 

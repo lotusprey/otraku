@@ -136,7 +136,7 @@ class _MediaListTile extends StatelessWidget {
                         children: [
                           Flexible(
                             child:
-                                Text(entry.title!, overflow: TextOverflow.fade),
+                                Text(entry.title, overflow: TextOverflow.fade),
                           ),
                           const SizedBox(height: 5),
                           RichText(

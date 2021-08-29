@@ -252,7 +252,7 @@ class MediaController extends OverscrollController {
 
   Future<bool> toggleFavourite() async =>
       await Client.request(
-        _model!.info.browsable == Explorable.anime
+        _model!.info.type == Explorable.anime
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': id},

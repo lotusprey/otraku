@@ -11,6 +11,8 @@ abstract class Config {
   static const FOLLOWING_FEED = 'feedMode';
   static const LAST_NOTIFICATION_COUNT = 'lastNotificationCount';
   static const CLOCK_TYPE = '12hourClock';
+  static const LEFT_HANDED = 'leftHanded';
+  static const DEFAULT_EXPLORE = 'defaultExplore';
 
   // Constants.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
@@ -19,7 +21,6 @@ abstract class Config {
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
   static const PHYSICS = BouncingScrollPhysics();
   static const FADE_DURATION = Duration(milliseconds: 300);
-  static const TAB_SWITCH_DURATION = Duration(milliseconds: 200);
 
   static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
   static final storage = GetStorage();

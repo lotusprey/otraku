@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -30,10 +30,9 @@ class SettingsController extends GetxController {
       if (ok) {
         if (changes.containsKey('displayAdultContent')) {
           if (changes['displayAdultContent'])
-            Get.find<ExplorerController>()
-                .setFilterWithKey(Filterable.IS_ADULT);
+            Get.find<ExploreController>().setFilterWithKey(Filterable.IS_ADULT);
           else
-            Get.find<ExplorerController>()
+            Get.find<ExploreController>()
                 .setFilterWithKey(Filterable.IS_ADULT, value: false);
         }
 

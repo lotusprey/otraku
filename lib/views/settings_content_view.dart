@@ -6,8 +6,8 @@ import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/fields/switch_tile.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsContentView extends StatelessWidget {
@@ -20,10 +20,12 @@ class SettingsContentView extends StatelessWidget {
       physics: Config.PHYSICS,
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       children: [
+        Text('Media', style: Theme.of(context).textTheme.headline6),
+        const SizedBox(height: 10),
         Row(
           children: [
             Flexible(
-              child: DropDownField<String>(
+              child: DropDownField(
                 title: 'Title Language',
                 value: settings.model.titleLanguage,
                 items: const {
@@ -42,7 +44,7 @@ class SettingsContentView extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Flexible(
-              child: DropDownField<int>(
+              child: DropDownField(
                 title: 'Activity Merge Time',
                 value: settings.model.activityMergeTime,
                 items: const {
@@ -71,9 +73,9 @@ class SettingsContentView extends StatelessWidget {
             ),
           ],
         ),
-        SwitchTile(
+        CheckBoxField(
           title: 'Airing Anime Notifications',
-          initialValue: settings.model.airingNotifications,
+          initial: settings.model.airingNotifications,
           onChanged: (val) {
             const notifications = 'airingNotifications';
             if (settings.changes.containsKey(notifications))
@@ -82,9 +84,9 @@ class SettingsContentView extends StatelessWidget {
               settings.changes[notifications] = val;
           },
         ),
-        SwitchTile(
+        CheckBoxField(
           title: '18+ Content',
-          initialValue: settings.model.displayAdultContent,
+          initial: settings.model.displayAdultContent,
           onChanged: (val) {
             const adultContent = 'displayAdultContent';
             if (settings.changes.containsKey(adultContent))
@@ -93,6 +95,8 @@ class SettingsContentView extends StatelessWidget {
               settings.changes[adultContent] = val;
           },
         ),
+        Text('Lists', style: Theme.of(context).textTheme.headline6),
+        const SizedBox(height: 10),
         Row(
           children: [
             Flexible(
@@ -133,9 +137,9 @@ class SettingsContentView extends StatelessWidget {
             ),
           ],
         ),
-        SwitchTile(
+        CheckBoxField(
           title: 'Split Completed Anime',
-          initialValue: settings.model.splitCompletedAnime,
+          initial: settings.model.splitCompletedAnime,
           onChanged: (val) {
             const splitAnime = 'splitCompletedAnime';
             if (settings.changes.containsKey(splitAnime))
@@ -144,9 +148,9 @@ class SettingsContentView extends StatelessWidget {
               settings.changes[splitAnime] = val;
           },
         ),
-        SwitchTile(
+        CheckBoxField(
           title: 'Split Completed Manga',
-          initialValue: settings.model.splitCompletedManga,
+          initial: settings.model.splitCompletedManga,
           onChanged: (val) {
             const splitManga = 'splitCompletedManga';
             if (settings.changes.containsKey(splitManga))
@@ -155,9 +159,9 @@ class SettingsContentView extends StatelessWidget {
               settings.changes[splitManga] = val;
           },
         ),
-        SwitchTile(
+        CheckBoxField(
           title: 'Advanced Scoring',
-          initialValue: settings.model.advancedScoringEnabled,
+          initial: settings.model.advancedScoringEnabled,
           onChanged: (val) {
             const advancedScoring = 'advancedScoringEnabled';
             if (settings.changes.containsKey(advancedScoring))

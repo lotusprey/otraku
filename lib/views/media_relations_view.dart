@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media_controller.dart';
@@ -13,7 +12,6 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaRelationsView extends StatelessWidget {
   final MediaController ctrl;
@@ -29,42 +27,22 @@ class MediaRelationsView extends StatelessWidget {
       slivers: [
         header,
         SliverShadowAppBar([
+          const Spacer(),
           BubbleTabs(
-            options: ['Media', 'Characters', 'Staff'],
-            values: [
-              MediaController.REL_MEDIA,
-              MediaController.REL_CHARACTERS,
-              MediaController.REL_STAFF,
-            ],
-            initial: ctrl.relationsTab,
-            onNewValue: (dynamic val) {
+            items: const {
+              'Media': MediaController.REL_MEDIA,
+              'Characters': MediaController.REL_CHARACTERS,
+              'Staff': MediaController.REL_STAFF,
+            },
+            current: () => ctrl.relationsTab,
+            onChanged: (int val) {
               scrollUp();
               ctrl.relationsTab = val;
             },
-            onSameValue: (dynamic _) => scrollUp(),
+            onSame: scrollUp,
+            itemWidth: 100,
           ),
           const Spacer(),
-          Obx(() {
-            if (ctrl.relationsTab == MediaController.REL_CHARACTERS &&
-                ctrl.model!.characters.items.isNotEmpty &&
-                ctrl.availableLanguages.length > 1)
-              return AppBarIcon(
-                tooltip: 'Language',
-                icon: Ionicons.globe_outline,
-                onTap: () => Sheet.show(
-                  ctx: context,
-                  sheet: OptionSheet(
-                    title: 'Language',
-                    options: ctrl.availableLanguages,
-                    index: ctrl.languageIndex,
-                    onTap: (index) =>
-                        ctrl.staffLanguage = ctrl.availableLanguages[index],
-                  ),
-                  isScrollControlled: true,
-                ),
-              );
-            return const SizedBox();
-          }),
         ]),
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
@@ -75,7 +53,7 @@ class MediaRelationsView extends StatelessWidget {
               if (other.isEmpty)
                 return ctrl.isLoading
                     ? _Empty(null)
-                    : _Empty('No related ctrl');
+                    : _Empty('No Related Media');
 
               return _RelationsGrid(ctrl.model!.otherMedia);
             }
@@ -117,7 +95,7 @@ class _RelationsGrid extends StatelessWidget {
         (_, index) => ExploreIndexer(
           id: models[index].id,
           imageUrl: models[index].imageUrl,
-          browsable: models[index].browsable,
+          explorable: models[index].explorable,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -126,7 +104,7 @@ class _RelationsGrid extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: Config.BORDER_RADIUS,
                   child: Container(
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).colorScheme.surface,
                     child: FadeImage(models[index].imageUrl, width: 125),
                   ),
                 ),

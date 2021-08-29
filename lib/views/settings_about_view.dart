@@ -30,7 +30,7 @@ class SettingsAboutView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v. 1.1.1',
+            'Otraku - v. 1.1.3',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline5,
           ),
@@ -51,6 +51,40 @@ class SettingsAboutView extends StatelessWidget {
               onPressed: () {
                 try {
                   launch('https://discord.gg/YN2QWVbFef');
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.logo_github),
+              label: Text('Source Code'),
+              onPressed: () {
+                try {
+                  launch('https://github.com/lotusgate/otraku');
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.cash_outline),
+              label: Text('Donate'),
+              onPressed: () {
+                try {
+                  launch('https://ko-fi.com/lotusgate');
                 } catch (err) {
                   Toast.show(context, 'Couldn\'t open link: $err');
                 }
@@ -84,7 +118,7 @@ class SettingsAboutView extends StatelessWidget {
               label: Text('Log Out'),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).errorColor,
+                  Theme.of(context).colorScheme.error,
                 ),
               ),
               onPressed: () => showPopUp(

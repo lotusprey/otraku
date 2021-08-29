@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
-import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/reply_model.dart';
-import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/utils/theming.dart';
+import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityView extends StatelessWidget {
@@ -25,8 +23,8 @@ class ActivityView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ActivityController>(
         tag: id.toString(),
-        builder: (activity) {
-          final model = activity.model;
+        builder: (ctrl) {
+          final model = ctrl.model;
           return Scaffold(
             appBar: ShadowAppBar(
               titleWidget: model != null
@@ -36,7 +34,7 @@ class ActivityView extends StatelessWidget {
                           child: ExploreIndexer(
                             id: model.agentId!,
                             imageUrl: model.agentImage,
-                            browsable: Explorable.user,
+                            explorable: Explorable.user,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -76,7 +74,7 @@ class ActivityView extends StatelessWidget {
                           ExploreIndexer(
                             id: model.recieverId!,
                             imageUrl: model.recieverImage,
-                            browsable: Explorable.user,
+                            explorable: Explorable.user,
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: FadeImage(
@@ -95,13 +93,30 @@ class ActivityView extends StatelessWidget {
               bottom: false,
               child: CustomScrollView(
                 physics: Config.PHYSICS,
-                controller: activity.scrollCtrl,
+                controller: ctrl.scrollCtrl,
                 slivers: [
                   if (model != null) ...[
                     SliverToBoxAdapter(
                         child: Padding(
                       padding: Config.PADDING,
-                      child: _ActivityBox(activity),
+                      child: ActivityBoxBody(
+                        model,
+                        InteractionButtons(
+                          model: model,
+                          delete: ctrl.deleteModel,
+                          toggleLike: () async =>
+                              await ActivityController.toggleLike(model).then(
+                            (ok) =>
+                                ok ? ctrl.updateModel() : model.toggleLike(),
+                          ),
+                          toggleSubscribtion: () =>
+                              ActivityController.toggleSubscription(model).then(
+                            (ok) => ok
+                                ? ctrl.updateModel()
+                                : model.toggleSubscription(),
+                          ),
+                        ),
+                      ),
                     )),
                     SliverPadding(
                       padding: Config.PADDING,
@@ -118,7 +133,7 @@ class ActivityView extends StatelessWidget {
                       height: 50,
                       child: Obx(
                         () => Center(
-                          child: activity.isLoading ? Loader() : null,
+                          child: ctrl.isLoading ? Loader() : null,
                         ),
                       ),
                     ),
@@ -128,156 +143,6 @@ class ActivityView extends StatelessWidget {
             ),
           );
         });
-  }
-}
-
-class _ActivityBox extends StatelessWidget {
-  final ActivityController activity;
-  _ActivityBox(this.activity);
-
-  @override
-  Widget build(BuildContext context) {
-    final model = activity.model!;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: Config.PADDING,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        borderRadius: Config.BORDER_RADIUS,
-      ),
-      child: Column(
-        children: [
-          if (model.type == ActivityType.ANIME_LIST ||
-              model.type == ActivityType.MANGA_LIST)
-            MediaBox(model)
-          else
-            UnconstrainedBox(
-              constrainedAxis: Axis.horizontal,
-              alignment: Alignment.topLeft,
-              child: HtmlContent(model.text),
-            ),
-          const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                model.createdAt,
-                style: Theme.of(context).textTheme.subtitle2,
-              ),
-              _InteractionButtons(activity),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InteractionButtons extends StatefulWidget {
-  final ActivityController activity;
-  _InteractionButtons(this.activity);
-  @override
-  __InteractionButtonsState createState() => __InteractionButtonsState();
-}
-
-class __InteractionButtonsState extends State<_InteractionButtons> {
-  @override
-  Widget build(BuildContext context) {
-    final model = widget.activity.model!;
-
-    return Row(
-      children: [
-        if (model.deletable)
-          Tooltip(
-            message: 'Delete',
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              child: const Icon(Ionicons.trash, size: Style.ICON_SMALL),
-              onTap: () => showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Delete?',
-                  mainAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: () {
-                    widget.activity.deleteModel();
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-          ),
-        const SizedBox(width: 10),
-        Tooltip(
-          message: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              setState(() => model.toggleSubscription());
-              ActivityController.toggleSubscription(model).then(
-                (ok) => ok
-                    ? widget.activity.updateModel()
-                    : setState(() => model.toggleSubscription()),
-              );
-            },
-            child: Icon(
-              Ionicons.notifications,
-              size: Style.ICON_SMALL,
-              color: !model.isSubscribed ? null : Theme.of(context).accentColor,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Tooltip(
-          message: 'Replies',
-          child: Row(
-            children: [
-              Text(
-                model.replyCount.toString(),
-                style: Theme.of(context).textTheme.subtitle2,
-              ),
-              const SizedBox(width: 5),
-              const Icon(Ionicons.chatbox, size: Style.ICON_SMALL),
-            ],
-          ),
-        ),
-        const SizedBox(width: 10),
-        Tooltip(
-          message: !model.isLiked ? 'Like' : 'Unlike',
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              setState(() => model.toggleLike());
-              ActivityController.toggleLike(model).then(
-                (ok) => ok
-                    ? widget.activity.updateModel()
-                    : setState(() => model.toggleLike()),
-              );
-            },
-            child: Row(
-              children: [
-                Text(
-                  model.likeCount.toString(),
-                  style: !model.isLiked
-                      ? Theme.of(context).textTheme.subtitle2
-                      : Theme.of(context)
-                          .textTheme
-                          .subtitle2!
-                          .copyWith(color: Theme.of(context).errorColor),
-                ),
-                const SizedBox(width: 5),
-                Icon(
-                  Icons.favorite,
-                  size: Style.ICON_SMALL,
-                  color: model.isLiked ? Theme.of(context).errorColor : null,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
 
@@ -294,7 +159,7 @@ class _UserReply extends StatelessWidget {
         ExploreIndexer(
           id: reply.userId,
           imageUrl: reply.userImage,
-          browsable: Explorable.user,
+          explorable: Explorable.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -317,14 +182,14 @@ class _UserReply extends StatelessWidget {
           child: Container(
             width: 50,
             height: 10,
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: Config.PADDING,
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: Config.BORDER_RADIUS,
           ),
           child: Column(
@@ -383,13 +248,15 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
                   : Theme.of(context)
                       .textTheme
                       .subtitle2!
-                      .copyWith(color: Theme.of(context).errorColor),
+                      .copyWith(color: Theme.of(context).colorScheme.error),
             ),
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Style.ICON_SMALL,
-              color: widget.reply.isLiked ? Theme.of(context).errorColor : null,
+              size: Theming.ICON_SMALL,
+              color: widget.reply.isLiked
+                  ? Theme.of(context).colorScheme.error
+                  : null,
             ),
           ],
         ),

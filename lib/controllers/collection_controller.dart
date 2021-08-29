@@ -3,7 +3,7 @@ import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/models/collection_list_model.dart';
+import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -23,32 +23,7 @@ class CollectionController extends OverscrollController implements Filterable {
           isCustomList
           isSplitCompletedList
           status
-          entries {
-            mediaId
-            status
-            score
-            progress
-            progressVolumes
-            repeat
-            notes
-            startedAt {year month day}
-            completedAt {year month day}
-            updatedAt
-            createdAt
-            media {
-              title {userPreferred}
-              format
-              status(version: 2)
-              startDate {year month day}
-              endDate {year month day}
-              episodes
-              chapters
-              volumes
-              coverImage {large}
-              nextAiringEpisode {episode airingAt}
-              genres
-            }
-          }
+          entries {...data}
         }
         user {
           mediaListOptions {
@@ -60,7 +35,8 @@ class CollectionController extends OverscrollController implements Filterable {
         }
       }
     }
-  ''';
+  '''
+      '''$_fragment''';
 
   static const _updateEntryMutation = r'''
     mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
@@ -68,43 +44,50 @@ class CollectionController extends OverscrollController implements Filterable {
         $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
         $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput,
         $advancedScores: [Float]) {
-      SaveMediaListEntry(mediaId: $mediaId, status: $status,
-        score: $score, progress: $progress, progressVolumes: $progressVolumes,
-        repeat: $repeat, private: $private, notes: $notes,
-        hiddenFromStatusLists: $hiddenFromStatusLists, customLists: $customLists,
-        startedAt: $startedAt, completedAt: $completedAt, advancedScores: $advancedScores) {
-          id
-          mediaId
-          status
-          score
-          progress
-          progressVolumes
-          repeat
-          notes
-          startedAt {year month day}
-          completedAt {year month day}
-          updatedAt
-          createdAt
-          media {
-            title {userPreferred}
-            format
-            status(version: 2)
-            startDate {year month day}
-            endDate {year month day}
-            episodes
-            chapters
-            volumes
-            coverImage {large}
-            nextAiringEpisode {episode airingAt}
-            genres
-          }
-        }
+      SaveMediaListEntry(mediaId: $mediaId, status: $status, score: $score,
+        progress: $progress, progressVolumes: $progressVolumes, repeat: $repeat,
+        private: $private, notes: $notes, hiddenFromStatusLists: $hiddenFromStatusLists,
+        customLists: $customLists, startedAt: $startedAt, completedAt: $completedAt,
+        advancedScores: $advancedScores) {...data}
     }
-  ''';
+  '''
+      '''$_fragment''';
 
   static const _updateProgressMutation = r'''
     mutation UpdateProgress($mediaId: Int, $progress: Int) {
-      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {progress}
+      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {...data customLists}
+    }
+  '''
+      '''$_fragment''';
+
+  static const _fragment = r'''
+    fragment data on MediaList {
+      id
+      mediaId
+      status
+      score
+      progress
+      progressVolumes
+      repeat
+      notes
+      startedAt {year month day}
+      completedAt {year month day}
+      updatedAt
+      createdAt
+      media {
+        title {userPreferred}
+        format
+        status(version: 2)
+        startDate {year month day}
+        endDate {year month day}
+        episodes
+        chapters
+        volumes
+        coverImage {large}
+        nextAiringEpisode {episode airingAt}
+        genres
+        countryOfOrigin
+      }
     }
   ''';
 
@@ -121,11 +104,11 @@ class CollectionController extends OverscrollController implements Filterable {
 
   final int userId;
   final bool ofAnime;
-  final _lists = <CollectionListModel>[];
+  final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[].obs;
   final _listIndex = 0.obs;
   final _filters = <String, dynamic>{};
-  final _isLoading = false.obs;
+  final _isLoading = true.obs;
   final _customListNames = <String>[];
   ScoreFormat? _scoreFormat;
 
@@ -145,14 +128,12 @@ class CollectionController extends OverscrollController implements Filterable {
   String get currentName => _lists[_listIndex()].name;
   ListStatus? get listStatus => _lists[_listIndex()].status;
   int get currentCount => _lists[_listIndex()].entries.length;
-  bool get isEmpty => _entries.isEmpty;
-  bool get isFullyEmpty => _lists.isEmpty;
+  bool get isEmpty => _lists.isEmpty;
 
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
     _listIndex.value = value;
     scrollTo(0);
-    update();
     filter();
   }
 
@@ -224,16 +205,13 @@ class CollectionController extends OverscrollController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(CollectionListModel(l, splitCompleted)
-        ..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
     }
 
     for (final l in data['lists'])
-      _lists.add(CollectionListModel(l, splitCompleted)
-        ..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
     _listIndex.value = 0;
-    update();
     filter();
     _isLoading.value = false;
   }
@@ -323,58 +301,70 @@ class CollectionController extends OverscrollController implements Filterable {
     filter();
   }
 
-  Future<void> updateProgress(ListEntryModel e) async {
-    if (e.progress == e.progressMax) return;
+  Future<void> incrementProgress(ListEntryModel model) async {
+    if (model.progress == model.progressMax) return;
+
+    final oldListStatus = model.listStatus;
 
     // Update database item.
     final data = await Client.request(
       _updateProgressMutation,
-      {'mediaId': e.mediaId, 'progress': e.progress + 1},
+      {'mediaId': model.mediaId, 'progress': model.progress + 1},
       popOnErr: false,
     );
     if (data == null) return;
 
-    e.updateProgress(data['SaveMediaListEntry']);
+    model = ListEntryModel(data['SaveMediaListEntry']);
 
-    final EntrySort sorting = _filters[Filterable.SORT];
-    final ListStatus? entryStatus = Convert.strToEnum(
-      e.status,
-      ListStatus.values,
-    );
+    final customLists = <String>[];
+    if (data['SaveMediaListEntry']['customLists'] != null)
+      for (final e in data['SaveMediaListEntry']['customLists'].entries)
+        if (e.value) customLists.add(e.key.toString().toLowerCase());
 
-    // If sorting doesn't depend on progress or updated time, replace entry.
-    if (sorting != EntrySort.PROGRESS &&
-        sorting != EntrySort.PROGRESS_DESC &&
-        sorting != EntrySort.UPDATED_AT &&
-        sorting != EntrySort.UPDATED_AT_DESC)
-      for (final list in _lists) {
-        if (list.status != null && list.status != entryStatus) continue;
+    // Remove from status list.
+    for (final list in _lists) {
+      if (list.isCustomList ||
+          list.status == null ||
+          list.status != oldListStatus ||
+          (list.splitCompletedListFormat != null &&
+              list.splitCompletedListFormat != model.format)) continue;
 
-        for (int i = 0; i < list.entries.length; i++)
-          if (list.entries[i].mediaId == e.mediaId) {
-            list.entries[i] = e;
+      list.removeByMediaId(model.mediaId);
+      break;
+    }
+
+    // Add to status list.
+    for (final list in _lists) {
+      if (list.isCustomList ||
+          list.status == null ||
+          list.status != model.listStatus ||
+          (list.splitCompletedListFormat != null &&
+              list.splitCompletedListFormat != model.format)) continue;
+
+      list.insertSorted(model, _filters[Filterable.SORT]);
+      break;
+    }
+
+    // Replace in custom lists.
+    if (customLists.isNotEmpty)
+      for (final list in _lists)
+        for (int i = 0; i < customLists.length; i++)
+          if (customLists[i] == list.name.toLowerCase()) {
+            list.removeByMediaId(model.mediaId);
+            list.insertSorted(model, _filters[Filterable.SORT]);
+            customLists.removeAt(i);
             break;
           }
-      }
-    // Otherwise, remove and insert sorted.
-    else
-      for (final list in _lists) {
-        if (list.status != null && list.status != entryStatus) continue;
 
-        for (int i = 0; i < list.entries.length; i++)
-          if (list.entries[i].mediaId == e.mediaId) {
-            list.entries.removeAt(i);
-            list.insertSorted(e, sorting);
-            break;
-          }
-      }
-
-    // Replace in filtered.
-    for (int i = 0; i < _entries.length; i++)
-      if (_entries[i].mediaId == e.mediaId) {
-        _entries[i] = e;
+    // Remove the old status list if it is empty.
+    for (int i = 0; i < _lists.length; i++)
+      if (_lists[i].entries.isEmpty) {
+        if (i <= _listIndex.value && _listIndex() != 0) _listIndex.value--;
+        _lists.removeAt(i);
         break;
       }
+
+    filter();
   }
 
   Future<void> removeEntry(EntryModel entry) async {
@@ -426,6 +416,7 @@ class CollectionController extends OverscrollController implements Filterable {
   void filter() {
     if (_lists.isEmpty) return;
 
+    final String? country = _filters[Filterable.COUNTRY];
     final List<String>? formatIn = _filters[Filterable.FORMAT_IN];
     final List<String>? statusIn = _filters[Filterable.STATUS_IN];
     final List<String>? genreIn = _filters[Filterable.GENRE_IN];
@@ -437,34 +428,19 @@ class CollectionController extends OverscrollController implements Filterable {
     final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
-      if (search != '' && !entry.title!.toLowerCase().contains(search))
-        continue;
+      if (search != '' && !entry.title.toLowerCase().contains(search)) continue;
 
-      if (formatIn != null) {
-        bool isIn = false;
-        for (final format in formatIn)
-          if (entry.format == format) {
-            isIn = true;
-            break;
-          }
-        if (!isIn) continue;
-      }
+      if (country != null && entry.country != country) continue;
 
-      if (statusIn != null) {
-        bool isIn = false;
-        for (final status in statusIn)
-          if (entry.status == status) {
-            isIn = true;
-            break;
-          }
-        if (!isIn) continue;
-      }
+      if (formatIn != null && !formatIn.contains(entry.format)) continue;
+
+      if (statusIn != null && !statusIn.contains(entry.status)) continue;
 
       if (genreIn != null) {
-        bool isIn = false;
-        for (final genre in entry.genres)
-          if (genreIn.contains(genre)) {
-            isIn = true;
+        bool isIn = true;
+        for (final genre in genreIn)
+          if (!entry.genres.contains(genre)) {
+            isIn = false;
             break;
           }
         if (!isIn) continue;
@@ -472,8 +448,8 @@ class CollectionController extends OverscrollController implements Filterable {
 
       if (genreNotIn != null) {
         bool isIn = false;
-        for (final genre in entry.genres)
-          if (genreNotIn.contains(genre)) {
+        for (final genre in genreNotIn)
+          if (entry.genres.contains(genre)) {
             isIn = true;
             break;
           }
@@ -507,6 +483,7 @@ class CollectionController extends OverscrollController implements Filterable {
 
   @override
   void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
+        Filterable.COUNTRY,
         Filterable.STATUS_IN,
         Filterable.FORMAT_IN,
         Filterable.GENRE_IN,

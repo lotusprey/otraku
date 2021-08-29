@@ -5,6 +5,7 @@ import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
@@ -18,65 +19,56 @@ class StatisticsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<StatisticsController>(
       tag: id.toString(),
-      builder: (stats) {
-        return Scaffold(
-          extendBody: true,
+      builder: (ctrl) {
+        return NavScaffold(
           appBar: ShadowAppBar(
-            title: stats.onAnime ? 'Anime Statistics' : 'Manga Statistics',
+            title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
-          bottomNavigationBar: NavBar(
-            options: {
+          navBar: NavBar(
+            items: {
               'Anime': Ionicons.film_outline,
               'Manga': Ionicons.bookmark_outline,
             },
-            onChanged: (page) => stats.onAnime = page == 0 ? true : false,
-            initial: stats.onAnime ? 0 : 1,
+            onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
+            initial: ctrl.onAnime ? 0 : 1,
           ),
-          body: SafeArea(
-            bottom: false,
-            child: AnimatedSwitcher(
-              duration: Config.TAB_SWITCH_DURATION,
-              child: ListView(
-                key: stats.key,
-                padding:
-                    EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
-                physics: Config.PHYSICS,
-                children: [
-                  _Title('Details'),
-                  _Details(stats),
-                  if (stats.model.scores.isNotEmpty) ...[
-                    _Title(
-                      'Score',
-                      BubbleTabs<bool>(
-                        options: stats.onAnime
-                            ? const ['Titles', 'Hours']
-                            : const ['Titles', 'Chapters'],
-                        values: [true, false],
-                        initial: stats.scoresOnCount,
-                        onNewValue: (val) => stats.scoresOnCount = val,
-                        onSameValue: (_) {},
-                      ),
-                    ),
-                    _ScoreChart(id),
-                    GridView(
-                      shrinkWrap: true,
-                      padding: Config.PADDING,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _Card('Format Distribution', stats.model.formats),
-                        _Card('Status Distribution', stats.model.statuses),
-                        _Card('Country Distribution', stats.model.countries),
-                      ],
-                      gridDelegate:
-                          SliverGridDelegateWithMinWidthAndFixedHeight(
-                        minWidth: 340,
-                        height: 250,
-                      ),
-                    ),
+          child: ListView(
+            key: ctrl.key,
+            padding: EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
+            physics: Config.PHYSICS,
+            children: [
+              _Title('Details'),
+              _Details(ctrl),
+              if (ctrl.model.scores.isNotEmpty) ...[
+                _Title(
+                  'Score',
+                  BubbleTabs<bool>(
+                    items: ctrl.onAnime
+                        ? const {'Titles': true, 'Hours': false}
+                        : const {'Titles': true, 'Chapters': false},
+                    current: () => ctrl.scoresOnCount,
+                    onChanged: (val) => ctrl.scoresOnCount = val,
+                    onSame: () {},
+                    itemWidth: 80,
+                  ),
+                ),
+                _ScoreChart(id),
+                GridView(
+                  shrinkWrap: true,
+                  padding: Config.PADDING,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _Card('Format Distribution', ctrl.model.formats),
+                    _Card('Status Distribution', ctrl.model.statuses),
+                    _Card('Country Distribution', ctrl.model.countries),
                   ],
-                ],
-              ),
-            ),
+                  gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+                    minWidth: 340,
+                    height: 250,
+                  ),
+                ),
+              ],
+            ],
           ),
         );
       },
@@ -152,7 +144,7 @@ class _Details extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
@@ -250,8 +242,11 @@ class _ScoreChart extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         stops: const [0.5, 1],
                         colors: [
-                          Theme.of(context).accentColor,
-                          Theme.of(context).accentColor.withOpacity(0.2),
+                          Theme.of(context).colorScheme.secondary,
+                          Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.2),
                         ],
                       ),
                     ),
@@ -296,8 +291,8 @@ class _Card extends StatelessWidget {
                 end: Alignment.centerRight,
                 stops: const [0.5, 1],
                 colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.4),
-                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.surface.withOpacity(0.4),
+                  Theme.of(context).colorScheme.surface,
                 ],
               ),
             ),

@@ -4,7 +4,7 @@ import 'package:otraku/utils/convert.dart';
 
 class MediaInfoModel {
   final int id;
-  final Explorable browsable;
+  final Explorable type;
   final int? favourites;
   bool isFavourite;
   final String? preferredTitle;
@@ -39,7 +39,7 @@ class MediaInfoModel {
 
   MediaInfoModel._({
     required this.id,
-    required this.browsable,
+    required this.type,
     required this.favourites,
     required this.isFavourite,
     required this.preferredTitle,
@@ -88,7 +88,7 @@ class MediaInfoModel {
 
     final model = MediaInfoModel._(
       id: map['id'],
-      browsable: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+      type: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       isFavourite: map['isFavourite'] ?? false,
       favourites: map['favourites'],
       preferredTitle: map['title']['userPreferred'],

@@ -8,9 +8,9 @@ class StudioModel {
   StudioModel._({
     required this.id,
     required this.name,
-    this.favourites = 0,
-    this.isFavourite = false,
-    this.isAnimationStudio = true,
+    required this.favourites,
+    required this.isFavourite,
+    required this.isAnimationStudio,
   });
 
   factory StudioModel(Map<String, dynamic> map) => StudioModel._(

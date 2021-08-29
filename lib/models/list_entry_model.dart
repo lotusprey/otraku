@@ -1,8 +1,9 @@
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
   final int mediaId;
-  final String? title;
+  final String title;
   final String? cover;
   final String? format;
   final String? status;
@@ -11,10 +12,12 @@ class ListEntryModel {
   final int? createdAt;
   final int? updatedAt;
   final List<String> genres;
-  int progress;
+  final int progress;
   final int? progressMax;
-  int progressVolumes;
+  final int progressVolumes;
   final int? progressVolumesMax;
+  final ListStatus? listStatus;
+  final String? country;
   double score;
   int repeat;
   String? notes;
@@ -27,20 +30,22 @@ class ListEntryModel {
     required this.cover,
     required this.format,
     required this.status,
+    required this.listStatus,
     required this.nextEpisode,
     required this.airingAt,
     required this.createdAt,
     required this.updatedAt,
     required this.genres,
-    this.progress = 0,
-    this.progressMax,
-    this.progressVolumes = 0,
-    this.progressVolumesMax,
-    this.score = 0,
-    this.repeat = 0,
-    this.notes,
-    this.startDate,
-    this.endDate,
+    required this.progress,
+    required this.progressMax,
+    required this.progressVolumes,
+    required this.progressVolumesMax,
+    required this.score,
+    required this.repeat,
+    required this.notes,
+    required this.startDate,
+    required this.endDate,
+    required this.country,
   });
 
   factory ListEntryModel(Map<String, dynamic> map) => ListEntryModel._(
@@ -55,7 +60,8 @@ class ListEntryModel {
         progressMax: map['media']['episodes'] ?? map['media']['chapters'],
         progressVolumes: map['progressVolumes'] ?? 0,
         progressVolumesMax: map['media']['volumes'],
-        score: map['score'].toDouble(),
+        score: (map['score'] ?? 0).toDouble(),
+        listStatus: Convert.strToEnum(map['status'], ListStatus.values),
         startDate: Convert.mapToDateTime(map['startedAt']),
         endDate: Convert.mapToDateTime(map['completedAt']),
         repeat: map['repeat'] ?? 0,
@@ -63,6 +69,7 @@ class ListEntryModel {
         createdAt: map['createdAt'],
         updatedAt: map['updatedAt'],
         genres: List.from(map['media']['genres']),
+        country: map['media']['countryOfOrigin'],
       );
 
   double progressPercent() {
@@ -70,6 +77,4 @@ class ListEntryModel {
     if (nextEpisode != null) return progress / (nextEpisode! - 1);
     return 1;
   }
-
-  void updateProgress(Map<String, dynamic> map) => progress = map['progress'];
 }

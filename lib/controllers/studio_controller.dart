@@ -4,7 +4,7 @@ import 'package:otraku/models/studio_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/models/studio_page_model.dart';
+import 'package:otraku/models/group_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
@@ -54,12 +54,12 @@ class StudioController extends OverscrollController {
   StudioController(this.id);
 
   StudioModel? _model;
-  final _media = StudioPageModel().obs;
+  final _media = GroupPageModel<ExplorableModel>().obs;
   MediaSort _sort = MediaSort.START_DATE_DESC;
   bool? _onList;
 
   StudioModel? get model => _model;
-  StudioPageModel get media => _media();
+  GroupPageModel<ExplorableModel> get media => _media();
 
   @override
   bool get hasNextPage => _media().hasNextPage;

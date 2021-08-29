@@ -11,6 +11,8 @@ enum EntrySort {
   PROGRESS_DESC,
   REPEAT,
   REPEAT_DESC,
+  AIRING_AT,
+  AIRING_AT_DESC,
 }
 
 extension EntrySortHelper on EntrySort {
@@ -26,6 +28,7 @@ extension EntrySortHelper on EntrySort {
     'score': EntrySort.SCORE_DESC,
     'updatedAt': EntrySort.UPDATED_AT_DESC,
     'id': EntrySort.CREATED_AT_DESC,
+    null: EntrySort.TITLE,
   };
 
   String get string => _enumsToStrings[this]!;

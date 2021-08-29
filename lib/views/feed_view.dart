@@ -7,11 +7,10 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/activity_widgets.dart';
+import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/navigation/headline_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
@@ -45,7 +44,7 @@ class FeedView extends StatelessWidget {
               padding: Config.PADDING,
               controller: feed.scrollCtrl,
               itemBuilder: (_, i) =>
-                  UserActivity(feed: feed, model: feed.activities[i]),
+                  ActivityBox(feed: feed, model: feed.activities[i]),
               itemCount: feed.activities.length,
             );
           },
@@ -66,7 +65,6 @@ class HomeFeedView extends StatelessWidget {
       controller: feed.scrollCtrl,
       physics: Config.PHYSICS,
       slivers: [
-        const HeadlineHeader('Feed', false),
         _Header(feed),
         SliverRefreshControl(
           onRefresh: () => feed.fetchPage(clean: true),
@@ -95,7 +93,7 @@ class HomeFeedView extends StatelessWidget {
 
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
-                  (_, i) => UserActivity(feed: feed, model: activities[i]),
+                  (_, i) => ActivityBox(feed: feed, model: activities[i]),
                   childCount: activities.length,
                 ),
               );
@@ -119,66 +117,65 @@ class _Header extends StatelessWidget {
     final viewer = Get.find<ViewerController>();
 
     return SliverTransparentAppBar([
-      BubbleTabs<bool>(
-        options: ['Following', 'Global'],
-        values: [true, false],
-        initial: feed.onFollowing,
-        onNewValue: (val) => feed.onFollowing = val,
-        onSameValue: (_) => feed.scrollTo(0),
+      BubbleTabs(
+        items: const {'Following': true, 'Global': false},
+        current: () => feed.onFollowing,
+        onChanged: (bool val) => feed.onFollowing = val,
+        onSame: () => feed.scrollTo(0),
+        itemWidth: 90,
       ),
       const Spacer(),
       _Filter(feed),
-      if (viewer.unreadCount > 0)
-        Padding(
+      Obx(() {
+        if (viewer.unreadCount < 1)
+          return AppBarIcon(
+            tooltip: 'Notifications',
+            icon: Ionicons.notifications_outline,
+            onTap: () => Navigation.it.push(Navigation.notificationsRoute),
+          );
+
+        return Padding(
           padding: const EdgeInsets.only(right: 10),
           child: Tooltip(
             message: 'Notifications',
             child: GestureDetector(
               onTap: () => Navigation.it.push(Navigation.notificationsRoute),
-              child: Obx(
-                () => Stack(
-                  children: [
-                    Positioned(
-                      right: 0,
-                      child: Icon(
-                        Ionicons.notifications_outline,
-                        color: Theme.of(context).dividerColor,
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: 0,
+                    child: Icon(
+                      Ionicons.notifications_outline,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+                  ),
+                  Container(
+                    constraints: const BoxConstraints(
+                      minWidth: 20,
+                      minHeight: 20,
+                      maxHeight: 20,
+                    ),
+                    margin: const EdgeInsets.only(right: 15, bottom: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.error,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        viewer.unreadCount.toString(),
+                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                              color: Theme.of(context).colorScheme.background,
+                            ),
                       ),
                     ),
-                    Container(
-                      constraints: const BoxConstraints(
-                        minWidth: 20,
-                        minHeight: 20,
-                        maxHeight: 20,
-                      ),
-                      margin: const EdgeInsets.only(right: 15, bottom: 5),
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).errorColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Center(
-                        child: Text(
-                          viewer.unreadCount.toString(),
-                          style:
-                              Theme.of(context).textTheme.subtitle2!.copyWith(
-                                    color: Theme.of(context).backgroundColor,
-                                  ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        )
-      else
-        AppBarIcon(
-          tooltip: 'Notifications',
-          icon: Ionicons.notifications_outline,
-          onTap: () => Navigation.it.push(Navigation.notificationsRoute),
-        ),
+        );
+      }),
     ]);
   }
 }

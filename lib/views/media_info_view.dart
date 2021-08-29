@@ -5,7 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -84,7 +84,7 @@ class MediaInfoView extends StatelessWidget {
                   child: Container(
                     padding: Config.PADDING,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: Config.BORDER_RADIUS,
                     ),
                     child: Text(
@@ -118,7 +118,7 @@ class MediaInfoView extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: InputFieldStructure(
                   title: infoTitles[i],
@@ -134,7 +134,7 @@ class MediaInfoView extends StatelessWidget {
             title: 'Genres',
             items: info.genres,
             onTap: (index) {
-              final explorable = Get.find<ExplorerController>();
+              final explorable = Get.find<ExploreController>();
               explorable.clearAllFilters(update: false);
               explorable.setFilterWithKey(
                 Filterable.SORT,
@@ -144,7 +144,7 @@ class MediaInfoView extends StatelessWidget {
                 Filterable.GENRE_IN,
                 value: [info.genres[index]],
               );
-              explorable.type = info.browsable;
+              explorable.type = info.type;
               explorable.search = '';
               Config.setHomeIndex(HomeView.EXPLORE);
               Navigation.it.popToFirst();
@@ -157,7 +157,7 @@ class MediaInfoView extends StatelessWidget {
             onTap: (index) => ExploreIndexer.openPage(
               id: info.studios[info.studios.keys.elementAt(index)]!,
               imageUrl: info.studios.keys.elementAt(index),
-              browsable: Explorable.studio,
+              explorable: Explorable.studio,
             ),
           ),
         if (info.producers.isNotEmpty)
@@ -167,7 +167,7 @@ class MediaInfoView extends StatelessWidget {
             onTap: (index) => ExploreIndexer.openPage(
               id: info.producers[info.producers.keys.elementAt(index)]!,
               imageUrl: info.producers.keys.elementAt(index),
-              browsable: Explorable.studio,
+              explorable: Explorable.studio,
             ),
           ),
         if (info.romajiTitle != null) ...[
@@ -248,7 +248,7 @@ class _ScrollCards extends StatelessWidget {
                     padding: Config.PADDING,
                     decoration: BoxDecoration(
                       borderRadius: Config.BORDER_RADIUS,
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                     child: Text(items[index]),
                   ),
@@ -274,20 +274,20 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Config.MATERIAL_TAP_TARGET_SIZE,
+            height: Config.MATERIAL_TAP_TARGET_SIZE + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
                   borderRadius: Config.BORDER_RADIUS,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 child: SingleChildScrollView(
                   padding: Config.PADDING,
                   scrollDirection: Axis.horizontal,
                   physics: Config.PHYSICS,
-                  child: Text(titles[i]),
+                  child: Center(child: Text(titles[i])),
                 ),
               ),
             ),
@@ -331,7 +331,23 @@ class __TagsState extends State<_Tags> {
       delegate = SliverChildBuilderDelegate(
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => showPopUp(
+          onTap: () {
+            final explorable = Get.find<ExploreController>();
+            explorable.clearAllFilters(update: false);
+            explorable.setFilterWithKey(
+              Filterable.SORT,
+              value: describeEnum(MediaSort.TRENDING_DESC),
+            );
+            explorable.setFilterWithKey(
+              Filterable.TAG_IN,
+              value: [tags[i].name],
+            );
+            explorable.type = ctrl.model!.info.type;
+            explorable.search = '';
+            Config.setHomeIndex(HomeView.EXPLORE);
+            Navigation.it.popToFirst();
+          },
+          onLongPress: () => showPopUp(
             context,
             TextDialog(title: tags[i].name, text: tags[i].desciption),
           ),
@@ -339,7 +355,7 @@ class __TagsState extends State<_Tags> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: Config.BORDER_RADIUS,
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
               children: [
@@ -369,7 +385,7 @@ class __TagsState extends State<_Tags> {
       final spoilerStyle = Theme.of(context)
           .textTheme
           .bodyText2!
-          .copyWith(color: Theme.of(context).errorColor);
+          .copyWith(color: Theme.of(context).colorScheme.error);
 
       delegate = SliverChildBuilderDelegate(
         (_, i) {
@@ -377,7 +393,7 @@ class __TagsState extends State<_Tags> {
             return TextButton.icon(
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).primaryColor,
+                  Theme.of(context).colorScheme.surface,
                 ),
               ),
               onPressed: () => setState(
@@ -391,7 +407,23 @@ class __TagsState extends State<_Tags> {
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => showPopUp(
+            onTap: () {
+              final explorable = Get.find<ExploreController>();
+              explorable.clearAllFilters(update: false);
+              explorable.setFilterWithKey(
+                Filterable.SORT,
+                value: describeEnum(MediaSort.TRENDING_DESC),
+              );
+              explorable.setFilterWithKey(
+                Filterable.TAG_IN,
+                value: [tags[i].name],
+              );
+              explorable.type = ctrl.model!.info.type;
+              explorable.search = '';
+              Config.setHomeIndex(HomeView.EXPLORE);
+              Navigation.it.popToFirst();
+            },
+            onLongPress: () => showPopUp(
               context,
               TextDialog(title: tags[i].name, text: tags[i].desciption),
             ),
@@ -399,7 +431,7 @@ class __TagsState extends State<_Tags> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 borderRadius: Config.BORDER_RADIUS,
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context).colorScheme.surface,
               ),
               child: Row(
                 children: [

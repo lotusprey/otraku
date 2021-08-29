@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/theming.dart';
 
 class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -94,10 +94,10 @@ class _ShadowBody extends StatelessWidget {
     return Container(
       height: Config.MATERIAL_TAP_TARGET_SIZE,
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: Theme.of(context).colorScheme.background,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             offset: const Offset(0, 3),
             blurRadius: 7,
           ),
@@ -184,8 +184,8 @@ class AppBarIcon extends StatelessWidget {
       icon: Icon(icon),
       tooltip: tooltip,
       onPressed: onTap,
-      iconSize: Style.ICON_BIG,
-      color: colour ?? Theme.of(context).dividerColor,
+      iconSize: Theming.ICON_BIG,
+      color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
       padding: Config.PADDING,
     );

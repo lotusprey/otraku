@@ -28,6 +28,7 @@ class StaffController extends OverscrollController {
               type
               title {userPreferred}
               coverImage {large}
+              format
             }
             characters {
               id
@@ -188,14 +189,15 @@ class StaffController extends OverscrollController {
               id: char['id'],
               title: char['name']['full'],
               imageUrl: char['image']['large'],
-              browsable: Explorable.character,
-              text2: Convert.clarifyEnum(connection['characterRole']),
-              others: [
+              type: Explorable.character,
+              subtitle: Convert.clarifyEnum(connection['characterRole']),
+              other: [
                 ConnectionModel(
                   id: connection['node']['id'],
                   title: connection['node']['title']['userPreferred'],
                   imageUrl: connection['node']['coverImage']['large'],
-                  browsable: connection['node']['type'] == 'ANIME'
+                  subtitle: Convert.clarifyEnum(connection['node']['format']),
+                  type: connection['node']['type'] == 'ANIME'
                       ? Explorable.anime
                       : Explorable.manga,
                 ),
@@ -216,10 +218,10 @@ class StaffController extends OverscrollController {
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
         imageUrl: connection['node']['coverImage']['large'],
-        browsable: connection['node']['type'] == 'ANIME'
+        type: connection['node']['type'] == 'ANIME'
             ? Explorable.anime
             : Explorable.manga,
-        text2: Convert.clarifyEnum(connection['staffRole']),
+        subtitle: Convert.clarifyEnum(connection['staffRole']),
       ));
 
     _roles.update((r) => r!.append(

@@ -77,7 +77,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.headline5),
+          child: Text(title, style: Theme.of(context).textTheme.headline6),
         ),
       );
 }
@@ -96,8 +96,8 @@ class _Grid extends StatelessWidget {
 
   static const _gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
     height: 40,
-    mainAxisSpacing: 0,
     minWidth: 200,
+    mainAxisSpacing: 0,
   );
 
   @override
@@ -105,9 +105,9 @@ class _Grid extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (_, i) {
             i += from;
-            return CheckboxField(
+            return CheckBoxField(
               title: NotificationType.values[i].text,
-              initialValue: values[i],
+              initial: values[i],
               onChanged: (val) {
                 values[i] = val;
                 onChanged(values);

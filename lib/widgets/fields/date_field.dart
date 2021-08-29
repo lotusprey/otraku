@@ -53,7 +53,7 @@ class _DateFieldState extends State<DateField> {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: Config.BORDER_RADIUS,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10),

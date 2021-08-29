@@ -10,6 +10,7 @@ abstract class Filterable extends GetxController {
   static const GENRE_NOT_IN = 'genre_not_in';
   static const TAG_IN = 'tag_in';
   static const TAG_NOT_IN = 'tag_not_in';
+  static const COUNTRY = 'countryOfOrigin';
   static const ON_LIST = 'onList';
   static const IS_ADULT = 'isAdult';
   static const SEARCH = 'search';

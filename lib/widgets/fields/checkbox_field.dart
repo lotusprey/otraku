@@ -1,54 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/theming.dart';
 
-class CheckboxField extends StatefulWidget {
-  final String? title;
-  final bool initialValue;
-  final Function(bool) onChanged;
+class CheckBoxField extends StatefulWidget {
+  final String title;
+  final bool initial;
+  final void Function(bool) onChanged;
 
-  CheckboxField({
+  const CheckBoxField({
     required this.title,
+    required this.initial,
     required this.onChanged,
-    this.initialValue = false,
   });
 
   @override
-  _CheckboxFieldState createState() => _CheckboxFieldState();
+  _CheckBoxFieldState createState() => _CheckBoxFieldState();
 }
 
-class _CheckboxFieldState extends State<CheckboxField> {
-  late bool _value;
-
-  @override
-  Widget build(BuildContext context) => ListTile(
-        contentPadding: const EdgeInsets.all(0),
-        visualDensity: VisualDensity.compact,
-        minVerticalPadding: 0,
-        dense: true,
-        title: Text(
-          widget.title!,
-          style: _value
-              ? Theme.of(context).textTheme.bodyText1
-              : Theme.of(context).textTheme.bodyText2,
-        ),
-        onTap: onTap,
-        trailing: Checkbox(
-          value: _value,
-          onChanged: (_) => onTap(),
-          activeColor: Theme.of(context).accentColor,
-          checkColor: Theme.of(context).backgroundColor,
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          visualDensity: VisualDensity.compact,
-        ),
-      );
-
-  void onTap() {
-    setState(() => _value = !_value);
-    widget.onChanged(_value);
-  }
+class _CheckBoxFieldState extends State<CheckBoxField> {
+  late bool _val;
 
   @override
   void initState() {
     super.initState();
-    _value = widget.initialValue;
+    _val = widget.initial;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          Feedback.forTap(context);
+          setState(() => _val = !_val);
+          widget.onChanged(_val);
+        },
+        child: Row(
+          children: [
+            Expanded(child: Text(widget.title)),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: Theming.ICON_BIG,
+              height: Theming.ICON_BIG,
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _val ? Theme.of(context).colorScheme.secondary : null,
+                border: Border.all(
+                  color: _val
+                      ? Colors.transparent
+                      : Theme.of(context).colorScheme.primary,
+                  width: 2,
+                ),
+              ),
+              child: _val
+                  ? Icon(
+                      Ionicons.checkmark_outline,
+                      color: Theme.of(context).colorScheme.background,
+                      size: Theming.ICON_SMALL,
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

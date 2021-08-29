@@ -10,8 +10,6 @@ class CustomSliverHeader extends StatelessWidget {
   final Widget? child;
   final String? title;
   final List<Widget> actions;
-  final bool actionsScrollFadeIn;
-  final bool titleScrollFadeIn;
   final bool implyLeading;
 
   CustomSliverHeader({
@@ -20,8 +18,6 @@ class CustomSliverHeader extends StatelessWidget {
     this.background,
     this.title,
     this.actions = const [],
-    this.actionsScrollFadeIn = true,
-    this.titleScrollFadeIn = true,
     this.implyLeading = true,
   });
 
@@ -35,8 +31,6 @@ class CustomSliverHeader extends StatelessWidget {
         child: child,
         actions: actions,
         title: title,
-        actionsScrollFadeIn: actionsScrollFadeIn,
-        titleScrollFadeIn: titleScrollFadeIn,
         implyLeading: implyLeading,
       ),
     );
@@ -49,8 +43,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   final Widget? child;
   final String? title;
   final List<Widget> actions;
-  final bool actionsScrollFadeIn;
-  final bool titleScrollFadeIn;
   final bool implyLeading;
   late double _middleExtent;
 
@@ -60,8 +52,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     required this.child,
     required this.actions,
     required this.title,
-    required this.actionsScrollFadeIn,
-    required this.titleScrollFadeIn,
     required this.implyLeading,
   }) {
     _middleExtent = (minExtent + maxExtent) * 0.5;
@@ -74,12 +64,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final currentExtent = maxExtent - shrinkOffset;
-    final titleOpacity = !titleScrollFadeIn || currentExtent <= minExtent
-        ? 1.0
-        : 1.0 - currentExtent / maxExtent;
-    final actionOpacity = !actionsScrollFadeIn || currentExtent <= minExtent
-        ? 1.0
-        : 1.0 - currentExtent / maxExtent;
+    final titleOpacity =
+        currentExtent <= minExtent ? 1.0 : 1.0 - currentExtent / maxExtent;
     final headerOpacity = currentExtent >= _middleExtent
         ? 0.0
         : currentExtent <= minExtent
@@ -90,7 +76,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             blurRadius: 7,
             offset: const Offset(0, 3),
           )
@@ -120,7 +106,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Theme.of(context)
-                        .backgroundColor
+                        .colorScheme
+                        .background
                         .withAlpha((headerOpacity * 255).ceil()),
                   ),
                 ),
@@ -141,22 +128,23 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       ),
                     ),
                   Expanded(
-                    child: Opacity(
-                      opacity: titleOpacity,
-                      child: title != null
-                          ? Text(
-                              title!,
-                              style: Theme.of(context).textTheme.headline5,
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : const SizedBox(),
-                    ),
+                    child: title != null
+                        ? Padding(
+                            padding: implyLeading
+                                ? const EdgeInsets.only(left: 0)
+                                : const EdgeInsets.only(left: 10),
+                            child: Opacity(
+                              opacity: titleOpacity,
+                              child: Text(
+                                title!,
+                                style: Theme.of(context).textTheme.headline5,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
                   ),
-                  if (actions.isNotEmpty)
-                    Opacity(
-                      opacity: actionOpacity,
-                      child: Row(children: actions),
-                    ),
+                  ...actions,
                 ],
               ),
             ),
@@ -202,7 +190,7 @@ class Shade extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).backgroundColor,
+            color: Theme.of(context).colorScheme.background,
             blurRadius: 10,
             spreadRadius: -5,
           ),

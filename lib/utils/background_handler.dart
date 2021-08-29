@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_storage/get_storage.dart';
@@ -8,6 +9,7 @@ import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -74,7 +76,7 @@ class BackgroundHandler {
       return;
     }
 
-    Navigation.it.push(uri.pathSegments[0], args: [id, null, null]);
+    Navigation.it.push('/${uri.pathSegments[0]}', args: [id, null, null]);
   }
 }
 
@@ -224,21 +226,25 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       return true;
     });
 
-void _show(NotificationModel model, String title, String payload) =>
-    _notificationPlugin.show(
-      model.id,
-      title,
-      model.texts.join(),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'NOTIFICATIONS',
-          'Notifications',
-          'All Notifications',
-          color: Color(0xFF45A0F2),
-        ),
+void _show(NotificationModel model, String title, String payload) {
+  final id = describeEnum(model.type);
+  final name = Convert.clarifyEnum(id)!;
+
+  _notificationPlugin.show(
+    model.id,
+    title,
+    model.texts.join(),
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        id,
+        name,
+        name,
+        color: const Color(0xFF45A0F2),
       ),
-      payload: payload,
-    );
+    ),
+    payload: payload,
+  );
+}
 
 const _countQuery = 'query Count {Viewer {unreadNotificationCount}}';
 

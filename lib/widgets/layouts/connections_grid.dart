@@ -47,8 +47,8 @@ class _MediaConnectionTile extends StatelessWidget {
     if (preferredSubtitle == null)
       index = 0;
     else
-      for (int i = 0; i < item.others.length; i++)
-        if (item.others[i].text2 == preferredSubtitle) {
+      for (int i = 0; i < item.other.length; i++)
+        if (item.other[i].subtitle == preferredSubtitle) {
           index = i;
           break;
         }
@@ -58,14 +58,14 @@ class _MediaConnectionTile extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
             Expanded(
               child: ExploreIndexer(
                 id: item.id,
-                browsable: item.browsable,
+                explorable: item.type,
                 imageUrl: item.imageUrl,
                 child: Container(
                   color: Colors.transparent,
@@ -86,16 +86,17 @@ class _MediaConnectionTile extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  item.text1,
+                                  item.title,
                                   overflow: TextOverflow.fade,
                                 ),
                               ),
-                              Text(
-                                item.text2!,
-                                maxLines: 2,
-                                overflow: TextOverflow.fade,
-                                style: Theme.of(context).textTheme.subtitle2,
-                              ),
+                              if (item.subtitle != null)
+                                Text(
+                                  item.subtitle!,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.fade,
+                                  style: Theme.of(context).textTheme.subtitle2,
+                                ),
                             ],
                           ),
                         ),
@@ -105,12 +106,12 @@ class _MediaConnectionTile extends StatelessWidget {
                 ),
               ),
             ),
-            if (index != null && item.others.length > index)
+            if (index != null && item.other.length > index)
               Expanded(
                 child: ExploreIndexer(
-                  id: item.others[index].id,
-                  browsable: item.others[index].browsable,
-                  imageUrl: item.others[index].imageUrl,
+                  id: item.other[index].id,
+                  explorable: item.other[index].type,
+                  imageUrl: item.other[index].imageUrl,
                   child: Container(
                     color: Colors.transparent,
                     child: Row(
@@ -125,22 +126,24 @@ class _MediaConnectionTile extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    item.others[index].text1,
+                                    item.other[index].title,
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.end,
                                   ),
                                 ),
-                                Text(
-                                  item.others[index].text2!,
-                                  style: Theme.of(context).textTheme.subtitle2,
-                                ),
+                                if (item.other[index].subtitle != null)
+                                  Text(
+                                    item.other[index].subtitle!,
+                                    style:
+                                        Theme.of(context).textTheme.subtitle2,
+                                  ),
                               ],
                             ),
                           ),
                         ),
                         ClipRRect(
                           child: FadeImage(
-                            item.others[index].imageUrl,
+                            item.other[index].imageUrl,
                             width: 75,
                           ),
                           borderRadius:

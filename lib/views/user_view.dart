@@ -123,7 +123,7 @@ class HomeUserView extends StatelessWidget {
                 margin: padding,
                 padding: Config.PADDING,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: Config.BORDER_RADIUS,
                 ),
                 child: HtmlContent(user.model!.description!),
@@ -150,7 +150,9 @@ class _Button extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          Expanded(child: Icon(icon, color: Theme.of(context).dividerColor)),
+          Expanded(
+              child: Icon(icon,
+                  color: Theme.of(context).colorScheme.onBackground)),
           Expanded(
             flex: 2,
             child: Text(title, style: Theme.of(context).textTheme.headline5),

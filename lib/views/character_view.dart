@@ -13,6 +13,7 @@ import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class CharacterView extends StatelessWidget {
   final int id;
@@ -95,15 +96,15 @@ class CharacterView extends StatelessWidget {
               return SliverShadowAppBar([
                 character.anime.items.isNotEmpty &&
                         character.manga.items.isNotEmpty
-                    ? BubbleTabs<bool>(
-                        options: const ['Anime', 'Manga'],
-                        values: const [true, false],
-                        initial: true,
-                        onNewValue: (value) {
+                    ? BubbleTabs(
+                        items: const {'Anime': true, 'Manga': false},
+                        current: () => true,
+                        onChanged: (bool value) {
                           character.onAnime = value;
                           character.scrollTo(offset);
                         },
-                        onSameValue: (_) => character.scrollTo(offset),
+                        onSame: () => character.scrollTo(offset),
+                        itemWidth: 80,
                       )
                     : const SizedBox(),
                 const Spacer(),
@@ -177,10 +178,16 @@ class _Details extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            '${model.firstName} ${model.middleName} ${model.lastName}',
-            style: Theme.of(context).textTheme.headline2,
-            textAlign: axis == Axis.vertical ? TextAlign.center : null,
+          GestureDetector(
+            onTap: () => Toast.copy(
+              context,
+              '${model.firstName} ${model.middleName} ${model.lastName}',
+            ),
+            child: Text(
+              '${model.firstName} ${model.middleName} ${model.lastName}',
+              style: Theme.of(context).textTheme.headline2,
+              textAlign: axis == Axis.vertical ? TextAlign.center : null,
+            ),
           ),
           Text(
             model.altNames.join(', '),
@@ -196,7 +203,7 @@ class _Details extends StatelessWidget {
                     child: Container(
                       padding: Config.PADDING,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: Config.BORDER_RADIUS,
                       ),
                       child: Text(

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/explorer_controller.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
@@ -50,10 +50,10 @@ class _BottomDrawer extends StatelessWidget {
             end: Alignment.topCenter,
             stops: const [0, 0.5, 0.8, 1],
             colors: [
-              Theme.of(context).backgroundColor,
-              Theme.of(context).backgroundColor.withAlpha(200),
-              Theme.of(context).backgroundColor.withAlpha(150),
-              Theme.of(context).backgroundColor.withAlpha(0),
+              Theme.of(context).colorScheme.background,
+              Theme.of(context).colorScheme.background.withAlpha(200),
+              Theme.of(context).colorScheme.background.withAlpha(150),
+              Theme.of(context).colorScheme.background.withAlpha(0),
             ],
           ),
         ),
@@ -122,7 +122,7 @@ class ExploreBottomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ExplorerController>();
+    final ctrl = Get.find<ExploreController>();
 
     return _BottomDrawer(
       ctx: ctx,
@@ -134,8 +134,8 @@ class ExploreBottomDrawer extends StatelessWidget {
           Icon(
             Explorable.values[i].icon,
             color: i != ctrl.type.index
-                ? Theme.of(context).dividerColor
-                : Theme.of(context).accentColor,
+                ? Theme.of(context).colorScheme.onBackground
+                : Theme.of(context).colorScheme.secondary,
           ),
           const SizedBox(width: 5),
           Text(

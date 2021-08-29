@@ -68,7 +68,7 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExploreIndexer(
-      browsable: data.browsable,
+      explorable: data.explorable,
       id: data.id,
       imageUrl: data.imageUrl,
       child: Column(
@@ -79,7 +79,7 @@ class _Tile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: Config.BORDER_RADIUS,
                 child: Container(
-                  color: full ? Theme.of(context).primaryColor : null,
+                  color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(
                     data.imageUrl,
                     fit: full ? BoxFit.cover : BoxFit.contain,
@@ -93,7 +93,7 @@ class _Tile extends StatelessWidget {
             height: 35,
             child: Text(
               data.text1,
-              overflow: TextOverflow.ellipsis,
+              overflow: TextOverflow.fade,
               maxLines: 2,
               style: Theme.of(context).textTheme.subtitle1,
             ),

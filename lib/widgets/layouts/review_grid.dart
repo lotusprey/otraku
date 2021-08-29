@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/explorable_model.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -63,10 +63,10 @@ class _Tile extends StatelessWidget {
     return ExploreIndexer(
       id: model.id,
       imageUrl: model.imageUrl,
-      browsable: Explorable.review,
+      explorable: Explorable.review,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: Config.BORDER_RADIUS,
         ),
         child: Column(
@@ -122,7 +122,7 @@ class _Tile extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.thumbs_up_down_outlined,
-                                  size: Style.ICON_SMALL,
+                                  size: Theming.ICON_SMALL,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(

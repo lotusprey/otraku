@@ -30,15 +30,15 @@ class _ThreeStateFieldState extends State<ThreeStateField> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: _state == 0
-              ? Theme.of(context).primaryColor
+              ? Theme.of(context).colorScheme.surface
               : _state == 1
-                  ? Theme.of(context).accentColor
-                  : Theme.of(context).errorColor,
+                  ? Theme.of(context).colorScheme.secondary
+                  : Theme.of(context).colorScheme.error,
         ),
         child: _state != 0
             ? Icon(
                 _state == 1 ? Icons.add_rounded : Icons.remove_rounded,
-                color: Theme.of(context).backgroundColor,
+                color: Theme.of(context).colorScheme.background,
               )
             : null,
       ),

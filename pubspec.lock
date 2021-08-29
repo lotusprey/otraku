@@ -92,13 +92,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.17.0"
-  dbus:
-    dependency: transitive
-    description:
-      name: dbus
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.4"
   fake_async:
     dependency: transitive
     description:
@@ -138,14 +131,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.0"
-  flutter_local_notifications_linux:
-    dependency: transitive
-    description:
-      name: flutter_local_notifications_linux
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0+1"
+    version: "8.1.1+1"
   flutter_local_notifications_platform_interface:
     dependency: transitive
     description:
@@ -159,7 +145,7 @@ packages:
       name: flutter_secure_storage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.0"
+    version: "4.2.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -176,14 +162,14 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.1+4"
+    version: "0.6.2"
   get:
     dependency: "direct main"
     description:
       name: get
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.3.0"
+    version: "4.3.8"
   get_storage:
     dependency: "direct main"
     description:
@@ -317,13 +303,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
-  posix:
-    dependency: transitive
-    description:
-      name: posix
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.1.2"
   process:
     dependency: transitive
     description:

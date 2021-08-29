@@ -23,10 +23,11 @@ class Toast {
           ),
           padding: Config.PADDING,
           decoration: BoxDecoration(
-            color: Theme.of(ctx).primaryColor,
+            color: Theme.of(ctx).colorScheme.surface,
             borderRadius: Config.BORDER_RADIUS,
             boxShadow: [
-              BoxShadow(color: Theme.of(ctx).backgroundColor, blurRadius: 10),
+              BoxShadow(
+                  color: Theme.of(ctx).colorScheme.background, blurRadius: 10),
             ],
           ),
           child: Text(text, style: Theme.of(ctx).textTheme.bodyText1),
@@ -46,7 +47,7 @@ class Toast {
     _busy = false;
   }
 
-  static void copy(final BuildContext ctx, final String? text) =>
+  static void copy(final BuildContext ctx, final String text) =>
       Clipboard.setData(ClipboardData(text: text))
           .then((_) => show(ctx, 'Copied'));
 }

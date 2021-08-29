@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/enums/themes.dart';
 import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/review_controller.dart';
 import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -43,7 +43,7 @@ class ReviewView extends StatelessWidget {
                               onTap: () => ExploreIndexer.openPage(
                                 id: model.mediaId,
                                 imageUrl: model.mediaCover,
-                                browsable: model.browsable,
+                                explorable: model.explorable,
                               ),
                               child: Text(
                                 model.mediaTitle,
@@ -56,7 +56,7 @@ class ReviewView extends StatelessWidget {
                               onTap: () => ExploreIndexer.openPage(
                                 id: model.userId,
                                 imageUrl: model.userAvatar,
-                                browsable: Explorable.user,
+                                explorable: Explorable.user,
                               ),
                               child: RichText(
                                 textAlign: TextAlign.center,
@@ -90,7 +90,7 @@ class ReviewView extends StatelessWidget {
                                 child: Text('${model.score}/100'),
                                 style: ElevatedButton.styleFrom(
                                   textStyle: TextStyle(
-                                    fontSize: Style.FONT_BIG,
+                                    fontSize: Theming.FONT_BIG,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -138,12 +138,12 @@ class _Header extends StatelessWidget {
                     right: 0,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).backgroundColor,
+                        color: Theme.of(context).colorScheme.background,
                         boxShadow: [
                           BoxShadow(
                             blurRadius: 15,
                             spreadRadius: 25,
-                            color: Theme.of(context).backgroundColor,
+                            color: Theme.of(context).colorScheme.background,
                           ),
                         ],
                       ),
@@ -181,7 +181,7 @@ class _RateButtonsState extends State<_RateButtons> {
                     : Icons.thumb_up_outlined,
               ),
               color: widget.model.viewerRating == true
-                  ? Theme.of(context).accentColor
+                  ? Theme.of(context).colorScheme.secondary
                   : null,
               onPressed: () =>
                   _rate(widget.model.viewerRating != true ? true : null)
@@ -194,7 +194,7 @@ class _RateButtonsState extends State<_RateButtons> {
                     : Icons.thumb_down_outlined,
               ),
               color: widget.model.viewerRating == false
-                  ? Theme.of(context).errorColor
+                  ? Theme.of(context).colorScheme.error
                   : null,
               onPressed: () =>
                   _rate(widget.model.viewerRating != false ? false : null)

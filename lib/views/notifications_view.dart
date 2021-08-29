@@ -69,7 +69,7 @@ class _NotificationWidget extends StatelessWidget {
         height: 90,
         decoration: BoxDecoration(
           borderRadius: Config.BORDER_RADIUS,
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
@@ -77,11 +77,11 @@ class _NotificationWidget extends StatelessWidget {
               onTap: () => ExploreIndexer.openPage(
                 id: notification.headId!,
                 imageUrl: notification.imageUrl,
-                browsable: notification.browsable ?? Explorable.user,
+                explorable: notification.explorable ?? Explorable.user,
               ),
               onLongPress: () {
-                if (notification.browsable == Explorable.anime ||
-                    notification.browsable == Explorable.manga)
+                if (notification.explorable == Explorable.anime ||
+                    notification.explorable == Explorable.manga)
                   ExploreIndexer.openEditPage(notification.headId!);
               },
               child: ClipRRect(
@@ -99,7 +99,7 @@ class _NotificationWidget extends StatelessWidget {
                       ExploreIndexer.openPage(
                         id: notification.bodyId!,
                         imageUrl: notification.imageUrl,
-                        browsable: notification.browsable!,
+                        explorable: notification.explorable!,
                       );
                       return;
                     case NotificationType.ACTIVITY_LIKE:
@@ -117,7 +117,7 @@ class _NotificationWidget extends StatelessWidget {
                       ExploreIndexer.openPage(
                         id: notification.headId!,
                         imageUrl: notification.imageUrl,
-                        browsable: Explorable.user,
+                        explorable: Explorable.user,
                       );
                       return;
                     default:
@@ -126,8 +126,8 @@ class _NotificationWidget extends StatelessWidget {
                   }
                 },
                 onLongPress: () {
-                  if (notification.browsable == Explorable.anime ||
-                      notification.browsable == Explorable.manga)
+                  if (notification.explorable == Explorable.anime ||
+                      notification.explorable == Explorable.manga)
                     ExploreIndexer.openEditPage(notification.headId!);
                 },
                 child: Padding(
@@ -165,7 +165,7 @@ class _NotificationWidget extends StatelessWidget {
                 width: 10,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).accentColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   borderRadius: BorderRadius.horizontal(right: Config.RADIUS),
                 ),
               ),

@@ -21,7 +21,7 @@ class MediaSocialView extends StatelessWidget {
       child: Container(
         width: 50,
         height: 10,
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.surface,
       ),
     );
 
@@ -57,7 +57,7 @@ class MediaSocialView extends StatelessWidget {
                       ExploreIndexer(
                         id: items[index].userId,
                         imageUrl: items[index].avatar,
-                        browsable: Explorable.user,
+                        explorable: Explorable.user,
                         child: Row(
                           children: [
                             Hero(
@@ -82,12 +82,12 @@ class MediaSocialView extends StatelessWidget {
                         child: ExploreIndexer(
                           id: items[index].reviewId,
                           imageUrl: ctrl.model!.info.banner,
-                          browsable: Explorable.review,
+                          explorable: Explorable.review,
                           child: Container(
                             width: double.infinity,
                             padding: Config.PADDING,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
+                              color: Theme.of(context).colorScheme.surface,
                               borderRadius: Config.BORDER_RADIUS,
                             ),
                             child: Text(

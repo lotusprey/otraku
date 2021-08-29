@@ -28,7 +28,7 @@ class SettingsView extends StatelessWidget {
             'App': Ionicons.color_palette_outline,
             'Content': Ionicons.tv_outline,
             'Notifications': Ionicons.notifications_outline,
-            'About': Ionicons.person_circle_outline,
+            'About': Ionicons.information_outline,
           },
           onChanged: (page) => settings.pageIndex = page,
           initial: settings.pageIndex,

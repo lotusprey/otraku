@@ -96,8 +96,8 @@ class _Grid extends StatelessWidget {
 
   static const _gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
     height: 40,
-    mainAxisSpacing: 0,
     minWidth: 200,
+    mainAxisSpacing: 0,
   );
 
   @override
@@ -105,7 +105,7 @@ class _Grid extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (_, i) {
             i += from;
-            return CheckboxField(
+            return CheckBoxField(
               title: NotificationType.values[i].text,
               initial: values[i],
               onChanged: (val) {

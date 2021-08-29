@@ -378,7 +378,7 @@ class _Content extends StatelessWidget {
           ...advancedScoring,
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           _Label('Additional Settings'),
-          _CheckboxGrid(
+          _CheckBoxGrid(
             {
               'Private': model.private,
               'Hidden From Status Lists': model.hiddenFromStatusLists,
@@ -390,7 +390,7 @@ class _Content extends StatelessWidget {
           if (model.customLists.isNotEmpty) ...[
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
             _Label('Custom Lists'),
-            _CheckboxGrid(
+            _CheckBoxGrid(
               model.customLists,
               (key, val) => model.customLists[key] = val,
             ),
@@ -432,11 +432,11 @@ class _FieldGrid extends StatelessWidget {
   }
 }
 
-class _CheckboxGrid extends StatelessWidget {
+class _CheckBoxGrid extends StatelessWidget {
   final Map<String, bool> map;
   final Function(String, bool) onChanged;
 
-  _CheckboxGrid(this.map, this.onChanged);
+  _CheckBoxGrid(this.map, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
@@ -444,7 +444,7 @@ class _CheckboxGrid extends StatelessWidget {
 
     return SliverGrid(
       delegate: SliverChildBuilderDelegate(
-        (_, index) => CheckboxField(
+        (_, index) => CheckBoxField(
           title: map.entries.elementAt(index).key,
           initial: map.entries.elementAt(index).value,
           onChanged: (val) => onChanged(map.entries.elementAt(index).key, val),
@@ -453,8 +453,8 @@ class _CheckboxGrid extends StatelessWidget {
       ),
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 190,
-        height: Config.MATERIAL_TAP_TARGET_SIZE,
         mainAxisSpacing: 0,
+        height: Config.MATERIAL_TAP_TARGET_SIZE,
       ),
     );
   }

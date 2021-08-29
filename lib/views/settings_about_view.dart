@@ -80,6 +80,23 @@ class SettingsAboutView extends StatelessWidget {
           child: SizedBox(
             width: 200,
             child: ElevatedButton.icon(
+              icon: const Icon(Ionicons.cash_outline),
+              label: Text('Donate'),
+              onPressed: () {
+                try {
+                  launch('https://ko-fi.com/lotusgate');
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 200,
+            child: ElevatedButton.icon(
               icon: const Icon(Ionicons.finger_print),
               label: Text('Privacy Policy'),
               onPressed: () {

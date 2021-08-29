@@ -5,8 +5,8 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
+import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/fields/switch_tile.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -78,19 +78,20 @@ class SettingsAppView extends StatelessWidget {
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
                 minWidth: 210,
+                mainAxisSpacing: 0,
+                crossAxisSpacing: 20,
                 height: Config.MATERIAL_TAP_TARGET_SIZE,
               ),
               delegate: SliverChildListDelegate.fixed([
-                SwitchTile(
+                CheckBoxField(
                   title: 'Left-Handed Mode',
-                  initialValue:
-                      Config.storage.read(Config.LEFT_HANDED) ?? false,
+                  initial: Config.storage.read(Config.LEFT_HANDED) ?? false,
                   onChanged: (val) =>
                       Config.storage.write(Config.LEFT_HANDED, val),
                 ),
-                SwitchTile(
+                CheckBoxField(
                   title: '12 Hour Clock',
-                  initialValue: Config.storage.read(Config.CLOCK_TYPE) ?? false,
+                  initial: Config.storage.read(Config.CLOCK_TYPE) ?? false,
                   onChanged: (val) =>
                       Config.storage.write(Config.CLOCK_TYPE, val),
                 ),

@@ -74,12 +74,9 @@ class Theming with ChangeNotifier {
     notifyListeners();
   }
 
-  // Used for DropDownField.
-  static Map<String, int> get options {
-    final map = <String, int>{};
-    for (int i = 0; i < _themes.length; i++) map[_themes.keys.elementAt(i)] = i;
-    return map;
-  }
+  // Typically used for DropDownFields.
+  static Map<String, int> get themes =>
+      Map.fromIterables(_themes.keys, List.generate(_themes.length, (i) => i));
 
   static final _themes = {
     'Navy': ThemeModel(

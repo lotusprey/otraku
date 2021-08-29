@@ -140,8 +140,9 @@ class ExploreController extends OverscrollController implements Filterable {
   set type(Explorable value) {
     _type.value = value;
 
-    if (value == Explorable.anime) _filters[Filterable.TYPE] = 'ANIME';
-    if (value == Explorable.manga) _filters[Filterable.TYPE] = 'MANGA';
+    if (value == Explorable.anime)
+      _filters[Filterable.TYPE] = 'ANIME';
+    else if (value == Explorable.manga) _filters[Filterable.TYPE] = 'MANGA';
 
     _filters.remove(Filterable.FORMAT_IN);
     fetch();
@@ -318,6 +319,9 @@ class ExploreController extends OverscrollController implements Filterable {
         else
           _tags[category]!.add(TagModel(t));
       }
+
+      _filters[Filterable.TYPE] =
+          _type() == Explorable.manga ? 'MANGA' : 'ANIME';
 
       fetch();
     });

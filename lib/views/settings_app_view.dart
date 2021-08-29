@@ -29,13 +29,13 @@ class SettingsAppView extends StatelessWidget {
                 DropDownField<int>(
                   title: 'Light Theme',
                   value: Theming.it.light,
-                  items: Theming.options,
+                  items: Theming.themes,
                   onChanged: (val) => Theming.it.light = val,
                 ),
                 DropDownField<int>(
                   title: 'Dark Theme',
                   value: Theming.it.dark,
-                  items: Theming.options,
+                  items: Theming.themes,
                   onChanged: (val) => Theming.it.dark = val,
                 ),
                 DropDownField<ThemeMode>(

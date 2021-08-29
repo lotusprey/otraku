@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/html_content.dart';
 
-Future<dynamic> showPopUp(BuildContext ctx, Widget child) =>
-    showDialog(context: ctx, builder: (ctx) => PopUpAnimation(child));
+Future<dynamic> showPopUp(BuildContext ctx, Widget child) => showDialog(
+      context: ctx,
+      builder: (ctx) => PopUpAnimation(child),
+      barrierColor: Theme.of(ctx).colorScheme.background.withAlpha(200),
+    );
 
 class PopUpAnimation extends StatefulWidget {
   final Widget child;

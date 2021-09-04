@@ -11,8 +11,11 @@ enum NotificationType {
   THREAD_SUBSCRIBED,
   THREAD_LIKE,
   THREAD_COMMENT_LIKE,
-  AIRING,
   RELATED_MEDIA_ADDITION,
+  MEDIA_DATA_CHANGE,
+  MEDIA_MERGE,
+  MEDIA_DELETION,
+  AIRING,
 }
 
 extension NotificationTypeExtension on NotificationType {
@@ -30,8 +33,11 @@ extension NotificationTypeExtension on NotificationType {
     NotificationType.THREAD_SUBSCRIBED: 'Comments on a subscribed thread',
     NotificationType.THREAD_LIKE: 'Likes on my forum threads',
     NotificationType.THREAD_COMMENT_LIKE: 'Likes on my forum comments',
-    NotificationType.AIRING: 'Airings of anime I am watching',
     NotificationType.RELATED_MEDIA_ADDITION: 'New media related to me',
+    NotificationType.MEDIA_DATA_CHANGE: 'Modified media in my lists',
+    NotificationType.MEDIA_MERGE: 'Merged media in my lists',
+    NotificationType.MEDIA_DELETION: 'Deleted media in my lists',
+    NotificationType.AIRING: 'Airings of anime I am watching',
   };
 
   String get text => _notificationNames[this]!;

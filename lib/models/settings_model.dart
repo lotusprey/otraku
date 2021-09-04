@@ -12,7 +12,7 @@ class SettingsModel {
   final bool displayAdultContent;
   final bool airingNotifications;
   final bool advancedScoringEnabled;
-  final Map<String?, bool?> notificationOptions;
+  final Map<String, bool> notificationOptions;
 
   SettingsModel._({
     required this.scoreFormat,

@@ -15,14 +15,14 @@ class SettingsNotificationsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final settings = Get.find<SettingsController>();
     final options = settings.model.notificationOptions;
+
     final siteValues = <bool>[];
-    for (int i = 0; i < NotificationType.values.length - 2; i++)
+    for (int i = 0; i < NotificationType.values.length - 1; i++)
       siteValues.add(
         options[describeEnum(NotificationType.values[i])] ?? false,
       );
 
     final siteOptions = <Widget>[];
-
     siteOptions.add(_Title('Users'));
     siteOptions.add(
       _Grid(from: 0, to: 1, values: siteValues, onChanged: changeSiteOption),
@@ -34,6 +34,10 @@ class SettingsNotificationsView extends StatelessWidget {
     siteOptions.add(_Title('Forum'));
     siteOptions.add(
       _Grid(from: 7, to: 12, values: siteValues, onChanged: changeSiteOption),
+    );
+    siteOptions.add(_Title('Media'));
+    siteOptions.add(
+      _Grid(from: 12, to: 16, values: siteValues, onChanged: changeSiteOption),
     );
 
     return Padding(
@@ -94,28 +98,30 @@ class _Grid extends StatelessWidget {
     required this.onChanged,
   });
 
-  static const _gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-    height: 40,
-    minWidth: 200,
-    mainAxisSpacing: 0,
-  );
-
   @override
-  Widget build(BuildContext context) => SliverGrid(
-        delegate: SliverChildBuilderDelegate(
-          (_, i) {
-            i += from;
-            return CheckBoxField(
-              title: NotificationType.values[i].text,
-              initial: values[i],
-              onChanged: (val) {
-                values[i] = val;
-                onChanged(values);
-              },
-            );
-          },
-          childCount: to - from,
-        ),
-        gridDelegate: _gridDelegate,
-      );
+  Widget build(BuildContext context) {
+    const gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
+      height: 40,
+      minWidth: 200,
+      mainAxisSpacing: 0,
+    );
+
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate(
+        (_, i) {
+          i += from;
+          return CheckBoxField(
+            title: NotificationType.values[i].text,
+            initial: values[i],
+            onChanged: (val) {
+              values[i] = val;
+              onChanged(values);
+            },
+          );
+        },
+        childCount: to - from,
+      ),
+      gridDelegate: gridDelegate,
+    );
+  }
 }

@@ -66,8 +66,9 @@ class ThemeModel {
         ),
         dialogTheme: DialogTheme(
           elevation: 10,
-          backgroundColor: background,
-          shape: RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+          backgroundColor: surface,
+          shape:
+              const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
           titleTextStyle: TextStyle(
             fontSize: Theming.FONT_MEDIUM,
             color: onBackground,

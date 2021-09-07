@@ -54,9 +54,7 @@ class DialogBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Theme.of(context).colorScheme.background,
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
         child: child,
@@ -83,9 +81,7 @@ class ConfirmationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-      title: Text(title, style: Theme.of(context).textTheme.headline5),
+      title: Text(title),
       content: content != null ? Text(content!) : null,
       actions: [
         if (secondaryAction != null)

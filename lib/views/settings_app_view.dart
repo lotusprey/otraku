@@ -95,6 +95,12 @@ class SettingsAppView extends StatelessWidget {
                   onChanged: (val) =>
                       Config.storage.write(Config.CLOCK_TYPE, val),
                 ),
+                CheckBoxField(
+                  title: 'Confirm Exit',
+                  initial: Config.storage.read(Config.CONFIRM_EXIT) ?? false,
+                  onChanged: (val) =>
+                      Config.storage.write(Config.CONFIRM_EXIT, val),
+                ),
               ]),
             ),
             SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),

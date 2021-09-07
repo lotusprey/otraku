@@ -13,6 +13,7 @@ abstract class Config {
   static const CLOCK_TYPE = '12hourClock';
   static const LEFT_HANDED = 'leftHanded';
   static const DEFAULT_EXPLORE = 'defaultExplore';
+  static const CONFIRM_EXIT = 'confirmExit';
 
   // Constants.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;

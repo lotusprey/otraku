@@ -46,6 +46,25 @@ class _PopUpAnimationState extends State<PopUpAnimation>
       );
 }
 
+// A basic container for a dialog.
+class DialogBox extends StatelessWidget {
+  final Widget child;
+  const DialogBox(this.child);
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
+        child: child,
+      ),
+    );
+  }
+}
+
 class ConfirmationDialog extends StatelessWidget {
   final String title;
   final String? content;
@@ -99,7 +118,6 @@ class ImageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
       shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
       backgroundColor: Colors.transparent,
@@ -118,7 +136,7 @@ class TextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      _Dialog(title: title, expand: false, child: Text(text));
+      _DialogColumn(title: title, expand: false, child: Text(text));
 }
 
 class HtmlDialog extends StatelessWidget {
@@ -128,15 +146,15 @@ class HtmlDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      _Dialog(title: title, expand: true, child: HtmlContent(text));
+      _DialogColumn(title: title, expand: true, child: HtmlContent(text));
 }
 
-class _Dialog extends StatelessWidget {
+class _DialogColumn extends StatelessWidget {
   final String title;
   final Widget child;
   final bool expand;
 
-  const _Dialog({
+  const _DialogColumn({
     required this.title,
     required this.child,
     required this.expand,
@@ -144,45 +162,38 @@ class _Dialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      backgroundColor: Theme.of(context).colorScheme.background,
-      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
+    return DialogBox(
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
+              color: Theme.of(context).colorScheme.background,
+            ),
+            padding: Config.PADDING,
+            child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+          ),
+          Flexible(
+            fit: expand ? FlexFit.tight : FlexFit.loose,
+            child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
-                color: Theme.of(context).colorScheme.background,
+                borderRadius:
+                    const BorderRadius.vertical(bottom: Config.RADIUS),
+                color: Theme.of(context).colorScheme.surface,
               ),
-              padding: Config.PADDING,
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-            ),
-            Flexible(
-              fit: expand ? FlexFit.tight : FlexFit.loose,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      const BorderRadius.vertical(bottom: Config.RADIUS),
-                  color: Theme.of(context).colorScheme.surface,
-                ),
-                child: Scrollbar(
-                  child: SingleChildScrollView(
-                    physics: Config.PHYSICS,
-                    padding: Config.PADDING,
-                    child: child,
-                  ),
+              child: Scrollbar(
+                child: SingleChildScrollView(
+                  physics: Config.PHYSICS,
+                  padding: Config.PADDING,
+                  child: child,
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

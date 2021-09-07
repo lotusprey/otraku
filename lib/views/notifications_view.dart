@@ -9,7 +9,9 @@ import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -73,35 +75,28 @@ class _NotificationWidget extends StatelessWidget {
         ),
         child: Row(
           children: [
-            GestureDetector(
-              onTap: () => ExploreIndexer.openPage(
-                id: notification.headId!,
-                imageUrl: notification.imageUrl,
-                explorable: notification.explorable ?? Explorable.user,
+            if (notification.imageUrl != null && notification.headId != null)
+              GestureDetector(
+                onTap: () => ExploreIndexer.openPage(
+                  id: notification.headId!,
+                  imageUrl: notification.imageUrl,
+                  explorable: notification.explorable ?? Explorable.user,
+                ),
+                onLongPress: () {
+                  if (notification.explorable == Explorable.anime ||
+                      notification.explorable == Explorable.manga)
+                    ExploreIndexer.openEditPage(notification.headId!);
+                },
+                child: ClipRRect(
+                  child: FadeImage(notification.imageUrl!, width: 70),
+                  borderRadius: BorderRadius.horizontal(left: Config.RADIUS),
+                ),
               ),
-              onLongPress: () {
-                if (notification.explorable == Explorable.anime ||
-                    notification.explorable == Explorable.manga)
-                  ExploreIndexer.openEditPage(notification.headId!);
-              },
-              child: ClipRRect(
-                child: FadeImage(notification.imageUrl, width: 70),
-                borderRadius: BorderRadius.horizontal(left: Config.RADIUS),
-              ),
-            ),
             Flexible(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
                   switch (notification.type) {
-                    case NotificationType.AIRING:
-                    case NotificationType.RELATED_MEDIA_ADDITION:
-                      ExploreIndexer.openPage(
-                        id: notification.bodyId!,
-                        imageUrl: notification.imageUrl,
-                        explorable: notification.explorable!,
-                      );
-                      return;
                     case NotificationType.ACTIVITY_LIKE:
                     case NotificationType.ACTIVITY_MENTION:
                     case NotificationType.ACTIVITY_MESSAGE:
@@ -119,6 +114,19 @@ class _NotificationWidget extends StatelessWidget {
                         imageUrl: notification.imageUrl,
                         explorable: Explorable.user,
                       );
+                      return;
+                    case NotificationType.AIRING:
+                    case NotificationType.RELATED_MEDIA_ADDITION:
+                      ExploreIndexer.openPage(
+                        id: notification.bodyId!,
+                        imageUrl: notification.imageUrl,
+                        explorable: notification.explorable!,
+                      );
+                      return;
+                    case NotificationType.MEDIA_DATA_CHANGE:
+                    case NotificationType.MEDIA_MERGE:
+                    case NotificationType.MEDIA_DELETION:
+                      showPopUp(context, _NotificationDialog(notification));
                       return;
                     default:
                       Toast.show(context, 'Forum is not supported yet');
@@ -171,6 +179,48 @@ class _NotificationWidget extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _NotificationDialog extends StatelessWidget {
+  final NotificationModel model;
+  const _NotificationDialog(this.model);
+
+  @override
+  Widget build(BuildContext context) {
+    final title = RichText(
+      overflow: TextOverflow.fade,
+      text: TextSpan(
+        children: [
+          for (int i = 0; i < model.texts.length; i++)
+            TextSpan(
+              text: model.texts[i],
+              style: (i % 2 == 0) == model.markTextOnEvenIndex
+                  ? Theme.of(context).textTheme.bodyText1
+                  : Theme.of(context).textTheme.bodyText2,
+            ),
+        ],
+      ),
+    );
+
+    return DialogBox(
+      Column(
+        children: [
+          if (model.imageUrl == null)
+            title
+          else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FadeImage(model.imageUrl!),
+                const SizedBox(width: 5),
+                title,
+              ],
+            ),
+          if (model.details != null) HtmlContent(model.details!),
+        ],
       ),
     );
   }

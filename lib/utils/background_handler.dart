@@ -218,6 +218,23 @@ void _fetch() => Workmanager().executeTask((_, input) async {
               '${Navigation.mediaRoute}/${model.bodyId}',
             );
             break;
+          case NotificationType.MEDIA_DATA_CHANGE:
+            _show(
+              model,
+              'Modified Media',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
+            break;
+          case NotificationType.MEDIA_MERGE:
+            _show(
+              model,
+              'Merged Media',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
+            break;
+          case NotificationType.MEDIA_DELETION:
+            _show(model, 'Deleted Media', '');
+            break;
           default:
             break;
         }
@@ -340,17 +357,39 @@ const _notificationQuery = r'''
           user {id name avatar {large}}
           createdAt
         }
+        ... on RelatedMediaAdditionNotification {
+          id
+          type
+          media {id type title {userPreferred} coverImage {large}}
+          createdAt
+        }
+        ... on MediaDataChangeNotification {
+          id
+          type
+          reason
+          media {id type title {userPreferred} coverImage {large}}
+          createdAt
+        }
+        ... on MediaMergeNotification {
+          id
+          type
+          reason
+          deletedMediaTitles
+          media {id type title {userPreferred} coverImage {large}}
+          createdAt
+        }
+        ... on MediaDeletionNotification {
+          id
+          type
+          reason
+          deletedMediaTitle
+          createdAt
+        }
         ... on AiringNotification {
           id
           type
           episode
-          media {id type bannerImage title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on RelatedMediaAdditionNotification {
-          id
-          type
-          media {id type bannerImage title {userPreferred} coverImage {large}}
+          media {id type title {userPreferred} coverImage {large}}
           createdAt
         }
       }

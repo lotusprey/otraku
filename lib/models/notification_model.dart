@@ -5,25 +5,28 @@ import 'package:otraku/utils/convert.dart';
 class NotificationModel {
   final int id;
   final NotificationType type;
-  final int? headId;
-  final int? bodyId;
-  final String? imageUrl;
   final List<String> texts;
   final bool markTextOnEvenIndex;
   final String timestamp;
+  final int? headId;
+  final int? bodyId;
+  final String? details;
+  final String? imageUrl;
   final Explorable? explorable;
 
   NotificationModel._({
     required this.id,
     required this.type,
-    required this.headId,
-    required this.bodyId,
-    required this.imageUrl,
     required this.texts,
     required this.markTextOnEvenIndex,
     required this.timestamp,
+    this.headId,
+    this.bodyId,
+    this.details,
+    this.imageUrl,
     this.explorable,
-  });
+  })  : assert((headId == null) == (imageUrl == null)),
+        assert(details == null || bodyId == null);
 
   factory NotificationModel(final Map<String, dynamic> map) {
     switch (map['type']) {
@@ -195,6 +198,74 @@ class NotificationModel {
           markTextOnEvenIndex: true,
           timestamp: Convert.millisToStr(map['createdAt']),
         );
+      case 'RELATED_MEDIA_ADDITION':
+        return NotificationModel._(
+          id: map['id'],
+          type: NotificationType.RELATED_MEDIA_ADDITION,
+          headId: map['media']['id'],
+          bodyId: map['media']['id'],
+          imageUrl: map['media']['coverImage']['large'],
+          texts: [
+            map['media']['title']['userPreferred'],
+            ' was added to the site',
+          ],
+          markTextOnEvenIndex: true,
+          timestamp: Convert.millisToStr(map['createdAt']),
+          explorable: map['media']['type'] == 'ANIME'
+              ? Explorable.anime
+              : Explorable.manga,
+        );
+      case 'MEDIA_DATA_CHANGE':
+        return NotificationModel._(
+          id: map['id'],
+          type: NotificationType.MEDIA_DATA_CHANGE,
+          headId: map['media']['id'],
+          bodyId: map['media']['id'],
+          imageUrl: map['media']['coverImage']['large'],
+          details: map['reason'],
+          texts: [
+            map['media']['title']['userPreferred'],
+            ' received site data changes',
+          ],
+          markTextOnEvenIndex: true,
+          timestamp: Convert.millisToStr(map['createdAt']),
+          explorable: map['media']['type'] == 'ANIME'
+              ? Explorable.anime
+              : Explorable.manga,
+        );
+      case 'MEDIA_MERGE':
+        final List<String> titles = map['deletedMediaTitles'] ?? [];
+        if (titles.isEmpty) throw ArgumentError('No titles in media merge');
+
+        return NotificationModel._(
+          id: map['id'],
+          type: NotificationType.MEDIA_MERGE,
+          headId: map['media']['id'],
+          bodyId: map['media']['id'],
+          imageUrl: map['media']['coverImage']['large'],
+          details: map['reason'],
+          texts: [
+            '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',
+            map['media']['title']['userPreferred'],
+          ],
+          markTextOnEvenIndex: false,
+          timestamp: Convert.millisToStr(map['createdAt']),
+          explorable: map['media']['type'] == 'ANIME'
+              ? Explorable.anime
+              : Explorable.manga,
+        );
+      case 'MEDIA_DELETION':
+        return NotificationModel._(
+          id: map['id'],
+          type: NotificationType.MEDIA_DELETION,
+          details: map['reason'],
+          texts: [
+            map['deletedMediaTitle'],
+            ' was deleted from the site',
+          ],
+          markTextOnEvenIndex: true,
+          timestamp: Convert.millisToStr(map['createdAt']),
+        );
       case 'AIRING':
         return NotificationModel._(
           id: map['id'],
@@ -207,26 +278,9 @@ class NotificationModel {
             map['episode'].toString(),
             ' of ',
             map['media']['title']['userPreferred'],
-            ' aired.',
+            ' aired',
           ],
           markTextOnEvenIndex: false,
-          timestamp: Convert.millisToStr(map['createdAt']),
-          explorable: map['media']['type'] == 'ANIME'
-              ? Explorable.anime
-              : Explorable.manga,
-        );
-      case 'RELATED_MEDIA_ADDITION':
-        return NotificationModel._(
-          id: map['id'],
-          type: NotificationType.RELATED_MEDIA_ADDITION,
-          headId: map['media']['id'],
-          bodyId: map['media']['id'],
-          imageUrl: map['media']['coverImage']['large'],
-          texts: [
-            map['media']['title']['userPreferred'],
-            ' was added to the site.',
-          ],
-          markTextOnEvenIndex: true,
           timestamp: Convert.millisToStr(map['createdAt']),
           explorable: map['media']['type'] == 'ANIME'
               ? Explorable.anime

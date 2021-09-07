@@ -81,7 +81,7 @@ class _Tile extends StatelessWidget {
                 child: Container(
                   color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(
-                    data.imageUrl,
+                    data.imageUrl!,
                     fit: full ? BoxFit.cover : BoxFit.contain,
                   ),
                 ),

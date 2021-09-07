@@ -4,7 +4,7 @@ class ReplyModel {
   final int id;
   final int userId;
   final String userName;
-  final String? userImage;
+  final String userImage;
   final String text;
   final String createdAt;
   int likeCount;

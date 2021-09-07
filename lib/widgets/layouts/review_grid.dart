@@ -79,7 +79,7 @@ class _Tile extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Config.RADIUS),
                   child: Hero(
                     tag: model.id,
-                    child: FadeImage(model.imageUrl),
+                    child: FadeImage(model.imageUrl!),
                   ),
                 ),
               ),

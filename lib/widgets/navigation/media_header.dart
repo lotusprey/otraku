@@ -39,7 +39,7 @@ class MediaHeader extends StatelessWidget {
           if (info?.banner != null)
             Column(
               children: [
-                Expanded(child: FadeImage(info!.banner)),
+                Expanded(child: FadeImage(info!.banner!)),
                 SizedBox(height: height - bannerHeight),
               ],
             ),

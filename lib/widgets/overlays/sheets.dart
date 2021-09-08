@@ -25,7 +25,8 @@ class Sheet extends StatelessWidget {
         builder: (_) => sheet,
         isScrollControlled: isScrollControlled,
         backgroundColor: Colors.transparent,
-        barrierColor: barrierColour,
+        barrierColor: barrierColour ??
+            Theme.of(ctx).colorScheme.background.withAlpha(200),
       );
 
   final Widget child;
@@ -49,12 +50,19 @@ class Sheet extends StatelessWidget {
       margin: EdgeInsets.only(
         left: sideMargin,
         right: sideMargin,
-        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 20,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         borderRadius: Config.BORDER_RADIUS,
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 15,
+            offset: Offset(5, 5),
+            color: Colors.black45,
+          ),
+        ],
       ),
       child: Column(
         children: [

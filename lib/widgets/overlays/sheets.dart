@@ -419,27 +419,24 @@ class MediaSortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final length = MediaSort.values.length;
     final prefTitle = Get.find<ViewerController>().settings!.titleLanguage;
-    MediaSort titleAsc;
-    MediaSort titleDesc;
+    late MediaSort titleAsc;
+    late MediaSort titleDesc;
 
-    if (describeEnum(MediaSort.values[length - 2]).contains(prefTitle)) {
-      titleAsc = MediaSort.values[length - 2];
-      titleDesc = MediaSort.values[length - 1];
-    } else if (describeEnum(MediaSort.values[length - 4]).contains(prefTitle)) {
-      titleAsc = MediaSort.values[length - 4];
-      titleDesc = MediaSort.values[length - 3];
-    } else {
-      titleAsc = MediaSort.values[length - 6];
-      titleDesc = MediaSort.values[length - 5];
-    }
+    // Check which title is the preferred one.
+    for (int i = 0; i < length; i += 2)
+      if (describeEnum(MediaSort.values[i]).contains(prefTitle)) {
+        titleAsc = MediaSort.values[i];
+        titleDesc = MediaSort.values[i + 1];
+      }
 
     int currentIndex = initial.index ~/ 2;
     bool currentlyDesc = initial.index % 2 == 0 ? false : true;
 
     if (currentIndex > (length - 5) ~/ 2) currentIndex = (length - 6) ~/ 2;
 
-    final options = <String>[];
-    for (int i = 0; i < length - 6; i += 2)
+    // Gather the sort options as user-readable strings.
+    final options = ['Date Added'];
+    for (int i = 2; i < length - 6; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
     options.add('Title');
 

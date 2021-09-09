@@ -6,6 +6,7 @@ class SettingsModel {
   final ScoreFormat scoreFormat;
   final EntrySort defaultSort;
   final String titleLanguage;
+  final String staffNameLanguage;
   final int activityMergeTime;
   final bool splitCompletedAnime;
   final bool splitCompletedManga;
@@ -18,6 +19,7 @@ class SettingsModel {
     required this.scoreFormat,
     required this.defaultSort,
     required this.titleLanguage,
+    required this.staffNameLanguage,
     required this.activityMergeTime,
     required this.splitCompletedAnime,
     required this.splitCompletedManga,
@@ -36,6 +38,8 @@ class SettingsModel {
         defaultSort:
             EntrySortHelper.getEnum(map['mediaListOptions']['rowOrder']),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
+        staffNameLanguage:
+            map['options']['staffNameLanguage'] ?? 'ROMAJI_WESTERN',
         activityMergeTime: map['options']['activityMergeTime'] ?? 720,
         splitCompletedAnime: map['mediaListOptions']['animeList']
                 ['splitCompletedSectionByFormat'] ??

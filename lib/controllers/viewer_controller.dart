@@ -10,6 +10,7 @@ class ViewerController extends GetxController {
         unreadNotificationCount
         options {
           titleLanguage 
+          staffNameLanguage
           activityMergeTime
           displayAdultContent
           airingNotifications

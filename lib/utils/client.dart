@@ -90,23 +90,25 @@ abstract class Client {
   // be popped.
   // silentErr - No need of a dialog on error.
   static Future<Map<String, dynamic>?> request(
-    String request,
+    String query,
     Map<String, dynamic>? variables, {
     bool popOnErr = true,
     bool silentErr = false,
   }) async {
-    bool erred = false;
+    IOException? err;
 
     final response = await post(
       _url,
-      body: json.encode({'query': request, 'variables': variables}),
+      body: json.encode({'query': query, 'variables': variables}),
       headers: _headers,
-    ).catchError((err) {
-      if (!silentErr) _handleErr(popOnErr, ioErr: err as IOException);
-      erred = true;
-    });
+    ).catchError((e) => err = e);
 
-    if (erred || response.body.isEmpty) {
+    if (err != null) {
+      if (!silentErr) _handleErr(popOnErr, ioErr: err);
+      return null;
+    }
+
+    if (response.body.isEmpty) {
       if (!silentErr)
         _handleErr(popOnErr, apiErr: ['Empty AniList response...']);
       return null;
@@ -138,15 +140,18 @@ abstract class Client {
 
     if (popOnErr) Navigator.pop(context);
 
-    if (ioErr != null && ioErr is SocketException) {
+    if (ioErr != null) {
       showPopUp(
         context,
         ConfirmationDialog(
           content: ioErr.toString(),
-          title: 'Internet connection problem',
+          title: ioErr is SocketException
+              ? 'Internet connection problem'
+              : 'Device request failed',
           mainAction: 'Ok',
         ),
       );
+
       return;
     }
 
@@ -157,15 +162,12 @@ abstract class Client {
       return;
     }
 
-    final text = ioErr?.toString() ?? apiErr!.join('\n');
-
     showPopUp(
       context,
       ConfirmationDialog(
-        content: text,
-        title:
-            ioErr == null ? 'A query error occured' : 'A request error occured',
-        mainAction: 'Sad',
+        content: apiErr?.join('\n'),
+        title: 'Faulty query',
+        mainAction: 'Ok',
       ),
     );
   }

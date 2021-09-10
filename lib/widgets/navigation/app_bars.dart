@@ -185,6 +185,7 @@ class AppBarIcon extends StatelessWidget {
       tooltip: tooltip,
       onPressed: onTap,
       iconSize: Theming.ICON_BIG,
+      splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
       padding: Config.PADDING,

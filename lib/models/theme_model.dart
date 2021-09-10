@@ -42,7 +42,7 @@ class ThemeModel {
         disabledColor: primary,
         unselectedWidgetColor: primary,
         toggleableActiveColor: secondary,
-        splashColor: Colors.transparent,
+        splashColor: highlight,
         highlightColor: Colors.transparent,
         colorScheme: ColorScheme(
           brightness: brightness,

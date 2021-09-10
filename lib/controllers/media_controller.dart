@@ -161,7 +161,7 @@ class MediaController extends OverscrollController {
             _model!.characters.hasNextPage ||
         val == REL_STAFF &&
             _model!.staff.items.isEmpty &&
-            _model!.staff.hasNextPage) fetchRelationPage();
+            _model!.staff.hasNextPage) _fetchRelationPage();
   }
 
   bool get isLoading => _isLoading;
@@ -214,9 +214,9 @@ class MediaController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async =>
-      _tab == RELATIONS ? fetchRelationPage() : fetchReviewPage();
+      _tab == RELATIONS ? _fetchRelationPage() : _fetchReviewPage();
 
-  Future<void> fetchRelationPage() async {
+  Future<void> _fetchRelationPage() async {
     final ofCharacters = _relationsTab() == REL_CHARACTERS;
     _isLoading = true;
 
@@ -236,7 +236,7 @@ class MediaController extends OverscrollController {
     _isLoading = false;
   }
 
-  Future<void> fetchReviewPage() async {
+  Future<void> _fetchReviewPage() async {
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {

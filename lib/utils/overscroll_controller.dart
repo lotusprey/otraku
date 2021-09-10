@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
 // A Get controller that can fetch data on overscroll.
@@ -27,7 +28,8 @@ abstract class OverscrollController extends GetxController {
   bool _canLoad = true;
 
   Future<void> _listener() async {
-    if (scrollCtrl.lastPos.pixels > scrollCtrl.lastPos.maxScrollExtent - 100 &&
+    if (scrollCtrl.lastPos.userScrollDirection == ScrollDirection.reverse &&
+        scrollCtrl.lastPos.pixels > scrollCtrl.lastPos.maxScrollExtent - 100 &&
         _canLoad &&
         hasNextPage) {
       _canLoad = false;

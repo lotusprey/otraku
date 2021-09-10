@@ -48,58 +48,54 @@ class MediaSocialView extends StatelessWidget {
 
             return SliverGrid(
               delegate: SliverChildBuilderDelegate(
-                (_, index) {
-                  if (index == items.length - 5) ctrl.fetchReviewPage();
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ExploreIndexer(
-                        id: items[index].userId,
-                        imageUrl: items[index].avatar,
-                        explorable: Explorable.user,
-                        child: Row(
-                          children: [
-                            Hero(
-                              tag: items[index].userId,
-                              child: ClipRRect(
-                                borderRadius: Config.BORDER_RADIUS,
-                                child: FadeImage(
-                                  items[index].avatar,
-                                  height: 50,
-                                  width: 50,
-                                ),
+                (_, index) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExploreIndexer(
+                      id: items[index].userId,
+                      imageUrl: items[index].avatar,
+                      explorable: Explorable.user,
+                      child: Row(
+                        children: [
+                          Hero(
+                            tag: items[index].userId,
+                            child: ClipRRect(
+                              borderRadius: Config.BORDER_RADIUS,
+                              child: FadeImage(
+                                items[index].avatar,
+                                height: 50,
+                                width: 50,
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            Text(items[index].username),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(items[index].username),
+                        ],
                       ),
-                      const SizedBox(height: 5),
-                      clipper,
-                      Expanded(
-                        child: ExploreIndexer(
-                          id: items[index].reviewId,
-                          imageUrl: ctrl.model!.info.banner,
-                          explorable: Explorable.review,
-                          child: Container(
-                            width: double.infinity,
-                            padding: Config.PADDING,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: Config.BORDER_RADIUS,
-                            ),
-                            child: Text(
-                              items[index].summary,
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
+                    ),
+                    const SizedBox(height: 5),
+                    clipper,
+                    Expanded(
+                      child: ExploreIndexer(
+                        id: items[index].reviewId,
+                        imageUrl: ctrl.model!.info.banner,
+                        explorable: Explorable.review,
+                        child: Container(
+                          width: double.infinity,
+                          padding: Config.PADDING,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            borderRadius: Config.BORDER_RADIUS,
+                          ),
+                          child: Text(
+                            items[index].summary,
+                            style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ),
                       ),
-                    ],
-                  );
-                },
+                    ),
+                  ],
+                ),
                 childCount: items.length,
               ),
               gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(

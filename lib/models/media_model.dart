@@ -52,7 +52,7 @@ class MediaModel {
 
         voiceActors.add(ConnectionModel(
           id: va['id'],
-          title: va['name']['full'],
+          title: va['name']['userPreferred'],
           imageUrl: va['image']['large'],
           type: Explorable.staff,
           subtitle: language,
@@ -61,7 +61,7 @@ class MediaModel {
 
       items.add(ConnectionModel(
         id: connection['node']['id'],
-        title: connection['node']['name']['full'],
+        title: connection['node']['name']['userPreferred'],
         imageUrl: connection['node']['image']['large'],
         subtitle: Convert.clarifyEnum(connection['role']),
         type: Explorable.character,
@@ -79,7 +79,7 @@ class MediaModel {
     for (final connection in map['staff']['edges'])
       items.add(ConnectionModel(
         id: connection['node']['id'],
-        title: connection['node']['name']['full'],
+        title: connection['node']['name']['userPreferred'],
         subtitle: connection['role'],
         imageUrl: connection['node']['image']['large'],
         type: Explorable.staff,

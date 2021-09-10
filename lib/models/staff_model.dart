@@ -1,8 +1,6 @@
 class StaffModel {
   final int id;
-  final String firstName;
-  final String middleName;
-  final String lastName;
+  final String name;
   final List<String> altNames;
   final String description;
   final String? imageUrl;
@@ -19,6 +17,8 @@ class StaffModel {
 
   StaffModel._({
     required this.id,
+    required this.name,
+    required this.description,
     required this.imageUrl,
     required this.language,
     required this.primaryOccupations,
@@ -27,10 +27,6 @@ class StaffModel {
     required this.age,
     required this.startYear,
     required this.endYear,
-    this.firstName = '',
-    this.middleName = '',
-    this.lastName = '',
-    this.description = '',
     this.altNames = const [],
     this.favourites = 0,
     this.isFavourite = false,
@@ -50,10 +46,9 @@ class StaffModel {
 
     return StaffModel._(
       id: map['id'],
-      firstName: map['name']['first'] ?? '',
-      middleName: map['name']['middle'] ?? '',
-      lastName: map['name']['last'] ?? '',
+      name: map['name']['userPreferred'] ?? '',
       altNames: alts,
+      description: map['description'] ?? '',
       imageUrl: map['image']['large'],
       language: map['languageV2'],
       primaryOccupations: occupations,
@@ -62,7 +57,6 @@ class StaffModel {
       age: map['age'],
       startYear: yearsActive.length > 0 ? yearsActive[0] : null,
       endYear: yearsActive.length > 1 ? yearsActive[1] : null,
-      description: map['description'] ?? '',
       favourites: map['favourites'] ?? 0,
       isFavourite: map['isFavourite'] ?? false,
       isFavouriteBlocked: map['isFavouriteBlocked'] ?? false,

@@ -27,17 +27,19 @@ class ViewerController extends GetxController {
   ''';
 
   static const _settingsMutation = r'''
-    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $activityMergeTime: Int, 
-        $displayAdultContent: Boolean, $airingNotifications: Boolean, $scoreFormat: ScoreFormat, $rowOrder: String, 
-        $notificationOptions: [NotificationOptionInput], $splitCompletedAnime: Boolean, 
-        $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean) {
-      UpdateUser(about: $about, titleLanguage: $titleLanguage, activityMergeTime: $activityMergeTime, 
-          displayAdultContent: $displayAdultContent, airingNotifications: $airingNotifications,
-          scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
+    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
+        $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
+        $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
+        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean) {
+      UpdateUser(about: $about, titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
+          activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
+          airingNotifications: $airingNotifications, scoreFormat: $scoreFormat,
+          rowOrder: $rowOrder, notificationOptions: $notificationOptions,
           animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, advancedScoringEnabled: $advancedScoringEnabled},
           mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga, advancedScoringEnabled: $advancedScoringEnabled}) {
         options {
           titleLanguage
+          staffNameLanguage
           activityMergeTime
           displayAdultContent
           airingNotifications

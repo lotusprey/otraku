@@ -1,8 +1,6 @@
 class CharacterModel {
   final int id;
-  final String firstName;
-  final String middleName;
-  final String lastName;
+  final String name;
   final List<String> altNames;
   final List<String> altNamesSpoilers;
   final String description;
@@ -15,13 +13,11 @@ class CharacterModel {
 
   CharacterModel._({
     required this.id,
+    required this.name,
+    required this.description,
     required this.imageUrl,
     required this.gender,
     required this.age,
-    this.firstName = '',
-    this.middleName = '',
-    this.lastName = '',
-    this.description = '',
     this.altNames = const [],
     this.altNamesSpoilers = const [],
     this.favourites = 0,
@@ -41,15 +37,13 @@ class CharacterModel {
 
     return CharacterModel._(
       id: map['id'],
-      firstName: map['name']['first'] ?? '',
-      middleName: map['name']['middle'] ?? '',
-      lastName: map['name']['last'] ?? '',
+      name: map['name']['userPreferred'] ?? '',
       altNames: alts,
       altNamesSpoilers: altsSpoilers,
+      description: map['description'] ?? '',
       imageUrl: map['image']['large'],
       gender: map['gender'],
       age: map['age'],
-      description: map['description'] ?? '',
       favourites: map['favourites'] ?? 0,
       isFavourite: map['isFavourite'] ?? false,
       isFavouriteBlocked: map['isFavouriteBlocked'] ?? false,

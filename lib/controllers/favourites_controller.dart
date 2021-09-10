@@ -24,10 +24,10 @@ class FavouritesController extends OverscrollController {
       pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}
     }
     fragment character on CharacterConnection {
-      pageInfo {hasNextPage} nodes {id name {full} image {large}}
+      pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
     }
     fragment staff on StaffConnection {
-      pageInfo {hasNextPage} nodes {id name {full} image {large}}
+      pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
     }
     fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
   ''';

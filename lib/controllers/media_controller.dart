@@ -84,15 +84,15 @@ class MediaController extends OverscrollController {
         pageInfo {hasNextPage}
         edges {
           role
-          voiceActors {id name{full} language image{large}}
-          node {id name{full} image{large}}
+          voiceActors {id name{userPreferred} language image{large}}
+          node {id name{userPreferred} image{large}}
         }
       }
     }
     fragment staff on Media {
       staff(page: $staffPage) {
         pageInfo {hasNextPage}
-        edges {role node {id name{full} image{large}}}
+        edges {role node {id name{userPreferred} image{large}}}
       }
     }
     fragment reviews on Media {

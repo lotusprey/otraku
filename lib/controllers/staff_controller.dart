@@ -32,7 +32,7 @@ class StaffController extends OverscrollController {
             }
             characters {
               id
-              name {full}
+              name {userPreferred}
               image {large}
             }
           }
@@ -53,7 +53,7 @@ class StaffController extends OverscrollController {
     }
     fragment person on Staff {
       id
-      name{first middle last native alternative}
+      name{userPreferred native alternative}
       image{large}
       description(asHtml: true)
       languageV2
@@ -187,7 +187,7 @@ class StaffController extends OverscrollController {
         if (char != null)
           connections.add(ConnectionModel(
               id: char['id'],
-              title: char['name']['full'],
+              title: char['name']['userPreferred'],
               imageUrl: char['image']['large'],
               type: Explorable.character,
               subtitle: Convert.clarifyEnum(connection['characterRole']),

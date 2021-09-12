@@ -147,17 +147,15 @@ class OptionSheet extends StatelessWidget {
 class SelectionSheet<T> extends StatelessWidget {
   final List<String> options;
   final List<T> values;
-  final List<T> inclusive;
-  final List<T>? exclusive;
-  final Function(List<T>, List<T>?) onDone;
+  final List<T> names;
+  final void Function(List<T>) onDone;
   final bool fixHeight;
 
   SelectionSheet({
     required this.onDone,
     required this.options,
     required this.values,
-    required this.inclusive,
-    this.exclusive,
+    required this.names,
     this.fixHeight = false,
   });
 
@@ -170,32 +168,63 @@ class SelectionSheet<T> extends StatelessWidget {
           physics:
               fixHeight ? const NeverScrollableScrollPhysics() : Config.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          itemBuilder: (_, index) => exclusive == null
-              ? TwoStateField(
-                  title: options[index],
-                  initial: inclusive.contains(values[index]),
-                  onChanged: (val) => val
-                      ? inclusive.add(values[index])
-                      : inclusive.remove(values[index]),
-                )
-              : ThreeStateField(
-                  title: options[index],
-                  initialState: inclusive.contains(values[index])
-                      ? 1
-                      : exclusive!.contains(values[index])
-                          ? 2
-                          : 0,
-                  onChanged: (state) {
-                    if (state == 0)
-                      exclusive!.remove(values[index]);
-                    else if (state == 1)
-                      inclusive.add(values[index]);
-                    else {
-                      inclusive.remove(values[index]);
-                      exclusive!.add(values[index]);
-                    }
-                  },
-                ),
+          itemBuilder: (_, index) => TwoStateField(
+            title: options[index],
+            initial: names.contains(values[index]),
+            onChanged: (val) =>
+                val ? names.add(values[index]) : names.remove(values[index]),
+          ),
+          itemCount: options.length,
+          itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
+        ),
+        onDone: () => onDone(names),
+      );
+}
+
+class SelectionToggleSheet<T> extends StatelessWidget {
+  final List<String> options;
+  final List<T> values;
+  final List<T> inclusive;
+  final List<T> exclusive;
+  final void Function(List<T>, List<T>) onDone;
+  final bool fixHeight;
+
+  SelectionToggleSheet({
+    required this.onDone,
+    required this.options,
+    required this.values,
+    required this.inclusive,
+    required this.exclusive,
+    this.fixHeight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) => Sheet(
+        height: fixHeight
+            ? options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50
+            : null,
+        child: ListView.builder(
+          physics:
+              fixHeight ? const NeverScrollableScrollPhysics() : Config.PHYSICS,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          itemBuilder: (_, index) => ThreeStateField(
+            title: options[index],
+            initialState: inclusive.contains(values[index])
+                ? 1
+                : exclusive.contains(values[index])
+                    ? 2
+                    : 0,
+            onChanged: (state) {
+              if (state == 0)
+                exclusive.remove(values[index]);
+              else if (state == 1)
+                inclusive.add(values[index]);
+              else {
+                inclusive.remove(values[index]);
+                exclusive.add(values[index]);
+              }
+            },
+          ),
           itemCount: options.length,
           itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
         ),

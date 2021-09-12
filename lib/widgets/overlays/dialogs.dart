@@ -46,6 +46,28 @@ class _PopUpAnimationState extends State<PopUpAnimation>
       );
 }
 
+class InputDialog extends StatelessWidget {
+  final String initial;
+  final void Function(String) onChanged;
+
+  InputDialog({required this.initial, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    String text = initial;
+
+    return TextFormField(
+      maxLines: 5,
+      initialValue: initial,
+      onChanged: (t) => text = t,
+      onEditingComplete: () {
+        Navigator.pop(context);
+        onChanged(text.trim());
+      },
+    );
+  }
+}
+
 // A basic container for a dialog.
 class DialogBox extends StatelessWidget {
   final Widget child;

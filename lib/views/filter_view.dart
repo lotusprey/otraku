@@ -12,7 +12,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/layouts/chip_grid.dart';
+import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FilterView extends StatelessWidget {
@@ -148,19 +148,13 @@ class FilterView extends StatelessWidget {
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
-            inclusive: changes[Filterable.STATUS_IN],
-            openSheet: ({
-              required List<String> inclusive,
-              required List<String>? exclusive,
-              required void Function(List<String>, List<String>?) onDone,
-            }) =>
-                Sheet.show(
+            names: changes[Filterable.STATUS_IN],
+            edit: (names, onDone) => Sheet.show(
               ctx: context,
               sheet: SelectionSheet(
                 options: statusOptions,
                 values: statusValues,
-                inclusive: inclusive,
-                exclusive: exclusive != null ? exclusive : null,
+                names: names,
                 fixHeight: statusOptions.length <= 10,
                 onDone: onDone,
               ),
@@ -170,42 +164,31 @@ class FilterView extends StatelessWidget {
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            inclusive: changes[Filterable.FORMAT_IN],
-            openSheet: ({
-              required List<String> inclusive,
-              required List<String>? exclusive,
-              required void Function(List<String>, List<String>?) onDone,
-            }) =>
-                Sheet.show(
+            names: changes[Filterable.FORMAT_IN],
+            edit: (names, onDone) => Sheet.show(
               ctx: context,
               sheet: SelectionSheet(
                 options: formatOptions,
                 values: formatValues,
-                inclusive: inclusive,
-                exclusive: exclusive != null ? exclusive : null,
+                names: names,
                 fixHeight: formatOptions.length <= 10,
                 onDone: onDone,
               ),
               isScrollControlled: formatOptions.length <= 10,
             ),
           ),
-          ChipGrid(
+          ChipToggleGrid(
             title: 'Genres',
             placeholder: 'genres',
             inclusive: changes[Filterable.GENRE_IN],
             exclusive: changes[Filterable.GENRE_NOT_IN],
-            openSheet: ({
-              required List<String> inclusive,
-              required List<String>? exclusive,
-              required void Function(List<String>, List<String>?) onDone,
-            }) =>
-                Sheet.show(
+            edit: (inclusive, exclusive, onDone) => Sheet.show(
               ctx: context,
-              sheet: SelectionSheet(
+              sheet: SelectionToggleSheet(
                 options: explorer.genres,
                 values: explorer.genres,
                 inclusive: inclusive,
-                exclusive: exclusive != null ? exclusive : null,
+                exclusive: exclusive,
                 fixHeight: explorer.genres.length <= 10,
                 onDone: onDone,
               ),
@@ -213,22 +196,17 @@ class FilterView extends StatelessWidget {
             ),
           ),
           if (collectionTag == null)
-            ChipGrid(
+            ChipToggleGrid(
               title: 'Tags',
               placeholder: 'tags',
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
-              openSheet: ({
-                required List<String> inclusive,
-                required List<String>? exclusive,
-                required void Function(List<String>, List<String>?) onDone,
-              }) =>
-                  Sheet.show(
+              edit: (inclusive, exclusive, onDone) => Sheet.show(
                 ctx: context,
                 sheet: TagSelectionSheet(
                   tags: explorer.tags,
                   inclusive: inclusive,
-                  exclusive: exclusive!,
+                  exclusive: exclusive,
                   onDone: onDone,
                 ),
                 isScrollControlled: false,

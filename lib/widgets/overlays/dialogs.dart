@@ -56,14 +56,27 @@ class InputDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     String text = initial;
 
-    return TextFormField(
-      maxLines: 5,
-      initialValue: initial,
-      onChanged: (t) => text = t,
-      onEditingComplete: () {
-        Navigator.pop(context);
-        onChanged(text.trim());
-      },
+    return Center(
+      child: Material(
+        color: Colors.transparent,
+        child: TextFormField(
+          maxLines: 5,
+          autofocus: true,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline2,
+          decoration: const InputDecoration(
+            filled: false,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+          ),
+          keyboardType: TextInputType.name,
+          initialValue: initial,
+          onChanged: (t) => text = t,
+          onEditingComplete: () {
+            onChanged(text.trim());
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 }

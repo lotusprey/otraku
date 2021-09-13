@@ -37,8 +37,8 @@ class _ChipGrid extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onClear,
                   child: Container(
-                    height: Theming.ICON_BIG,
-                    width: Theming.ICON_BIG,
+                    height: Theming.ICON_SMALL,
+                    width: Theming.ICON_SMALL,
                     margin: Config.PADDING,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -54,19 +54,19 @@ class _ChipGrid extends StatelessWidget {
               ),
             AppBarIcon(
               tooltip: 'Edit',
-              icon: Ionicons.options_outline,
+              icon: Ionicons.add_circle_outline,
               colour: Theme.of(context).colorScheme.primary,
               onTap: onEdit,
             ),
           ],
         ),
         children.isNotEmpty
-            ? Wrap(spacing: 10, runSpacing: 10, children: children)
+            ? Wrap(spacing: 5, children: children)
             : SizedBox(
                 height: Config.MATERIAL_TAP_TARGET_SIZE,
                 child: Center(
                   child: Text(
-                    'No selected $placeholder',
+                    'No $placeholder',
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                 ),
@@ -205,15 +205,18 @@ class _ChipToggleGridState extends State<ChipToggleGrid> {
   }
 }
 
+// The names can get modified. On every change onChanged gets called.
 class ChipNamingGrid extends StatefulWidget {
   final String title;
   final String placeholder;
   final List<String> names;
+  final void Function() onChanged;
 
   ChipNamingGrid({
     required this.title,
     required this.placeholder,
     required this.names,
+    required this.onChanged,
   });
 
   @override
@@ -228,8 +231,14 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
       children.add(ChipNamingField(
         key: UniqueKey(),
         name: widget.names[i],
-        onChanged: (n) => setState(() => widget.names[i] = n),
-        onRemoved: () => setState(() => widget.names.removeAt(i)),
+        onChanged: (n) {
+          setState(() => widget.names[i] = n);
+          widget.onChanged();
+        },
+        onRemoved: () {
+          setState(() => widget.names.removeAt(i));
+          widget.onChanged();
+        },
       ));
 
     return _ChipGrid(
@@ -244,6 +253,7 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
         ).then((_) {
           if (name.isEmpty || widget.names.contains(name)) return;
           setState(() => widget.names.add(name));
+          widget.onChanged();
         });
       },
     );

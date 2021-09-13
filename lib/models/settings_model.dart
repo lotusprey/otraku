@@ -13,6 +13,7 @@ class SettingsModel {
   final bool displayAdultContent;
   final bool airingNotifications;
   final bool advancedScoringEnabled;
+  final List<String> advancedScores;
   final Map<String, bool> notificationOptions;
 
   SettingsModel._({
@@ -26,6 +27,7 @@ class SettingsModel {
     required this.airingNotifications,
     required this.displayAdultContent,
     required this.advancedScoringEnabled,
+    required this.advancedScores,
     required this.notificationOptions,
   });
 
@@ -52,6 +54,9 @@ class SettingsModel {
         advancedScoringEnabled: map['mediaListOptions']['animeList']
                 ['advancedScoringEnabled'] ??
             false,
+        advancedScores: List<String>.from(
+          map['mediaListOptions']['animeList']['advancedScoring'] ?? [],
+        ),
         notificationOptions: Map.fromIterable(
           map['options']['notificationOptions'],
           key: (n) => n['type'],

@@ -65,8 +65,9 @@ class _ChipToggleFieldState extends State<ChipToggleField> {
       );
 }
 
-// A chip that can be renamed when tapped.
-class ChipNamingField extends StatefulWidget {
+// A chip that can be renamed when tapped. It's a statelessWidget, because the
+// state is managed by it's parent (likely ChipNamingGrid).
+class ChipNamingField extends StatelessWidget {
   final String name;
   final void Function() onRemoved;
   final void Function(String) onChanged;
@@ -79,37 +80,19 @@ class ChipNamingField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChipNamingFieldState createState() => _ChipNamingFieldState();
-}
-
-class _ChipNamingFieldState extends State<ChipNamingField> {
-  late String _name;
-
-  @override
-  void initState() {
-    super.initState();
-    _name = widget.name;
-  }
-
-  @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => showPopUp(
           context,
           InputDialog(
-            initial: _name,
-            onChanged: (name) {
-              if (name.isNotEmpty) {
-                setState(() => _name = name);
-                widget.onChanged(_name);
-              }
-            },
+            initial: name,
+            onChanged: (n) => n.isNotEmpty ? onChanged(n) : null,
           ),
         ),
         child: Chip(
-          label: Text(widget.name, style: Theme.of(context).textTheme.button),
+          label: Text(name, style: Theme.of(context).textTheme.button),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           deleteIconColor: Theme.of(context).colorScheme.onSecondary,
-          onDeleted: widget.onRemoved,
+          onDeleted: onRemoved,
         ),
       );
 }

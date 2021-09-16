@@ -6,7 +6,6 @@ import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class FriendsView extends StatelessWidget {
   final int id;
@@ -15,27 +14,25 @@ class FriendsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GetBuilder<FriendsController>(
         tag: id.toString(),
-        builder: (friends) => NavScaffold(
+        builder: (ctrl) => NavScaffold(
+          setPage: (page) => ctrl.onFollowing = page == 0 ? true : false,
+          index: ctrl.onFollowing ? 0 : 1,
           appBar: ShadowAppBar(
-            title: friends.onFollowing ? 'Following' : 'Followers',
+            title: ctrl.onFollowing ? 'Following' : 'Followers',
           ),
-          navBar: NavBar(
-            items: {
-              'Following': Ionicons.people_circle,
-              'Followers': Ionicons.person_circle,
-            },
-            onChanged: (page) => friends.onFollowing = page == 0 ? true : false,
-            initial: friends.onFollowing ? 0 : 1,
-          ),
-          child: friends.users.isNotEmpty
+          items: const {
+            'Following': Ionicons.people_circle,
+            'Followers': Ionicons.person_circle,
+          },
+          child: ctrl.users.isNotEmpty
               ? TileGrid(
-                  models: friends.users,
-                  scrollCtrl: friends.scrollCtrl,
+                  models: ctrl.users,
+                  scrollCtrl: ctrl.scrollCtrl,
                   full: false,
-                  key: friends.key,
+                  key: ctrl.key,
                 )
               : Center(
-                  child: friends.hasNextPage
+                  child: ctrl.hasNextPage
                       ? const Loader()
                       : Text(
                           'No Users',

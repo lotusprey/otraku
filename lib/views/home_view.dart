@@ -10,7 +10,6 @@ import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/nav_scaffold.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends StatelessWidget {
@@ -53,21 +52,19 @@ class HomeView extends StatelessWidget {
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
       child: ValueListenableBuilder<int>(
-        valueListenable: Config.homeIndex,
+        valueListenable: Config.homeNotifier,
         builder: (_, index, __) => NavScaffold(
+          index: index,
           child: tabs[index],
           floating: fabs[index],
-          navBar: NavBar(
-            items: {
-              'Feed': Ionicons.file_tray_outline,
-              'Anime': Ionicons.film_outline,
-              'Manga': Ionicons.bookmark_outline,
-              'Explore': Ionicons.compass_outline,
-              'Profile': Ionicons.person_outline,
-            },
-            onChanged: (page) => Config.setHomeIndex(page),
-            initial: index,
-          ),
+          setPage: (i) => Config.homeIndex = i,
+          items: const {
+            'Feed': Ionicons.file_tray_outline,
+            'Anime': Ionicons.film_outline,
+            'Manga': Ionicons.bookmark_outline,
+            'Explore': Ionicons.compass_outline,
+            'Profile': Ionicons.person_outline,
+          },
         ),
       ),
     );

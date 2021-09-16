@@ -11,7 +11,6 @@ import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -57,16 +56,14 @@ class MediaView extends StatelessWidget {
           );
 
         return NavScaffold(
+          index: ctrl.tab,
+          setPage: (page) => ctrl.tab = page,
           floating: _ActionButtons(ctrl, pageTop),
-          navBar: NavBar(
-            items: {
-              'Info': Ionicons.book_outline,
-              'Relations': Icons.emoji_people_outlined,
-              'Social': Icons.rate_review_outlined,
-            },
-            initial: ctrl.tab,
-            onChanged: (index) => ctrl.tab = index,
-          ),
+          items: const {
+            'Info': Ionicons.book_outline,
+            'Relations': Icons.emoji_people_outlined,
+            'Social': Icons.rate_review_outlined,
+          },
           child: ctrl.tab == MediaController.INFO
               ? MediaInfoView(ctrl, header)
               : ctrl.tab == MediaController.RELATIONS

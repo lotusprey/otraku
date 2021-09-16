@@ -8,7 +8,6 @@ import 'package:otraku/views/settings_notifications_view.dart';
 import 'package:otraku/views/settings_about_view.dart';
 import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -23,16 +22,14 @@ class SettingsView extends StatelessWidget {
 
     return GetBuilder<SettingsController>(
       builder: (settings) => NavScaffold(
-        navBar: NavBar(
-          items: const {
-            'App': Ionicons.color_palette_outline,
-            'Content': Ionicons.tv_outline,
-            'Notifications': Ionicons.notifications_outline,
-            'About': Ionicons.information_outline,
-          },
-          onChanged: (page) => settings.pageIndex = page,
-          initial: settings.pageIndex,
-        ),
+        setPage: (page) => settings.pageIndex = page,
+        index: settings.pageIndex,
+        items: const {
+          'App': Ionicons.color_palette_outline,
+          'Content': Ionicons.tv_outline,
+          'Notifications': Ionicons.notifications_outline,
+          'About': Ionicons.information_outline,
+        },
         appBar: ShadowAppBar(title: _pageNames[settings.pageIndex]),
         child: _tabs[settings.pageIndex],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
@@ -22,26 +23,16 @@ class NavScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double? swipeOffset;
-
-    final body = GestureDetector(
+    final body = DragDetector(
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 200),
         child: child,
       ),
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragCancel: () => swipeOffset = null,
-      onHorizontalDragStart: (start) => swipeOffset = start.globalPosition.dx,
-      onHorizontalDragUpdate: (update) {
-        if (swipeOffset == null) return;
-        final dif = swipeOffset! - update.globalPosition.dx;
-
-        if (dif > 30) {
+      onSwipe: (goRight) {
+        if (goRight) {
           if (index < items.length - 1) setPage(index + 1);
-          swipeOffset = null;
-        } else if (dif < -30) {
+        } else {
           if (index > 0) setPage(index - 1);
-          swipeOffset = null;
         }
       },
     );

@@ -12,6 +12,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/theming.dart';
+import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -190,29 +191,16 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
 
   @override
   Widget build(BuildContext context) {
-    DragStartDetails? dragStart;
-    DragUpdateDetails? dragUpdate;
-
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (!_onSearch) ...[
             Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: widget.scrollToTop,
-                onHorizontalDragStart: (details) => dragStart = details,
-                onHorizontalDragUpdate: (details) => dragUpdate = details,
-                onHorizontalDragEnd: (_) {
-                  if (dragUpdate == null || dragStart == null) return;
-                  if (dragUpdate!.globalPosition.dx <
-                      dragStart!.globalPosition.dx)
-                    widget.swipe(1);
-                  else
-                    widget.swipe(-1);
-                },
+              child: DragDetector(
                 child: widget.title,
+                onTap: widget.scrollToTop,
+                onSwipe: (goRight) => widget.swipe(goRight ? 1 : -1),
               ),
             ),
             if (widget.search != null)
@@ -253,6 +241,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                               icon:
                                   const Icon(Ionicons.chevron_forward_outline),
                               iconSize: Theming.ICON_SMALL,
+                              splashColor: Colors.transparent,
                               color: Theme.of(context).colorScheme.primary,
                               onPressed: () =>
                                   setState(() => _onSearch = false),
@@ -263,6 +252,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                               padding: const EdgeInsets.all(0),
                               icon: const Icon(Icons.close_rounded),
                               iconSize: Theming.ICON_SMALL,
+                              splashColor: Colors.transparent,
                               color: Theme.of(context).colorScheme.primary,
                               onPressed: () {
                                 _ctrl.clear();

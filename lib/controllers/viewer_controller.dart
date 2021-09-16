@@ -68,7 +68,7 @@ class ViewerController extends GetxController {
   }
 
   Future<void> fetch() async {
-    final data = await Client.request(_viewerQuery, {}, popOnErr: false);
+    final data = await Client.request(_viewerQuery);
     if (data == null) return;
 
     if (_settings == null) _settings = SettingsModel(data['Viewer']);
@@ -78,8 +78,7 @@ class ViewerController extends GetxController {
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
-    final data =
-        await Client.request(_settingsMutation, variables, popOnErr: false);
+    final data = await Client.request(_settingsMutation, variables);
     if (data == null) return false;
     _settings = SettingsModel(data['UpdateUser']);
     return true;

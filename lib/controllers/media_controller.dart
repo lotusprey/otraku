@@ -256,7 +256,6 @@ class MediaController extends OverscrollController {
             ? _toggleFavouriteAnimeMutation
             : _toggleFavouriteMangaMutation,
         {'id': id},
-        popOnErr: false,
       ) !=
       null;
 

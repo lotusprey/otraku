@@ -70,11 +70,7 @@ class UserController extends GetxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    final data = await Client.request(
-      _userQuery,
-      {'id': id},
-      popOnErr: id != Client.viewerId,
-    );
+    final data = await Client.request(_userQuery, {'id': id});
     if (data == null) return;
 
     _model = UserModel(data['User'], id == Client.viewerId);

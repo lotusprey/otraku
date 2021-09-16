@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/routing/navigation.dart';
@@ -64,7 +63,7 @@ abstract class Client {
 
     // Fetch the viewer's id, if needed.
     if (_viewerId == null) {
-      final data = await request(_idQuery, null, popOnErr: false);
+      final data = await request(_idQuery);
       if (data == null) return false;
       _viewerId = data['Viewer']['id'];
       Config.storage.write(_ID_KEY, _viewerId);
@@ -86,15 +85,10 @@ abstract class Client {
   static bool loggedIn() => _accessToken != null && _viewerId != null;
 
   // Sends a request to the site.
-  // popOnErr - after confirmation, not only the dialog, but the page too should
-  // be popped.
-  // silentErr - No need of a dialog on error.
   static Future<Map<String, dynamic>?> request(
-    String query,
-    Map<String, dynamic>? variables, {
-    bool popOnErr = true,
-    bool silentErr = false,
-  }) async {
+    String query, [
+    Map<String, dynamic>? variables,
+  ]) async {
     IOException? err;
 
     final response = await post(
@@ -104,13 +98,12 @@ abstract class Client {
     ).catchError((e) => err = e);
 
     if (err != null) {
-      if (!silentErr) _handleErr(popOnErr, ioErr: err);
+      _handleErr(ioErr: err);
       return null;
     }
 
     if (response.body.isEmpty) {
-      if (!silentErr)
-        _handleErr(popOnErr, apiErr: ['Empty AniList response...']);
+      _handleErr(apiErr: ['Empty AniList response...']);
       return null;
     }
 
@@ -121,7 +114,7 @@ abstract class Client {
           .map((e) => e['message'].toString())
           .toList();
 
-      if (!silentErr) _handleErr(popOnErr, apiErr: messages);
+      _handleErr(apiErr: messages);
 
       return null;
     }
@@ -130,15 +123,14 @@ abstract class Client {
   }
 
   // Handle errors that have occured after fetching.
-  static void _handleErr(
-    bool popOnErr, {
+  static void _handleErr({
     IOException? ioErr,
     List<String>? apiErr,
   }) {
+    assert(ioErr != null || apiErr != null);
+
     final context = Navigation.it.ctx;
     if (context == null) return;
-
-    if (popOnErr) Navigator.pop(context);
 
     if (ioErr != null) {
       showPopUp(

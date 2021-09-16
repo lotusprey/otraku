@@ -163,11 +163,7 @@ class CollectionController extends OverscrollController implements Filterable {
     _isLoading.value = true;
     Map<String, dynamic>? data = await Client.request(
       _collectionQuery,
-      {
-        'userId': userId,
-        'type': ofAnime ? 'ANIME' : 'MANGA',
-      },
-      popOnErr: userId != Client.viewerId,
+      {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
     if (data == null) {
@@ -310,7 +306,6 @@ class CollectionController extends OverscrollController implements Filterable {
     final data = await Client.request(
       _updateProgressMutation,
       {'mediaId': model.mediaId, 'progress': model.progress + 1},
-      popOnErr: false,
     );
     if (data == null) return;
 
@@ -369,11 +364,8 @@ class CollectionController extends OverscrollController implements Filterable {
 
   Future<void> removeEntry(EntryModel entry) async {
     // Update database item.
-    final data = await Client.request(
-      _removeEntryMutation,
-      {'entryId': entry.entryId},
-      popOnErr: false,
-    );
+    final data =
+        await Client.request(_removeEntryMutation, {'entryId': entry.entryId});
 
     if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
       return;

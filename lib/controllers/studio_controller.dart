@@ -125,11 +125,7 @@ class StudioController extends OverscrollController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(
-      _toggleFavouriteMutation,
-      {'id': id},
-      popOnErr: false,
-    );
+    final data = await Client.request(_toggleFavouriteMutation, {'id': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }

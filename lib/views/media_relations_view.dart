@@ -166,6 +166,7 @@ class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverFillRemaining(
+      hasScrollBody: false,
       child: Center(
         child: text == null
             ? Loader()

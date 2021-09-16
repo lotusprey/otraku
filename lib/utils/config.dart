@@ -20,17 +20,18 @@ abstract class Config {
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = Radius.circular(10);
   static const BORDER_RADIUS = BorderRadius.all(RADIUS);
-  static const PHYSICS = BouncingScrollPhysics();
   static const FADE_DURATION = Duration(milliseconds: 300);
+  static const PHYSICS =
+      AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
 
   static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
   static final storage = GetStorage();
 
-  static final _index =
+  static final homeNotifier =
       ValueNotifier<int>(storage.read(STARTUP_PAGE) ?? HomeView.ANIME_LIST);
 
-  static ValueNotifier<int> get homeIndex => _index;
-  static void setHomeIndex(int val) {
-    if (val > -1 && val < 5) _index.value = val;
+  static int get homeIndex => homeNotifier.value;
+  static set homeIndex(int i) {
+    if (i > -1 && i < 5) homeNotifier.value = i;
   }
 }

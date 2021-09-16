@@ -63,7 +63,7 @@ class HomeUserView extends StatelessWidget {
                     Ionicons.film,
                     'Anime',
                     () => id == Client.viewerId
-                        ? Config.setHomeIndex(HomeView.ANIME_LIST)
+                        ? Config.homeIndex = HomeView.ANIME_LIST
                         : Navigation.it.push(
                             Navigation.collectionRoute,
                             args: [id, true],
@@ -73,7 +73,7 @@ class HomeUserView extends StatelessWidget {
                     Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
-                        ? Config.setHomeIndex(HomeView.MANGA_LIST)
+                        ? Config.homeIndex = HomeView.MANGA_LIST
                         : Navigation.it.push(
                             Navigation.collectionRoute,
                             args: [id, false],

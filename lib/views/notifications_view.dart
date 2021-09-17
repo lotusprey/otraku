@@ -205,22 +205,43 @@ class _NotificationDialog extends StatelessWidget {
       ),
     );
 
+    final coverWidth = MediaQuery.of(context).size.width < 430.0
+        ? MediaQuery.of(context).size.width * 0.35
+        : 150.0;
+    final coverHeight = coverWidth / 0.7;
+
     return DialogBox(
-      Column(
-        children: [
-          if (model.imageUrl == null)
-            title
-          else
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                FadeImage(model.imageUrl!),
-                const SizedBox(width: 5),
-                title,
-              ],
-            ),
-          if (model.details != null) HtmlContent(model.details!),
-        ],
+      Padding(
+        padding: Config.PADDING,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (model.imageUrl == null)
+              title
+            else
+              Flexible(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    ClipRRect(
+                      borderRadius: Config.BORDER_RADIUS,
+                      child: FadeImage(
+                        model.imageUrl!,
+                        width: coverWidth,
+                        height: coverHeight,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(child: title),
+                  ],
+                ),
+              ),
+            if (model.details != null) ...[
+              const SizedBox(height: 10),
+              HtmlContent(model.details!),
+            ],
+          ],
+        ),
       ),
     );
   }

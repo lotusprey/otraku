@@ -35,6 +35,7 @@ class MediaInfoModel {
   final tags = <TagModel>[];
   final String? source;
   final String? hashtag;
+  final String? siteUrl;
   final String? countryOfOrigin;
 
   MediaInfoModel._({
@@ -67,6 +68,7 @@ class MediaInfoModel {
     required this.genres,
     required this.source,
     required this.hashtag,
+    required this.siteUrl,
     required this.countryOfOrigin,
   });
 
@@ -118,6 +120,7 @@ class MediaInfoModel {
       genres: List<String>.from(map['genres']),
       source: Convert.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
+      siteUrl: map['siteUrl'],
       countryOfOrigin: Convert.COUNTRY_CODES[map['countryOfOrigin']],
     );
 

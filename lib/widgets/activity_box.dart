@@ -191,97 +191,87 @@ class _InteractionButtonsState extends State<InteractionButtons> {
           ),
           onPressed: () => Sheet.show(
             ctx: context,
-            sheet: Sheet(
-              height:
-                  Config.MATERIAL_TAP_TARGET_SIZE * (model.deletable ? 4 : 3),
-              child: ListTileTheme(
-                dense: true,
-                iconColor: Theme.of(context).colorScheme.onBackground,
-                child: Column(
-                  children: [
-                    if (model.deletable)
-                      ListTile(
-                        leading: const Icon(Ionicons.trash),
-                        title: Text(
-                          'Delete',
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          showPopUp(
-                            context,
-                            ConfirmationDialog(
-                              title: 'Delete?',
-                              mainAction: 'Yes',
-                              secondaryAction: 'No',
-                              onConfirm: () {
-                                widget.delete();
+            sheet: ListTileSheet([
+              if (model.deletable)
+                ListTile(
+                  leading: const Icon(Ionicons.trash),
+                  title: Text(
+                    'Delete',
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showPopUp(
+                      context,
+                      ConfirmationDialog(
+                        title: 'Delete?',
+                        mainAction: 'Yes',
+                        secondaryAction: 'No',
+                        onConfirm: () {
+                          widget.delete();
 
-                                // If an activityPage cannot be pushed, it's
-                                // already opened and should be closed.
-                                if (widget.pushActivityPage == null)
-                                  Navigator.pop(context);
-                              },
-                            ),
-                          );
+                          // If an activityPage cannot be pushed, it's
+                          // already opened and should be closed.
+                          if (widget.pushActivityPage == null)
+                            Navigator.pop(context);
                         },
                       ),
-                    ListTile(
-                      leading: Icon(
-                        !model.isSubscribed
-                            ? Ionicons.notifications_outline
-                            : Ionicons.notifications_off_outline,
-                      ),
-                      title: Text(
-                        !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        model.toggleSubscription();
-                        widget.toggleSubscribtion();
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Ionicons.clipboard_outline),
-                      title: Text(
-                        'Copy Link',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        if (model.siteUrl == null) {
-                          Toast.show(context, 'Url is null');
-                          return;
-                        }
-
-                        Toast.copy(context, model.siteUrl!);
-                      },
-                    ),
-                    ListTile(
-                      leading: const Icon(Ionicons.link),
-                      title: Text(
-                        'Open in Browser',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        if (model.siteUrl == null) {
-                          Toast.show(context, 'Url is null');
-                          return;
-                        }
-
-                        try {
-                          launch(model.siteUrl!);
-                        } catch (err) {
-                          Toast.show(context, 'Couldn\'t open link: $err');
-                        }
-                      },
-                    ),
-                  ],
+                    );
+                  },
                 ),
+              ListTile(
+                leading: Icon(
+                  !model.isSubscribed
+                      ? Ionicons.notifications_outline
+                      : Ionicons.notifications_off_outline,
+                ),
+                title: Text(
+                  !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  model.toggleSubscription();
+                  widget.toggleSubscribtion();
+                },
               ),
-            ),
+              ListTile(
+                leading: const Icon(Ionicons.clipboard_outline),
+                title: Text(
+                  'Copy Link',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  if (model.siteUrl == null) {
+                    Toast.show(context, 'Url is null');
+                    return;
+                  }
+
+                  Toast.copy(context, model.siteUrl!);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Ionicons.link),
+                title: Text(
+                  'Open in Browser',
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  if (model.siteUrl == null) {
+                    Toast.show(context, 'Url is null');
+                    return;
+                  }
+
+                  try {
+                    launch(model.siteUrl!);
+                  } catch (err) {
+                    Toast.show(context, 'Couldn\'t open link: $err');
+                  }
+                },
+              ),
+            ]),
           ),
         ),
         Tooltip(

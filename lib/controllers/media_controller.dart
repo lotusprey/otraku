@@ -49,6 +49,7 @@ class MediaController extends OverscrollController {
       tags {name description rank isMediaSpoiler isGeneralSpoiler}
       source
       hashtag
+      siteUrl
       countryOfOrigin
       mediaListEntry {
         id

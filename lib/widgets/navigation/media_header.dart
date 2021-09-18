@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
+import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MediaHeader extends StatelessWidget {
   final MediaController ctrl;
@@ -29,6 +34,14 @@ class MediaHeader extends StatelessWidget {
     return CustomSliverHeader(
       height: height,
       title: info?.preferredTitle,
+      actions: [
+        if (ctrl.model?.info.siteUrl != null)
+          Shade(AppBarIcon(
+            tooltip: 'More',
+            icon: Ionicons.ellipsis_horizontal,
+            onTap: () => _showSheet(context, ctrl.model!.info),
+          )),
+      ],
       background: Stack(
         fit: StackFit.expand,
         children: [
@@ -143,4 +156,45 @@ class MediaHeader extends StatelessWidget {
       ),
     );
   }
+
+  void _showSheet(BuildContext context, MediaInfoModel model) => Sheet.show(
+      ctx: context,
+      sheet: ListTileSheet([
+        ListTile(
+          leading: const Icon(Ionicons.clipboard_outline),
+          title: Text(
+            'Copy Link',
+            style: Theme.of(context).textTheme.bodyText2,
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            if (model.siteUrl == null) {
+              Toast.show(context, 'Url is null');
+              return;
+            }
+
+            Toast.copy(context, model.siteUrl!);
+          },
+        ),
+        ListTile(
+          leading: const Icon(Ionicons.link),
+          title: Text(
+            'Open in Browser',
+            style: Theme.of(context).textTheme.bodyText2,
+          ),
+          onTap: () {
+            Navigator.pop(context);
+            if (model.siteUrl == null) {
+              Toast.show(context, 'Url is null');
+              return;
+            }
+
+            try {
+              launch(model.siteUrl!);
+            } catch (err) {
+              Toast.show(context, 'Couldn\'t open link: $err');
+            }
+          },
+        ),
+      ]));
 }

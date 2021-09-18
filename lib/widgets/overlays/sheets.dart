@@ -484,3 +484,19 @@ class MediaSortSheet extends StatelessWidget {
     );
   }
 }
+
+// A sheet of ListTile widgets.
+class ListTileSheet extends StatelessWidget {
+  final List<ListTile> children;
+  const ListTileSheet(this.children);
+
+  @override
+  Widget build(BuildContext context) => Sheet(
+        height: Config.MATERIAL_TAP_TARGET_SIZE * children.length,
+        child: ListTileTheme(
+          child: Column(children: children),
+          iconColor: Theme.of(context).colorScheme.onBackground,
+          dense: true,
+        ),
+      );
+}

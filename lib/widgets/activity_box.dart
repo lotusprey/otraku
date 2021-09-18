@@ -184,6 +184,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           constraints: const BoxConstraints(maxHeight: Theming.ICON_SMALL),
+          splashColor: Colors.transparent,
           tooltip: 'More',
           icon: const Icon(
             Ionicons.ellipsis_horizontal,

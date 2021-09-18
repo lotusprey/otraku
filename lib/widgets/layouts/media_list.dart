@@ -302,7 +302,7 @@ class _MediaListTile extends StatelessWidget {
 
 class _Progress extends StatelessWidget {
   final ListEntryModel entry;
-  final void Function(ListEntryModel)? increment;
+  final Future<void> Function(ListEntryModel)? increment;
   _Progress(this.entry, this.increment);
 
   @override

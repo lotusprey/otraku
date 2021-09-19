@@ -317,16 +317,25 @@ class _Progress extends StatelessWidget {
     if (increment == null || entry.progress == entry.progressMax)
       return Tooltip(message: 'Progress', child: text);
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => increment!(entry),
+    return TextButton(
+      style: ButtonStyle(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        minimumSize: MaterialStateProperty.all(const Size(0, 20)),
+        maximumSize: MaterialStateProperty.all(const Size.fromHeight(20)),
+        padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
+      ),
+      onPressed: () => increment!(entry),
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(
           children: [
             text,
             const SizedBox(width: 5),
-            const Icon(Ionicons.add_outline, size: Theming.ICON_SMALL),
+            Icon(
+              Ionicons.add_outline,
+              size: Theming.ICON_SMALL,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ],
         ),
       ),

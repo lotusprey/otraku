@@ -39,6 +39,7 @@ class UserController extends GetxController {
         chaptersRead
         volumesRead
         scores(sort: MEAN_SCORE) {count meanScore minutesWatched chaptersRead score}
+        lengths {count meanScore minutesWatched chaptersRead length}
         formats {count meanScore minutesWatched chaptersRead format}
         statuses {count meanScore minutesWatched chaptersRead status}
         countries {count meanScore minutesWatched chaptersRead country}

@@ -9,6 +9,7 @@ class StatisticsModel {
   final int chaptersRead;
   final int volumesRead;
   final scores = <NumberStatistics>[];
+  final lengths = <NumberStatistics>[];
   final formats = <EnumStatistics>[];
   final statuses = <EnumStatistics>[];
   final countries = <EnumStatistics>[];
@@ -35,6 +36,8 @@ class StatisticsModel {
     );
     for (final s in map['scores'])
       model.scores.add(NumberStatistics(s, 'score'));
+    for (final l in map['lengths'])
+      model.lengths.add(NumberStatistics(l, 'length'));
     for (final f in map['formats'])
       model.formats.add(EnumStatistics(f, 'format'));
     for (final s in map['statuses'])
@@ -43,6 +46,21 @@ class StatisticsModel {
       c['country'] = Convert.COUNTRY_CODES[c['country']];
       model.countries.add(EnumStatistics(c, 'country'));
     }
+
+    // The backend can't sort them by length, so it has to be done locally.
+    model.lengths.sort((a, b) {
+      if (a.number == '?') return 1;
+      if (b.number == '?') return -1;
+
+      if (a.number[a.number.length - 1] == '+') return 1;
+      if (b.number[b.number.length - 1] == '+') return -1;
+
+      if (a.number.length > b.number.length) return 1;
+      if (a.number.length < b.number.length) return -1;
+
+      return a.number.compareTo(b.number);
+    });
+
     return model;
   }
 }
@@ -52,7 +70,7 @@ class NumberStatistics {
   final double meanScore;
   final int minutesWatched;
   final int chaptersRead;
-  final int number;
+  final String number;
 
   NumberStatistics._({
     required this.count,
@@ -68,7 +86,7 @@ class NumberStatistics {
         meanScore: map['meanScore'].toDouble(),
         minutesWatched: map['minutesWatched'],
         chaptersRead: map['chaptersRead'],
-        number: map[key],
+        number: (map[key] ?? '?').toString(),
       );
 }
 

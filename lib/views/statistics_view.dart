@@ -17,7 +17,11 @@ class StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final keyAnime = UniqueKey();
+    final keyManga = UniqueKey();
+
     return GetBuilder<StatisticsController>(
+      id: StatisticsController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {
         return NavScaffold(
@@ -31,41 +35,76 @@ class StatisticsView extends StatelessWidget {
             'Manga': Ionicons.bookmark_outline,
           },
           child: ListView(
-            key: ctrl.key,
+            key: ctrl.onAnime ? keyAnime : keyManga,
             padding: EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
             physics: Config.PHYSICS,
             children: [
               _Title('Details'),
               _Details(ctrl),
               if (ctrl.model.scores.isNotEmpty) ...[
+                const SizedBox(height: 10),
                 _Title(
                   'Score',
-                  BubbleTabs<bool>(
+                  BubbleTabs<int>(
                     items: ctrl.onAnime
-                        ? const {'Titles': true, 'Hours': false}
-                        : const {'Titles': true, 'Chapters': false},
-                    current: () => ctrl.scoresOnCount,
-                    onChanged: (val) => ctrl.scoresOnCount = val,
+                        ? const {'Titles': 0, 'Hours': 1}
+                        : const {'Titles': 0, 'Chapters': 1},
+                    current: () => ctrl.scoreChartTab,
+                    onChanged: (val) => ctrl.scoreChartTab = val,
                     onSame: () {},
-                    itemWidth: 80,
+                    itemWidth: 100,
                   ),
                 ),
-                _ScoreChart(id),
-                GridView(
-                  shrinkWrap: true,
-                  padding: Config.PADDING,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _Card('Format Distribution', ctrl.model.formats),
-                    _Card('Status Distribution', ctrl.model.statuses),
-                    _Card('Country Distribution', ctrl.model.countries),
-                  ],
-                  gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-                    minWidth: 340,
-                    height: 250,
+                GetBuilder<StatisticsController>(
+                  id: StatisticsController.ID_SCORE,
+                  tag: id.toString(),
+                  builder: (_) => _BarChart(
+                    stats: ctrl.model.scores,
+                    onAnime: ctrl.onAnime,
+                    chartTab: ctrl.scoreChartTab,
+                    wide: false,
                   ),
                 ),
               ],
+              if (ctrl.model.lengths.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                _Title(
+                  ctrl.onAnime ? 'Episodes' : 'Chapters',
+                  BubbleTabs<int>(
+                    items: ctrl.onAnime
+                        ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
+                        : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
+                    current: () => ctrl.lengthChartTab,
+                    onChanged: (val) => ctrl.lengthChartTab = val,
+                    onSame: () {},
+                    itemWidth: 100,
+                  ),
+                ),
+                GetBuilder<StatisticsController>(
+                  id: StatisticsController.ID_LENGTH,
+                  tag: id.toString(),
+                  builder: (_) => _BarChart(
+                    stats: ctrl.model.lengths,
+                    onAnime: ctrl.onAnime,
+                    chartTab: ctrl.lengthChartTab,
+                    wide: true,
+                  ),
+                ),
+              ],
+              GridView(
+                shrinkWrap: true,
+                padding: Config.PADDING,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _PieChart('Format Distribution', ctrl.model.formats),
+                  _PieChart('Status Distribution', ctrl.model.statuses),
+                  _PieChart('Country Distribution', ctrl.model.countries),
+                ],
+                gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+                  minWidth: 340,
+                  height: 250,
+                ),
+              ),
             ],
           ),
         );
@@ -81,13 +120,14 @@ class _Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(text, style: Theme.of(context).textTheme.headline6),
         ),
-        const Spacer(),
         if (tabs != null) tabs!,
       ],
     );
@@ -136,7 +176,7 @@ class _Details extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: true,
       padding: Config.PADDING,
-      physics: Config.PHYSICS,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       itemBuilder: (_, i) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -167,108 +207,112 @@ class _Details extends StatelessWidget {
   }
 }
 
-class _ScoreChart extends StatelessWidget {
-  final int id;
-  _ScoreChart(this.id);
+class _BarChart extends StatelessWidget {
+  final List<NumberStatistics> stats;
+  final bool onAnime;
+  final int chartTab;
+  final bool wide;
+
+  _BarChart({
+    required this.stats,
+    required this.onAnime,
+    required this.chartTab,
+    required this.wide,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final stats = Get.find<StatisticsController>(tag: id.toString());
+    double max = 200.0;
+    if (chartTab == StatisticsController.BY_COUNT) {
+      int maxCount = stats[0].count;
+      for (int i = 1; i < stats.length; i++)
+        if (maxCount < stats[i].count) maxCount = stats[i].count;
+      max /= maxCount;
+    } else if (chartTab == StatisticsController.BY_MEAN_SCORE) {
+      double maxMeanScore = stats[0].meanScore;
+      for (int i = 1; i < stats.length; i++)
+        if (maxMeanScore < stats[i].meanScore)
+          maxMeanScore = stats[i].meanScore;
+      max /= maxMeanScore;
+    } else if (onAnime) {
+      int maxMinutes = stats[0].minutesWatched;
+      for (int i = 1; i < stats.length; i++)
+        if (maxMinutes < stats[i].minutesWatched)
+          maxMinutes = stats[i].minutesWatched;
+      max /= maxMinutes;
+    } else {
+      int maxChapters = stats[0].chaptersRead;
+      for (int i = 1; i < stats.length; i++)
+        if (maxChapters < stats[i].chaptersRead)
+          maxChapters = stats[i].chaptersRead;
+      max /= maxChapters;
+    }
 
-    return Obx(
-      () {
-        final scores = stats.model.scores;
-
-        double max = 200.0;
-        if (stats.scoresOnCount) {
-          int maxCount = scores[0].count;
-          for (int i = 1; i < scores.length; i++)
-            if (maxCount < scores[i].count) maxCount = scores[i].count;
-          max /= maxCount;
-        } else {
-          if (stats.onAnime) {
-            int maxMinutes = scores[0].minutesWatched;
-            for (int i = 1; i < scores.length; i++)
-              if (maxMinutes < scores[i].minutesWatched)
-                maxMinutes = scores[i].minutesWatched;
-            max /= maxMinutes;
+    return SizedBox(
+      height: 280,
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        physics: Config.PHYSICS,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (_, i) {
+          late num value;
+          late double height;
+          if (chartTab == StatisticsController.BY_COUNT) {
+            value = stats[i].count;
+            height = stats[i].count * max;
+          } else if (chartTab == StatisticsController.BY_MEAN_SCORE) {
+            value = stats[i].meanScore;
+            height = stats[i].meanScore * max;
+          } else if (onAnime) {
+            value = stats[i].minutesWatched ~/ 60;
+            height = stats[i].minutesWatched * max;
           } else {
-            int maxChapters = scores[0].chaptersRead;
-            for (int i = 1; i < scores.length; i++)
-              if (maxChapters < scores[i].chaptersRead)
-                maxChapters = scores[i].chaptersRead;
-            max /= maxChapters;
+            value = stats[i].chaptersRead;
+            height = stats[i].chaptersRead * max;
           }
-        }
 
-        return SizedBox(
-          height: 280,
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            physics: Config.PHYSICS,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (_, i) {
-              late int number;
-              late double height;
-              if (stats.scoresOnCount) {
-                number = scores[i].count;
-                height = scores[i].count * max;
-              } else {
-                if (stats.onAnime) {
-                  number = scores[i].minutesWatched ~/ 60;
-                  height = scores[i].minutesWatched * max;
-                } else {
-                  number = scores[i].chaptersRead;
-                  height = scores[i].chaptersRead * max;
-                }
-              }
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    number.toString(),
-                    style: Theme.of(context).textTheme.subtitle1,
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                value.toString(),
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                height: height,
+                margin: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.5, 1],
+                    colors: [
+                      Theme.of(context).colorScheme.secondary,
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.2),
+                    ],
                   ),
-                  Container(
-                    height: height,
-                    margin: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: const [0.5, 1],
-                        colors: [
-                          Theme.of(context).colorScheme.secondary,
-                          Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withOpacity(0.2),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Text(
-                    scores[i].number.toString(),
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ],
-              );
-            },
-            itemExtent: 50,
-            itemCount: scores.length,
-          ),
-        );
-      },
+                ),
+              ),
+              Text(
+                stats[i].number,
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ],
+          );
+        },
+        itemExtent: wide ? 65 : 50,
+        itemCount: stats.length,
+      ),
     );
   }
 }
 
-class _Card extends StatelessWidget {
+class _PieChart extends StatelessWidget {
   final String title;
   final List<EnumStatistics> stats;
-  _Card(this.title, this.stats);
+  _PieChart(this.title, this.stats);
 
   @override
   Widget build(BuildContext context) {

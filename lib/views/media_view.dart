@@ -5,7 +5,7 @@ import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/views/media_info_view.dart';
-import 'package:otraku/views/media_relations_view.dart';
+import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/nav_scaffold.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
@@ -14,7 +14,6 @@ import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-// TODO rename relations
 class MediaView extends StatelessWidget {
   final int id;
   final String? coverUrl;
@@ -61,15 +60,15 @@ class MediaView extends StatelessWidget {
           index: ctrl.tab,
           setPage: (page) => ctrl.tab = page,
           trySubtab: (goRight) {
-            if (ctrl.tab == MediaController.RELATIONS) {
-              if (goRight && ctrl.relationsTab < 2) {
+            if (ctrl.tab == MediaController.OTHER) {
+              if (goRight && ctrl.subtab < 2) {
                 ctrl.scrollTo(pageTop);
-                ctrl.relationsTab++;
+                ctrl.subtab++;
                 return true;
               }
-              if (!goRight && ctrl.relationsTab > 0) {
+              if (!goRight && ctrl.subtab > 0) {
                 ctrl.scrollTo(pageTop);
-                ctrl.relationsTab--;
+                ctrl.subtab--;
                 return true;
               }
             }
@@ -78,13 +77,13 @@ class MediaView extends StatelessWidget {
           floating: _ActionButtons(id),
           items: const {
             'Info': Ionicons.book_outline,
-            'Relations': Icons.emoji_people_outlined,
+            'Other': Icons.emoji_people_outlined,
             'Social': Icons.rate_review_outlined,
           },
           child: ctrl.tab == MediaController.INFO
               ? MediaInfoView(ctrl, header)
-              : ctrl.tab == MediaController.RELATIONS
-                  ? MediaRelationsView(
+              : ctrl.tab == MediaController.OTHER
+                  ? MediaOtherView(
                       ctrl,
                       header,
                       () => ctrl.scrollTo(pageTop),
@@ -108,14 +107,14 @@ class __ActionButtonsState extends State<_ActionButtons> {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<MediaController>(
-      id: MediaController.ID_RELATIONS,
+      id: MediaController.ID_OTHER,
       tag: widget.id.toString(),
       builder: (ctrl) {
         final model = ctrl.model!;
 
         List<Widget> children = [
-          if (ctrl.tab == MediaController.RELATIONS &&
-              ctrl.relationsTab == MediaController.REL_CHARACTERS &&
+          if (ctrl.tab == MediaController.OTHER &&
+              ctrl.subtab == MediaController.CHARACTERS &&
               model.characters.items.isNotEmpty &&
               ctrl.availableLanguages.length > 1) ...[
             ActionButton(

@@ -126,16 +126,19 @@ class MediaController extends OverscrollController {
     }
   ''';
 
+  // Tabs.
   static const INFO = 0;
-  static const RELATIONS = 1;
+  static const OTHER = 1;
   static const SOCIAL = 2;
-  static const REL_MEDIA = 0;
-  static const REL_CHARACTERS = 1;
-  static const REL_STAFF = 2;
+
+  // subtabs of 'Other'.
+  static const RELATIONS = 0;
+  static const CHARACTERS = 1;
+  static const STAFF = 2;
 
   // GetBuilder ids.
   static const ID_MAIN = 0;
-  static const ID_RELATIONS = 1;
+  static const ID_OTHER = 1;
 
   // ***************************************************************************
   // DATA
@@ -146,7 +149,7 @@ class MediaController extends OverscrollController {
 
   MediaModel? _model;
   int _tab = INFO;
-  int _relationsTab = REL_MEDIA;
+  int _subtab = RELATIONS;
   final _staffLanguage = 'Japanese'.obs;
   final _availableLanguages = <String>[];
   bool _isLoading = false;
@@ -158,16 +161,16 @@ class MediaController extends OverscrollController {
     update([ID_MAIN]);
   }
 
-  int get relationsTab => _relationsTab;
-  set relationsTab(final int val) {
-    _relationsTab = val;
-    if (val == REL_CHARACTERS &&
+  int get subtab => _subtab;
+  set subtab(final int val) {
+    _subtab = val;
+    if (val == CHARACTERS &&
             _model!.characters.items.isEmpty &&
             _model!.characters.hasNextPage ||
-        val == REL_STAFF &&
+        val == STAFF &&
             _model!.staff.items.isEmpty &&
-            _model!.staff.hasNextPage) _fetchRelationPage();
-    update([ID_RELATIONS]);
+            _model!.staff.hasNextPage) _fetchOtherPage();
+    update([ID_OTHER]);
   }
 
   bool get isLoading => _isLoading;
@@ -176,11 +179,9 @@ class MediaController extends OverscrollController {
   bool get hasNextPage {
     if (_tab == SOCIAL) return _model?.reviews.hasNextPage ?? false;
 
-    if (_tab == RELATIONS) {
-      if (_tab == REL_CHARACTERS)
-        return _model?.characters.hasNextPage ?? false;
-
-      if (_tab == REL_STAFF) return _model?.characters.hasNextPage ?? false;
+    if (_tab == OTHER) {
+      if (_tab == CHARACTERS) return _model?.characters.hasNextPage ?? false;
+      if (_tab == STAFF) return _model?.characters.hasNextPage ?? false;
     }
 
     return false;
@@ -220,10 +221,10 @@ class MediaController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async =>
-      _tab == RELATIONS ? _fetchRelationPage() : _fetchReviewPage();
+      _tab == OTHER ? _fetchOtherPage() : _fetchReviewPage();
 
-  Future<void> _fetchRelationPage() async {
-    final ofCharacters = _relationsTab == REL_CHARACTERS;
+  Future<void> _fetchOtherPage() async {
+    final ofCharacters = _subtab == CHARACTERS;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
@@ -241,7 +242,7 @@ class MediaController extends OverscrollController {
       _model!.addStaff(result['Media']);
 
     _isLoading = false;
-    update([ID_RELATIONS]);
+    update([ID_OTHER]);
   }
 
   Future<void> _fetchReviewPage() async {

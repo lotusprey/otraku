@@ -13,11 +13,11 @@ import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
-class MediaRelationsView extends StatelessWidget {
+class MediaOtherView extends StatelessWidget {
   final MediaController ctrl;
   final Widget header;
   final void Function() scrollUp;
-  MediaRelationsView(this.ctrl, this.header, this.scrollUp);
+  MediaOtherView(this.ctrl, this.header, this.scrollUp);
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +29,18 @@ class MediaRelationsView extends StatelessWidget {
         SliverShadowAppBar([
           const Spacer(),
           GetBuilder<MediaController>(
-            id: MediaController.ID_RELATIONS,
+            id: MediaController.ID_OTHER,
             tag: ctrl.id.toString(),
             builder: (_) => BubbleTabs(
               items: const {
-                'Media': MediaController.REL_MEDIA,
-                'Characters': MediaController.REL_CHARACTERS,
-                'Staff': MediaController.REL_STAFF,
+                'Relations': MediaController.RELATIONS,
+                'Characters': MediaController.CHARACTERS,
+                'Staff': MediaController.STAFF,
               },
-              current: () => ctrl.relationsTab,
+              current: () => ctrl.subtab,
               onChanged: (int val) {
                 scrollUp();
-                ctrl.relationsTab = val;
+                ctrl.subtab = val;
               },
               onSame: scrollUp,
               itemWidth: 100,
@@ -51,21 +51,19 @@ class MediaRelationsView extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
           sliver: GetBuilder<MediaController>(
-            id: MediaController.ID_RELATIONS,
+            id: MediaController.ID_OTHER,
             tag: ctrl.id.toString(),
             builder: (_) {
-              if (ctrl.relationsTab == MediaController.REL_MEDIA) {
+              if (ctrl.subtab == MediaController.RELATIONS) {
                 final other = ctrl.model!.otherMedia;
 
                 if (other.isEmpty)
-                  return ctrl.isLoading
-                      ? _Empty(null)
-                      : _Empty('No Related Media');
+                  return ctrl.isLoading ? _Empty(null) : _Empty('No Relations');
 
                 return _RelationsGrid(ctrl.model!.otherMedia);
               }
 
-              if (ctrl.relationsTab == MediaController.REL_CHARACTERS) {
+              if (ctrl.subtab == MediaController.CHARACTERS) {
                 if (ctrl.model!.characters.items.isEmpty)
                   return ctrl.isLoading
                       ? _Empty(null)
@@ -176,7 +174,6 @@ class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverFillRemaining(
-      hasScrollBody: false,
       child: Center(
         child: text == null
             ? Loader()

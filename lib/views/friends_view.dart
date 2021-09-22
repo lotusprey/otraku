@@ -12,33 +12,38 @@ class FriendsView extends StatelessWidget {
   FriendsView(this.id);
 
   @override
-  Widget build(BuildContext context) => GetBuilder<FriendsController>(
-        tag: id.toString(),
-        builder: (ctrl) => NavScaffold(
-          setPage: (page) => ctrl.onFollowing = page == 0 ? true : false,
-          index: ctrl.onFollowing ? 0 : 1,
-          appBar: ShadowAppBar(
-            title: ctrl.onFollowing ? 'Following' : 'Followers',
-          ),
-          items: const {
-            'Following': Ionicons.people_circle,
-            'Followers': Ionicons.person_circle,
-          },
-          child: ctrl.users.isNotEmpty
-              ? TileGrid(
-                  models: ctrl.users,
-                  scrollCtrl: ctrl.scrollCtrl,
-                  full: false,
-                  key: ctrl.key,
-                )
-              : Center(
-                  child: ctrl.hasNextPage
-                      ? const Loader()
-                      : Text(
-                          'No Users',
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                ),
+  Widget build(BuildContext context) {
+    final keyFollowing = UniqueKey();
+    final keyFollowers = UniqueKey();
+
+    return GetBuilder<FriendsController>(
+      tag: id.toString(),
+      builder: (ctrl) => NavScaffold(
+        setPage: (page) => ctrl.onFollowing = page == 0 ? true : false,
+        index: ctrl.onFollowing ? 0 : 1,
+        appBar: ShadowAppBar(
+          title: ctrl.onFollowing ? 'Following' : 'Followers',
         ),
-      );
+        items: const {
+          'Following': Ionicons.people_circle,
+          'Followers': Ionicons.person_circle,
+        },
+        child: ctrl.users.isNotEmpty
+            ? TileGrid(
+                models: ctrl.users,
+                scrollCtrl: ctrl.scrollCtrl,
+                full: false,
+                key: ctrl.onFollowing ? keyFollowing : keyFollowers,
+              )
+            : Center(
+                child: ctrl.hasNextPage
+                    ? const Loader()
+                    : Text(
+                        'No Users',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+              ),
+      ),
+    );
+  }
 }

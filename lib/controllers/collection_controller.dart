@@ -259,7 +259,7 @@ class CollectionController extends OverscrollController implements Filterable {
     if (!newEntry.hiddenFromStatusLists) {
       bool added = false;
       for (final list in _lists)
-        if (newEntry.status == list.status &&
+        if (entry.listStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.insertSorted(entry, _filters[Filterable.SORT]);

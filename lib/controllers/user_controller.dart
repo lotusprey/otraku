@@ -39,6 +39,7 @@ class UserController extends GetxController {
         chaptersRead
         volumesRead
         scores(sort: MEAN_SCORE) {count meanScore minutesWatched chaptersRead score}
+        lengths {count meanScore minutesWatched chaptersRead length}
         formats {count meanScore minutesWatched chaptersRead format}
         statuses {count meanScore minutesWatched chaptersRead status}
         countries {count meanScore minutesWatched chaptersRead country}
@@ -47,10 +48,10 @@ class UserController extends GetxController {
         pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}
       }
       fragment character on CharacterConnection {
-        pageInfo {hasNextPage} nodes {id name {full} image {large}}
+        pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
       }
       fragment staff on StaffConnection {
-        pageInfo {hasNextPage} nodes {id name {full} image {large}}
+        pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
       }
       fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
     ''';
@@ -70,11 +71,7 @@ class UserController extends GetxController {
   // ***************************************************************************
 
   Future<void> fetch() async {
-    final data = await Client.request(
-      _userQuery,
-      {'id': id},
-      popOnErr: id != Client.viewerId,
-    );
+    final data = await Client.request(_userQuery, {'id': id});
     if (data == null) return;
 
     _model = UserModel(data['User'], id == Client.viewerId);

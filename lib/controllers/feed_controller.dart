@@ -116,7 +116,6 @@ class FeedController extends OverscrollController {
         'typeIn': _typeIn.map((t) => describeEnum(t)).toList(),
         'idNotInt': _idNotIn,
       },
-      popOnErr: id != null,
     );
     if (data == null) return;
 
@@ -148,11 +147,7 @@ class FeedController extends OverscrollController {
   }
 
   Future<void> deleteActivity(int activityId) async {
-    final data = await Client.request(
-      _deleteMutation,
-      {'id': activityId},
-      popOnErr: false,
-    );
+    final data = await Client.request(_deleteMutation, {'id': activityId});
     if (data == null) return;
 
     for (int i = 0; i < _activities().items.length; i++)

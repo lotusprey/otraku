@@ -45,7 +45,7 @@ class ExplorableModel {
   factory ExplorableModel.character(final Map<String, dynamic> map) =>
       ExplorableModel(
         id: map['id'],
-        text1: map['name']['full'],
+        text1: map['name']['userPreferred'],
         imageUrl: map['image']['large'],
         explorable: Explorable.character,
       );
@@ -53,7 +53,7 @@ class ExplorableModel {
   factory ExplorableModel.staff(final Map<String, dynamic> map) =>
       ExplorableModel(
         id: map['id'],
-        text1: map['name']['full'],
+        text1: map['name']['userPreferred'],
         imageUrl: map['image']['large'],
         explorable: Explorable.staff,
       );

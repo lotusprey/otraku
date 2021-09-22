@@ -23,7 +23,7 @@ class StaffView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final staff = Get.find<StaffController>(tag: id.toString());
+    final ctrl = Get.find<StaffController>(tag: id.toString());
     final axis = MediaQuery.of(context).size.width > 450
         ? Axis.horizontal
         : Axis.vertical;
@@ -36,7 +36,7 @@ class StaffView extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
-          controller: staff.scrollCtrl,
+          controller: ctrl.scrollCtrl,
           slivers: [
             GetBuilder<StaffController>(
               tag: id.toString(),
@@ -44,8 +44,7 @@ class StaffView extends StatelessWidget {
                 toggleFavourite: s.toggleFavourite,
                 isFavourite: s.model?.isFavourite,
                 favourites: s.model?.favourites,
-                text:
-                    '${s.model?.firstName} ${s.model?.middleName} ${s.model?.lastName}',
+                text: s.model?.name,
               ),
             ),
             GetBuilder<StaffController>(
@@ -77,7 +76,7 @@ class StaffView extends StatelessWidget {
                               showPopUp(context, ImageDialog(imageUrl)),
                         ),
                         const SizedBox(height: 10, width: 10),
-                        if (s.model != null) _Details(staff.model!, axis),
+                        if (s.model != null) _Details(ctrl.model!, axis),
                       ],
                     ),
                   ),
@@ -85,7 +84,7 @@ class StaffView extends StatelessWidget {
               ),
             ),
             Obx(() {
-              if (staff.characters.items.isEmpty && staff.roles.items.isEmpty)
+              if (ctrl.characters.items.isEmpty && ctrl.roles.items.isEmpty)
                 return const SliverToBoxAdapter();
 
               final offset =
@@ -93,16 +92,15 @@ class StaffView extends StatelessWidget {
                       Config.PADDING.top * 2;
 
               return SliverShadowAppBar([
-                staff.characters.items.isNotEmpty &&
-                        staff.roles.items.isNotEmpty
+                ctrl.characters.items.isNotEmpty && ctrl.roles.items.isNotEmpty
                     ? BubbleTabs(
                         items: const {'Characters': true, 'Staff Roles': false},
                         current: () => true,
                         onChanged: (bool value) {
-                          staff.onCharacters = value;
-                          staff.scrollTo(offset);
+                          ctrl.onCharacters = value;
+                          ctrl.scrollTo(offset);
                         },
-                        onSame: () => staff.scrollTo(offset),
+                        onSame: () => ctrl.scrollTo(offset),
                         itemWidth: 100,
                       )
                     : const SizedBox(),
@@ -113,10 +111,10 @@ class StaffView extends StatelessWidget {
                   onTap: () => Sheet.show(
                     ctx: context,
                     sheet: MediaSortSheet(
-                      staff.sort,
+                      ctrl.sort,
                       (sort) {
-                        staff.sort = sort;
-                        staff.scrollTo(offset);
+                        ctrl.sort = sort;
+                        ctrl.scrollTo(offset);
                       },
                     ),
                     isScrollControlled: true,
@@ -126,7 +124,7 @@ class StaffView extends StatelessWidget {
             }),
             Obx(() {
               final connections =
-                  staff.onCharacters ? staff.characters : staff.roles;
+                  ctrl.onCharacters ? ctrl.characters : ctrl.roles;
 
               if (connections.items.isEmpty) return const SliverToBoxAdapter();
 
@@ -159,12 +157,9 @@ class _Details extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GestureDetector(
-            onTap: () => Toast.copy(
-              context,
-              '${model.firstName} ${model.middleName} ${model.lastName}',
-            ),
+            onTap: () => Toast.copy(context, model.name),
             child: Text(
-              '${model.firstName} ${model.middleName} ${model.lastName}',
+              model.name,
               style: Theme.of(context).textTheme.headline2,
               textAlign: axis == Axis.vertical ? TextAlign.center : null,
             ),

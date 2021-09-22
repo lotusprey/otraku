@@ -1,6 +1,7 @@
-// The TITLE values must be at the end
-// because of how the MediaSortSheet works
+// Used for general media sorting. The naming is compatible with the API.
 enum MediaSort {
+  ID,
+  ID_DESC,
   TRENDING,
   TRENDING_DESC,
   POPULARITY,

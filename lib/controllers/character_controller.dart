@@ -27,7 +27,7 @@ class CharacterController extends OverscrollController {
     }
     fragment person on Character {
       id
-      name{first middle last native alternative alternativeSpoiler}
+      name{userPreferred native alternative alternativeSpoiler}
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
@@ -41,7 +41,7 @@ class CharacterController extends OverscrollController {
       pageInfo {hasNextPage}
       edges {
         characterRole
-        voiceActors(sort: [LANGUAGE]) {id name {full} image {large} language}
+        voiceActors(sort: [LANGUAGE]) {id name {userPreferred} image {large} language}
         node {id type title {userPreferred} coverImage {large}}
       }
     }
@@ -162,11 +162,7 @@ class CharacterController extends OverscrollController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(
-      _toggleFavouriteMutation,
-      {'id': id},
-      popOnErr: false,
-    );
+    final data = await Client.request(_toggleFavouriteMutation, {'id': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }
@@ -192,7 +188,7 @@ class CharacterController extends OverscrollController {
 
         voiceActors.add(ConnectionModel(
           id: va['id'],
-          title: va['name']['full'],
+          title: va['name']['userPreferred'],
           imageUrl: va['image']['large'],
           type: Explorable.staff,
           subtitle: language,

@@ -9,9 +9,9 @@ class ActivityModel {
   final int id;
   final ActivityType type;
   final bool deletable;
-  final int? agentId;
-  final String? agentName;
-  final String? agentImage;
+  final int agentId;
+  final String agentName;
+  final String agentImage;
   final int? recieverId;
   final String? recieverName;
   final String? recieverImage;

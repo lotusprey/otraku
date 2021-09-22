@@ -108,7 +108,6 @@ class ActionButton extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(30),
-              splashColor: Theme.of(context).colorScheme.primary,
               child: Icon(icon, color: Theme.of(context).colorScheme.secondary),
             ),
           ),

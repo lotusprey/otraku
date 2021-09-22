@@ -32,14 +32,14 @@ class ActivityView extends StatelessWidget {
                       children: [
                         Flexible(
                           child: ExploreIndexer(
-                            id: model.agentId!,
+                            id: model.agentId,
                             imageUrl: model.agentImage,
                             explorable: Explorable.user,
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Hero(
-                                  tag: model.agentId!,
+                                  tag: model.agentId,
                                   child: ClipRRect(
                                     borderRadius: Config.BORDER_RADIUS,
                                     child: FadeImage(
@@ -52,7 +52,7 @@ class ActivityView extends StatelessWidget {
                                 const SizedBox(width: 10),
                                 Flexible(
                                   child: Text(
-                                    model.agentName!,
+                                    model.agentName,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
@@ -78,7 +78,7 @@ class ActivityView extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: Config.BORDER_RADIUS,
                               child: FadeImage(
-                                model.recieverImage,
+                                model.recieverImage!,
                                 height: 40,
                                 width: 40,
                               ),

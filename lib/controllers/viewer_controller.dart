@@ -10,6 +10,7 @@ class ViewerController extends GetxController {
         unreadNotificationCount
         options {
           titleLanguage 
+          staffNameLanguage
           activityMergeTime
           displayAdultContent
           airingNotifications
@@ -18,7 +19,7 @@ class ViewerController extends GetxController {
         mediaListOptions {
           scoreFormat
           rowOrder
-          animeList {splitCompletedSectionByFormat customLists advancedScoringEnabled}
+          animeList {splitCompletedSectionByFormat customLists advancedScoring advancedScoringEnabled}
           mangaList {splitCompletedSectionByFormat customLists}
         }
     }
@@ -26,17 +27,20 @@ class ViewerController extends GetxController {
   ''';
 
   static const _settingsMutation = r'''
-    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $activityMergeTime: Int, 
-        $displayAdultContent: Boolean, $airingNotifications: Boolean, $scoreFormat: ScoreFormat, $rowOrder: String, 
-        $notificationOptions: [NotificationOptionInput], $splitCompletedAnime: Boolean, 
-        $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean) {
-      UpdateUser(about: $about, titleLanguage: $titleLanguage, activityMergeTime: $activityMergeTime, 
-          displayAdultContent: $displayAdultContent, airingNotifications: $airingNotifications,
-          scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, advancedScoringEnabled: $advancedScoringEnabled},
-          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga, advancedScoringEnabled: $advancedScoringEnabled}) {
+    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
+        $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
+        $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
+        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean, $advancedScoring: [String]) {
+      UpdateUser(about: $about, titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
+          activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
+          airingNotifications: $airingNotifications, scoreFormat: $scoreFormat,
+          rowOrder: $rowOrder, notificationOptions: $notificationOptions,
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, 
+          advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
+          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
         options {
           titleLanguage
+          staffNameLanguage
           activityMergeTime
           displayAdultContent
           airingNotifications
@@ -45,8 +49,8 @@ class ViewerController extends GetxController {
         mediaListOptions {
           scoreFormat
           rowOrder
-          animeList {splitCompletedSectionByFormat advancedScoringEnabled}
-          mangaList {splitCompletedSectionByFormat}
+          animeList {splitCompletedSectionByFormat customLists advancedScoring advancedScoringEnabled}
+          mangaList {splitCompletedSectionByFormat customLists}
         }
       }
     }
@@ -64,7 +68,7 @@ class ViewerController extends GetxController {
   }
 
   Future<void> fetch() async {
-    final data = await Client.request(_viewerQuery, {}, popOnErr: false);
+    final data = await Client.request(_viewerQuery);
     if (data == null) return;
 
     if (_settings == null) _settings = SettingsModel(data['Viewer']);
@@ -74,8 +78,7 @@ class ViewerController extends GetxController {
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
-    final data =
-        await Client.request(_settingsMutation, variables, popOnErr: false);
+    final data = await Client.request(_settingsMutation, variables);
     if (data == null) return false;
     _settings = SettingsModel(data['UpdateUser']);
     return true;

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
@@ -9,7 +10,7 @@ import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/nav_scaffold.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends StatelessWidget {
   static const FEED = 0;
@@ -48,23 +49,42 @@ class HomeView extends StatelessWidget {
 
     BackgroundHandler.checkLaunchedByNotification();
 
-    return ValueListenableBuilder<int>(
-      valueListenable: Config.homeIndex,
-      builder: (_, index, __) => NavScaffold(
-        child: tabs[index],
-        floating: fabs[index],
-        navBar: NavBar(
-          items: {
+    return WillPopScope(
+      onWillPop: () => _onWillPop(context),
+      child: ValueListenableBuilder<int>(
+        valueListenable: Config.homeNotifier,
+        builder: (_, index, __) => NavScaffold(
+          index: index,
+          child: tabs[index],
+          floating: fabs[index],
+          setPage: (i) => Config.homeIndex = i,
+          items: const {
             'Feed': Ionicons.file_tray_outline,
             'Anime': Ionicons.film_outline,
             'Manga': Ionicons.bookmark_outline,
             'Explore': Ionicons.compass_outline,
             'Profile': Ionicons.person_outline,
           },
-          onChanged: (page) => Config.setHomeIndex(page),
-          initial: index,
         ),
       ),
     );
+  }
+
+  Future<bool> _onWillPop(BuildContext ctx) async {
+    if (!(Config.storage.read(Config.CONFIRM_EXIT) ?? false))
+      return SynchronousFuture(true);
+
+    bool ok = false;
+    await showPopUp(
+      ctx,
+      ConfirmationDialog(
+        title: 'Exit?',
+        mainAction: 'Yes',
+        secondaryAction: 'Never',
+        onConfirm: () => ok = true,
+      ),
+    );
+
+    return Future.value(ok);
   }
 }

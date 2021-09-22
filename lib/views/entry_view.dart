@@ -87,7 +87,7 @@ class __ActionsState extends State<_Actions> {
                         ? CollectionController.ANIME
                         : CollectionController.MANGA,
                   ).removeEntry(ctrl.oldModel!);
-                  widget.callback?.call(EntryModel.empty(ctrl.model!));
+                  widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
                   Navigator.of(context).pop();
                 },
               ),

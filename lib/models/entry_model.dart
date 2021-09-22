@@ -42,14 +42,13 @@ class EntryModel {
   });
 
   factory EntryModel(Map<String, dynamic> map) {
-    if (map['mediaListEntry'] == null) {
+    if (map['mediaListEntry'] == null)
       return EntryModel._(
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
         progressVolumesMax: map['volumes'],
       );
-    }
 
     final advancedScores = <String, double>{};
     if (map['mediaListEntry']['advancedScores'] != null)
@@ -113,7 +112,7 @@ class EntryModel {
         customLists: {...copy.customLists},
       );
 
-  factory EntryModel.empty(final EntryModel copy) => EntryModel._(
+  factory EntryModel.emptyCopy(final EntryModel copy) => EntryModel._(
         type: copy.type,
         mediaId: copy.mediaId,
         progressMax: copy.progressMax,

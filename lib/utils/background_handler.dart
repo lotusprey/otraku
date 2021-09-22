@@ -83,40 +83,30 @@ class BackgroundHandler {
 void _fetch() => Workmanager().executeTask((_, input) async {
       await GetStorage.init();
 
-      // Log in
+      // Log in.
       if (Client.viewerId == null) {
         final ok = await Client.logIn();
         if (!ok) return true;
       }
 
-      // Get the count of new notifications
-      Map<String, dynamic>? data = await Client.request(
-        _countQuery,
-        null,
-        popOnErr: false,
-        silentErr: true,
-      );
+      // Get the count of new notifications.
+      Map<String, dynamic>? data = await Client.request(_countQuery);
       if (data == null) return false;
 
-      final int lastCount =
+      final int newCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
+      final int oldCount =
           Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
-      final int newCount = data['Viewer']['unreadNotificationCount'] ?? 0;
-      final count = newCount < lastCount ? newCount : newCount - lastCount;
+      final count = newCount < oldCount ? newCount : newCount - oldCount;
       if (count < 1) return true;
 
-      // Get new notifications
-      data = await Client.request(
-        _notificationQuery,
-        {'perPage': count},
-        popOnErr: false,
-        silentErr: true,
-      );
+      // Get new notifications.
+      data = await Client.request(_notificationQuery, {'perPage': count});
       if (data == null) return false;
 
-      // Save new notification count
+      // Save new notification count.
       Config.storage.write(Config.LAST_NOTIFICATION_COUNT, newCount);
 
-      // Show notifications
+      // Show notifications.
       for (final n in data['Page']['notifications']) {
         late NotificationModel model;
         try {
@@ -217,6 +207,23 @@ void _fetch() => Workmanager().executeTask((_, input) async {
               'New Addition',
               '${Navigation.mediaRoute}/${model.bodyId}',
             );
+            break;
+          case NotificationType.MEDIA_DATA_CHANGE:
+            _show(
+              model,
+              'Modified Media',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
+            break;
+          case NotificationType.MEDIA_MERGE:
+            _show(
+              model,
+              'Merged Media',
+              '${Navigation.mediaRoute}/${model.bodyId}',
+            );
+            break;
+          case NotificationType.MEDIA_DELETION:
+            _show(model, 'Deleted Media', '');
             break;
           default:
             break;
@@ -340,17 +347,39 @@ const _notificationQuery = r'''
           user {id name avatar {large}}
           createdAt
         }
+        ... on RelatedMediaAdditionNotification {
+          id
+          type
+          media {id type title {userPreferred} coverImage {large}}
+          createdAt
+        }
+        ... on MediaDataChangeNotification {
+          id
+          type
+          reason
+          media {id type title {userPreferred} coverImage {large}}
+          createdAt
+        }
+        ... on MediaMergeNotification {
+          id
+          type
+          reason
+          deletedMediaTitles
+          media {id type title {userPreferred} coverImage {large}}
+          createdAt
+        }
+        ... on MediaDeletionNotification {
+          id
+          type
+          reason
+          deletedMediaTitle
+          createdAt
+        }
         ... on AiringNotification {
           id
           type
           episode
-          media {id type bannerImage title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on RelatedMediaAdditionNotification {
-          id
-          type
-          media {id type bannerImage title {userPreferred} coverImage {large}}
+          media {id type title {userPreferred} coverImage {large}}
           createdAt
         }
       }

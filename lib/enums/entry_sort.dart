@@ -1,3 +1,4 @@
+// Used for sorting the entries of a collection.
 enum EntrySort {
   TITLE,
   TITLE_DESC,
@@ -15,6 +16,7 @@ enum EntrySort {
   AIRING_AT_DESC,
 }
 
+// AniList supports only 4 default sortings.
 extension EntrySortHelper on EntrySort {
   static const _enumsToStrings = const {
     EntrySort.TITLE: 'title',

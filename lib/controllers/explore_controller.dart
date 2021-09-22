@@ -42,7 +42,7 @@ class ExploreController extends OverscrollController implements Filterable {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
         characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
-          id name {full} image {large}
+          id name {userPreferred} image {large}
         }
       }
     }
@@ -53,7 +53,7 @@ class ExploreController extends OverscrollController implements Filterable {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
         staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
-          id name {full} image {large}
+          id name {userPreferred} image {large}
         }
       }
     }
@@ -237,7 +237,6 @@ class ExploreController extends OverscrollController implements Filterable {
     Map<String, dynamic>? data = await Client.request(
       query,
       {..._filters, if (_search() != '') 'search': _search()},
-      popOnErr: false,
     );
 
     _concurrentFetches--;
@@ -304,7 +303,7 @@ class ExploreController extends OverscrollController implements Filterable {
         }
       ''';
 
-    Client.request(query, null, popOnErr: false).then((data) {
+    Client.request(query).then((data) {
       if (data == null) return;
 
       if (!data['Viewer']['options']['displayAdultContent'])

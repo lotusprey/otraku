@@ -79,7 +79,7 @@ class UserHeader extends StatelessWidget {
           if (user?.banner != null)
             Column(
               children: [
-                Expanded(child: FadeImage(user!.banner)),
+                Expanded(child: FadeImage(user!.banner!)),
                 SizedBox(height: height - bannerHeight),
               ],
             ),

@@ -194,8 +194,8 @@ class _Filter extends StatelessWidget {
         sheet: SelectionSheet<ActivityType>(
           options: ActivityType.values.map((v) => v.text).toList(),
           values: ActivityType.values,
-          inclusive: feed.typeIn,
-          onDone: (typeIn, _) => feed.typeIn = typeIn,
+          names: feed.typeIn,
+          onDone: (typeIn) => feed.typeIn = typeIn,
           fixHeight: true,
         ),
         isScrollControlled: true,

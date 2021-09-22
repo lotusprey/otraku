@@ -25,7 +25,8 @@ class Sheet extends StatelessWidget {
         builder: (_) => sheet,
         isScrollControlled: isScrollControlled,
         backgroundColor: Colors.transparent,
-        barrierColor: barrierColour,
+        barrierColor: barrierColour ??
+            Theme.of(ctx).colorScheme.background.withAlpha(200),
       );
 
   final Widget child;
@@ -49,12 +50,19 @@ class Sheet extends StatelessWidget {
       margin: EdgeInsets.only(
         left: sideMargin,
         right: sideMargin,
-        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 20,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         borderRadius: Config.BORDER_RADIUS,
+        boxShadow: const [
+          BoxShadow(
+            blurRadius: 15,
+            offset: Offset(5, 5),
+            color: Colors.black45,
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -139,17 +147,15 @@ class OptionSheet extends StatelessWidget {
 class SelectionSheet<T> extends StatelessWidget {
   final List<String> options;
   final List<T> values;
-  final List<T> inclusive;
-  final List<T>? exclusive;
-  final Function(List<T>, List<T>?) onDone;
+  final List<T> names;
+  final void Function(List<T>) onDone;
   final bool fixHeight;
 
   SelectionSheet({
     required this.onDone,
     required this.options,
     required this.values,
-    required this.inclusive,
-    this.exclusive,
+    required this.names,
     this.fixHeight = false,
   });
 
@@ -162,32 +168,63 @@ class SelectionSheet<T> extends StatelessWidget {
           physics:
               fixHeight ? const NeverScrollableScrollPhysics() : Config.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          itemBuilder: (_, index) => exclusive == null
-              ? TwoStateField(
-                  title: options[index],
-                  initial: inclusive.contains(values[index]),
-                  onChanged: (val) => val
-                      ? inclusive.add(values[index])
-                      : inclusive.remove(values[index]),
-                )
-              : ThreeStateField(
-                  title: options[index],
-                  initialState: inclusive.contains(values[index])
-                      ? 1
-                      : exclusive!.contains(values[index])
-                          ? 2
-                          : 0,
-                  onChanged: (state) {
-                    if (state == 0)
-                      exclusive!.remove(values[index]);
-                    else if (state == 1)
-                      inclusive.add(values[index]);
-                    else {
-                      inclusive.remove(values[index]);
-                      exclusive!.add(values[index]);
-                    }
-                  },
-                ),
+          itemBuilder: (_, index) => TwoStateField(
+            title: options[index],
+            initial: names.contains(values[index]),
+            onChanged: (val) =>
+                val ? names.add(values[index]) : names.remove(values[index]),
+          ),
+          itemCount: options.length,
+          itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
+        ),
+        onDone: () => onDone(names),
+      );
+}
+
+class SelectionToggleSheet<T> extends StatelessWidget {
+  final List<String> options;
+  final List<T> values;
+  final List<T> inclusive;
+  final List<T> exclusive;
+  final void Function(List<T>, List<T>) onDone;
+  final bool fixHeight;
+
+  SelectionToggleSheet({
+    required this.onDone,
+    required this.options,
+    required this.values,
+    required this.inclusive,
+    required this.exclusive,
+    this.fixHeight = false,
+  });
+
+  @override
+  Widget build(BuildContext context) => Sheet(
+        height: fixHeight
+            ? options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50
+            : null,
+        child: ListView.builder(
+          physics:
+              fixHeight ? const NeverScrollableScrollPhysics() : Config.PHYSICS,
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          itemBuilder: (_, index) => ThreeStateField(
+            title: options[index],
+            initialState: inclusive.contains(values[index])
+                ? 1
+                : exclusive.contains(values[index])
+                    ? 2
+                    : 0,
+            onChanged: (state) {
+              if (state == 0)
+                exclusive.remove(values[index]);
+              else if (state == 1)
+                inclusive.add(values[index]);
+              else {
+                inclusive.remove(values[index]);
+                exclusive.add(values[index]);
+              }
+            },
+          ),
           itemCount: options.length,
           itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
         ),
@@ -411,27 +448,24 @@ class MediaSortSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final length = MediaSort.values.length;
     final prefTitle = Get.find<ViewerController>().settings!.titleLanguage;
-    MediaSort titleAsc;
-    MediaSort titleDesc;
+    late MediaSort titleAsc;
+    late MediaSort titleDesc;
 
-    if (describeEnum(MediaSort.values[length - 2]).contains(prefTitle)) {
-      titleAsc = MediaSort.values[length - 2];
-      titleDesc = MediaSort.values[length - 1];
-    } else if (describeEnum(MediaSort.values[length - 4]).contains(prefTitle)) {
-      titleAsc = MediaSort.values[length - 4];
-      titleDesc = MediaSort.values[length - 3];
-    } else {
-      titleAsc = MediaSort.values[length - 6];
-      titleDesc = MediaSort.values[length - 5];
-    }
+    // Check which title is the preferred one.
+    for (int i = 0; i < length; i += 2)
+      if (describeEnum(MediaSort.values[i]).contains(prefTitle)) {
+        titleAsc = MediaSort.values[i];
+        titleDesc = MediaSort.values[i + 1];
+      }
 
     int currentIndex = initial.index ~/ 2;
     bool currentlyDesc = initial.index % 2 == 0 ? false : true;
 
     if (currentIndex > (length - 5) ~/ 2) currentIndex = (length - 6) ~/ 2;
 
-    final options = <String>[];
-    for (int i = 0; i < length - 6; i += 2)
+    // Gather the sort options as user-readable strings.
+    final options = ['Date Added'];
+    for (int i = 2; i < length - 6; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
     options.add('Title');
 
@@ -449,4 +483,20 @@ class MediaSortSheet extends StatelessWidget {
       },
     );
   }
+}
+
+// A sheet of ListTile widgets.
+class ListTileSheet extends StatelessWidget {
+  final List<ListTile> children;
+  const ListTileSheet(this.children);
+
+  @override
+  Widget build(BuildContext context) => Sheet(
+        height: Config.MATERIAL_TAP_TARGET_SIZE * children.length,
+        child: ListTileTheme(
+          child: Column(children: children),
+          iconColor: Theme.of(context).colorScheme.onBackground,
+          dense: true,
+        ),
+      );
 }

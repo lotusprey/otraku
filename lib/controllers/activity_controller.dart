@@ -106,10 +106,8 @@ class ActivityController extends OverscrollController {
     if (_model != null && _model!.replies.items.isNotEmpty) return;
     _isLoading.value = true;
 
-    final data = await Client.request(
-      _activityQuery,
-      {'id': id, 'withActivity': true},
-    );
+    final data =
+        await Client.request(_activityQuery, {'id': id, 'withActivity': true});
     if (data == null) return;
 
     _model = ActivityModel(data['Activity']);
@@ -134,7 +132,6 @@ class ActivityController extends OverscrollController {
     final data = await Client.request(
       _toggleSubscriptionMutation,
       {'id': activityModel.id, 'subscribe': activityModel.isSubscribed},
-      popOnErr: false,
     );
     return data != null;
   }
@@ -143,7 +140,6 @@ class ActivityController extends OverscrollController {
     final data = await Client.request(
       _toggleLikeMutation,
       {'id': am.id, 'type': 'ACTIVITY'},
-      popOnErr: false,
     );
     return data != null;
   }
@@ -152,7 +148,6 @@ class ActivityController extends OverscrollController {
     final data = await Client.request(
       _toggleLikeMutation,
       {'id': reply.id, 'type': 'ACTIVITY_REPLY'},
-      popOnErr: false,
     );
     return data != null;
   }
@@ -166,11 +161,7 @@ class ActivityController extends OverscrollController {
     if (feedTag != null)
       await Get.find<FeedController>(tag: feedTag).deleteActivity(id);
     else
-      await Client.request(
-        _deleteMutation,
-        {'id': id},
-        popOnErr: false,
-      );
+      await Client.request(_deleteMutation, {'id': id});
   }
 
   @override

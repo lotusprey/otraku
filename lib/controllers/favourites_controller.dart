@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
@@ -24,10 +23,10 @@ class FavouritesController extends OverscrollController {
       pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}
     }
     fragment character on CharacterConnection {
-      pageInfo {hasNextPage} nodes {id name {full} image {large}}
+      pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
     }
     fragment staff on StaffConnection {
-      pageInfo {hasNextPage} nodes {id name {full} image {large}}
+      pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
     }
     fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
   ''';
@@ -37,31 +36,16 @@ class FavouritesController extends OverscrollController {
 
   late UserModel _model;
   int _pageIndex = UserModel.ANIME_FAV;
-  final _keys = [
-    UniqueKey(),
-    UniqueKey(),
-    UniqueKey(),
-    UniqueKey(),
-    UniqueKey(),
-  ];
 
   @override
   bool get hasNextPage => _model.favourites[_pageIndex].hasNextPage;
   List<ExplorableModel> get favourites => _model.favourites[_pageIndex].items;
-  UniqueKey get key => _keys[_pageIndex];
 
   int get pageIndex => _pageIndex;
   set pageIndex(int index) {
+    if (index < 0 || index > 4) return;
     _pageIndex = index;
     scrollTo(0).then((_) => update());
-  }
-
-  String get pageName {
-    if (_pageIndex == UserModel.ANIME_FAV) return 'Anime';
-    if (_pageIndex == UserModel.MANGA_FAV) return 'Manga';
-    if (_pageIndex == UserModel.CHARACTER_FAV) return 'Characters';
-    if (_pageIndex == UserModel.STAFF_FAV) return 'Staff';
-    return 'Studios';
   }
 
   @override

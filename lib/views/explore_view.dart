@@ -4,7 +4,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/bottom_drawer.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
-import 'package:otraku/widgets/layouts/title_list.dart';
+import 'package:otraku/widgets/layouts/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
@@ -59,7 +59,7 @@ class _ExploreGrid extends StatelessWidget {
         );
       }
 
-      if (results[0].explorable == Explorable.studio) return TitleList(results);
+      if (results[0].explorable == Explorable.studio) return TitleGrid(results);
 
       if (results[0].explorable == Explorable.user)
         return TileGrid(models: results, full: false);

@@ -146,7 +146,7 @@ class MediaInfoView extends StatelessWidget {
               );
               explorable.type = info.type;
               explorable.search = '';
-              Config.setHomeIndex(HomeView.EXPLORE);
+              Config.homeIndex = HomeView.EXPLORE;
               Navigation.it.popToFirst();
             },
           ),
@@ -344,7 +344,7 @@ class __TagsState extends State<_Tags> {
             );
             explorable.type = ctrl.model!.info.type;
             explorable.search = '';
-            Config.setHomeIndex(HomeView.EXPLORE);
+            Config.homeIndex = HomeView.EXPLORE;
             Navigation.it.popToFirst();
           },
           onLongPress: () => showPopUp(
@@ -420,7 +420,7 @@ class __TagsState extends State<_Tags> {
               );
               explorable.type = ctrl.model!.info.type;
               explorable.search = '';
-              Config.setHomeIndex(HomeView.EXPLORE);
+              Config.homeIndex = HomeView.EXPLORE;
               Navigation.it.popToFirst();
             },
             onLongPress: () => showPopUp(

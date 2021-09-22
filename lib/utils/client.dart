@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/routing/navigation.dart';
@@ -64,7 +63,7 @@ abstract class Client {
 
     // Fetch the viewer's id, if needed.
     if (_viewerId == null) {
-      final data = await request(_idQuery, null, popOnErr: false);
+      final data = await request(_idQuery);
       if (data == null) return false;
       _viewerId = data['Viewer']['id'];
       Config.storage.write(_ID_KEY, _viewerId);
@@ -86,29 +85,25 @@ abstract class Client {
   static bool loggedIn() => _accessToken != null && _viewerId != null;
 
   // Sends a request to the site.
-  // popOnErr - after confirmation, not only the dialog, but the page too should
-  // be popped.
-  // silentErr - No need of a dialog on error.
   static Future<Map<String, dynamic>?> request(
-    String request,
-    Map<String, dynamic>? variables, {
-    bool popOnErr = true,
-    bool silentErr = false,
-  }) async {
-    bool erred = false;
+    String query, [
+    Map<String, dynamic>? variables,
+  ]) async {
+    IOException? err;
 
     final response = await post(
       _url,
-      body: json.encode({'query': request, 'variables': variables}),
+      body: json.encode({'query': query, 'variables': variables}),
       headers: _headers,
-    ).catchError((err) {
-      if (!silentErr) _handleErr(popOnErr, ioErr: err as IOException);
-      erred = true;
-    });
+    ).catchError((e) => err = e);
 
-    if (erred || response.body.isEmpty) {
-      if (!silentErr)
-        _handleErr(popOnErr, apiErr: ['Empty AniList response...']);
+    if (err != null) {
+      _handleErr(ioErr: err);
+      return null;
+    }
+
+    if (response.body.isEmpty) {
+      _handleErr(apiErr: ['Empty AniList response...']);
       return null;
     }
 
@@ -119,7 +114,7 @@ abstract class Client {
           .map((e) => e['message'].toString())
           .toList();
 
-      if (!silentErr) _handleErr(popOnErr, apiErr: messages);
+      _handleErr(apiErr: messages);
 
       return null;
     }
@@ -128,25 +123,27 @@ abstract class Client {
   }
 
   // Handle errors that have occured after fetching.
-  static void _handleErr(
-    bool popOnErr, {
+  static void _handleErr({
     IOException? ioErr,
     List<String>? apiErr,
   }) {
+    assert(ioErr != null || apiErr != null);
+
     final context = Navigation.it.ctx;
     if (context == null) return;
 
-    if (popOnErr) Navigator.pop(context);
-
-    if (ioErr != null && ioErr is SocketException) {
+    if (ioErr != null) {
       showPopUp(
         context,
         ConfirmationDialog(
           content: ioErr.toString(),
-          title: 'Internet connection problem',
+          title: ioErr is SocketException
+              ? 'Internet connection problem'
+              : 'Device request failed',
           mainAction: 'Ok',
         ),
       );
+
       return;
     }
 
@@ -157,15 +154,12 @@ abstract class Client {
       return;
     }
 
-    final text = ioErr?.toString() ?? apiErr!.join('\n');
-
     showPopUp(
       context,
       ConfirmationDialog(
-        content: text,
-        title:
-            ioErr == null ? 'A query error occured' : 'A request error occured',
-        mainAction: 'Sad',
+        content: apiErr?.join('\n'),
+        title: 'Faulty query',
+        mainAction: 'Ok',
       ),
     );
   }

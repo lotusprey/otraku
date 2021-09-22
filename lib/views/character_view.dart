@@ -23,7 +23,7 @@ class CharacterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final character = Get.find<CharacterController>(tag: id.toString());
+    final ctrl = Get.find<CharacterController>(tag: id.toString());
     final axis = MediaQuery.of(context).size.width > 450
         ? Axis.horizontal
         : Axis.vertical;
@@ -36,7 +36,7 @@ class CharacterView extends StatelessWidget {
         bottom: false,
         child: CustomScrollView(
           physics: Config.PHYSICS,
-          controller: character.scrollCtrl,
+          controller: ctrl.scrollCtrl,
           slivers: [
             GetBuilder<CharacterController>(
               tag: id.toString(),
@@ -44,8 +44,7 @@ class CharacterView extends StatelessWidget {
                 toggleFavourite: c.toggleFavourite,
                 isFavourite: c.model?.isFavourite,
                 favourites: c.model?.favourites,
-                text:
-                    '${c.model?.firstName} ${c.model?.middleName} ${c.model?.lastName}',
+                text: c.model?.name,
               ),
             ),
             GetBuilder<CharacterController>(
@@ -85,8 +84,7 @@ class CharacterView extends StatelessWidget {
               ),
             ),
             Obx(() {
-              if (character.anime.items.isEmpty &&
-                  character.manga.items.isEmpty)
+              if (ctrl.anime.items.isEmpty && ctrl.manga.items.isEmpty)
                 return const SliverToBoxAdapter();
 
               final offset =
@@ -94,21 +92,20 @@ class CharacterView extends StatelessWidget {
                       Config.PADDING.top * 2;
 
               return SliverShadowAppBar([
-                character.anime.items.isNotEmpty &&
-                        character.manga.items.isNotEmpty
+                ctrl.anime.items.isNotEmpty && ctrl.manga.items.isNotEmpty
                     ? BubbleTabs(
                         items: const {'Anime': true, 'Manga': false},
                         current: () => true,
                         onChanged: (bool value) {
-                          character.onAnime = value;
-                          character.scrollTo(offset);
+                          ctrl.onAnime = value;
+                          ctrl.scrollTo(offset);
                         },
-                        onSame: () => character.scrollTo(offset),
+                        onSame: () => ctrl.scrollTo(offset),
                         itemWidth: 80,
                       )
                     : const SizedBox(),
                 const Spacer(),
-                if (character.availableLanguages.length > 1)
+                if (ctrl.availableLanguages.length > 1)
                   AppBarIcon(
                     tooltip: 'Language',
                     icon: Ionicons.globe_outline,
@@ -116,10 +113,10 @@ class CharacterView extends StatelessWidget {
                       ctx: context,
                       sheet: OptionSheet(
                         title: 'Language',
-                        options: character.availableLanguages,
-                        index: character.languageIndex,
-                        onTap: (index) => character.staffLanguage =
-                            character.availableLanguages[index],
+                        options: ctrl.availableLanguages,
+                        index: ctrl.languageIndex,
+                        onTap: (index) =>
+                            ctrl.staffLanguage = ctrl.availableLanguages[index],
                       ),
                       isScrollControlled: true,
                     ),
@@ -130,10 +127,10 @@ class CharacterView extends StatelessWidget {
                   onTap: () => Sheet.show(
                     ctx: context,
                     sheet: MediaSortSheet(
-                      character.sort,
+                      ctrl.sort,
                       (sort) {
-                        character.sort = sort;
-                        character.scrollTo(offset);
+                        ctrl.sort = sort;
+                        ctrl.scrollTo(offset);
                       },
                     ),
                     isScrollControlled: true,
@@ -142,8 +139,7 @@ class CharacterView extends StatelessWidget {
               ]);
             }),
             Obx(() {
-              final connections =
-                  character.onAnime ? character.anime : character.manga;
+              final connections = ctrl.onAnime ? ctrl.anime : ctrl.manga;
 
               if (connections.items.isEmpty) return const SliverToBoxAdapter();
 
@@ -156,7 +152,7 @@ class CharacterView extends StatelessWidget {
                 ),
                 sliver: ConnectionsGrid(
                   connections: connections.items,
-                  preferredSubtitle: character.staffLanguage,
+                  preferredSubtitle: ctrl.staffLanguage,
                 ),
               );
             }),
@@ -179,12 +175,9 @@ class _Details extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           GestureDetector(
-            onTap: () => Toast.copy(
-              context,
-              '${model.firstName} ${model.middleName} ${model.lastName}',
-            ),
+            onTap: () => Toast.copy(context, model.name),
             child: Text(
-              '${model.firstName} ${model.middleName} ${model.lastName}',
+              model.name,
               style: Theme.of(context).textTheme.headline2,
               textAlign: axis == Axis.vertical ? TextAlign.center : null,
             ),

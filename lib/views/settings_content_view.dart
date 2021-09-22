@@ -8,6 +8,8 @@ import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/layouts/chip_grids.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 
 class SettingsContentView extends StatelessWidget {
@@ -15,170 +17,223 @@ class SettingsContentView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<SettingsController>();
-    return ListView(
-      physics: Config.PHYSICS,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      children: [
-        Text('Media', style: Theme.of(context).textTheme.headline6),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Flexible(
-              child: DropDownField(
-                title: 'Title Language',
-                value: settings.model.titleLanguage,
-                items: const {
-                  'Romaji': 'ROMAJI',
-                  'English': 'ENGLISH',
-                  'Native': 'NATIVE',
-                },
-                onChanged: (val) {
-                  const key = 'titleLanguage';
-                  if (val == settings.model.titleLanguage)
-                    settings.changes.remove(key);
-                  else
-                    settings.changes[key] = val;
-                },
+    final ctrl = Get.find<SettingsController>();
+
+    const dropDownGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
+      minWidth: 170,
+      height: 75,
+    );
+    const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
+      minWidth: 230,
+      mainAxisSpacing: 0,
+      height: Config.MATERIAL_TAP_TARGET_SIZE,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: CustomScrollView(
+        physics: Config.PHYSICS,
+        slivers: [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'Media',
+                style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            const SizedBox(width: 10),
-            Flexible(
-              child: DropDownField(
-                title: 'Activity Merge Time',
-                value: settings.model.activityMergeTime,
-                items: const {
-                  'Never': 0,
-                  '30 Minutes': 30,
-                  '1 Hour': 60,
-                  '2 Hours': 120,
-                  '3 Hours': 180,
-                  '6 Hours': 360,
-                  '12 Hours': 720,
-                  '1 Day': 1440,
-                  '2 Days': 2880,
-                  '3 Days': 4320,
-                  '1 Week': 10080,
-                  '2 Weeks': 20160,
-                  'Always': 29160,
-                },
-                onChanged: (val) {
-                  const key = 'activityMergeTime';
-                  if (val == settings.model.activityMergeTime)
-                    settings.changes.remove(key);
-                  else
-                    settings.changes[key] = val;
-                },
-              ),
-            ),
-          ],
-        ),
-        CheckBoxField(
-          title: 'Airing Anime Notifications',
-          initial: settings.model.airingNotifications,
-          onChanged: (val) {
-            const notifications = 'airingNotifications';
-            if (settings.changes.containsKey(notifications))
-              settings.changes.remove(notifications);
-            else
-              settings.changes[notifications] = val;
-          },
-        ),
-        CheckBoxField(
-          title: '18+ Content',
-          initial: settings.model.displayAdultContent,
-          onChanged: (val) {
-            const adultContent = 'displayAdultContent';
-            if (settings.changes.containsKey(adultContent))
-              settings.changes.remove(adultContent);
-            else
-              settings.changes[adultContent] = val;
-          },
-        ),
-        Text('Lists', style: Theme.of(context).textTheme.headline6),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Flexible(
-              child: DropDownField<ScoreFormat>(
-                title: 'Scoring System',
-                value: settings.model.scoreFormat,
-                items: Map.fromIterable(
-                  ScoreFormat.values,
-                  key: (v) => Convert.clarifyEnum(describeEnum(v))!,
-                  value: (v) => v,
-                ),
-                onChanged: (val) {
-                  const key = 'scoreFormat';
-                  if (val == settings.model.scoreFormat)
-                    settings.changes.remove(key);
-                  else
-                    settings.changes[key] = describeEnum(val);
-                },
-              ),
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              child: DropDownField<EntrySort>(
-                title: 'Default List Order',
-                value: settings.model.defaultSort,
-                items: Map.fromIterables(
-                  EntrySortHelper.defaultStrings,
-                  EntrySortHelper.defaultEnums,
-                ),
-                onChanged: (val) {
-                  const key = 'rowOrder';
-                  if (val == settings.model.defaultSort)
-                    settings.changes.remove(key);
-                  else
-                    settings.changes[key] = val.string;
-                },
-              ),
-            ),
-          ],
-        ),
-        CheckBoxField(
-          title: 'Split Completed Anime',
-          initial: settings.model.splitCompletedAnime,
-          onChanged: (val) {
-            const splitAnime = 'splitCompletedAnime';
-            if (settings.changes.containsKey(splitAnime))
-              settings.changes.remove(splitAnime);
-            else
-              settings.changes[splitAnime] = val;
-          },
-        ),
-        CheckBoxField(
-          title: 'Split Completed Manga',
-          initial: settings.model.splitCompletedManga,
-          onChanged: (val) {
-            const splitManga = 'splitCompletedManga';
-            if (settings.changes.containsKey(splitManga))
-              settings.changes.remove(splitManga);
-            else
-              settings.changes[splitManga] = val;
-          },
-        ),
-        CheckBoxField(
-          title: 'Advanced Scoring',
-          initial: settings.model.advancedScoringEnabled,
-          onChanged: (val) {
-            const advancedScoring = 'advancedScoringEnabled';
-            if (settings.changes.containsKey(advancedScoring))
-              settings.changes.remove(advancedScoring);
-            else
-              settings.changes[advancedScoring] = val;
-          },
-        ),
-        Padding(
-          padding: Config.PADDING,
-          child: Text(
-            'Note: Advanced scoring works only with POINT 100 and POINT 10 Decimal scoring systems',
-            style: Theme.of(context).textTheme.subtitle2,
           ),
-        ),
-        SizedBox(height: NavBar.offset(context)),
-      ],
+          SliverPadding(
+            padding: const EdgeInsets.only(right: 10),
+            sliver: SliverGrid(
+              gridDelegate: dropDownGridDelegate,
+              delegate: SliverChildListDelegate.fixed([
+                DropDownField(
+                  title: 'Title Language',
+                  value: ctrl.model.titleLanguage,
+                  items: const {
+                    'Romaji': 'ROMAJI',
+                    'English': 'ENGLISH',
+                    'Native': 'NATIVE',
+                  },
+                  onChanged: (val) {
+                    const key = 'titleLanguage';
+                    if (val == ctrl.model.titleLanguage)
+                      ctrl.changes.remove(key);
+                    else
+                      ctrl.changes[key] = val;
+                  },
+                ),
+                DropDownField(
+                  title: 'Character & Staff Name',
+                  value: ctrl.model.staffNameLanguage,
+                  items: const {
+                    'Romaji, Western Order': 'ROMAJI_WESTERN',
+                    'Romaji': 'ROMAJI',
+                    'Native': 'NATIVE',
+                  },
+                  onChanged: (val) {
+                    const key = 'staffNameLanguage';
+                    if (val == ctrl.model.staffNameLanguage)
+                      ctrl.changes.remove(key);
+                    else
+                      ctrl.changes[key] = val;
+                  },
+                ),
+                DropDownField(
+                  title: 'Activity Merge Time',
+                  value: ctrl.model.activityMergeTime,
+                  items: const {
+                    'Never': 0,
+                    '30 Minutes': 30,
+                    '1 Hour': 60,
+                    '2 Hours': 120,
+                    '3 Hours': 180,
+                    '6 Hours': 360,
+                    '12 Hours': 720,
+                    '1 Day': 1440,
+                    '2 Days': 2880,
+                    '3 Days': 4320,
+                    '1 Week': 10080,
+                    '2 Weeks': 20160,
+                    'Always': 29160,
+                  },
+                  onChanged: (val) {
+                    const key = 'activityMergeTime';
+                    if (val == ctrl.model.activityMergeTime)
+                      ctrl.changes.remove(key);
+                    else
+                      ctrl.changes[key] = val;
+                  },
+                ),
+              ]),
+            ),
+          ),
+          SliverGrid(
+            gridDelegate: checkBoxGridDelegate,
+            delegate: SliverChildListDelegate.fixed([
+              CheckBoxField(
+                title: 'Airing Anime Notifications',
+                initial: ctrl.model.airingNotifications,
+                onChanged: (val) {
+                  const notifications = 'airingNotifications';
+                  if (ctrl.changes.containsKey(notifications))
+                    ctrl.changes.remove(notifications);
+                  else
+                    ctrl.changes[notifications] = val;
+                },
+              ),
+              CheckBoxField(
+                title: '18+ Content',
+                initial: ctrl.model.displayAdultContent,
+                onChanged: (val) {
+                  const adultContent = 'displayAdultContent';
+                  if (ctrl.changes.containsKey(adultContent))
+                    ctrl.changes.remove(adultContent);
+                  else
+                    ctrl.changes[adultContent] = val;
+                },
+              ),
+            ]),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'Lists',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(right: 10),
+            sliver: SliverGrid(
+              gridDelegate: dropDownGridDelegate,
+              delegate: SliverChildListDelegate.fixed([
+                DropDownField<ScoreFormat>(
+                  title: 'Scoring System',
+                  value: ctrl.model.scoreFormat,
+                  items: Map.fromIterable(
+                    ScoreFormat.values,
+                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                    value: (v) => v,
+                  ),
+                  onChanged: (val) {
+                    const key = 'scoreFormat';
+                    if (val == ctrl.model.scoreFormat)
+                      ctrl.changes.remove(key);
+                    else
+                      ctrl.changes[key] = describeEnum(val);
+                  },
+                ),
+                DropDownField<EntrySort>(
+                  title: 'Default List Order',
+                  value: ctrl.model.defaultSort,
+                  items: Map.fromIterables(
+                    EntrySortHelper.defaultStrings,
+                    EntrySortHelper.defaultEnums,
+                  ),
+                  onChanged: (val) {
+                    const key = 'rowOrder';
+                    if (val == ctrl.model.defaultSort)
+                      ctrl.changes.remove(key);
+                    else
+                      ctrl.changes[key] = val.string;
+                  },
+                ),
+              ]),
+            ),
+          ),
+          SliverGrid(
+            gridDelegate: checkBoxGridDelegate,
+            delegate: SliverChildListDelegate.fixed([
+              CheckBoxField(
+                title: 'Split Completed Anime',
+                initial: ctrl.model.splitCompletedAnime,
+                onChanged: (val) {
+                  const splitAnime = 'splitCompletedAnime';
+                  if (ctrl.changes.containsKey(splitAnime))
+                    ctrl.changes.remove(splitAnime);
+                  else
+                    ctrl.changes[splitAnime] = val;
+                },
+              ),
+              CheckBoxField(
+                title: 'Split Completed Manga',
+                initial: ctrl.model.splitCompletedManga,
+                onChanged: (val) {
+                  const splitManga = 'splitCompletedManga';
+                  if (ctrl.changes.containsKey(splitManga))
+                    ctrl.changes.remove(splitManga);
+                  else
+                    ctrl.changes[splitManga] = val;
+                },
+              ),
+              CheckBoxField(
+                title: 'Advanced Scoring',
+                initial: ctrl.model.advancedScoringEnabled,
+                onChanged: (val) {
+                  const advancedScoring = 'advancedScoringEnabled';
+                  if (ctrl.changes.containsKey(advancedScoring))
+                    ctrl.changes.remove(advancedScoring);
+                  else
+                    ctrl.changes[advancedScoring] = val;
+                },
+              ),
+            ]),
+          ),
+          SliverToBoxAdapter(
+            child: ChipNamingGrid(
+              title: 'Advanced Scores',
+              placeholder: 'advanced scores',
+              names: ctrl.model.advancedScores,
+              onChanged: () =>
+                  ctrl.changes['advancedScoring'] = ctrl.model.advancedScores,
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+        ],
+      ),
     );
   }
 }

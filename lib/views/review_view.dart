@@ -131,7 +131,7 @@ class _Header extends StatelessWidget {
             ? Stack(
                 fit: StackFit.expand,
                 children: [
-                  FadeImage(bannerUrl),
+                  FadeImage(bannerUrl!),
                   Positioned(
                     bottom: 0,
                     left: 0,

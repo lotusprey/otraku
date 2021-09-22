@@ -19,12 +19,12 @@ class CheckBoxField extends StatefulWidget {
 }
 
 class _CheckBoxFieldState extends State<CheckBoxField> {
-  late bool _val;
+  late bool _on;
 
   @override
   void initState() {
     super.initState();
-    _val = widget.initial;
+    _on = widget.initial;
   }
 
   @override
@@ -36,28 +36,35 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
         behavior: HitTestBehavior.opaque,
         onTap: () {
           Feedback.forTap(context);
-          setState(() => _val = !_val);
-          widget.onChanged(_val);
+          setState(() => _on = !_on);
+          widget.onChanged(_on);
         },
         child: Row(
           children: [
-            Expanded(child: Text(widget.title)),
+            Expanded(
+              child: Text(
+                widget.title,
+                style: _on
+                    ? Theme.of(context).textTheme.bodyText2
+                    : Theme.of(context).textTheme.subtitle1,
+              ),
+            ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: Theming.ICON_BIG,
               height: Theming.ICON_BIG,
-              margin: const EdgeInsets.symmetric(horizontal: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _val ? Theme.of(context).colorScheme.secondary : null,
+                color: _on ? Theme.of(context).colorScheme.secondary : null,
                 border: Border.all(
-                  color: _val
+                  color: _on
                       ? Colors.transparent
                       : Theme.of(context).colorScheme.primary,
                   width: 2,
                 ),
               ),
-              child: _val
+              child: _on
                   ? Icon(
                       Ionicons.checkmark_outline,
                       color: Theme.of(context).colorScheme.background,

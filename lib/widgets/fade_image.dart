@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/config.dart';
 
 class FadeImage extends StatelessWidget {
-  final String? image;
+  final String image;
   final BoxFit fit;
   final double width;
   final double height;
@@ -22,7 +22,7 @@ class FadeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return FadeInImage.memoryNetwork(
       fit: fit,
-      image: image!,
+      image: image,
       width: width,
       height: height,
       alignment: alignment,

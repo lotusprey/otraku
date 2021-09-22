@@ -42,7 +42,7 @@ class ThemeModel {
         disabledColor: primary,
         unselectedWidgetColor: primary,
         toggleableActiveColor: secondary,
-        splashColor: Colors.transparent,
+        splashColor: highlight,
         highlightColor: Colors.transparent,
         colorScheme: ColorScheme(
           brightness: brightness,
@@ -66,8 +66,9 @@ class ThemeModel {
         ),
         dialogTheme: DialogTheme(
           elevation: 10,
-          backgroundColor: background,
-          shape: RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+          backgroundColor: surface,
+          shape:
+              const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
           titleTextStyle: TextStyle(
             fontSize: Theming.FONT_MEDIUM,
             color: onBackground,

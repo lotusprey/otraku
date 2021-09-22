@@ -104,17 +104,39 @@ class NotificationsController extends OverscrollController {
             user {id name avatar {large}}
             createdAt
           }
+          ... on RelatedMediaAdditionNotification {
+            id
+            type
+            media {id type title {userPreferred} coverImage {large}}
+            createdAt
+          }
+          ... on MediaDataChangeNotification {
+            id
+            type
+            reason
+            media {id type title {userPreferred} coverImage {large}}
+            createdAt
+          }
+          ... on MediaMergeNotification {
+            id
+            type
+            reason
+            deletedMediaTitles
+            media {id type title {userPreferred} coverImage {large}}
+            createdAt
+          }
+          ... on MediaDeletionNotification {
+            id
+            type
+            reason
+            deletedMediaTitle
+            createdAt
+          }
           ... on AiringNotification {
             id
             type
             episode
-            media {id type bannerImage title {userPreferred} coverImage {large}}
-            createdAt
-          }
-          ... on RelatedMediaAdditionNotification {
-            id
-            type
-            media {id type bannerImage title {userPreferred} coverImage {large}}
+            media {id type title {userPreferred} coverImage {large}}
             createdAt
           }
         }

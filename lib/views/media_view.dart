@@ -14,6 +14,7 @@ import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
+// TODO rename relations
 class MediaView extends StatelessWidget {
   final int id;
   final String? coverUrl;
@@ -41,6 +42,7 @@ class MediaView extends StatelessWidget {
     );
 
     return GetBuilder<MediaController>(
+      id: MediaController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {
         if (ctrl.model == null)
@@ -58,7 +60,22 @@ class MediaView extends StatelessWidget {
         return NavScaffold(
           index: ctrl.tab,
           setPage: (page) => ctrl.tab = page,
-          floating: _ActionButtons(ctrl, pageTop),
+          trySubtab: (goRight) {
+            if (ctrl.tab == MediaController.RELATIONS) {
+              if (goRight && ctrl.relationsTab < 2) {
+                ctrl.scrollTo(pageTop);
+                ctrl.relationsTab++;
+                return true;
+              }
+              if (!goRight && ctrl.relationsTab > 0) {
+                ctrl.scrollTo(pageTop);
+                ctrl.relationsTab--;
+                return true;
+              }
+            }
+            return false;
+          },
+          floating: _ActionButtons(id),
           items: const {
             'Info': Ionicons.book_outline,
             'Relations': Icons.emoji_people_outlined,
@@ -80,10 +97,8 @@ class MediaView extends StatelessWidget {
 }
 
 class _ActionButtons extends StatefulWidget {
-  final MediaController ctrl;
-  final double scrollTop;
-
-  _ActionButtons(this.ctrl, this.scrollTop);
+  final int id;
+  _ActionButtons(this.id);
 
   @override
   __ActionButtonsState createState() => __ActionButtonsState();
@@ -92,18 +107,18 @@ class _ActionButtons extends StatefulWidget {
 class __ActionButtonsState extends State<_ActionButtons> {
   @override
   Widget build(BuildContext context) {
-    final ctrl = widget.ctrl;
-    final model = ctrl.model!;
+    return GetBuilder<MediaController>(
+      id: MediaController.ID_RELATIONS,
+      tag: widget.id.toString(),
+      builder: (ctrl) {
+        final model = ctrl.model!;
 
-    List<Widget> children = [
-      if (ctrl.tab == MediaController.RELATIONS) ...[
-        Obx(
-          () {
-            if (ctrl.relationsTab != MediaController.REL_CHARACTERS ||
-                model.characters.items.isEmpty ||
-                ctrl.availableLanguages.length < 2) return const SizedBox();
-
-            return ActionButton(
+        List<Widget> children = [
+          if (ctrl.tab == MediaController.RELATIONS &&
+              ctrl.relationsTab == MediaController.REL_CHARACTERS &&
+              model.characters.items.isNotEmpty &&
+              ctrl.availableLanguages.length > 1) ...[
+            ActionButton(
               tooltip: 'Language',
               icon: Ionicons.globe_outline,
               onTap: () => Sheet.show(
@@ -117,40 +132,42 @@ class __ActionButtonsState extends State<_ActionButtons> {
                 ),
                 isScrollControlled: true,
               ),
-            );
-          },
-        ),
-        const SizedBox(width: 10),
-      ],
-      ActionButton(
-        icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
-        tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-        onTap: () => ctrl.toggleFavourite().then(
-              (ok) => ok
-                  ? setState(
-                      () => model.info.isFavourite = !model.info.isFavourite,
-                    )
-                  : null,
             ),
-      ),
-      const SizedBox(width: 10),
-      ActionButton(
-        icon: model.entry.status == null ? Icons.add : Icons.edit,
-        tooltip: model.entry.status == null ? 'Add' : 'Edit',
-        onTap: () => ExploreIndexer.openEditPage(
-          model.info.id,
-          model.entry,
-          (EntryModel entry) => setState(() => model.entry = entry),
-        ),
-      ),
-    ];
+            const SizedBox(width: 10),
+          ],
+          ActionButton(
+            icon:
+                model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
+            tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
+            onTap: () => ctrl.toggleFavourite().then(
+                  (ok) => ok
+                      ? setState(
+                          () =>
+                              model.info.isFavourite = !model.info.isFavourite,
+                        )
+                      : null,
+                ),
+          ),
+          const SizedBox(width: 10),
+          ActionButton(
+            icon: model.entry.status == null ? Icons.add : Icons.edit,
+            tooltip: model.entry.status == null ? 'Add' : 'Edit',
+            onTap: () => ExploreIndexer.openEditPage(
+              model.info.id,
+              model.entry,
+              (EntryModel entry) => setState(() => model.entry = entry),
+            ),
+          ),
+        ];
 
-    if (Config.storage.read(Config.LEFT_HANDED) ?? false)
-      children = children.reversed.toList();
+        if (Config.storage.read(Config.LEFT_HANDED) ?? false)
+          children = children.reversed.toList();
 
-    return FloatingListener(
-      scrollCtrl: ctrl.scrollCtrl,
-      child: Row(mainAxisSize: MainAxisSize.min, children: children),
+        return FloatingListener(
+          scrollCtrl: ctrl.scrollCtrl,
+          child: Row(mainAxisSize: MainAxisSize.min, children: children),
+        );
+      },
     );
   }
 }

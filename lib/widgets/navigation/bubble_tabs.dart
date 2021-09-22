@@ -30,6 +30,12 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
   }
 
   @override
+  void didUpdateWidget(covariant BubbleTabs<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _val = widget.current();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final values = widget.items.values;
 

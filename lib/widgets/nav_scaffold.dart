@@ -12,10 +12,18 @@ class NavScaffold extends StatelessWidget {
   final Widget? floating;
   final ShadowAppBar? appBar;
 
+  // When a tab swipe is detected, NavScaffold will try to switch the subtab of
+  // the page, instead of the tab itself. For 'go right' true is passed to the
+  // callback and for 'go left' - false. The returned value determines whether
+  // the subtab has been switched. If not (the end of the subtab carousel has
+  // been reached), NavScaffold will switch the tab.
+  final bool Function(bool)? trySubtab;
+
   const NavScaffold({
     required this.child,
     required this.items,
     required this.setPage,
+    this.trySubtab,
     this.index = 0,
     this.floating,
     this.appBar,
@@ -29,6 +37,9 @@ class NavScaffold extends StatelessWidget {
         child: child,
       ),
       onSwipe: (goRight) {
+        // Try to switch the subtab, instead of the tab.
+        if (trySubtab?.call(goRight) ?? false) return;
+
         if (goRight) {
           if (index < items.length - 1) setPage(index + 1);
         } else {
@@ -50,7 +61,7 @@ class NavScaffold extends StatelessWidget {
         initial: index,
         onChanged: setPage,
       ),
-      body: appBar == null ? SafeArea(bottom: false, child: body) : body,
+      body: SafeArea(bottom: false, child: body),
     );
   }
 }

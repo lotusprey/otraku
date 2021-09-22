@@ -133,6 +133,10 @@ class MediaController extends OverscrollController {
   static const REL_CHARACTERS = 1;
   static const REL_STAFF = 2;
 
+  // GetBuilder ids.
+  static const ID_MAIN = 0;
+  static const ID_RELATIONS = 1;
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -142,7 +146,7 @@ class MediaController extends OverscrollController {
 
   MediaModel? _model;
   int _tab = INFO;
-  final _relationsTab = REL_MEDIA.obs;
+  int _relationsTab = REL_MEDIA;
   final _staffLanguage = 'Japanese'.obs;
   final _availableLanguages = <String>[];
   bool _isLoading = false;
@@ -151,18 +155,19 @@ class MediaController extends OverscrollController {
   int get tab => _tab;
   set tab(int val) {
     _tab = val;
-    update();
+    update([ID_MAIN]);
   }
 
-  int get relationsTab => _relationsTab();
+  int get relationsTab => _relationsTab;
   set relationsTab(final int val) {
-    _relationsTab.value = val;
+    _relationsTab = val;
     if (val == REL_CHARACTERS &&
             _model!.characters.items.isEmpty &&
             _model!.characters.hasNextPage ||
         val == REL_STAFF &&
             _model!.staff.items.isEmpty &&
             _model!.staff.hasNextPage) _fetchRelationPage();
+    update([ID_RELATIONS]);
   }
 
   bool get isLoading => _isLoading;
@@ -209,7 +214,7 @@ class MediaController extends OverscrollController {
     if (result == null) return;
 
     _model = MediaModel(result['Media']);
-    update();
+    update([ID_MAIN]);
     _isLoading = false;
   }
 
@@ -218,7 +223,7 @@ class MediaController extends OverscrollController {
       _tab == RELATIONS ? _fetchRelationPage() : _fetchReviewPage();
 
   Future<void> _fetchRelationPage() async {
-    final ofCharacters = _relationsTab() == REL_CHARACTERS;
+    final ofCharacters = _relationsTab == REL_CHARACTERS;
     _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
@@ -234,7 +239,9 @@ class MediaController extends OverscrollController {
       _model!.addCharacters(result['Media'], _availableLanguages);
     else
       _model!.addStaff(result['Media']);
+
     _isLoading = false;
+    update([ID_RELATIONS]);
   }
 
   Future<void> _fetchReviewPage() async {

@@ -28,51 +28,61 @@ class MediaRelationsView extends StatelessWidget {
         header,
         SliverShadowAppBar([
           const Spacer(),
-          BubbleTabs(
-            items: const {
-              'Media': MediaController.REL_MEDIA,
-              'Characters': MediaController.REL_CHARACTERS,
-              'Staff': MediaController.REL_STAFF,
-            },
-            current: () => ctrl.relationsTab,
-            onChanged: (int val) {
-              scrollUp();
-              ctrl.relationsTab = val;
-            },
-            onSame: scrollUp,
-            itemWidth: 100,
+          GetBuilder<MediaController>(
+            id: MediaController.ID_RELATIONS,
+            tag: ctrl.id.toString(),
+            builder: (_) => BubbleTabs(
+              items: const {
+                'Media': MediaController.REL_MEDIA,
+                'Characters': MediaController.REL_CHARACTERS,
+                'Staff': MediaController.REL_STAFF,
+              },
+              current: () => ctrl.relationsTab,
+              onChanged: (int val) {
+                scrollUp();
+                ctrl.relationsTab = val;
+              },
+              onSame: scrollUp,
+              itemWidth: 100,
+            ),
           ),
           const Spacer(),
         ]),
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
-          sliver: Obx(() {
-            if (ctrl.relationsTab == MediaController.REL_MEDIA) {
-              final other = ctrl.model!.otherMedia;
+          sliver: GetBuilder<MediaController>(
+            id: MediaController.ID_RELATIONS,
+            tag: ctrl.id.toString(),
+            builder: (_) {
+              if (ctrl.relationsTab == MediaController.REL_MEDIA) {
+                final other = ctrl.model!.otherMedia;
 
-              if (other.isEmpty)
-                return ctrl.isLoading
-                    ? _Empty(null)
-                    : _Empty('No Related Media');
+                if (other.isEmpty)
+                  return ctrl.isLoading
+                      ? _Empty(null)
+                      : _Empty('No Related Media');
 
-              return _RelationsGrid(ctrl.model!.otherMedia);
-            }
+                return _RelationsGrid(ctrl.model!.otherMedia);
+              }
 
-            if (ctrl.relationsTab == MediaController.REL_CHARACTERS) {
-              if (ctrl.model!.characters.items.isEmpty)
-                return ctrl.isLoading ? _Empty(null) : _Empty('No Characters');
+              if (ctrl.relationsTab == MediaController.REL_CHARACTERS) {
+                if (ctrl.model!.characters.items.isEmpty)
+                  return ctrl.isLoading
+                      ? _Empty(null)
+                      : _Empty('No Characters');
 
-              return ConnectionsGrid(
-                connections: ctrl.model!.characters.items,
-                preferredSubtitle: ctrl.staffLanguage,
-              );
-            }
+                return ConnectionsGrid(
+                  connections: ctrl.model!.characters.items,
+                  preferredSubtitle: ctrl.staffLanguage,
+                );
+              }
 
-            if (ctrl.model!.staff.items.isEmpty)
-              return ctrl.isLoading ? _Empty(null) : _Empty('No Staff');
+              if (ctrl.model!.staff.items.isEmpty)
+                return ctrl.isLoading ? _Empty(null) : _Empty('No Staff');
 
-            return ConnectionsGrid(connections: ctrl.model!.staff.items);
-          }),
+              return ConnectionsGrid(connections: ctrl.model!.staff.items);
+            },
+          ),
         ),
         SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
       ],

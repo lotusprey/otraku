@@ -121,6 +121,7 @@ class _Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
+      runSpacing: 10,
       alignment: WrapAlignment.spaceBetween,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [

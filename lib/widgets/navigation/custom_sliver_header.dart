@@ -120,7 +120,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               child: Row(
                 children: [
                   if (implyLeading)
-                    Shade(
+                    IconShade(
                       AppBarIcon(
                         tooltip: 'Close',
                         icon: Ionicons.chevron_back_outline,
@@ -179,9 +179,9 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   TickerProvider? get vsync => null;
 }
 
-class Shade extends StatelessWidget {
+class IconShade extends StatelessWidget {
   final Widget child;
-  Shade(this.child);
+  IconShade(this.child);
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +192,7 @@ class Shade extends StatelessWidget {
           BoxShadow(
             color: Theme.of(context).colorScheme.background,
             blurRadius: 10,
-            spreadRadius: -5,
+            spreadRadius: -10,
           ),
         ],
       ),

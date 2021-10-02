@@ -7,7 +7,6 @@ import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 import '../utils/client.dart';
 
@@ -79,11 +78,9 @@ class CollectionActionButton extends StatelessWidget {
       child: ActionButton(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
-        onTap: () => Sheet.show(
-          ctx: context,
-          sheet: CollectionBottomDrawer(context, collectionTag),
-          barrierColour: Theme.of(context).colorScheme.surface.withAlpha(150),
-          isScrollControlled: true,
+        onTap: () => BottomDrawer.show(
+          context,
+          CollectionBottomDrawer(context, collectionTag),
         ),
       ),
     );

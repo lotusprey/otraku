@@ -3,11 +3,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/bottom_drawer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -157,44 +157,37 @@ class MediaHeader extends StatelessWidget {
     );
   }
 
-  void _showSheet(BuildContext context, MediaInfoModel model) => Sheet.show(
-      ctx: context,
-      sheet: ListTileSheet([
-        ListTile(
-          leading: const Icon(Ionicons.clipboard_outline),
-          title: Text(
-            'Copy Link',
-            style: Theme.of(context).textTheme.bodyText2,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-            if (model.siteUrl == null) {
-              Toast.show(context, 'Url is null');
-              return;
-            }
+  void _showSheet(BuildContext context, MediaInfoModel model) {
+    final children = <Widget>[];
+    children.add(BottomDrawerListTile(
+      text: 'Copy Link',
+      icon: Ionicons.clipboard_outline,
+      onTap: () {
+        if (model.siteUrl == null) {
+          Toast.show(context, 'Url is null');
+          return;
+        }
 
-            Toast.copy(context, model.siteUrl!);
-          },
-        ),
-        ListTile(
-          leading: const Icon(Ionicons.link),
-          title: Text(
-            'Open in Browser',
-            style: Theme.of(context).textTheme.bodyText2,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-            if (model.siteUrl == null) {
-              Toast.show(context, 'Url is null');
-              return;
-            }
+        Toast.copy(context, model.siteUrl!);
+      },
+    ));
+    children.add(BottomDrawerListTile(
+      text: 'Open in Browser',
+      icon: Ionicons.link_outline,
+      onTap: () {
+        if (model.siteUrl == null) {
+          Toast.show(context, 'Url is null');
+          return;
+        }
 
-            try {
-              launch(model.siteUrl!);
-            } catch (err) {
-              Toast.show(context, 'Couldn\'t open link: $err');
-            }
-          },
-        ),
-      ]));
+        try {
+          launch(model.siteUrl!);
+        } catch (err) {
+          Toast.show(context, 'Couldn\'t open link: $err');
+        }
+      },
+    ));
+
+    BottomDrawer.show(context, BottomDrawer(children: children, ctx: context));
+  }
 }

@@ -6,22 +6,26 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
-class _BottomDrawer extends StatelessWidget {
-  final int itemCount;
+class BottomDrawer extends StatelessWidget {
+  static void show(BuildContext ctx, Widget drawer) => Sheet.show(
+        ctx: ctx,
+        sheet: drawer,
+        isScrollControlled: true,
+        barrierColour: Theme.of(ctx).colorScheme.surface.withAlpha(150),
+      );
+
   final double itemExtent;
-  final Widget Function(int) itemBuilder;
-  final void Function(int) onChanged;
+  final List<Widget> children;
   // A workaround for a bug: showModalBottomSheet doesn't respect the top
   // padding, so SafeArea() and MediaQuery.of(context).padding.top don't work.
   final BuildContext ctx;
 
-  _BottomDrawer({
-    required this.itemCount,
-    required this.itemExtent,
-    required this.itemBuilder,
-    required this.onChanged,
+  BottomDrawer({
+    required this.children,
     required this.ctx,
+    this.itemExtent = 50,
   });
 
   @override
@@ -31,7 +35,7 @@ class _BottomDrawer extends StatelessWidget {
         : 20.0;
 
     final availableHeight = MediaQuery.of(ctx).size.height;
-    final requiredHeight = itemCount * itemExtent + 60;
+    final requiredHeight = children.length * itemExtent + 60;
 
     final size = requiredHeight < availableHeight
         ? requiredHeight / availableHeight
@@ -40,6 +44,7 @@ class _BottomDrawer extends StatelessWidget {
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: size,
+      minChildSize: size < 0.25 ? size : 0.25,
       builder: (_, sctrollCtrl) => Container(
         margin: EdgeInsets.only(top: MediaQuery.of(ctx).viewInsets.top),
         padding:
@@ -61,16 +66,9 @@ class _BottomDrawer extends StatelessWidget {
           controller: sctrollCtrl,
           padding: const EdgeInsets.only(top: 50),
           physics: Config.PHYSICS,
-          itemCount: itemCount,
+          itemCount: children.length,
           itemExtent: itemExtent,
-          itemBuilder: (_, i) => GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              Navigator.pop(context);
-              onChanged(i);
-            },
-            child: itemBuilder(i),
-          ),
+          itemBuilder: (_, i) => children[i],
         ),
       ),
     );
@@ -88,31 +86,36 @@ class CollectionBottomDrawer extends StatelessWidget {
     final names = ctrl.names;
     final counts = ctrl.allEntryCounts;
 
-    return _BottomDrawer(
-      ctx: ctx,
-      itemExtent: 60,
-      itemCount: names.length,
-      itemBuilder: (i) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            names[i],
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            style: i != ctrl.listIndex
-                ? Theme.of(context).textTheme.headline2
-                : Theme.of(context).textTheme.headline1,
-          ),
-          const SizedBox(height: 5),
-          Text(
-            counts[i].toString(),
-            style: Theme.of(context).textTheme.headline6,
-          ),
-        ],
-      ),
-      onChanged: (i) => ctrl.listIndex = i,
-    );
+    final children = <Widget>[];
+    for (int i = 0; i < ctrl.names.length; i++)
+      children.add(GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          Navigator.pop(context);
+          ctrl.listIndex = i;
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              names[i],
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: i != ctrl.listIndex
+                  ? Theme.of(context).textTheme.headline2
+                  : Theme.of(context).textTheme.headline1,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              counts[i].toString(),
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ],
+        ),
+      ));
+
+    return BottomDrawer(ctx: ctx, itemExtent: 60, children: children);
   }
 }
 
@@ -124,29 +127,66 @@ class ExploreBottomDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = Get.find<ExploreController>();
 
-    return _BottomDrawer(
-      ctx: ctx,
-      itemExtent: 50,
-      itemCount: Explorable.values.length,
-      itemBuilder: (i) => Row(
+    final children = <Widget>[];
+    for (int i = 0; i < Explorable.values.length; i++)
+      children.add(GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          Navigator.pop(context);
+          ctrl.type = Explorable.values[i];
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Explorable.values[i].icon,
+              color: i != ctrl.type.index
+                  ? Theme.of(context).colorScheme.onBackground
+                  : Theme.of(context).colorScheme.secondary,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
+              style: i != ctrl.type.index
+                  ? Theme.of(context).textTheme.headline2
+                  : Theme.of(context).textTheme.headline1,
+            ),
+          ],
+        ),
+      ));
+
+    return BottomDrawer(ctx: ctx, children: children);
+  }
+}
+
+// Used in custom implementations of BottomDrawer
+class BottomDrawerListTile extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final void Function() onTap;
+
+  BottomDrawerListTile({
+    required this.text,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Navigator.pop(context);
+        onTap();
+      },
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Explorable.values[i].icon,
-            color: i != ctrl.type.index
-                ? Theme.of(context).colorScheme.onBackground
-                : Theme.of(context).colorScheme.secondary,
-          ),
+          Icon(icon),
           const SizedBox(width: 5),
-          Text(
-            Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
-            style: i != ctrl.type.index
-                ? Theme.of(context).textTheme.headline2
-                : Theme.of(context).textTheme.headline1,
-          ),
+          Text(text, style: Theme.of(context).textTheme.headline2),
         ],
       ),
-      onChanged: (i) => ctrl.type = Explorable.values[i],
     );
   }
 }

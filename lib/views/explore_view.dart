@@ -11,7 +11,6 @@ import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreView extends StatelessWidget {
   const ExploreView();
@@ -103,12 +102,7 @@ class ExploreActionButton extends StatelessWidget {
         child: ActionButton(
           tooltip: 'Types',
           icon: ctrl.type.icon,
-          onTap: () => Sheet.show(
-            ctx: context,
-            sheet: ExploreBottomDrawer(context),
-            isScrollControlled: true,
-            barrierColour: Theme.of(context).colorScheme.surface.withAlpha(150),
-          ),
+          onTap: () => BottomDrawer.show(context, ExploreBottomDrawer(context)),
         ),
       ),
     );

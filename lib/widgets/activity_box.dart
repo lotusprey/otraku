@@ -8,11 +8,11 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/theming.dart';
+import 'package:otraku/widgets/bottom_drawer.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -190,90 +190,73 @@ class _InteractionButtonsState extends State<InteractionButtons> {
             Ionicons.ellipsis_horizontal,
             size: Theming.ICON_SMALL,
           ),
-          onPressed: () => Sheet.show(
-            ctx: context,
-            sheet: ListTileSheet([
-              if (model.deletable)
-                ListTile(
-                  leading: const Icon(Ionicons.trash),
-                  title: Text(
-                    'Delete',
-                    style: Theme.of(context).textTheme.bodyText2,
+          onPressed: () {
+            final children = <Widget>[];
+            if (model.deletable)
+              children.add(BottomDrawerListTile(
+                text: 'Delete',
+                icon: Ionicons.trash_outline,
+                onTap: () => showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Delete?',
+                    mainAction: 'Yes',
+                    secondaryAction: 'No',
+                    onConfirm: () {
+                      widget.delete();
+
+                      // If an activityPage cannot be pushed, it's
+                      // already opened and should be closed.
+                      if (widget.pushActivityPage == null)
+                        Navigator.pop(context);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    showPopUp(
-                      context,
-                      ConfirmationDialog(
-                        title: 'Delete?',
-                        mainAction: 'Yes',
-                        secondaryAction: 'No',
-                        onConfirm: () {
-                          widget.delete();
+                ),
+              ));
+            children.add(BottomDrawerListTile(
+              text: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+              icon: !model.isSubscribed
+                  ? Ionicons.notifications_outline
+                  : Ionicons.notifications_off_outline,
+              onTap: () {
+                model.toggleSubscription();
+                widget.toggleSubscribtion();
+              },
+            ));
+            children.add(BottomDrawerListTile(
+              text: 'Copy Link',
+              icon: Ionicons.clipboard_outline,
+              onTap: () {
+                if (model.siteUrl == null) {
+                  Toast.show(context, 'Url is null');
+                  return;
+                }
 
-                          // If an activityPage cannot be pushed, it's
-                          // already opened and should be closed.
-                          if (widget.pushActivityPage == null)
-                            Navigator.pop(context);
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ListTile(
-                leading: Icon(
-                  !model.isSubscribed
-                      ? Ionicons.notifications_outline
-                      : Ionicons.notifications_off_outline,
-                ),
-                title: Text(
-                  !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-                  style: Theme.of(context).textTheme.bodyText2,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  model.toggleSubscription();
-                  widget.toggleSubscribtion();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Ionicons.clipboard_outline),
-                title: Text(
-                  'Copy Link',
-                  style: Theme.of(context).textTheme.bodyText2,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  if (model.siteUrl == null) {
-                    Toast.show(context, 'Url is null');
-                    return;
-                  }
+                Toast.copy(context, model.siteUrl!);
+              },
+            ));
+            children.add(BottomDrawerListTile(
+              text: 'Open in Browser',
+              icon: Ionicons.link_outline,
+              onTap: () {
+                if (model.siteUrl == null) {
+                  Toast.show(context, 'Url is null');
+                  return;
+                }
 
-                  Toast.copy(context, model.siteUrl!);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Ionicons.link),
-                title: Text(
-                  'Open in Browser',
-                  style: Theme.of(context).textTheme.bodyText2,
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  if (model.siteUrl == null) {
-                    Toast.show(context, 'Url is null');
-                    return;
-                  }
+                try {
+                  launch(model.siteUrl!);
+                } catch (err) {
+                  Toast.show(context, 'Couldn\'t open link: $err');
+                }
+              },
+            ));
 
-                  try {
-                    launch(model.siteUrl!);
-                  } catch (err) {
-                    Toast.show(context, 'Couldn\'t open link: $err');
-                  }
-                },
-              ),
-            ]),
-          ),
+            BottomDrawer.show(
+              context,
+              BottomDrawer(ctx: context, children: children),
+            );
+          },
         ),
         Tooltip(
           message: 'Replies',

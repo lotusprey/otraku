@@ -31,10 +31,13 @@ abstract class Convert {
   static String? mapToDateStr(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
 
-    final String? month = _MONTHS[map!['month']];
-    final day = map['day'] ?? '';
+    final String month = _MONTHS[map!['month']] ?? '';
 
-    if (month == '' && day == '') return '${map['year']}';
+    if (month == '') return '${map['year']}';
+
+    final String day = map['day'] ?? '';
+
+    if (day == '') return '$month, ${map['year']}';
 
     return '$month $day, ${map['year']}';
   }

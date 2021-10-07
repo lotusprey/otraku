@@ -86,64 +86,6 @@ class Sheet extends StatelessWidget {
   }
 }
 
-class OptionSheet extends StatelessWidget {
-  final String title;
-  final List<String> options;
-  final int index;
-  final Function(int) onTap;
-
-  OptionSheet({
-    required this.title,
-    required this.options,
-    required this.index,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Sheet(
-        height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: Config.PADDING,
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-            ),
-            Expanded(
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (_, i) => ListTile(
-                  dense: true,
-                  title: Text(
-                    options[i],
-                    style: i != index
-                        ? Theme.of(context).textTheme.bodyText2
-                        : Theme.of(context).textTheme.bodyText1,
-                  ),
-                  trailing: Container(
-                    height: 25,
-                    width: 25,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: i != index
-                          ? Theme.of(context).colorScheme.surface
-                          : Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                  onTap: () {
-                    onTap(i);
-                    Navigator.pop(context);
-                  },
-                ),
-                itemCount: options.length,
-                itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
-              ),
-            ),
-          ],
-        ),
-      );
-}
-
 class SelectionSheet<T> extends StatelessWidget {
   final List<String> options;
   final List<T> values;

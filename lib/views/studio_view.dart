@@ -9,6 +9,7 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -59,11 +60,10 @@ class StudioView extends StatelessWidget {
                   AppBarIcon(
                     tooltip: 'Filter',
                     icon: Ionicons.funnel_outline,
-                    onTap: () => Sheet.show(
-                      ctx: context,
-                      sheet: OptionSheet(
-                        title: 'List Filter',
-                        options: ['Everything', 'On List', 'Not On List'],
+                    onTap: () => DragSheet.show(
+                      context,
+                      OptionDragSheet(
+                        options: const ['Everything', 'On List', 'Not On List'],
                         index: ctrl.onList == null
                             ? 0
                             : ctrl.onList!

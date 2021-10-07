@@ -12,7 +12,7 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class MediaView extends StatelessWidget {
   final int id;
@@ -120,16 +120,14 @@ class __ActionButtonsState extends State<_ActionButtons> {
             ActionButton(
               tooltip: 'Language',
               icon: Ionicons.globe_outline,
-              onTap: () => Sheet.show(
-                ctx: context,
-                sheet: OptionSheet(
-                  title: 'Language',
+              onTap: () => DragSheet.show(
+                context,
+                OptionDragSheet(
                   options: ctrl.availableLanguages,
                   index: ctrl.languageIndex,
                   onTap: (index) =>
                       ctrl.staffLanguage = ctrl.availableLanguages[index],
                 ),
-                isScrollControlled: true,
               ),
             ),
             const SizedBox(width: 10),

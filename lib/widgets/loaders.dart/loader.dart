@@ -6,7 +6,7 @@ class Loader extends StatelessWidget {
   const Loader();
 
   @override
-  Widget build(BuildContext context) => Shimmer(
+  Widget build(BuildContext context) => Shimmer(ShimmerItem(
         Container(
           width: 60,
           height: 15,
@@ -15,5 +15,5 @@ class Loader extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
           ),
         ),
-      );
+      ));
 }

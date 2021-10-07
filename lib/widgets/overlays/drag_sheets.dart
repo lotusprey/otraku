@@ -6,27 +6,28 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
-class BottomDrawer extends StatelessWidget {
-  static void show(BuildContext ctx, Widget drawer) => Sheet.show(
-        ctx: ctx,
-        sheet: drawer,
+// An implementation of DraggableScrollableSheet.
+class DragSheet extends StatelessWidget {
+  static void show(BuildContext ctx, Widget sheet) => showModalBottomSheet(
+        context: ctx,
+        builder: (_) => sheet,
         isScrollControlled: true,
-        barrierColour: Theme.of(ctx).colorScheme.surface.withAlpha(150),
+        backgroundColor: Colors.transparent,
+        barrierColor: Theme.of(ctx).colorScheme.surface.withAlpha(150),
       );
+
+  DragSheet({
+    required this.children,
+    required this.ctx,
+    this.itemExtent = Config.MATERIAL_TAP_TARGET_SIZE,
+  });
 
   final double itemExtent;
   final List<Widget> children;
   // A workaround for a bug: showModalBottomSheet doesn't respect the top
   // padding, so SafeArea() and MediaQuery.of(context).padding.top don't work.
   final BuildContext ctx;
-
-  BottomDrawer({
-    required this.children,
-    required this.ctx,
-    this.itemExtent = 50,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,10 +76,49 @@ class BottomDrawer extends StatelessWidget {
   }
 }
 
-class CollectionBottomDrawer extends StatelessWidget {
+class OptionDragSheet extends StatelessWidget {
+  OptionDragSheet({
+    required this.options,
+    required this.onTap,
+    required this.index,
+  });
+
+  final void Function(int) onTap;
+  final List<String> options;
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = <Widget>[];
+    for (int i = 0; i < options.length; i++)
+      children.add(SizedBox.expand(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.pop(context);
+            onTap(i);
+          },
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              options[i],
+              style: i != index
+                  ? Theme.of(context).textTheme.headline2
+                  : Theme.of(context).textTheme.headline1,
+            ),
+          ),
+        ),
+      ));
+
+    return DragSheet(ctx: context, children: children);
+  }
+}
+
+// Switch between lists in the collection.
+class CollectionDragSheet extends StatelessWidget {
+  CollectionDragSheet(this.ctx, this.collectionTag);
   final String collectionTag;
   final BuildContext ctx;
-  CollectionBottomDrawer(this.ctx, this.collectionTag);
 
   @override
   Widget build(BuildContext context) {
@@ -115,13 +155,14 @@ class CollectionBottomDrawer extends StatelessWidget {
         ),
       ));
 
-    return BottomDrawer(ctx: ctx, itemExtent: 60, children: children);
+    return DragSheet(ctx: ctx, itemExtent: 60, children: children);
   }
 }
 
-class ExploreBottomDrawer extends StatelessWidget {
+// Switch between explore types.
+class ExploreDragSheet extends StatelessWidget {
+  ExploreDragSheet(this.ctx);
   final BuildContext ctx;
-  ExploreBottomDrawer(this.ctx);
 
   @override
   Widget build(BuildContext context) {
@@ -155,21 +196,21 @@ class ExploreBottomDrawer extends StatelessWidget {
         ),
       ));
 
-    return BottomDrawer(ctx: ctx, children: children);
+    return DragSheet(ctx: ctx, children: children);
   }
 }
 
-// Used in custom implementations of BottomDrawer
-class BottomDrawerListTile extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final void Function() onTap;
-
-  BottomDrawerListTile({
+// Used in custom implementations of DragSheet
+class DragSheetListTile extends StatelessWidget {
+  DragSheetListTile({
     required this.text,
     required this.icon,
     required this.onTap,
   });
+
+  final String text;
+  final IconData icon;
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends StatelessWidget {
@@ -26,15 +26,19 @@ class NotificationsView extends StatelessWidget {
           AppBarIcon(
             tooltip: 'Filter',
             icon: Ionicons.funnel_outline,
-            onTap: () => Sheet.show(
-              ctx: context,
-              sheet: OptionSheet(
-                title: 'Category',
-                options: ['All', 'Activities', 'Forum', 'Media', 'Follows'],
+            onTap: () => DragSheet.show(
+              context,
+              OptionDragSheet(
+                options: const [
+                  'All',
+                  'Activities',
+                  'Forum',
+                  'Media',
+                  'Follows',
+                ],
                 index: notifications.filter,
                 onTap: (val) => notifications.filter = val,
               ),
-              isScrollControlled: true,
             ),
           ),
         ],

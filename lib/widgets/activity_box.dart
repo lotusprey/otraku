@@ -8,7 +8,7 @@ import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/theming.dart';
-import 'package:otraku/widgets/bottom_drawer.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -193,7 +193,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
           onPressed: () {
             final children = <Widget>[];
             if (model.deletable)
-              children.add(BottomDrawerListTile(
+              children.add(DragSheetListTile(
                 text: 'Delete',
                 icon: Ionicons.trash_outline,
                 onTap: () => showPopUp(
@@ -213,7 +213,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   ),
                 ),
               ));
-            children.add(BottomDrawerListTile(
+            children.add(DragSheetListTile(
               text: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
               icon: !model.isSubscribed
                   ? Ionicons.notifications_outline
@@ -223,7 +223,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 widget.toggleSubscribtion();
               },
             ));
-            children.add(BottomDrawerListTile(
+            children.add(DragSheetListTile(
               text: 'Copy Link',
               icon: Ionicons.clipboard_outline,
               onTap: () {
@@ -235,7 +235,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 Toast.copy(context, model.siteUrl!);
               },
             ));
-            children.add(BottomDrawerListTile(
+            children.add(DragSheetListTile(
               text: 'Open in Browser',
               icon: Ionicons.link_outline,
               onTap: () {
@@ -252,9 +252,9 @@ class _InteractionButtonsState extends State<InteractionButtons> {
               },
             ));
 
-            BottomDrawer.show(
+            DragSheet.show(
               context,
-              BottomDrawer(ctx: context, children: children),
+              DragSheet(ctx: context, children: children),
             );
           },
         ),

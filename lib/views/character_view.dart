@@ -12,6 +12,7 @@ import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -109,16 +110,14 @@ class CharacterView extends StatelessWidget {
                   AppBarIcon(
                     tooltip: 'Language',
                     icon: Ionicons.globe_outline,
-                    onTap: () => Sheet.show(
-                      ctx: context,
-                      sheet: OptionSheet(
-                        title: 'Language',
+                    onTap: () => DragSheet.show(
+                      context,
+                      OptionDragSheet(
                         options: ctrl.availableLanguages,
                         index: ctrl.languageIndex,
                         onTap: (index) =>
                             ctrl.staffLanguage = ctrl.availableLanguages[index],
                       ),
-                      isScrollControlled: true,
                     ),
                   ),
                 AppBarIcon(

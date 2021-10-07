@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/bottom_drawer.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -159,7 +159,7 @@ class MediaHeader extends StatelessWidget {
 
   void _showSheet(BuildContext context, MediaInfoModel model) {
     final children = <Widget>[];
-    children.add(BottomDrawerListTile(
+    children.add(DragSheetListTile(
       text: 'Copy Link',
       icon: Ionicons.clipboard_outline,
       onTap: () {
@@ -171,7 +171,7 @@ class MediaHeader extends StatelessWidget {
         Toast.copy(context, model.siteUrl!);
       },
     ));
-    children.add(BottomDrawerListTile(
+    children.add(DragSheetListTile(
       text: 'Open in Browser',
       icon: Ionicons.link_outline,
       onTap: () {
@@ -188,6 +188,6 @@ class MediaHeader extends StatelessWidget {
       },
     ));
 
-    BottomDrawer.show(context, BottomDrawer(children: children, ctx: context));
+    DragSheet.show(context, DragSheet(children: children, ctx: context));
   }
 }

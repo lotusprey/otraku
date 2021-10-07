@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/widgets/bottom_drawer.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -102,7 +102,7 @@ class ExploreActionButton extends StatelessWidget {
         child: ActionButton(
           tooltip: 'Types',
           icon: ctrl.type.icon,
-          onTap: () => BottomDrawer.show(context, ExploreBottomDrawer(context)),
+          onTap: () => DragSheet.show(context, ExploreDragSheet(context)),
         ),
       ),
     );

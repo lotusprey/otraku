@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/widgets/bottom_drawer.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
@@ -78,9 +78,9 @@ class CollectionActionButton extends StatelessWidget {
       child: ActionButton(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
-        onTap: () => BottomDrawer.show(
+        onTap: () => DragSheet.show(
           context,
-          CollectionBottomDrawer(context, collectionTag),
+          CollectionDragSheet(context, collectionTag),
         ),
       ),
     );

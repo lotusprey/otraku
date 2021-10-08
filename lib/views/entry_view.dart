@@ -452,7 +452,7 @@ class _CheckBoxGrid extends StatelessWidget {
         childCount: map.length,
       ),
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 190,
+        minWidth: 180,
         mainAxisSpacing: 0,
         height: Config.MATERIAL_TAP_TARGET_SIZE,
       ),

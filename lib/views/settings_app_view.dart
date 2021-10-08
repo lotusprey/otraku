@@ -104,7 +104,7 @@ class SettingsAppView extends StatelessWidget {
             ),
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-                minWidth: 210,
+                minWidth: 200,
                 mainAxisSpacing: 0,
                 crossAxisSpacing: 20,
                 height: Config.MATERIAL_TAP_TARGET_SIZE,

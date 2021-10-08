@@ -167,7 +167,7 @@ class SettingsContentView extends StatelessWidget {
                   },
                 ),
                 DropDownField<EntrySort>(
-                  title: 'Default List Order',
+                  title: 'Default Site List Sort',
                   value: ctrl.model.defaultSort,
                   items: Map.fromIterables(
                     EntrySortHelper.defaultStrings,

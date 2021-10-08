@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/entry_model.dart';
@@ -185,8 +186,9 @@ class CollectionController extends OverscrollController implements Filterable {
         ) ??
         ScoreFormat.POINT_10_DECIMAL;
 
-    _filters[Filterable.SORT] = EntrySortHelper.getEnum(
-      data['user']['mediaListOptions']['rowOrder'],
+    final key = ofAnime ? Config.DEFAULT_ANIME_SORT : Config.DEFAULT_MANGA_SORT;
+    _filters[Filterable.SORT] = EntrySort.values.elementAt(
+      Config.storage.read(key) ?? 0,
     );
 
     _customListNames.clear();

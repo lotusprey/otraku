@@ -16,16 +16,16 @@ enum EntrySort {
   AIRING_AT_DESC,
 }
 
-// AniList supports only 4 default sortings.
+// AniList supports only 4 default sort types.
 extension EntrySortHelper on EntrySort {
-  static const _enumsToStrings = const {
+  static const _enumsToStrings = {
     EntrySort.TITLE: 'title',
     EntrySort.SCORE_DESC: 'score',
     EntrySort.UPDATED_AT_DESC: 'updatedAt',
     EntrySort.CREATED_AT_DESC: 'id',
   };
 
-  static const _stringsToEnums = const {
+  static const _stringsToEnums = {
     'title': EntrySort.TITLE,
     'score': EntrySort.SCORE_DESC,
     'updatedAt': EntrySort.UPDATED_AT_DESC,

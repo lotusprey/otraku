@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
@@ -61,6 +62,32 @@ class SettingsAppView extends StatelessWidget {
                   },
                   onChanged: (val) =>
                       Config.storage.write(Config.STARTUP_PAGE, val),
+                ),
+                DropDownField<EntrySort>(
+                  title: 'Default Anime Sort',
+                  value: EntrySort.values.elementAt(
+                    Config.storage.read(Config.DEFAULT_ANIME_SORT) ?? 0,
+                  ),
+                  items: Map.fromIterable(
+                    EntrySort.values,
+                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                    value: (v) => v,
+                  ),
+                  onChanged: (val) => Config.storage
+                      .write(Config.DEFAULT_ANIME_SORT, val.index),
+                ),
+                DropDownField<EntrySort>(
+                  title: 'Default Manga Sort',
+                  value: EntrySort.values.elementAt(
+                    Config.storage.read(Config.DEFAULT_MANGA_SORT) ?? 0,
+                  ),
+                  items: Map.fromIterable(
+                    EntrySort.values,
+                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                    value: (v) => v,
+                  ),
+                  onChanged: (val) => Config.storage
+                      .write(Config.DEFAULT_MANGA_SORT, val.index),
                 ),
                 DropDownField<int>(
                   title: 'Default Explorable',

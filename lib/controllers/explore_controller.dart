@@ -208,7 +208,7 @@ class ExploreController extends OverscrollController implements Filterable {
       _isLoading.value = true;
       _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
-      scrollTo(0);
+      scrollUpTo(0);
     }
 
     String query;

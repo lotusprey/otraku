@@ -75,7 +75,7 @@ class StudioView extends StatelessWidget {
                               : val == 1
                                   ? true
                                   : false;
-                          ctrl.scrollTo(0);
+                          ctrl.scrollUpTo(0);
                         },
                       ),
                     ),
@@ -89,7 +89,7 @@ class StudioView extends StatelessWidget {
                         ctrl.sort,
                         (sort) {
                           ctrl.sort = sort;
-                          ctrl.scrollTo(0);
+                          ctrl.scrollUpTo(0);
                         },
                       ),
                       isScrollControlled: true,

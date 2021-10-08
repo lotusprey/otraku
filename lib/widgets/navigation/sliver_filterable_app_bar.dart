@@ -40,7 +40,7 @@ class SliverCollectionAppBar extends StatelessWidget {
       return SliverTransparentAppBar([
         leading,
         MediaSearchField(
-          scrollToTop: () => ctrl.scrollTo(0),
+          scrollToTop: () => ctrl.scrollUpTo(0),
           swipe: (offset) => ctrl.listIndex += offset,
           hint: ctrl.currentName,
           searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
@@ -91,7 +91,7 @@ class SliverExploreAppBar extends StatelessWidget {
         [
           const SizedBox(width: 10),
           MediaSearchField(
-            scrollToTop: () => explorer.scrollTo(0),
+            scrollToTop: () => explorer.scrollUpTo(0),
             swipe: (offset) {
               final index = explorer.type.index + offset;
               if (index >= 0 && index < Explorable.values.length)

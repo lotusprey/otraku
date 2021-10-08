@@ -98,9 +98,9 @@ class StaffView extends StatelessWidget {
                         current: () => true,
                         onChanged: (bool value) {
                           ctrl.onCharacters = value;
-                          ctrl.scrollTo(offset);
+                          ctrl.scrollUpTo(offset);
                         },
-                        onSame: () => ctrl.scrollTo(offset),
+                        onSame: () => ctrl.scrollUpTo(offset),
                         itemWidth: 100,
                       )
                     : const SizedBox(),
@@ -114,7 +114,7 @@ class StaffView extends StatelessWidget {
                       ctrl.sort,
                       (sort) {
                         ctrl.sort = sort;
-                        ctrl.scrollTo(offset);
+                        ctrl.scrollUpTo(offset);
                       },
                     ),
                     isScrollControlled: true,

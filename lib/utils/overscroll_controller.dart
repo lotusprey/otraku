@@ -6,13 +6,12 @@ import 'package:get/get.dart';
 abstract class OverscrollController extends GetxController {
   final scrollCtrl = MultiScrollController();
 
-  Future<void> scrollTo(double offset) async {
-    if (!scrollCtrl.hasClients) return;
+  // Scroll up to a certain offset with an animation.
+  Future<void> scrollUpTo(double offset) async {
+    if (!scrollCtrl.hasClients || scrollCtrl.lastPos.pixels <= offset) return;
 
     if (scrollCtrl.lastPos.pixels > offset + 100)
       scrollCtrl.lastPos.jumpTo(offset + 100);
-    else if (scrollCtrl.lastPos.pixels < offset - 100)
-      scrollCtrl.lastPos.jumpTo(offset - 100);
 
     await scrollCtrl.lastPos.animateTo(
       offset,

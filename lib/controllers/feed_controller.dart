@@ -98,7 +98,7 @@ class FeedController extends OverscrollController {
     _isLoading = true;
 
     if (clean) {
-      scrollTo(0);
+      scrollUpTo(0);
       _idNotIn.clear();
       _activities.update((a) => a!.clear());
     }

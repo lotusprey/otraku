@@ -112,7 +112,7 @@ class FilterView extends StatelessWidget {
 
               if (filterable is ExploreController) filterable.fetch();
               if (filterable is CollectionController) {
-                filterable.scrollTo(0);
+                filterable.scrollUpTo(0);
                 filterable.filter();
               }
 

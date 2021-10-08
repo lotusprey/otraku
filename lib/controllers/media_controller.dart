@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
@@ -150,10 +149,10 @@ class MediaController extends OverscrollController {
   MediaModel? _model;
   int _tab = INFO;
   int _subtab = RELATIONS;
-  final _staffLanguage = 'Japanese'.obs;
-  final _availableLanguages = <String>[];
+  String _staffLanguage = 'Japanese';
   bool _isLoading = false;
   bool showSpoilerTags = false;
+  final _availableLanguages = <String>[];
 
   int get tab => _tab;
   set tab(int val) {
@@ -189,12 +188,15 @@ class MediaController extends OverscrollController {
 
   MediaModel? get model => _model;
 
-  String get staffLanguage => _staffLanguage();
-  set staffLanguage(String value) => _staffLanguage.value = value;
+  String get staffLanguage => _staffLanguage;
+  set staffLanguage(String val) {
+    _staffLanguage = val;
+    update([ID_OTHER]);
+  }
 
   List<String> get availableLanguages => [..._availableLanguages];
   int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage());
+    final index = _availableLanguages.indexOf(_staffLanguage);
     if (index != -1) return index;
     return 0;
   }

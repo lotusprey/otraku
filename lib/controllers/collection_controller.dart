@@ -133,13 +133,13 @@ class CollectionController extends OverscrollController implements Filterable {
   set listIndex(int value) {
     if (value < 0 || value >= _lists.length || value == _listIndex()) return;
     _listIndex.value = value;
-    scrollTo(0);
+    scrollUpTo(0);
     filter();
   }
 
   void sort() {
     for (final list in _lists) list.sort(_filters[Filterable.SORT]);
-    scrollTo(0);
+    scrollUpTo(0);
     filter();
   }
 
@@ -468,7 +468,7 @@ class CollectionController extends OverscrollController implements Filterable {
     }
 
     if (update) {
-      scrollTo(0);
+      scrollUpTo(0);
       filter();
     }
   }
@@ -489,7 +489,7 @@ class CollectionController extends OverscrollController implements Filterable {
     }
 
     if (update) {
-      scrollTo(0);
+      scrollUpTo(0);
       filter();
     }
   }

@@ -99,9 +99,9 @@ class CharacterView extends StatelessWidget {
                         current: () => true,
                         onChanged: (bool value) {
                           ctrl.onAnime = value;
-                          ctrl.scrollTo(offset);
+                          ctrl.scrollUpTo(offset);
                         },
-                        onSame: () => ctrl.scrollTo(offset),
+                        onSame: () => ctrl.scrollUpTo(offset),
                         itemWidth: 80,
                       )
                     : const SizedBox(),
@@ -129,7 +129,7 @@ class CharacterView extends StatelessWidget {
                       ctrl.sort,
                       (sort) {
                         ctrl.sort = sort;
-                        ctrl.scrollTo(offset);
+                        ctrl.scrollUpTo(offset);
                       },
                     ),
                     isScrollControlled: true,

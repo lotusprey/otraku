@@ -45,7 +45,7 @@ class FavouritesController extends OverscrollController {
   set pageIndex(int index) {
     if (index < 0 || index > 4) return;
     _pageIndex = index;
-    scrollTo(0).then((_) => update());
+    scrollUpTo(0).then((_) => update());
   }
 
   @override

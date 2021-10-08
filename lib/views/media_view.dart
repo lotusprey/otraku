@@ -62,12 +62,12 @@ class MediaView extends StatelessWidget {
           trySubtab: (goRight) {
             if (ctrl.tab == MediaController.OTHER) {
               if (goRight && ctrl.subtab < 2) {
-                ctrl.scrollTo(pageTop);
+                ctrl.scrollUpTo(pageTop);
                 ctrl.subtab++;
                 return true;
               }
               if (!goRight && ctrl.subtab > 0) {
-                ctrl.scrollTo(pageTop);
+                ctrl.scrollUpTo(pageTop);
                 ctrl.subtab--;
                 return true;
               }
@@ -86,7 +86,7 @@ class MediaView extends StatelessWidget {
                   ? MediaOtherView(
                       ctrl,
                       header,
-                      () => ctrl.scrollTo(pageTop),
+                      () => ctrl.scrollUpTo(pageTop),
                     )
                   : MediaSocialView(ctrl, header),
         );

@@ -12,6 +12,7 @@ import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -31,6 +32,9 @@ class StaffView extends StatelessWidget {
     if (coverWidth > 200) coverWidth = 200;
     final coverHeight = coverWidth / 0.7;
 
+    final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
+        Config.PADDING.top * 2;
+
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -39,6 +43,7 @@ class StaffView extends StatelessWidget {
           controller: ctrl.scrollCtrl,
           slivers: [
             GetBuilder<StaffController>(
+              id: StaffController.ID_MAIN,
               tag: id.toString(),
               builder: (s) => TopSliverHeader(
                 toggleFavourite: s.toggleFavourite,
@@ -48,6 +53,7 @@ class StaffView extends StatelessWidget {
               ),
             ),
             GetBuilder<StaffController>(
+              id: StaffController.ID_MAIN,
               tag: id.toString(),
               builder: (s) => SliverPadding(
                 padding: Config.PADDING,
@@ -83,61 +89,68 @@ class StaffView extends StatelessWidget {
                 ),
               ),
             ),
-            Obx(() {
-              if (ctrl.characters.items.isEmpty && ctrl.roles.items.isEmpty)
-                return const SliverToBoxAdapter();
-
-              final offset =
-                  (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-                      Config.PADDING.top * 2;
-
-              return SliverShadowAppBar([
-                ctrl.characters.items.isNotEmpty && ctrl.roles.items.isNotEmpty
-                    ? BubbleTabs(
-                        items: const {'Characters': true, 'Staff Roles': false},
-                        current: () => true,
-                        onChanged: (bool value) {
-                          ctrl.onCharacters = value;
-                          ctrl.scrollUpTo(offset);
-                        },
-                        onSame: () => ctrl.scrollUpTo(offset),
-                        itemWidth: 100,
-                      )
-                    : const SizedBox(),
-                const Spacer(),
-                AppBarIcon(
-                  tooltip: 'Sort',
-                  icon: Ionicons.filter_outline,
-                  onTap: () => Sheet.show(
-                    ctx: context,
-                    sheet: MediaSortSheet(
-                      ctrl.sort,
-                      (sort) {
-                        ctrl.sort = sort;
-                        ctrl.scrollUpTo(offset);
-                      },
-                    ),
-                    isScrollControlled: true,
+            SliverShadowAppBar([
+              BubbleTabs(
+                items: const {'Characters': true, 'Staff Roles': false},
+                current: () => true,
+                onChanged: (bool value) {
+                  ctrl.onCharacters = value;
+                  ctrl.scrollUpTo(offset);
+                },
+                onSame: () => ctrl.scrollUpTo(offset),
+                itemWidth: 100,
+              ),
+              const Spacer(),
+              AppBarIcon(
+                tooltip: 'Filter',
+                icon: Ionicons.funnel_outline,
+                onTap: () => DragSheet.show(
+                  context,
+                  OptionDragSheet(
+                    options: const ['Everything', 'On List', 'Not On List'],
+                    index: ctrl.onList == null
+                        ? 0
+                        : ctrl.onList!
+                            ? 1
+                            : 2,
+                    onTap: (val) => ctrl.onList = val == 0
+                        ? null
+                        : val == 1
+                            ? true
+                            : false,
                   ),
                 ),
-              ]);
-            }),
-            Obx(() {
-              final connections =
-                  ctrl.onCharacters ? ctrl.characters : ctrl.roles;
-
-              if (connections.items.isEmpty) return const SliverToBoxAdapter();
-
-              return SliverPadding(
-                padding: EdgeInsets.only(
-                  top: 10,
-                  left: 10,
-                  right: 10,
-                  bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+              ),
+              AppBarIcon(
+                tooltip: 'Sort',
+                icon: Ionicons.filter_outline,
+                onTap: () => Sheet.show(
+                  ctx: context,
+                  sheet: MediaSortSheet(ctrl.sort, (s) => ctrl.sort = s),
+                  isScrollControlled: true,
                 ),
-                sliver: ConnectionsGrid(connections: connections.items),
-              );
-            }),
+              ),
+            ]),
+            GetBuilder<StaffController>(
+              id: StaffController.ID_MEDIA,
+              tag: id.toString(),
+              builder: (ctrl) {
+                final connections =
+                    ctrl.onCharacters ? ctrl.characters : ctrl.roles;
+
+                if (connections.isEmpty) return const SliverToBoxAdapter();
+
+                return SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    left: 10,
+                    right: 10,
+                    bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+                  ),
+                  sliver: ConnectionsGrid(connections: connections),
+                );
+              },
+            ),
           ],
         ),
       ),

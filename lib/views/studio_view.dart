@@ -69,14 +69,11 @@ class StudioView extends StatelessWidget {
                             : ctrl.onList!
                                 ? 1
                                 : 2,
-                        onTap: (val) {
-                          ctrl.onList = val == 0
-                              ? null
-                              : val == 1
-                                  ? true
-                                  : false;
-                          ctrl.scrollUpTo(0);
-                        },
+                        onTap: (val) => ctrl.onList = val == 0
+                            ? null
+                            : val == 1
+                                ? true
+                                : false,
                       ),
                     ),
                   ),
@@ -85,13 +82,7 @@ class StudioView extends StatelessWidget {
                     icon: Ionicons.filter_outline,
                     onTap: () => Sheet.show(
                       ctx: context,
-                      sheet: MediaSortSheet(
-                        ctrl.sort,
-                        (sort) {
-                          ctrl.sort = sort;
-                          ctrl.scrollUpTo(0);
-                        },
-                      ),
+                      sheet: MediaSortSheet(ctrl.sort, (s) => ctrl.sort = s),
                       isScrollControlled: true,
                     ),
                   ),

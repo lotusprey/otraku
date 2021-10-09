@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/explorable.dart';
@@ -55,6 +54,10 @@ class CharacterController extends OverscrollController {
     }
   ''';
 
+  // GetBuilder ids.
+  static const ID_MAIN = 0;
+  static const ID_MEDIA = 1;
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -63,45 +66,52 @@ class CharacterController extends OverscrollController {
   CharacterController(this.id);
 
   CharacterModel? _model;
-  final _anime = PageModel<ConnectionModel>().obs;
-  final _manga = PageModel<ConnectionModel>().obs;
-  final _onAnime = true.obs;
-  final _staffLanguage = 'Japanese'.obs;
+  final _anime = PageModel<ConnectionModel>();
+  final _manga = PageModel<ConnectionModel>();
   final _availableLanguages = <String>[];
+  bool _onAnime = true;
+  String _staffLanguage = 'Japanese';
   MediaSort _sort = MediaSort.TRENDING_DESC;
+  bool? _onList;
 
   CharacterModel? get model => _model;
-
-  PageModel<ConnectionModel> get anime => _anime();
-
-  PageModel<ConnectionModel> get manga => _manga();
-
-  @override
-  bool get hasNextPage =>
-      _onAnime() ? _anime().hasNextPage : _manga().hasNextPage;
-
-  bool get onAnime => _onAnime();
-
-  set onAnime(bool value) => _onAnime.value = value;
-
-  String get staffLanguage => _staffLanguage();
-
-  set staffLanguage(String value) => _staffLanguage.value = value;
+  List<ConnectionModel> get anime => _anime.items;
+  List<ConnectionModel> get manga => _manga.items;
 
   int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage());
+    final index = _availableLanguages.indexOf(_staffLanguage);
     if (index != -1) return index;
     return 0;
   }
 
   List<String> get availableLanguages => [..._availableLanguages];
 
-  MediaSort get sort => _sort;
+  bool get onAnime => _onAnime;
+  set onAnime(bool val) {
+    _onAnime = val;
+    update([ID_MEDIA]);
+  }
 
+  String get staffLanguage => _staffLanguage;
+  set staffLanguage(String val) {
+    _staffLanguage = val;
+    update([ID_MEDIA]);
+  }
+
+  MediaSort get sort => _sort;
   set sort(MediaSort value) {
     _sort = value;
     refetch();
   }
+
+  bool? get onList => _onList;
+  set onList(bool? val) {
+    _onList = val;
+    refetch();
+  }
+
+  @override
+  bool get hasNextPage => _onAnime ? _anime.hasNextPage : _manga.hasNextPage;
 
   // ***************************************************************************
   // FETCHING
@@ -122,43 +132,50 @@ class CharacterController extends OverscrollController {
     final data = body['Character'];
 
     _model = CharacterModel(data);
-    update();
-
     _initAnime(data, false);
     _initManga(data, false);
 
-    if (_anime().items.isEmpty) _onAnime.value = false;
+    if (_anime.items.isEmpty) _onAnime = false;
+
+    update([ID_MAIN, ID_MEDIA]);
   }
 
   Future<void> refetch() async {
+    scrollUpTo(0);
+
     final body = await Client.request(_characterQuery, {
       'id': id,
       'withAnime': true,
       'withManga': true,
       'sort': describeEnum(_sort),
+      'onList': _onList,
     });
     if (body == null) return;
 
     _initAnime(body['Character'], true);
     _initManga(body['Character'], true);
+
+    update([ID_MEDIA]);
   }
 
   @override
   Future<void> fetchPage() async {
     final data = await Client.request(_characterQuery, {
       'id': id,
-      'withAnime': _onAnime(),
-      'withManga': !_onAnime(),
-      'animePage': _anime().nextPage,
-      'mangaPage': _manga().nextPage,
+      'withAnime': _onAnime,
+      'withManga': !_onAnime,
+      'animePage': _anime.nextPage,
+      'mangaPage': _manga.nextPage,
       'sort': describeEnum(_sort)
     });
     if (data == null) return;
 
-    if (_onAnime())
+    if (_onAnime)
       _initAnime(data['Character'], false);
     else
       _initManga(data['Character'], false);
+
+    update([ID_MEDIA]);
   }
 
   Future<bool> toggleFavourite() async {
@@ -174,7 +191,7 @@ class CharacterController extends OverscrollController {
   void _initAnime(Map<String, dynamic> data, bool clear) {
     if (clear) {
       _availableLanguages.clear();
-      _anime().clear();
+      _anime.clear();
     }
 
     final connections = <ConnectionModel>[];
@@ -205,16 +222,14 @@ class CharacterController extends OverscrollController {
       ));
     }
 
-    if (!_availableLanguages.contains(_staffLanguage()))
-      _staffLanguage.value = 'Japanese';
+    if (!_availableLanguages.contains(_staffLanguage))
+      _staffLanguage = 'Japanese';
 
-    _anime.update(
-      (a) => a!.append(connections, data['anime']['pageInfo']['hasNextPage']),
-    );
+    _anime.append(connections, data['anime']['pageInfo']['hasNextPage']);
   }
 
   void _initManga(Map<String, dynamic> data, bool clear) {
-    if (clear) _manga().clear();
+    if (clear) _manga.clear();
 
     final connections = <ConnectionModel>[];
     for (final connection in data['manga']['edges'])
@@ -226,9 +241,7 @@ class CharacterController extends OverscrollController {
         subtitle: Convert.clarifyEnum(connection['characterRole']),
       ));
 
-    _manga.update(
-      (m) => m!.append(connections, data['manga']['pageInfo']['hasNextPage']),
-    );
+    _manga.append(connections, data['manga']['pageInfo']['hasNextPage']);
   }
 
   @override

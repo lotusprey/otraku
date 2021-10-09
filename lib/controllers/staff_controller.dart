@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/enums/explorable.dart';
@@ -78,6 +77,10 @@ class StaffController extends OverscrollController {
     }
   ''';
 
+  // GetBuilder id.
+  static const ID_MAIN = 0;
+  static const ID_MEDIA = 1;
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
@@ -86,25 +89,37 @@ class StaffController extends OverscrollController {
   StaffController(this.id);
 
   StaffModel? _model;
-  final _characters = PageModel<ConnectionModel>().obs;
-  final _roles = PageModel<ConnectionModel>().obs;
-  final _onCharacters = true.obs;
+  final _characters = PageModel<ConnectionModel>();
+  final _roles = PageModel<ConnectionModel>();
+  bool _onCharacters = true;
   MediaSort _sort = MediaSort.POPULARITY_DESC;
+  bool? _onList;
 
   StaffModel? get model => _model;
-  PageModel<ConnectionModel> get characters => _characters();
-  PageModel<ConnectionModel> get roles => _roles();
-  bool get onCharacters => _onCharacters();
-  set onCharacters(bool value) => _onCharacters.value = value;
+  List<ConnectionModel> get characters => _characters.items;
+  List<ConnectionModel> get roles => _roles.items;
+
+  bool get onCharacters => _onCharacters;
+  set onCharacters(bool val) {
+    _onCharacters = val;
+    update([ID_MEDIA]);
+  }
+
   MediaSort get sort => _sort;
   set sort(MediaSort value) {
     _sort = value;
     refetch();
   }
 
+  bool? get onList => _onList;
+  set onList(bool? val) {
+    _onList = val;
+    refetch();
+  }
+
   @override
   bool get hasNextPage =>
-      _onCharacters() ? _characters().hasNextPage : _roles().hasNextPage;
+      _onCharacters ? _characters.hasNextPage : _roles.hasNextPage;
 
   // ***************************************************************************
   // FETCHING
@@ -125,43 +140,50 @@ class StaffController extends OverscrollController {
     final data = body['Staff'];
 
     _model = StaffModel(data);
-    update();
-
     _initCharacters(data, false);
     _initRoles(data, false);
 
-    if (_characters().items.isEmpty) _onCharacters.value = false;
+    if (_characters.items.isEmpty) _onCharacters = false;
+
+    update([ID_MAIN, ID_MEDIA]);
   }
 
   Future<void> refetch() async {
+    scrollUpTo(0);
+
     final data = await Client.request(_staffQuery, {
       'id': id,
       'withCharacters': true,
       'withStaff': true,
       'sort': describeEnum(_sort),
+      'onList': _onList,
     });
     if (data == null) return;
 
     _initCharacters(data['Staff'], true);
     _initRoles(data['Staff'], true);
+
+    update([ID_MEDIA]);
   }
 
   @override
   Future<void> fetchPage() async {
     final data = await Client.request(_staffQuery, {
       'id': id,
-      'withCharacters': _onCharacters(),
-      'withStaff': !_onCharacters(),
-      'characterPage': _characters().nextPage,
-      'staffPage': _roles().nextPage,
+      'withCharacters': _onCharacters,
+      'withStaff': !_onCharacters,
+      'characterPage': _characters.nextPage,
+      'staffPage': _roles.nextPage,
       'sort': describeEnum(_sort),
     });
     if (data == null) return;
 
-    if (_onCharacters())
+    if (_onCharacters)
       _initCharacters(data['Staff'], false);
     else
       _initRoles(data['Staff'], false);
+
+    update([ID_MEDIA]);
   }
 
   Future<bool> toggleFavourite() async {
@@ -175,7 +197,7 @@ class StaffController extends OverscrollController {
   // ***************************************************************************
 
   void _initCharacters(Map<String, dynamic> data, bool clear) {
-    if (clear) _characters().clear();
+    if (clear) _characters.clear();
 
     final connections = <ConnectionModel>[];
     for (final connection in data['characterMedia']['edges'])
@@ -199,14 +221,14 @@ class StaffController extends OverscrollController {
                 ),
               ]));
 
-    _characters.update((c) => c!.append(
-          connections,
-          data['characterMedia']['pageInfo']['hasNextPage'],
-        ));
+    _characters.append(
+      connections,
+      data['characterMedia']['pageInfo']['hasNextPage'],
+    );
   }
 
   void _initRoles(Map<String, dynamic> data, bool clear) {
-    if (clear) _roles().clear();
+    if (clear) _roles.clear();
 
     final connections = <ConnectionModel>[];
     for (final connection in data['staffMedia']['edges'])
@@ -220,10 +242,10 @@ class StaffController extends OverscrollController {
         subtitle: Convert.clarifyEnum(connection['staffRole']),
       ));
 
-    _roles.update((r) => r!.append(
-          connections,
-          data['staffMedia']['pageInfo']['hasNextPage'],
-        ));
+    _roles.append(
+      connections,
+      data['staffMedia']['pageInfo']['hasNextPage'],
+    );
   }
 
   @override

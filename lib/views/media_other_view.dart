@@ -71,7 +71,10 @@ class MediaOtherView extends StatelessWidget {
 
                 return ConnectionsGrid(
                   connections: ctrl.model!.characters.items,
-                  preferredSubtitle: ctrl.staffLanguage,
+                  preferredSubtitle:
+                      ctrl.language < ctrl.availableLanguages.length
+                          ? ctrl.availableLanguages[ctrl.language]
+                          : null,
                 );
               }
 

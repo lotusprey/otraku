@@ -124,9 +124,8 @@ class __ActionButtonsState extends State<_ActionButtons> {
                 context,
                 OptionDragSheet(
                   options: ctrl.availableLanguages,
-                  index: ctrl.languageIndex,
-                  onTap: (index) =>
-                      ctrl.staffLanguage = ctrl.availableLanguages[index],
+                  index: ctrl.language,
+                  onTap: (val) => ctrl.language = val,
                 ),
               ),
             ),

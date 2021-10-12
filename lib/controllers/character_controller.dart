@@ -70,20 +70,13 @@ class CharacterController extends OverscrollController {
   final _manga = PageModel<ConnectionModel>();
   final _availableLanguages = <String>[];
   bool _onAnime = true;
-  String _staffLanguage = 'Japanese';
+  int _language = 0;
   MediaSort _sort = MediaSort.TRENDING_DESC;
   bool? _onList;
 
   CharacterModel? get model => _model;
   List<ConnectionModel> get anime => _anime.items;
   List<ConnectionModel> get manga => _manga.items;
-
-  int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage);
-    if (index != -1) return index;
-    return 0;
-  }
-
   List<String> get availableLanguages => [..._availableLanguages];
 
   bool get onAnime => _onAnime;
@@ -92,9 +85,9 @@ class CharacterController extends OverscrollController {
     update([ID_MEDIA]);
   }
 
-  String get staffLanguage => _staffLanguage;
-  set staffLanguage(String val) {
-    _staffLanguage = val;
+  int get language => _language;
+  set language(int val) {
+    _language = val;
     update([ID_MEDIA]);
   }
 
@@ -221,9 +214,6 @@ class CharacterController extends OverscrollController {
         other: voiceActors,
       ));
     }
-
-    if (!_availableLanguages.contains(_staffLanguage))
-      _staffLanguage = 'Japanese';
 
     _anime.append(connections, data['anime']['pageInfo']['hasNextPage']);
   }

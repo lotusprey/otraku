@@ -149,10 +149,12 @@ class MediaController extends OverscrollController {
   MediaModel? _model;
   int _tab = INFO;
   int _subtab = RELATIONS;
-  String _staffLanguage = 'Japanese';
+  int _language = 0;
   bool _isLoading = false;
   bool showSpoilerTags = false;
   final _availableLanguages = <String>[];
+
+  List<String> get availableLanguages => [..._availableLanguages];
 
   int get tab => _tab;
   set tab(int val) {
@@ -188,17 +190,10 @@ class MediaController extends OverscrollController {
 
   MediaModel? get model => _model;
 
-  String get staffLanguage => _staffLanguage;
-  set staffLanguage(String val) {
-    _staffLanguage = val;
+  int get language => _language;
+  set language(int val) {
+    _language = val;
     update([ID_OTHER]);
-  }
-
-  List<String> get availableLanguages => [..._availableLanguages];
-  int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage);
-    if (index != -1) return index;
-    return 0;
   }
 
   // ***************************************************************************

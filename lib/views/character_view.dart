@@ -115,9 +115,8 @@ class CharacterView extends StatelessWidget {
                       context,
                       OptionDragSheet(
                         options: ctrl.availableLanguages,
-                        index: ctrl.languageIndex,
-                        onTap: (index) =>
-                            ctrl.staffLanguage = ctrl.availableLanguages[index],
+                        index: ctrl.language,
+                        onTap: (val) => ctrl.language = val,
                       ),
                     ),
                   );
@@ -170,7 +169,10 @@ class CharacterView extends StatelessWidget {
                   ),
                   sliver: ConnectionsGrid(
                     connections: connections,
-                    preferredSubtitle: ctrl.staffLanguage,
+                    preferredSubtitle:
+                        ctrl.language < ctrl.availableLanguages.length
+                            ? ctrl.availableLanguages[ctrl.language]
+                            : null,
                   ),
                 );
               },

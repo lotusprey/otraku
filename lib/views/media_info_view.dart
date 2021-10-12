@@ -13,7 +13,7 @@ import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -190,7 +190,7 @@ class MediaInfoView extends StatelessWidget {
           const _Section('Tags'),
           _Tags(ctrl),
         ],
-        SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
       ],
     );
   }

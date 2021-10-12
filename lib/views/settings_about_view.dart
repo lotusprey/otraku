@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -133,7 +133,7 @@ class SettingsAboutView extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: NavBar.offset(context)),
+        SizedBox(height: NavLayout.offset(context)),
       ],
     );
   }

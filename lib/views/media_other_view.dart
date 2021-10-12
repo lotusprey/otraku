@@ -10,7 +10,7 @@ import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class MediaOtherView extends StatelessWidget {
@@ -82,7 +82,7 @@ class MediaOtherView extends StatelessWidget {
             },
           ),
         ),
-        SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
       ],
     );
   }

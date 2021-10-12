@@ -7,7 +7,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
@@ -56,9 +56,9 @@ class MediaView extends StatelessWidget {
             ),
           );
 
-        return NavScaffold(
+        return NavLayout(
           index: ctrl.tab,
-          setPage: (page) => ctrl.tab = page,
+          onChanged: (page) => ctrl.tab = page,
           trySubtab: (goRight) {
             if (ctrl.tab == MediaController.OTHER) {
               if (goRight && ctrl.subtab < 2) {

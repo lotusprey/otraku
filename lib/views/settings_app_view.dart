@@ -9,7 +9,7 @@ import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsAppView extends StatelessWidget {
   const SettingsAppView();
@@ -130,7 +130,8 @@ class SettingsAppView extends StatelessWidget {
                 ),
               ]),
             ),
-            SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+            SliverToBoxAdapter(
+                child: SizedBox(height: NavLayout.offset(context))),
           ],
         ),
       );

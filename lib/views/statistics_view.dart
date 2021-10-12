@@ -5,10 +5,9 @@ import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
 import 'package:otraku/widgets/pie_chart.dart';
 
 class StatisticsView extends StatelessWidget {
@@ -24,8 +23,8 @@ class StatisticsView extends StatelessWidget {
       id: StatisticsController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {
-        return NavScaffold(
-          setPage: (page) => ctrl.onAnime = page == 0 ? true : false,
+        return NavLayout(
+          onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
           index: ctrl.onAnime ? 0 : 1,
           appBar: ShadowAppBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
@@ -36,7 +35,8 @@ class StatisticsView extends StatelessWidget {
           },
           child: ListView(
             key: ctrl.onAnime ? keyAnime : keyManga,
-            padding: EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
+            padding:
+                EdgeInsets.only(top: 10, bottom: NavLayout.offset(context)),
             physics: Config.PHYSICS,
             children: [
               _Title('Details'),

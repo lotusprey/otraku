@@ -6,7 +6,7 @@ import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class ReviewGrid extends StatelessWidget {
   final List<ExplorableModel> data;
@@ -22,7 +22,7 @@ class ReviewGrid extends StatelessWidget {
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
-      bottom: scrollCtrl == null ? 0 : NavBar.offset(context),
+      bottom: scrollCtrl == null ? 0 : NavLayout.offset(context),
       top: 15,
     );
 

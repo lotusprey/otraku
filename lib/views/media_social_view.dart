@@ -6,7 +6,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/triangle_clip.dart';
 
 class MediaSocialView extends StatelessWidget {
@@ -105,7 +105,7 @@ class MediaSocialView extends StatelessWidget {
             );
           }),
         ),
-        SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
       ],
     );
   }

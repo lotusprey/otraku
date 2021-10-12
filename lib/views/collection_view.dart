@@ -6,7 +6,7 @@ import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 import '../utils/client.dart';
 
@@ -60,7 +60,7 @@ class HomeCollectionView extends StatelessWidget {
           SliverCollectionAppBar(collectionTag, id != Client.viewerId),
           MediaList(collectionTag),
           SliverToBoxAdapter(
-            child: SizedBox(height: NavBar.offset(context)),
+            child: SizedBox(height: NavLayout.offset(context)),
           ),
         ],
       );

@@ -9,7 +9,7 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class ExploreView extends StatelessWidget {
@@ -31,7 +31,7 @@ class ExploreView extends StatelessWidget {
         ),
         _ExploreGrid(),
         _EndOfListLoader(),
-        SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
       ],
     );
   }

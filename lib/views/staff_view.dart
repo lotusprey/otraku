@@ -98,7 +98,6 @@ class StaffView extends StatelessWidget {
                   ctrl.scrollUpTo(offset);
                 },
                 onSame: () => ctrl.scrollUpTo(offset),
-                itemWidth: 100,
               ),
               const Spacer(),
               AppBarIcon(

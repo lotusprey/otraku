@@ -122,7 +122,6 @@ class _Header extends StatelessWidget {
         current: () => feed.onFollowing,
         onChanged: (bool val) => feed.onFollowing = val,
         onSame: () => feed.scrollUpTo(0),
-        itemWidth: 90,
       ),
       const Spacer(),
       _Filter(feed),

@@ -27,7 +27,6 @@ class MediaOtherView extends StatelessWidget {
       slivers: [
         header,
         SliverShadowAppBar([
-          const Spacer(),
           GetBuilder<MediaController>(
             id: MediaController.ID_OTHER,
             tag: ctrl.id.toString(),
@@ -43,10 +42,8 @@ class MediaOtherView extends StatelessWidget {
                 ctrl.subtab = val;
               },
               onSame: scrollUp,
-              itemWidth: 100,
             ),
           ),
-          const Spacer(),
         ]),
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),

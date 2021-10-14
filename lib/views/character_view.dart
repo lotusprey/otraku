@@ -98,7 +98,6 @@ class CharacterView extends StatelessWidget {
                   ctrl.scrollUpTo(offset);
                 },
                 onSame: () => ctrl.scrollUpTo(offset),
-                itemWidth: 80,
               ),
               const Spacer(),
               GetBuilder<CharacterController>(

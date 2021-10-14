@@ -52,7 +52,6 @@ class StatisticsView extends StatelessWidget {
                     current: () => ctrl.scoreChartTab,
                     onChanged: (val) => ctrl.scoreChartTab = val,
                     onSame: () {},
-                    itemWidth: 100,
                   ),
                 ),
                 GetBuilder<StatisticsController>(
@@ -77,7 +76,6 @@ class StatisticsView extends StatelessWidget {
                     current: () => ctrl.lengthChartTab,
                     onChanged: (val) => ctrl.lengthChartTab = val,
                     onSame: () {},
-                    itemWidth: 100,
                   ),
                 ),
                 GetBuilder<StatisticsController>(

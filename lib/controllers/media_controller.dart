@@ -50,6 +50,7 @@ class MediaController extends OverscrollController {
       hashtag
       siteUrl
       countryOfOrigin
+      rankings {rank type year season allTime}
       mediaListEntry {
         id
         status
@@ -207,13 +208,18 @@ class MediaController extends OverscrollController {
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withMain': true,
+      'withCharacters': true,
+      'withStaff': true,
       'withReviews': true,
     });
     if (result == null) return;
 
     _model = MediaModel(result['Media']);
-    update([ID_MAIN]);
+    _model!.addCharacters(result['Media'], _availableLanguages);
+    _model!.addStaff(result['Media']);
+
     _isLoading = false;
+    update([ID_MAIN]);
   }
 
   @override

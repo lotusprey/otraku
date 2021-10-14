@@ -8,7 +8,6 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -55,16 +54,28 @@ class MediaOtherView extends StatelessWidget {
                 final other = ctrl.model!.otherMedia;
 
                 if (other.isEmpty)
-                  return ctrl.isLoading ? _Empty(null) : _Empty('No Relations');
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'No Relations',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
 
                 return _RelationsGrid(ctrl.model!.otherMedia);
               }
 
               if (ctrl.subtab == MediaController.CHARACTERS) {
                 if (ctrl.model!.characters.items.isEmpty)
-                  return ctrl.isLoading
-                      ? _Empty(null)
-                      : _Empty('No Characters');
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'No Characters',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
 
                 return ConnectionsGrid(
                   connections: ctrl.model!.characters.items,
@@ -76,7 +87,14 @@ class MediaOtherView extends StatelessWidget {
               }
 
               if (ctrl.model!.staff.items.isEmpty)
-                return ctrl.isLoading ? _Empty(null) : _Empty('No Staff');
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      'No Staff',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ),
+                );
 
               return ConnectionsGrid(connections: ctrl.model!.staff.items);
             },
@@ -162,22 +180,6 @@ class _RelationsGrid extends StatelessWidget {
           ),
         ),
         childCount: models.length,
-      ),
-    );
-  }
-}
-
-class _Empty extends StatelessWidget {
-  final String? text;
-  _Empty(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverFillRemaining(
-      child: Center(
-        child: text == null
-            ? Loader()
-            : Text(text!, style: Theme.of(context).textTheme.subtitle1),
       ),
     );
   }

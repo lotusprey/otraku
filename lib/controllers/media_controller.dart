@@ -151,7 +151,6 @@ class MediaController extends OverscrollController {
   int _tab = INFO;
   int _subtab = RELATIONS;
   int _language = 0;
-  bool _isLoading = false;
   bool showSpoilerTags = false;
   final _availableLanguages = <String>[];
 
@@ -174,8 +173,6 @@ class MediaController extends OverscrollController {
             _model!.staff.hasNextPage) _fetchOtherPage();
     update([ID_OTHER]);
   }
-
-  bool get isLoading => _isLoading;
 
   @override
   bool get hasNextPage {
@@ -203,7 +200,6 @@ class MediaController extends OverscrollController {
 
   Future<void> fetch() async {
     if (_model != null) return;
-    _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
@@ -218,7 +214,6 @@ class MediaController extends OverscrollController {
     _model!.addCharacters(result['Media'], _availableLanguages);
     _model!.addStaff(result['Media']);
 
-    _isLoading = false;
     update([ID_MAIN]);
   }
 
@@ -228,7 +223,6 @@ class MediaController extends OverscrollController {
 
   Future<void> _fetchOtherPage() async {
     final ofCharacters = _subtab == CHARACTERS;
-    _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
@@ -244,13 +238,10 @@ class MediaController extends OverscrollController {
     else
       _model!.addStaff(result['Media']);
 
-    _isLoading = false;
     update([ID_OTHER]);
   }
 
   Future<void> _fetchReviewPage() async {
-    _isLoading = true;
-
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withReviews': true,
@@ -259,7 +250,6 @@ class MediaController extends OverscrollController {
 
     if (result == null) return;
     _model!.addReviews(result['Media']);
-    _isLoading = false;
   }
 
   Future<bool> toggleFavourite() async =>

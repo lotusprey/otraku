@@ -51,6 +51,7 @@ class MediaController extends OverscrollController {
       siteUrl
       countryOfOrigin
       rankings {rank type year season allTime}
+      stats {scoreDistribution {score amount} statusDistribution {status amount}}
       mediaListEntry {
         id
         status

@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
+import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/utils/config.dart';
 
 abstract class Convert {
-  // Replaces _ with [blank_space] and makes each word
-  // start with an upper case letter and continue with
-  // lower case ones.
+  // Replaces _ with intervals and makes each word start with
+  // an upper case letter and continue with lower case ones.
   static String? clarifyEnum(String? str) {
     if (str == null) return null;
     return str.splitMapJoin(
@@ -15,9 +15,20 @@ abstract class Convert {
     );
   }
 
-  // Transforms a string into enum. The string must be
-  // as if it was acquired through "describeEnum()"
-  // and the values must be the enum values.
+  /// Converts a [ListStatus] to [String], taking into account the media type.
+  static String adaptListStatus(ListStatus status, bool isAnime) {
+    if (status == ListStatus.CURRENT) return isAnime ? 'Watching' : 'Reading';
+
+    if (status == ListStatus.REPEATING)
+      return isAnime ? 'Rewatching' : 'Rereading';
+
+    final str = describeEnum(status);
+    return str[0] + str.substring(1).toLowerCase();
+  }
+
+  /// Converts a [String] into [enum]. The [String] must be
+  /// as if it was acquired through [describeEnum()]
+  /// and the values must be the [enum] values.
   static T? strToEnum<T>(String? str, List<T> values) =>
       values.firstWhereOrNull((v) => describeEnum(v!) == str);
 

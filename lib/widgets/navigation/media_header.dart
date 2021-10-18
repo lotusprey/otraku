@@ -35,11 +35,11 @@ class MediaHeader extends StatelessWidget {
       height: height,
       title: info?.preferredTitle,
       actions: [
-        if (ctrl.model?.info.siteUrl != null)
+        if (info?.siteUrl != null)
           IconShade(AppBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
-            onTap: () => _showSheet(context, ctrl.model!.info),
+            onTap: () => _showSheet(context, info!),
           )),
       ],
       background: Stack(

@@ -13,22 +13,16 @@ import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class MediaInfoView extends StatelessWidget {
-  final MediaController ctrl;
-  final Widget header;
-  MediaInfoView(this.ctrl, this.header);
+class MediaInfoView {
+  static List<Widget> children(BuildContext ctx, MediaController ctrl) {
+    final model = ctrl.model!.info;
 
-  @override
-  Widget build(BuildContext context) {
-    final info = ctrl.model!.info;
-
-    final tileCount = (MediaQuery.of(context).size.width - 10) ~/ 150;
+    final tileCount = (MediaQuery.of(ctx).size.width - 10) ~/ 150;
     final tileAspectRatio =
-        (((MediaQuery.of(context).size.width - 10) / tileCount) - 10) / 51.0;
+        (((MediaQuery.of(ctx).size.width - 10) / tileCount) - 10) / 51.0;
     final infoTitles = [
       'Format',
       'Status',
@@ -47,21 +41,21 @@ class MediaInfoView extends StatelessWidget {
       'Origin'
     ];
     final infoChildren = [
-      info.format,
-      info.status,
-      info.episodes,
-      info.duration,
-      info.chapters,
-      info.volumes,
-      info.startDate,
-      info.endDate,
-      info.season,
-      info.averageScore,
-      info.meanScore,
-      info.popularity,
-      info.favourites,
-      info.source,
-      info.countryOfOrigin,
+      model.format,
+      model.status,
+      model.episodes,
+      model.duration,
+      model.chapters,
+      model.volumes,
+      model.startDate,
+      model.endDate,
+      model.season,
+      model.averageScore,
+      model.meanScore,
+      model.popularity,
+      model.favourites,
+      model.source,
+      model.countryOfOrigin,
     ];
     for (int i = infoChildren.length - 1; i >= 0; i--)
       if (infoChildren[i] == null) {
@@ -69,130 +63,122 @@ class MediaInfoView extends StatelessWidget {
         infoTitles.removeAt(i);
       }
 
-    return CustomScrollView(
-      physics: Config.PHYSICS,
-      controller: ctrl.scrollCtrl,
-      slivers: [
-        header,
-        if (info.description.isNotEmpty)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: Config.PADDING,
-              child: InputFieldStructure(
-                title: 'Description',
-                child: GestureDetector(
-                  child: Container(
-                    padding: Config.PADDING,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: Config.BORDER_RADIUS,
-                    ),
-                    child: Text(
-                      info.description,
-                      overflow: TextOverflow.fade,
-                      maxLines: 5,
-                    ),
+    return [
+      if (model.description.isNotEmpty)
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: Config.PADDING,
+            child: InputFieldStructure(
+              title: 'Description',
+              child: GestureDetector(
+                child: Container(
+                  padding: Config.PADDING,
+                  decoration: BoxDecoration(
+                    color: Theme.of(ctx).colorScheme.surface,
+                    borderRadius: Config.BORDER_RADIUS,
                   ),
-                  onTap: () => showPopUp(
-                    context,
-                    TextDialog(title: 'Description', text: info.description),
+                  child: Text(
+                    model.description,
+                    overflow: TextOverflow.fade,
+                    maxLines: 5,
                   ),
                 ),
-              ),
-            ),
-          ),
-        const _Section('Info'),
-        SliverPadding(
-          padding:
-              const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
-          sliver: SliverGrid(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              crossAxisCount: tileCount,
-              childAspectRatio: tileAspectRatio,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (_, i) => Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  borderRadius: Config.BORDER_RADIUS,
-                  color: Theme.of(context).colorScheme.surface,
-                ),
-                child: InputFieldStructure(
-                  title: infoTitles[i],
-                  child: Text(infoChildren[i].toString()),
+                onTap: () => showPopUp(
+                  ctx,
+                  TextDialog(title: 'Description', text: model.description),
                 ),
               ),
-              childCount: infoChildren.length,
             ),
           ),
         ),
-        if (info.genres.isNotEmpty)
-          _ScrollCards(
-            title: 'Genres',
-            items: info.genres,
-            onTap: (index) {
-              final explorable = Get.find<ExploreController>();
-              explorable.clearAllFilters(update: false);
-              explorable.setFilterWithKey(
-                Filterable.SORT,
-                value: describeEnum(MediaSort.TRENDING_DESC),
-              );
-              explorable.setFilterWithKey(
-                Filterable.GENRE_IN,
-                value: [info.genres[index]],
-              );
-              explorable.type = info.type;
-              explorable.search = '';
-              Config.homeIndex = HomeView.EXPLORE;
-              Navigation.it.popToFirst();
-            },
+      const _Section('Info'),
+      SliverPadding(
+        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
+        sliver: SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            crossAxisCount: tileCount,
+            childAspectRatio: tileAspectRatio,
           ),
-        if (info.studios.isNotEmpty)
-          _ScrollCards(
-            title: 'Studios',
-            items: info.studios.keys.toList(),
-            onTap: (index) => ExploreIndexer.openPage(
-              id: info.studios[info.studios.keys.elementAt(index)]!,
-              imageUrl: info.studios.keys.elementAt(index),
-              explorable: Explorable.studio,
+          delegate: SliverChildBuilderDelegate(
+            (_, i) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                borderRadius: Config.BORDER_RADIUS,
+                color: Theme.of(ctx).colorScheme.surface,
+              ),
+              child: InputFieldStructure(
+                title: infoTitles[i],
+                child: Text(infoChildren[i].toString()),
+              ),
             ),
+            childCount: infoChildren.length,
           ),
-        if (info.producers.isNotEmpty)
-          _ScrollCards(
-            title: 'Producers',
-            items: info.producers.keys.toList(),
-            onTap: (index) => ExploreIndexer.openPage(
-              id: info.producers[info.producers.keys.elementAt(index)]!,
-              imageUrl: info.producers.keys.elementAt(index),
-              explorable: Explorable.studio,
-            ),
+        ),
+      ),
+      if (model.genres.isNotEmpty)
+        _ScrollCards(
+          title: 'Genres',
+          items: model.genres,
+          onTap: (index) {
+            final explorable = Get.find<ExploreController>();
+            explorable.clearAllFilters(update: false);
+            explorable.setFilterWithKey(
+              Filterable.SORT,
+              value: describeEnum(MediaSort.TRENDING_DESC),
+            );
+            explorable.setFilterWithKey(
+              Filterable.GENRE_IN,
+              value: [model.genres[index]],
+            );
+            explorable.type = model.type;
+            explorable.search = '';
+            Config.homeIndex = HomeView.EXPLORE;
+            Navigation.it.popToFirst();
+          },
+        ),
+      if (model.studios.isNotEmpty)
+        _ScrollCards(
+          title: 'Studios',
+          items: model.studios.keys.toList(),
+          onTap: (index) => ExploreIndexer.openPage(
+            id: model.studios[model.studios.keys.elementAt(index)]!,
+            imageUrl: model.studios.keys.elementAt(index),
+            explorable: Explorable.studio,
           ),
-        if (info.romajiTitle != null) ...[
-          const _Section('Romaji'),
-          _Titles([info.romajiTitle!]),
-        ],
-        if (info.englishTitle != null) ...[
-          const _Section('English'),
-          _Titles([info.englishTitle!]),
-        ],
-        if (info.nativeTitle != null) ...[
-          const _Section('Native'),
-          _Titles([info.nativeTitle!]),
-        ],
-        if (info.synonyms.isNotEmpty) ...[
-          const _Section('Synonyms'),
-          _Titles(info.synonyms),
-        ],
-        if (info.tags.isNotEmpty) ...[
-          const _Section('Tags'),
-          _Tags(ctrl),
-        ],
-        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
+        ),
+      if (model.producers.isNotEmpty)
+        _ScrollCards(
+          title: 'Producers',
+          items: model.producers.keys.toList(),
+          onTap: (index) => ExploreIndexer.openPage(
+            id: model.producers[model.producers.keys.elementAt(index)]!,
+            imageUrl: model.producers.keys.elementAt(index),
+            explorable: Explorable.studio,
+          ),
+        ),
+      if (model.romajiTitle != null) ...[
+        const _Section('Romaji'),
+        _Titles([model.romajiTitle!]),
       ],
-    );
+      if (model.englishTitle != null) ...[
+        const _Section('English'),
+        _Titles([model.englishTitle!]),
+      ],
+      if (model.nativeTitle != null) ...[
+        const _Section('Native'),
+        _Titles([model.nativeTitle!]),
+      ],
+      if (model.synonyms.isNotEmpty) ...[
+        const _Section('Synonyms'),
+        _Titles(model.synonyms),
+      ],
+      if (model.tags.isNotEmpty) ...[
+        const _Section('Tags'),
+        _Tags(ctrl),
+      ],
+    ];
   }
 }
 

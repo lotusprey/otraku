@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:get/get.dart';
+import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media_controller.dart';
@@ -9,129 +9,88 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
-class MediaOtherView extends StatelessWidget {
-  final MediaController ctrl;
-  final Widget header;
-  final void Function() scrollUp;
-  MediaOtherView(this.ctrl, this.header, this.scrollUp);
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics: Config.PHYSICS,
-      controller: ctrl.scrollCtrl,
-      slivers: [
-        header,
+class MediaOtherView {
+  static List<Widget> children(
+    BuildContext ctx,
+    MediaController ctrl,
+    double headerOffset,
+  ) =>
+      [
         SliverShadowAppBar([
-          GetBuilder<MediaController>(
-            id: MediaController.ID_OTHER,
-            tag: ctrl.id.toString(),
-            builder: (_) => BubbleTabs(
-              items: const {
-                'Relations': MediaController.RELATIONS,
-                'Characters': MediaController.CHARACTERS,
-                'Staff': MediaController.STAFF,
-              },
-              current: () => ctrl.subtab,
-              onChanged: (int val) {
-                scrollUp();
-                ctrl.subtab = val;
-              },
-              onSame: scrollUp,
-            ),
+          BubbleTabs(
+            items: const {
+              'Relations': MediaController.RELATIONS,
+              'Characters': MediaController.CHARACTERS,
+              'Staff': MediaController.STAFF,
+            },
+            current: () => ctrl.otherTab,
+            onChanged: (int val) {
+              ctrl.scrollUpTo(headerOffset);
+              ctrl.otherTab = val;
+            },
+            onSame: () => ctrl.scrollUpTo(headerOffset),
           ),
         ]),
         SliverPadding(
           padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
-          sliver: GetBuilder<MediaController>(
-            id: MediaController.ID_OTHER,
-            tag: ctrl.id.toString(),
-            builder: (_) {
-              if (ctrl.subtab == MediaController.RELATIONS) {
-                final other = ctrl.model!.otherMedia;
-
-                if (other.isEmpty)
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Text(
-                        'No Relations',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
+          sliver: ctrl.otherTab == MediaController.RELATIONS
+              ? _RelationsGrid(ctrl.model!.otherMedia)
+              : ctrl.otherTab == MediaController.CHARACTERS
+                  ? _PeopleGrid(
+                      items: ctrl.model!.characters.items,
+                      placeholder: 'No Characters',
+                      preferredSubtitle:
+                          ctrl.language < ctrl.availableLanguages.length
+                              ? ctrl.availableLanguages[ctrl.language]
+                              : null,
+                    )
+                  : _PeopleGrid(
+                      items: ctrl.model!.staff.items,
+                      placeholder: 'No Staff',
                     ),
-                  );
-
-                return _RelationsGrid(ctrl.model!.otherMedia);
-              }
-
-              if (ctrl.subtab == MediaController.CHARACTERS) {
-                if (ctrl.model!.characters.items.isEmpty)
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Text(
-                        'No Characters',
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ),
-                  );
-
-                return ConnectionsGrid(
-                  connections: ctrl.model!.characters.items,
-                  preferredSubtitle:
-                      ctrl.language < ctrl.availableLanguages.length
-                          ? ctrl.availableLanguages[ctrl.language]
-                          : null,
-                );
-              }
-
-              if (ctrl.model!.staff.items.isEmpty)
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'No Staff',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                  ),
-                );
-
-              return ConnectionsGrid(connections: ctrl.model!.staff.items);
-            },
-          ),
         ),
-        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
-      ],
-    );
-  }
+      ];
 }
 
 class _RelationsGrid extends StatelessWidget {
-  final List<RelatedMediaModel> models;
-  _RelationsGrid(this.models);
+  _RelationsGrid(this.items);
+
+  final List<RelatedMediaModel> items;
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty)
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(
+            'No Relations',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+      );
+
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 300,
         height: 190,
       ),
       delegate: SliverChildBuilderDelegate(
-        (_, index) => ExploreIndexer(
-          id: models[index].id,
-          imageUrl: models[index].imageUrl,
-          explorable: models[index].explorable,
+        (_, i) => ExploreIndexer(
+          id: items[i].id,
+          imageUrl: items[i].imageUrl,
+          explorable: items[i].explorable,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Hero(
-                tag: models[index].id,
+                tag: items[i].id,
                 child: ClipRRect(
                   borderRadius: Config.BORDER_RADIUS,
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
-                    child: FadeImage(models[index].imageUrl!, width: 125),
+                    child: FadeImage(items[i].imageUrl!, width: 125),
                   ),
                 ),
               ),
@@ -146,12 +105,12 @@ class _RelationsGrid extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          models[index].relationType!,
+                          items[i].relationType!,
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                         Flexible(
                           child: Text(
-                            models[index].text1,
+                            items[i].text1,
                             overflow: TextOverflow.fade,
                           ),
                         ),
@@ -161,14 +120,14 @@ class _RelationsGrid extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (models[index].format != null)
+                        if (items[i].format != null)
                           Text(
-                            models[index].format!,
+                            items[i].format!,
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
-                        if (models[index].status != null)
+                        if (items[i].status != null)
                           Text(
-                            models[index].status!,
+                            items[i].status!,
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                       ],
@@ -179,8 +138,38 @@ class _RelationsGrid extends StatelessWidget {
             ],
           ),
         ),
-        childCount: models.length,
+        childCount: items.length,
       ),
+    );
+  }
+}
+
+class _PeopleGrid extends StatelessWidget {
+  _PeopleGrid({
+    required this.items,
+    required this.placeholder,
+    this.preferredSubtitle,
+  });
+
+  final List<ConnectionModel> items;
+  final String placeholder;
+  final String? preferredSubtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty)
+      return SliverFillRemaining(
+        child: Center(
+          child: Text(
+            placeholder,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+      );
+
+    return ConnectionsGrid(
+      connections: items,
+      preferredSubtitle: preferredSubtitle,
     );
   }
 }

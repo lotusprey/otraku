@@ -3,6 +3,8 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
+/// A [Scaffold] with a custom [Scaffold.bottomNavigationBar] and a tab
+/// transition animation.
 class NavLayout extends StatefulWidget {
   final Widget child;
   final Map<String, IconData> items;
@@ -12,8 +14,8 @@ class NavLayout extends StatefulWidget {
   final ShadowAppBar? appBar;
 
   /// When a tab swipe is detected, [NavLayout] will try to switch the subtab
-  /// of the page, instead of the tab itself. For 'go right' true is passed to
-  /// the callback and for 'go left' - false. The returned value determines
+  /// of the page, instead of the tab itself. For 'go right' [true] is passed to
+  /// the callback and for 'go left' - [false]. The returned value determines
   /// whether the subtab has been switched. If not (the end of the subtab
   /// carousel has been reached), [NavLayout] will switch the tab.
   final bool Function(bool)? trySubtab;

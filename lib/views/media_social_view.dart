@@ -5,6 +5,7 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/theming.dart';
+import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -178,73 +179,13 @@ class _Scores extends StatelessWidget {
   final Map<int, int> scores;
 
   @override
-  Widget build(BuildContext context) {
-    double max = 200;
-    int maxScore = 0;
-    for (final s in scores.values) if (maxScore < s) maxScore = s;
-    max /= maxScore;
-
-    return SliverToBoxAdapter(
-      child: Container(
-        height: 310,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10, top: 10),
-              child: Text(
-                'Score Distribution',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                physics: Config.PHYSICS,
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(10),
-                itemExtent: 60,
-                itemCount: scores.length,
-                itemBuilder: (_, i) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        scores.values.elementAt(i).toString(),
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                      Container(
-                        height: scores.values.elementAt(i) * max,
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: const [0.5, 1],
-                            colors: [
-                              Theme.of(context).colorScheme.secondary,
-                              Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.2),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Text(
-                        scores.keys.elementAt(i).toString(),
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: BarChart(
+          title: 'Score Distribution',
+          names: scores.keys.toList(),
+          values: scores.values.toList(),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _Statuses extends StatelessWidget {

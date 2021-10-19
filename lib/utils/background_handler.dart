@@ -245,7 +245,7 @@ void _show(NotificationModel model, String title, String payload) {
       android: AndroidNotificationDetails(
         id,
         name,
-        name,
+        channelDescription: name,
         color: const Color(0xFF45A0F2),
       ),
     ),

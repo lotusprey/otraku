@@ -51,7 +51,7 @@ class ListEntryModel {
   factory ListEntryModel(Map<String, dynamic> map) => ListEntryModel._(
         mediaId: map['mediaId'],
         title: map['media']['title']['userPreferred'],
-        cover: map['media']['coverImage']['large'],
+        cover: map['media']['coverImage']['extraLarge'],
         nextEpisode: map['media']['nextAiringEpisode']?['episode'],
         airingAt: map['media']['nextAiringEpisode']?['airingAt'],
         format: map['media']['format'],

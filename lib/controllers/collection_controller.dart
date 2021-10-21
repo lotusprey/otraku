@@ -84,7 +84,7 @@ class CollectionController extends OverscrollController implements Filterable {
         episodes
         chapters
         volumes
-        coverImage {large}
+        coverImage {extraLarge}
         nextAiringEpisode {episode airingAt}
         genres
         countryOfOrigin

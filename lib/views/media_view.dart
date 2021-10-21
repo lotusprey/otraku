@@ -111,15 +111,12 @@ class MediaView extends StatelessWidget {
                 physics: Config.PHYSICS,
                 slivers: [
                   header,
-                  ...ctrl.tab == MediaController.INFO
-                      ? MediaInfoView.children(context, ctrl)
-                      : ctrl.tab == MediaController.OTHER
-                          ? MediaOtherView.children(context, ctrl, headerOffset)
-                          : MediaSocialView.children(
-                              context,
-                              ctrl,
-                              headerOffset,
-                            ),
+                  if (ctrl.tab == MediaController.INFO)
+                    ...MediaInfoView.children(context, ctrl)
+                  else if (ctrl.tab == MediaController.OTHER)
+                    ...MediaOtherView.children(context, ctrl, headerOffset)
+                  else
+                    ...MediaSocialView.children(context, ctrl, headerOffset),
                   footer,
                 ],
               ),

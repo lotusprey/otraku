@@ -11,7 +11,6 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/pie_chart.dart';
 
 abstract class MediaSocialView {
   static List<Widget> children(
@@ -39,9 +38,12 @@ abstract class MediaSocialView {
       if (ctrl.socialTab == MediaController.REVIEWS)
         _ReviewGrid(model.reviews.items, model.info.banner)
       else ...[
-        if (model.stats.ranks.isNotEmpty) _Ranks(model.stats.ranks),
-        if (model.stats.scores.isNotEmpty) _Scores(model.stats.scores),
-        if (model.stats.statuses.isNotEmpty) _Statuses(model.stats.statuses),
+        if (model.stats.rankTexts.isNotEmpty)
+          _Ranks(model.stats.rankTexts, model.stats.rankTypes),
+        if (model.stats.scoreNames.isNotEmpty)
+          _Scores(model.stats.scoreNames, model.stats.scoreValues),
+        if (model.stats.statusNames.isNotEmpty)
+          _Statuses(model.stats.statusNames, model.stats.statusValues),
       ],
     ];
   }
@@ -128,8 +130,9 @@ class _ReviewGrid extends StatelessWidget {
 }
 
 class _Ranks extends StatelessWidget {
-  _Ranks(this.ranks);
-  final Map<String, bool> ranks;
+  _Ranks(this.rankTexts, this.rankTypes);
+  final List<String> rankTexts;
+  final List<bool> rankTypes;
 
   @override
   Widget build(BuildContext context) {
@@ -150,16 +153,14 @@ class _Ranks extends StatelessWidget {
             child: Row(
               children: [
                 Icon(
-                  ranks.values.elementAt(i)
-                      ? Ionicons.star
-                      : Icons.favorite_rounded,
+                  rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
                   size: Theming.ICON_BIG,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(width: 5),
                 Expanded(
                   child: Text(
-                    ranks.keys.elementAt(i),
+                    rankTexts[i],
                     overflow: TextOverflow.ellipsis,
                     maxLines: 2,
                   ),
@@ -167,7 +168,7 @@ class _Ranks extends StatelessWidget {
               ],
             ),
           ),
-          childCount: ranks.length,
+          childCount: rankTexts.length,
         ),
       ),
     );
@@ -175,84 +176,34 @@ class _Ranks extends StatelessWidget {
 }
 
 class _Scores extends StatelessWidget {
-  _Scores(this.scores);
-  final Map<int, int> scores;
+  _Scores(this.scoreNames, this.scoreValues);
+  final List<int> scoreNames;
+  final List<int> scoreValues;
 
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: BarChart(
           title: 'Score Distribution',
-          names: scores.keys.toList(),
-          values: scores.values.toList(),
+          names: scoreNames,
+          values: scoreValues,
         ),
       );
 }
 
 class _Statuses extends StatelessWidget {
-  _Statuses(this.statuses);
-  final Map<String, int> statuses;
+  _Statuses(this.statusNames, this.statusValues);
+  final List<String> statusNames;
+  final List<int> statusValues;
 
   @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Container(
-        height: 260,
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Status Distribution',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            const SizedBox(height: 10),
-            Flexible(
-              child: Container(
-                padding: Config.PADDING,
-                decoration: BoxDecoration(
-                  borderRadius: Config.BORDER_RADIUS,
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    stops: const [0.5, 1],
-                    colors: [
-                      Theme.of(context).colorScheme.surface.withOpacity(0.4),
-                      Theme.of(context).colorScheme.surface,
-                    ],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Flexible(child: PieChart(statuses.values.toList())),
-                    const SizedBox(width: 10),
-                    SizedBox(
-                      width: 160,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          for (int i = 0; i < statuses.length; i++)
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(statuses.keys.elementAt(i)),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  statuses.values.elementAt(i).toString(),
-                                  style: Theme.of(context).textTheme.subtitle1,
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: PieChart(
+            title: 'Status Distribution',
+            names: statusNames,
+            values: statusValues,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

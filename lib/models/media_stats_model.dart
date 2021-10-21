@@ -4,9 +4,14 @@ import 'package:otraku/utils/convert.dart';
 class MediaStatsModel {
   MediaStatsModel._();
 
-  final ranks = <String, bool>{};
-  final scores = <int, int>{};
-  final statuses = <String, int>{};
+  final rankTexts = <String>[];
+  final rankTypes = <bool>[];
+
+  final scoreNames = <int>[];
+  final scoreValues = <int>[];
+
+  final statusNames = <String>[];
+  final statusValues = <int>[];
 
   factory MediaStatsModel(Map<String, dynamic> map) {
     final model = MediaStatsModel._();
@@ -20,36 +25,38 @@ class MediaStatsModel {
             : (rank['year'] ?? rank['season'] ?? '').toString();
         if (when.isEmpty) continue;
 
-        if (rank['type'] == 'RATED')
-          model.ranks['#${rank["rank"]} Highest Rated $when'] = true;
-        else
-          model.ranks['#${rank["rank"]} Most Popular $when'] = false;
+        if (rank['type'] == 'RATED') {
+          model.rankTexts.add('#${rank["rank"]} Highest Rated $when');
+          model.rankTypes.add(true);
+        } else {
+          model.rankTexts.add('#${rank["rank"]} Most Popular $when');
+          model.rankTypes.add(false);
+        }
       }
 
     if (map['stats'] != null) {
       if (map['stats']['scoreDistribution'] != null)
-        for (final s in map['stats']['scoreDistribution'])
-          model.scores[s['score']] = s['amount'];
+        for (final s in map['stats']['scoreDistribution']) {
+          model.scoreNames.add(s['score']);
+          model.scoreValues.add(s['amount']);
+        }
 
-      if (map['stats']['statusDistribution'] != null) {
-        final keys = <String>[];
-        final values = <int>[];
-
+      if (map['stats']['statusDistribution'] != null)
         for (final s in map['stats']['statusDistribution']) {
           int index = -1;
-          for (int i = 0; i < values.length; i++)
-            if (values[i] < s['amount']) {
-              values.insert(i, s['amount']);
+          for (int i = 0; i < model.statusValues.length; i++)
+            if (model.statusValues[i] < s['amount']) {
+              model.statusValues.insert(i, s['amount']);
               index = i;
               break;
             }
 
           if (index < 0) {
-            index = values.length;
-            values.add(s['amount']);
+            index = model.statusValues.length;
+            model.statusValues.add(s['amount']);
           }
 
-          keys.insert(
+          model.statusNames.insert(
             index,
             Convert.adaptListStatus(
               Convert.strToEnum(s['status'], ListStatus.values)!,
@@ -57,10 +64,6 @@ class MediaStatsModel {
             ),
           );
         }
-
-        for (int i = 0; i < keys.length; i++)
-          model.statuses[keys[i]] = values[i];
-      }
     }
 
     return model;

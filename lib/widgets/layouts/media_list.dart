@@ -14,75 +14,58 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class MediaList extends StatelessWidget {
-  final String collectionTag;
+  MediaList(this.ctrlTag);
 
-  MediaList(this.collectionTag);
+  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
-    final collectionCtrl = Get.find<CollectionController>(tag: collectionTag);
-    final isMe = collectionTag == CollectionController.ANIME ||
-        collectionTag == CollectionController.MANGA;
+    final isMe = ctrlTag == CollectionController.ANIME ||
+        ctrlTag == CollectionController.MANGA;
     final sidePadding = MediaQuery.of(context).size.width > 620
         ? (MediaQuery.of(context).size.width - 600) / 2.0
         : 10.0;
 
-    return Obx(() {
-      if (collectionCtrl.isEmpty) {
-        if (collectionCtrl.isLoading)
-          return const SliverFillRemaining(child: Center(child: Loader()));
-
-        return SliverFillRemaining(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'No ${collectionCtrl.ofAnime ? 'Anime' : 'Manga'}',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ],
+    return GetBuilder<CollectionController>(
+      id: CollectionController.ID_BODY,
+      tag: ctrlTag,
+      builder: (ctrl) {
+        if (ctrl.entries.isEmpty)
+          return SliverFillRemaining(
+            child: Center(
+              child: ctrl.isLoading
+                  ? const Loader()
+                  : Text(
+                      ctrl.isEmpty
+                          ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
+                          : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
             ),
+          );
+
+        return SliverPadding(
+          padding:
+              EdgeInsets.only(left: sidePadding, right: sidePadding, top: 15),
+          sliver: SliverFixedExtentList(
+            delegate: SliverChildBuilderDelegate(
+              (_, i) => _MediaListTile(ctrl.entries[i], ctrl, isMe),
+              childCount: ctrl.entries.length,
+            ),
+            itemExtent: 150,
           ),
         );
-      }
-
-      if (collectionCtrl.entries.isEmpty)
-        return SliverFillRemaining(
-          child: Center(
-            child: Text(
-              'No ${collectionCtrl.ofAnime ? 'Anime' : 'Manga'} Results',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          ),
-        );
-
-      final entries = collectionCtrl.entries;
-
-      return SliverPadding(
-        padding: EdgeInsets.only(
-          left: sidePadding,
-          right: sidePadding,
-          top: 15,
-        ),
-        sliver: SliverFixedExtentList(
-          delegate: SliverChildBuilderDelegate(
-            (_, i) => _MediaListTile(entries[i], collectionCtrl, isMe),
-            childCount: entries.length,
-          ),
-          itemExtent: 150,
-        ),
-      );
-    });
+      },
+    );
   }
 }
 
 class _MediaListTile extends StatelessWidget {
-  final ListEntryModel entry;
-  final CollectionController collectionCtrl;
-  final bool isMe;
+  _MediaListTile(this.entry, this.ctrl, this.isMe);
 
-  _MediaListTile(this.entry, this.collectionCtrl, this.isMe);
+  final ListEntryModel entry;
+  final CollectionController ctrl;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
@@ -226,7 +209,7 @@ class _MediaListTile extends StatelessWidget {
                           const SizedBox(),
                         _Progress(
                           entry,
-                          isMe ? collectionCtrl.incrementProgress : null,
+                          isMe ? ctrl.incrementProgress : null,
                         ),
                       ],
                     ),
@@ -243,7 +226,7 @@ class _MediaListTile extends StatelessWidget {
   Widget _buildScore(BuildContext context) {
     if (entry.score == 0) return const SizedBox();
 
-    switch (collectionCtrl.scoreFormat) {
+    switch (ctrl.scoreFormat) {
       case ScoreFormat.POINT_3:
         if (entry.score == 3)
           return const Icon(

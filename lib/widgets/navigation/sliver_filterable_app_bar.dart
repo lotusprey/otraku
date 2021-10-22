@@ -17,14 +17,13 @@ import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
-  final String tag;
+  SliverCollectionAppBar(this.ctrlTag, this.canPop);
+
+  final String ctrlTag;
   final bool canPop;
-  SliverCollectionAppBar(this.tag, this.canPop);
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<CollectionController>(tag: tag);
-
     final leading = canPop
         ? AppBarIcon(
             tooltip: 'Close',
@@ -33,52 +32,56 @@ class SliverCollectionAppBar extends StatelessWidget {
           )
         : const SizedBox(width: 10);
 
-    return Obx(() {
-      if (ctrl.isLoading || ctrl.isEmpty)
-        return SliverTransparentAppBar([leading]);
+    return GetBuilder<CollectionController>(
+      id: CollectionController.ID_HEAD,
+      tag: ctrlTag,
+      builder: (ctrl) {
+        if (ctrl.isLoading || ctrl.isEmpty)
+          return SliverTransparentAppBar([leading]);
 
-      return SliverTransparentAppBar([
-        leading,
-        MediaSearchField(
-          scrollToTop: () => ctrl.scrollUpTo(0),
-          swipe: (offset) => ctrl.listIndex += offset,
-          hint: ctrl.currentName,
-          searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
-          search: (val) => ctrl.setFilterWithKey(
-            Filterable.SEARCH,
-            value: val,
-            update: true,
-          ),
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  ctrl.currentName,
-                  style: Theme.of(context).textTheme.headline2,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        return SliverTransparentAppBar([
+          leading,
+          MediaSearchField(
+            scrollToTop: () => ctrl.scrollUpTo(0),
+            swipe: (offset) => ctrl.listIndex += offset,
+            hint: ctrl.currentName,
+            searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
+            search: (val) => ctrl.setFilterWithKey(
+              Filterable.SEARCH,
+              value: val,
+              update: true,
+            ),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    ctrl.currentName,
+                    style: Theme.of(context).textTheme.headline2,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Text(
-                ' ${ctrl.currentCount}',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
+                Text(
+                  ' ${ctrl.currentCount}',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ],
+            ),
           ),
-        ),
-        AppBarIcon(
-          tooltip: 'Sort',
-          icon: Ionicons.filter_outline,
-          onTap: () => Sheet.show(
-            ctx: context,
-            sheet: CollectionSortSheet(tag),
-            isScrollControlled: true,
+          AppBarIcon(
+            tooltip: 'Sort',
+            icon: Ionicons.filter_outline,
+            onTap: () => Sheet.show(
+              ctx: context,
+              sheet: CollectionSortSheet(ctrlTag),
+              isScrollControlled: true,
+            ),
           ),
-        ),
-        _FilterIcon(tag),
-      ]);
-    });
+          _FilterIcon(ctrlTag),
+        ]);
+      },
+    );
   }
 }
 
@@ -321,7 +324,7 @@ class _FilterIconState extends State<_FilterIcon> {
         colour: _active ? Theme.of(context).colorScheme.secondary : null,
       );
 
-  bool _checkIfActive() => _filterable.anyActiveFilterFrom([
+  bool _checkIfActive() => _filterable.anyActiveFilterFrom(const [
         Filterable.ON_LIST,
         Filterable.COUNTRY,
         Filterable.STATUS_IN,

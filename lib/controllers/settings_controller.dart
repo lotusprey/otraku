@@ -40,16 +40,18 @@ class SettingsController extends GetxController {
 
       if (changes.containsKey('scoreFormat') ||
           changes.containsKey('titleLanguage')) {
-        Get.find<CollectionController>(tag: CollectionController.ANIME).fetch();
-        Get.find<CollectionController>(tag: CollectionController.MANGA).fetch();
+        Get.find<CollectionController>(tag: CollectionController.ANIME)
+            .refetch();
+        Get.find<CollectionController>(tag: CollectionController.MANGA)
+            .refetch();
       } else {
         if (changes.containsKey('splitCompletedAnime'))
           Get.find<CollectionController>(tag: CollectionController.ANIME)
-              .fetch();
+              .refetch();
 
         if (changes.containsKey('splitCompletedManga'))
           Get.find<CollectionController>(tag: CollectionController.MANGA)
-              .fetch();
+              .refetch();
       }
     }
     super.onClose();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
@@ -19,9 +20,7 @@ class ExploreView extends StatelessWidget {
   Widget build(BuildContext context) {
     final explorer = Get.find<ExploreController>();
     return CustomScrollView(
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
+      physics: Config.PHYSICS,
       controller: explorer.scrollCtrl,
       slivers: [
         SliverExploreAppBar(),

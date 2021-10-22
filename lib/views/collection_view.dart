@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
@@ -50,37 +52,38 @@ class HomeCollectionView extends StatelessWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => CustomScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<CollectionController>(tag: collectionTag);
+    return CustomScrollView(
+      physics: Config.PHYSICS,
+      controller: ctrl.scrollCtrl,
+      slivers: [
+        SliverCollectionAppBar(collectionTag, id != Client.viewerId),
+        SliverRefreshControl(
+          onRefresh: ctrl.refetch,
+          canRefresh: () => !ctrl.isLoading,
         ),
-        controller:
-            Get.find<CollectionController>(tag: collectionTag).scrollCtrl,
-        slivers: [
-          SliverCollectionAppBar(collectionTag, id != Client.viewerId),
-          MediaList(collectionTag),
-          SliverToBoxAdapter(
-            child: SizedBox(height: NavLayout.offset(context)),
-          ),
-        ],
-      );
+        MediaList(collectionTag),
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
+      ],
+    );
+  }
 }
 
 class CollectionActionButton extends StatelessWidget {
-  final String collectionTag;
-  const CollectionActionButton(this.collectionTag, {Key? key})
-      : super(key: key);
+  final String ctrlTag;
+  const CollectionActionButton(this.ctrlTag, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FloatingListener(
-      scrollCtrl: Get.find<CollectionController>(tag: collectionTag).scrollCtrl,
+      scrollCtrl: Get.find<CollectionController>(tag: ctrlTag).scrollCtrl,
       child: ActionButton(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
         onTap: () => DragSheet.show(
           context,
-          CollectionDragSheet(context, collectionTag),
+          CollectionDragSheet(context, ctrlTag),
         ),
       ),
     );

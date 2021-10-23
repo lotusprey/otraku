@@ -14,7 +14,7 @@ class SliverRefreshControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) => CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
-        refreshTriggerPullDistance: 150,
+        refreshTriggerPullDistance: 250,
         onRefresh: () async {
           if (canRefresh()) await onRefresh();
         },

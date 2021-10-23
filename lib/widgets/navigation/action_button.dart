@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 // Hides child on scroll-down and reveals it on scroll-up.
@@ -22,17 +23,14 @@ class _FloatingListenerState extends State<FloatingListener>
 
   void _visibility() {
     final pos = widget.scrollCtrl.lastPos;
-
-    // The position should be in bounds.
-    if (pos.pixels < pos.minScrollExtent || pos.pixels > pos.maxScrollExtent)
-      return;
-
-    // If the position has moved enough from the last spot, update visibility.
     final dif = pos.pixels - _lastOffset;
-    if (dif > 10) {
+
+    // If the position has moved enough from the last
+    // spot or is out of bounds, update visibility.
+    if (dif > 10 || pos.pixels > pos.maxScrollExtent) {
       _lastOffset = widget.scrollCtrl.lastPos.pixels;
       _animationCtrl.forward().then((_) => setState(() => _visible = false));
-    } else if (dif < -10) {
+    } else if (dif < -10 || pos.pixels < pos.minScrollExtent) {
       _lastOffset = widget.scrollCtrl.lastPos.pixels;
       setState(() => _visible = true);
       _animationCtrl.reverse();

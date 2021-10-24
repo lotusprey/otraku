@@ -29,15 +29,15 @@ class Sheet extends StatelessWidget {
             Theme.of(ctx).colorScheme.background.withAlpha(200),
       );
 
-  final Widget child;
-  final double? height;
-  final void Function()? onDone;
-
   Sheet({
     required this.child,
     this.height,
     this.onDone,
   });
+
+  final Widget child;
+  final double? height;
+  final void Function()? onDone;
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +87,6 @@ class Sheet extends StatelessWidget {
 }
 
 class SelectionSheet<T> extends StatelessWidget {
-  final List<String> options;
-  final List<T> values;
-  final List<T> names;
-  final void Function(List<T>) onDone;
-  final bool fixHeight;
-
   SelectionSheet({
     required this.onDone,
     required this.options,
@@ -100,6 +94,12 @@ class SelectionSheet<T> extends StatelessWidget {
     required this.names,
     this.fixHeight = false,
   });
+
+  final List<String> options;
+  final List<T> values;
+  final List<T> names;
+  final void Function(List<T>) onDone;
+  final bool fixHeight;
 
   @override
   Widget build(BuildContext context) => Sheet(
@@ -124,13 +124,6 @@ class SelectionSheet<T> extends StatelessWidget {
 }
 
 class SelectionToggleSheet<T> extends StatelessWidget {
-  final List<String> options;
-  final List<T> values;
-  final List<T> inclusive;
-  final List<T> exclusive;
-  final void Function(List<T>, List<T>) onDone;
-  final bool fixHeight;
-
   SelectionToggleSheet({
     required this.onDone,
     required this.options,
@@ -139,6 +132,13 @@ class SelectionToggleSheet<T> extends StatelessWidget {
     required this.exclusive,
     this.fixHeight = false,
   });
+
+  final List<String> options;
+  final List<T> values;
+  final List<T> inclusive;
+  final List<T> exclusive;
+  final void Function(List<T>, List<T>) onDone;
+  final bool fixHeight;
 
   @override
   Widget build(BuildContext context) => Sheet(
@@ -175,17 +175,17 @@ class SelectionToggleSheet<T> extends StatelessWidget {
 }
 
 class TagSelectionSheet extends StatelessWidget {
-  final Map<String, List<TagModel>> tags;
-  final List<String> inclusive;
-  final List<String> exclusive;
-  final Function(List<String>, List<String>) onDone;
-
   TagSelectionSheet({
     required this.tags,
     required this.inclusive,
     required this.exclusive,
     required this.onDone,
   });
+
+  final Map<String, List<TagModel>> tags;
+  final List<String> inclusive;
+  final List<String> exclusive;
+  final void Function(List<String>, List<String>) onDone;
 
   @override
   Widget build(BuildContext context) {
@@ -247,17 +247,17 @@ class TagSelectionSheet extends StatelessWidget {
 }
 
 class _SortSheet extends StatelessWidget {
-  final List<String> options;
-  final int index;
-  final bool desc;
-  final Function(int, bool) onTap;
-
   _SortSheet({
     required this.options,
     required this.index,
     required this.desc,
     required this.onTap,
   });
+
+  final List<String> options;
+  final int index;
+  final bool desc;
+  final void Function(int, bool) onTap;
 
   @override
   Widget build(BuildContext context) => Sheet(
@@ -349,8 +349,9 @@ class _SortSheet extends StatelessWidget {
 }
 
 class CollectionSortSheet extends StatelessWidget {
-  final String collectionTag;
   CollectionSortSheet(this.collectionTag);
+
+  final String collectionTag;
 
   @override
   Widget build(BuildContext context) {
@@ -382,9 +383,10 @@ class CollectionSortSheet extends StatelessWidget {
 }
 
 class MediaSortSheet extends StatelessWidget {
+  MediaSortSheet(this.initial, this.onTap);
+
   final MediaSort initial;
   final void Function(MediaSort) onTap;
-  MediaSortSheet(this.initial, this.onTap);
 
   @override
   Widget build(BuildContext context) {
@@ -415,14 +417,13 @@ class MediaSortSheet extends StatelessWidget {
       options: options,
       index: currentIndex,
       desc: currentlyDesc,
-      onTap: (index, desc) {
-        if (index != options.length - 1)
-          desc
+      onTap: (index, desc) => index < options.length - 1
+          ? desc
               ? onTap(MediaSort.values[index * 2 + 1])
-              : onTap(MediaSort.values[index * 2]);
-        else
-          desc ? onTap(titleDesc) : onTap(titleAsc);
-      },
+              : onTap(MediaSort.values[index * 2])
+          : desc
+              ? onTap(titleDesc)
+              : onTap(titleAsc),
     );
   }
 }

@@ -143,7 +143,6 @@ class CollectionController extends OverscrollController implements Filterable {
 
   void sort() {
     for (final list in _lists) list.sort(_filters[Filterable.SORT]);
-    scrollUpTo(0);
     filter();
   }
 
@@ -470,6 +469,7 @@ class CollectionController extends OverscrollController implements Filterable {
       e.add(entry);
     }
 
+    scrollUpTo(0);
     _entries.clear();
     _entries.addAll(e);
     update([ID_BODY, if (updateHeader) ID_HEAD]);

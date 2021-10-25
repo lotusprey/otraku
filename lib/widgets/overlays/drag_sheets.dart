@@ -7,7 +7,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 
-// An implementation of DraggableScrollableSheet.
+/// An implementation of [DraggableScrollableSheet].
 class DragSheet extends StatelessWidget {
   static void show(BuildContext ctx, Widget sheet) => showModalBottomSheet(
         context: ctx,
@@ -25,8 +25,9 @@ class DragSheet extends StatelessWidget {
 
   final double itemExtent;
   final List<Widget> children;
-  // A workaround for a bug: showModalBottomSheet doesn't respect the top
-  // padding, so SafeArea() and MediaQuery.of(context).padding.top don't work.
+
+  /// A workaround for a bug: [showModalBottomSheet] doesn't respect the top
+  /// padding, so [SafeArea] & [MediaQuery.of(context).padding.top] don't work.
   final BuildContext ctx;
 
   @override
@@ -114,7 +115,7 @@ class OptionDragSheet extends StatelessWidget {
   }
 }
 
-// Switch between lists in the collection.
+// Switch between lists in a collection.
 class CollectionDragSheet extends StatelessWidget {
   CollectionDragSheet(this.ctx, this.collectionTag);
   final String collectionTag;
@@ -159,7 +160,7 @@ class CollectionDragSheet extends StatelessWidget {
   }
 }
 
-// Switch between explore types.
+// Switch between explore types in the explore tab.
 class ExploreDragSheet extends StatelessWidget {
   ExploreDragSheet(this.ctx);
   final BuildContext ctx;
@@ -200,16 +201,18 @@ class ExploreDragSheet extends StatelessWidget {
   }
 }
 
-// Used in custom implementations of DragSheet
+/// Used in custom implementations of [DragSheet]
 class DragSheetListTile extends StatelessWidget {
   DragSheetListTile({
     required this.text,
-    required this.icon,
     required this.onTap,
+    this.selected = false,
+    this.icon,
   });
 
   final String text;
-  final IconData icon;
+  final IconData? icon;
+  final bool selected;
   final void Function() onTap;
 
   @override
@@ -220,14 +223,24 @@ class DragSheetListTile extends StatelessWidget {
         Navigator.pop(context);
         onTap();
       },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon),
-          const SizedBox(width: 5),
-          Text(text, style: Theme.of(context).textTheme.headline2),
-        ],
-      ),
+      child: icon == null
+          ? Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                text,
+                style: selected
+                    ? Theme.of(context).textTheme.headline1
+                    : Theme.of(context).textTheme.headline2,
+              ),
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon),
+                const SizedBox(width: 5),
+                Text(text, style: Theme.of(context).textTheme.headline2),
+              ],
+            ),
     );
   }
 }

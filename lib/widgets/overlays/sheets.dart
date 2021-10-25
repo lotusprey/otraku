@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -390,40 +389,17 @@ class MediaSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final length = MediaSort.values.length;
-    final prefTitle = Get.find<ViewerController>().settings!.titleLanguage;
-    late MediaSort titleAsc;
-    late MediaSort titleDesc;
-
-    // Check which title is the preferred one.
-    for (int i = 0; i < length; i += 2)
-      if (describeEnum(MediaSort.values[i]).contains(prefTitle)) {
-        titleAsc = MediaSort.values[i];
-        titleDesc = MediaSort.values[i + 1];
-      }
-
-    int currentIndex = initial.index ~/ 2;
-    bool currentlyDesc = initial.index % 2 == 0 ? false : true;
-
-    if (currentIndex > (length - 5) ~/ 2) currentIndex = (length - 6) ~/ 2;
-
-    // Gather the sort options as user-readable strings.
     final options = ['Date Added'];
-    for (int i = 2; i < length - 6; i += 2)
+    for (int i = 2; i < MediaSort.values.length; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
-    options.add('Title');
 
     return _SortSheet(
       options: options,
-      index: currentIndex,
-      desc: currentlyDesc,
-      onTap: (index, desc) => index < options.length - 1
-          ? desc
-              ? onTap(MediaSort.values[index * 2 + 1])
-              : onTap(MediaSort.values[index * 2])
-          : desc
-              ? onTap(titleDesc)
-              : onTap(titleAsc),
+      index: initial.index ~/ 2,
+      desc: initial.index % 2 == 0 ? false : true,
+      onTap: (index, desc) => desc
+          ? onTap(MediaSort.values[index * 2 + 1])
+          : onTap(MediaSort.values[index * 2]),
     );
   }
 }

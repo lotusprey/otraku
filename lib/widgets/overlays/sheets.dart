@@ -16,7 +16,7 @@ class Sheet extends StatelessWidget {
   static void show({
     required BuildContext ctx,
     required Widget sheet,
-    bool isScrollControlled = false,
+    bool isScrollControlled = true,
     Color? barrierColour,
   }) =>
       showModalBottomSheet(
@@ -68,22 +68,20 @@ class Sheet extends StatelessWidget {
           ? child
           : Column(
               children: [
-                // TODO is expanded needed here
                 Expanded(child: child),
-                if (onDone != null)
-                  TextButton.icon(
-                    onPressed: () {
-                      onDone!();
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      Icons.done_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: Theming.ICON_SMALL,
-                    ),
-                    label: Text('Done',
-                        style: Theme.of(context).textTheme.bodyText1),
+                TextButton.icon(
+                  onPressed: () {
+                    onDone!();
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.done_rounded,
+                    color: Theme.of(context).colorScheme.secondary,
+                    size: Theming.ICON_SMALL,
                   ),
+                  label: Text('Done',
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
               ],
             ),
     );
@@ -283,7 +281,7 @@ class CollectionSortSheet extends StatelessWidget {
           const SizedBox(height: 10),
           Text('Sort', style: Theme.of(context).textTheme.subtitle1),
           Expanded(
-            child: _Sorts(
+            child: _Sorting(
               onChanged: (i, d) {
                 index = i;
                 desc = d;
@@ -324,7 +322,7 @@ class MediaSortSheet extends StatelessWidget {
           const SizedBox(height: 10),
           Text('Sort', style: Theme.of(context).textTheme.subtitle1),
           Expanded(
-            child: _Sorts(
+            child: _Sorting(
               onChanged: (i, d) {
                 index = i;
                 desc = d;
@@ -340,8 +338,8 @@ class MediaSortSheet extends StatelessWidget {
   }
 }
 
-class _Sorts extends StatefulWidget {
-  _Sorts({
+class _Sorting extends StatefulWidget {
+  _Sorting({
     required this.names,
     required this.onChanged,
     required this.index,
@@ -354,10 +352,10 @@ class _Sorts extends StatefulWidget {
   final bool desc;
 
   @override
-  _SortsState createState() => _SortsState();
+  _SortingState createState() => _SortingState();
 }
 
-class _SortsState extends State<_Sorts> {
+class _SortingState extends State<_Sorting> {
   late int _index;
   late bool _desc;
 
@@ -369,39 +367,37 @@ class _SortsState extends State<_Sorts> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      itemCount: widget.names.length,
-      itemExtent: 40,
-      itemBuilder: (_, i) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              widget.names[i],
-              style: i != _index
-                  ? Theme.of(context).textTheme.bodyText2
-                  : Theme.of(context).textTheme.bodyText1,
-            ),
-            if (i == _index)
-              Icon(
-                _desc
-                    ? Icons.arrow_downward_rounded
-                    : Icons.arrow_upward_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: Theming.ICON_SMALL,
+  Widget build(BuildContext context) => ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: widget.names.length,
+        itemExtent: 40,
+        itemBuilder: (_, i) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.names[i],
+                style: i != _index
+                    ? Theme.of(context).textTheme.bodyText2
+                    : Theme.of(context).textTheme.bodyText1,
               ),
-          ],
+              if (i == _index)
+                Icon(
+                  _desc
+                      ? Icons.arrow_downward_rounded
+                      : Icons.arrow_upward_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: Theming.ICON_SMALL,
+                ),
+            ],
+          ),
+          onTap: () {
+            i != _index
+                ? setState(() => _index = i)
+                : setState(() => _desc = !_desc);
+            widget.onChanged(_index, _desc);
+          },
         ),
-        onTap: () {
-          i != _index
-              ? setState(() => _index = i)
-              : setState(() => _desc = !_desc);
-          widget.onChanged(_index, _desc);
-        },
-      ),
-    );
-  }
+      );
 }

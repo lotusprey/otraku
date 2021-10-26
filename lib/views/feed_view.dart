@@ -197,7 +197,6 @@ class _Filter extends StatelessWidget {
           onDone: (typeIn) => feed.typeIn = typeIn,
           fixHeight: true,
         ),
-        isScrollControlled: true,
       ),
     );
   }

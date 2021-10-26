@@ -83,7 +83,6 @@ class StudioView extends StatelessWidget {
                     onTap: () => Sheet.show(
                       ctx: context,
                       sheet: MediaSortSheet(ctrl.sort, (s) => ctrl.sort = s),
-                      isScrollControlled: true,
                     ),
                   ),
                 ]),

@@ -104,7 +104,6 @@ class FilterView extends StatelessWidget {
             icon: Ionicons.filter_outline,
             onTap: () => Sheet.show(
               ctx: context,
-              isScrollControlled: true,
               sheet: collectionTag != null
                   ? CollectionSortSheet(collectionTag!)
                   : MediaSortSheet(
@@ -204,6 +203,7 @@ class FilterView extends StatelessWidget {
             exclusive: changes[Filterable.GENRE_NOT_IN],
             edit: (inclusive, exclusive, onDone) => Sheet.show(
               ctx: context,
+              isScrollControlled: false,
               sheet: SelectionToggleSheet(
                 options: explorer.genres,
                 values: explorer.genres,
@@ -212,7 +212,6 @@ class FilterView extends StatelessWidget {
                 fixHeight: explorer.genres.length <= 10,
                 onDone: onDone,
               ),
-              isScrollControlled: false,
             ),
           ),
           if (collectionTag == null)
@@ -223,13 +222,13 @@ class FilterView extends StatelessWidget {
               exclusive: changes[Filterable.TAG_NOT_IN],
               edit: (inclusive, exclusive, onDone) => Sheet.show(
                 ctx: context,
+                isScrollControlled: false,
                 sheet: TagSelectionSheet(
                   tags: explorer.tags,
                   inclusive: inclusive,
                   exclusive: exclusive,
                   onDone: onDone,
                 ),
-                isScrollControlled: false,
               ),
             ),
         ],

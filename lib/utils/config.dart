@@ -15,6 +15,7 @@ abstract class Config {
   static const DEFAULT_EXPLORE = 'defaultExplore';
   static const DEFAULT_ANIME_SORT = 'defaultAnimeSort';
   static const DEFAULT_MANGA_SORT = 'defaultMangaSort';
+  static const DEFAULT_EXPLORE_SORT = 'defaultExploreSort';
   static const CONFIRM_EXIT = 'confirmExit';
 
   // Constants.

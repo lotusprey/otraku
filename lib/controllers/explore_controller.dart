@@ -110,8 +110,9 @@ class ExploreController extends OverscrollController implements Filterable {
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
-    Filterable.SORT: describeEnum(MediaSort.TRENDING_DESC),
     Filterable.ID_NOT_IN: [],
+    Filterable.SORT: describeEnum(MediaSort.values
+        .elementAt(Config.storage.read(Config.DEFAULT_EXPLORE_SORT) ?? 3)),
   };
 
   // ***************************************************************************

@@ -72,7 +72,6 @@ class SettingsAppView extends StatelessWidget {
                   items: Map.fromIterable(
                     EntrySort.values,
                     key: (v) => Convert.clarifyEnum(describeEnum(v))!,
-                    value: (v) => v,
                   ),
                   onChanged: (val) => Config.storage
                       .write(Config.DEFAULT_ANIME_SORT, val.index),
@@ -85,7 +84,6 @@ class SettingsAppView extends StatelessWidget {
                   items: Map.fromIterable(
                     EntrySort.values,
                     key: (v) => Convert.clarifyEnum(describeEnum(v))!,
-                    value: (v) => v,
                   ),
                   onChanged: (val) => Config.storage
                       .write(Config.DEFAULT_MANGA_SORT, val.index),
@@ -98,7 +96,6 @@ class SettingsAppView extends StatelessWidget {
                   items: Map.fromIterable(
                     MediaSort.values,
                     key: (v) => Convert.clarifyEnum(describeEnum(v))!,
-                    value: (v) => v,
                   ),
                   onChanged: (val) => Config.storage
                       .write(Config.DEFAULT_EXPLORE_SORT, val.index),

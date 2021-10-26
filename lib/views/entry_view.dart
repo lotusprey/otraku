@@ -182,7 +182,6 @@ class _Content extends StatelessWidget {
                 items: Map.fromIterable(
                   ListStatus.values,
                   key: (v) => Convert.adaptListStatus(v, model.type == 'ANIME'),
-                  value: (v) => v,
                 ),
                 onChanged: (status) {
                   model.status = status;

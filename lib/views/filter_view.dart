@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/enums/anime_format.dart';
-import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/convert.dart';
@@ -16,12 +15,9 @@ import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FilterView extends StatelessWidget {
-  static const COLLECTION_SHOUD_SORT_KEY = 'COLLECTION_SHOUD_SORT';
-
   FilterView(this.collectionTag, this.isDefinitelyInactive);
 
   final String? collectionTag;
@@ -45,7 +41,6 @@ class FilterView extends StatelessWidget {
 
     // Track filter changes.
     final changes = <String, dynamic>{};
-    changes[Filterable.SORT] = filterable.getFilterWithKey(Filterable.SORT);
     changes[Filterable.ON_LIST] =
         filterable.getFilterWithKey(Filterable.ON_LIST);
     changes[Filterable.COUNTRY] =
@@ -69,8 +64,8 @@ class FilterView extends StatelessWidget {
       filterable.getFilterWithKey(Filterable.TAG_NOT_IN) ?? [],
     );
 
-    // Collection has to manually be forced to sort itself.
-    changes[COLLECTION_SHOUD_SORT_KEY] = false;
+    if (collectionTag == null)
+      changes[Filterable.SORT] = filterable.getFilterWithKey(Filterable.SORT);
 
     // Countries.
     final countries = <String, String?>{'All': null};
@@ -107,15 +102,18 @@ class FilterView extends StatelessWidget {
           AppBarIcon(
             tooltip: 'Sort',
             icon: Ionicons.filter_outline,
-            onTap: () => DragSheet.show(
-              context,
-              DragSheet(
-                itemExtent: 35,
-                children: collectionTag != null
-                    ? _collectionSortOptions(changes)
-                    : _exploreSortOptions(changes),
-                ctx: context,
-              ),
+            onTap: () => Sheet.show(
+              ctx: context,
+              isScrollControlled: true,
+              sheet: collectionTag != null
+                  ? CollectionSortSheet(collectionTag!)
+                  : MediaSortSheet(
+                      Convert.strToEnum(
+                        changes[Filterable.SORT],
+                        MediaSort.values,
+                      )!,
+                      (v) => changes[Filterable.SORT] = describeEnum(v),
+                    ),
             ),
           ),
           AppBarIcon(
@@ -134,13 +132,9 @@ class FilterView extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (filterable is ExploreController) filterable.fetch();
-              if (filterable is CollectionController) {
-                if (changes[COLLECTION_SHOUD_SORT_KEY])
-                  filterable.sort();
-                else
-                  filterable.filter();
-              }
+              if (filterable is ExploreController)
+                filterable.fetch();
+              else if (filterable is CollectionController) filterable.filter();
 
               isDefinitelyInactive(false);
               Navigator.pop(context);
@@ -242,23 +236,4 @@ class FilterView extends StatelessWidget {
       ),
     );
   }
-
-  List<Widget> _collectionSortOptions(Map<String, dynamic> changes) =>
-      EntrySort.values
-          .map((v) => DragSheetListTile(
-              text: Convert.clarifyEnum(describeEnum(v))!,
-              onTap: () {
-                changes[Filterable.SORT] = v;
-                changes[COLLECTION_SHOUD_SORT_KEY] = true;
-              },
-              selected: v == changes[Filterable.SORT]))
-          .toList();
-
-  List<Widget> _exploreSortOptions(Map<String, dynamic> changes) => MediaSort
-      .values
-      .map((v) => DragSheetListTile(
-          text: Convert.clarifyEnum(describeEnum(v))!,
-          onTap: () => changes[Filterable.SORT] = describeEnum(v),
-          selected: describeEnum(v) == changes[Filterable.SORT]))
-      .toList();
 }

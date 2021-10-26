@@ -40,16 +40,17 @@ class Sheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomMargin = MediaQuery.of(context).viewPadding.bottom + 20;
     final sideMargin = MediaQuery.of(context).size.width > 420
         ? (MediaQuery.of(context).size.width - 400) / 2
         : 20.0;
 
     return Container(
-      height: height,
+      height: height != null ? (height! + bottomMargin) : null,
       margin: EdgeInsets.only(
         left: sideMargin,
         right: sideMargin,
-        bottom: MediaQuery.of(context).viewPadding.bottom + 20,
+        bottom: bottomMargin,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -63,24 +64,28 @@ class Sheet extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Expanded(child: child),
-          if (onDone != null)
-            TextButton.icon(
-              onPressed: () {
-                onDone!();
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.done_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: Theming.ICON_SMALL,
-              ),
-              label: Text('Done', style: Theme.of(context).textTheme.bodyText1),
+      child: onDone == null
+          ? child
+          : Column(
+              children: [
+                // TODO is expanded needed here
+                Expanded(child: child),
+                if (onDone != null)
+                  TextButton.icon(
+                    onPressed: () {
+                      onDone!();
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.done_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: Theming.ICON_SMALL,
+                    ),
+                    label: Text('Done',
+                        style: Theme.of(context).textTheme.bodyText1),
+                  ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }
@@ -245,108 +250,6 @@ class TagSelectionSheet extends StatelessWidget {
   }
 }
 
-class _SortSheet extends StatelessWidget {
-  _SortSheet({
-    required this.options,
-    required this.index,
-    required this.desc,
-    required this.onTap,
-  });
-
-  final List<String> options;
-  final int index;
-  final bool desc;
-  final void Function(int, bool) onTap;
-
-  @override
-  Widget build(BuildContext context) => Sheet(
-        height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 10,
-                bottom: 10,
-                left: 15,
-                right: 45,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Sort', style: Theme.of(context).textTheme.subtitle1),
-                  Text('Order', style: Theme.of(context).textTheme.subtitle1),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (_, i) => ListTile(
-                  dense: true,
-                  title: Text(
-                    options[i],
-                    style: i != index
-                        ? Theme.of(context).textTheme.bodyText2
-                        : Theme.of(context).textTheme.bodyText1,
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i != index || !desc
-                              ? Theme.of(context).colorScheme.surface
-                              : Theme.of(context).colorScheme.secondary,
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(
-                            Icons.arrow_downward_rounded,
-                            size: Theming.ICON_SMALL,
-                          ),
-                          color: Theme.of(context).colorScheme.background,
-                          onPressed: () {
-                            onTap(i, true);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      Container(
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i != index || desc
-                              ? Theme.of(context).colorScheme.surface
-                              : Theme.of(context).colorScheme.secondary,
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(
-                            Icons.arrow_upward_rounded,
-                            size: Theming.ICON_SMALL,
-                          ),
-                          color: Theme.of(context).colorScheme.background,
-                          onPressed: () {
-                            onTap(i, false);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                itemCount: options.length,
-                itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
-              ),
-            ),
-          ],
-        ),
-      );
-}
-
 class CollectionSortSheet extends StatelessWidget {
   CollectionSortSheet(this.collectionTag);
 
@@ -355,20 +258,17 @@ class CollectionSortSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final collection = Get.find<CollectionController>(tag: collectionTag);
-
     final EntrySort entrySort = collection.getFilterWithKey(Filterable.SORT);
-    final currentIndex = entrySort.index ~/ 2;
-    final currentlyDesc = entrySort.index % 2 == 0 ? false : true;
 
+    int index = entrySort.index ~/ 2;
+    bool desc = entrySort.index % 2 != 0;
     final options = <String>[];
     for (int i = 0; i < EntrySort.values.length; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(EntrySort.values[i]))!);
 
-    return _SortSheet(
-      options: options,
-      index: currentIndex,
-      desc: currentlyDesc,
-      onTap: (int index, bool desc) {
+    return Sheet(
+      height: options.length * 40 + 58,
+      onDone: () {
         collection.setFilterWithKey(
           Filterable.SORT,
           value: desc
@@ -377,6 +277,24 @@ class CollectionSortSheet extends StatelessWidget {
         );
         collection.sort();
       },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          Text('Sort', style: Theme.of(context).textTheme.subtitle1),
+          Expanded(
+            child: _Sorts(
+              onChanged: (i, d) {
+                index = i;
+                desc = d;
+              },
+              names: options,
+              index: index,
+              desc: desc,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -389,17 +307,101 @@ class MediaSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final options = ['Date Added'];
-    for (int i = 2; i < MediaSort.values.length; i += 2)
+    int index = initial.index ~/ 2;
+    bool desc = initial.index % 2 != 0;
+    final options = <String>[];
+    for (int i = 0; i < MediaSort.values.length; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
 
-    return _SortSheet(
-      options: options,
-      index: initial.index ~/ 2,
-      desc: initial.index % 2 == 0 ? false : true,
-      onTap: (index, desc) => desc
+    return Sheet(
+      height: options.length * 40 + 58,
+      onDone: () => desc
           ? onTap(MediaSort.values[index * 2 + 1])
           : onTap(MediaSort.values[index * 2]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          Text('Sort', style: Theme.of(context).textTheme.subtitle1),
+          Expanded(
+            child: _Sorts(
+              onChanged: (i, d) {
+                index = i;
+                desc = d;
+              },
+              names: options,
+              index: index,
+              desc: desc,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Sorts extends StatefulWidget {
+  _Sorts({
+    required this.names,
+    required this.onChanged,
+    required this.index,
+    required this.desc,
+  });
+
+  final List<String> names;
+  final void Function(int, bool) onChanged;
+  final int index;
+  final bool desc;
+
+  @override
+  _SortsState createState() => _SortsState();
+}
+
+class _SortsState extends State<_Sorts> {
+  late int _index;
+  late bool _desc;
+
+  @override
+  void initState() {
+    super.initState();
+    _index = widget.index;
+    _desc = widget.desc;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemCount: widget.names.length,
+      itemExtent: 40,
+      itemBuilder: (_, i) => GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              widget.names[i],
+              style: i != _index
+                  ? Theme.of(context).textTheme.bodyText2
+                  : Theme.of(context).textTheme.bodyText1,
+            ),
+            if (i == _index)
+              Icon(
+                _desc
+                    ? Icons.arrow_downward_rounded
+                    : Icons.arrow_upward_rounded,
+                color: Theme.of(context).colorScheme.secondary,
+                size: Theming.ICON_SMALL,
+              ),
+          ],
+        ),
+        onTap: () {
+          i != _index
+              ? setState(() => _index = i)
+              : setState(() => _desc = !_desc);
+          widget.onChanged(_index, _desc);
+        },
+      ),
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
@@ -102,9 +104,13 @@ class CollectionController extends OverscrollController implements Filterable {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
 
+  static final _random = Random();
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
+
+  CollectionController(this.userId, this.ofAnime);
 
   final int userId;
   final bool ofAnime;
@@ -116,46 +122,49 @@ class CollectionController extends OverscrollController implements Filterable {
   bool _isLoading = true;
   ScoreFormat? _scoreFormat;
 
-  CollectionController(this.userId, this.ofAnime);
-
   // ***************************************************************************
   // GETTERS & SETTERS
   // ***************************************************************************
 
   @override
   bool get hasNextPage => false;
-  bool get isLoading => _isLoading;
+
   int get listIndex => _listIndex;
-  ScoreFormat? get scoreFormat => _scoreFormat;
-  List<String> get customListNames => [..._customListNames];
-  List<ListEntryModel> get entries => _entries;
-  String get currentName => _lists[_listIndex].name;
-  ListStatus? get listStatus => _lists[_listIndex].status;
-  int get currentCount => _lists[_listIndex].entries.length;
+  bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
+  ScoreFormat? get scoreFormat => _scoreFormat;
+  List<ListEntryModel> get entries => _entries;
+  List<String> get customListNames => [..._customListNames];
+
+  List<String> get listNames {
+    final n = <String>[];
+    for (final list in _lists) n.add(list.name);
+    return n;
+  }
+
+  List<int> get listCounts {
+    final c = <int>[];
+    for (final list in _lists) c.add(list.entries.length);
+    return c;
+  }
+
+  /// Returns a random entry from [_entries].
+  ListEntryModel get random => _entries[_random.nextInt(_entries.length)];
+
+  // Getters for the current list.
+  String get listName => _lists[_listIndex].name;
+  int get listCount => _lists[_listIndex].entries.length;
+  ListStatus? get listStatus => _lists[_listIndex].status;
 
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
-    scrollUpTo(0);
     filter();
   }
 
   void sort() {
     for (final list in _lists) list.sort(_filters[Filterable.SORT]);
     filter();
-  }
-
-  List<String> get names {
-    final n = <String>[];
-    for (final list in _lists) n.add(list.name);
-    return n;
-  }
-
-  List<int> get allEntryCounts {
-    final c = <int>[];
-    for (final list in _lists) c.add(list.entries.length);
-    return c;
   }
 
   void _updateLoading(bool val) {

@@ -117,18 +117,19 @@ class OptionDragSheet extends StatelessWidget {
 
 // Switch between lists in a collection.
 class CollectionDragSheet extends StatelessWidget {
-  CollectionDragSheet(this.ctx, this.collectionTag);
-  final String collectionTag;
+  CollectionDragSheet(this.ctx, this.ctrlTag);
+
+  final String ctrlTag;
   final BuildContext ctx;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<CollectionController>(tag: collectionTag);
-    final names = ctrl.names;
-    final counts = ctrl.allEntryCounts;
+    final ctrl = Get.find<CollectionController>(tag: ctrlTag);
+    final names = ctrl.listNames;
+    final counts = ctrl.listCounts;
 
     final children = <Widget>[];
-    for (int i = 0; i < ctrl.names.length; i++)
+    for (int i = 0; i < ctrl.listNames.length; i++)
       children.add(GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {

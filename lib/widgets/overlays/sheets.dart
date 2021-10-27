@@ -249,13 +249,13 @@ class TagSelectionSheet extends StatelessWidget {
 }
 
 class CollectionSortSheet extends StatelessWidget {
-  CollectionSortSheet(this.collectionTag);
+  CollectionSortSheet(this.ctrlTag);
 
-  final String collectionTag;
+  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<CollectionController>(tag: collectionTag);
+    final collection = Get.find<CollectionController>(tag: ctrlTag);
     final EntrySort entrySort = collection.getFilterWithKey(Filterable.SORT);
 
     int index = entrySort.index ~/ 2;

@@ -13,15 +13,15 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 import '../utils/client.dart';
 
 class CollectionView extends StatelessWidget {
-  final int id;
-  final bool ofAnime;
-  final String ctrlTag;
-
   CollectionView({
     required this.id,
     required this.ofAnime,
     required this.ctrlTag,
   });
+
+  final int id;
+  final bool ofAnime;
+  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class CollectionView extends StatelessWidget {
         child: HomeCollectionView(
           id: id,
           ofAnime: ofAnime,
-          collectionTag: ctrlTag,
+          ctrlTag: ctrlTag,
           key: null,
         ),
       ),
@@ -40,30 +40,30 @@ class CollectionView extends StatelessWidget {
 }
 
 class HomeCollectionView extends StatelessWidget {
-  final int id;
-  final bool ofAnime;
-  final String collectionTag;
-
   HomeCollectionView({
     required this.id,
     required this.ofAnime,
-    required this.collectionTag,
+    required this.ctrlTag,
     required key,
   }) : super(key: key);
 
+  final int id;
+  final bool ofAnime;
+  final String ctrlTag;
+
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<CollectionController>(tag: collectionTag);
+    final ctrl = Get.find<CollectionController>(tag: ctrlTag);
     return CustomScrollView(
       physics: Config.PHYSICS,
       controller: ctrl.scrollCtrl,
       slivers: [
-        SliverCollectionAppBar(collectionTag, id != Client.viewerId),
+        SliverCollectionAppBar(ctrlTag, id != Client.viewerId),
         SliverRefreshControl(
           onRefresh: ctrl.refetch,
           canRefresh: () => !ctrl.isLoading,
         ),
-        MediaList(collectionTag),
+        MediaList(ctrlTag),
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
       ],
     );
@@ -71,8 +71,8 @@ class HomeCollectionView extends StatelessWidget {
 }
 
 class CollectionActionButton extends StatelessWidget {
-  final String ctrlTag;
   const CollectionActionButton(this.ctrlTag, {Key? key}) : super(key: key);
+  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {

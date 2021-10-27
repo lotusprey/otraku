@@ -42,7 +42,7 @@ class SliverCollectionAppBar extends StatelessWidget {
           MediaSearchField(
             scrollToTop: () => ctrl.scrollUpTo(0),
             swipe: (offset) => ctrl.listIndex += offset,
-            hint: ctrl.currentName,
+            hint: ctrl.listName,
             searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
             search: (val) => ctrl.setFilterWithKey(
               Filterable.SEARCH,
@@ -54,18 +54,29 @@ class SliverCollectionAppBar extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    ctrl.currentName,
+                    ctrl.listName,
                     style: Theme.of(context).textTheme.headline2,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Text(
-                  ' ${ctrl.currentCount}',
+                  ' ${ctrl.listCount}',
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ],
             ),
+          ),
+          AppBarIcon(
+            tooltip: 'Random',
+            icon: Ionicons.shuffle_outline,
+            onTap: () {
+              final entry = ctrl.random;
+              Navigation.it.push(
+                Navigation.mediaRoute,
+                args: [entry.mediaId, entry.cover],
+              );
+            },
           ),
           _FilterIcon(ctrlTag),
         ]);
@@ -121,13 +132,6 @@ class SliverExploreAppBar extends StatelessWidget {
 }
 
 class MediaSearchField extends StatefulWidget {
-  final Function() scrollToTop;
-  final Function(int) swipe;
-  final Widget title;
-  final String hint;
-  final String searchValue;
-  final Function(String)? search;
-
   MediaSearchField({
     required this.scrollToTop,
     required this.swipe,
@@ -136,6 +140,13 @@ class MediaSearchField extends StatefulWidget {
     required this.searchValue,
     required this.search,
   });
+
+  final Function() scrollToTop;
+  final Function(int) swipe;
+  final Widget title;
+  final String hint;
+  final String searchValue;
+  final Function(String)? search;
 
   @override
   _MediaSearchFieldState createState() => _MediaSearchFieldState();
@@ -248,9 +259,9 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
 }
 
 class _FilterIcon extends StatefulWidget {
-  final String? collectionTag;
-
   _FilterIcon(this.collectionTag);
+
+  final String? collectionTag;
 
   @override
   _FilterIconState createState() => _FilterIconState();

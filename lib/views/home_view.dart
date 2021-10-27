@@ -26,13 +26,13 @@ class HomeView extends StatelessWidget {
       HomeCollectionView(
         ofAnime: true,
         id: Client.viewerId!,
-        collectionTag: CollectionController.ANIME,
+        ctrlTag: CollectionController.ANIME,
         key: UniqueKey(),
       ),
       HomeCollectionView(
         ofAnime: false,
         id: Client.viewerId!,
-        collectionTag: CollectionController.MANGA,
+        ctrlTag: CollectionController.MANGA,
         key: UniqueKey(),
       ),
       const ExploreView(),

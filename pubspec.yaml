@@ -19,8 +19,8 @@ dependencies:
   url_launcher: ^6.0.12
   app_links: ^2.2.0 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
   workmanager: ^0.4.1
-  flutter_local_notifications: ^9.0.0
-  flutter_widget_from_html_core: ^0.8.0
+  flutter_local_notifications: ^9.0.1
+  flutter_widget_from_html_core: ^0.8.1
   ionicons: ^0.1.2
 
 dev_dependencies:

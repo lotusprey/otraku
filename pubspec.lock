@@ -138,7 +138,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.0.0"
+    version: "9.0.1"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -176,7 +176,7 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.0"
+    version: "0.8.1"
   get:
     dependency: "direct main"
     description:

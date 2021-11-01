@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
@@ -132,6 +131,7 @@ class CollectionController extends OverscrollController implements Filterable {
   int get listIndex => _listIndex;
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
+  int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
   List<String> get customListNames => [..._customListNames];
@@ -152,9 +152,8 @@ class CollectionController extends OverscrollController implements Filterable {
   ListEntryModel get random => _entries[_random.nextInt(_entries.length)];
 
   // Getters for the current list.
-  String get listName => _lists[_listIndex].name;
-  int get listCount => _lists[_listIndex].entries.length;
-  ListStatus? get listStatus => _lists[_listIndex].status;
+  String get currentName => _lists[_listIndex].name;
+  int get currentCount => _lists[_listIndex].entries.length;
 
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;

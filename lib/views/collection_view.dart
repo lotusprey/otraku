@@ -76,8 +76,10 @@ class CollectionActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ctrl = Get.find<CollectionController>(tag: ctrlTag);
+
     return FloatingListener(
-      scrollCtrl: Get.find<CollectionController>(tag: ctrlTag).scrollCtrl,
+      scrollCtrl: ctrl.scrollCtrl,
       child: ActionButton(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
@@ -85,6 +87,21 @@ class CollectionActionButton extends StatelessWidget {
           context,
           CollectionDragSheet(context, ctrlTag),
         ),
+        onSwipe: (goRight) {
+          if (goRight) {
+            if (ctrl.listIndex < ctrl.listCount - 1)
+              ctrl.listIndex++;
+            else
+              ctrl.listIndex = 0;
+          } else {
+            if (ctrl.listIndex > 0)
+              ctrl.listIndex--;
+            else
+              ctrl.listIndex = ctrl.listCount - 1;
+          }
+
+          return null;
+        },
       ),
     );
   }

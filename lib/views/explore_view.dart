@@ -102,6 +102,22 @@ class ExploreActionButton extends StatelessWidget {
           tooltip: 'Types',
           icon: ctrl.type.icon,
           onTap: () => DragSheet.show(context, ExploreDragSheet(context)),
+          onSwipe: (goRight) {
+            final index = ctrl.type.index;
+            if (goRight) {
+              if (index < Explorable.values.length - 1)
+                ctrl.type = Explorable.values.elementAt(index + 1);
+              else
+                ctrl.type = Explorable.values.elementAt(0);
+            } else {
+              if (index > 0)
+                ctrl.type = Explorable.values.elementAt(index - 1);
+              else
+                ctrl.type = Explorable.values.last;
+            }
+
+            return ctrl.type.icon;
+          },
         ),
       ),
     );

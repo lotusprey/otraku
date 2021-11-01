@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // Detects horizontal swipes.
 class DragDetector extends StatelessWidget {
-  // Passing true means 'go right' and false means 'go left'
+  /// Passing [true] means 'go right' and [false] means 'go left'
   final void Function(bool) onSwipe;
   final void Function()? onTap;
   final Widget child;

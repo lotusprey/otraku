@@ -42,7 +42,7 @@ class SliverCollectionAppBar extends StatelessWidget {
           MediaSearchField(
             scrollToTop: () => ctrl.scrollUpTo(0),
             swipe: (offset) => ctrl.listIndex += offset,
-            hint: ctrl.listName,
+            hint: ctrl.currentName,
             searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
             search: (val) => ctrl.setFilterWithKey(
               Filterable.SEARCH,
@@ -54,14 +54,14 @@ class SliverCollectionAppBar extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    ctrl.listName,
+                    ctrl.currentName,
                     style: Theme.of(context).textTheme.headline2,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Text(
-                  ' ${ctrl.listCount}',
+                  ' ${ctrl.currentCount}',
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ],

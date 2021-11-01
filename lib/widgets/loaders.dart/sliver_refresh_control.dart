@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 
 class SliverRefreshControl extends StatelessWidget {
-  final Future<void> Function() onRefresh;
-  final bool Function() canRefresh;
-
   const SliverRefreshControl({
     required this.onRefresh,
     required this.canRefresh,
   });
 
+  final Future<void> Function() onRefresh;
+  final bool Function() canRefresh;
+
   @override
   Widget build(BuildContext context) => CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
-        refreshTriggerPullDistance: 250,
+        refreshTriggerPullDistance: 200,
         onRefresh: () async {
           if (canRefresh()) await onRefresh();
         },

@@ -11,7 +11,6 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/theming.dart';
-import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
@@ -179,10 +178,10 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
         children: [
           if (!_onSearch) ...[
             Expanded(
-              child: DragDetector(
+              child: GestureDetector(
                 child: widget.title,
                 onTap: widget.scrollToTop,
-                onSwipe: (goRight) => widget.swipe(goRight ? 1 : -1),
+                behavior: HitTestBehavior.opaque,
               ),
             ),
             if (widget.search != null)

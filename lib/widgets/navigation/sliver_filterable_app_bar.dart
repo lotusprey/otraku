@@ -87,32 +87,32 @@ class SliverCollectionAppBar extends StatelessWidget {
 class SliverExploreAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExploreController>();
+    final ctrl = Get.find<ExploreController>();
     return Obx(
       () => SliverTransparentAppBar(
         [
           const SizedBox(width: 10),
           MediaSearchField(
-            scrollToTop: () => explorer.scrollUpTo(0),
+            scrollToTop: () => ctrl.scrollUpTo(0),
             swipe: (offset) {
-              final index = explorer.type.index + offset;
+              final index = ctrl.type.index + offset;
               if (index >= 0 && index < Explorable.values.length)
-                explorer.type = Explorable.values[index];
+                ctrl.type = Explorable.values[index];
             },
-            hint: Convert.clarifyEnum(describeEnum(explorer.type))!,
-            searchValue: explorer.search,
-            search: explorer.type != Explorable.review
-                ? (val) => explorer.search = val
+            hint: Convert.clarifyEnum(describeEnum(ctrl.type))!,
+            searchValue: ctrl.search,
+            search: ctrl.type != Explorable.review
+                ? (val) => ctrl.search = val
                 : null,
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(explorer.type.icon,
+                Icon(ctrl.type.icon,
                     color: Theme.of(context).colorScheme.onBackground),
                 const SizedBox(width: 15),
                 Flexible(
                   child: Text(
-                    Convert.clarifyEnum(describeEnum(explorer.type))!,
+                    Convert.clarifyEnum(describeEnum(ctrl.type))!,
                     style: Theme.of(context).textTheme.headline2,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -121,9 +121,11 @@ class SliverExploreAppBar extends StatelessWidget {
               ],
             ),
           ),
-          if (explorer.type == Explorable.anime ||
-              explorer.type == Explorable.manga)
-            _FilterIcon(null),
+          if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
+            _FilterIcon(null)
+          else if (ctrl.type == Explorable.character ||
+              ctrl.type == Explorable.staff)
+            _BirthdayIcon(ctrl),
         ],
       ),
     );
@@ -312,4 +314,43 @@ class _FilterIconState extends State<_FilterIcon> {
         Filterable.TAG_IN,
         Filterable.TAG_NOT_IN,
       ]);
+}
+
+class _BirthdayIcon extends StatefulWidget {
+  _BirthdayIcon(this.ctrl);
+
+  final ExploreController ctrl;
+
+  @override
+  State<_BirthdayIcon> createState() => _BirthdayIconState();
+}
+
+class _BirthdayIconState extends State<_BirthdayIcon> {
+  late bool _active;
+
+  @override
+  void initState() {
+    super.initState();
+    _active = widget.ctrl.anyActiveFilterFrom([Filterable.IS_BIRTHDAY]);
+  }
+
+  @override
+  Widget build(BuildContext context) => AppBarIcon(
+        icon: Icons.cake_outlined,
+        tooltip: 'Birthday Filter',
+        colour: _active ? Theme.of(context).colorScheme.secondary : null,
+        onTap: () {
+          if (widget.ctrl.anyActiveFilterFrom([Filterable.IS_BIRTHDAY])) {
+            widget.ctrl.setFilterWithKey(Filterable.IS_BIRTHDAY, update: true);
+            setState(() => _active = false);
+          } else {
+            widget.ctrl.setFilterWithKey(
+              Filterable.IS_BIRTHDAY,
+              update: true,
+              value: true,
+            );
+            setState(() => _active = true);
+          }
+        },
+      );
 }

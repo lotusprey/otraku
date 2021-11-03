@@ -38,10 +38,10 @@ class ExploreController extends OverscrollController implements Filterable {
   ''';
 
   static const _charactersQuery = r'''
-    query Characters($page: Int, $search: String, $id_not_in: [Int]) {
+    query Characters($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
-        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
+        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
           id name {userPreferred} image {large}
         }
       }
@@ -49,10 +49,10 @@ class ExploreController extends OverscrollController implements Filterable {
   ''';
 
   static const _staffQuery = r'''
-    query Staff($page: Int, $search: String, $id_not_in: [Int]) {
+    query Staff($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
-        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
+        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
           id name {userPreferred} image {large}
         }
       }

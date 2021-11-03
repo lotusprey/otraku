@@ -125,6 +125,7 @@ class _DraggableIconState extends State<_DraggableIcon>
   @override
   Widget build(BuildContext context) {
     return DragDetector(
+      triggerOffset: 10,
       onSwipe: (goRight) {
         // The previous transition must have finished.
         if (_ctrl.isAnimating) return;

@@ -5,7 +5,7 @@ import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class FavouritesView extends StatelessWidget {
@@ -26,9 +26,9 @@ class FavouritesView extends StatelessWidget {
 
     return GetBuilder<FavouritesController>(
       tag: id.toString(),
-      builder: (ctrl) => NavScaffold(
+      builder: (ctrl) => NavLayout(
         index: ctrl.pageIndex,
-        setPage: (index) => ctrl.pageIndex = index,
+        onChanged: (index) => ctrl.pageIndex = index,
         items: {
           'Anime': Explorable.anime.icon,
           'Manga': Explorable.manga.icon,

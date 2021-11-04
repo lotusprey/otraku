@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/enums/anime_format.dart';
 import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/enums/manga_format.dart';
 import 'package:otraku/enums/media_status.dart';
@@ -16,10 +18,10 @@ import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FilterView extends StatelessWidget {
+  FilterView(this.collectionTag, this.isDefinitelyInactive);
+
   final String? collectionTag;
   final void Function(bool) isDefinitelyInactive;
-
-  FilterView(this.collectionTag, this.isDefinitelyInactive);
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,10 @@ class FilterView extends StatelessWidget {
 
     // Track filter changes.
     final changes = <String, dynamic>{};
+    changes[Filterable.ON_LIST] =
+        filterable.getFilterWithKey(Filterable.ON_LIST);
+    changes[Filterable.COUNTRY] =
+        filterable.getFilterWithKey(Filterable.COUNTRY);
     changes[Filterable.STATUS_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.STATUS_IN) ?? [],
     );
@@ -57,10 +63,9 @@ class FilterView extends StatelessWidget {
     changes[Filterable.TAG_NOT_IN] = List<String>.from(
       filterable.getFilterWithKey(Filterable.TAG_NOT_IN) ?? [],
     );
-    changes[Filterable.COUNTRY] =
-        filterable.getFilterWithKey(Filterable.COUNTRY);
-    changes[Filterable.ON_LIST] =
-        filterable.getFilterWithKey(Filterable.ON_LIST);
+
+    if (collectionTag == null)
+      changes[Filterable.SORT] = filterable.getFilterWithKey(Filterable.SORT);
 
     // Countries.
     final countries = <String, String?>{'All': null};
@@ -95,6 +100,22 @@ class FilterView extends StatelessWidget {
         title: 'Filters',
         actions: [
           AppBarIcon(
+            tooltip: 'Sort',
+            icon: Ionicons.filter_outline,
+            onTap: () => Sheet.show(
+              ctx: context,
+              sheet: collectionTag != null
+                  ? CollectionSortSheet(collectionTag!)
+                  : MediaSortSheet(
+                      Convert.strToEnum(
+                        changes[Filterable.SORT],
+                        MediaSort.values,
+                      )!,
+                      (v) => changes[Filterable.SORT] = describeEnum(v),
+                    ),
+            ),
+          ),
+          AppBarIcon(
             tooltip: 'Clear',
             icon: Icons.close,
             onTap: () {
@@ -110,11 +131,9 @@ class FilterView extends StatelessWidget {
               for (final key in changes.keys)
                 filterable.setFilterWithKey(key, value: changes[key]);
 
-              if (filterable is ExploreController) filterable.fetch();
-              if (filterable is CollectionController) {
-                filterable.scrollTo(0);
-                filterable.filter();
-              }
+              if (filterable is ExploreController)
+                filterable.fetch();
+              else if (filterable is CollectionController) filterable.filter();
 
               isDefinitelyInactive(false);
               Navigator.pop(context);
@@ -184,6 +203,7 @@ class FilterView extends StatelessWidget {
             exclusive: changes[Filterable.GENRE_NOT_IN],
             edit: (inclusive, exclusive, onDone) => Sheet.show(
               ctx: context,
+              isScrollControlled: false,
               sheet: SelectionToggleSheet(
                 options: explorer.genres,
                 values: explorer.genres,
@@ -192,7 +212,6 @@ class FilterView extends StatelessWidget {
                 fixHeight: explorer.genres.length <= 10,
                 onDone: onDone,
               ),
-              isScrollControlled: false,
             ),
           ),
           if (collectionTag == null)
@@ -203,13 +222,13 @@ class FilterView extends StatelessWidget {
               exclusive: changes[Filterable.TAG_NOT_IN],
               edit: (inclusive, exclusive, onDone) => Sheet.show(
                 ctx: context,
+                isScrollControlled: false,
                 sheet: TagSelectionSheet(
                   tags: explorer.tags,
                   inclusive: inclusive,
                   exclusive: exclusive,
                   onDone: onDone,
                 ),
-                isScrollControlled: false,
               ),
             ),
         ],

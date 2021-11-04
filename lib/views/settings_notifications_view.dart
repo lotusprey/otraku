@@ -6,7 +6,7 @@ import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsNotificationsView extends StatelessWidget {
   const SettingsNotificationsView();
@@ -47,7 +47,7 @@ class SettingsNotificationsView extends StatelessWidget {
         slivers: [
           ...siteOptions,
           SliverToBoxAdapter(
-            child: SizedBox(height: NavBar.offset(context)),
+            child: SizedBox(height: NavLayout.offset(context)),
           ),
         ],
       ),

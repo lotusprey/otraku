@@ -4,12 +4,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
-import 'package:otraku/widgets/pie_chart.dart';
 
 class StatisticsView extends StatelessWidget {
   final int id;
@@ -24,8 +23,8 @@ class StatisticsView extends StatelessWidget {
       id: StatisticsController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {
-        return NavScaffold(
-          setPage: (page) => ctrl.onAnime = page == 0 ? true : false,
+        return NavLayout(
+          onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
           index: ctrl.onAnime ? 0 : 1,
           appBar: ShadowAppBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
@@ -36,71 +35,71 @@ class StatisticsView extends StatelessWidget {
           },
           child: ListView(
             key: ctrl.onAnime ? keyAnime : keyManga,
-            padding: EdgeInsets.only(top: 10, bottom: NavBar.offset(context)),
+            padding:
+                EdgeInsets.only(top: 10, bottom: NavLayout.offset(context)),
             physics: Config.PHYSICS,
             children: [
-              _Title('Details'),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                  'Details',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
               _Details(ctrl),
               if (ctrl.model.scores.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                _Title(
-                  'Score',
-                  BubbleTabs<int>(
-                    items: ctrl.onAnime
-                        ? const {'Titles': 0, 'Hours': 1}
-                        : const {'Titles': 0, 'Chapters': 1},
-                    current: () => ctrl.scoreChartTab,
-                    onChanged: (val) => ctrl.scoreChartTab = val,
-                    onSame: () {},
-                    itemWidth: 100,
-                  ),
-                ),
                 GetBuilder<StatisticsController>(
                   id: StatisticsController.ID_SCORE,
                   tag: id.toString(),
                   builder: (_) => _BarChart(
+                    title: 'Score',
+                    tabs: BubbleTabs<int>(
+                      items: ctrl.onAnime
+                          ? const {'Titles': 0, 'Hours': 1}
+                          : const {'Titles': 0, 'Chapters': 1},
+                      current: () => ctrl.scoreChartTab,
+                      onChanged: (val) => ctrl.scoreChartTab = val,
+                      onSame: () {},
+                    ),
                     stats: ctrl.model.scores,
                     onAnime: ctrl.onAnime,
                     chartTab: ctrl.scoreChartTab,
-                    wide: false,
+                    barWidth: 40,
                   ),
                 ),
               ],
               if (ctrl.model.lengths.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                _Title(
-                  ctrl.onAnime ? 'Episodes' : 'Chapters',
-                  BubbleTabs<int>(
-                    items: ctrl.onAnime
-                        ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
-                        : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
-                    current: () => ctrl.lengthChartTab,
-                    onChanged: (val) => ctrl.lengthChartTab = val,
-                    onSame: () {},
-                    itemWidth: 100,
-                  ),
-                ),
                 GetBuilder<StatisticsController>(
                   id: StatisticsController.ID_LENGTH,
                   tag: id.toString(),
                   builder: (_) => _BarChart(
+                    title: ctrl.onAnime ? 'Episodes' : 'Chapters',
+                    tabs: BubbleTabs<int>(
+                      items: ctrl.onAnime
+                          ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
+                          : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
+                      current: () => ctrl.lengthChartTab,
+                      onChanged: (val) => ctrl.lengthChartTab = val,
+                      onSame: () {},
+                    ),
                     stats: ctrl.model.lengths,
                     onAnime: ctrl.onAnime,
                     chartTab: ctrl.lengthChartTab,
-                    wide: true,
+                    barWidth: 65,
                   ),
                 ),
               ],
               GridView(
                 shrinkWrap: true,
-                padding: Config.PADDING,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
                   _PieChart('Format Distribution', ctrl.model.formats),
                   _PieChart('Status Distribution', ctrl.model.statuses),
                   _PieChart('Country Distribution', ctrl.model.countries),
                 ],
-                gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+                gridDelegate:
+                    const SliverGridDelegateWithMinWidthAndFixedHeight(
                   minWidth: 340,
                   height: 250,
                 ),
@@ -109,28 +108,6 @@ class StatisticsView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Title extends StatelessWidget {
-  final String text;
-  final BubbleTabs? tabs;
-  _Title(this.text, [this.tabs]);
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      runSpacing: 10,
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Text(text, style: Theme.of(context).textTheme.headline6),
-        ),
-        if (tabs != null) tabs!,
-      ],
     );
   }
 }
@@ -200,7 +177,7 @@ class _Details extends StatelessWidget {
           ],
         ),
       ),
-      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 190,
         height: 50,
       ),
@@ -209,164 +186,55 @@ class _Details extends StatelessWidget {
 }
 
 class _BarChart extends StatelessWidget {
-  final List<NumberStatistics> stats;
-  final bool onAnime;
-  final int chartTab;
-  final bool wide;
-
   _BarChart({
     required this.stats,
+    required this.title,
+    required this.tabs,
     required this.onAnime,
     required this.chartTab,
-    required this.wide,
+    required this.barWidth,
   });
+
+  final List<NumberStatistics> stats;
+  final String title;
+  final BubbleTabs tabs;
+  final bool onAnime;
+  final int chartTab;
+  final double barWidth;
 
   @override
   Widget build(BuildContext context) {
-    double max = 200.0;
-    if (chartTab == StatisticsController.BY_COUNT) {
-      int maxCount = stats[0].count;
-      for (int i = 1; i < stats.length; i++)
-        if (maxCount < stats[i].count) maxCount = stats[i].count;
-      max /= maxCount;
-    } else if (chartTab == StatisticsController.BY_MEAN_SCORE) {
-      double maxMeanScore = stats[0].meanScore;
-      for (int i = 1; i < stats.length; i++)
-        if (maxMeanScore < stats[i].meanScore)
-          maxMeanScore = stats[i].meanScore;
-      max /= maxMeanScore;
-    } else if (onAnime) {
-      int maxMinutes = stats[0].minutesWatched;
-      for (int i = 1; i < stats.length; i++)
-        if (maxMinutes < stats[i].minutesWatched)
-          maxMinutes = stats[i].minutesWatched;
-      max /= maxMinutes;
-    } else {
-      int maxChapters = stats[0].chaptersRead;
-      for (int i = 1; i < stats.length; i++)
-        if (maxChapters < stats[i].chaptersRead)
-          maxChapters = stats[i].chaptersRead;
-      max /= maxChapters;
-    }
+    late List<num> values;
+    if (chartTab == StatisticsController.BY_COUNT)
+      values = stats.map((s) => s.count).toList();
+    else if (chartTab == StatisticsController.BY_MEAN_SCORE)
+      values = stats.map((s) => s.meanScore).toList();
+    else if (onAnime)
+      values = stats.map((s) => s.minutesWatched).toList();
+    else
+      values = stats.map((s) => s.chaptersRead).toList();
 
-    return SizedBox(
-      height: 280,
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        physics: Config.PHYSICS,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (_, i) {
-          late num value;
-          late double height;
-          if (chartTab == StatisticsController.BY_COUNT) {
-            value = stats[i].count;
-            height = stats[i].count * max;
-          } else if (chartTab == StatisticsController.BY_MEAN_SCORE) {
-            value = stats[i].meanScore;
-            height = stats[i].meanScore * max;
-          } else if (onAnime) {
-            value = stats[i].minutesWatched ~/ 60;
-            height = stats[i].minutesWatched * max;
-          } else {
-            value = stats[i].chaptersRead;
-            height = stats[i].chaptersRead * max;
-          }
-
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                value.toString(),
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                height: height,
-                margin: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: const [0.5, 1],
-                    colors: [
-                      Theme.of(context).colorScheme.secondary,
-                      Theme.of(context).colorScheme.secondary.withOpacity(0.2),
-                    ],
-                  ),
-                ),
-              ),
-              Text(
-                stats[i].number,
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ],
-          );
-        },
-        itemExtent: wide ? 65 : 50,
-        itemCount: stats.length,
-      ),
+    return BarChart(
+      title: title,
+      tabs: tabs,
+      names: stats.map((s) => s.number).toList(),
+      values: values,
+      barWidth: barWidth,
     );
   }
 }
 
 class _PieChart extends StatelessWidget {
+  _PieChart(this.title, this.stats);
+
   final String title;
   final List<EnumStatistics> stats;
-  _PieChart(this.title, this.stats);
 
   @override
   Widget build(BuildContext context) {
-    final counts = stats.map((s) => s.count).toList();
+    final names = stats.map((s) => s.value).toList();
+    final values = stats.map((s) => s.count).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.headline6),
-        const SizedBox(height: 10),
-        Flexible(
-          child: Container(
-            padding: Config.PADDING,
-            decoration: BoxDecoration(
-              borderRadius: Config.BORDER_RADIUS,
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                stops: const [0.5, 1],
-                colors: [
-                  Theme.of(context).colorScheme.surface.withOpacity(0.4),
-                  Theme.of(context).colorScheme.surface,
-                ],
-              ),
-            ),
-            child: Row(
-              children: [
-                Flexible(child: PieChart(counts)),
-                const SizedBox(width: 10),
-                SizedBox(
-                  width: 150,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      for (int i = 0; i < stats.length; i++)
-                        Row(
-                          children: [
-                            Expanded(child: Text(stats[i].value)),
-                            const SizedBox(width: 5),
-                            Text(
-                              stats[i].count.toString(),
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+    return PieChart(title: title, names: names, values: values);
   }
 }

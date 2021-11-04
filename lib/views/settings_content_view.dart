@@ -10,7 +10,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsContentView extends StatelessWidget {
   const SettingsContentView();
@@ -24,7 +24,7 @@ class SettingsContentView extends StatelessWidget {
       height: 75,
     );
     const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-      minWidth: 230,
+      minWidth: 220,
       mainAxisSpacing: 0,
       height: Config.MATERIAL_TAP_TARGET_SIZE,
     );
@@ -156,7 +156,6 @@ class SettingsContentView extends StatelessWidget {
                   items: Map.fromIterable(
                     ScoreFormat.values,
                     key: (v) => Convert.clarifyEnum(describeEnum(v))!,
-                    value: (v) => v,
                   ),
                   onChanged: (val) {
                     const key = 'scoreFormat';
@@ -167,7 +166,7 @@ class SettingsContentView extends StatelessWidget {
                   },
                 ),
                 DropDownField<EntrySort>(
-                  title: 'Default List Order',
+                  title: 'Default Site List Sort',
                   value: ctrl.model.defaultSort,
                   items: Map.fromIterables(
                     EntrySortHelper.defaultStrings,
@@ -231,7 +230,8 @@ class SettingsContentView extends StatelessWidget {
                   ctrl.changes['advancedScoring'] = ctrl.model.advancedScores,
             ),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+          SliverToBoxAdapter(
+              child: SizedBox(height: NavLayout.offset(context))),
         ],
       ),
     );

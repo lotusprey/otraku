@@ -12,6 +12,7 @@ import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -31,6 +32,9 @@ class CharacterView extends StatelessWidget {
     if (coverWidth > 200) coverWidth = 200;
     final coverHeight = coverWidth / 0.7;
 
+    final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
+        Config.PADDING.top * 2;
+
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -39,6 +43,7 @@ class CharacterView extends StatelessWidget {
           controller: ctrl.scrollCtrl,
           slivers: [
             GetBuilder<CharacterController>(
+              id: CharacterController.ID_MAIN,
               tag: id.toString(),
               builder: (c) => TopSliverHeader(
                 toggleFavourite: c.toggleFavourite,
@@ -48,6 +53,7 @@ class CharacterView extends StatelessWidget {
               ),
             ),
             GetBuilder<CharacterController>(
+              id: CharacterController.ID_MAIN,
               tag: id.toString(),
               builder: (c) => SliverPadding(
                 padding: Config.PADDING,
@@ -83,79 +89,92 @@ class CharacterView extends StatelessWidget {
                 ),
               ),
             ),
-            Obx(() {
-              if (ctrl.anime.items.isEmpty && ctrl.manga.items.isEmpty)
-                return const SliverToBoxAdapter();
+            SliverShadowAppBar([
+              BubbleTabs(
+                items: const {'Anime': true, 'Manga': false},
+                current: () => true,
+                onChanged: (bool val) {
+                  ctrl.onAnime = val;
+                  ctrl.scrollUpTo(offset);
+                },
+                onSame: () => ctrl.scrollUpTo(offset),
+              ),
+              const Spacer(),
+              GetBuilder<CharacterController>(
+                id: CharacterController.ID_MEDIA,
+                tag: id.toString(),
+                builder: (ctrl) {
+                  if (!ctrl.onAnime || ctrl.availableLanguages.length < 2)
+                    return const SizedBox();
 
-              final offset =
-                  (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-                      Config.PADDING.top * 2;
-
-              return SliverShadowAppBar([
-                ctrl.anime.items.isNotEmpty && ctrl.manga.items.isNotEmpty
-                    ? BubbleTabs(
-                        items: const {'Anime': true, 'Manga': false},
-                        current: () => true,
-                        onChanged: (bool value) {
-                          ctrl.onAnime = value;
-                          ctrl.scrollTo(offset);
-                        },
-                        onSame: () => ctrl.scrollTo(offset),
-                        itemWidth: 80,
-                      )
-                    : const SizedBox(),
-                const Spacer(),
-                if (ctrl.availableLanguages.length > 1)
-                  AppBarIcon(
+                  return AppBarIcon(
                     tooltip: 'Language',
                     icon: Ionicons.globe_outline,
-                    onTap: () => Sheet.show(
-                      ctx: context,
-                      sheet: OptionSheet(
-                        title: 'Language',
+                    onTap: () => DragSheet.show(
+                      context,
+                      OptionDragSheet(
                         options: ctrl.availableLanguages,
-                        index: ctrl.languageIndex,
-                        onTap: (index) =>
-                            ctrl.staffLanguage = ctrl.availableLanguages[index],
+                        index: ctrl.language,
+                        onTap: (val) => ctrl.language = val,
                       ),
-                      isScrollControlled: true,
                     ),
+                  );
+                },
+              ),
+              AppBarIcon(
+                tooltip: 'Filter',
+                icon: Ionicons.funnel_outline,
+                onTap: () => DragSheet.show(
+                  context,
+                  OptionDragSheet(
+                    options: const ['Everything', 'On List', 'Not On List'],
+                    index: ctrl.onList == null
+                        ? 0
+                        : ctrl.onList!
+                            ? 1
+                            : 2,
+                    onTap: (val) => ctrl.onList = val == 0
+                        ? null
+                        : val == 1
+                            ? true
+                            : false,
                   ),
-                AppBarIcon(
-                  tooltip: 'Sort',
-                  icon: Ionicons.filter_outline,
-                  onTap: () => Sheet.show(
-                    ctx: context,
-                    sheet: MediaSortSheet(
-                      ctrl.sort,
-                      (sort) {
-                        ctrl.sort = sort;
-                        ctrl.scrollTo(offset);
-                      },
-                    ),
-                    isScrollControlled: true,
+                ),
+              ),
+              AppBarIcon(
+                tooltip: 'Sort',
+                icon: Ionicons.filter_outline,
+                onTap: () => Sheet.show(
+                  ctx: context,
+                  sheet: MediaSortSheet(ctrl.sort, (s) => ctrl.sort = s),
+                ),
+              ),
+            ]),
+            GetBuilder<CharacterController>(
+              id: CharacterController.ID_MEDIA,
+              tag: id.toString(),
+              builder: (ctrl) {
+                final connections = ctrl.onAnime ? ctrl.anime : ctrl.manga;
+
+                if (connections.isEmpty) return const SliverToBoxAdapter();
+
+                return SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    left: 10,
+                    right: 10,
+                    bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                   ),
-                ),
-              ]);
-            }),
-            Obx(() {
-              final connections = ctrl.onAnime ? ctrl.anime : ctrl.manga;
-
-              if (connections.items.isEmpty) return const SliverToBoxAdapter();
-
-              return SliverPadding(
-                padding: EdgeInsets.only(
-                  top: 10,
-                  left: 10,
-                  right: 10,
-                  bottom: MediaQuery.of(context).viewPadding.bottom + 10,
-                ),
-                sliver: ConnectionsGrid(
-                  connections: connections.items,
-                  preferredSubtitle: ctrl.staffLanguage,
-                ),
-              );
-            }),
+                  sliver: ConnectionsGrid(
+                    connections: connections,
+                    preferredSubtitle:
+                        ctrl.language < ctrl.availableLanguages.length
+                            ? ctrl.availableLanguages[ctrl.language]
+                            : null,
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),

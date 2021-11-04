@@ -5,28 +5,20 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 
-class ConnectionsGrid extends StatefulWidget {
-  final List<ConnectionModel> connections;
-  final String? preferredSubtitle;
-
+class ConnectionsGrid extends StatelessWidget {
   ConnectionsGrid({
     required this.connections,
     this.preferredSubtitle,
   });
 
-  @override
-  _ConnectionsGridState createState() => _ConnectionsGridState();
-}
+  final List<ConnectionModel> connections;
+  final String? preferredSubtitle;
 
-class _ConnectionsGridState extends State<ConnectionsGrid> {
   @override
   Widget build(BuildContext context) => SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, index) => _MediaConnectionTile(
-            widget.connections[index],
-            widget.preferredSubtitle,
-          ),
-          childCount: widget.connections.length,
+          (_, i) => _MediaConnectionTile(connections[i], preferredSubtitle),
+          childCount: connections.length,
         ),
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
           minWidth: 300,
@@ -36,17 +28,15 @@ class _ConnectionsGridState extends State<ConnectionsGrid> {
 }
 
 class _MediaConnectionTile extends StatelessWidget {
+  _MediaConnectionTile(this.item, this.preferredSubtitle);
+
   final ConnectionModel item;
   final String? preferredSubtitle;
 
-  _MediaConnectionTile(this.item, this.preferredSubtitle);
-
   @override
   Widget build(BuildContext context) {
-    int? index;
-    if (preferredSubtitle == null)
-      index = 0;
-    else
+    int index = 0;
+    if (preferredSubtitle != null)
       for (int i = 0; i < item.other.length; i++)
         if (item.other[i].subtitle == preferredSubtitle) {
           index = i;
@@ -106,7 +96,7 @@ class _MediaConnectionTile extends StatelessWidget {
                 ),
               ),
             ),
-            if (index != null && item.other.length > index)
+            if (item.other.length > index)
               Expanded(
                 child: ExploreIndexer(
                   id: item.other[index].id,

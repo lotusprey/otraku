@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
@@ -17,7 +16,7 @@ class Sheet extends StatelessWidget {
   static void show({
     required BuildContext ctx,
     required Widget sheet,
-    bool isScrollControlled = false,
+    bool isScrollControlled = true,
     Color? barrierColour,
   }) =>
       showModalBottomSheet(
@@ -29,28 +28,29 @@ class Sheet extends StatelessWidget {
             Theme.of(ctx).colorScheme.background.withAlpha(200),
       );
 
-  final Widget child;
-  final double? height;
-  final void Function()? onDone;
-
   Sheet({
     required this.child,
     this.height,
     this.onDone,
   });
 
+  final Widget child;
+  final double? height;
+  final void Function()? onDone;
+
   @override
   Widget build(BuildContext context) {
+    final bottomMargin = MediaQuery.of(context).viewPadding.bottom + 20;
     final sideMargin = MediaQuery.of(context).size.width > 420
         ? (MediaQuery.of(context).size.width - 400) / 2
         : 20.0;
 
     return Container(
-      height: height,
+      height: height != null ? (height! + bottomMargin) : null,
       margin: EdgeInsets.only(
         left: sideMargin,
         right: sideMargin,
-        bottom: MediaQuery.of(context).viewPadding.bottom + 20,
+        bottom: bottomMargin,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -64,93 +64,31 @@ class Sheet extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Expanded(child: child),
-          if (onDone != null)
-            TextButton.icon(
-              onPressed: () {
-                onDone!();
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.done_rounded,
-                color: Theme.of(context).colorScheme.secondary,
-                size: Theming.ICON_SMALL,
-              ),
-              label: Text('Done', style: Theme.of(context).textTheme.bodyText1),
+      child: onDone == null
+          ? child
+          : Column(
+              children: [
+                Expanded(child: child),
+                TextButton.icon(
+                  onPressed: () {
+                    onDone!();
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.done_rounded,
+                    color: Theme.of(context).colorScheme.secondary,
+                    size: Theming.ICON_SMALL,
+                  ),
+                  label: Text('Done',
+                      style: Theme.of(context).textTheme.bodyText1),
+                ),
+              ],
             ),
-        ],
-      ),
     );
   }
 }
 
-class OptionSheet extends StatelessWidget {
-  final String title;
-  final List<String> options;
-  final int index;
-  final Function(int) onTap;
-
-  OptionSheet({
-    required this.title,
-    required this.options,
-    required this.index,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Sheet(
-        height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: Config.PADDING,
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-            ),
-            Expanded(
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (_, i) => ListTile(
-                  dense: true,
-                  title: Text(
-                    options[i],
-                    style: i != index
-                        ? Theme.of(context).textTheme.bodyText2
-                        : Theme.of(context).textTheme.bodyText1,
-                  ),
-                  trailing: Container(
-                    height: 25,
-                    width: 25,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: i != index
-                          ? Theme.of(context).colorScheme.surface
-                          : Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                  onTap: () {
-                    onTap(i);
-                    Navigator.pop(context);
-                  },
-                ),
-                itemCount: options.length,
-                itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
-              ),
-            ),
-          ],
-        ),
-      );
-}
-
 class SelectionSheet<T> extends StatelessWidget {
-  final List<String> options;
-  final List<T> values;
-  final List<T> names;
-  final void Function(List<T>) onDone;
-  final bool fixHeight;
-
   SelectionSheet({
     required this.onDone,
     required this.options,
@@ -158,6 +96,12 @@ class SelectionSheet<T> extends StatelessWidget {
     required this.names,
     this.fixHeight = false,
   });
+
+  final List<String> options;
+  final List<T> values;
+  final List<T> names;
+  final void Function(List<T>) onDone;
+  final bool fixHeight;
 
   @override
   Widget build(BuildContext context) => Sheet(
@@ -182,13 +126,6 @@ class SelectionSheet<T> extends StatelessWidget {
 }
 
 class SelectionToggleSheet<T> extends StatelessWidget {
-  final List<String> options;
-  final List<T> values;
-  final List<T> inclusive;
-  final List<T> exclusive;
-  final void Function(List<T>, List<T>) onDone;
-  final bool fixHeight;
-
   SelectionToggleSheet({
     required this.onDone,
     required this.options,
@@ -197,6 +134,13 @@ class SelectionToggleSheet<T> extends StatelessWidget {
     required this.exclusive,
     this.fixHeight = false,
   });
+
+  final List<String> options;
+  final List<T> values;
+  final List<T> inclusive;
+  final List<T> exclusive;
+  final void Function(List<T>, List<T>) onDone;
+  final bool fixHeight;
 
   @override
   Widget build(BuildContext context) => Sheet(
@@ -233,17 +177,17 @@ class SelectionToggleSheet<T> extends StatelessWidget {
 }
 
 class TagSelectionSheet extends StatelessWidget {
-  final Map<String, List<TagModel>> tags;
-  final List<String> inclusive;
-  final List<String> exclusive;
-  final Function(List<String>, List<String>) onDone;
-
   TagSelectionSheet({
     required this.tags,
     required this.inclusive,
     required this.exclusive,
     required this.onDone,
   });
+
+  final Map<String, List<TagModel>> tags;
+  final List<String> inclusive;
+  final List<String> exclusive;
+  final void Function(List<String>, List<String>) onDone;
 
   @override
   Widget build(BuildContext context) {
@@ -304,129 +248,25 @@ class TagSelectionSheet extends StatelessWidget {
   }
 }
 
-class _SortSheet extends StatelessWidget {
-  final List<String> options;
-  final int index;
-  final bool desc;
-  final Function(int, bool) onTap;
-
-  _SortSheet({
-    required this.options,
-    required this.index,
-    required this.desc,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) => Sheet(
-        height: options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 10,
-                bottom: 10,
-                left: 15,
-                right: 45,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Sort', style: Theme.of(context).textTheme.subtitle1),
-                  Text('Order', style: Theme.of(context).textTheme.subtitle1),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (_, i) => ListTile(
-                  dense: true,
-                  title: Text(
-                    options[i],
-                    style: i != index
-                        ? Theme.of(context).textTheme.bodyText2
-                        : Theme.of(context).textTheme.bodyText1,
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i != index || !desc
-                              ? Theme.of(context).colorScheme.surface
-                              : Theme.of(context).colorScheme.secondary,
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(
-                            Icons.arrow_downward_rounded,
-                            size: Theming.ICON_SMALL,
-                          ),
-                          color: Theme.of(context).colorScheme.background,
-                          onPressed: () {
-                            onTap(i, true);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      Container(
-                        height: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i != index || desc
-                              ? Theme.of(context).colorScheme.surface
-                              : Theme.of(context).colorScheme.secondary,
-                        ),
-                        child: IconButton(
-                          padding: const EdgeInsets.all(0),
-                          icon: const Icon(
-                            Icons.arrow_upward_rounded,
-                            size: Theming.ICON_SMALL,
-                          ),
-                          color: Theme.of(context).colorScheme.background,
-                          onPressed: () {
-                            onTap(i, false);
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                itemCount: options.length,
-                itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
-              ),
-            ),
-          ],
-        ),
-      );
-}
-
 class CollectionSortSheet extends StatelessWidget {
-  final String collectionTag;
-  CollectionSortSheet(this.collectionTag);
+  CollectionSortSheet(this.ctrlTag);
+
+  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
-    final collection = Get.find<CollectionController>(tag: collectionTag);
-
+    final collection = Get.find<CollectionController>(tag: ctrlTag);
     final EntrySort entrySort = collection.getFilterWithKey(Filterable.SORT);
-    final currentIndex = entrySort.index ~/ 2;
-    final currentlyDesc = entrySort.index % 2 == 0 ? false : true;
 
+    int index = entrySort.index ~/ 2;
+    bool desc = entrySort.index % 2 != 0;
     final options = <String>[];
     for (int i = 0; i < EntrySort.values.length; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(EntrySort.values[i]))!);
 
-    return _SortSheet(
-      options: options,
-      index: currentIndex,
-      desc: currentlyDesc,
-      onTap: (int index, bool desc) {
+    return Sheet(
+      height: options.length * 40 + 58,
+      onDone: () {
         collection.setFilterWithKey(
           Filterable.SORT,
           value: desc
@@ -435,68 +275,129 @@ class CollectionSortSheet extends StatelessWidget {
         );
         collection.sort();
       },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          Text('Sort', style: Theme.of(context).textTheme.subtitle1),
+          Expanded(
+            child: _Sorting(
+              onChanged: (i, d) {
+                index = i;
+                desc = d;
+              },
+              names: options,
+              index: index,
+              desc: desc,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class MediaSortSheet extends StatelessWidget {
+  MediaSortSheet(this.initial, this.onTap);
+
   final MediaSort initial;
   final void Function(MediaSort) onTap;
-  MediaSortSheet(this.initial, this.onTap);
 
   @override
   Widget build(BuildContext context) {
-    final length = MediaSort.values.length;
-    final prefTitle = Get.find<ViewerController>().settings!.titleLanguage;
-    late MediaSort titleAsc;
-    late MediaSort titleDesc;
-
-    // Check which title is the preferred one.
-    for (int i = 0; i < length; i += 2)
-      if (describeEnum(MediaSort.values[i]).contains(prefTitle)) {
-        titleAsc = MediaSort.values[i];
-        titleDesc = MediaSort.values[i + 1];
-      }
-
-    int currentIndex = initial.index ~/ 2;
-    bool currentlyDesc = initial.index % 2 == 0 ? false : true;
-
-    if (currentIndex > (length - 5) ~/ 2) currentIndex = (length - 6) ~/ 2;
-
-    // Gather the sort options as user-readable strings.
-    final options = ['Date Added'];
-    for (int i = 2; i < length - 6; i += 2)
+    int index = initial.index ~/ 2;
+    bool desc = initial.index % 2 != 0;
+    final options = <String>[];
+    for (int i = 0; i < MediaSort.values.length; i += 2)
       options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
-    options.add('Title');
 
-    return _SortSheet(
-      options: options,
-      index: currentIndex,
-      desc: currentlyDesc,
-      onTap: (index, desc) {
-        if (index != options.length - 1)
-          desc
-              ? onTap(MediaSort.values[index * 2 + 1])
-              : onTap(MediaSort.values[index * 2]);
-        else
-          desc ? onTap(titleDesc) : onTap(titleAsc);
-      },
+    return Sheet(
+      height: options.length * 40 + 58,
+      onDone: () => desc
+          ? onTap(MediaSort.values[index * 2 + 1])
+          : onTap(MediaSort.values[index * 2]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 10),
+          Text('Sort', style: Theme.of(context).textTheme.subtitle1),
+          Expanded(
+            child: _Sorting(
+              onChanged: (i, d) {
+                index = i;
+                desc = d;
+              },
+              names: options,
+              index: index,
+              desc: desc,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-// A sheet of ListTile widgets.
-class ListTileSheet extends StatelessWidget {
-  final List<ListTile> children;
-  const ListTileSheet(this.children);
+class _Sorting extends StatefulWidget {
+  _Sorting({
+    required this.names,
+    required this.onChanged,
+    required this.index,
+    required this.desc,
+  });
+
+  final List<String> names;
+  final void Function(int, bool) onChanged;
+  final int index;
+  final bool desc;
 
   @override
-  Widget build(BuildContext context) => Sheet(
-        height: Config.MATERIAL_TAP_TARGET_SIZE * children.length,
-        child: ListTileTheme(
-          child: Column(children: children),
-          iconColor: Theme.of(context).colorScheme.onBackground,
-          dense: true,
+  _SortingState createState() => _SortingState();
+}
+
+class _SortingState extends State<_Sorting> {
+  late int _index;
+  late bool _desc;
+
+  @override
+  void initState() {
+    super.initState();
+    _index = widget.index;
+    _desc = widget.desc;
+  }
+
+  @override
+  Widget build(BuildContext context) => ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: widget.names.length,
+        itemExtent: 40,
+        itemBuilder: (_, i) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.names[i],
+                style: i != _index
+                    ? Theme.of(context).textTheme.bodyText2
+                    : Theme.of(context).textTheme.bodyText1,
+              ),
+              if (i == _index)
+                Icon(
+                  _desc
+                      ? Icons.arrow_downward_rounded
+                      : Icons.arrow_upward_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                  size: Theming.ICON_SMALL,
+                ),
+            ],
+          ),
+          onTap: () {
+            i != _index
+                ? setState(() => _index = i)
+                : setState(() => _desc = !_desc);
+            widget.onChanged(_index, _desc);
+          },
         ),
       );
 }

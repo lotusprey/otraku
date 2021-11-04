@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/widgets/bottom_drawer.dart';
+import 'package:otraku/utils/config.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreView extends StatelessWidget {
   const ExploreView();
@@ -20,9 +20,7 @@ class ExploreView extends StatelessWidget {
   Widget build(BuildContext context) {
     final explorer = Get.find<ExploreController>();
     return CustomScrollView(
-      physics: const BouncingScrollPhysics(
-        parent: AlwaysScrollableScrollPhysics(),
-      ),
+      physics: Config.PHYSICS,
       controller: explorer.scrollCtrl,
       slivers: [
         SliverExploreAppBar(),
@@ -32,7 +30,7 @@ class ExploreView extends StatelessWidget {
         ),
         _ExploreGrid(),
         _EndOfListLoader(),
-        SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
       ],
     );
   }
@@ -103,12 +101,23 @@ class ExploreActionButton extends StatelessWidget {
         child: ActionButton(
           tooltip: 'Types',
           icon: ctrl.type.icon,
-          onTap: () => Sheet.show(
-            ctx: context,
-            sheet: ExploreBottomDrawer(context),
-            isScrollControlled: true,
-            barrierColour: Theme.of(context).colorScheme.surface.withAlpha(150),
-          ),
+          onTap: () => DragSheet.show(context, ExploreDragSheet(context)),
+          onSwipe: (goRight) {
+            final index = ctrl.type.index;
+            if (goRight) {
+              if (index < Explorable.values.length - 1)
+                ctrl.type = Explorable.values.elementAt(index + 1);
+              else
+                ctrl.type = Explorable.values.elementAt(0);
+            } else {
+              if (index > 0)
+                ctrl.type = Explorable.values.elementAt(index - 1);
+              else
+                ctrl.type = Explorable.values.last;
+            }
+
+            return ctrl.type.icon;
+          },
         ),
       ),
     );

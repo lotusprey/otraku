@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/friends_controller.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class FriendsView extends StatelessWidget {
@@ -18,8 +18,8 @@ class FriendsView extends StatelessWidget {
 
     return GetBuilder<FriendsController>(
       tag: id.toString(),
-      builder: (ctrl) => NavScaffold(
-        setPage: (page) => ctrl.onFollowing = page == 0 ? true : false,
+      builder: (ctrl) => NavLayout(
+        onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
         index: ctrl.onFollowing ? 0 : 1,
         appBar: ShadowAppBar(
           title: ctrl.onFollowing ? 'Following' : 'Followers',

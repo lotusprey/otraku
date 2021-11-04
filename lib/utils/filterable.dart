@@ -13,6 +13,7 @@ abstract class Filterable extends GetxController {
   static const COUNTRY = 'countryOfOrigin';
   static const ON_LIST = 'onList';
   static const IS_ADULT = 'isAdult';
+  static const IS_BIRTHDAY = 'isBirthday';
   static const SEARCH = 'search';
   static const TYPE = 'type';
   static const SORT = 'sort';

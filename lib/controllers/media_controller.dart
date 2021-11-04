@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
@@ -51,6 +50,8 @@ class MediaController extends OverscrollController {
       hashtag
       siteUrl
       countryOfOrigin
+      rankings {rank type year season allTime}
+      stats {scoreDistribution {score amount} statusDistribution {status amount}}
       mediaListEntry {
         id
         status
@@ -131,14 +132,19 @@ class MediaController extends OverscrollController {
   static const OTHER = 1;
   static const SOCIAL = 2;
 
-  // subtabs of 'Other'.
+  // Tabs of 'Other'.
   static const RELATIONS = 0;
   static const CHARACTERS = 1;
   static const STAFF = 2;
 
+  // Tabs of 'Social'.
+  static const REVIEWS = 0;
+  static const STATS = 1;
+
   // GetBuilder ids.
-  static const ID_MAIN = 0;
-  static const ID_OTHER = 1;
+  static const ID_BASE = 0;
+  static const ID_OUTER = 1;
+  static const ID_INNER = 2;
 
   // ***************************************************************************
   // DATA
@@ -149,54 +155,51 @@ class MediaController extends OverscrollController {
 
   MediaModel? _model;
   int _tab = INFO;
-  int _subtab = RELATIONS;
-  final _staffLanguage = 'Japanese'.obs;
-  final _availableLanguages = <String>[];
-  bool _isLoading = false;
+  int _otherTab = RELATIONS;
+  int _socialTab = REVIEWS;
+  int _language = 0;
   bool showSpoilerTags = false;
+  final _availableLanguages = <String>[];
+
+  List<String> get availableLanguages => [..._availableLanguages];
+
+  MediaModel? get model => _model;
+
+  int get language => _language;
+  set language(int val) {
+    _language = val;
+    update([ID_INNER]);
+  }
 
   int get tab => _tab;
   set tab(int val) {
     _tab = val;
-    update([ID_MAIN]);
+    update([ID_OUTER]);
   }
 
-  int get subtab => _subtab;
-  set subtab(final int val) {
-    _subtab = val;
-    if (val == CHARACTERS &&
-            _model!.characters.items.isEmpty &&
-            _model!.characters.hasNextPage ||
-        val == STAFF &&
-            _model!.staff.items.isEmpty &&
-            _model!.staff.hasNextPage) _fetchOtherPage();
-    update([ID_OTHER]);
+  int get otherTab => _otherTab;
+  set otherTab(final int val) {
+    _otherTab = val;
+    update([ID_OUTER]);
   }
 
-  bool get isLoading => _isLoading;
+  int get socialTab => _socialTab;
+  set socialTab(final int val) {
+    _socialTab = val;
+    update([ID_INNER]);
+  }
 
   @override
   bool get hasNextPage {
-    if (_tab == SOCIAL) return _model?.reviews.hasNextPage ?? false;
-
     if (_tab == OTHER) {
       if (_tab == CHARACTERS) return _model?.characters.hasNextPage ?? false;
       if (_tab == STAFF) return _model?.characters.hasNextPage ?? false;
     }
 
+    if (_tab == SOCIAL && _socialTab == REVIEWS)
+      return _model?.reviews.hasNextPage ?? false;
+
     return false;
-  }
-
-  MediaModel? get model => _model;
-
-  String get staffLanguage => _staffLanguage();
-  set staffLanguage(String value) => _staffLanguage.value = value;
-
-  List<String> get availableLanguages => [..._availableLanguages];
-  int get languageIndex {
-    final index = _availableLanguages.indexOf(_staffLanguage());
-    if (index != -1) return index;
-    return 0;
   }
 
   // ***************************************************************************
@@ -205,18 +208,21 @@ class MediaController extends OverscrollController {
 
   Future<void> fetch() async {
     if (_model != null) return;
-    _isLoading = true;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withMain': true,
+      'withCharacters': true,
+      'withStaff': true,
       'withReviews': true,
     });
     if (result == null) return;
 
     _model = MediaModel(result['Media']);
-    update([ID_MAIN]);
-    _isLoading = false;
+    _model!.addCharacters(result['Media'], _availableLanguages);
+    _model!.addStaff(result['Media']);
+
+    update([ID_BASE]);
   }
 
   @override
@@ -224,8 +230,7 @@ class MediaController extends OverscrollController {
       _tab == OTHER ? _fetchOtherPage() : _fetchReviewPage();
 
   Future<void> _fetchOtherPage() async {
-    final ofCharacters = _subtab == CHARACTERS;
-    _isLoading = true;
+    final ofCharacters = _otherTab == CHARACTERS;
 
     final result = await Client.request(_mediaQuery, {
       'id': id,
@@ -241,13 +246,10 @@ class MediaController extends OverscrollController {
     else
       _model!.addStaff(result['Media']);
 
-    _isLoading = false;
-    update([ID_OTHER]);
+    update([ID_INNER]);
   }
 
   Future<void> _fetchReviewPage() async {
-    _isLoading = true;
-
     final result = await Client.request(_mediaQuery, {
       'id': id,
       'withReviews': true,
@@ -256,7 +258,8 @@ class MediaController extends OverscrollController {
 
     if (result == null) return;
     _model!.addReviews(result['Media']);
-    _isLoading = false;
+
+    update([ID_INNER]);
   }
 
   Future<bool> toggleFavourite() async =>

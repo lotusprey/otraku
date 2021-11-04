@@ -6,25 +6,21 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/theming.dart';
-import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
-  final String tag;
+  SliverCollectionAppBar(this.ctrlTag, this.canPop);
+
+  final String ctrlTag;
   final bool canPop;
-  SliverCollectionAppBar(this.tag, this.canPop);
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<CollectionController>(tag: tag);
-
     final leading = canPop
         ? AppBarIcon(
             tooltip: 'Close',
@@ -33,84 +29,90 @@ class SliverCollectionAppBar extends StatelessWidget {
           )
         : const SizedBox(width: 10);
 
-    return Obx(() {
-      if (ctrl.isLoading || ctrl.isEmpty)
-        return SliverTransparentAppBar([leading]);
+    return GetBuilder<CollectionController>(
+      id: CollectionController.ID_HEAD,
+      tag: ctrlTag,
+      builder: (ctrl) {
+        if (ctrl.isLoading || ctrl.isEmpty)
+          return SliverTransparentAppBar([leading]);
 
-      return SliverTransparentAppBar([
-        leading,
-        MediaSearchField(
-          scrollToTop: () => ctrl.scrollTo(0),
-          swipe: (offset) => ctrl.listIndex += offset,
-          hint: ctrl.currentName,
-          searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
-          search: (val) => ctrl.setFilterWithKey(
-            Filterable.SEARCH,
-            value: val,
-            update: true,
-          ),
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  ctrl.currentName,
-                  style: Theme.of(context).textTheme.headline2,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        return SliverTransparentAppBar([
+          leading,
+          MediaSearchField(
+            scrollToTop: () => ctrl.scrollUpTo(0),
+            swipe: (offset) => ctrl.listIndex += offset,
+            hint: ctrl.currentName,
+            searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
+            search: (val) => ctrl.setFilterWithKey(
+              Filterable.SEARCH,
+              value: val,
+              update: true,
+            ),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    ctrl.currentName,
+                    style: Theme.of(context).textTheme.headline2,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Text(
-                ' ${ctrl.currentCount}',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ],
+                Text(
+                  ' ${ctrl.currentCount}',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ],
+            ),
           ),
-        ),
-        AppBarIcon(
-          tooltip: 'Sort',
-          icon: Ionicons.filter_outline,
-          onTap: () => Sheet.show(
-            ctx: context,
-            sheet: CollectionSortSheet(tag),
-            isScrollControlled: true,
+          AppBarIcon(
+            tooltip: 'Random',
+            icon: Ionicons.shuffle_outline,
+            onTap: () {
+              final entry = ctrl.random;
+              Navigation.it.push(
+                Navigation.mediaRoute,
+                args: [entry.mediaId, entry.cover],
+              );
+            },
           ),
-        ),
-        _FilterIcon(tag),
-      ]);
-    });
+          _FilterIcon(ctrlTag),
+        ]);
+      },
+    );
   }
 }
 
 class SliverExploreAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExploreController>();
+    final ctrl = Get.find<ExploreController>();
     return Obx(
       () => SliverTransparentAppBar(
         [
           const SizedBox(width: 10),
           MediaSearchField(
-            scrollToTop: () => explorer.scrollTo(0),
+            scrollToTop: () => ctrl.scrollUpTo(0),
             swipe: (offset) {
-              final index = explorer.type.index + offset;
+              final index = ctrl.type.index + offset;
               if (index >= 0 && index < Explorable.values.length)
-                explorer.type = Explorable.values[index];
+                ctrl.type = Explorable.values[index];
             },
-            hint: Convert.clarifyEnum(describeEnum(explorer.type))!,
-            searchValue: explorer.search,
-            search: explorer.type != Explorable.review
-                ? (val) => explorer.search = val
+            hint: Convert.clarifyEnum(describeEnum(ctrl.type))!,
+            searchValue: ctrl.search,
+            search: ctrl.type != Explorable.review
+                ? (val) => ctrl.search = val
                 : null,
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(explorer.type.icon,
+                Icon(ctrl.type.icon,
                     color: Theme.of(context).colorScheme.onBackground),
                 const SizedBox(width: 15),
                 Flexible(
                   child: Text(
-                    Convert.clarifyEnum(describeEnum(explorer.type))!,
+                    Convert.clarifyEnum(describeEnum(ctrl.type))!,
                     style: Theme.of(context).textTheme.headline2,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -119,30 +121,11 @@ class SliverExploreAppBar extends StatelessWidget {
               ],
             ),
           ),
-          if (explorer.type == Explorable.anime ||
-              explorer.type == Explorable.manga) ...[
-            AppBarIcon(
-              tooltip: 'Sort',
-              icon: Ionicons.filter_outline,
-              onTap: () => Sheet.show(
-                ctx: context,
-                sheet: MediaSortSheet(
-                  Convert.strToEnum(
-                    Get.find<ExploreController>()
-                        .getFilterWithKey(Filterable.SORT),
-                    MediaSort.values,
-                  )!,
-                  (sort) => Get.find<ExploreController>().setFilterWithKey(
-                    Filterable.SORT,
-                    value: describeEnum(sort),
-                    update: true,
-                  ),
-                ),
-                isScrollControlled: true,
-              ),
-            ),
-            _FilterIcon(null),
-          ],
+          if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
+            _FilterIcon(null)
+          else if (ctrl.type == Explorable.character ||
+              ctrl.type == Explorable.staff)
+            _BirthdayIcon(ctrl),
         ],
       ),
     );
@@ -150,13 +133,6 @@ class SliverExploreAppBar extends StatelessWidget {
 }
 
 class MediaSearchField extends StatefulWidget {
-  final Function() scrollToTop;
-  final Function(int) swipe;
-  final Widget title;
-  final String hint;
-  final String searchValue;
-  final Function(String)? search;
-
   MediaSearchField({
     required this.scrollToTop,
     required this.swipe,
@@ -165,6 +141,13 @@ class MediaSearchField extends StatefulWidget {
     required this.searchValue,
     required this.search,
   });
+
+  final Function() scrollToTop;
+  final Function(int) swipe;
+  final Widget title;
+  final String hint;
+  final String searchValue;
+  final Function(String)? search;
 
   @override
   _MediaSearchFieldState createState() => _MediaSearchFieldState();
@@ -197,10 +180,10 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
         children: [
           if (!_onSearch) ...[
             Expanded(
-              child: DragDetector(
+              child: GestureDetector(
                 child: widget.title,
                 onTap: widget.scrollToTop,
-                onSwipe: (goRight) => widget.swipe(goRight ? 1 : -1),
+                behavior: HitTestBehavior.opaque,
               ),
             ),
             if (widget.search != null)
@@ -277,9 +260,9 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
 }
 
 class _FilterIcon extends StatefulWidget {
-  final String? collectionTag;
-
   _FilterIcon(this.collectionTag);
+
+  final String? collectionTag;
 
   @override
   _FilterIconState createState() => _FilterIconState();
@@ -321,7 +304,7 @@ class _FilterIconState extends State<_FilterIcon> {
         colour: _active ? Theme.of(context).colorScheme.secondary : null,
       );
 
-  bool _checkIfActive() => _filterable.anyActiveFilterFrom([
+  bool _checkIfActive() => _filterable.anyActiveFilterFrom(const [
         Filterable.ON_LIST,
         Filterable.COUNTRY,
         Filterable.STATUS_IN,
@@ -331,4 +314,43 @@ class _FilterIconState extends State<_FilterIcon> {
         Filterable.TAG_IN,
         Filterable.TAG_NOT_IN,
       ]);
+}
+
+class _BirthdayIcon extends StatefulWidget {
+  _BirthdayIcon(this.ctrl);
+
+  final ExploreController ctrl;
+
+  @override
+  State<_BirthdayIcon> createState() => _BirthdayIconState();
+}
+
+class _BirthdayIconState extends State<_BirthdayIcon> {
+  late bool _active;
+
+  @override
+  void initState() {
+    super.initState();
+    _active = widget.ctrl.anyActiveFilterFrom([Filterable.IS_BIRTHDAY]);
+  }
+
+  @override
+  Widget build(BuildContext context) => AppBarIcon(
+        icon: Icons.cake_outlined,
+        tooltip: 'Birthday Filter',
+        colour: _active ? Theme.of(context).colorScheme.secondary : null,
+        onTap: () {
+          if (widget.ctrl.anyActiveFilterFrom([Filterable.IS_BIRTHDAY])) {
+            widget.ctrl.setFilterWithKey(Filterable.IS_BIRTHDAY, update: true);
+            setState(() => _active = false);
+          } else {
+            widget.ctrl.setFilterWithKey(
+              Filterable.IS_BIRTHDAY,
+              update: true,
+              value: true,
+            );
+            setState(() => _active = true);
+          }
+        },
+      );
 }

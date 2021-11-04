@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/enums/media_sort.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/theming.dart';
@@ -8,7 +10,7 @@ import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsAppView extends StatelessWidget {
   const SettingsAppView();
@@ -62,6 +64,42 @@ class SettingsAppView extends StatelessWidget {
                   onChanged: (val) =>
                       Config.storage.write(Config.STARTUP_PAGE, val),
                 ),
+                DropDownField<EntrySort>(
+                  title: 'Default Anime Sort',
+                  value: EntrySort.values.elementAt(
+                    Config.storage.read(Config.DEFAULT_ANIME_SORT) ?? 0,
+                  ),
+                  items: Map.fromIterable(
+                    EntrySort.values,
+                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                  ),
+                  onChanged: (val) => Config.storage
+                      .write(Config.DEFAULT_ANIME_SORT, val.index),
+                ),
+                DropDownField<EntrySort>(
+                  title: 'Default Manga Sort',
+                  value: EntrySort.values.elementAt(
+                    Config.storage.read(Config.DEFAULT_MANGA_SORT) ?? 0,
+                  ),
+                  items: Map.fromIterable(
+                    EntrySort.values,
+                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                  ),
+                  onChanged: (val) => Config.storage
+                      .write(Config.DEFAULT_MANGA_SORT, val.index),
+                ),
+                DropDownField<MediaSort>(
+                  title: 'Default Explore Sort',
+                  value: MediaSort.values.elementAt(
+                    Config.storage.read(Config.DEFAULT_EXPLORE_SORT) ?? 3,
+                  ),
+                  items: Map.fromIterable(
+                    MediaSort.values,
+                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                  ),
+                  onChanged: (val) => Config.storage
+                      .write(Config.DEFAULT_EXPLORE_SORT, val.index),
+                ),
                 DropDownField<int>(
                   title: 'Default Explorable',
                   value: Config.storage.read(Config.DEFAULT_EXPLORE) ?? 0,
@@ -77,7 +115,7 @@ class SettingsAppView extends StatelessWidget {
             ),
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-                minWidth: 210,
+                minWidth: 200,
                 mainAxisSpacing: 0,
                 crossAxisSpacing: 20,
                 height: Config.MATERIAL_TAP_TARGET_SIZE,
@@ -103,7 +141,8 @@ class SettingsAppView extends StatelessWidget {
                 ),
               ]),
             ),
-            SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+            SliverToBoxAdapter(
+                child: SizedBox(height: NavLayout.offset(context))),
           ],
         ),
       );

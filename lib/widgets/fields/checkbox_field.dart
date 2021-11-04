@@ -41,19 +41,11 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
         },
         child: Row(
           children: [
-            Expanded(
-              child: Text(
-                widget.title,
-                style: _on
-                    ? Theme.of(context).textTheme.bodyText2
-                    : Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: Theming.ICON_BIG,
               height: Theming.ICON_BIG,
-              margin: const EdgeInsets.symmetric(horizontal: 10),
+              margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _on ? Theme.of(context).colorScheme.secondary : null,
@@ -71,6 +63,14 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
                       size: Theming.ICON_SMALL,
                     )
                   : null,
+            ),
+            Expanded(
+              child: Text(
+                widget.title,
+                style: _on
+                    ? Theme.of(context).textTheme.bodyText2
+                    : Theme.of(context).textTheme.subtitle1,
+              ),
             ),
           ],
         ),

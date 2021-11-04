@@ -29,7 +29,7 @@ class FriendsController extends OverscrollController {
       _onFollowing ? _model.following.items : _model.followers.items;
 
   bool get onFollowing => _onFollowing;
-  set onFollowing(bool val) => scrollTo(0).then((_) {
+  set onFollowing(bool val) => scrollUpTo(0).then((_) {
         _onFollowing = val;
         if (_onFollowing &&
             _model.following.items.isEmpty &&

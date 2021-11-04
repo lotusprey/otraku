@@ -87,7 +87,6 @@ class StudioController extends OverscrollController {
         'id': id,
         'withStudio': true,
         'sort': describeEnum(_sort),
-        'onList': _onList,
       },
     );
     if (data == null) return;
@@ -99,6 +98,8 @@ class StudioController extends OverscrollController {
   }
 
   Future<void> refetch() async {
+    scrollUpTo(0);
+
     final data = await Client.request(
       _studioQuery,
       {'id': id, 'sort': describeEnum(_sort), 'onList': _onList},

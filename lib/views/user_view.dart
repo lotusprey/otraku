@@ -8,7 +8,7 @@ import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class UserView extends StatelessWidget {
   final int id;
@@ -129,7 +129,8 @@ class HomeUserView extends StatelessWidget {
                 child: HtmlContent(user.model!.description!),
               ),
             ),
-          SliverToBoxAdapter(child: SizedBox(height: NavBar.offset(context))),
+          SliverToBoxAdapter(
+              child: SizedBox(height: NavLayout.offset(context))),
         ],
       ),
     );

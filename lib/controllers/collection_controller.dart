@@ -1,7 +1,8 @@
-import 'package:get/get.dart';
+import 'dart:math';
+
 import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/entry_model.dart';
@@ -83,7 +84,7 @@ class CollectionController extends OverscrollController implements Filterable {
         episodes
         chapters
         volumes
-        coverImage {large}
+        coverImage {extraLarge}
         nextAiringEpisode {episode airingAt}
         genres
         countryOfOrigin
@@ -98,21 +99,27 @@ class CollectionController extends OverscrollController implements Filterable {
   static const ANIME = 'anime';
   static const MANGA = 'manga';
 
+  // GetBuilder ids.
+  static const ID_HEAD = 0;
+  static const ID_BODY = 1;
+
+  static final _random = Random();
+
   // ***************************************************************************
   // DATA
   // ***************************************************************************
 
+  CollectionController(this.userId, this.ofAnime);
+
   final int userId;
   final bool ofAnime;
   final _lists = <ListModel>[];
-  final _entries = <ListEntryModel>[].obs;
-  final _listIndex = 0.obs;
+  final _entries = <ListEntryModel>[];
   final _filters = <String, dynamic>{};
-  final _isLoading = true.obs;
   final _customListNames = <String>[];
+  int _listIndex = 0;
+  bool _isLoading = true;
   ScoreFormat? _scoreFormat;
-
-  CollectionController(this.userId, this.ofAnime);
 
   // ***************************************************************************
   // GETTERS & SETTERS
@@ -120,54 +127,66 @@ class CollectionController extends OverscrollController implements Filterable {
 
   @override
   bool get hasNextPage => false;
-  bool get isLoading => _isLoading();
-  int get listIndex => _listIndex();
-  ScoreFormat? get scoreFormat => _scoreFormat;
-  List<String> get customListNames => [..._customListNames];
-  List<ListEntryModel> get entries => _entries();
-  String get currentName => _lists[_listIndex()].name;
-  ListStatus? get listStatus => _lists[_listIndex()].status;
-  int get currentCount => _lists[_listIndex()].entries.length;
+
+  int get listIndex => _listIndex;
+  bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
+  int get listCount => _lists.length;
+  ScoreFormat? get scoreFormat => _scoreFormat;
+  List<ListEntryModel> get entries => _entries;
+  List<String> get customListNames => [..._customListNames];
 
-  set listIndex(int value) {
-    if (value < 0 || value >= _lists.length || value == _listIndex()) return;
-    _listIndex.value = value;
-    scrollTo(0);
-    filter();
-  }
-
-  void sort() {
-    for (final list in _lists) list.sort(_filters[Filterable.SORT]);
-    scrollTo(0);
-    filter();
-  }
-
-  List<String> get names {
+  List<String> get listNames {
     final n = <String>[];
     for (final list in _lists) n.add(list.name);
     return n;
   }
 
-  List<int> get allEntryCounts {
+  List<int> get listCounts {
     final c = <int>[];
     for (final list in _lists) c.add(list.entries.length);
     return c;
+  }
+
+  /// Returns a random entry from [_entries].
+  ListEntryModel get random => _entries[_random.nextInt(_entries.length)];
+
+  // Getters for the current list.
+  String get currentName => _lists[_listIndex].name;
+  int get currentCount => _lists[_listIndex].entries.length;
+
+  set listIndex(int val) {
+    if (val < 0 || val >= _lists.length || val == _listIndex) return;
+    _listIndex = val;
+    filter();
+  }
+
+  void sort() {
+    for (final list in _lists) list.sort(_filters[Filterable.SORT]);
+    filter();
+  }
+
+  void _updateLoading(bool val) {
+    if (_isLoading == val) return;
+
+    _isLoading = val;
+    update([ID_HEAD, ID_BODY]);
   }
 
   // ***************************************************************************
   // FETCHING
   // ***************************************************************************
 
-  Future<void> fetch() async {
-    _isLoading.value = true;
+  Future<void> _fetch() async {
+    if (_lists.isEmpty) _updateLoading(true);
+
     Map<String, dynamic>? data = await Client.request(
       _collectionQuery,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
     if (data == null) {
-      _isLoading.value = false;
+      _updateLoading(false);
       return null;
     }
 
@@ -185,8 +204,9 @@ class CollectionController extends OverscrollController implements Filterable {
         ) ??
         ScoreFormat.POINT_10_DECIMAL;
 
-    _filters[Filterable.SORT] = EntrySortHelper.getEnum(
-      data['user']['mediaListOptions']['rowOrder'],
+    final key = ofAnime ? Config.DEFAULT_ANIME_SORT : Config.DEFAULT_MANGA_SORT;
+    _filters[Filterable.SORT] = EntrySort.values.elementAt(
+      Config.storage.read(key) ?? 0,
     );
 
     _customListNames.clear();
@@ -207,9 +227,15 @@ class CollectionController extends OverscrollController implements Filterable {
     for (final l in data['lists'])
       _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
-    _listIndex.value = 0;
+    _listIndex = 0;
+    _isLoading = false;
     filter();
-    _isLoading.value = false;
+  }
+
+  Future<void> refetch() async {
+    _entries.clear();
+    _lists.clear();
+    return _fetch();
   }
 
   @override
@@ -267,7 +293,7 @@ class CollectionController extends OverscrollController implements Filterable {
           break;
         }
       if (!added) {
-        fetch();
+        _fetch();
         return;
       }
     }
@@ -282,7 +308,7 @@ class CollectionController extends OverscrollController implements Filterable {
             break;
           }
       if (newCustomLists.isNotEmpty) {
-        fetch();
+        _fetch();
         return;
       }
     }
@@ -290,7 +316,7 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex.value && _listIndex() != 0) _listIndex.value--;
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i--);
       }
 
@@ -354,7 +380,7 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove the old status list if it is empty.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex.value && _listIndex() != 0) _listIndex.value--;
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i);
         break;
       }
@@ -394,7 +420,7 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex.value && _listIndex() != 0) _listIndex.value--;
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i--);
       }
 
@@ -405,7 +431,7 @@ class CollectionController extends OverscrollController implements Filterable {
   // FILTERING
   // ***************************************************************************
 
-  void filter() {
+  void filter([bool updateHeader = true]) {
     if (_lists.isEmpty) return;
 
     final String? country = _filters[Filterable.COUNTRY];
@@ -416,7 +442,7 @@ class CollectionController extends OverscrollController implements Filterable {
     final search =
         (_filters[Filterable.SEARCH] as String?)?.toLowerCase() ?? '';
 
-    final list = _lists[_listIndex()];
+    final list = _lists[_listIndex];
     final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
@@ -451,7 +477,10 @@ class CollectionController extends OverscrollController implements Filterable {
       e.add(entry);
     }
 
-    _entries.assignAll(e);
+    scrollUpTo(0);
+    _entries.clear();
+    _entries.addAll(e);
+    update([ID_BODY, if (updateHeader) ID_HEAD]);
   }
 
   @override
@@ -461,15 +490,14 @@ class CollectionController extends OverscrollController implements Filterable {
   void setFilterWithKey(String key, {dynamic value, bool update = false}) {
     if (value == null ||
         (value is List && value.isEmpty) ||
-        (value is String && value.trim().isEmpty)) {
+        (value is String && value.trim().isEmpty))
       _filters.remove(key);
-    } else {
+    else
       _filters[key] = value;
-    }
 
     if (update) {
-      scrollTo(0);
-      filter();
+      scrollUpTo(0);
+      filter(false);
     }
   }
 
@@ -484,25 +512,23 @@ class CollectionController extends OverscrollController implements Filterable {
 
   @override
   void clearFiltersWithKeys(List<String> keys, {bool update = true}) {
-    for (final key in keys) {
-      _filters.remove(key);
-    }
+    for (final key in keys) _filters.remove(key);
 
     if (update) {
-      scrollTo(0);
-      filter();
+      scrollUpTo(0);
+      filter(false);
     }
   }
 
   @override
   bool anyActiveFilterFrom(List<String> keys) {
-    for (final key in keys) if (_filters.containsKey(key)) return true;
+    for (final k in keys) if (_filters.containsKey(k)) return true;
     return false;
   }
 
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    _fetch();
   }
 }

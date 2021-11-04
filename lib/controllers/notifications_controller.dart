@@ -181,7 +181,7 @@ class NotificationsController extends OverscrollController {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
     fetch();
-    scrollTo(0);
+    scrollUpTo(0);
   }
 
   List<NotificationModel> get entries => _entries.items;

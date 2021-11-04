@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/models/related_media_model.dart';
@@ -11,6 +12,7 @@ import 'package:otraku/models/page_model.dart';
 class MediaModel {
   final MediaInfoModel info;
   late EntryModel entry;
+  final MediaStatsModel stats;
   final List<RelatedMediaModel> otherMedia;
   final _characters = PageModel<ConnectionModel>().obs;
   final _staff = PageModel<ConnectionModel>().obs;
@@ -20,11 +22,12 @@ class MediaModel {
   PageModel<ConnectionModel> get staff => _staff();
   PageModel<RelatedReviewModel> get reviews => _reviews();
 
-  MediaModel._(
-    this.info,
-    this.entry,
-    this.otherMedia,
-  );
+  MediaModel._({
+    required this.info,
+    required this.entry,
+    required this.stats,
+    required this.otherMedia,
+  });
 
   factory MediaModel(final Map<String, dynamic> map) {
     final other = <RelatedMediaModel>[];
@@ -32,9 +35,10 @@ class MediaModel {
       other.add(RelatedMediaModel(relation));
 
     return MediaModel._(
-      MediaInfoModel(map),
-      EntryModel(map),
-      other,
+      info: MediaInfoModel(map),
+      entry: EntryModel(map),
+      stats: MediaStatsModel(map),
+      otherMedia: other,
     )..addReviews(map);
   }
 

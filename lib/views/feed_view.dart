@@ -10,7 +10,7 @@ import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
@@ -101,7 +101,7 @@ class HomeFeedView extends StatelessWidget {
           ),
         ),
         SliverToBoxAdapter(
-          child: SizedBox(height: NavBar.offset(context)),
+          child: SizedBox(height: NavLayout.offset(context)),
         ),
       ],
     );
@@ -121,8 +121,7 @@ class _Header extends StatelessWidget {
         items: const {'Following': true, 'Global': false},
         current: () => feed.onFollowing,
         onChanged: (bool val) => feed.onFollowing = val,
-        onSame: () => feed.scrollTo(0),
-        itemWidth: 90,
+        onSame: () => feed.scrollUpTo(0),
       ),
       const Spacer(),
       _Filter(feed),
@@ -198,7 +197,6 @@ class _Filter extends StatelessWidget {
           onDone: (typeIn) => feed.typeIn = typeIn,
           fixHeight: true,
         ),
-        isScrollControlled: true,
       ),
     );
   }

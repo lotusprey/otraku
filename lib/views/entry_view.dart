@@ -9,6 +9,7 @@ import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -180,11 +181,7 @@ class _Content extends StatelessWidget {
                 value: model.status,
                 items: Map.fromIterable(
                   ListStatus.values,
-                  key: (v) => listStatusSpecification(
-                    v,
-                    model.type == 'ANIME',
-                  ),
-                  value: (v) => v,
+                  key: (v) => Convert.adaptListStatus(v, model.type == 'ANIME'),
                 ),
                 onChanged: (status) {
                   model.status = status;
@@ -452,7 +449,7 @@ class _CheckBoxGrid extends StatelessWidget {
         childCount: map.length,
       ),
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 190,
+        minWidth: 180,
         mainAxisSpacing: 0,
         height: Config.MATERIAL_TAP_TARGET_SIZE,
       ),

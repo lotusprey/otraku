@@ -38,7 +38,7 @@ class UserHeader extends StatelessWidget {
       title: user?.name,
       actions: [
         if (isMe)
-          Shade(
+          IconShade(
             AppBarIcon(
               tooltip: 'Settings',
               icon: Ionicons.cog_outline,

@@ -7,12 +7,12 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class MediaView extends StatelessWidget {
   final int id;
@@ -29,21 +29,26 @@ class MediaView extends StatelessWidget {
     final bannerHeight =
         coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
     final headerHeight = bannerHeight + coverHeight * 0.6;
-    final pageTop = headerHeight - Config.MATERIAL_TAP_TARGET_SIZE;
+    final headerOffset = headerHeight - Config.MATERIAL_TAP_TARGET_SIZE;
 
-    final header = MediaHeader(
-      ctrl: Get.find<MediaController>(tag: id.toString()),
-      imageUrl: coverUrl,
-      coverWidth: coverWidth,
-      coverHeight: coverHeight,
-      bannerHeight: bannerHeight,
-      height: headerHeight,
-    );
+    final footer =
+        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
+
+    const keys = [ValueKey(0), ValueKey(1), ValueKey(2)];
 
     return GetBuilder<MediaController>(
-      id: MediaController.ID_MAIN,
+      id: MediaController.ID_BASE,
       tag: id.toString(),
       builder: (ctrl) {
+        final header = MediaHeader(
+          ctrl: ctrl,
+          imageUrl: coverUrl,
+          coverWidth: coverWidth,
+          coverHeight: coverHeight,
+          bannerHeight: bannerHeight,
+          height: headerHeight,
+        );
+
         if (ctrl.model == null)
           return Scaffold(
             body: SafeArea(
@@ -56,39 +61,67 @@ class MediaView extends StatelessWidget {
             ),
           );
 
-        return NavScaffold(
-          index: ctrl.tab,
-          setPage: (page) => ctrl.tab = page,
-          trySubtab: (goRight) {
-            if (ctrl.tab == MediaController.OTHER) {
-              if (goRight && ctrl.subtab < 2) {
-                ctrl.scrollTo(pageTop);
-                ctrl.subtab++;
-                return true;
+        return GetBuilder<MediaController>(
+          id: MediaController.ID_OUTER,
+          tag: id.toString(),
+          builder: (_) => NavLayout(
+            index: ctrl.tab,
+            onChanged: (page) => ctrl.tab = page,
+            trySubtab: (goRight) {
+              if (ctrl.tab == MediaController.OTHER) {
+                if (goRight && ctrl.otherTab < 2) {
+                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.otherTab++;
+                  return true;
+                }
+                if (!goRight && ctrl.otherTab > 0) {
+                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.otherTab--;
+                  return true;
+                }
               }
-              if (!goRight && ctrl.subtab > 0) {
-                ctrl.scrollTo(pageTop);
-                ctrl.subtab--;
-                return true;
+
+              if (ctrl.tab == MediaController.SOCIAL) {
+                if (goRight && ctrl.socialTab < 1) {
+                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.socialTab++;
+                  return true;
+                }
+                if (!goRight && ctrl.socialTab > 0) {
+                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.socialTab--;
+                  return true;
+                }
               }
-            }
-            return false;
-          },
-          floating: _ActionButtons(id),
-          items: const {
-            'Info': Ionicons.book_outline,
-            'Other': Icons.emoji_people_outlined,
-            'Social': Icons.rate_review_outlined,
-          },
-          child: ctrl.tab == MediaController.INFO
-              ? MediaInfoView(ctrl, header)
-              : ctrl.tab == MediaController.OTHER
-                  ? MediaOtherView(
-                      ctrl,
-                      header,
-                      () => ctrl.scrollTo(pageTop),
-                    )
-                  : MediaSocialView(ctrl, header),
+
+              return false;
+            },
+            floating: _ActionButtons(ctrl),
+            items: const {
+              'Info': Ionicons.book_outline,
+              'Other': Icons.emoji_people_outlined,
+              'Social': Icons.rate_review_outlined,
+            },
+            child: GetBuilder<MediaController>(
+              key: keys[ctrl.tab],
+              id: MediaController.ID_INNER,
+              tag: id.toString(),
+              builder: (_) => CustomScrollView(
+                controller: ctrl.scrollCtrl,
+                physics: Config.PHYSICS,
+                slivers: [
+                  header,
+                  if (ctrl.tab == MediaController.INFO)
+                    ...MediaInfoView.children(context, ctrl)
+                  else if (ctrl.tab == MediaController.OTHER)
+                    ...MediaOtherView.children(context, ctrl, headerOffset)
+                  else
+                    ...MediaSocialView.children(context, ctrl, headerOffset),
+                  footer,
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
@@ -96,8 +129,8 @@ class MediaView extends StatelessWidget {
 }
 
 class _ActionButtons extends StatefulWidget {
-  final int id;
-  _ActionButtons(this.id);
+  _ActionButtons(this.ctrl);
+  final MediaController ctrl;
 
   @override
   __ActionButtonsState createState() => __ActionButtonsState();
@@ -106,67 +139,56 @@ class _ActionButtons extends StatefulWidget {
 class __ActionButtonsState extends State<_ActionButtons> {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MediaController>(
-      id: MediaController.ID_OTHER,
-      tag: widget.id.toString(),
-      builder: (ctrl) {
-        final model = ctrl.model!;
+    final model = widget.ctrl.model!;
 
-        List<Widget> children = [
-          if (ctrl.tab == MediaController.OTHER &&
-              ctrl.subtab == MediaController.CHARACTERS &&
-              model.characters.items.isNotEmpty &&
-              ctrl.availableLanguages.length > 1) ...[
-            ActionButton(
-              tooltip: 'Language',
-              icon: Ionicons.globe_outline,
-              onTap: () => Sheet.show(
-                ctx: context,
-                sheet: OptionSheet(
-                  title: 'Language',
-                  options: ctrl.availableLanguages,
-                  index: ctrl.languageIndex,
-                  onTap: (index) =>
-                      ctrl.staffLanguage = ctrl.availableLanguages[index],
-                ),
-                isScrollControlled: true,
-              ),
-            ),
-            const SizedBox(width: 10),
-          ],
-          ActionButton(
-            icon:
-                model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
-            tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-            onTap: () => ctrl.toggleFavourite().then(
-                  (ok) => ok
-                      ? setState(
-                          () =>
-                              model.info.isFavourite = !model.info.isFavourite,
-                        )
-                      : null,
-                ),
-          ),
-          const SizedBox(width: 10),
-          ActionButton(
-            icon: model.entry.status == null ? Icons.add : Icons.edit,
-            tooltip: model.entry.status == null ? 'Add' : 'Edit',
-            onTap: () => ExploreIndexer.openEditPage(
-              model.info.id,
-              model.entry,
-              (EntryModel entry) => setState(() => model.entry = entry),
+    List<Widget> children = [
+      if (widget.ctrl.tab == MediaController.OTHER &&
+          widget.ctrl.otherTab == MediaController.CHARACTERS &&
+          model.characters.items.isNotEmpty &&
+          widget.ctrl.availableLanguages.length > 1) ...[
+        ActionButton(
+          tooltip: 'Language',
+          icon: Ionicons.globe_outline,
+          onTap: () => DragSheet.show(
+            context,
+            OptionDragSheet(
+              options: widget.ctrl.availableLanguages,
+              index: widget.ctrl.language,
+              onTap: (val) => widget.ctrl.language = val,
             ),
           ),
-        ];
+        ),
+        const SizedBox(width: 10),
+      ],
+      ActionButton(
+        icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
+        tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
+        onTap: () => widget.ctrl.toggleFavourite().then(
+              (ok) => ok
+                  ? setState(
+                      () => model.info.isFavourite = !model.info.isFavourite,
+                    )
+                  : null,
+            ),
+      ),
+      const SizedBox(width: 10),
+      ActionButton(
+        icon: model.entry.status == null ? Icons.add : Icons.edit,
+        tooltip: model.entry.status == null ? 'Add' : 'Edit',
+        onTap: () => ExploreIndexer.openEditPage(
+          model.info.id,
+          model.entry,
+          (EntryModel entry) => setState(() => model.entry = entry),
+        ),
+      ),
+    ];
 
-        if (Config.storage.read(Config.LEFT_HANDED) ?? false)
-          children = children.reversed.toList();
+    if (Config.storage.read(Config.LEFT_HANDED) ?? false)
+      children = children.reversed.toList();
 
-        return FloatingListener(
-          scrollCtrl: ctrl.scrollCtrl,
-          child: Row(mainAxisSize: MainAxisSize.min, children: children),
-        );
-      },
+    return FloatingListener(
+      scrollCtrl: widget.ctrl.scrollCtrl,
+      child: Row(mainAxisSize: MainAxisSize.min, children: children),
     );
   }
 }

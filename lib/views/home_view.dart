@@ -9,7 +9,7 @@ import 'package:otraku/views/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/nav_scaffold.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends StatelessWidget {
@@ -26,13 +26,13 @@ class HomeView extends StatelessWidget {
       HomeCollectionView(
         ofAnime: true,
         id: Client.viewerId!,
-        collectionTag: CollectionController.ANIME,
+        ctrlTag: CollectionController.ANIME,
         key: UniqueKey(),
       ),
       HomeCollectionView(
         ofAnime: false,
         id: Client.viewerId!,
-        collectionTag: CollectionController.MANGA,
+        ctrlTag: CollectionController.MANGA,
         key: UniqueKey(),
       ),
       const ExploreView(),
@@ -53,11 +53,11 @@ class HomeView extends StatelessWidget {
       onWillPop: () => _onWillPop(context),
       child: ValueListenableBuilder<int>(
         valueListenable: Config.homeNotifier,
-        builder: (_, index, __) => NavScaffold(
+        builder: (_, index, __) => NavLayout(
           index: index,
           child: tabs[index],
           floating: fabs[index],
-          setPage: (i) => Config.homeIndex = i,
+          onChanged: (i) => Config.homeIndex = i,
           items: const {
             'Feed': Ionicons.file_tray_outline,
             'Anime': Ionicons.film_outline,

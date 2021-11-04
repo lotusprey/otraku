@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/widgets/navigation/nav_bar.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -30,7 +30,7 @@ class SettingsAboutView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v. 1.1.4',
+            'Otraku - v. 1.1.5',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline5,
           ),
@@ -133,7 +133,7 @@ class SettingsAboutView extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: NavBar.offset(context)),
+        SizedBox(height: NavLayout.offset(context)),
       ],
     );
   }

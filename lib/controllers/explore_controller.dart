@@ -38,10 +38,10 @@ class ExploreController extends OverscrollController implements Filterable {
   ''';
 
   static const _charactersQuery = r'''
-    query Characters($page: Int, $search: String, $id_not_in: [Int]) {
+    query Characters($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
-        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
+        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
           id name {userPreferred} image {large}
         }
       }
@@ -49,10 +49,10 @@ class ExploreController extends OverscrollController implements Filterable {
   ''';
 
   static const _staffQuery = r'''
-    query Staff($page: Int, $search: String, $id_not_in: [Int]) {
+    query Staff($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
       Page(page: $page, perPage: 30) {
         pageInfo {hasNextPage}
-        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC) {
+        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
           id name {userPreferred} image {large}
         }
       }
@@ -110,8 +110,9 @@ class ExploreController extends OverscrollController implements Filterable {
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
-    Filterable.SORT: describeEnum(MediaSort.TRENDING_DESC),
     Filterable.ID_NOT_IN: [],
+    Filterable.SORT: describeEnum(MediaSort.values
+        .elementAt(Config.storage.read(Config.DEFAULT_EXPLORE_SORT) ?? 3)),
   };
 
   // ***************************************************************************
@@ -208,7 +209,7 @@ class ExploreController extends OverscrollController implements Filterable {
       _isLoading.value = true;
       _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
-      scrollTo(0);
+      scrollUpTo(0);
     }
 
     String query;

@@ -136,7 +136,16 @@ class StaffView extends StatelessWidget {
                 final connections =
                     ctrl.onCharacters ? ctrl.characters : ctrl.roles;
 
-                if (connections.isEmpty) return const SliverToBoxAdapter();
+                if (connections.isEmpty)
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        'No resuts',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
 
                 return SliverPadding(
                   padding: EdgeInsets.only(

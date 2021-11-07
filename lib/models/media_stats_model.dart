@@ -22,7 +22,9 @@ class MediaStatsModel {
       for (final rank in map['rankings']) {
         final String when = (rank['allTime'] ?? false)
             ? 'Ever'
-            : (rank['year'] ?? rank['season'] ?? '').toString();
+            : rank['season'] != null
+                ? '${Convert.clarifyEnum(rank['season'])} ${rank['year'] ?? ''}'
+                : (rank['year'] ?? '').toString();
         if (when.isEmpty) continue;
 
         if (rank['type'] == 'RATED') {

@@ -89,21 +89,22 @@ class StatisticsView extends StatelessWidget {
                   ),
                 ),
               ],
-              GridView(
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  _PieChart('Format Distribution', ctrl.model.formats),
-                  _PieChart('Status Distribution', ctrl.model.statuses),
-                  _PieChart('Country Distribution', ctrl.model.countries),
-                ],
-                gridDelegate:
-                    const SliverGridDelegateWithMinWidthAndFixedHeight(
-                  minWidth: 340,
-                  height: 250,
+              if (ctrl.model.count > 0)
+                GridView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    _PieChart('Format Distribution', ctrl.model.formats),
+                    _PieChart('Status Distribution', ctrl.model.statuses),
+                    _PieChart('Country Distribution', ctrl.model.countries),
+                  ],
+                  gridDelegate:
+                      const SliverGridDelegateWithMinWidthAndFixedHeight(
+                    minWidth: 340,
+                    height: 250,
+                  ),
                 ),
-              ),
             ],
           ),
         );

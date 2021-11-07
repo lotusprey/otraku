@@ -133,6 +133,7 @@ class StaffController extends OverscrollController {
       'withPerson': true,
       'withCharacters': true,
       'withStaff': true,
+      'onList': _onList,
       'sort': describeEnum(_sort),
     });
     if (body == null) return;
@@ -142,8 +143,6 @@ class StaffController extends OverscrollController {
     _model = StaffModel(data);
     _initCharacters(data, false);
     _initRoles(data, false);
-
-    if (_characters.items.isEmpty) _onCharacters = false;
 
     update([ID_MAIN, ID_MEDIA]);
   }
@@ -155,8 +154,8 @@ class StaffController extends OverscrollController {
       'id': id,
       'withCharacters': true,
       'withStaff': true,
-      'sort': describeEnum(_sort),
       'onList': _onList,
+      'sort': describeEnum(_sort),
     });
     if (data == null) return;
 
@@ -175,6 +174,7 @@ class StaffController extends OverscrollController {
       'characterPage': _characters.nextPage,
       'staffPage': _roles.nextPage,
       'sort': describeEnum(_sort),
+      'onList': _onList,
     });
     if (data == null) return;
 

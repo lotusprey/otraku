@@ -158,12 +158,13 @@ class CollectionController extends OverscrollController implements Filterable {
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
-    filter();
+    scrollUpTo(0);
+    _filter();
   }
 
   void sort() {
     for (final list in _lists) list.sort(_filters[Filterable.SORT]);
-    filter();
+    _filter();
   }
 
   void _updateLoading(bool val) {
@@ -227,9 +228,10 @@ class CollectionController extends OverscrollController implements Filterable {
     for (final l in data['lists'])
       _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
+    scrollUpTo(0);
     _listIndex = 0;
     _isLoading = false;
-    filter();
+    _filter();
   }
 
   Future<void> refetch() async {
@@ -316,11 +318,14 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) _listIndex--;
+        if (i <= _listIndex && _listIndex != 0) {
+          _listIndex--;
+          scrollUpTo(0);
+        }
         _lists.removeAt(i--);
       }
 
-    filter();
+    _filter();
   }
 
   Future<void> incrementProgress(ListEntryModel model) async {
@@ -380,12 +385,15 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove the old status list if it is empty.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) _listIndex--;
+        if (i <= _listIndex && _listIndex != 0) {
+          _listIndex--;
+          scrollUpTo(0);
+        }
         _lists.removeAt(i);
         break;
       }
 
-    filter();
+    _filter();
   }
 
   Future<void> removeEntry(EntryModel entry) async {
@@ -420,18 +428,21 @@ class CollectionController extends OverscrollController implements Filterable {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) _listIndex--;
+        if (i <= _listIndex && _listIndex != 0) {
+          _listIndex--;
+          scrollUpTo(0);
+        }
         _lists.removeAt(i--);
       }
 
-    filter();
+    _filter();
   }
 
   // ***************************************************************************
   // FILTERING
   // ***************************************************************************
 
-  void filter([bool updateHeader = true]) {
+  void _filter([bool updateHeader = true]) {
     if (_lists.isEmpty) return;
 
     final String? country = _filters[Filterable.COUNTRY];
@@ -477,7 +488,6 @@ class CollectionController extends OverscrollController implements Filterable {
       e.add(entry);
     }
 
-    scrollUpTo(0);
     _entries.clear();
     _entries.addAll(e);
     update([ID_BODY, if (updateHeader) ID_HEAD]);
@@ -495,10 +505,10 @@ class CollectionController extends OverscrollController implements Filterable {
     else
       _filters[key] = value;
 
-    if (update) {
-      scrollUpTo(0);
-      filter(false);
-    }
+    if (!update) return;
+
+    scrollUpTo(0);
+    _filter(false);
   }
 
   @override
@@ -514,10 +524,10 @@ class CollectionController extends OverscrollController implements Filterable {
   void clearFiltersWithKeys(List<String> keys, {bool update = true}) {
     for (final key in keys) _filters.remove(key);
 
-    if (update) {
-      scrollUpTo(0);
-      filter(false);
-    }
+    if (!update) return;
+
+    scrollUpTo(0);
+    _filter(false);
   }
 
   @override

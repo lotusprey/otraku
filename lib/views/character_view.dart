@@ -156,7 +156,16 @@ class CharacterView extends StatelessWidget {
               builder: (ctrl) {
                 final connections = ctrl.onAnime ? ctrl.anime : ctrl.manga;
 
-                if (connections.isEmpty) return const SliverToBoxAdapter();
+                if (connections.isEmpty)
+                  return SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        'No resuts',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
 
                 return SliverPadding(
                   padding: EdgeInsets.only(

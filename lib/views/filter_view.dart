@@ -128,15 +128,21 @@ class FilterView extends StatelessWidget {
             tooltip: 'Apply',
             icon: Icons.done_rounded,
             onTap: () {
-              for (final key in changes.keys)
-                filterable.setFilterWithKey(key, value: changes[key]);
-
-              if (filterable is ExploreController)
-                filterable.fetch();
-              else if (filterable is CollectionController) filterable.filter();
-
               isDefinitelyInactive(false);
               Navigator.pop(context);
+
+              if (changes.isEmpty) return;
+
+              for (int i = 0; i < changes.length - 1; i++) {
+                final key = changes.keys.elementAt(i);
+                filterable.setFilterWithKey(key, value: changes[key]);
+              }
+
+              filterable.setFilterWithKey(
+                changes.keys.last,
+                value: changes[changes.keys.last],
+                update: true,
+              );
             },
           ),
         ],

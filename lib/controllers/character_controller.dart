@@ -118,6 +118,7 @@ class CharacterController extends OverscrollController {
       'withPerson': true,
       'withAnime': true,
       'withManga': true,
+      'onList': _onList,
       'sort': describeEnum(_sort),
     });
     if (body == null) return;
@@ -127,8 +128,6 @@ class CharacterController extends OverscrollController {
     _model = CharacterModel(data);
     _initAnime(data, false);
     _initManga(data, false);
-
-    if (_anime.items.isEmpty) _onAnime = false;
 
     update([ID_MAIN, ID_MEDIA]);
   }
@@ -140,8 +139,8 @@ class CharacterController extends OverscrollController {
       'id': id,
       'withAnime': true,
       'withManga': true,
-      'sort': describeEnum(_sort),
       'onList': _onList,
+      'sort': describeEnum(_sort),
     });
     if (body == null) return;
 
@@ -159,7 +158,8 @@ class CharacterController extends OverscrollController {
       'withManga': !_onAnime,
       'animePage': _anime.nextPage,
       'mangaPage': _manga.nextPage,
-      'sort': describeEnum(_sort)
+      'sort': describeEnum(_sort),
+      'onList': _onList,
     });
     if (data == null) return;
 

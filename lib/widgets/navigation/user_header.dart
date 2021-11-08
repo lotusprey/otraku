@@ -79,7 +79,12 @@ class UserHeader extends StatelessWidget {
           if (user?.banner != null)
             Column(
               children: [
-                Expanded(child: FadeImage(user!.banner!)),
+                Expanded(
+                  child: GestureDetector(
+                    child: FadeImage(user!.banner!),
+                    onTap: () => showPopUp(context, ImageDialog(user!.banner!)),
+                  ),
+                ),
                 SizedBox(height: height - bannerHeight),
               ],
             ),

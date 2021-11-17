@@ -5,68 +5,15 @@ import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class FeedController extends OverscrollController {
-  static const _activitiesQuery = r'''
-    query Activities($userId: Int, $page: Int = 1, $idNotIn: [Int], $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        activities(userId: $userId, id_not_in: $idNotIn, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: ID_DESC) {
-          ... on TextActivity {
-            id
-            type
-            replyCount
-            likeCount
-            isLiked
-            isSubscribed
-            createdAt
-            siteUrl
-            user {id name avatar {large}}
-            text(asHtml: true)
-          }
-          ... on ListActivity {
-            id
-            type
-            replyCount
-            likeCount
-            isLiked
-            isSubscribed
-            createdAt
-            siteUrl
-            user {id name avatar {large}}
-            media {id type title{userPreferred} coverImage{large} format}
-            progress
-            status
-          }
-          ... on MessageActivity {
-            id
-            type
-            replyCount
-            likeCount
-            isLiked
-            isSubscribed
-            isPrivate
-            createdAt
-            siteUrl
-            recipient {id name avatar {large}}
-            messenger {id name avatar {large}}
-            message(asHtml: true)
-          }
-        }
-      }
-    }
-  ''';
-
-  static const _deleteMutation = r'''
-    mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
-  ''';
-
   static const HOME_FEED_TAG = 'Feed';
 
-  final int? id;
   FeedController(this.id);
 
+  final int? id;
   final _activities = PageModel<ActivityModel>().obs;
   final _idNotIn = <int>[];
   late final List<ActivityType> _typeIn;
@@ -104,7 +51,7 @@ class FeedController extends OverscrollController {
     }
 
     final data = await Client.request(
-      _activitiesQuery,
+      GqlQuery.activities,
       {
         if (id != null) ...{
           'userId': id,
@@ -147,7 +94,8 @@ class FeedController extends OverscrollController {
   }
 
   Future<void> deleteActivity(int activityId) async {
-    final data = await Client.request(_deleteMutation, {'id': activityId});
+    final data =
+        await Client.request(GqlMutation.deleteActivity, {'id': activityId});
     if (data == null) return;
 
     for (int i = 0; i < _activities().items.length; i++)

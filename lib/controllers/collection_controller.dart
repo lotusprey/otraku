@@ -9,93 +9,11 @@ import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class CollectionController extends OverscrollController implements Filterable {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _collectionQuery = r'''
-    query Collection($userId: Int, $type: MediaType) {
-      MediaListCollection(userId: $userId, type: $type) {
-        lists {
-          name
-          isCustomList
-          isSplitCompletedList
-          status
-          entries {...data}
-        }
-        user {
-          mediaListOptions {
-            rowOrder
-            scoreFormat
-            animeList {sectionOrder customLists splitCompletedSectionByFormat}
-            mangaList {sectionOrder customLists splitCompletedSectionByFormat}
-          }
-        }
-      }
-    }
-  '''
-      '''$_fragment''';
-
-  static const _updateEntryMutation = r'''
-    mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
-        $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
-        $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
-        $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput,
-        $advancedScores: [Float]) {
-      SaveMediaListEntry(mediaId: $mediaId, status: $status, score: $score,
-        progress: $progress, progressVolumes: $progressVolumes, repeat: $repeat,
-        private: $private, notes: $notes, hiddenFromStatusLists: $hiddenFromStatusLists,
-        customLists: $customLists, startedAt: $startedAt, completedAt: $completedAt,
-        advancedScores: $advancedScores) {...data}
-    }
-  '''
-      '''$_fragment''';
-
-  static const _updateProgressMutation = r'''
-    mutation UpdateProgress($mediaId: Int, $progress: Int) {
-      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {...data customLists}
-    }
-  '''
-      '''$_fragment''';
-
-  static const _fragment = r'''
-    fragment data on MediaList {
-      id
-      mediaId
-      status
-      score
-      progress
-      progressVolumes
-      repeat
-      notes
-      startedAt {year month day}
-      completedAt {year month day}
-      updatedAt
-      createdAt
-      media {
-        title {userPreferred}
-        format
-        status(version: 2)
-        startDate {year month day}
-        endDate {year month day}
-        episodes
-        chapters
-        volumes
-        coverImage {extraLarge}
-        nextAiringEpisode {episode airingAt}
-        genres
-        countryOfOrigin
-      }
-    }
-  ''';
-
-  static const _removeEntryMutation = r'''
-    mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
-  ''';
-
+  // Viewer controller tags. Also used in the tag creation of other collections.
   static const ANIME = 'anime';
   static const MANGA = 'manga';
 
@@ -182,7 +100,7 @@ class CollectionController extends OverscrollController implements Filterable {
     if (_lists.isEmpty) _updateLoading(true);
 
     Map<String, dynamic>? data = await Client.request(
-      _collectionQuery,
+      GqlQuery.collection,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
@@ -245,7 +163,8 @@ class CollectionController extends OverscrollController implements Filterable {
 
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
     // Update database item.
-    final data = await Client.request(_updateEntryMutation, newEntry.toMap());
+    final data =
+        await Client.request(GqlMutation.updateEntry, newEntry.toMap());
     if (data == null) return;
 
     final entry = ListEntryModel(data['SaveMediaListEntry']);
@@ -335,7 +254,7 @@ class CollectionController extends OverscrollController implements Filterable {
 
     // Update database item.
     final data = await Client.request(
-      _updateProgressMutation,
+      GqlMutation.updateProgress,
       {'mediaId': model.mediaId, 'progress': model.progress + 1},
     );
     if (data == null) return;
@@ -398,8 +317,10 @@ class CollectionController extends OverscrollController implements Filterable {
 
   Future<void> removeEntry(EntryModel entry) async {
     // Update database item.
-    final data =
-        await Client.request(_removeEntryMutation, {'entryId': entry.entryId});
+    final data = await Client.request(
+      GqlMutation.removeEntry,
+      {'entryId': entry.entryId},
+    );
 
     if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
       return;

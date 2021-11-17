@@ -3,22 +3,10 @@ import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class FriendsController extends OverscrollController {
-  static const _friendsQuery = r'''
-    query Friends($id: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
-      following: Page(page: $page) @include(if: $withFollowing) {
-        pageInfo {hasNextPage}
-        following(userId: $id, sort: USERNAME) {id name avatar {large}}
-      }
-      followers: Page(page: $page) @include(if: $withFollowers) {
-        pageInfo {hasNextPage}
-        followers(userId: $id, sort: USERNAME) {id name avatar {large}}
-      }
-    }
-  ''';
-
   FriendsController(this.id, this._onFollowing);
 
   final int id;
@@ -47,7 +35,7 @@ class FriendsController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
-    Map<String, dynamic>? data = await Client.request(_friendsQuery, {
+    Map<String, dynamic>? data = await Client.request(GqlQuery.friends, {
       'id': id,
       'withFollowing': _onFollowing,
       'withFollowers': !_onFollowing,

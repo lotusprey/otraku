@@ -2,60 +2,9 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/models/settings_model.dart';
+import 'package:otraku/utils/graphql.dart';
 
 class ViewerController extends GetxController {
-  static const _viewerQuery = r'''
-    query ViewerData {
-      Viewer {
-        unreadNotificationCount
-        options {
-          titleLanguage 
-          staffNameLanguage
-          activityMergeTime
-          displayAdultContent
-          airingNotifications
-          notificationOptions {type enabled}
-        }
-        mediaListOptions {
-          scoreFormat
-          rowOrder
-          animeList {splitCompletedSectionByFormat customLists advancedScoring advancedScoringEnabled}
-          mangaList {splitCompletedSectionByFormat customLists}
-        }
-    }
-  }
-  ''';
-
-  static const _settingsMutation = r'''
-    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
-        $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
-        $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
-        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean, $advancedScoring: [String]) {
-      UpdateUser(about: $about, titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
-          activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
-          airingNotifications: $airingNotifications, scoreFormat: $scoreFormat,
-          rowOrder: $rowOrder, notificationOptions: $notificationOptions,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, 
-          advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
-          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
-        options {
-          titleLanguage
-          staffNameLanguage
-          activityMergeTime
-          displayAdultContent
-          airingNotifications
-          notificationOptions {type enabled}
-        }
-        mediaListOptions {
-          scoreFormat
-          rowOrder
-          animeList {splitCompletedSectionByFormat customLists advancedScoring advancedScoringEnabled}
-          mangaList {splitCompletedSectionByFormat customLists}
-        }
-      }
-    }
-  ''';
-
   final _unreadCount = 0.obs;
   SettingsModel? _settings;
 
@@ -67,8 +16,8 @@ class ViewerController extends GetxController {
     Config.storage.write(Config.LAST_NOTIFICATION_COUNT, 0);
   }
 
-  Future<void> fetch() async {
-    final data = await Client.request(_viewerQuery);
+  Future<void> _fetch() async {
+    final data = await Client.request(GqlQuery.settings);
     if (data == null) return;
 
     if (_settings == null) _settings = SettingsModel(data['Viewer']);
@@ -78,7 +27,7 @@ class ViewerController extends GetxController {
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
-    final data = await Client.request(_settingsMutation, variables);
+    final data = await Client.request(GqlMutation.updateSettings, variables);
     if (data == null) return false;
     _settings = SettingsModel(data['UpdateUser']);
     return true;
@@ -87,6 +36,6 @@ class ViewerController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    if (_settings == null) _fetch();
   }
 }

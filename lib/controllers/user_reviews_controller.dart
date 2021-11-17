@@ -3,29 +3,13 @@ import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class UserReviewsController extends OverscrollController {
-  static const _reviewsQuery = r'''
-    query UserReviews($id: Int, $page: Int = 1) {
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        reviews(userId: $id, sort: CREATED_AT_DESC) {
-          id
-          summary 
-          body(asHtml: true)
-          rating
-          ratingAmount
-          media {id type title{userPreferred} bannerImage}
-          user {id name}
-        }
-      }
-    }
-  ''';
-
-  final int id;
   UserReviewsController(this.id);
 
+  final int id;
   late UserModel _model;
 
   @override
@@ -34,8 +18,8 @@ class UserReviewsController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
-    final data = await Client.request(_reviewsQuery, {
-      'id': id,
+    final data = await Client.request(GqlQuery.reviews, {
+      'userId': id,
       'page': _model.reviews.nextPage,
     });
     if (data == null) return;

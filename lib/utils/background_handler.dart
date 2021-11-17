@@ -10,6 +10,7 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -89,8 +90,9 @@ void _fetch() => Workmanager().executeTask((_, input) async {
         if (!ok) return true;
       }
 
-      // Get the count of new notifications.
-      Map<String, dynamic>? data = await Client.request(_countQuery);
+      // Get new notifications.
+      final data =
+          await Client.request(GqlQuery.notifications, {'withCount': true});
       if (data == null) return false;
 
       final int newCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
@@ -99,18 +101,15 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       final count = newCount < oldCount ? newCount : newCount - oldCount;
       if (count < 1) return true;
 
-      // Get new notifications.
-      data = await Client.request(_notificationQuery, {'perPage': count});
-      if (data == null) return false;
-
       // Save new notification count.
       Config.storage.write(Config.LAST_NOTIFICATION_COUNT, newCount);
 
       // Show notifications.
-      for (final n in data['Page']['notifications']) {
+      final ns = data['Page']['notifications'];
+      for (int i = 0; i < count && i < ns.length; i++) {
         late NotificationModel model;
         try {
-          model = NotificationModel(n);
+          model = NotificationModel(ns[i]);
         } catch (_) {
           continue;
         }
@@ -252,137 +251,3 @@ void _show(NotificationModel model, String title, String payload) {
     payload: payload,
   );
 }
-
-const _countQuery = 'query Count {Viewer {unreadNotificationCount}}';
-
-const _notificationQuery = r'''
-  query Notifications($perPage: Int) {
-    Page(perPage: $perPage) {
-      notifications(resetNotificationCount: false) {
-        ... on FollowingNotification {
-          id
-          type
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityMessageNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityReplyNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityReplySubscribedNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentReplyNotification {
-          id
-          type
-          context
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityMentionNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentMentionNotification {
-          id
-          type
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentSubscribedNotification {
-          id
-          type
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityLikeNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityReplyLikeNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadLikeNotification {
-          id
-          type
-          thread {id title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentLikeNotification {
-          id
-          type
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on RelatedMediaAdditionNotification {
-          id
-          type
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on MediaDataChangeNotification {
-          id
-          type
-          reason
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on MediaMergeNotification {
-          id
-          type
-          reason
-          deletedMediaTitles
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on MediaDeletionNotification {
-          id
-          type
-          reason
-          deletedMediaTitle
-          createdAt
-        }
-        ... on AiringNotification {
-          id
-          type
-          episode
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-      }
-    }
-  }
-''';

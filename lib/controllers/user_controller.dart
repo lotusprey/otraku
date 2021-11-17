@@ -1,77 +1,30 @@
 import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
+import 'package:otraku/utils/graphql.dart';
 
 class UserController extends GetxController {
-  static const _userQuery = r'''
-      query User($id: Int) {
-        User(id: $id) {
-          ...main
-          favourites {
-            anime {...media}
-            manga {...media}
-            characters {...character}
-            staff {...staff}
-            studios {...studio}
-          }
-        }
-      }
-      fragment main on User {
-        id
-        name
-        about(asHtml: true)
-        avatar {large}
-        bannerImage
-        isFollowing
-        isFollower
-        isBlocked
-        donatorTier
-        donatorBadge
-        moderatorStatus
-        statistics {anime {...stats} manga {...stats}}
-      }
-      fragment stats on UserStatistics {
-        count
-        meanScore
-        standardDeviation
-        minutesWatched
-        episodesWatched
-        chaptersRead
-        volumesRead
-        scores(sort: MEAN_SCORE) {count meanScore minutesWatched chaptersRead score}
-        lengths {count meanScore minutesWatched chaptersRead length}
-        formats {count meanScore minutesWatched chaptersRead format}
-        statuses {count meanScore minutesWatched chaptersRead status}
-        countries {count meanScore minutesWatched chaptersRead country}
-      }
-      fragment media on MediaConnection {
-        pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {large}}
-      }
-      fragment character on CharacterConnection {
-        pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
-      }
-      fragment staff on StaffConnection {
-        pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}
-      }
-      fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
-    ''';
-
-  static const _toggleFollow =
-      r'''mutation FollowUser($id: Int) {ToggleFollow(userId: $id) {isFollowing}}''';
-
-  final int id;
   UserController(this.id);
 
+  final int id;
   UserModel? _model;
 
   UserModel? get model => _model;
 
-  // ***************************************************************************
-  // FETCHING
-  // ***************************************************************************
-
-  Future<void> fetch() async {
-    final data = await Client.request(_userQuery, {'id': id});
+  Future<void> _fetch() async {
+    final data = await Client.request(
+      GqlQuery.user,
+      {
+        'id': id,
+        'withMain': true,
+        'withStats': true,
+        'withAnime': true,
+        'withManga': true,
+        'withCharacters': true,
+        'withStaff': true,
+        'withStudios': true,
+      },
+    );
     if (data == null) return;
 
     _model = UserModel(data['User'], id == Client.viewerId);
@@ -80,7 +33,7 @@ class UserController extends GetxController {
   }
 
   Future<void> toggleFollow() async {
-    final data = await Client.request(_toggleFollow, {'id': id});
+    final data = await Client.request(GqlMutation.toggleFollow, {'userId': id});
     if (data == null) return;
     _model!.toggleFollow(data['ToggleFollow']);
     update();
@@ -89,6 +42,6 @@ class UserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    if (_model == null) _fetch();
   }
 }

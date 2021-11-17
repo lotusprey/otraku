@@ -11,13 +11,13 @@ class ListEntryModel {
   final int? airingAt;
   final int? createdAt;
   final int? updatedAt;
-  final List<String> genres;
   final int progress;
   final int? progressMax;
   final int progressVolumes;
   final int? progressVolumesMax;
   final ListStatus? listStatus;
   final String? country;
+  final List<String> genres;
   double score;
   int repeat;
   String? notes;
@@ -49,7 +49,7 @@ class ListEntryModel {
   });
 
   factory ListEntryModel(Map<String, dynamic> map) => ListEntryModel._(
-        mediaId: map['mediaId'],
+        mediaId: map['media']['id'],
         title: map['media']['title']['userPreferred'],
         cover: map['media']['coverImage']['extraLarge'],
         nextEpisode: map['media']['nextAiringEpisode']?['episode'],

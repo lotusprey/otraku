@@ -163,13 +163,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ActionButton(
         icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
         tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-        onTap: () => widget.ctrl.toggleFavourite().then(
-              (ok) => ok
-                  ? setState(
-                      () => model.info.isFavourite = !model.info.isFavourite,
-                    )
-                  : null,
-            ),
+        onTap: () => widget.ctrl.toggleFavourite().then((_) => setState(() {})),
       ),
       const SizedBox(width: 10),
       ActionButton(

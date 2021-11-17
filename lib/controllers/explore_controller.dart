@@ -8,96 +8,11 @@ import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 // Searches and filters items from the Explorable enum
 class ExploreController extends OverscrollController implements Filterable {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _mediaQuery = r'''
-    query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
-        $status_not_in: [MediaStatus], $format_in: [MediaFormat], $format_not_in: [MediaFormat], 
-        $genre_in: [String], $genre_not_in: [String], $tag_in: [String], $tag_not_in: [String], 
-        $onList: Boolean, $isAdult: Boolean, $startDate_greater: FuzzyDateInt, 
-        $startDate_lesser: FuzzyDateInt, $countryOfOrigin: CountryCode, $source: MediaSource, 
-        $season: MediaSeason, $id_not_in: [Int], $sort: [MediaSort]) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        media(type: $type, search: $search, status_in: $status_in, status_not_in: $status_not_in, 
-        format_in: $format_in, format_not_in: $format_not_in, genre_in: $genre_in, 
-        genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
-        onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
-        startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
-        source: $source, season: $season, id_not_in: $id_not_in, sort: $sort) {
-          id type title {userPreferred} coverImage {large}
-        }
-      }
-    }
-  ''';
-
-  static const _charactersQuery = r'''
-    query Characters($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
-          id name {userPreferred} image {large}
-        }
-      }
-    }
-  ''';
-
-  static const _staffQuery = r'''
-    query Staff($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
-          id name {userPreferred} image {large}
-        }
-      }
-    }
-  ''';
-
-  static const _studiosQuery = r'''
-    query Studios($page: Int, $search: String, $id_not_in: [Int]) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        studios(search: $search, id_not_in: $id_not_in) {id name}
-      }
-    }
-  ''';
-
-  static const _usersQuery = r'''
-    query Users($page: Int, $search: String) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        users(search: $search) {id name avatar {large}}
-      }
-    }
-  ''';
-
-  static const _reviewsQuery = r'''
-    query Reviews($page: Int) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        reviews(sort: CREATED_AT_DESC) {
-          id
-          summary 
-          body(asHtml: true)
-          rating
-          ratingAmount
-          media {id type title{userPreferred} bannerImage}
-          user {id name}
-        }
-      }
-    }
-  ''';
-
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
   final _isLoading = true.obs;
   final _results = PageModel<ExplorableModel>().obs;
   final _search = ''.obs;
@@ -213,27 +128,18 @@ class ExploreController extends OverscrollController implements Filterable {
     }
 
     String query;
-    switch (_type.value) {
-      case Explorable.anime:
-      case Explorable.manga:
-        query = _mediaQuery;
-        break;
-      case Explorable.character:
-        query = _charactersQuery;
-        break;
-      case Explorable.staff:
-        query = _staffQuery;
-        break;
-      case Explorable.studio:
-        query = _studiosQuery;
-        break;
-      case Explorable.user:
-        query = _usersQuery;
-        break;
-      case Explorable.review:
-        query = _reviewsQuery;
-        break;
-    }
+    if (_type.value == Explorable.anime || _type.value == Explorable.manga)
+      query = GqlQuery.medias;
+    else if (_type.value == Explorable.character)
+      query = GqlQuery.characters;
+    else if (_type.value == Explorable.staff)
+      query = GqlQuery.staffs;
+    else if (_type.value == Explorable.studio)
+      query = GqlQuery.studios;
+    else if (_type.value == Explorable.review)
+      query = GqlQuery.reviews;
+    else
+      query = GqlQuery.users;
 
     Map<String, dynamic>? data = await Client.request(
       query,

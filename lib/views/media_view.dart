@@ -171,6 +171,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
         tooltip: model.entry.status == null ? 'Add' : 'Edit',
         onTap: () => ExploreIndexer.openEditPage(
           model.info.id,
+          context,
           model.entry,
           (EntryModel entry) => setState(() => model.entry = entry),
         ),

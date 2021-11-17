@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/entry_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/favourites_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
@@ -19,11 +18,9 @@ import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/controllers/user_reviews_controller.dart';
 import 'package:otraku/controllers/viewer_controller.dart';
-import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
-import 'package:otraku/views/entry_view.dart';
 import 'package:otraku/views/favourites_view.dart';
 import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/views/friends_view.dart';
@@ -56,7 +53,6 @@ class Navigation extends RouterDelegate<String>
   static const notificationsRoute = '/notifications';
   static const collectionRoute = '/collection';
   static const mediaRoute = '/media';
-  static const entryRoute = '/entry';
   static const characterRoute = '/character';
   static const staffRoute = '/staff';
   static const studioRoute = '/studio';
@@ -151,18 +147,6 @@ class Navigation extends RouterDelegate<String>
 
         Get.put(MediaController(id), tag: id.toString());
         _add(route, MediaView(id, image), args, id.toString());
-        break;
-      case entryRoute:
-        if (args.length < 3 || args[0] is! int || args[1] is! EntryModel?)
-          return;
-        if (args[2] is! Function(EntryModel)?) return;
-
-        final int id = args[0];
-        final EntryModel? model = args[1];
-        final Function(EntryModel)? callback = args[2];
-
-        Get.put(EntryController(id, model), tag: id.toString());
-        _add(route, EntryView(id, callback), args, id.toString());
         break;
       case characterRoute:
         if (args.length < 2 || args[0] is! int || args[1] is! String) return;
@@ -316,9 +300,6 @@ class Navigation extends RouterDelegate<String>
         break;
       case mediaRoute:
         if (_isPageUnique(page)) Get.delete<MediaController>(tag: page.tag);
-        break;
-      case entryRoute:
-        if (_isPageUnique(page)) Get.delete<EntryController>(tag: page.tag);
         break;
       case characterRoute:
         if (_isPageUnique(page)) Get.delete<CharacterController>(tag: page.tag);

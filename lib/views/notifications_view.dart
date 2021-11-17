@@ -89,7 +89,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditPage(notification.headId!);
+                    ExploreIndexer.openEditPage(notification.headId!, context);
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
@@ -140,7 +140,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditPage(notification.headId!);
+                    ExploreIndexer.openEditPage(notification.headId!, context);
                 },
                 child: Padding(
                   padding: Config.PADDING,

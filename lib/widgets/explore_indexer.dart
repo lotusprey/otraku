@@ -4,7 +4,9 @@ import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/views/entry_view.dart';
 import 'package:otraku/views/home_view.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable explorable;
@@ -55,11 +57,12 @@ class ExploreIndexer extends StatelessWidget {
   }
 
   static void openEditPage(
-    int id, [
-    EntryModel? entry,
-    Function(EntryModel)? fn,
+    int id,
+    BuildContext context, [
+    EntryModel? model,
+    Function(EntryModel)? callback,
   ]) =>
-      Navigation.it.push(Navigation.entryRoute, args: [id, entry, fn]);
+      DragSheet.show(context, EntryView(id, model, callback));
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,7 @@ class ExploreIndexer extends StatelessWidget {
       onTap: () => openPage(id: id, imageUrl: imageUrl, explorable: explorable),
       onLongPress: () {
         if (explorable == Explorable.anime || explorable == Explorable.manga)
-          openEditPage(id);
+          openEditPage(id, context);
       },
       child: child,
     );

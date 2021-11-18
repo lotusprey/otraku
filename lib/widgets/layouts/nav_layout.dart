@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/config.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -60,10 +61,9 @@ class NavLayout extends StatelessWidget {
       extendBody: true,
       appBar: appBar,
       floatingActionButton: floating,
-      floatingActionButtonLocation:
-          (Config.storage.read(Config.LEFT_HANDED) ?? false)
-              ? FloatingActionButtonLocation.startFloat
-              : FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: HomeController.localSettings.leftHanded
+          ? FloatingActionButtonLocation.startFloat
+          : FloatingActionButtonLocation.endFloat,
       body: SafeArea(bottom: false, child: body),
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(

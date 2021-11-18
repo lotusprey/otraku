@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/entry_controller.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/enums/list_status.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
@@ -157,7 +157,7 @@ class _ButtonsState extends State<_Buttons> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: _loading
                   ? const [Center(child: Loader())]
-                  : (Config.storage.read(Config.LEFT_HANDED) ?? false)
+                  : HomeController.localSettings.leftHanded
                       ? [save, remove]
                       : [remove, save],
             ),
@@ -176,7 +176,7 @@ class _EditView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<ViewerController>().settings!;
+    final settings = Get.find<HomeController>().siteSettings!;
     final old = ctrl.oldModel!;
     final model = ctrl.model!;
 

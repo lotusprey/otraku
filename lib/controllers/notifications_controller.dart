@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -39,13 +39,13 @@ class NotificationsController extends OverscrollController {
   set filter(int val) {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
-    fetch();
+    _fetch();
     scrollUpTo(0);
   }
 
   List<NotificationModel> get entries => _entries.items;
 
-  Future<void> fetch() async {
+  Future<void> _fetch() async {
     final data = await Client.request(
       GqlQuery.notifications,
       {
@@ -65,7 +65,7 @@ class NotificationsController extends OverscrollController {
       } catch (_) {}
 
     _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
-    Get.find<ViewerController>().nullifyUnread();
+    Get.find<HomeController>().nullifyUnread();
     update();
   }
 
@@ -93,6 +93,6 @@ class NotificationsController extends OverscrollController {
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    _fetch();
   }
 }

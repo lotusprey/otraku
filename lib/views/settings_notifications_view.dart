@@ -1,20 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsNotificationsView extends StatelessWidget {
-  const SettingsNotificationsView();
+  SettingsNotificationsView(this.model, this.changes);
+
+  final SettingsSiteModel model;
+  final Map<String, dynamic> changes;
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<SettingsController>();
-    final options = settings.model.notificationOptions;
+    final options = model.notificationOptions;
 
     final siteValues = <bool>[];
     for (int i = 0; i < NotificationType.values.length - 1; i++)
@@ -56,11 +57,10 @@ class SettingsNotificationsView extends StatelessWidget {
 
   void changeSiteOption(List<bool> values) {
     const key = 'notificationOptions';
-    final settings = Get.find<SettingsController>();
 
-    if (settings.changes.containsKey(key))
+    if (changes.containsKey(key))
       for (int i = 0; i < values.length; i++)
-        settings.changes[key][i]['enabled'] = values[i];
+        changes[key][i]['enabled'] = values[i];
     else {
       final newOptions = [];
       for (int i = 0; i < values.length; i++)
@@ -68,7 +68,7 @@ class SettingsNotificationsView extends StatelessWidget {
           'type': describeEnum(NotificationType.values[i]),
           'enabled': values[i],
         });
-      settings.changes[key] = newOptions;
+      changes[key] = newOptions;
     }
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
 import 'package:otraku/enums/explorable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/views/entry_view.dart';
@@ -44,7 +45,7 @@ class ExploreIndexer extends StatelessWidget {
         if (id != Client.viewerId)
           Navigation.it.push(Navigation.userRoute, args: [id, imageUrl]);
         else {
-          Config.homeIndex = HomeView.PROFILE;
+          Get.find<HomeController>().homeTab = HomeView.PROFILE;
           Navigation.it.popToFirst();
         }
         return;

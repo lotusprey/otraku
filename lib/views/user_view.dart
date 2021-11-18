@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -63,7 +64,8 @@ class HomeUserView extends StatelessWidget {
                     Ionicons.film,
                     'Anime',
                     () => id == Client.viewerId
-                        ? Config.homeIndex = HomeView.ANIME_LIST
+                        ? Get.find<HomeController>().homeTab =
+                            HomeView.ANIME_LIST
                         : Navigation.it.push(
                             Navigation.collectionRoute,
                             args: [id, true],
@@ -73,7 +75,8 @@ class HomeUserView extends StatelessWidget {
                     Ionicons.bookmark,
                     'Manga',
                     () => id == Client.viewerId
-                        ? Config.homeIndex = HomeView.MANGA_LIST
+                        ? Get.find<HomeController>().homeTab =
+                            HomeView.MANGA_LIST
                         : Navigation.it.push(
                             Navigation.collectionRoute,
                             args: [id, false],

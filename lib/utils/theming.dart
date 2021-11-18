@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/theme_model.dart';
-import 'package:otraku/utils/config.dart';
 
 class Theming with ChangeNotifier {
   // Sizes.
@@ -12,60 +12,27 @@ class Theming with ChangeNotifier {
   static const FONT_MEDIUM = 15.0;
   static const FONT_SMALL = 13.0;
 
-  // Storage keys.
-  static const _THEME_MODE = 'themeMode';
-  static const _LIGHT_THEME = 'theme1';
-  static const _DARK_THEME = 'theme2';
-  // static const _CUSTOM_1 = 'customTheme1';
-  // static const _CUSTOM_2 = 'customTheme2';
-
   static final it = Theming._();
 
   Theming._() {
-    _mode = ThemeMode.values[(Config.storage.read(_THEME_MODE) ?? 0)];
-    _light = Config.storage.read(_LIGHT_THEME) ?? 0;
-    _dark = Config.storage.read(_DARK_THEME) ?? 0;
     _setTheme();
   }
 
   late ThemeModel _theme;
-  late ThemeMode _mode;
-  late int _light;
-  late int _dark;
 
   ThemeModel get theme => _theme;
-  ThemeMode get mode => _mode;
-  int get light => _light;
-  int get dark => _dark;
-
-  set mode(ThemeMode val) {
-    if (val == _mode) return;
-    Config.storage.write(_THEME_MODE, val.index);
-    _mode = val;
-    refresh();
-  }
-
-  set light(int val) {
-    if (val < 0 || val > _themes.length || val == _light) return;
-    Config.storage.write(_LIGHT_THEME, val);
-    _light = val;
-    refresh();
-  }
-
-  set dark(int val) {
-    if (val < 0 || val > _themes.length || val == _dark) return;
-    Config.storage.write(_DARK_THEME, val);
-    _dark = val;
-    refresh();
-  }
 
   void _setTheme() {
-    final platform = SchedulerBinding.instance?.window.platformBrightness;
-    final isDark = _mode == ThemeMode.system
-        ? platform == Brightness.dark
-        : _mode == ThemeMode.dark;
+    final mode = HomeController.localSettings.themeMode;
+    final light = HomeController.localSettings.lightTheme;
+    final dark = HomeController.localSettings.darkTheme;
 
-    _theme = _themes.values.elementAt(isDark ? _dark : _light);
+    final platform = SchedulerBinding.instance?.window.platformBrightness;
+    final isDark = mode == ThemeMode.system
+        ? platform == Brightness.dark
+        : mode == ThemeMode.dark;
+
+    _theme = _themes.values.elementAt(isDark ? dark : light);
     SystemChrome.setSystemUIOverlayStyle(_theme.overlayStyle);
   }
 
@@ -74,9 +41,11 @@ class Theming with ChangeNotifier {
     notifyListeners();
   }
 
-  // Typically used for DropDownFields.
+  /// Typically used for [DropDownFields].
   static Map<String, int> get themes =>
       Map.fromIterables(_themes.keys, List.generate(_themes.length, (i) => i));
+
+  static get themeCount => _themes.length;
 
   static final _themes = {
     'Navy': ThemeModel(

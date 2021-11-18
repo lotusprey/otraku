@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/config.dart';
@@ -178,7 +179,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ),
     ];
 
-    if (Config.storage.read(Config.LEFT_HANDED) ?? false)
+    if (HomeController.localSettings.leftHanded)
       children = children.reversed.toList();
 
     return FloatingListener(

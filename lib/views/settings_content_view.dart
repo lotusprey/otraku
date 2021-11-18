@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/enums/entry_sort.dart';
 import 'package:otraku/enums/score_format.dart';
 import 'package:otraku/utils/convert.dart';
@@ -13,12 +12,13 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsContentView extends StatelessWidget {
-  const SettingsContentView();
+  SettingsContentView(this.model, this.changes);
+
+  final SettingsSiteModel model;
+  final Map<String, dynamic> changes;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<SettingsController>();
-
     const dropDownGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
       minWidth: 170,
       height: 75,
@@ -50,7 +50,7 @@ class SettingsContentView extends StatelessWidget {
               delegate: SliverChildListDelegate.fixed([
                 DropDownField(
                   title: 'Title Language',
-                  value: ctrl.model.titleLanguage,
+                  value: model.titleLanguage,
                   items: const {
                     'Romaji': 'ROMAJI',
                     'English': 'ENGLISH',
@@ -58,15 +58,15 @@ class SettingsContentView extends StatelessWidget {
                   },
                   onChanged: (val) {
                     const key = 'titleLanguage';
-                    if (val == ctrl.model.titleLanguage)
-                      ctrl.changes.remove(key);
+                    if (val == model.titleLanguage)
+                      changes.remove(key);
                     else
-                      ctrl.changes[key] = val;
+                      changes[key] = val;
                   },
                 ),
                 DropDownField(
                   title: 'Character & Staff Name',
-                  value: ctrl.model.staffNameLanguage,
+                  value: model.staffNameLanguage,
                   items: const {
                     'Romaji, Western Order': 'ROMAJI_WESTERN',
                     'Romaji': 'ROMAJI',
@@ -74,15 +74,15 @@ class SettingsContentView extends StatelessWidget {
                   },
                   onChanged: (val) {
                     const key = 'staffNameLanguage';
-                    if (val == ctrl.model.staffNameLanguage)
-                      ctrl.changes.remove(key);
+                    if (val == model.staffNameLanguage)
+                      changes.remove(key);
                     else
-                      ctrl.changes[key] = val;
+                      changes[key] = val;
                   },
                 ),
                 DropDownField(
                   title: 'Activity Merge Time',
-                  value: ctrl.model.activityMergeTime,
+                  value: model.activityMergeTime,
                   items: const {
                     'Never': 0,
                     '30 Minutes': 30,
@@ -100,10 +100,10 @@ class SettingsContentView extends StatelessWidget {
                   },
                   onChanged: (val) {
                     const key = 'activityMergeTime';
-                    if (val == ctrl.model.activityMergeTime)
-                      ctrl.changes.remove(key);
+                    if (val == model.activityMergeTime)
+                      changes.remove(key);
                     else
-                      ctrl.changes[key] = val;
+                      changes[key] = val;
                   },
                 ),
               ]),
@@ -114,24 +114,24 @@ class SettingsContentView extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(
                 title: 'Airing Anime Notifications',
-                initial: ctrl.model.airingNotifications,
+                initial: model.airingNotifications,
                 onChanged: (val) {
                   const notifications = 'airingNotifications';
-                  if (ctrl.changes.containsKey(notifications))
-                    ctrl.changes.remove(notifications);
+                  if (changes.containsKey(notifications))
+                    changes.remove(notifications);
                   else
-                    ctrl.changes[notifications] = val;
+                    changes[notifications] = val;
                 },
               ),
               CheckBoxField(
                 title: '18+ Content',
-                initial: ctrl.model.displayAdultContent,
+                initial: model.displayAdultContent,
                 onChanged: (val) {
                   const adultContent = 'displayAdultContent';
-                  if (ctrl.changes.containsKey(adultContent))
-                    ctrl.changes.remove(adultContent);
+                  if (changes.containsKey(adultContent))
+                    changes.remove(adultContent);
                   else
-                    ctrl.changes[adultContent] = val;
+                    changes[adultContent] = val;
                 },
               ),
             ]),
@@ -152,32 +152,32 @@ class SettingsContentView extends StatelessWidget {
               delegate: SliverChildListDelegate.fixed([
                 DropDownField<ScoreFormat>(
                   title: 'Scoring System',
-                  value: ctrl.model.scoreFormat,
+                  value: model.scoreFormat,
                   items: Map.fromIterable(
                     ScoreFormat.values,
                     key: (v) => Convert.clarifyEnum(describeEnum(v))!,
                   ),
                   onChanged: (val) {
                     const key = 'scoreFormat';
-                    if (val == ctrl.model.scoreFormat)
-                      ctrl.changes.remove(key);
+                    if (val == model.scoreFormat)
+                      changes.remove(key);
                     else
-                      ctrl.changes[key] = describeEnum(val);
+                      changes[key] = describeEnum(val);
                   },
                 ),
                 DropDownField<EntrySort>(
                   title: 'Default Site List Sort',
-                  value: ctrl.model.defaultSort,
+                  value: model.defaultSort,
                   items: Map.fromIterables(
                     EntrySortHelper.defaultStrings,
                     EntrySortHelper.defaultEnums,
                   ),
                   onChanged: (val) {
                     const key = 'rowOrder';
-                    if (val == ctrl.model.defaultSort)
-                      ctrl.changes.remove(key);
+                    if (val == model.defaultSort)
+                      changes.remove(key);
                     else
-                      ctrl.changes[key] = val.string;
+                      changes[key] = val.string;
                   },
                 ),
               ]),
@@ -188,35 +188,35 @@ class SettingsContentView extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(
                 title: 'Split Completed Anime',
-                initial: ctrl.model.splitCompletedAnime,
+                initial: model.splitCompletedAnime,
                 onChanged: (val) {
                   const splitAnime = 'splitCompletedAnime';
-                  if (ctrl.changes.containsKey(splitAnime))
-                    ctrl.changes.remove(splitAnime);
+                  if (changes.containsKey(splitAnime))
+                    changes.remove(splitAnime);
                   else
-                    ctrl.changes[splitAnime] = val;
+                    changes[splitAnime] = val;
                 },
               ),
               CheckBoxField(
                 title: 'Split Completed Manga',
-                initial: ctrl.model.splitCompletedManga,
+                initial: model.splitCompletedManga,
                 onChanged: (val) {
                   const splitManga = 'splitCompletedManga';
-                  if (ctrl.changes.containsKey(splitManga))
-                    ctrl.changes.remove(splitManga);
+                  if (changes.containsKey(splitManga))
+                    changes.remove(splitManga);
                   else
-                    ctrl.changes[splitManga] = val;
+                    changes[splitManga] = val;
                 },
               ),
               CheckBoxField(
                 title: 'Advanced Scoring',
-                initial: ctrl.model.advancedScoringEnabled,
+                initial: model.advancedScoringEnabled,
                 onChanged: (val) {
                   const advancedScoring = 'advancedScoringEnabled';
-                  if (ctrl.changes.containsKey(advancedScoring))
-                    ctrl.changes.remove(advancedScoring);
+                  if (changes.containsKey(advancedScoring))
+                    changes.remove(advancedScoring);
                   else
-                    ctrl.changes[advancedScoring] = val;
+                    changes[advancedScoring] = val;
                 },
               ),
             ]),
@@ -225,9 +225,9 @@ class SettingsContentView extends StatelessWidget {
             child: ChipNamingGrid(
               title: 'Advanced Scores',
               placeholder: 'advanced scores',
-              names: ctrl.model.advancedScores,
+              names: model.advancedScores,
               onChanged: () =>
-                  ctrl.changes['advancedScoring'] = ctrl.model.advancedScores,
+                  changes['advancedScoring'] = model.advancedScores,
             ),
           ),
           SliverToBoxAdapter(

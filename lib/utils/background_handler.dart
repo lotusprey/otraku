@@ -4,11 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/enums/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -96,13 +96,12 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       if (data == null) return false;
 
       final int newCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final int oldCount =
-          Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
+      final int oldCount = HomeController.localSettings.notificationCount;
       final count = newCount < oldCount ? newCount : newCount - oldCount;
       if (count < 1) return true;
 
       // Save new notification count.
-      Config.storage.write(Config.LAST_NOTIFICATION_COUNT, newCount);
+      HomeController.localSettings.notificationCount = newCount;
 
       // Show notifications.
       final ns = data['Page']['notifications'];

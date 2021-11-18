@@ -11,13 +11,11 @@ import 'package:otraku/controllers/friends_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/controllers/review_controller.dart';
-import 'package:otraku/controllers/settings_controller.dart';
 import 'package:otraku/controllers/staff_controller.dart';
 import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/controllers/user_reviews_controller.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
 import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
@@ -112,11 +110,9 @@ class Navigation extends RouterDelegate<String>
         );
         Get.put(FeedController(null), tag: FeedController.HOME_FEED_TAG);
         Get.put(ExploreController());
-        Get.put(ViewerController());
         _add(route, HomeView(), args, null);
         break;
       case settingsRoute:
-        Get.put(SettingsController());
         _add(route, SettingsView(), args, null);
         break;
       case notificationsRoute:
@@ -286,10 +282,6 @@ class Navigation extends RouterDelegate<String>
         Get.delete<UserController>(tag: Client.viewerId.toString());
         Get.delete<FeedController>(tag: FeedController.HOME_FEED_TAG);
         Get.delete<ExploreController>();
-        Get.delete<ViewerController>();
-        break;
-      case settingsRoute:
-        Get.delete<SettingsController>();
         break;
       case notificationsRoute:
         Get.delete<NotificationsController>();

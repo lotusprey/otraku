@@ -5,7 +5,7 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/enums/activity_type.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -109,72 +109,77 @@ class HomeFeedView extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  final FeedController feed;
-  _Header(this.feed);
+  final FeedController ctrl;
+  _Header(this.ctrl);
 
   @override
   Widget build(BuildContext context) {
-    final viewer = Get.find<ViewerController>();
-
     return SliverTransparentAppBar([
       BubbleTabs(
         items: const {'Following': true, 'Global': false},
-        current: () => feed.onFollowing,
-        onChanged: (bool val) => feed.onFollowing = val,
-        onSame: () => feed.scrollUpTo(0),
+        current: () => ctrl.onFollowing,
+        onChanged: (bool val) => ctrl.onFollowing = val,
+        onSame: () => ctrl.scrollUpTo(0),
       ),
       const Spacer(),
-      _Filter(feed),
-      Obx(() {
-        if (viewer.unreadCount < 1)
-          return AppBarIcon(
-            tooltip: 'Notifications',
-            icon: Ionicons.notifications_outline,
-            onTap: () => Navigation.it.push(Navigation.notificationsRoute),
-          );
-
-        return Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Tooltip(
-            message: 'Notifications',
-            child: GestureDetector(
+      _Filter(ctrl),
+      GetBuilder<HomeController>(
+        id: HomeController.ID_NOTIFICATIONS,
+        builder: (vCtrl) {
+          if (HomeController.localSettings.notificationCount < 1)
+            return AppBarIcon(
+              tooltip: 'Notifications',
+              icon: Ionicons.notifications_outline,
               onTap: () => Navigation.it.push(Navigation.notificationsRoute),
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    child: Icon(
-                      Ionicons.notifications_outline,
-                      color: Theme.of(context).colorScheme.onBackground,
-                    ),
-                  ),
-                  Container(
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                      maxHeight: 20,
-                    ),
-                    margin: const EdgeInsets.only(right: 15, bottom: 5),
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        viewer.unreadCount.toString(),
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                              color: Theme.of(context).colorScheme.background,
-                            ),
+            );
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Tooltip(
+              message: 'Notifications',
+              child: GestureDetector(
+                onTap: () => Navigation.it.push(Navigation.notificationsRoute),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      right: 0,
+                      child: Icon(
+                        Ionicons.notifications_outline,
+                        color: Theme.of(context).colorScheme.onBackground,
                       ),
                     ),
-                  ),
-                ],
+                    Container(
+                      constraints: const BoxConstraints(
+                        minWidth: 20,
+                        minHeight: 20,
+                        maxHeight: 20,
+                      ),
+                      margin: const EdgeInsets.only(right: 15, bottom: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.error,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          HomeController.localSettings.notificationCount
+                              .toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle2!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.background,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     ]);
   }
 }

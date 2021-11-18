@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/utils/config.dart';
 
 abstract class Convert {
   // Replaces _ with intervals and makes each word start with
@@ -71,7 +71,7 @@ abstract class Convert {
     if (seconds == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
 
-    if (Config.storage.read(Config.CLOCK_TYPE) ?? false) {
+    if (HomeController.localSettings.analogueClock) {
       final overflows = date.hour > 12;
       return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} '
           '${_MONTHS[date.month]} ${date.year}, '

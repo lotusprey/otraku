@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/config.dart';
@@ -134,7 +135,7 @@ class MediaInfoView {
             );
             explorable.type = model.type;
             explorable.search = '';
-            Config.homeIndex = HomeView.EXPLORE;
+            Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigation.it.popToFirst();
           },
         ),
@@ -330,7 +331,7 @@ class __TagsState extends State<_Tags> {
             );
             explorable.type = ctrl.model!.info.type;
             explorable.search = '';
-            Config.homeIndex = HomeView.EXPLORE;
+            Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigation.it.popToFirst();
           },
           onLongPress: () => showPopUp(
@@ -406,7 +407,7 @@ class __TagsState extends State<_Tags> {
               );
               explorable.type = ctrl.model!.info.type;
               explorable.search = '';
-              Config.homeIndex = HomeView.EXPLORE;
+              Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigation.it.popToFirst();
             },
             onLongPress: () => showPopUp(

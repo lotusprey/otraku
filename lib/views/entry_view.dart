@@ -13,6 +13,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/expandable_field.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
@@ -32,40 +33,38 @@ class EntryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GetBuilder<EntryController>(
-        id: EntryController.MAIN_ID,
-        tag: mediaId.toString(),
-        init: EntryController(mediaId, model),
-        builder: (ctrl) {
-          // This is cached to not rebuild each time the sheet is scrolled.
-          Widget? editView;
+    return GetBuilder<EntryController>(
+      id: EntryController.MAIN_ID,
+      tag: mediaId.toString(),
+      init: EntryController(mediaId, model),
+      builder: (ctrl) {
+        // This is cached to not rebuild each time the sheet is scrolled.
+        Widget? editView;
 
-          return DraggableScrollableSheet(
-            expand: false,
-            builder: (context, scrollCtrl) {
-              if (editView == null)
-                editView = Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      child: ctrl.model != null
-                          ? _EditView(ctrl, scrollCtrl)
-                          : const Center(child: Loader()),
+        return DraggableScrollableSheet(
+          expand: false,
+          builder: (context, scrollCtrl) {
+            if (editView == null)
+              editView = Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.background,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(20)),
                     ),
-                    if (ctrl.model != null) _Buttons(ctrl, callback),
-                  ],
-                );
+                    child: ctrl.model != null
+                        ? _EditView(ctrl, scrollCtrl)
+                        : const Center(child: Loader()),
+                  ),
+                  if (ctrl.model != null) _Buttons(ctrl, callback),
+                ],
+              );
 
-              return editView!;
-            },
-          );
-        },
-      ),
+            return editView!;
+          },
+        );
+      },
     );
   }
 }
@@ -86,13 +85,14 @@ class _ButtonsState extends State<_Buttons> {
   @override
   Widget build(BuildContext context) {
     final ctrl = widget.ctrl;
+
     final remove = Expanded(
       child: ctrl.model!.status != null
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ElevatedButton.icon(
-                style: Theme.of(context).elevatedButtonTheme.style!.copyWith(
-                      backgroundColor: MaterialStateProperty.all(
+              child: TextButton.icon(
+                style: Theme.of(context).textButtonTheme.style!.copyWith(
+                      foregroundColor: MaterialStateProperty.all(
                         Theme.of(context).colorScheme.error,
                       ),
                     ),
@@ -119,10 +119,11 @@ class _ButtonsState extends State<_Buttons> {
             )
           : const SizedBox(),
     );
+
     final save = Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: ElevatedButton.icon(
+        child: TextButton.icon(
           label: Text('Save'),
           icon: Icon(Ionicons.save_outline),
           onPressed: () {
@@ -146,13 +147,19 @@ class _ButtonsState extends State<_Buttons> {
         child: BackdropFilter(
           filter: Config.filter,
           child: Container(
-            height: 50,
+            height: MediaQuery.of(context).viewPadding.bottom + 50,
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewPadding.bottom,
+            ),
             width: double.infinity,
             color: Theme.of(context).cardColor,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children:
-                  _loading ? const [Center(child: Loader())] : [remove, save],
+              children: _loading
+                  ? const [Center(child: Loader())]
+                  : (Config.storage.read(Config.LEFT_HANDED) ?? false)
+                      ? [save, remove]
+                      : [remove, save],
             ),
           ),
         ),
@@ -440,7 +447,9 @@ class _EditView extends StatelessWidget {
               (key, val) => model.customLists[key] = val,
             ),
           ],
-          const SliverToBoxAdapter(child: SizedBox(height: 50)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: NavLayout.offset(context)),
+          ),
         ],
       ),
     );

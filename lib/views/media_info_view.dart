@@ -142,7 +142,7 @@ class MediaInfoView {
         _ScrollCards(
           title: 'Studios',
           items: model.studios.keys.toList(),
-          onTap: (index) => ExploreIndexer.openPage(
+          onTap: (index) => ExploreIndexer.openView(
             id: model.studios[model.studios.keys.elementAt(index)]!,
             imageUrl: model.studios.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -152,7 +152,7 @@ class MediaInfoView {
         _ScrollCards(
           title: 'Producers',
           items: model.producers.keys.toList(),
-          onTap: (index) => ExploreIndexer.openPage(
+          onTap: (index) => ExploreIndexer.openView(
             id: model.producers[model.producers.keys.elementAt(index)]!,
             imageUrl: model.producers.keys.elementAt(index),
             explorable: Explorable.studio,

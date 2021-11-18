@@ -81,7 +81,7 @@ class _NotificationWidget extends StatelessWidget {
           children: [
             if (notification.imageUrl != null && notification.headId != null)
               GestureDetector(
-                onTap: () => ExploreIndexer.openPage(
+                onTap: () => ExploreIndexer.openView(
                   id: notification.headId!,
                   imageUrl: notification.imageUrl,
                   explorable: notification.explorable ?? Explorable.user,
@@ -89,7 +89,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditPage(notification.headId!, context);
+                    ExploreIndexer.openEditView(notification.headId!, context);
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
@@ -113,7 +113,7 @@ class _NotificationWidget extends StatelessWidget {
                       );
                       return;
                     case NotificationType.FOLLOWING:
-                      ExploreIndexer.openPage(
+                      ExploreIndexer.openView(
                         id: notification.headId!,
                         imageUrl: notification.imageUrl,
                         explorable: Explorable.user,
@@ -121,7 +121,7 @@ class _NotificationWidget extends StatelessWidget {
                       return;
                     case NotificationType.AIRING:
                     case NotificationType.RELATED_MEDIA_ADDITION:
-                      ExploreIndexer.openPage(
+                      ExploreIndexer.openView(
                         id: notification.bodyId!,
                         imageUrl: notification.imageUrl,
                         explorable: notification.explorable!,
@@ -140,7 +140,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditPage(notification.headId!, context);
+                    ExploreIndexer.openEditView(notification.headId!, context);
                 },
                 child: Padding(
                   padding: Config.PADDING,

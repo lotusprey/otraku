@@ -21,7 +21,7 @@ class ExploreIndexer extends StatelessWidget {
     required this.child,
   });
 
-  static void openPage({
+  static void openView({
     required int id,
     required String? imageUrl,
     required Explorable explorable,
@@ -56,7 +56,7 @@ class ExploreIndexer extends StatelessWidget {
     }
   }
 
-  static void openEditPage(
+  static void openEditView(
     int id,
     BuildContext context, [
     EntryModel? model,
@@ -68,10 +68,10 @@ class ExploreIndexer extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => openPage(id: id, imageUrl: imageUrl, explorable: explorable),
+      onTap: () => openView(id: id, imageUrl: imageUrl, explorable: explorable),
       onLongPress: () {
         if (explorable == Explorable.anime || explorable == Explorable.manga)
-          openEditPage(id, context);
+          openEditView(id, context);
       },
       child: child,
     );

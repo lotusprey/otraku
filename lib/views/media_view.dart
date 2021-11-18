@@ -169,7 +169,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ActionButton(
         icon: model.entry.status == null ? Icons.add : Icons.edit,
         tooltip: model.entry.status == null ? 'Add' : 'Edit',
-        onTap: () => ExploreIndexer.openEditPage(
+        onTap: () => ExploreIndexer.openEditView(
           model.info.id,
           context,
           model.entry,

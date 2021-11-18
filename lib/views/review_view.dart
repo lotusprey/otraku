@@ -40,7 +40,7 @@ class ReviewView extends StatelessWidget {
                         sliver: SliverList(
                           delegate: SliverChildListDelegate.fixed([
                             GestureDetector(
-                              onTap: () => ExploreIndexer.openPage(
+                              onTap: () => ExploreIndexer.openView(
                                 id: model.mediaId,
                                 imageUrl: model.mediaCover,
                                 explorable: model.explorable,
@@ -53,7 +53,7 @@ class ReviewView extends StatelessWidget {
                             ),
                             const SizedBox(height: 5),
                             GestureDetector(
-                              onTap: () => ExploreIndexer.openPage(
+                              onTap: () => ExploreIndexer.openView(
                                 id: model.userId,
                                 imageUrl: model.userAvatar,
                                 explorable: Explorable.user,

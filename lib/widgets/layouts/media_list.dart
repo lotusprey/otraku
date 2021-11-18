@@ -307,7 +307,13 @@ class _Progress extends StatelessWidget {
         maximumSize: MaterialStateProperty.all(const Size.fromHeight(20)),
         padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
       ),
-      onPressed: () => increment!(entry),
+      onPressed: () {
+        if (entry.progressMax == null ||
+            entry.progress < entry.progressMax! - 1)
+          increment!(entry);
+        else
+          ExploreIndexer.openEditView(entry.mediaId, context);
+      },
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(

@@ -4,11 +4,12 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/entry_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -157,7 +158,7 @@ class _ButtonsState extends State<_Buttons> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: _loading
                   ? const [Center(child: Loader())]
-                  : HomeController.localSettings.leftHanded
+                  : LocalSettings().leftHanded
                       ? [save, remove]
                       : [remove, save],
             ),

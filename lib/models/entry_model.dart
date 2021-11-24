@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/constants/list_status.dart';
 
 class EntryModel {
   final int mediaId;

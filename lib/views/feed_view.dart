@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/feed_controller.dart';
-import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/activity_type.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -126,11 +127,11 @@ class _Header extends StatelessWidget {
       GetBuilder<HomeController>(
         id: HomeController.ID_NOTIFICATIONS,
         builder: (vCtrl) {
-          if (HomeController.localSettings.notificationCount < 1)
+          if (LocalSettings().notificationCount < 1)
             return AppBarIcon(
               tooltip: 'Notifications',
               icon: Ionicons.notifications_outline,
-              onTap: () => Navigation.it.push(Navigation.notificationsRoute),
+              onTap: () => Navigation().push(Navigation.notificationsRoute),
             );
 
           return Padding(
@@ -138,7 +139,7 @@ class _Header extends StatelessWidget {
             child: Tooltip(
               message: 'Notifications',
               child: GestureDetector(
-                onTap: () => Navigation.it.push(Navigation.notificationsRoute),
+                onTap: () => Navigation().push(Navigation.notificationsRoute),
                 child: Stack(
                   children: [
                     Positioned(
@@ -162,8 +163,7 @@ class _Header extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          HomeController.localSettings.notificationCount
-                              .toString(),
+                          LocalSettings().notificationCount.toString(),
                           style: Theme.of(context)
                               .textTheme
                               .subtitle2!

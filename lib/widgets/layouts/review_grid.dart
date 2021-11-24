@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';

@@ -1,4 +1,4 @@
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/convert.dart';
 

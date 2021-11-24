@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/models/studio_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/group_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/graphql.dart';

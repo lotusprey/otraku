@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/theming.dart';
 
 class ThemeModel {
@@ -266,20 +266,20 @@ class ThemeModel {
     );
   }
 
-  factory ThemeModel.read(String key) {
-    final Map<String, dynamic> map = Config.storage.read(key) ?? {};
+  // factory ThemeModel.read(String key) {
+  //   final Map<String, dynamic> map = Config.storage.read(key) ?? {};
 
-    return ThemeModel(
-      brightness: map['brightness'] ?? Brightness.dark,
-      background: map['background'] ?? Color(0xFF0F171E),
-      onBackground: map['onBackground'] ?? Color(0xFFCAD5E2),
-      surface: map['surface'] ?? Color(0xFF1D2835),
-      onSurface: map['onSurface'] ?? Color(0xFFCAD5E2),
-      primary: map['primary'] ?? Color(0xFF56789F),
-      secondary: map['secondary'] ?? Color(0xFF45A0F2),
-      onSecondary: map['onSecondary'] ?? Color(0xFF0F171E),
-      error: map['error'] ?? Color(0xFFD74761),
-      onError: map['onError'] ?? Color(0xFF0F171E),
-    );
-  }
+  //   return ThemeModel(
+  //     brightness: map['brightness'] ?? Brightness.dark,
+  //     background: map['background'] ?? Color(0xFF0F171E),
+  //     onBackground: map['onBackground'] ?? Color(0xFFCAD5E2),
+  //     surface: map['surface'] ?? Color(0xFF1D2835),
+  //     onSurface: map['onSurface'] ?? Color(0xFFCAD5E2),
+  //     primary: map['primary'] ?? Color(0xFF56789F),
+  //     secondary: map['secondary'] ?? Color(0xFF45A0F2),
+  //     onSecondary: map['onSecondary'] ?? Color(0xFF0F171E),
+  //     error: map['error'] ?? Color(0xFFD74761),
+  //     onError: map['onError'] ?? Color(0xFF0F171E),
+  //   );
+  // }
 }

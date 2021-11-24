@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/widgets/html_content.dart';
 
 Future<dynamic> showPopUp(BuildContext ctx, Widget child) => showDialog(
@@ -126,7 +126,7 @@ class ConfirmationDialog extends StatelessWidget {
               style:
                   TextStyle(color: Theme.of(context).colorScheme.onBackground),
             ),
-            onPressed: Navigator.of(context).pop,
+            onPressed: () => Navigator.pop(context),
           ),
         TextButton(
           child: Text(mainAction),

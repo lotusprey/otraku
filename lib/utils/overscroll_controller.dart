@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
-// A Get controller that can fetch data on overscroll.
+/// A [GetxController] that can fetch data on overscroll.
 abstract class OverscrollController extends GetxController {
   final scrollCtrl = MultiScrollController();
 

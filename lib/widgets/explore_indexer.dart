@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/views/entry_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
@@ -30,27 +30,27 @@ class ExploreIndexer extends StatelessWidget {
     switch (explorable) {
       case Explorable.anime:
       case Explorable.manga:
-        Navigation.it.push(Navigation.mediaRoute, args: [id, imageUrl]);
+        Navigation().push(Navigation.mediaRoute, args: [id, imageUrl]);
         return;
       case Explorable.character:
-        Navigation.it.push(Navigation.characterRoute, args: [id, imageUrl]);
+        Navigation().push(Navigation.characterRoute, args: [id, imageUrl]);
         return;
       case Explorable.staff:
-        Navigation.it.push(Navigation.staffRoute, args: [id, imageUrl]);
+        Navigation().push(Navigation.staffRoute, args: [id, imageUrl]);
         return;
       case Explorable.studio:
-        Navigation.it.push(Navigation.studioRoute, args: [id, imageUrl]);
+        Navigation().push(Navigation.studioRoute, args: [id, imageUrl]);
         return;
       case Explorable.user:
-        if (id != Client.viewerId)
-          Navigation.it.push(Navigation.userRoute, args: [id, imageUrl]);
+        if (id != LocalSettings().id)
+          Navigation().push(Navigation.userRoute, args: [id, imageUrl]);
         else {
           Get.find<HomeController>().homeTab = HomeView.PROFILE;
-          Navigation.it.popToFirst();
+          Navigation().popToFirst();
         }
         return;
       case Explorable.review:
-        Navigation.it.push(Navigation.reviewRoute, args: [id, imageUrl]);
+        Navigation().push(Navigation.reviewRoute, args: [id, imageUrl]);
         return;
       default:
         return;

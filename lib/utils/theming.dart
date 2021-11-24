@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/theme_model.dart';
+import 'package:otraku/utils/local_settings.dart';
 
 class Theming with ChangeNotifier {
+  Theming._() {
+    _setTheme();
+  }
+
+  factory Theming() => _it;
+
+  static final _it = Theming._();
+
   // Sizes.
   static const ICON_BIG = 25.0;
   static const ICON_SMALL = 20.0;
@@ -12,20 +20,14 @@ class Theming with ChangeNotifier {
   static const FONT_MEDIUM = 15.0;
   static const FONT_SMALL = 13.0;
 
-  static final it = Theming._();
-
-  Theming._() {
-    _setTheme();
-  }
-
   late ThemeModel _theme;
 
   ThemeModel get theme => _theme;
 
   void _setTheme() {
-    final mode = HomeController.localSettings.themeMode;
-    final light = HomeController.localSettings.lightTheme;
-    final dark = HomeController.localSettings.darkTheme;
+    final mode = LocalSettings().themeMode;
+    final light = LocalSettings().lightTheme;
+    final dark = LocalSettings().darkTheme;
 
     final platform = SchedulerBinding.instance?.window.platformBrightness;
     final isDark = mode == ThemeMode.system

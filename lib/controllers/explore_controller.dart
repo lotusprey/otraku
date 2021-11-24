@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 // Searches and filters items from the Explorable enum
@@ -17,14 +17,13 @@ class ExploreController extends OverscrollController implements Filterable {
   final _search = ''.obs;
   final _genres = <String>[];
   final _tags = <String, List<TagModel>>{};
-  final _type = HomeController.localSettings.defaultExplorable.obs;
+  final _type = LocalSettings().defaultExplorable.obs;
   int _concurrentFetches = 0;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
     Filterable.ID_NOT_IN: [],
-    Filterable.SORT:
-        describeEnum(HomeController.localSettings.defaultExploreSort),
+    Filterable.SORT: describeEnum(LocalSettings().defaultExploreSort),
   };
 
   // ***************************************************************************

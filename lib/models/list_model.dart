@@ -1,6 +1,6 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/models/list_entry_model.dart';
 
 class ListModel {

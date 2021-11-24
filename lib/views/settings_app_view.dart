@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/media_sort.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
@@ -18,8 +18,6 @@ class SettingsAppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = HomeController.localSettings;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
@@ -34,29 +32,29 @@ class SettingsAppView extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               DropDownField<int>(
                 title: 'Light Theme',
-                value: settings.lightTheme,
+                value: LocalSettings().lightTheme,
                 items: Theming.themes,
-                onChanged: (val) => settings.lightTheme = val,
+                onChanged: (val) => LocalSettings().lightTheme = val,
               ),
               DropDownField<int>(
                 title: 'Dark Theme',
-                value: settings.darkTheme,
+                value: LocalSettings().darkTheme,
                 items: Theming.themes,
-                onChanged: (val) => settings.darkTheme = val,
+                onChanged: (val) => LocalSettings().darkTheme = val,
               ),
               DropDownField<ThemeMode>(
                 title: 'Theme Mode',
-                value: settings.themeMode,
+                value: LocalSettings().themeMode,
                 items: const {
                   'Auto': ThemeMode.system,
                   'Light': ThemeMode.light,
                   'Dark': ThemeMode.dark,
                 },
-                onChanged: (val) => settings.themeMode = val,
+                onChanged: (val) => LocalSettings().themeMode = val,
               ),
               DropDownField<int>(
                 title: 'Startup Page',
-                value: settings.defaultHomeTab,
+                value: LocalSettings().defaultHomeTab,
                 items: {
                   'Feed': HomeView.FEED,
                   'Anime List': HomeView.ANIME_LIST,
@@ -64,43 +62,43 @@ class SettingsAppView extends StatelessWidget {
                   'Explore': HomeView.EXPLORE,
                   'Profile': HomeView.PROFILE,
                 },
-                onChanged: (val) => settings.defaultHomeTab = val,
+                onChanged: (val) => LocalSettings().defaultHomeTab = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',
-                value: settings.defaultAnimeSort,
+                value: LocalSettings().defaultAnimeSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum(describeEnum(v))!,
                 ),
-                onChanged: (val) => settings.defaultAnimeSort = val,
+                onChanged: (val) => LocalSettings().defaultAnimeSort = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Manga Sort',
-                value: settings.defaultMangaSort,
+                value: LocalSettings().defaultMangaSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum(describeEnum(v))!,
                 ),
-                onChanged: (val) => settings.defaultMangaSort = val,
+                onChanged: (val) => LocalSettings().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
                 title: 'Default Explore Sort',
-                value: settings.defaultExploreSort,
+                value: LocalSettings().defaultExploreSort,
                 items: Map.fromIterable(
                   MediaSort.values,
                   key: (v) => Convert.clarifyEnum(describeEnum(v))!,
                 ),
-                onChanged: (val) => settings.defaultExploreSort = val,
+                onChanged: (val) => LocalSettings().defaultExploreSort = val,
               ),
               DropDownField<Explorable>(
                 title: 'Default Explorable',
-                value: settings.defaultExplorable,
+                value: LocalSettings().defaultExplorable,
                 items: Map.fromIterable(
                   Explorable.values,
                   key: (e) => Convert.clarifyEnum(describeEnum(e))!,
                 ),
-                onChanged: (val) => settings.defaultExplorable = val,
+                onChanged: (val) => LocalSettings().defaultExplorable = val,
               ),
             ]),
           ),
@@ -114,18 +112,18 @@ class SettingsAppView extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(
                 title: 'Left-Handed Mode',
-                initial: settings.leftHanded,
-                onChanged: (val) => settings.leftHanded = val,
+                initial: LocalSettings().leftHanded,
+                onChanged: (val) => LocalSettings().leftHanded = val,
               ),
               CheckBoxField(
                 title: '12 Hour Clock',
-                initial: settings.analogueClock,
-                onChanged: (val) => settings.analogueClock = val,
+                initial: LocalSettings().analogueClock,
+                onChanged: (val) => LocalSettings().analogueClock = val,
               ),
               CheckBoxField(
                 title: 'Confirm Exit',
-                initial: settings.confirmExit,
-                onChanged: (val) => settings.confirmExit = val,
+                initial: LocalSettings().confirmExit,
+                onChanged: (val) => LocalSettings().confirmExit = val,
               ),
             ]),
           ),

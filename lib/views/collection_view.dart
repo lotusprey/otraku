@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/media_list.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-
-import '../utils/client.dart';
 
 class CollectionView extends StatelessWidget {
   CollectionView({
@@ -58,7 +57,7 @@ class HomeCollectionView extends StatelessWidget {
       physics: Config.PHYSICS,
       controller: ctrl.scrollCtrl,
       slivers: [
-        SliverCollectionAppBar(ctrlTag, id != Client.viewerId),
+        SliverCollectionAppBar(ctrlTag, id != LocalSettings().id),
         SliverRefreshControl(
           onRefresh: ctrl.refetch,
           canRefresh: () => !ctrl.isLoading,

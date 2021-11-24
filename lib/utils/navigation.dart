@@ -16,6 +16,7 @@ import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/controllers/user_reviews_controller.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
@@ -35,7 +36,39 @@ import 'package:otraku/views/statistics_view.dart';
 import 'package:otraku/views/studio_view.dart';
 import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/routing/route_page.dart';
+
+class RoutePage extends MaterialPage {
+  RoutePage({
+    required this.tag,
+    required String name,
+    required Widget child,
+    required List<dynamic> args,
+  }) : super(name: name, child: child, arguments: args);
+
+  // This property shouldn't be null if there is a controller with
+  // a tag, unknown at compile time, associated with the page.
+  final String? tag;
+}
+
+class RouteParser extends RouteInformationParser<String> {
+  const RouteParser();
+
+  @override
+  Future<String> parseRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
+    if (routeInformation.location == null) return Navigation.authRoute;
+
+    final uri = Uri.parse(routeInformation.location!);
+    if (uri.pathSegments.isEmpty) return Navigation.authRoute;
+
+    return uri.pathSegments[0];
+  }
+
+  @override
+  RouteInformation restoreRouteInformation(String configuration) =>
+      RouteInformation(location: configuration);
+}
 
 class Navigation extends RouterDelegate<String>
     with PopNavigatorRouterDelegateMixin<String>, ChangeNotifier {
@@ -43,7 +76,9 @@ class Navigation extends RouterDelegate<String>
     push(authRoute);
   }
 
-  static final it = Navigation._();
+  factory Navigation() => _it;
+
+  static final _it = Navigation._();
 
   static const authRoute = '/auth';
   static const homeRoute = '/home';
@@ -97,16 +132,16 @@ class Navigation extends RouterDelegate<String>
         break;
       case homeRoute:
         Get.put(
-          CollectionController(Client.viewerId!, true),
+          CollectionController(LocalSettings().id!, true),
           tag: CollectionController.ANIME,
         );
         Get.put(
-          CollectionController(Client.viewerId!, false),
+          CollectionController(LocalSettings().id!, false),
           tag: CollectionController.MANGA,
         );
         Get.put(
-          UserController(Client.viewerId!),
-          tag: Client.viewerId.toString(),
+          UserController(LocalSettings().id!),
+          tag: LocalSettings().id.toString(),
         );
         Get.put(FeedController(null), tag: FeedController.HOME_FEED_TAG);
         Get.put(ExploreController());
@@ -279,7 +314,7 @@ class Navigation extends RouterDelegate<String>
       case homeRoute:
         Get.delete<CollectionController>(tag: CollectionController.ANIME);
         Get.delete<CollectionController>(tag: CollectionController.MANGA);
-        Get.delete<UserController>(tag: Client.viewerId.toString());
+        Get.delete<UserController>(tag: LocalSettings().id.toString());
         Get.delete<FeedController>(tag: FeedController.HOME_FEED_TAG);
         Get.delete<ExploreController>();
         break;
@@ -344,7 +379,7 @@ class Navigation extends RouterDelegate<String>
 
   // Replaces all pages with a new page.
   void setBasePage(String route) {
-    Get.reset();
+    Get.deleteAll();
     _pages.clear();
     push(route);
   }

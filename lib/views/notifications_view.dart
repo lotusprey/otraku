@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -107,7 +107,7 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.ACTIVITY_REPLY:
                     case NotificationType.ACTIVITY_REPLY_LIKE:
                     case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                      Navigation.it.push(
+                      Navigation().push(
                         Navigation.activityRoute,
                         args: [notification.bodyId, null],
                       );
@@ -149,6 +149,7 @@ class _NotificationWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       RichText(
+                        maxLines: 3,
                         overflow: TextOverflow.fade,
                         text: TextSpan(
                           children: [

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/convert.dart';
 
 /// An implementation of [DraggableScrollableSheet].

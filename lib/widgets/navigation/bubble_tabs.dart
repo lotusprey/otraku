@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
 
 class BubbleTabs<T> extends StatefulWidget {
   final Map<String, T> items;

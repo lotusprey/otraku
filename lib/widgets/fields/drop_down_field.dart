@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 
 class DropDownField<T> extends StatefulWidget {

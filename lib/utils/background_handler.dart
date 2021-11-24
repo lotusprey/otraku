@@ -3,14 +3,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/routing/navigation.dart';
+import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -22,7 +21,7 @@ class BackgroundHandler {
   static bool _didInit = false;
   static bool _didCheckLaunch = false;
 
-  static void init() {
+  static Future<void> init() async {
     if (_didInit) return;
     _didInit = true;
 
@@ -35,17 +34,23 @@ class BackgroundHandler {
       onSelectNotification: (payload) async => _handleNotification(payload),
     );
 
-    Workmanager().initialize(_fetch);
+    await Workmanager().initialize(_fetch);
 
     if (Platform.isAndroid)
       Workmanager().registerPeriodicTask(
         '0',
-        'notification',
+        'notifications',
         constraints: Constraints(networkType: NetworkType.connected),
       );
   }
 
-  static void checkLaunchedByNotification() {
+  // Should be called if the user logs out of an account.
+  static void dispose() {
+    _didInit = false;
+    Workmanager().cancelAll();
+  }
+
+  static void checkIfLaunchedByNotification() {
     if (_didCheckLaunch) return;
     _didCheckLaunch = true;
 
@@ -64,7 +69,7 @@ class BackgroundHandler {
     if (id < 0) return;
 
     if (uri.pathSegments[0] == Navigation.threadRoute) {
-      final ctx = Navigation.it.ctx;
+      final ctx = Navigation().ctx;
       if (ctx == null) return;
 
       showPopUp(
@@ -77,16 +82,18 @@ class BackgroundHandler {
       return;
     }
 
-    Navigation.it.push('/${uri.pathSegments[0]}', args: [id, null, null]);
+    Navigation().push('/${uri.pathSegments[0]}', args: [id, null, null]);
   }
 }
 
 void _fetch() => Workmanager().executeTask((_, input) async {
-      await GetStorage.init();
+      // Initialise local settings.
+      await LocalSettings.init();
+      if (LocalSettings.onPrimaryAccount == null) return true;
 
       // Log in.
-      if (Client.viewerId == null) {
-        final ok = await Client.logIn();
+      if (!Client.loggedIn()) {
+        final ok = await Client.logIn(LocalSettings.onPrimaryAccount!);
         if (!ok) return true;
       }
 
@@ -96,12 +103,12 @@ void _fetch() => Workmanager().executeTask((_, input) async {
       if (data == null) return false;
 
       final int newCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final int oldCount = HomeController.localSettings.notificationCount;
+      final int oldCount = LocalSettings().notificationCount;
       final count = newCount < oldCount ? newCount : newCount - oldCount;
       if (count < 1) return true;
 
       // Save new notification count.
-      HomeController.localSettings.notificationCount = newCount;
+      LocalSettings().notificationCount = newCount;
 
       // Show notifications.
       final ns = data['Page']['notifications'];

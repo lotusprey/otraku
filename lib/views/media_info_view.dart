@@ -4,11 +4,11 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
@@ -136,7 +136,7 @@ class MediaInfoView {
             explorable.type = model.type;
             explorable.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-            Navigation.it.popToFirst();
+            Navigation().popToFirst();
           },
         ),
       if (model.studios.isNotEmpty)
@@ -332,7 +332,7 @@ class __TagsState extends State<_Tags> {
             explorable.type = ctrl.model!.info.type;
             explorable.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-            Navigation.it.popToFirst();
+            Navigation().popToFirst();
           },
           onLongPress: () => showPopUp(
             context,
@@ -408,7 +408,7 @@ class __TagsState extends State<_Tags> {
               explorable.type = ctrl.model!.info.type;
               explorable.search = '';
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-              Navigation.it.popToFirst();
+              Navigation().popToFirst();
             },
             onLongPress: () => showPopUp(
               context,

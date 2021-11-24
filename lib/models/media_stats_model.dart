@@ -1,4 +1,4 @@
-import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/utils/convert.dart';
 
 class MediaStatsModel {

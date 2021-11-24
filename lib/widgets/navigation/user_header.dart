@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/theming.dart';
@@ -48,7 +48,7 @@ class UserHeader extends StatelessWidget {
                 AppBarIcon(
                   tooltip: 'Settings',
                   icon: Ionicons.cog_outline,
-                  onTap: () => Navigation.it.push(Navigation.settingsRoute),
+                  onTap: () => Navigation().push(Navigation.settingsRoute),
                 ),
               );
             },

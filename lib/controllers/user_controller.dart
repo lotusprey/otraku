@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/local_settings.dart';
 
 class UserController extends GetxController {
   UserController(this.id);
@@ -27,7 +28,7 @@ class UserController extends GetxController {
     );
     if (data == null) return;
 
-    _model = UserModel(data['User'], id == Client.viewerId);
+    _model = UserModel(data['User'], id == LocalSettings().id);
     _model!.addFavs(null, data['User']['favourites']);
     update();
   }

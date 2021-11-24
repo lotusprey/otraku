@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/enums/activity_type.dart';
+import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class FeedController extends OverscrollController {
@@ -27,9 +27,9 @@ class FeedController extends OverscrollController {
     fetchPage(clean: true);
   }
 
-  bool get onFollowing => HomeController.localSettings.lastFeed;
+  bool get onFollowing => LocalSettings().lastFeed;
   set onFollowing(bool v) {
-    HomeController.localSettings.lastFeed = v;
+    LocalSettings().lastFeed = v;
     fetchPage(clean: true);
   }
 
@@ -54,9 +54,8 @@ class FeedController extends OverscrollController {
         if (id != null) ...{
           'userId': id,
         } else ...{
-          'isFollowing': HomeController.localSettings.lastFeed,
-          'hasRepliesOrTypeText':
-              HomeController.localSettings.lastFeed ? null : true,
+          'isFollowing': LocalSettings().lastFeed,
+          'hasRepliesOrTypeText': LocalSettings().lastFeed ? null : true,
         },
         'page': clean ? 1 : _activities().nextPage,
         'typeIn': _typeIn.map((t) => describeEnum(t)).toList(),

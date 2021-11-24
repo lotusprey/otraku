@@ -1,7 +1,8 @@
 import 'package:get/get.dart';
-import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/settings_model.dart';
+import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/local_settings.dart';
 
 class HomeController extends GetxController {
   // GetBuilder ids.
@@ -9,13 +10,11 @@ class HomeController extends GetxController {
   static const ID_SETTINGS = 1;
   static const ID_NOTIFICATIONS = 2;
 
-  static final localSettings = LocalSettings();
-
-  SettingsSiteModel? _siteSettings;
+  SettingsModel? _siteSettings;
   late int _homeTab;
   int _settingsTab = 0;
 
-  SettingsSiteModel? get siteSettings => _siteSettings;
+  SettingsModel? get siteSettings => _siteSettings;
 
   int get homeTab => _homeTab;
   set homeTab(int v) {
@@ -25,12 +24,12 @@ class HomeController extends GetxController {
 
   int get settingsTab => _settingsTab;
   set settingsTab(int v) {
-    settingsTab = v;
+    _settingsTab = v;
     update([ID_SETTINGS]);
   }
 
   void nullifyUnread() {
-    localSettings.notificationCount = 0;
+    LocalSettings().notificationCount = 0;
     update([ID_NOTIFICATIONS]);
   }
 
@@ -38,8 +37,8 @@ class HomeController extends GetxController {
     final data = await Client.request(GqlQuery.settings);
     if (data == null) return;
 
-    _siteSettings = SettingsSiteModel(data['Viewer']);
-    localSettings.notificationCount =
+    _siteSettings = SettingsModel(data['Viewer']);
+    LocalSettings().notificationCount =
         data['Viewer']['unreadNotificationCount'] ?? 0;
     update([ID_SETTINGS]);
   }
@@ -47,14 +46,14 @@ class HomeController extends GetxController {
   Future<bool> updateSettings(Map<String, dynamic> variables) async {
     final data = await Client.request(GqlMutation.updateSettings, variables);
     if (data == null) return false;
-    _siteSettings = SettingsSiteModel(data['UpdateUser']);
+    _siteSettings = SettingsModel(data['UpdateUser']);
     return true;
   }
 
   @override
   void onInit() {
     super.onInit();
-    _homeTab = localSettings.defaultHomeTab;
+    _homeTab = LocalSettings().defaultHomeTab;
     if (_siteSettings == null) _fetch();
   }
 }

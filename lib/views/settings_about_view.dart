@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -115,21 +114,13 @@ class SettingsAboutView extends StatelessWidget {
             width: 200,
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.log_out_outline),
-              label: Text('Log Out'),
+              label: Text('Accounts'),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
                   Theme.of(context).colorScheme.error,
                 ),
               ),
-              onPressed: () => showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Log out? (Don\'t do it)',
-                  mainAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: Client.logOut,
-                ),
-              ),
+              onPressed: Client.logOut,
             ),
           ),
         ),

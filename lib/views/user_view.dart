@@ -3,12 +3,12 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/routing/navigation.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/views/home_view.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class UserView extends StatelessWidget {
@@ -48,7 +48,7 @@ class HomeUserView extends StatelessWidget {
           UserHeader(
             id: id,
             user: user.model,
-            isMe: id == Client.viewerId,
+            isMe: id == LocalSettings().id,
             avatarUrl: avatarUrl,
           ),
           if (user.model != null)
@@ -63,10 +63,10 @@ class HomeUserView extends StatelessWidget {
                   _Button(
                     Ionicons.film,
                     'Anime',
-                    () => id == Client.viewerId
+                    () => id == LocalSettings().id
                         ? Get.find<HomeController>().homeTab =
                             HomeView.ANIME_LIST
-                        : Navigation.it.push(
+                        : Navigation().push(
                             Navigation.collectionRoute,
                             args: [id, true],
                           ),
@@ -74,10 +74,10 @@ class HomeUserView extends StatelessWidget {
                   _Button(
                     Ionicons.bookmark,
                     'Manga',
-                    () => id == Client.viewerId
+                    () => id == LocalSettings().id
                         ? Get.find<HomeController>().homeTab =
                             HomeView.MANGA_LIST
-                        : Navigation.it.push(
+                        : Navigation().push(
                             Navigation.collectionRoute,
                             args: [id, false],
                           ),
@@ -85,36 +85,36 @@ class HomeUserView extends StatelessWidget {
                   _Button(
                     Ionicons.people_circle,
                     'Following',
-                    () => Navigation.it
+                    () => Navigation()
                         .push(Navigation.friendsRoute, args: [id, true]),
                   ),
                   _Button(
                     Ionicons.person_circle,
                     'Followers',
-                    () => Navigation.it
+                    () => Navigation()
                         .push(Navigation.friendsRoute, args: [id, false]),
                   ),
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Navigation.it.push(Navigation.feedRoute, args: [id]),
+                    () => Navigation().push(Navigation.feedRoute, args: [id]),
                   ),
                   _Button(
                     Icons.favorite,
                     'Favourites',
-                    () => Navigation.it
+                    () => Navigation()
                         .push(Navigation.favouritesRoute, args: [id]),
                   ),
                   _Button(
                     Ionicons.stats_chart,
                     'Statistics',
-                    () => Navigation.it
+                    () => Navigation()
                         .push(Navigation.statisticsRoute, args: [id]),
                   ),
                   _Button(
                     Icons.rate_review,
                     'Reviews',
-                    () => Navigation.it
+                    () => Navigation()
                         .push(Navigation.userReviewsRoute, args: [id]),
                   ),
                 ],

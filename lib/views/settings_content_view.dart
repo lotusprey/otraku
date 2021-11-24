@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/models/settings_model.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -14,7 +14,7 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 class SettingsContentView extends StatelessWidget {
   SettingsContentView(this.model, this.changes);
 
-  final SettingsSiteModel model;
+  final SettingsModel model;
   final Map<String, dynamic> changes;
 
   @override

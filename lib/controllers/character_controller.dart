@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/graphql.dart';

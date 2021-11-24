@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/models/settings_model.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -10,7 +10,7 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 class SettingsNotificationsView extends StatelessWidget {
   SettingsNotificationsView(this.model, this.changes);
 
-  final SettingsSiteModel model;
+  final SettingsModel model;
   final Map<String, dynamic> changes;
 
   @override

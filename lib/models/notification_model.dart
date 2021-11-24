@@ -1,5 +1,5 @@
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/utils/convert.dart';
 
 class NotificationModel {

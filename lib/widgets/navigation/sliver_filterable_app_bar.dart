@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/theming.dart';
@@ -71,7 +71,7 @@ class SliverCollectionAppBar extends StatelessWidget {
             icon: Ionicons.shuffle_outline,
             onTap: () {
               final entry = ctrl.random;
-              Navigation.it.push(
+              Navigation().push(
                 Navigation.mediaRoute,
                 args: [entry.mediaId, entry.cover],
               );
@@ -292,7 +292,7 @@ class _FilterIconState extends State<_FilterIcon> {
   Widget build(BuildContext context) => AppBarIcon(
         tooltip: 'Filter',
         icon: Ionicons.funnel_outline,
-        onTap: () => Navigation.it.push(
+        onTap: () => Navigation().push(
           Navigation.filtersRoute,
           args: [
             widget.collectionTag,

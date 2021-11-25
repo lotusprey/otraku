@@ -81,7 +81,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.headline6),
+          child: Text(title, style: Theme.of(context).textTheme.headline3),
         ),
       );
 }

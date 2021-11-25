@@ -159,7 +159,7 @@ class _Button extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onBackground)),
           Expanded(
             flex: 2,
-            child: Text(title, style: Theme.of(context).textTheme.headline5),
+            child: Text(title, style: Theme.of(context).textTheme.headline2),
           )
         ],
       ),

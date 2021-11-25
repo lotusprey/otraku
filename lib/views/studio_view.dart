@@ -48,7 +48,7 @@ class StudioView extends StatelessWidget {
                       child: Text(
                         name,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline2,
+                        style: Theme.of(context).textTheme.headline1,
                       ),
                     ),
                   ),
@@ -105,7 +105,7 @@ class StudioView extends StatelessWidget {
                         padding: Config.PADDING,
                         child: Text(
                           ctrl.media.names[i],
-                          style: Theme.of(context).textTheme.headline3,
+                          style: Theme.of(context).textTheme.headline1,
                         ),
                       ),
                     ),

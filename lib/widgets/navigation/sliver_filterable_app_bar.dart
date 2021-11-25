@@ -54,14 +54,14 @@ class SliverCollectionAppBar extends StatelessWidget {
                 Flexible(
                   child: Text(
                     ctrl.currentName,
-                    style: Theme.of(context).textTheme.headline2,
+                    style: Theme.of(context).textTheme.headline1,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Text(
                   ' ${ctrl.currentCount}',
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline3,
                 ),
               ],
             ),
@@ -113,7 +113,7 @@ class SliverExploreAppBar extends StatelessWidget {
                 Flexible(
                   child: Text(
                     Convert.clarifyEnum(describeEnum(ctrl.type))!,
-                    style: Theme.of(context).textTheme.headline2,
+                    style: Theme.of(context).textTheme.headline1,
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -209,7 +209,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                     autofocus: true,
                     scrollPhysics: Config.PHYSICS,
                     cursorColor: Theme.of(context).colorScheme.secondary,
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.bodyText2,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(30),
                     ],

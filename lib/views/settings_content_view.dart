@@ -39,7 +39,7 @@ class SettingsContentView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 'Media',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headline3,
               ),
             ),
           ),
@@ -141,7 +141,7 @@ class SettingsContentView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Text(
                 'Lists',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headline3,
               ),
             ),
           ),

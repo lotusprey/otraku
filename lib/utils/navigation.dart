@@ -38,7 +38,7 @@ import 'package:otraku/views/user_reviews_view.dart';
 import 'package:otraku/utils/client.dart';
 
 class RoutePage extends MaterialPage {
-  RoutePage({
+  const RoutePage({
     required this.tag,
     required String name,
     required Widget child,

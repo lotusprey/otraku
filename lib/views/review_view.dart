@@ -47,7 +47,7 @@ class ReviewView extends StatelessWidget {
                               ),
                               child: Text(
                                 model.mediaTitle,
-                                style: Theme.of(context).textTheme.headline5,
+                                style: Theme.of(context).textTheme.headline2,
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -61,7 +61,7 @@ class ReviewView extends StatelessWidget {
                               child: RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
-                                  style: Theme.of(context).textTheme.headline5,
+                                  style: Theme.of(context).textTheme.headline2,
                                   children: [
                                     TextSpan(
                                       text: 'review by ',

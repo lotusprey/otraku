@@ -63,7 +63,7 @@ class InputDialog extends StatelessWidget {
           maxLines: 5,
           autofocus: true,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headline2,
+          style: Theme.of(context).textTheme.headline1,
           decoration: const InputDecoration(
             filled: false,
             contentPadding: const EdgeInsets.symmetric(horizontal: 10),

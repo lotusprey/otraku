@@ -33,7 +33,7 @@ class BarChart extends StatelessWidget {
         if (tabs == null)
           Padding(
             padding: const EdgeInsets.only(left: 10, top: 10),
-            child: Text(title, style: Theme.of(context).textTheme.headline6),
+            child: Text(title, style: Theme.of(context).textTheme.headline3),
           )
         else
           Wrap(
@@ -45,7 +45,7 @@ class BarChart extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline3,
                 ),
               ),
               tabs!,
@@ -112,7 +112,7 @@ class PieChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.headline6),
+        Text(title, style: Theme.of(context).textTheme.headline3),
         const SizedBox(height: 5),
         Container(
           height: 225,

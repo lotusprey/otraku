@@ -43,7 +43,7 @@ class StatisticsView extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 10),
                 child: Text(
                   'Details',
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline3,
                 ),
               ),
               _Details(ctrl),

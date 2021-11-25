@@ -64,7 +64,7 @@ class _Tile extends StatelessWidget {
         tag: data.id,
         child: Text(
           data.text1,
-          style: Theme.of(context).textTheme.headline3,
+          style: Theme.of(context).textTheme.headline1,
           overflow: TextOverflow.fade,
           maxLines: 2,
         ),

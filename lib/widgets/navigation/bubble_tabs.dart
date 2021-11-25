@@ -65,8 +65,8 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
                 child: Text(
                   widget.items.keys.elementAt(i),
                   style: _val != values.elementAt(i)
-                      ? Theme.of(context).textTheme.headline5
-                      : Theme.of(context).textTheme.headline5!.copyWith(
+                      ? Theme.of(context).textTheme.headline2
+                      : Theme.of(context).textTheme.headline2!.copyWith(
                           color: Theme.of(context).colorScheme.background),
                 ),
               ),

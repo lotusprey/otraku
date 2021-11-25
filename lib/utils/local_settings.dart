@@ -36,7 +36,8 @@ class LocalSettings {
       Explorable.values[s.read(_DEFAULT_EXPLORABLE) ?? 0],
       EntrySort.values[s.read(_DEFAULT_ANIME_SORT) ?? 0],
       EntrySort.values[s.read(_DEFAULT_MANGA_SORT) ?? 0],
-      MediaSort.values[s.read(_DEFAULT_EXPLORE_SORT) ?? 0],
+      MediaSort.values[
+          s.read(_DEFAULT_EXPLORE_SORT) ?? MediaSort.TRENDING_DESC.index],
       s.read(_CONFIRM_EXIT) ?? false,
       s.read(_LEFT_HANDED) ?? false,
       s.read(_ANALOGUE_CLOCK) ?? false,

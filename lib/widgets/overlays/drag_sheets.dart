@@ -104,8 +104,9 @@ class OptionDragSheet extends StatelessWidget {
             child: Text(
               options[i],
               style: i != index
-                  ? Theme.of(context).textTheme.headline2
-                  : Theme.of(context).textTheme.headline1,
+                  ? Theme.of(context).textTheme.headline1
+                  : Theme.of(context).textTheme.headline1?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary),
             ),
           ),
         ),
@@ -145,13 +146,14 @@ class CollectionDragSheet extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: i != ctrl.listIndex
-                  ? Theme.of(context).textTheme.headline2
-                  : Theme.of(context).textTheme.headline1,
+                  ? Theme.of(context).textTheme.headline1
+                  : Theme.of(context).textTheme.headline1?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary),
             ),
             const SizedBox(height: 5),
             Text(
               counts[i].toString(),
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline3,
             ),
           ],
         ),
@@ -191,8 +193,9 @@ class ExploreDragSheet extends StatelessWidget {
             Text(
               Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
               style: i != ctrl.type.index
-                  ? Theme.of(context).textTheme.headline2
-                  : Theme.of(context).textTheme.headline1,
+                  ? Theme.of(context).textTheme.headline1
+                  : Theme.of(context).textTheme.headline1?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary),
             ),
           ],
         ),
@@ -230,16 +233,17 @@ class DragSheetListTile extends StatelessWidget {
               child: Text(
                 text,
                 style: selected
-                    ? Theme.of(context).textTheme.headline1
-                    : Theme.of(context).textTheme.headline2,
+                    ? Theme.of(context).textTheme.headline1?.copyWith(
+                        color: Theme.of(context).colorScheme.secondary)
+                    : Theme.of(context).textTheme.headline1,
               ),
             )
           : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon),
-                const SizedBox(width: 5),
-                Text(text, style: Theme.of(context).textTheme.headline2),
+                Icon(icon, color: Theme.of(context).colorScheme.onBackground),
+                const SizedBox(width: 10),
+                Text(text, style: Theme.of(context).textTheme.headline1),
               ],
             ),
     );

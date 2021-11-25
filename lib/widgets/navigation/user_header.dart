@@ -156,7 +156,7 @@ class UserHeader extends StatelessWidget {
                           user!.name!,
                           overflow: TextOverflow.fade,
                           style:
-                              Theme.of(context).textTheme.headline2!.copyWith(
+                              Theme.of(context).textTheme.headline1!.copyWith(
                             shadows: [
                               Shadow(
                                 color: Theme.of(context).colorScheme.background,
@@ -280,7 +280,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
         overflow: TextOverflow.ellipsis,
         style: Theme.of(context)
             .textTheme
-            .headline6!
+            .headline3!
             .copyWith(color: Colors.white),
       ),
     );

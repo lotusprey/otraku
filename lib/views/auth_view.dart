@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/config.dart';
+import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/utils/client.dart';
@@ -31,11 +32,18 @@ class _AuthViewState extends State<AuthView> {
 
     if (!_loading) setState(() => _loading = true);
 
-    Client.logIn(primary).then((loggedIn) => loggedIn
-        ? WidgetsBinding.instance!.addPostFrameCallback(
-            (_) => Navigation().setBasePage(Navigation.homeRoute),
-          )
-        : setState(() => _loading = false));
+    Client.logIn(primary).then((loggedIn) {
+      if (!loggedIn) {
+        setState(() => _loading = false);
+        return;
+      }
+
+      WidgetsBinding.instance!.addPostFrameCallback(
+          (_) => Navigation().setBasePage(Navigation.homeRoute));
+
+      // Set up background tasks.
+      BackgroundHandler.init();
+    });
   }
 
   Future<void> _requestAccessToken(bool primary) async {
@@ -96,7 +104,7 @@ class _AuthViewState extends State<AuthView> {
             children: [
               Text(
                 'Otraku\nAn unofficial AniList app',
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.headline1,
               ),
               const SizedBox(height: 20),
               Container(
@@ -113,7 +121,7 @@ class _AuthViewState extends State<AuthView> {
                       children: [
                         Text(
                           'Primary Account',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headline2,
                         ),
                         if (available0) ...[
                           const SizedBox(height: 5),
@@ -165,7 +173,7 @@ class _AuthViewState extends State<AuthView> {
                       children: [
                         Text(
                           'Secondary Account',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headline2,
                         ),
                         if (available1) ...[
                           const SizedBox(height: 5),

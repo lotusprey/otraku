@@ -158,30 +158,15 @@ class ThemeModel {
         textTheme: TextTheme(
           headline1: TextStyle(
             fontSize: Theming.FONT_BIG,
-            color: secondary,
+            color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline2: TextStyle(
-            fontSize: Theming.FONT_BIG,
+            fontSize: Theming.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline3: TextStyle(
-            fontSize: Theming.FONT_BIG,
-            color: primary,
-            fontWeight: FontWeight.w500,
-          ),
-          headline4: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
-            color: secondary,
-            fontWeight: FontWeight.w500,
-          ),
-          headline5: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
-            color: onBackground,
-            fontWeight: FontWeight.w500,
-          ),
-          headline6: TextStyle(
             fontSize: Theming.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.w500,

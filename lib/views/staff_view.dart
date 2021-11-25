@@ -180,7 +180,7 @@ class _Details extends StatelessWidget {
             onTap: () => Toast.copy(context, model.name),
             child: Text(
               model.name,
-              style: Theme.of(context).textTheme.headline2,
+              style: Theme.of(context).textTheme.headline1,
               textAlign: axis == Axis.vertical ? TextAlign.center : null,
             ),
           ),

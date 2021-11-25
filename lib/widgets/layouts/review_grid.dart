@@ -96,7 +96,7 @@ class _Tile extends StatelessWidget {
                         alignment: Alignment.bottomLeft,
                         child: Text(
                           model.text1,
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headline2,
                           overflow: TextOverflow.fade,
                         ),
                       ),

@@ -131,7 +131,7 @@ class MediaHeader extends StatelessWidget {
                         child: Text(
                           info.preferredTitle!,
                           style:
-                              Theme.of(context).textTheme.headline2!.copyWith(
+                              Theme.of(context).textTheme.headline1!.copyWith(
                             shadows: [
                               Shadow(
                                 color: Theme.of(context).colorScheme.background,

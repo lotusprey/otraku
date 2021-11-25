@@ -27,7 +27,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
         Expanded(
           child: titleWidget != null
               ? titleWidget!
-              : Text(title, style: Theme.of(context).textTheme.headline2),
+              : Text(title, style: Theme.of(context).textTheme.headline1),
         ),
         ...actions,
       ]),

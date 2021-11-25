@@ -199,7 +199,7 @@ class TagSelectionSheet extends StatelessWidget {
           padding: Config.PADDING,
           child: Text(
             tags.entries.elementAt(i).key,
-            style: Theme.of(context).textTheme.headline4,
+            style: Theme.of(context).textTheme.headline1,
           ),
         ),
       ));

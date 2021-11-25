@@ -106,9 +106,6 @@ abstract class Client {
       }
     }
 
-    // Set up background tasks.
-    BackgroundHandler.init();
-
     return true;
   }
 

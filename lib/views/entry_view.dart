@@ -108,8 +108,8 @@ class _ButtonsState extends State<_Buttons> {
                     onConfirm: () {
                       Get.find<CollectionController>(
                         tag: ctrl.model!.type == 'ANIME'
-                            ? true.toString()
-                            : false.toString(),
+                            ? '${LocalSettings().id}true'
+                            : '${LocalSettings().id}false',
                       ).removeEntry(ctrl.oldModel!);
                       widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
                       Navigator.pop(context);
@@ -131,8 +131,8 @@ class _ButtonsState extends State<_Buttons> {
             setState(() => _loading = true);
             Get.find<CollectionController>(
               tag: ctrl.model!.type == 'ANIME'
-                  ? true.toString()
-                  : false.toString(),
+                  ? '${LocalSettings().id}true'
+                  : '${LocalSettings().id}false',
             ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
               widget.callback?.call(ctrl.model!);
               Navigator.pop(context);

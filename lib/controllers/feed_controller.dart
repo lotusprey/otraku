@@ -9,8 +9,6 @@ import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class FeedController extends OverscrollController {
-  static const HOME_FEED_TAG = 'Feed';
-
   FeedController(this.id);
 
   final int? id;

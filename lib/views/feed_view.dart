@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/constants/activity_type.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -21,34 +21,36 @@ class FeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feed = Get.find<FeedController>(tag: id.toString());
+    return GetBuilder<FeedController>(
+      init: FeedController(id),
+      tag: id.toString(),
+      builder: (ctrl) => Scaffold(
+        appBar: ShadowAppBar(title: 'Activities', actions: [_Filter(ctrl)]),
+        body: SafeArea(
+          child: Obx(
+            () {
+              final activities = ctrl.activities;
 
-    return Scaffold(
-      appBar: ShadowAppBar(title: 'Activities', actions: [_Filter(feed)]),
-      body: SafeArea(
-        child: Obx(
-          () {
-            final activities = feed.activities;
+              if (ctrl.isLoading) return const Center(child: Loader());
 
-            if (feed.isLoading) return const Center(child: Loader());
+              if (activities.isEmpty)
+                return Center(
+                  child: Text(
+                    'No Activities',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                );
 
-            if (activities.isEmpty)
-              return Center(
-                child: Text(
-                  'No Activities',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+              return ListView.builder(
+                physics: Config.PHYSICS,
+                padding: Config.PADDING,
+                controller: ctrl.scrollCtrl,
+                itemBuilder: (_, i) =>
+                    ActivityBox(feed: ctrl, model: ctrl.activities[i]),
+                itemCount: ctrl.activities.length,
               );
-
-            return ListView.builder(
-              physics: Config.PHYSICS,
-              padding: Config.PADDING,
-              controller: feed.scrollCtrl,
-              itemBuilder: (_, i) =>
-                  ActivityBox(feed: feed, model: feed.activities[i]),
-              itemCount: feed.activities.length,
-            );
-          },
+            },
+          ),
         ),
       ),
     );
@@ -60,51 +62,51 @@ class HomeFeedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final feed = Get.find<FeedController>(tag: FeedController.HOME_FEED_TAG);
+    return GetBuilder<FeedController>(
+      builder: (ctrl) => CustomScrollView(
+        controller: ctrl.scrollCtrl,
+        physics: Config.PHYSICS,
+        slivers: [
+          _Header(ctrl),
+          SliverRefreshControl(
+            onRefresh: () => ctrl.fetchPage(clean: true),
+            canRefresh: () => !ctrl.isLoading,
+          ),
+          SliverPadding(
+            padding: Config.PADDING,
+            sliver: Obx(
+              () {
+                final activities = ctrl.activities;
 
-    return CustomScrollView(
-      controller: feed.scrollCtrl,
-      physics: Config.PHYSICS,
-      slivers: [
-        _Header(feed),
-        SliverRefreshControl(
-          onRefresh: () => feed.fetchPage(clean: true),
-          canRefresh: () => !feed.isLoading,
-        ),
-        SliverPadding(
-          padding: Config.PADDING,
-          sliver: Obx(
-            () {
-              final activities = feed.activities;
+                if (ctrl.isLoading)
+                  return const SliverFillRemaining(
+                    child: Center(child: Loader()),
+                  );
 
-              if (feed.isLoading)
-                return const SliverFillRemaining(
-                  child: Center(child: Loader()),
-                );
-
-              if (activities.isEmpty)
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'No Activities',
-                      style: Theme.of(context).textTheme.subtitle1,
+                if (activities.isEmpty)
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'No Activities',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
                     ),
+                  );
+
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (_, i) => ActivityBox(feed: ctrl, model: activities[i]),
+                    childCount: activities.length,
                   ),
                 );
-
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) => ActivityBox(feed: feed, model: activities[i]),
-                  childCount: activities.length,
-                ),
-              );
-            },
+              },
+            ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: SizedBox(height: NavLayout.offset(context)),
-        ),
-      ],
+          SliverToBoxAdapter(
+            child: SizedBox(height: NavLayout.offset(context)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -131,7 +133,7 @@ class _Header extends StatelessWidget {
             return AppBarIcon(
               tooltip: 'Notifications',
               icon: Ionicons.notifications_outline,
-              onTap: () => Navigation().push(Navigation.notificationsRoute),
+              onTap: () => Navigator.pushNamed(context, RouteArg.notifications),
             );
 
           return Padding(
@@ -139,7 +141,8 @@ class _Header extends StatelessWidget {
             child: Tooltip(
               message: 'Notifications',
               child: GestureDetector(
-                onTap: () => Navigation().push(Navigation.notificationsRoute),
+                onTap: () =>
+                    Navigator.pushNamed(context, RouteArg.notifications),
                 child: Stack(
                   children: [
                     Positioned(

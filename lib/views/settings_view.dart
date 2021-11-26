@@ -37,18 +37,14 @@ class SettingsView extends StatelessWidget {
 
           if (changes.containsKey('scoreFormat') ||
               changes.containsKey('titleLanguage')) {
-            Get.find<CollectionController>(tag: CollectionController.ANIME)
-                .refetch();
-            Get.find<CollectionController>(tag: CollectionController.MANGA)
-                .refetch();
+            Get.find<CollectionController>(tag: true.toString()).refetch();
+            Get.find<CollectionController>(tag: false.toString()).refetch();
           } else {
             if (changes.containsKey('splitCompletedAnime'))
-              Get.find<CollectionController>(tag: CollectionController.ANIME)
-                  .refetch();
+              Get.find<CollectionController>(tag: true.toString()).refetch();
 
             if (changes.containsKey('splitCompletedManga'))
-              Get.find<CollectionController>(tag: CollectionController.MANGA)
-                  .refetch();
+              Get.find<CollectionController>(tag: false.toString()).refetch();
           }
         }
       },

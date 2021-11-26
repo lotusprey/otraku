@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 abstract class Client {
@@ -114,7 +115,9 @@ abstract class Client {
     _token = null;
     LocalSettings.onPrimaryAccount = null;
     BackgroundHandler.dispose();
-    Navigation().setBasePage(Navigation.authRoute);
+    final context = RouteArg.navKey.currentContext;
+    if (context == null) return;
+    Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
   }
 
   // Remove a saved account.
@@ -177,7 +180,7 @@ abstract class Client {
   }) {
     assert(ioErr != null || apiErr != null);
 
-    final context = Navigation().ctx;
+    final context = RouteArg.navKey.currentContext;
     if (context == null) return;
 
     if (ioErr != null) {
@@ -198,7 +201,7 @@ abstract class Client {
     if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
-      Navigation().setBasePage(Navigation.authRoute);
+      Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
       return;
     }
 

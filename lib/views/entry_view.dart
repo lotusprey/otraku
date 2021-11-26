@@ -35,7 +35,7 @@ class EntryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<EntryController>(
-      id: EntryController.MAIN_ID,
+      id: EntryController.ID_MAIN,
       tag: mediaId.toString(),
       init: EntryController(mediaId, model),
       builder: (ctrl) {
@@ -108,8 +108,8 @@ class _ButtonsState extends State<_Buttons> {
                     onConfirm: () {
                       Get.find<CollectionController>(
                         tag: ctrl.model!.type == 'ANIME'
-                            ? CollectionController.ANIME
-                            : CollectionController.MANGA,
+                            ? true.toString()
+                            : false.toString(),
                       ).removeEntry(ctrl.oldModel!);
                       widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
                       Navigator.pop(context);
@@ -131,8 +131,8 @@ class _ButtonsState extends State<_Buttons> {
             setState(() => _loading = true);
             Get.find<CollectionController>(
               tag: ctrl.model!.type == 'ANIME'
-                  ? CollectionController.ANIME
-                  : CollectionController.MANGA,
+                  ? true.toString()
+                  : false.toString(),
             ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
               widget.callback?.call(ctrl.model!);
               Navigator.pop(context);
@@ -211,7 +211,7 @@ class _EditView extends StatelessWidget {
 
               if (model.score != avg) {
                 model.score = avg;
-                ctrl.update([EntryController.SCORE_ID]);
+                ctrl.update([EntryController.ID_SCORE]);
               }
             },
           ),
@@ -229,7 +229,7 @@ class _EditView extends StatelessWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([
             GetBuilder<EntryController>(
-              id: EntryController.STATUS_ID,
+              id: EntryController.ID_STATUS,
               tag: model.mediaId.toString(),
               builder: (_) => DropDownField<ListStatus?>(
                 hint: 'Add',
@@ -246,7 +246,7 @@ class _EditView extends StatelessWidget {
                       model.status == ListStatus.CURRENT &&
                       model.startedAt == null) {
                     model.startedAt = DateTime.now();
-                    ctrl.update([EntryController.START_DATE_ID]);
+                    ctrl.update([EntryController.ID_START_DATE]);
                     Toast.show(context, 'Start date changed');
                     return;
                   }
@@ -255,13 +255,13 @@ class _EditView extends StatelessWidget {
                       model.status == ListStatus.COMPLETED &&
                       model.completedAt == null) {
                     model.completedAt = DateTime.now();
-                    ctrl.update([EntryController.COMPLETE_DATE_ID]);
+                    ctrl.update([EntryController.ID_COMPLETE_DATE]);
                     String text = 'Completed date changed';
 
                     if (model.progressMax != null &&
                         model.progress < model.progressMax!) {
                       model.progress = model.progressMax!;
-                      ctrl.update([EntryController.PROGRESS_ID]);
+                      ctrl.update([EntryController.ID_PROGRESS]);
                       text = 'Completed date & progress changed';
                     }
 
@@ -273,7 +273,7 @@ class _EditView extends StatelessWidget {
             InputFieldStructure(
               title: 'Progress',
               child: GetBuilder<EntryController>(
-                id: EntryController.PROGRESS_ID,
+                id: EntryController.ID_PROGRESS,
                 tag: model.mediaId.toString(),
                 builder: (_) => NumberField(
                   value: model.progress,
@@ -289,14 +289,14 @@ class _EditView extends StatelessWidget {
                       if (old.status == model.status &&
                           old.status != ListStatus.COMPLETED) {
                         model.status = ListStatus.COMPLETED;
-                        ctrl.update([EntryController.STATUS_ID]);
+                        ctrl.update([EntryController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.completedAt == model.completedAt &&
                           old.completedAt == null) {
                         model.completedAt = DateTime.now();
-                        ctrl.update([EntryController.COMPLETE_DATE_ID]);
+                        ctrl.update([EntryController.ID_COMPLETE_DATE]);
                         text = text == null
                             ? 'Completed date changed'
                             : 'Status & Completed date changed';
@@ -313,13 +313,13 @@ class _EditView extends StatelessWidget {
                           (old.status == null ||
                               old.status == ListStatus.PLANNING)) {
                         model.status = ListStatus.CURRENT;
-                        ctrl.update([EntryController.STATUS_ID]);
+                        ctrl.update([EntryController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.startedAt == null && model.startedAt == null) {
                         model.startedAt = DateTime.now();
-                        ctrl.update([EntryController.START_DATE_ID]);
+                        ctrl.update([EntryController.ID_START_DATE]);
                         text = text == null
                             ? 'Start date changed'
                             : 'Status & start date changed';
@@ -354,7 +354,7 @@ class _EditView extends StatelessWidget {
             child: InputFieldStructure(
               title: 'Score',
               child: GetBuilder<EntryController>(
-                id: EntryController.SCORE_ID,
+                id: EntryController.ID_SCORE,
                 tag: model.mediaId.toString(),
                 builder: (_) => ScorePicker(model),
               ),
@@ -375,7 +375,7 @@ class _EditView extends StatelessWidget {
             InputFieldStructure(
               title: 'Started',
               child: GetBuilder<EntryController>(
-                id: EntryController.START_DATE_ID,
+                id: EntryController.ID_START_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.startedAt,
@@ -386,7 +386,7 @@ class _EditView extends StatelessWidget {
 
                     if (old.status == null && model.status == null) {
                       model.status = ListStatus.CURRENT;
-                      ctrl.update([EntryController.STATUS_ID]);
+                      ctrl.update([EntryController.ID_STATUS]);
                       Toast.show(context, 'Status changed');
                     }
                   },
@@ -397,7 +397,7 @@ class _EditView extends StatelessWidget {
             InputFieldStructure(
               title: 'Completed',
               child: GetBuilder<EntryController>(
-                id: EntryController.COMPLETE_DATE_ID,
+                id: EntryController.ID_COMPLETE_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.completedAt,
@@ -410,13 +410,13 @@ class _EditView extends StatelessWidget {
                         old.status != ListStatus.REPEATING &&
                         old.status == model.status) {
                       model.status = ListStatus.COMPLETED;
-                      ctrl.update([EntryController.STATUS_ID]);
+                      ctrl.update([EntryController.ID_STATUS]);
                       String text = 'Status changed';
 
                       if (model.progressMax != null &&
                           model.progress < model.progressMax!) {
                         model.progress = model.progressMax!;
-                        ctrl.update([EntryController.PROGRESS_ID]);
+                        ctrl.update([EntryController.ID_PROGRESS]);
                         text = 'Status & progress changed';
                       }
 

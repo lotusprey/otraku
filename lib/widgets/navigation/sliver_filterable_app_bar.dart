@@ -6,10 +6,10 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
@@ -71,9 +71,10 @@ class SliverCollectionAppBar extends StatelessWidget {
             icon: Ionicons.shuffle_outline,
             onTap: () {
               final entry = ctrl.random;
-              Navigation().push(
-                Navigation.mediaRoute,
-                args: [entry.mediaId, entry.cover],
+              Navigator.pushNamed(
+                context,
+                RouteArg.media,
+                arguments: RouteArg(id: entry.mediaId, info: entry.cover),
               );
             },
           ),
@@ -85,6 +86,8 @@ class SliverCollectionAppBar extends StatelessWidget {
 }
 
 class SliverExploreAppBar extends StatelessWidget {
+  const SliverExploreAppBar();
+
   @override
   Widget build(BuildContext context) {
     final ctrl = Get.find<ExploreController>();
@@ -292,14 +295,15 @@ class _FilterIconState extends State<_FilterIcon> {
   Widget build(BuildContext context) => AppBarIcon(
         tooltip: 'Filter',
         icon: Ionicons.funnel_outline,
-        onTap: () => Navigation().push(
-          Navigation.filtersRoute,
-          args: [
-            widget.collectionTag,
-            (bool definitelyInactive) => definitelyInactive
+        onTap: () => Navigator.pushNamed(
+          context,
+          RouteArg.filters,
+          arguments: RouteArg(
+            info: widget.collectionTag,
+            callback: (bool definitelyInactive) => definitelyInactive
                 ? setState(() => _active = false)
                 : setState(() => _active = _checkIfActive()),
-          ],
+          ),
         ),
         colour: _active ? Theme.of(context).colorScheme.secondary : null,
       );

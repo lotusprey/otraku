@@ -9,8 +9,9 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class FavouritesView extends StatelessWidget {
-  final int id;
   FavouritesView(this.id);
+
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class FavouritesView extends StatelessWidget {
     const names = ['Anime', 'Manga', 'Characters', 'Staff', 'Studios'];
 
     return GetBuilder<FavouritesController>(
+      init: FavouritesController(id),
       tag: id.toString(),
       builder: (ctrl) => NavLayout(
         index: ctrl.pageIndex,

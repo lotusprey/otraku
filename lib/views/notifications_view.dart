@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -18,45 +18,50 @@ import 'package:otraku/widgets/overlays/toast.dart';
 class NotificationsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final notifications = Get.find<NotificationsController>();
-    return Scaffold(
-      appBar: ShadowAppBar(
-        title: 'Notifications',
-        actions: [
-          AppBarIcon(
-            tooltip: 'Filter',
-            icon: Ionicons.funnel_outline,
-            onTap: () => DragSheet.show(
-              context,
-              OptionDragSheet(
-                options: const [
-                  'All',
-                  'Activities',
-                  'Forum',
-                  'Media',
-                  'Follows',
-                ],
-                index: notifications.filter,
-                onTap: (val) => notifications.filter = val,
+    return GetBuilder<NotificationsController>(
+      init: NotificationsController(),
+      builder: (ctrl) => Scaffold(
+        appBar: ShadowAppBar(
+          title: 'Notifications',
+          actions: [
+            AppBarIcon(
+              tooltip: 'Filter',
+              icon: Ionicons.funnel_outline,
+              onTap: () => DragSheet.show(
+                context,
+                OptionDragSheet(
+                  options: const [
+                    'All',
+                    'Activities',
+                    'Forum',
+                    'Media',
+                    'Follows',
+                  ],
+                  index: ctrl.filter,
+                  onTap: (val) => ctrl.filter = val,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        body: GetBuilder<NotificationsController>(
+          id: NotificationsController.ID_LIST,
+          builder: (ctrl) {
+            final entries = ctrl.entries;
+            return ListView.builder(
+              padding: Config.PADDING,
+              physics: Config.PHYSICS,
+              controller: ctrl.scrollCtrl,
+              itemBuilder: (_, index) => _NotificationWidget(
+                entries[index],
+                index < ctrl.unreadCount,
+              ),
+              itemCount: entries.length,
+              itemExtent: 100,
+            );
+          },
+        ),
       ),
-      body: GetBuilder<NotificationsController>(builder: (notifications) {
-        final entries = notifications.entries;
-        return ListView.builder(
-          padding: Config.PADDING,
-          physics: Config.PHYSICS,
-          controller: notifications.scrollCtrl,
-          itemBuilder: (_, index) => _NotificationWidget(
-            entries[index],
-            index < notifications.unreadCount,
-          ),
-          itemCount: entries.length,
-          itemExtent: 100,
-        );
-      }),
     );
   }
 }
@@ -82,6 +87,7 @@ class _NotificationWidget extends StatelessWidget {
             if (notification.imageUrl != null && notification.headId != null)
               GestureDetector(
                 onTap: () => ExploreIndexer.openView(
+                  ctx: context,
                   id: notification.headId!,
                   imageUrl: notification.imageUrl,
                   explorable: notification.explorable ?? Explorable.user,
@@ -107,13 +113,15 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.ACTIVITY_REPLY:
                     case NotificationType.ACTIVITY_REPLY_LIKE:
                     case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                      Navigation().push(
-                        Navigation.activityRoute,
-                        args: [notification.bodyId, null],
+                      Navigator.pushNamed(
+                        context,
+                        RouteArg.activity,
+                        arguments: RouteArg(id: notification.bodyId),
                       );
                       return;
                     case NotificationType.FOLLOWING:
                       ExploreIndexer.openView(
+                        ctx: context,
                         id: notification.headId!,
                         imageUrl: notification.imageUrl,
                         explorable: Explorable.user,
@@ -122,6 +130,7 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.AIRING:
                     case NotificationType.RELATED_MEDIA_ADDITION:
                       ExploreIndexer.openView(
+                        ctx: context,
                         id: notification.bodyId!,
                         imageUrl: notification.imageUrl,
                         explorable: notification.explorable!,

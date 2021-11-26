@@ -17,103 +17,106 @@ class ReviewView extends StatelessWidget {
   ReviewView(this.id, this.bannerUrl);
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          bottom: false,
-          child: GetBuilder<ReviewController>(
-              tag: id.toString(),
-              builder: (review) {
-                final model = review.model;
-                return CustomScrollView(
-                  physics: Config.PHYSICS,
-                  slivers: [
-                    _Header(id, bannerUrl),
-                    if (model != null)
-                      SliverPadding(
-                        padding: EdgeInsets.only(
-                          top: 15,
-                          left: 10,
-                          right: 10,
-                          bottom:
-                              MediaQuery.of(context).viewPadding.bottom + 10,
-                        ),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate.fixed([
-                            GestureDetector(
-                              onTap: () => ExploreIndexer.openView(
-                                id: model.mediaId,
-                                imageUrl: model.mediaCover,
-                                explorable: model.explorable,
-                              ),
-                              child: Text(
-                                model.mediaTitle,
-                                style: Theme.of(context).textTheme.headline2,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            GestureDetector(
-                              onTap: () => ExploreIndexer.openView(
-                                id: model.userId,
-                                imageUrl: model.userAvatar,
-                                explorable: Explorable.user,
-                              ),
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: Theme.of(context).textTheme.headline2,
-                                  children: [
-                                    TextSpan(
-                                      text: 'review by ',
-                                      style:
-                                          Theme.of(context).textTheme.subtitle1,
-                                    ),
-                                    TextSpan(text: model.userName),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                model.summary,
-                                style: Theme.of(context).textTheme.subtitle1,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            HtmlContent(model.text),
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              alignment: Alignment.center,
-                              child: ElevatedButton(
-                                onPressed: null,
-                                child: Text('${model.score}/100'),
-                                style: ElevatedButton.styleFrom(
-                                  textStyle: TextStyle(
-                                    fontSize: Theming.FONT_BIG,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            _RateButtons(model),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10, top: 20),
-                              child: Text(
-                                model.createdAt,
-                                style: Theme.of(context).textTheme.subtitle1,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ]),
-                        ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: GetBuilder<ReviewController>(
+            init: ReviewController(id),
+            tag: id.toString(),
+            builder: (ctrl) {
+              final model = ctrl.model;
+              return CustomScrollView(
+                physics: Config.PHYSICS,
+                slivers: [
+                  _Header(id, bannerUrl),
+                  if (model != null)
+                    SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: 15,
+                        left: 10,
+                        right: 10,
+                        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
                       ),
-                  ],
-                );
-              }),
-        ),
-      );
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          GestureDetector(
+                            onTap: () => ExploreIndexer.openView(
+                              ctx: context,
+                              id: model.mediaId,
+                              imageUrl: model.mediaCover,
+                              explorable: model.explorable,
+                            ),
+                            child: Text(
+                              model.mediaTitle,
+                              style: Theme.of(context).textTheme.headline2,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          GestureDetector(
+                            onTap: () => ExploreIndexer.openView(
+                              ctx: context,
+                              id: model.userId,
+                              imageUrl: model.userAvatar,
+                              explorable: Explorable.user,
+                            ),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.headline2,
+                                children: [
+                                  TextSpan(
+                                    text: 'review by ',
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1,
+                                  ),
+                                  TextSpan(text: model.userName),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              model.summary,
+                              style: Theme.of(context).textTheme.subtitle1,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          HtmlContent(model.text),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                              onPressed: null,
+                              child: Text('${model.score}/100'),
+                              style: ElevatedButton.styleFrom(
+                                textStyle: TextStyle(
+                                  fontSize: Theming.FONT_BIG,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          _RateButtons(model),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10, top: 20),
+                            child: Text(
+                              model.createdAt,
+                              style: Theme.of(context).textTheme.subtitle1,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                ],
+              );
+            }),
+      ),
+    );
+  }
 }
 
 class _Header extends StatelessWidget {

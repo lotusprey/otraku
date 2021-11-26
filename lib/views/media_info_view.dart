@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/constants/config.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
@@ -136,7 +135,7 @@ class MediaInfoView {
             explorable.type = model.type;
             explorable.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-            Navigation().popToFirst();
+            Navigator.popUntil(ctx, (r) => r.isFirst);
           },
         ),
       if (model.studios.isNotEmpty)
@@ -144,6 +143,7 @@ class MediaInfoView {
           title: 'Studios',
           items: model.studios.keys.toList(),
           onTap: (index) => ExploreIndexer.openView(
+            ctx: ctx,
             id: model.studios[model.studios.keys.elementAt(index)]!,
             imageUrl: model.studios.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -154,6 +154,7 @@ class MediaInfoView {
           title: 'Producers',
           items: model.producers.keys.toList(),
           onTap: (index) => ExploreIndexer.openView(
+            ctx: ctx,
             id: model.producers[model.producers.keys.elementAt(index)]!,
             imageUrl: model.producers.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -332,7 +333,7 @@ class __TagsState extends State<_Tags> {
             explorable.type = ctrl.model!.info.type;
             explorable.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-            Navigation().popToFirst();
+            Navigator.popUntil(context, (r) => r.isFirst);
           },
           onLongPress: () => showPopUp(
             context,
@@ -408,7 +409,7 @@ class __TagsState extends State<_Tags> {
               explorable.type = ctrl.model!.info.type;
               explorable.search = '';
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-              Navigation().popToFirst();
+              Navigator.popUntil(context, (r) => r.isFirst);
             },
             onLongPress: () => showPopUp(
               context,

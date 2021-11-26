@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -68,12 +68,12 @@ class BackgroundHandler {
     final id = int.tryParse(uri.pathSegments[1]) ?? -1;
     if (id < 0) return;
 
-    if (uri.pathSegments[0] == Navigation.threadRoute) {
-      final ctx = Navigation().ctx;
-      if (ctx == null) return;
+    final context = RouteArg.navKey.currentContext;
+    if (context == null) return;
 
+    if (uri.pathSegments[0] == RouteArg.thread) {
       showPopUp(
-        ctx,
+        context,
         ConfirmationDialog(
           title: 'Sorry! Forum is not yet supported!',
           mainAction: 'Ok',
@@ -82,7 +82,11 @@ class BackgroundHandler {
       return;
     }
 
-    Navigation().push('/${uri.pathSegments[0]}', args: [id, null, null]);
+    Navigator.pushNamed(
+      context,
+      '/${uri.pathSegments[0]}',
+      arguments: RouteArg(id: id),
+    );
   }
 }
 
@@ -125,14 +129,14 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             _show(
               model,
               'New Follow',
-              '${Navigation.userRoute}/${model.bodyId}',
+              '${RouteArg.user}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_MESSAGE:
             _show(
               model,
               'New Message',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY:
@@ -140,91 +144,91 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             _show(
               model,
               'New Reply',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_MENTION:
             _show(
               model,
               'New Mention',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_LIKE:
             _show(
               model,
               'New Activity Like',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
             _show(
               model,
               'New Reply Like',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
             _show(
               model,
               'New Forum Reply',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_MENTION:
             _show(
               model,
               'New Forum Mention',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_SUBSCRIBED:
             _show(
               model,
               'New Forum Comment',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_LIKE:
             _show(
               model,
               'New Forum Like',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_LIKE:
             _show(
               model,
               'New Forum Comment Like',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.AIRING:
             _show(
               model,
               'New Episode',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
             _show(
               model,
               'New Addition',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.MEDIA_DATA_CHANGE:
             _show(
               model,
               'Modified Media',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.MEDIA_MERGE:
             _show(
               model,
               'Merged Media',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.MEDIA_DELETION:

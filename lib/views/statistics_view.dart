@@ -20,6 +20,7 @@ class StatisticsView extends StatelessWidget {
     final keyManga = UniqueKey();
 
     return GetBuilder<StatisticsController>(
+      init: StatisticsController(id),
       id: StatisticsController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {

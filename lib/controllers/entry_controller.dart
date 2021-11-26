@@ -5,12 +5,12 @@ import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/graphql.dart';
 
 class EntryController extends GetxController {
-  static const MAIN_ID = 0;
-  static const STATUS_ID = 1;
-  static const PROGRESS_ID = 2;
-  static const SCORE_ID = 3;
-  static const START_DATE_ID = 4;
-  static const COMPLETE_DATE_ID = 5;
+  static const ID_MAIN = 0;
+  static const ID_STATUS = 1;
+  static const ID_PROGRESS = 2;
+  static const ID_SCORE = 3;
+  static const ID_START_DATE = 4;
+  static const ID_COMPLETE_DATE = 5;
 
   EntryController(this._id, this._model);
 
@@ -30,9 +30,7 @@ class EntryController extends GetxController {
     if (_model!.customLists.isEmpty) {
       final customLists = Map.fromIterable(
         Get.find<CollectionController>(
-          tag: _model!.type == 'ANIME'
-              ? CollectionController.ANIME
-              : CollectionController.MANGA,
+          tag: _model!.type == 'ANIME' ? true.toString() : false.toString(),
         ).customListNames,
         key: (k) => k.toString(),
         value: (_) => false,
@@ -42,7 +40,7 @@ class EntryController extends GetxController {
     }
     _copy = EntryModel.copy(_model!);
 
-    update([MAIN_ID]);
+    update([ID_MAIN]);
   }
 
   @override

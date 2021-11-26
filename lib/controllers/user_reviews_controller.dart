@@ -6,8 +6,8 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
-class UserReviewsController extends OverscrollController {
-  UserReviewsController(this.id);
+class ReviewsController extends OverscrollController {
+  ReviewsController(this.id);
 
   final int id;
   late UserModel _model;

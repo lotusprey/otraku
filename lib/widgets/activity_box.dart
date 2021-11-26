@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/constants/config.dart';
 import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
@@ -93,12 +93,10 @@ class ActivityBox extends StatelessWidget {
                     : model.toggleSubscription(),
               );
             },
-            pushActivityPage: () => Navigation().push(
-              Navigation.activityRoute,
-              args: [
-                model.id,
-                feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
-              ],
+            pushActivityPage: () => Navigator.pushNamed(
+              context,
+              RouteArg.activity,
+              arguments: RouteArg(id: model.id, info: feed.id?.toString()),
             ),
           ),
         ),

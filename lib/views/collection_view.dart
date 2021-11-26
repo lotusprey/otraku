@@ -12,27 +12,17 @@ import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class CollectionView extends StatelessWidget {
-  CollectionView({
-    required this.id,
-    required this.ofAnime,
-    required this.ctrlTag,
-  });
+  CollectionView(this.id, this.ofAnime);
 
   final int id;
   final bool ofAnime;
-  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: CollectionActionButton(ctrlTag),
+      floatingActionButton: CollectionActionButton('$id$ofAnime'),
       body: SafeArea(
-        child: HomeCollectionView(
-          id: id,
-          ofAnime: ofAnime,
-          ctrlTag: ctrlTag,
-          key: null,
-        ),
+        child: HomeCollectionView(id: id, ofAnime: ofAnime, key: null),
       ),
     );
   }
@@ -42,29 +32,32 @@ class HomeCollectionView extends StatelessWidget {
   HomeCollectionView({
     required this.id,
     required this.ofAnime,
-    required this.ctrlTag,
     required key,
   }) : super(key: key);
 
   final int id;
   final bool ofAnime;
-  final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<CollectionController>(tag: ctrlTag);
-    return CustomScrollView(
-      physics: Config.PHYSICS,
-      controller: ctrl.scrollCtrl,
-      slivers: [
-        SliverCollectionAppBar(ctrlTag, id != LocalSettings().id),
-        SliverRefreshControl(
-          onRefresh: ctrl.refetch,
-          canRefresh: () => !ctrl.isLoading,
-        ),
-        MediaList(ctrlTag),
-        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
-      ],
+    final tag = '$id$ofAnime';
+    return GetBuilder<CollectionController>(
+      init: CollectionController(id, ofAnime),
+      tag: tag,
+      builder: (ctrl) => CustomScrollView(
+        physics: Config.PHYSICS,
+        controller: ctrl.scrollCtrl,
+        slivers: [
+          SliverCollectionAppBar(tag, id != LocalSettings().id),
+          SliverRefreshControl(
+            onRefresh: ctrl.refetch,
+            canRefresh: () => !ctrl.isLoading,
+          ),
+          MediaList(tag),
+          SliverToBoxAdapter(
+              child: SizedBox(height: NavLayout.offset(context))),
+        ],
+      ),
     );
   }
 }

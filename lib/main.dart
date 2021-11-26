@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/navigation.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/theming.dart';
 
@@ -15,12 +15,13 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
+  Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Otraku',
         theme: Theming().theme.themeData,
-        routerDelegate: Navigation(),
-        routeInformationParser: const RouteParser(),
+        initialRoute: RouteArg.auth,
+        navigatorKey: RouteArg.navKey,
+        onGenerateRoute: RouteArg.generateRoute,
       );
 
   @override
@@ -34,7 +35,6 @@ class _AppState extends State<App> {
   @override
   void dispose() {
     Theming().dispose();
-    Navigation().dispose();
     super.dispose();
   }
 }

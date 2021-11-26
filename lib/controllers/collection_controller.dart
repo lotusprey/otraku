@@ -12,10 +12,6 @@ import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class CollectionController extends OverscrollController implements Filterable {
-  // Viewer controller tags. Also used in the tag creation of other collections.
-  static const ANIME = 'anime';
-  static const MANGA = 'manga';
-
   // GetBuilder ids.
   static const ID_HEAD = 0;
   static const ID_BODY = 1;

@@ -6,8 +6,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/config.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/local_settings.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -38,8 +38,11 @@ class _AuthViewState extends State<AuthView> {
         return;
       }
 
-      WidgetsBinding.instance!.addPostFrameCallback(
-          (_) => Navigation().setBasePage(Navigation.homeRoute));
+      Navigator.pushReplacementNamed(
+        context,
+        RouteArg.home,
+        arguments: RouteArg(id: LocalSettings().id),
+      );
 
       // Set up background tasks.
       BackgroundHandler.init();

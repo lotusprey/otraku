@@ -38,6 +38,7 @@ class MediaView extends StatelessWidget {
     const keys = [ValueKey(0), ValueKey(1), ValueKey(2)];
 
     return GetBuilder<MediaController>(
+      init: MediaController(id),
       id: MediaController.ID_BASE,
       tag: id.toString(),
       builder: (ctrl) {

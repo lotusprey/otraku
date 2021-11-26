@@ -7,6 +7,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/config.dart';
+import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -20,8 +21,8 @@ class MediaList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMe = ctrlTag == CollectionController.ANIME ||
-        ctrlTag == CollectionController.MANGA;
+    final isMe = ctrlTag == '${LocalSettings().id}true' ||
+        ctrlTag == '${LocalSettings().id}false';
     final sidePadding = MediaQuery.of(context).size.width > 620
         ? (MediaQuery.of(context).size.width - 600) / 2.0
         : 10.0;

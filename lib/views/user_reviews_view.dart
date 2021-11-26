@@ -5,16 +5,17 @@ import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
-class UserReviewsView extends StatelessWidget {
+class ReviewsView extends StatelessWidget {
   final int id;
-  UserReviewsView(this.id);
+  ReviewsView(this.id);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ShadowAppBar(title: 'Reviews'),
       body: SafeArea(
-        child: GetBuilder<UserReviewsController>(
+        child: GetBuilder<ReviewsController>(
+          init: ReviewsController(id),
           tag: id.toString(),
           builder: (feed) {
             if (feed.reviews.isEmpty) {

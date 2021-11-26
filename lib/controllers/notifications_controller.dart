@@ -7,6 +7,8 @@ import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 
 class NotificationsController extends OverscrollController {
+  static const ID_LIST = 0;
+
   static const _filters = const [
     null,
     const [
@@ -66,7 +68,7 @@ class NotificationsController extends OverscrollController {
 
     _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
     Get.find<HomeController>().nullifyUnread();
-    update();
+    update([ID_LIST]);
   }
 
   @override
@@ -87,7 +89,7 @@ class NotificationsController extends OverscrollController {
     for (final n in data!['notifications']) nl.add(NotificationModel(n));
 
     _entries.append(nl, data['pageInfo']['hasNextPage']);
-    update();
+    update([ID_LIST]);
   }
 
   @override

@@ -16,12 +16,14 @@ import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityView extends StatelessWidget {
   final int id;
+  final String? feedTag;
 
-  ActivityView(this.id);
+  ActivityView(this.id, this.feedTag);
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ActivityController>(
+        init: ActivityController(id, feedTag),
         tag: id.toString(),
         builder: (ctrl) {
           final model = ctrl.model;

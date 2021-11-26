@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/utils/navigation.dart';
 import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/views/home_view.dart';
@@ -41,6 +41,7 @@ class HomeUserView extends StatelessWidget {
     );
 
     return GetBuilder<UserController>(
+      init: UserController(id),
       tag: id.toString(),
       builder: (user) => CustomScrollView(
         physics: Config.PHYSICS,
@@ -66,9 +67,10 @@ class HomeUserView extends StatelessWidget {
                     () => id == LocalSettings().id
                         ? Get.find<HomeController>().homeTab =
                             HomeView.ANIME_LIST
-                        : Navigation().push(
-                            Navigation.collectionRoute,
-                            args: [id, true],
+                        : Navigator.pushNamed(
+                            context,
+                            RouteArg.collection,
+                            arguments: RouteArg(id: id, variant: true),
                           ),
                   ),
                   _Button(
@@ -77,45 +79,65 @@ class HomeUserView extends StatelessWidget {
                     () => id == LocalSettings().id
                         ? Get.find<HomeController>().homeTab =
                             HomeView.MANGA_LIST
-                        : Navigation().push(
-                            Navigation.collectionRoute,
-                            args: [id, false],
+                        : Navigator.pushNamed(
+                            context,
+                            RouteArg.collection,
+                            arguments: RouteArg(id: id, variant: false),
                           ),
                   ),
                   _Button(
                     Ionicons.people_circle,
                     'Following',
-                    () => Navigation()
-                        .push(Navigation.friendsRoute, args: [id, true]),
+                    () => Navigator.pushNamed(
+                      context,
+                      RouteArg.friends,
+                      arguments: RouteArg(id: id, variant: true),
+                    ),
                   ),
                   _Button(
                     Ionicons.person_circle,
                     'Followers',
-                    () => Navigation()
-                        .push(Navigation.friendsRoute, args: [id, false]),
+                    () => Navigator.pushNamed(
+                      context,
+                      RouteArg.friends,
+                      arguments: RouteArg(id: id, variant: false),
+                    ),
                   ),
                   _Button(
                     Ionicons.chatbox,
                     'User Feed',
-                    () => Navigation().push(Navigation.feedRoute, args: [id]),
+                    () => Navigator.pushNamed(
+                      context,
+                      RouteArg.feed,
+                      arguments: RouteArg(id: id),
+                    ),
                   ),
                   _Button(
                     Icons.favorite,
                     'Favourites',
-                    () => Navigation()
-                        .push(Navigation.favouritesRoute, args: [id]),
+                    () => Navigator.pushNamed(
+                      context,
+                      RouteArg.favourites,
+                      arguments: RouteArg(id: id),
+                    ),
                   ),
                   _Button(
                     Ionicons.stats_chart,
                     'Statistics',
-                    () => Navigation()
-                        .push(Navigation.statisticsRoute, args: [id]),
+                    () => Navigator.pushNamed(
+                      context,
+                      RouteArg.statistics,
+                      arguments: RouteArg(id: id),
+                    ),
                   ),
                   _Button(
                     Icons.rate_review,
                     'Reviews',
-                    () => Navigation()
-                        .push(Navigation.userReviewsRoute, args: [id]),
+                    () => Navigator.pushNamed(
+                      context,
+                      RouteArg.reviews,
+                      arguments: RouteArg(id: id),
+                    ),
                   ),
                 ],
               ),

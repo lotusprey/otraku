@@ -18,34 +18,38 @@ class ExploreView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExploreController>();
-    return CustomScrollView(
-      physics: Config.PHYSICS,
-      controller: explorer.scrollCtrl,
-      slivers: [
-        SliverExploreAppBar(),
-        SliverRefreshControl(
-          onRefresh: explorer.fetch,
-          canRefresh: () => !explorer.isLoading,
-        ),
-        _ExploreGrid(),
-        _EndOfListLoader(),
-        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context))),
-      ],
+    return GetBuilder<ExploreController>(
+      builder: (ctrl) => CustomScrollView(
+        physics: Config.PHYSICS,
+        controller: ctrl.scrollCtrl,
+        slivers: [
+          const SliverExploreAppBar(),
+          SliverRefreshControl(
+            onRefresh: ctrl.fetch,
+            canRefresh: () => !ctrl.isLoading,
+          ),
+          const _ExploreGrid(),
+          const _EndOfListLoader(),
+          SliverToBoxAdapter(
+              child: SizedBox(height: NavLayout.offset(context))),
+        ],
+      ),
     );
   }
 }
 
 class _ExploreGrid extends StatelessWidget {
+  const _ExploreGrid();
+
   @override
   Widget build(BuildContext context) {
-    final explorer = Get.find<ExploreController>();
+    final ctrl = Get.find<ExploreController>();
 
     return Obx(() {
-      if (explorer.isLoading)
+      if (ctrl.isLoading)
         return const SliverFillRemaining(child: Center(child: Loader()));
 
-      final results = explorer.results;
+      final results = ctrl.results;
       if (results.isEmpty) {
         return SliverFillRemaining(
           child: Center(
@@ -71,6 +75,8 @@ class _ExploreGrid extends StatelessWidget {
 }
 
 class _EndOfListLoader extends StatelessWidget {
+  const _EndOfListLoader();
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -78,10 +84,12 @@ class _EndOfListLoader extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Obx(
-            () => Get.find<ExploreController>().hasNextPage &&
-                    !Get.find<ExploreController>().isLoading
-                ? Loader()
-                : const SizedBox(),
+            () {
+              final ctrl = Get.find<ExploreController>();
+              return ctrl.hasNextPage && !ctrl.isLoading
+                  ? const Loader()
+                  : const SizedBox();
+            },
           ),
         ),
       ),

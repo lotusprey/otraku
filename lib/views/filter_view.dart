@@ -17,8 +17,8 @@ import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class FilterView extends StatelessWidget {
-  FilterView(this.collectionTag, this.isDefinitelyInactive);
+class FiltersView extends StatelessWidget {
+  FiltersView(this.collectionTag, this.isDefinitelyInactive);
 
   final String? collectionTag;
   final void Function(bool) isDefinitelyInactive;

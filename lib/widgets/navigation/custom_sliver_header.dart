@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class CustomSliverHeader extends StatelessWidget {
@@ -98,7 +98,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
             if (child != null)
               Padding(
                 padding:
-                    const EdgeInsets.only(top: Config.MATERIAL_TAP_TARGET_SIZE),
+                    const EdgeInsets.only(top: Consts.MATERIAL_TAP_TARGET_SIZE),
                 child: child,
               ),
             if (headerOpacity > 0.001)
@@ -155,7 +155,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   double get maxExtent => height;

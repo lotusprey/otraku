@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/theming.dart';
@@ -35,7 +35,7 @@ class ReviewGrid extends StatelessWidget {
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         itemCount: data.length,
         gridDelegate: gridDelegate,
         itemBuilder: (_, i) => _Tile(data[i]),
@@ -67,7 +67,7 @@ class _Tile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -76,7 +76,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Config.RADIUS),
+                  borderRadius: BorderRadius.vertical(top: Consts.RADIUS),
                   child: Hero(
                     tag: model.id,
                     child: FadeImage(model.imageUrl!),
@@ -86,7 +86,7 @@ class _Tile extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

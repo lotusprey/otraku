@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/utils/theming.dart';
@@ -12,7 +12,6 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityView extends StatelessWidget {
   final int id;
@@ -43,7 +42,7 @@ class ActivityView extends StatelessWidget {
                                 Hero(
                                   tag: model.agentId,
                                   child: ClipRRect(
-                                    borderRadius: Config.BORDER_RADIUS,
+                                    borderRadius: Consts.BORDER_RADIUS,
                                     child: FadeImage(
                                       model.agentImage,
                                       height: 40,
@@ -78,7 +77,7 @@ class ActivityView extends StatelessWidget {
                             imageUrl: model.recieverImage,
                             explorable: Explorable.user,
                             child: ClipRRect(
-                              borderRadius: Config.BORDER_RADIUS,
+                              borderRadius: Consts.BORDER_RADIUS,
                               child: FadeImage(
                                 model.recieverImage!,
                                 height: 40,
@@ -94,13 +93,13 @@ class ActivityView extends StatelessWidget {
             body: SafeArea(
               bottom: false,
               child: CustomScrollView(
-                physics: Config.PHYSICS,
+                physics: Consts.PHYSICS,
                 controller: ctrl.scrollCtrl,
                 slivers: [
                   if (model != null) ...[
                     SliverToBoxAdapter(
                         child: Padding(
-                      padding: Config.PADDING,
+                      padding: Consts.PADDING,
                       child: ActivityBoxBody(
                         model,
                         InteractionButtons(
@@ -121,7 +120,7 @@ class ActivityView extends StatelessWidget {
                       ),
                     )),
                     SliverPadding(
-                      padding: Config.PADDING,
+                      padding: Consts.PADDING,
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => _UserReply(model.replies.items[i]),
@@ -166,7 +165,7 @@ class _UserReply extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
                 child: FadeImage(
                   reply.userImage,
                   height: 50,
@@ -179,20 +178,12 @@ class _UserReply extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        ClipPath(
-          clipper: TriangleClip(),
-          child: Container(
-            width: 50,
-            height: 10,
-            color: Theme.of(context).colorScheme.surface,
-          ),
-        ),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
           ),
           child: Column(
             children: [

@@ -48,6 +48,7 @@ class BackgroundHandler {
   static void dispose() {
     _didInit = false;
     Workmanager().cancelAll();
+    _notificationPlugin.cancelAll();
   }
 
   static void checkIfLaunchedByNotification() {
@@ -90,7 +91,7 @@ class BackgroundHandler {
   }
 }
 
-void _fetch() => Workmanager().executeTask((_, input) async {
+void _fetch() => Workmanager().executeTask((_, __) async {
       // Initialise local settings.
       await LocalSettings.init();
       if (LocalSettings.onPrimaryAccount == null) return true;

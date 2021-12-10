@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/theming.dart';
 
 class ThemeModel {
@@ -68,7 +68,7 @@ class ThemeModel {
           elevation: 10,
           backgroundColor: surface,
           shape:
-              const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+              const RoundedRectangleBorder(borderRadius: Consts.BORDER_RADIUS),
           titleTextStyle: TextStyle(
             fontSize: Theming.FONT_MEDIUM,
             color: onBackground,
@@ -82,16 +82,16 @@ class ThemeModel {
         ),
         iconTheme: IconThemeData(color: primary, size: Theming.ICON_BIG),
         tooltipTheme: TooltipThemeData(
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
           textStyle: TextStyle(fontSize: Theming.FONT_MEDIUM, color: primary),
         ),
         scrollbarTheme: ScrollbarThemeData(
-          radius: Config.RADIUS,
+          radius: Consts.RADIUS,
           thumbColor: MaterialStateProperty.all(primary),
         ),
         sliderTheme: SliderThemeData(
@@ -125,7 +125,7 @@ class ThemeModel {
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             borderSide: BorderSide.none,
           ),
         ),
@@ -135,7 +135,7 @@ class ThemeModel {
               fontSize: Theming.FONT_MEDIUM,
             )),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
             )),
             foregroundColor: MaterialStateProperty.all(secondary),
             overlayColor: MaterialStateProperty.all(highlight),
@@ -151,7 +151,7 @@ class ThemeModel {
             foregroundColor: MaterialStateProperty.all(background),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
             )),
           ),
         ),
@@ -171,6 +171,11 @@ class ThemeModel {
             color: primary,
             fontWeight: FontWeight.w500,
           ),
+          headline4: TextStyle(
+            fontSize: Theming.FONT_MEDIUM,
+            color: primary,
+            fontWeight: FontWeight.normal,
+          ),
           bodyText1: TextStyle(
             fontSize: Theming.FONT_MEDIUM,
             color: secondary,
@@ -184,6 +189,7 @@ class ThemeModel {
           subtitle1: TextStyle(
             fontSize: Theming.FONT_MEDIUM,
             color: primary,
+            fontWeight: FontWeight.normal,
           ),
           subtitle2: TextStyle(
             fontSize: Theming.FONT_SMALL,

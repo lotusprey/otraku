@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -126,7 +126,7 @@ class UserHeader extends StatelessWidget {
                     child: Hero(
                       tag: id,
                       child: ClipRRect(
-                        borderRadius: Config.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RADIUS,
                         child: Container(
                           height: avatarSize,
                           width: avatarSize,
@@ -178,7 +178,7 @@ class UserHeader extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Theme.of(context).colorScheme.secondary,
-                              borderRadius: Config.BORDER_RADIUS,
+                              borderRadius: Consts.BORDER_RADIUS,
                             ),
                             child: Text(
                               user!.moderatorStatus!,
@@ -273,7 +273,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: _animation.value,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: Text(
         widget.text!,

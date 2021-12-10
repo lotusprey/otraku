@@ -8,7 +8,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
 import 'package:otraku/views/home_view.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class UserView extends StatelessWidget {
@@ -44,7 +44,7 @@ class HomeUserView extends StatelessWidget {
       init: UserController(id),
       tag: id.toString(),
       builder: (user) => CustomScrollView(
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         slivers: [
           UserHeader(
             id: id,
@@ -146,10 +146,10 @@ class HomeUserView extends StatelessWidget {
             SliverToBoxAdapter(
               child: Container(
                 margin: padding,
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                 ),
                 child: HtmlContent(user.model!.description!),
               ),
@@ -172,7 +172,7 @@ class _Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: Config.BORDER_RADIUS,
+      borderRadius: Consts.BORDER_RADIUS,
       onTap: onTap,
       child: Row(
         children: [

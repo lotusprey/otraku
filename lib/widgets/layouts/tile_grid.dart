@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -40,7 +40,7 @@ class TileGrid extends StatelessWidget {
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         itemCount: models.length,
         gridDelegate: gridDelegate,
         itemBuilder: (_, i) => _Tile(models[i], full),
@@ -77,7 +77,7 @@ class _Tile extends StatelessWidget {
             child: Hero(
               tag: data.id,
               child: ClipRRect(
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
                 child: Container(
                   color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(

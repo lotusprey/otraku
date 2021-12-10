@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/review_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/review_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/theming.dart';
@@ -27,7 +27,7 @@ class ReviewView extends StatelessWidget {
             builder: (ctrl) {
               final model = ctrl.model;
               return CustomScrollView(
-                physics: Config.PHYSICS,
+                physics: Consts.PHYSICS,
                 slivers: [
                   _Header(id, bannerUrl),
                   if (model != null)

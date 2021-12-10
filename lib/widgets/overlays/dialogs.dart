@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/html_content.dart';
 
 Future<dynamic> showPopUp(BuildContext ctx, Widget child) => showDialog(
@@ -150,10 +150,10 @@ class ImageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      shape: const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+      shape: const RoundedRectangleBorder(borderRadius: Consts.BORDER_RADIUS),
       backgroundColor: Colors.transparent,
       child: ClipRRect(
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
         child: Image.network(url, fit: fit),
       ),
     );
@@ -200,10 +200,10 @@ class _DialogColumn extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Config.RADIUS),
+              borderRadius: const BorderRadius.vertical(top: Consts.RADIUS),
               color: Theme.of(context).colorScheme.background,
             ),
-            padding: Config.PADDING,
+            padding: Consts.PADDING,
             child: Text(title, style: Theme.of(context).textTheme.subtitle1),
           ),
           Flexible(
@@ -212,13 +212,13 @@ class _DialogColumn extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius:
-                    const BorderRadius.vertical(bottom: Config.RADIUS),
+                    const BorderRadius.vertical(bottom: Consts.RADIUS),
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  physics: Config.PHYSICS,
-                  padding: Config.PADDING,
+                  physics: Consts.PHYSICS,
+                  padding: Consts.PADDING,
                   child: child,
                 ),
               ),

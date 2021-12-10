@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/character_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
@@ -32,7 +31,7 @@ class CharacterView extends StatelessWidget {
     final coverHeight = coverWidth / 0.7;
 
     final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Config.PADDING.top * 2;
+        Consts.PADDING.top * 2;
 
     return Scaffold(
       body: SafeArea(
@@ -41,7 +40,7 @@ class CharacterView extends StatelessWidget {
           init: CharacterController(id),
           tag: id.toString(),
           builder: (ctrl) => CustomScrollView(
-            physics: Config.PHYSICS,
+            physics: Consts.PHYSICS,
             controller: ctrl.scrollCtrl,
             slivers: [
               GetBuilder<CharacterController>(
@@ -58,7 +57,7 @@ class CharacterView extends StatelessWidget {
                 id: CharacterController.ID_MAIN,
                 tag: id.toString(),
                 builder: (c) => SliverPadding(
-                  padding: Config.PADDING,
+                  padding: Consts.PADDING,
                   sliver: SliverToBoxAdapter(
                     child: SizedBox(
                       height: axis == Axis.horizontal
@@ -73,7 +72,7 @@ class CharacterView extends StatelessWidget {
                               child: Hero(
                                 tag: c.id,
                                 child: ClipRRect(
-                                  borderRadius: Config.BORDER_RADIUS,
+                                  borderRadius: Consts.BORDER_RADIUS,
                                   child: Image.network(
                                     imageUrl!,
                                     fit: BoxFit.cover,
@@ -227,10 +226,10 @@ class _Details extends StatelessWidget {
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(
-                      padding: Config.PADDING,
+                      padding: Consts.PADDING,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Config.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RADIUS,
                       ),
                       child: Text(
                         Convert.clearHtml(model.description),

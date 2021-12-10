@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/theming.dart';
@@ -21,7 +21,7 @@ class SettingsAppView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverGrid(
@@ -107,7 +107,7 @@ class SettingsAppView extends StatelessWidget {
               minWidth: 200,
               mainAxisSpacing: 0,
               crossAxisSpacing: 20,
-              height: Config.MATERIAL_TAP_TARGET_SIZE,
+              height: Consts.MATERIAL_TAP_TARGET_SIZE,
             ),
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(

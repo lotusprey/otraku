@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/models/settings_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/utils/convert.dart';
@@ -26,13 +26,13 @@ class SettingsContentView extends StatelessWidget {
     const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
       minWidth: 220,
       mainAxisSpacing: 0,
-      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.MATERIAL_TAP_TARGET_SIZE,
     );
 
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: CustomScrollView(
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         slivers: [
           SliverToBoxAdapter(
             child: Padding(

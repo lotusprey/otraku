@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 
 class DateField extends StatefulWidget {
   final DateTime? date;
@@ -20,7 +20,7 @@ class DateField extends StatefulWidget {
 class _DateFieldState extends State<DateField> {
   final constraints = const BoxConstraints(
     maxWidth: 30,
-    minHeight: Config.MATERIAL_TAP_TARGET_SIZE,
+    minHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
   );
 
   DateTime? _date;
@@ -54,7 +54,7 @@ class _DateFieldState extends State<DateField> {
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: _date != null

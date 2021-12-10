@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:otraku/utils/overscroll_controller.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 
 class NumberField extends StatefulWidget {
   final num value;
@@ -24,7 +24,7 @@ class _NumberFieldState extends State<NumberField> {
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
         ),
         child: Row(
           children: [
@@ -99,14 +99,15 @@ class _NumberFieldState extends State<NumberField> {
   void didUpdateWidget(covariant NumberField oldWidget) {
     super.didUpdateWidget(oldWidget);
     final text = widget.value.toString();
-    _controller.value = _controller.value.copyWith(
-      text: text,
-      selection: TextSelection(
-        baseOffset: text.length,
-        extentOffset: text.length,
-      ),
-      composing: TextRange.empty,
-    );
+    if (text != _controller.text)
+      _controller.value = _controller.value.copyWith(
+        text: text,
+        selection: TextSelection(
+          baseOffset: text.length,
+          extentOffset: text.length,
+        ),
+        composing: TextRange.empty,
+      );
   }
 
   @override

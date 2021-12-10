@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/notification_type.dart';
@@ -49,8 +49,8 @@ class NotificationsView extends StatelessWidget {
           builder: (ctrl) {
             final entries = ctrl.entries;
             return ListView.builder(
-              padding: Config.PADDING,
-              physics: Config.PHYSICS,
+              padding: Consts.PADDING,
+              physics: Consts.PHYSICS,
               controller: ctrl.scrollCtrl,
               itemBuilder: (_, index) => _NotificationWidget(
                 entries[index],
@@ -79,7 +79,7 @@ class _NotificationWidget extends StatelessWidget {
       child: Container(
         height: 90,
         decoration: BoxDecoration(
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
@@ -99,7 +99,7 @@ class _NotificationWidget extends StatelessWidget {
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
-                  borderRadius: BorderRadius.horizontal(left: Config.RADIUS),
+                  borderRadius: BorderRadius.horizontal(left: Consts.RADIUS),
                 ),
               ),
             Flexible(
@@ -152,7 +152,7 @@ class _NotificationWidget extends StatelessWidget {
                     ExploreIndexer.openEditView(notification.headId!, context);
                 },
                 child: Padding(
-                  padding: Config.PADDING,
+                  padding: Consts.PADDING,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -188,7 +188,7 @@ class _NotificationWidget extends StatelessWidget {
                 height: double.infinity,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.horizontal(right: Config.RADIUS),
+                  borderRadius: BorderRadius.horizontal(right: Consts.RADIUS),
                 ),
               ),
           ],
@@ -226,7 +226,7 @@ class _NotificationDialog extends StatelessWidget {
 
     return DialogBox(
       Padding(
-        padding: Config.PADDING,
+        padding: Consts.PADDING,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -238,7 +238,7 @@ class _NotificationDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     ClipRRect(
-                      borderRadius: Config.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RADIUS,
                       child: FadeImage(
                         model.imageUrl!,
                         width: coverWidth,

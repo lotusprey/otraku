@@ -19,8 +19,8 @@ class _AppState extends State<App> {
         debugShowCheckedModeBanner: false,
         title: 'Otraku',
         theme: Theming().theme.themeData,
-        initialRoute: RouteArg.auth,
         navigatorKey: RouteArg.navKey,
+        initialRoute: RouteArg.auth,
         onGenerateRoute: RouteArg.generateRoute,
       );
 

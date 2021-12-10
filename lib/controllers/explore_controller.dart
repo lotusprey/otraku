@@ -120,6 +120,7 @@ class ExploreController extends OverscrollController implements Filterable {
       _isLoading.value = true;
       _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
+      // TODO what to do with that?
       scrollUpTo(0);
     }
 
@@ -190,6 +191,7 @@ class ExploreController extends OverscrollController implements Filterable {
 
   @override
   Future<void> fetchPage() async {
+    if (!_results().hasNextPage) return;
     _filters[Filterable.PAGE]++;
     await fetch(clean: false);
   }

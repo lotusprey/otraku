@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-// Holds constants and configurations utilised throughout the whole app.
-abstract class Config {
+// Constants utilised throughout the whole app.
+abstract class Consts {
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS = Radius.circular(10);

@@ -6,7 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -39,7 +39,6 @@ class SliverCollectionAppBar extends StatelessWidget {
         return SliverTransparentAppBar([
           leading,
           MediaSearchField(
-            scrollToTop: () => ctrl.scrollUpTo(0),
             swipe: (offset) => ctrl.listIndex += offset,
             hint: ctrl.currentName,
             searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
@@ -96,7 +95,6 @@ class SliverExploreAppBar extends StatelessWidget {
         [
           const SizedBox(width: 10),
           MediaSearchField(
-            scrollToTop: () => ctrl.scrollUpTo(0),
             swipe: (offset) {
               final index = ctrl.type.index + offset;
               if (index >= 0 && index < Explorable.values.length)
@@ -137,7 +135,6 @@ class SliverExploreAppBar extends StatelessWidget {
 
 class MediaSearchField extends StatefulWidget {
   MediaSearchField({
-    required this.scrollToTop,
     required this.swipe,
     required this.title,
     required this.hint,
@@ -145,7 +142,6 @@ class MediaSearchField extends StatefulWidget {
     required this.search,
   });
 
-  final Function() scrollToTop;
   final Function(int) swipe;
   final Widget title;
   final String hint;
@@ -182,13 +178,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (!_onSearch) ...[
-            Expanded(
-              child: GestureDetector(
-                child: widget.title,
-                onTap: widget.scrollToTop,
-                behavior: HitTestBehavior.opaque,
-              ),
-            ),
+            Expanded(child: widget.title),
             if (widget.search != null)
               AppBarIcon(
                 tooltip: 'Search',
@@ -210,7 +200,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                   child: TextField(
                     controller: _ctrl,
                     autofocus: true,
-                    scrollPhysics: Config.PHYSICS,
+                    scrollPhysics: Consts.PHYSICS,
                     cursorColor: Theme.of(context).colorScheme.secondary,
                     style: Theme.of(context).textTheme.bodyText2,
                     inputFormatters: [

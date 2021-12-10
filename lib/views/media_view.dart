@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
@@ -28,9 +28,9 @@ class MediaView extends StatelessWidget {
         : 150.0;
     final coverHeight = coverWidth / 0.7;
     final bannerHeight =
-        coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+        coverHeight * 0.6 + Consts.MATERIAL_TAP_TARGET_SIZE + 10;
     final headerHeight = bannerHeight + coverHeight * 0.6;
-    final headerOffset = headerHeight - Config.MATERIAL_TAP_TARGET_SIZE;
+    final headerOffset = headerHeight - Consts.MATERIAL_TAP_TARGET_SIZE;
 
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
@@ -110,7 +110,7 @@ class MediaView extends StatelessWidget {
               tag: id.toString(),
               builder: (_) => CustomScrollView(
                 controller: ctrl.scrollCtrl,
-                physics: Config.PHYSICS,
+                physics: Consts.PHYSICS,
                 slivers: [
                   header,
                   if (ctrl.tab == MediaController.INFO)

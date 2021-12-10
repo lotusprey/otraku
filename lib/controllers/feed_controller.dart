@@ -38,6 +38,7 @@ class FeedController extends OverscrollController {
 
   @override
   Future<void> fetchPage({bool clean = false}) async {
+    if (!_activities().hasNextPage) return;
     _isLoading = true;
 
     if (clean) {

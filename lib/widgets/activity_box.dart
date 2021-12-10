@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
@@ -38,7 +38,7 @@ class ActivityBox extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: Config.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RADIUS,
                       child: FadeImage(model.agentImage, height: 50, width: 50),
                     ),
                     const SizedBox(width: 10),
@@ -68,7 +68,7 @@ class ActivityBox extends StatelessWidget {
                 imageUrl: model.recieverImage,
                 explorable: Explorable.user,
                 child: ClipRRect(
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                   child: FadeImage(model.recieverImage!, height: 50, width: 50),
                 ),
               ),
@@ -114,10 +114,10 @@ class ActivityBoxBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: Config.PADDING,
+      padding: Consts.PADDING,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: Column(
         children: [
@@ -325,12 +325,12 @@ class ActivityBoxBodyMedia extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
               child: FadeImage(activity.mediaImage!, width: 70),
             ),
             Expanded(
               child: Padding(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,

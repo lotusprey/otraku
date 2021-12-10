@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/connection_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -47,7 +47,7 @@ class _MediaConnectionTile extends StatelessWidget {
       alignment: Alignment.topCenter,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
@@ -65,11 +65,11 @@ class _MediaConnectionTile extends StatelessWidget {
                       ClipRRect(
                         child: FadeImage(item.imageUrl, width: 75),
                         borderRadius:
-                            BorderRadius.horizontal(left: Config.RADIUS),
+                            BorderRadius.horizontal(left: Consts.RADIUS),
                       ),
                       Expanded(
                         child: Padding(
-                          padding: Config.PADDING,
+                          padding: Consts.PADDING,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +109,7 @@ class _MediaConnectionTile extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: Config.PADDING,
+                            padding: Consts.PADDING,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.end,
@@ -137,7 +137,7 @@ class _MediaConnectionTile extends StatelessWidget {
                             width: 75,
                           ),
                           borderRadius:
-                              BorderRadius.horizontal(right: Config.RADIUS),
+                              BorderRadius.horizontal(right: Consts.RADIUS),
                         ),
                       ],
                     ),

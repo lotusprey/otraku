@@ -6,16 +6,17 @@ import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-class MediaList extends StatelessWidget {
-  MediaList(this.ctrlTag);
+class CollectionGrid extends StatelessWidget {
+  CollectionGrid(this.ctrlTag);
 
   final String ctrlTag;
 
@@ -23,8 +24,8 @@ class MediaList extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMe = ctrlTag == '${LocalSettings().id}true' ||
         ctrlTag == '${LocalSettings().id}false';
-    final sidePadding = MediaQuery.of(context).size.width > 620
-        ? (MediaQuery.of(context).size.width - 600) / 2.0
+    final sidePadding = MediaQuery.of(context).size.width > 1020
+        ? (MediaQuery.of(context).size.width - 1000) / 2.0
         : 10.0;
 
     return GetBuilder<CollectionController>(
@@ -48,12 +49,15 @@ class MediaList extends StatelessWidget {
         return SliverPadding(
           padding:
               EdgeInsets.only(left: sidePadding, right: sidePadding, top: 15),
-          sliver: SliverFixedExtentList(
+          sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (_, i) => _MediaListTile(ctrl.entries[i], ctrl, isMe),
+              (_, i) => _CollectionGridTile(ctrl.entries[i], ctrl, isMe),
               childCount: ctrl.entries.length,
             ),
-            itemExtent: 150,
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              minWidth: 350,
+              height: 150,
+            ),
           ),
         );
       },
@@ -61,8 +65,8 @@ class MediaList extends StatelessWidget {
   }
 }
 
-class _MediaListTile extends StatelessWidget {
-  _MediaListTile(this.entry, this.ctrl, this.isMe);
+class _CollectionGridTile extends StatelessWidget {
+  _CollectionGridTile(this.entry, this.ctrl, this.isMe);
 
   final ListEntryModel entry;
   final CollectionController ctrl;
@@ -82,11 +86,10 @@ class _MediaListTile extends StatelessWidget {
             : '${format == null && entry.airingAt == null ? "" : ' • '}'
                 '${entry.nextEpisode! - 1 - entry.progress} ep behind';
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: ExploreIndexer(
         id: entry.mediaId,
@@ -103,12 +106,12 @@ class _MediaListTile extends StatelessWidget {
                   color: Theme.of(context).colorScheme.surface,
                   child: FadeImage(entry.cover),
                 ),
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
               ),
             ),
             Expanded(
               child: Padding(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +149,7 @@ class _MediaListTile extends StatelessWidget {
                       height: 5,
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       decoration: BoxDecoration(
-                        borderRadius: Config.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RADIUS,
                         gradient: LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,

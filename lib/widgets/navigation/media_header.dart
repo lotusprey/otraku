@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/media_info_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -90,13 +90,13 @@ class MediaHeader extends StatelessWidget {
               tag: ctrl.id,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                   color: Theme.of(context).colorScheme.surface,
                 ),
                 height: coverHeight,
                 width: coverWidth,
                 child: ClipRRect(
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                   child: Stack(
                     fit: StackFit.expand,
                     children: [

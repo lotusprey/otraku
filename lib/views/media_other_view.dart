@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/models/related_media_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -87,7 +86,7 @@ class _RelationsGrid extends StatelessWidget {
               Hero(
                 tag: items[i].id,
                 child: ClipRRect(
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: FadeImage(items[i].imageUrl!, width: 125),

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/studio_controller.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
@@ -29,7 +28,7 @@ class StudioView extends StatelessWidget {
           tag: id.toString(),
           builder: (ctrl) => Obx(
             () => CustomScrollView(
-              physics: Config.PHYSICS,
+              physics: Consts.PHYSICS,
               controller: ctrl.scrollCtrl,
               semanticChildCount: ctrl.media.mediaCount,
               slivers: [
@@ -42,7 +41,7 @@ class StudioView extends StatelessWidget {
                 if (name != null)
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: Config.PADDING,
+                      padding: Consts.PADDING,
                       child: GestureDetector(
                         onTap: () => Toast.copy(context, name!),
                         child: Hero(
@@ -108,7 +107,7 @@ class StudioView extends StatelessWidget {
                     for (int i = 0; i < ctrl.media.names.length; i++) ...[
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: Config.PADDING,
+                          padding: Consts.PADDING,
                           child: Text(
                             ctrl.media.names[i],
                             style: Theme.of(context).textTheme.headline1,

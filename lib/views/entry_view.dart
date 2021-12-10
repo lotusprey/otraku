@@ -7,7 +7,7 @@ import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
@@ -62,6 +62,7 @@ class EntryView extends StatelessWidget {
                 ],
               );
 
+            // TODO padding
             return editView!;
           },
         );
@@ -146,7 +147,7 @@ class _ButtonsState extends State<_Buttons> {
       alignment: Alignment.bottomCenter,
       child: ClipRect(
         child: BackdropFilter(
-          filter: Config.filter,
+          filter: Consts.filter,
           child: Container(
             height: MediaQuery.of(context).viewPadding.bottom + 50,
             padding: EdgeInsets.only(
@@ -224,7 +225,7 @@ class _EditView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([
@@ -510,7 +511,7 @@ class _CheckBoxGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 180,
         mainAxisSpacing: 0,
-        height: Config.MATERIAL_TAP_TARGET_SIZE,
+        height: Consts.MATERIAL_TAP_TARGET_SIZE,
       ),
     );
   }

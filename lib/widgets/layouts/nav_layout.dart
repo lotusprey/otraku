@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -12,6 +12,7 @@ class NavLayout extends StatelessWidget {
     required this.items,
     required this.onChanged,
     this.index = 0,
+    this.onSame,
     this.trySubtab,
     this.floating,
     this.appBar,
@@ -21,6 +22,7 @@ class NavLayout extends StatelessWidget {
   final Map<String, IconData> items;
   final void Function(int) onChanged;
   final int index;
+  final void Function(int)? onSame;
   final Widget? floating;
   final ShadowAppBar? appBar;
 
@@ -67,7 +69,7 @@ class NavLayout extends StatelessWidget {
       body: SafeArea(bottom: false, child: body),
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(
-          filter: Config.filter,
+          filter: Consts.filter,
           child: Container(
             height: MediaQuery.of(context).viewPadding.bottom + 50,
             padding: EdgeInsets.only(
@@ -81,7 +83,10 @@ class NavLayout extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      if (i != index) onChanged(i);
+                      if (i != index)
+                        onChanged(i);
+                      else
+                        onSame?.call(i);
                     },
                     child: SizedBox(
                       height: double.infinity,

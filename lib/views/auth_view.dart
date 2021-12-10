@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/client.dart';
@@ -98,7 +98,7 @@ class _AuthViewState extends State<AuthView> {
     return Scaffold(
       body: Container(
         alignment: Alignment.bottomCenter,
-        padding: Config.PADDING,
+        padding: Consts.PADDING,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 320),
           child: Column(
@@ -111,10 +111,10 @@ class _AuthViewState extends State<AuthView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                 ),
                 child: Row(
                   children: [
@@ -163,10 +163,10 @@ class _AuthViewState extends State<AuthView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                 ),
                 child: Row(
                   children: [

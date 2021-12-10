@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/favourite_button.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
@@ -56,7 +56,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     if (shrinkPercentage > 1) shrinkPercentage = 1;
 
     return Container(
-      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.MATERIAL_TAP_TARGET_SIZE,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -101,10 +101,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

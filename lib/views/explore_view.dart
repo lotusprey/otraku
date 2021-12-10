@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
@@ -20,7 +20,7 @@ class ExploreView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ExploreController>(
       builder: (ctrl) => CustomScrollView(
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         controller: ctrl.scrollCtrl,
         slivers: [
           const SliverExploreAppBar(),

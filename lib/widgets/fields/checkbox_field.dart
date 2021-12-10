@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/theming.dart';
 
 class CheckBoxField extends StatefulWidget {
@@ -31,7 +31,7 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.MATERIAL_TAP_TARGET_SIZE,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {

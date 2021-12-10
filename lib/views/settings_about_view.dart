@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,12 +12,12 @@ class SettingsAboutView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      physics: Config.PHYSICS,
-      padding: Config.PADDING,
+      physics: Consts.PHYSICS,
+      padding: Consts.PADDING,
       children: [
         Center(
           child: ClipRRect(
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             child: Image.asset(
               'assets/icons/about_icon.png',
               fit: BoxFit.contain,

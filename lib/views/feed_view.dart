@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/constants/activity_type.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -42,8 +42,8 @@ class FeedView extends StatelessWidget {
                 );
 
               return ListView.builder(
-                physics: Config.PHYSICS,
-                padding: Config.PADDING,
+                physics: Consts.PHYSICS,
+                padding: Consts.PADDING,
                 controller: ctrl.scrollCtrl,
                 itemBuilder: (_, i) =>
                     ActivityBox(feed: ctrl, model: ctrl.activities[i]),
@@ -65,7 +65,7 @@ class HomeFeedView extends StatelessWidget {
     return GetBuilder<FeedController>(
       builder: (ctrl) => CustomScrollView(
         controller: ctrl.scrollCtrl,
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         slivers: [
           _Header(ctrl),
           SliverRefreshControl(
@@ -73,7 +73,7 @@ class HomeFeedView extends StatelessWidget {
             canRefresh: () => !ctrl.isLoading,
           ),
           SliverPadding(
-            padding: Config.PADDING,
+            padding: Consts.PADDING,
             sliver: Obx(
               () {
                 final activities = ctrl.activities;

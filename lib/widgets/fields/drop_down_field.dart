@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 
 class DropDownField<T> extends StatefulWidget {
@@ -44,7 +44,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
         ),
         child: DropdownButton<T>(
           value: _value,

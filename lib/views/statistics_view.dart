@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -38,7 +38,7 @@ class StatisticsView extends StatelessWidget {
             key: ctrl.onAnime ? keyAnime : keyManga,
             padding:
                 EdgeInsets.only(top: 10, bottom: NavLayout.offset(context)),
-            physics: Config.PHYSICS,
+            physics: Consts.PHYSICS,
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 10),
@@ -155,13 +155,13 @@ class _Details extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
-      padding: Config.PADDING,
+      padding: Consts.PADDING,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       itemBuilder: (_, i) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(

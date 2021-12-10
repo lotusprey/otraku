@@ -10,7 +10,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/manga_format.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -148,8 +148,8 @@ class FiltersView extends StatelessWidget {
         ],
       ),
       body: ListView(
-        physics: Config.PHYSICS,
-        padding: Config.PADDING,
+        physics: Consts.PHYSICS,
+        padding: Consts.PADDING,
         children: [
           if (collectionTag == null)
             DropDownField(

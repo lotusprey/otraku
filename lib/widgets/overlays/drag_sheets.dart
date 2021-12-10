@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 
 /// An implementation of [DraggableScrollableSheet].
@@ -20,7 +20,7 @@ class DragSheet extends StatelessWidget {
   DragSheet({
     required this.children,
     required this.ctx,
-    this.itemExtent = Config.MATERIAL_TAP_TARGET_SIZE,
+    this.itemExtent = Consts.MATERIAL_TAP_TARGET_SIZE,
   });
 
   final double itemExtent;
@@ -67,7 +67,7 @@ class DragSheet extends StatelessWidget {
         child: ListView.builder(
           controller: sctrollCtrl,
           padding: const EdgeInsets.only(top: 50),
-          physics: Config.PHYSICS,
+          physics: Consts.PHYSICS,
           itemCount: children.length,
           itemExtent: itemExtent,
           itemBuilder: (_, i) => children[i],
@@ -166,6 +166,7 @@ class CollectionDragSheet extends StatelessWidget {
 // Switch between explore types in the explore tab.
 class ExploreDragSheet extends StatelessWidget {
   ExploreDragSheet(this.ctx);
+
   final BuildContext ctx;
 
   @override

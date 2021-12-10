@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/theming.dart';
 
 class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -35,7 +35,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Config.MATERIAL_TAP_TARGET_SIZE);
+  Size get preferredSize => Size.fromHeight(Consts.MATERIAL_TAP_TARGET_SIZE);
 }
 
 class SliverShadowAppBar extends StatelessWidget {
@@ -62,10 +62,10 @@ class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
       _ShadowBody(children);
 
   @override
-  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -92,7 +92,7 @@ class _ShadowBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.MATERIAL_TAP_TARGET_SIZE,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -132,9 +132,9 @@ class _SliverTransparentAppBarDelegate
   ) =>
       ClipRect(
         child: BackdropFilter(
-          filter: Config.filter,
+          filter: Consts.filter,
           child: Container(
-            height: Config.MATERIAL_TAP_TARGET_SIZE,
+            height: Consts.MATERIAL_TAP_TARGET_SIZE,
             color: Theme.of(context).cardColor,
             child: Row(children: children),
           ),
@@ -142,10 +142,10 @@ class _SliverTransparentAppBarDelegate
       );
 
   @override
-  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -188,7 +188,7 @@ class AppBarIcon extends StatelessWidget {
       splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
-      padding: Config.PADDING,
+      padding: Consts.PADDING,
     );
   }
 }

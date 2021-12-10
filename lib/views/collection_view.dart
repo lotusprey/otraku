@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
-import 'package:otraku/widgets/layouts/media_list.dart';
+import 'package:otraku/widgets/layouts/collection_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -45,7 +45,7 @@ class HomeCollectionView extends StatelessWidget {
       init: CollectionController(id, ofAnime),
       tag: tag,
       builder: (ctrl) => CustomScrollView(
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         controller: ctrl.scrollCtrl,
         slivers: [
           SliverCollectionAppBar(tag, id != LocalSettings().id),
@@ -53,7 +53,7 @@ class HomeCollectionView extends StatelessWidget {
             onRefresh: ctrl.refetch,
             canRefresh: () => !ctrl.isLoading,
           ),
-          MediaList(tag),
+          CollectionGrid(tag),
           SliverToBoxAdapter(
               child: SizedBox(height: NavLayout.offset(context))),
         ],

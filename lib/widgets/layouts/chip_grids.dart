@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
@@ -39,7 +39,7 @@ class _ChipGrid extends StatelessWidget {
                   child: Container(
                     height: Theming.ICON_SMALL,
                     width: Theming.ICON_SMALL,
-                    margin: Config.PADDING,
+                    margin: Consts.PADDING,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Theme.of(context).colorScheme.primary,
@@ -63,7 +63,7 @@ class _ChipGrid extends StatelessWidget {
         children.isNotEmpty
             ? Wrap(spacing: 5, children: children)
             : SizedBox(
-                height: Config.MATERIAL_TAP_TARGET_SIZE,
+                height: Consts.MATERIAL_TAP_TARGET_SIZE,
                 child: Center(
                   child: Text(
                     'No $placeholder',

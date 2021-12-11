@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/notification_type.dart';
@@ -44,6 +46,7 @@ class SettingsNotificationsView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
+        controller: Get.find<HomeController>().scrollCtrl,
         physics: Consts.PHYSICS,
         slivers: [
           ...siteOptions,

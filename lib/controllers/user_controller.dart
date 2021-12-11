@@ -1,10 +1,10 @@
-import 'package:get/get.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class UserController extends GetxController {
+class UserController extends ScrollingController {
   UserController(this.id);
 
   final int id;

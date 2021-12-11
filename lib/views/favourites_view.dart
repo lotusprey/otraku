@@ -31,6 +31,7 @@ class FavouritesView extends StatelessWidget {
       builder: (ctrl) => NavLayout(
         index: ctrl.pageIndex,
         onChanged: (index) => ctrl.pageIndex = index,
+        onSame: (_) => ctrl.scrollUpTo(0),
         items: {
           'Anime': Explorable.anime.icon,
           'Manga': Explorable.manga.icon,

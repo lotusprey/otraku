@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/constants/consts.dart';
 
 class TwoStateField extends StatefulWidget {
   final String title;
@@ -38,7 +38,7 @@ class _TwoStateFieldState extends State<TwoStateField> {
             ? Icon(
                 Icons.done_rounded,
                 color: Theme.of(context).colorScheme.background,
-                size: Theming.ICON_SMALL,
+                size: Consts.ICON_SMALL,
               )
             : null,
       ),

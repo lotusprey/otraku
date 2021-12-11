@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/theming.dart';
 
 class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -184,7 +183,7 @@ class AppBarIcon extends StatelessWidget {
       icon: Icon(icon),
       tooltip: tooltip,
       onPressed: onTap,
-      iconSize: Theming.ICON_BIG,
+      iconSize: Consts.ICON_BIG,
       splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),

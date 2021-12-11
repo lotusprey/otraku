@@ -15,7 +15,7 @@ import 'package:otraku/views/settings_view.dart';
 import 'package:otraku/views/staff_view.dart';
 import 'package:otraku/views/statistics_view.dart';
 import 'package:otraku/views/studio_view.dart';
-import 'package:otraku/views/user_reviews_view.dart';
+import 'package:otraku/views/reviews_view.dart';
 import 'package:otraku/views/user_view.dart';
 
 /// A routing helper. When passing arguments to named routes, they should always

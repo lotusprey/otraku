@@ -8,7 +8,6 @@ import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/local_settings.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -137,7 +136,7 @@ class _CollectionGridTile extends StatelessWidget {
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1
-                                      ?.copyWith(fontSize: Theming.FONT_SMALL),
+                                      ?.copyWith(fontSize: Consts.FONT_SMALL),
                                 ),
                               ],
                             ),
@@ -178,7 +177,7 @@ class _CollectionGridTile extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Ionicons.repeat,
-                                  size: Theming.ICON_SMALL,
+                                  size: Consts.ICON_SMALL,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
@@ -194,12 +193,12 @@ class _CollectionGridTile extends StatelessWidget {
                           IconButton(
                             tooltip: 'Comment',
                             constraints: const BoxConstraints(
-                              maxHeight: Theming.ICON_SMALL,
+                              maxHeight: Consts.ICON_SMALL,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             icon: const Icon(
                               Ionicons.chatbox,
-                              size: Theming.ICON_SMALL,
+                              size: Consts.ICON_SMALL,
                             ),
                             onPressed: () => showPopUp(
                               context,
@@ -235,21 +234,21 @@ class _CollectionGridTile extends StatelessWidget {
         if (entry.score == 3)
           return const Icon(
             Icons.sentiment_very_satisfied,
-            size: Theming.ICON_SMALL,
+            size: Consts.ICON_SMALL,
           );
 
         if (entry.score == 2)
-          return const Icon(Icons.sentiment_neutral, size: Theming.ICON_SMALL);
+          return const Icon(Icons.sentiment_neutral, size: Consts.ICON_SMALL);
 
         return const Icon(
           Icons.sentiment_very_dissatisfied,
-          size: Theming.ICON_SMALL,
+          size: Consts.ICON_SMALL,
         );
       case ScoreFormat.POINT_5:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, size: Theming.ICON_SMALL),
+            const Icon(Icons.star_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(0),
@@ -261,7 +260,7 @@ class _CollectionGridTile extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Theming.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(
@@ -275,7 +274,7 @@ class _CollectionGridTile extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Theming.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(0),
@@ -326,7 +325,7 @@ class _Progress extends StatelessWidget {
             const SizedBox(width: 5),
             Icon(
               Ionicons.add_outline,
-              size: Theming.ICON_SMALL,
+              size: Consts.ICON_SMALL,
               color: Theme.of(context).colorScheme.primary,
             ),
           ],

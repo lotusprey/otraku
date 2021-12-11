@@ -3,34 +3,31 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 
 /// A [GetxController] that can fetch data on overscroll.
-abstract class OverscrollController extends GetxController {
+abstract class ScrollingController extends GetxController {
   final scrollCtrl = MultiScrollController();
 
   // Scroll up to a certain offset with an animation.
   Future<void> scrollUpTo(double offset) async {
-    if (!scrollCtrl.hasClients || scrollCtrl.lastPos.pixels <= offset) return;
+    if (!scrollCtrl.hasClients || scrollCtrl.pos.pixels <= offset) return;
 
-    if (scrollCtrl.lastPos.pixels > offset + 100)
-      scrollCtrl.lastPos.jumpTo(offset + 100);
+    if (scrollCtrl.pos.pixels > offset + 100)
+      scrollCtrl.pos.jumpTo(offset + 100);
 
-    await scrollCtrl.lastPos.animateTo(
+    await scrollCtrl.pos.animateTo(
       offset,
       duration: const Duration(milliseconds: 200),
       curve: Curves.decelerate,
     );
   }
 
-  bool get hasNextPage;
-
-  Future<void> fetchPage();
+  Future<void> fetchPage() => Future.value();
 
   bool _canLoad = true;
 
   Future<void> _listener() async {
-    if (scrollCtrl.lastPos.userScrollDirection == ScrollDirection.reverse &&
-        scrollCtrl.lastPos.pixels > scrollCtrl.lastPos.maxScrollExtent - 100 &&
-        _canLoad &&
-        hasNextPage) {
+    if (scrollCtrl.pos.userScrollDirection == ScrollDirection.reverse &&
+        scrollCtrl.pos.pixels > scrollCtrl.pos.maxScrollExtent - 100 &&
+        _canLoad) {
       _canLoad = false;
       await fetchPage();
       await Future.delayed(const Duration(seconds: 1));
@@ -54,11 +51,11 @@ abstract class OverscrollController extends GetxController {
 class MultiScrollController extends ScrollController {
   // Returns the last attached ScrollPosition.
   // This was necessary, because it's possible that there would be multiple
-  // pages using the same OverscrollController and consecutively, using the same
+  // views using the same ScrollingController and consecutively, using the same
   // ScrollController. The ScrollController position getter works with only 1
   // ScrollPosition attached, so that required the addition of the following
   // getter.
-  ScrollPosition get lastPos {
+  ScrollPosition get pos {
     assert(
       positions.isNotEmpty,
       'ScrollController not attached to any scroll views.',
@@ -66,10 +63,12 @@ class MultiScrollController extends ScrollController {
     return positions.last;
   }
 
-  // Used to determine if this has been disposed.
-  bool get mounted => _mounted;
-
   bool _mounted = true;
+
+  @override
+  void removeListener(VoidCallback listener) {
+    if (_mounted) super.removeListener(listener);
+  }
 
   @override
   void dispose() {

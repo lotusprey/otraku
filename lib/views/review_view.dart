@@ -4,7 +4,6 @@ import 'package:otraku/models/review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/review_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -93,7 +92,7 @@ class ReviewView extends StatelessWidget {
                               child: Text('${model.score}/100'),
                               style: ElevatedButton.styleFrom(
                                 textStyle: TextStyle(
-                                  fontSize: Theming.FONT_BIG,
+                                  fontSize: Consts.FONT_BIG,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

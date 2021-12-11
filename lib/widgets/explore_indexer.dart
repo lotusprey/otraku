@@ -66,7 +66,7 @@ class ExploreIndexer extends StatelessWidget {
             arguments: RouteArg(id: id, info: imageUrl),
           );
         else {
-          Get.find<HomeController>().homeTab = HomeView.PROFILE;
+          Get.find<HomeController>().homeTab = HomeView.USER;
           Navigator.popUntil(ctx, (r) => r.isFirst);
         }
         return;

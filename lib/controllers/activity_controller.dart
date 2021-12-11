@@ -4,9 +4,9 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class ActivityController extends OverscrollController {
+class ActivityController extends ScrollingController {
   ActivityController(this.id, this.feedTag);
 
   final int id;
@@ -16,9 +16,6 @@ class ActivityController extends OverscrollController {
 
   ActivityModel? get model => _model;
   bool get isLoading => _isLoading();
-
-  @override
-  bool get hasNextPage => _model!.replies.hasNextPage;
 
   Future<void> fetch() async {
     if (_model != null && _model!.replies.items.isNotEmpty) return;
@@ -38,6 +35,8 @@ class ActivityController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
+    if (!_model!.replies.hasNextPage) return;
+
     final data = await Client.request(
       GqlQuery.activity,
       {'id': id, 'page': _model!.replies.nextPage},

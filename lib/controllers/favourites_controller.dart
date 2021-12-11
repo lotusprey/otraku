@@ -4,17 +4,15 @@ import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class FavouritesController extends OverscrollController {
+class FavouritesController extends ScrollingController {
   FavouritesController(this.id);
 
   final int id;
   late UserModel _model;
   int _pageIndex = UserModel.ANIME_FAV;
 
-  @override
-  bool get hasNextPage => _model.favourites[_pageIndex].hasNextPage;
   List<ExplorableModel> get favourites => _model.favourites[_pageIndex].items;
 
   int get pageIndex => _pageIndex;
@@ -26,6 +24,8 @@ class FavouritesController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
+    if (!_model.favourites[_pageIndex].hasNextPage) return;
+
     final data = await Client.request(GqlQuery.user, {
       'id': id,
       'page': _model.favourites[_pageIndex].nextPage,

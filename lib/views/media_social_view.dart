@@ -4,7 +4,6 @@ import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -154,7 +153,7 @@ class _Ranks extends StatelessWidget {
               children: [
                 Icon(
                   rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
-                  size: Theming.ICON_BIG,
+                  size: Consts.ICON_BIG,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(width: 5),

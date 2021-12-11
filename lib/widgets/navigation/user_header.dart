@@ -6,7 +6,6 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -61,7 +60,7 @@ class UserHeader extends StatelessWidget {
                 user!.isFollowing
                     ? Ionicons.person_remove_outline
                     : Ionicons.person_add_outline,
-                size: Theming.ICON_SMALL,
+                size: Consts.ICON_SMALL,
               ),
               label: Text(
                 user!.isFollowing

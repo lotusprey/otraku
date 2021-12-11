@@ -9,9 +9,9 @@ import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/local_settings.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class CollectionController extends OverscrollController implements Filterable {
+class CollectionController extends ScrollingController implements Filterable {
   // GetBuilder ids.
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
@@ -32,22 +32,29 @@ class CollectionController extends OverscrollController implements Filterable {
   final _customListNames = <String>[];
   int _listIndex = 0;
   bool _isLoading = true;
+  bool _searchMode = false;
   ScoreFormat? _scoreFormat;
 
   // ***************************************************************************
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  @override
-  bool get hasNextPage => false;
-
   int get listIndex => _listIndex;
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
+  bool get searchMode => _searchMode;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
   List<String> get customListNames => [..._customListNames];
+
+  set searchMode(bool v) {
+    if (_searchMode == v) return;
+    _searchMode = v;
+    update([ID_HEAD]);
+    if (_filters[Filterable.SEARCH] != null)
+      setFilterWithKey(Filterable.SEARCH, update: true);
+  }
 
   List<String> get listNames {
     final n = <String>[];
@@ -151,9 +158,6 @@ class CollectionController extends OverscrollController implements Filterable {
     _lists.clear();
     return _fetch();
   }
-
-  @override
-  Future<void> fetchPage() async {}
 
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
     // Update database item.

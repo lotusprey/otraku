@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 
 const _ACTION_BUTTON_SIZE = 56.0;
@@ -173,16 +173,16 @@ class _FloatingListenerState extends State<FloatingListener>
   double _lastOffset = 0;
 
   void _visibility() {
-    final pos = widget.scrollCtrl.lastPos;
+    final pos = widget.scrollCtrl.pos;
     final dif = pos.pixels - _lastOffset;
 
     // If the position has moved enough from the last
     // spot or is out of bounds, update visibility.
     if (dif > 10 || pos.pixels > pos.maxScrollExtent) {
-      _lastOffset = widget.scrollCtrl.lastPos.pixels;
+      _lastOffset = widget.scrollCtrl.pos.pixels;
       _animationCtrl.forward().then((_) => setState(() => _visible = false));
     } else if (dif < -10 || pos.pixels < pos.minScrollExtent) {
-      _lastOffset = widget.scrollCtrl.lastPos.pixels;
+      _lastOffset = widget.scrollCtrl.pos.pixels;
       setState(() => _visible = true);
       _animationCtrl.reverse();
     }
@@ -202,9 +202,7 @@ class _FloatingListenerState extends State<FloatingListener>
 
   @override
   void dispose() {
-    if (widget.scrollCtrl.mounted)
-      widget.scrollCtrl.removeListener(_visibility);
-
+    widget.scrollCtrl.removeListener(_visibility);
     _animationCtrl.dispose();
     super.dispose();
   }

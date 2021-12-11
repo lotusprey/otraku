@@ -4,9 +4,9 @@ import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class FriendsController extends OverscrollController {
+class FriendsController extends ScrollingController {
   FriendsController(this.id, this._onFollowing);
 
   final int id;
@@ -28,13 +28,15 @@ class FriendsController extends OverscrollController {
         update();
       });
 
-  @override
   bool get hasNextPage => _onFollowing
       ? _model.following.hasNextPage
       : _model.followers.hasNextPage;
 
   @override
   Future<void> fetchPage() async {
+    if (_onFollowing && !_model.following.hasNextPage) return;
+    if (!_onFollowing && !_model.followers.hasNextPage) return;
+
     Map<String, dynamic>? data = await Client.request(GqlQuery.friends, {
       'id': id,
       'withFollowing': _onFollowing,

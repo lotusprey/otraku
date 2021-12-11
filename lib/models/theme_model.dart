@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/theming.dart';
 
 class ThemeModel {
   final Brightness brightness;
@@ -70,17 +69,17 @@ class ThemeModel {
           shape:
               const RoundedRectangleBorder(borderRadius: Consts.BORDER_RADIUS),
           titleTextStyle: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           contentTextStyle: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.normal,
           ),
         ),
-        iconTheme: IconThemeData(color: primary, size: Theming.ICON_BIG),
+        iconTheme: IconThemeData(color: primary, size: Consts.ICON_BIG),
         tooltipTheme: TooltipThemeData(
           padding: Consts.PADDING,
           decoration: BoxDecoration(
@@ -88,7 +87,7 @@ class ThemeModel {
             borderRadius: Consts.BORDER_RADIUS,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
-          textStyle: TextStyle(fontSize: Theming.FONT_MEDIUM, color: primary),
+          textStyle: TextStyle(fontSize: Consts.FONT_MEDIUM, color: primary),
         ),
         scrollbarTheme: ScrollbarThemeData(
           radius: Consts.RADIUS,
@@ -120,7 +119,7 @@ class ThemeModel {
           filled: true,
           fillColor: surface,
           hintStyle: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.normal,
           ),
@@ -132,7 +131,7 @@ class ThemeModel {
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Theming.FONT_MEDIUM,
+              fontSize: Consts.FONT_MEDIUM,
             )),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
               borderRadius: Consts.BORDER_RADIUS,
@@ -144,7 +143,7 @@ class ThemeModel {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Theming.FONT_MEDIUM,
+              fontSize: Consts.FONT_MEDIUM,
               fontWeight: FontWeight.w500,
             )),
             backgroundColor: MaterialStateProperty.all(secondary),
@@ -157,47 +156,47 @@ class ThemeModel {
         ),
         textTheme: TextTheme(
           headline1: TextStyle(
-            fontSize: Theming.FONT_BIG,
+            fontSize: Consts.FONT_BIG,
             color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline2: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline3: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.w500,
           ),
           headline4: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.normal,
           ),
           bodyText1: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: secondary,
             fontWeight: FontWeight.normal,
           ),
           bodyText2: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.normal,
           ),
           subtitle1: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.normal,
           ),
           subtitle2: TextStyle(
-            fontSize: Theming.FONT_SMALL,
+            fontSize: Consts.FONT_SMALL,
             color: primary,
             fontWeight: FontWeight.normal,
           ),
           button: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: background,
             fontWeight: FontWeight.normal,
           ),

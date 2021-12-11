@@ -49,6 +49,9 @@ class EntryController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (_model == null) _fetch();
+    if (_model == null)
+      _fetch();
+    else
+      _copy = EntryModel.copy(_model!);
   }
 }

@@ -19,10 +19,15 @@ class CollectionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: CollectionActionButton('$id$ofAnime'),
-      body: SafeArea(
-        child: HomeCollectionView(id: id, ofAnime: ofAnime, key: null),
+    final tag = '$id$ofAnime';
+    return GetBuilder<CollectionController>(
+      init: CollectionController(id, ofAnime),
+      tag: tag,
+      builder: (ctrl) => Scaffold(
+        floatingActionButton: CollectionActionButton(tag),
+        body: SafeArea(
+          child: HomeCollectionView(id: id, ofAnime: ofAnime, key: null),
+        ),
       ),
     );
   }
@@ -32,7 +37,7 @@ class HomeCollectionView extends StatelessWidget {
   HomeCollectionView({
     required this.id,
     required this.ofAnime,
-    required key,
+    key,
   }) : super(key: key);
 
   final int id;
@@ -42,7 +47,6 @@ class HomeCollectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     final tag = '$id$ofAnime';
     return GetBuilder<CollectionController>(
-      init: CollectionController(id, ofAnime),
       tag: tag,
       builder: (ctrl) => CustomScrollView(
         physics: Consts.PHYSICS,
@@ -55,7 +59,8 @@ class HomeCollectionView extends StatelessWidget {
           ),
           CollectionGrid(tag),
           SliverToBoxAdapter(
-              child: SizedBox(height: NavLayout.offset(context))),
+            child: SizedBox(height: NavLayout.offset(context)),
+          ),
         ],
       ),
     );
@@ -64,6 +69,7 @@ class HomeCollectionView extends StatelessWidget {
 
 class CollectionActionButton extends StatelessWidget {
   const CollectionActionButton(this.ctrlTag, {Key? key}) : super(key: key);
+
   final String ctrlTag;
 
   @override

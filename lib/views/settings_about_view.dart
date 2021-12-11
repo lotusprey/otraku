@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -12,6 +14,7 @@ class SettingsAboutView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      controller: Get.find<HomeController>().scrollCtrl,
       physics: Consts.PHYSICS,
       padding: Consts.PADDING,
       children: [

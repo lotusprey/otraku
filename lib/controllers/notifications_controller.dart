@@ -4,9 +4,9 @@ import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class NotificationsController extends OverscrollController {
+class NotificationsController extends ScrollingController {
   static const ID_LIST = 0;
 
   static const _filters = const [
@@ -34,8 +34,6 @@ class NotificationsController extends OverscrollController {
   int _filter = 0;
   final _entries = PageModel<NotificationModel>();
 
-  @override
-  bool get hasNextPage => _entries.hasNextPage;
   int get unreadCount => _unreadCount;
   int get filter => _filter;
   set filter(int val) {
@@ -73,6 +71,8 @@ class NotificationsController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
+    if (!_entries.hasNextPage) return;
+
     Map<String, dynamic>? data = await Client.request(
       GqlQuery.notifications,
       {

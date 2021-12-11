@@ -1,10 +1,10 @@
-import 'package:get/get.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class HomeController extends GetxController {
+class HomeController extends ScrollingController {
   // GetBuilder ids.
   static const ID_HOME = 0;
   static const ID_SETTINGS = 1;
@@ -13,6 +13,7 @@ class HomeController extends GetxController {
   SettingsModel? _siteSettings;
   late int _homeTab;
   int _settingsTab = 0;
+  int _notificationCount = 0;
 
   SettingsModel? get siteSettings => _siteSettings;
 
@@ -28,8 +29,10 @@ class HomeController extends GetxController {
     update([ID_SETTINGS]);
   }
 
+  int get notificationCount => _notificationCount;
+
   void nullifyUnread() {
-    LocalSettings().notificationCount = 0;
+    _notificationCount = 0;
     update([ID_NOTIFICATIONS]);
   }
 
@@ -38,8 +41,7 @@ class HomeController extends GetxController {
     if (data == null) return;
 
     _siteSettings = SettingsModel(data['Viewer']);
-    LocalSettings().notificationCount =
-        data['Viewer']['unreadNotificationCount'] ?? 0;
+    _notificationCount = data['Viewer']['unreadNotificationCount'] ?? 0;
     update([ID_SETTINGS]);
   }
 

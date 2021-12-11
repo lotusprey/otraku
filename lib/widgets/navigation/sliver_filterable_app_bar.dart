@@ -10,7 +10,6 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
@@ -39,14 +38,21 @@ class SliverCollectionAppBar extends StatelessWidget {
         return SliverTransparentAppBar([
           leading,
           MediaSearchField(
-            swipe: (offset) => ctrl.listIndex += offset,
             hint: ctrl.currentName,
-            searchValue: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
-            search: (val) => ctrl.setFilterWithKey(
-              Filterable.SEARCH,
-              value: val,
-              update: true,
-            ),
+            searchVal: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
+            searchMode: ctrl.searchMode,
+            search: (val) {
+              if (val == null) {
+                ctrl.searchMode = false;
+                return;
+              }
+
+              ctrl.setFilterWithKey(
+                Filterable.SEARCH,
+                value: val,
+                update: true,
+              );
+            },
             title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -89,45 +95,50 @@ class SliverExploreAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ExploreController>();
-    return Obx(
-      () => SliverTransparentAppBar(
-        [
-          const SizedBox(width: 10),
-          MediaSearchField(
-            swipe: (offset) {
-              final index = ctrl.type.index + offset;
-              if (index >= 0 && index < Explorable.values.length)
-                ctrl.type = Explorable.values[index];
-            },
-            hint: Convert.clarifyEnum(describeEnum(ctrl.type))!,
-            searchValue: ctrl.search,
-            search: ctrl.type != Explorable.review
-                ? (val) => ctrl.search = val
-                : null,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(ctrl.type.icon,
-                    color: Theme.of(context).colorScheme.onBackground),
-                const SizedBox(width: 15),
-                Flexible(
-                  child: Text(
-                    Convert.clarifyEnum(describeEnum(ctrl.type))!,
-                    style: Theme.of(context).textTheme.headline1,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+    return GetBuilder<ExploreController>(
+      id: ExploreController.ID_HEAD,
+      builder: (ctrl) => Obx(
+        () => SliverTransparentAppBar(
+          [
+            const SizedBox(width: 10),
+            MediaSearchField(
+              hint: Convert.clarifyEnum(describeEnum(ctrl.type))!,
+              searchVal: ctrl.search,
+              search: ctrl.type != Explorable.review
+                  ? (val) {
+                      if (val == null) {
+                        ctrl.searchMode = !ctrl.searchMode;
+                        return;
+                      }
+
+                      ctrl.search = val;
+                    }
+                  : null,
+              searchMode: ctrl.searchMode,
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(ctrl.type.icon,
+                      color: Theme.of(context).colorScheme.onBackground),
+                  const SizedBox(width: 15),
+                  Flexible(
+                    child: Text(
+                      Convert.clarifyEnum(describeEnum(ctrl.type))!,
+                      style: Theme.of(context).textTheme.headline1,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
-            _FilterIcon(null)
-          else if (ctrl.type == Explorable.character ||
-              ctrl.type == Explorable.staff)
-            _BirthdayIcon(ctrl),
-        ],
+            if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
+              _FilterIcon(null)
+            else if (ctrl.type == Explorable.character ||
+                ctrl.type == Explorable.staff)
+              _BirthdayIcon(ctrl),
+          ],
+        ),
       ),
     );
   }
@@ -135,18 +146,18 @@ class SliverExploreAppBar extends StatelessWidget {
 
 class MediaSearchField extends StatefulWidget {
   MediaSearchField({
-    required this.swipe,
     required this.title,
     required this.hint,
-    required this.searchValue,
+    required this.searchVal,
+    required this.searchMode,
     required this.search,
   });
 
-  final Function(int) swipe;
   final Widget title;
   final String hint;
-  final String searchValue;
-  final Function(String)? search;
+  final String searchVal;
+  final bool searchMode;
+  final void Function(String?)? search;
 
   @override
   _MediaSearchFieldState createState() => _MediaSearchFieldState();
@@ -154,14 +165,12 @@ class MediaSearchField extends StatefulWidget {
 
 class _MediaSearchFieldState extends State<MediaSearchField> {
   late bool _empty;
-  late bool _onSearch;
   late TextEditingController _ctrl;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = TextEditingController(text: widget.searchValue);
-    _onSearch = widget.search != null && widget.searchValue != '';
+    _ctrl = TextEditingController(text: widget.searchVal);
     _empty = _ctrl.text.isEmpty;
   }
 
@@ -177,20 +186,18 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!_onSearch) ...[
+          if (!widget.searchMode) ...[
             Expanded(child: widget.title),
             if (widget.search != null)
               AppBarIcon(
                 tooltip: 'Search',
                 icon: Ionicons.search_outline,
-                onTap: () => setState(() => _onSearch = true),
+                onTap: () => widget.search!(null),
               ),
           ] else
             WillPopScope(
               onWillPop: () {
-                setState(() => _onSearch = false);
-                _ctrl.clear();
-                _update('');
+                widget.search!(null);
                 return Future.value(false);
               },
               child: Expanded(
@@ -216,18 +223,17 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                               padding: const EdgeInsets.all(0),
                               icon:
                                   const Icon(Ionicons.chevron_forward_outline),
-                              iconSize: Theming.ICON_SMALL,
+                              iconSize: Consts.ICON_SMALL,
                               splashColor: Colors.transparent,
                               color: Theme.of(context).colorScheme.primary,
-                              onPressed: () =>
-                                  setState(() => _onSearch = false),
+                              onPressed: () => widget.search!(null),
                             )
                           : IconButton(
                               tooltip: 'Clear',
                               constraints: const BoxConstraints(maxWidth: 40),
                               padding: const EdgeInsets.all(0),
                               icon: const Icon(Icons.close_rounded),
-                              iconSize: Theming.ICON_SMALL,
+                              iconSize: Consts.ICON_SMALL,
                               splashColor: Colors.transparent,
                               color: Theme.of(context).colorScheme.primary,
                               onPressed: () {
@@ -247,7 +253,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
   }
 
   void _update(String text) {
-    widget.search!(text);
+    widget.search?.call(text);
     if (_empty != text.isEmpty) setState(() => _empty = text.isEmpty);
   }
 }

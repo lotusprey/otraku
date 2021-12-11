@@ -13,13 +13,6 @@ class Theming with ChangeNotifier {
 
   static final _it = Theming._();
 
-  // Sizes.
-  static const ICON_BIG = 25.0;
-  static const ICON_SMALL = 20.0;
-  static const FONT_BIG = 20.0;
-  static const FONT_MEDIUM = 15.0;
-  static const FONT_SMALL = 13.0;
-
   late ThemeModel _theme;
 
   ThemeModel get theme => _theme;

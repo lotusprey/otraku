@@ -6,9 +6,9 @@ import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/local_settings.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class FeedController extends OverscrollController {
+class FeedController extends ScrollingController {
   FeedController(this.id);
 
   final int? id;
@@ -32,9 +32,6 @@ class FeedController extends OverscrollController {
   }
 
   bool get isLoading => _isLoading;
-
-  @override
-  bool get hasNextPage => _activities().hasNextPage;
 
   @override
   Future<void> fetchPage({bool clean = false}) async {

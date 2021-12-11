@@ -7,9 +7,9 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/group_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class StudioController extends OverscrollController {
+class StudioController extends ScrollingController {
   StudioController(this.id);
 
   final int id;
@@ -20,9 +20,6 @@ class StudioController extends OverscrollController {
 
   StudioModel? get model => _model;
   GroupPageModel<ExplorableModel> get media => _media();
-
-  @override
-  bool get hasNextPage => _media().hasNextPage;
 
   MediaSort get sort => _sort;
   set sort(MediaSort value) {
@@ -67,6 +64,8 @@ class StudioController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
+    if (!_media().hasNextPage) return;
+
     final data = await Client.request(
       GqlQuery.studio,
       {

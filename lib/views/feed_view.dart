@@ -5,7 +5,6 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/activity_box.dart';
@@ -16,8 +15,9 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class FeedView extends StatelessWidget {
-  final int id;
   FeedView(this.id);
+
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -112,8 +112,9 @@ class HomeFeedView extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  final FeedController ctrl;
   _Header(this.ctrl);
+
+  final FeedController ctrl;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +130,7 @@ class _Header extends StatelessWidget {
       GetBuilder<HomeController>(
         id: HomeController.ID_NOTIFICATIONS,
         builder: (vCtrl) {
-          if (LocalSettings().notificationCount < 1)
+          if (vCtrl.notificationCount < 1)
             return AppBarIcon(
               tooltip: 'Notifications',
               icon: Ionicons.notifications_outline,
@@ -166,7 +167,7 @@ class _Header extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          LocalSettings().notificationCount.toString(),
+                          vCtrl.notificationCount.toString(),
                           style: Theme.of(context)
                               .textTheme
                               .subtitle2!
@@ -188,8 +189,9 @@ class _Header extends StatelessWidget {
 }
 
 class _Filter extends StatelessWidget {
-  final FeedController feed;
-  _Filter(this.feed);
+  _Filter(this.ctrl);
+
+  final FeedController ctrl;
 
   @override
   Widget build(BuildContext context) {
@@ -201,8 +203,8 @@ class _Filter extends StatelessWidget {
         sheet: SelectionSheet<ActivityType>(
           options: ActivityType.values.map((v) => v.text).toList(),
           values: ActivityType.values,
-          names: feed.typeIn,
-          onDone: (typeIn) => feed.typeIn = typeIn,
+          names: ctrl.typeIn,
+          onDone: (typeIn) => ctrl.typeIn = typeIn,
           fixHeight: true,
         ),
       ),

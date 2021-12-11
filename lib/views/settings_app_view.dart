@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/theming.dart';
@@ -21,6 +23,7 @@ class SettingsAppView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
+        controller: Get.find<HomeController>().scrollCtrl,
         physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
@@ -60,7 +63,7 @@ class SettingsAppView extends StatelessWidget {
                   'Anime List': HomeView.ANIME_LIST,
                   'Manga List': HomeView.MANGA_LIST,
                   'Explore': HomeView.EXPLORE,
-                  'Profile': HomeView.PROFILE,
+                  'Profile': HomeView.USER,
                 },
                 onChanged: (val) => LocalSettings().defaultHomeTab = val,
               ),

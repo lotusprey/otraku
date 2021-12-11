@@ -67,8 +67,9 @@ class SettingsView extends StatelessWidget {
           ];
 
         return NavLayout(
-          onChanged: (i) => ctrl.settingsTab = i,
           index: ctrl.settingsTab,
+          onChanged: (i) => ctrl.settingsTab = i,
+          onSame: (_) => ctrl.scrollUpTo(0),
           items: const {
             'App': Ionicons.color_palette_outline,
             'Content': Ionicons.tv_outline,

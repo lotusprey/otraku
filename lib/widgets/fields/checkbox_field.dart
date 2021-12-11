@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/theming.dart';
 
 class CheckBoxField extends StatefulWidget {
   final String title;
@@ -43,8 +42,8 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: Theming.ICON_BIG,
-              height: Theming.ICON_BIG,
+              width: Consts.ICON_BIG,
+              height: Consts.ICON_BIG,
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -60,7 +59,7 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
                   ? Icon(
                       Ionicons.checkmark_outline,
                       color: Theme.of(context).colorScheme.background,
-                      size: Theming.ICON_SMALL,
+                      size: Consts.ICON_SMALL,
                     )
                   : null,
             ),

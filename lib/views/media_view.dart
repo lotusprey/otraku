@@ -16,10 +16,10 @@ import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class MediaView extends StatelessWidget {
+  MediaView(this.id, this.coverUrl);
+
   final int id;
   final String? coverUrl;
-
-  MediaView(this.id, this.coverUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +69,7 @@ class MediaView extends StatelessWidget {
           builder: (_) => NavLayout(
             index: ctrl.tab,
             onChanged: (page) => ctrl.tab = page,
+            onSame: (_) => ctrl.scrollUpTo(headerOffset),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
                 if (goRight && ctrl.otherTab < 2) {

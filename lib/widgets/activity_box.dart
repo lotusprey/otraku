@@ -7,7 +7,6 @@ import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -181,12 +180,12 @@ class _InteractionButtonsState extends State<InteractionButtons> {
       children: [
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          constraints: const BoxConstraints(maxHeight: Theming.ICON_SMALL),
+          constraints: const BoxConstraints(maxHeight: Consts.ICON_SMALL),
           splashColor: Colors.transparent,
           tooltip: 'More',
           icon: const Icon(
             Ionicons.ellipsis_horizontal,
-            size: Theming.ICON_SMALL,
+            size: Consts.ICON_SMALL,
           ),
           onPressed: () {
             final children = <Widget>[];
@@ -268,7 +267,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 const SizedBox(width: 5),
-                const Icon(Ionicons.chatbox, size: Theming.ICON_SMALL),
+                const Icon(Ionicons.chatbox, size: Consts.ICON_SMALL),
               ],
             ),
           ),
@@ -296,7 +295,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 const SizedBox(width: 5),
                 Icon(
                   Icons.favorite,
-                  size: Theming.ICON_SMALL,
+                  size: Consts.ICON_SMALL,
                   color: widget.model.isLiked
                       ? Theme.of(context).colorScheme.error
                       : null,

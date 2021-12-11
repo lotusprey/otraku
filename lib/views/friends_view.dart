@@ -22,8 +22,9 @@ class FriendsView extends StatelessWidget {
       init: FriendsController(id, onFollowing),
       tag: id.toString(),
       builder: (ctrl) => NavLayout(
-        onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
         index: ctrl.onFollowing ? 0 : 1,
+        onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
+        onSame: (_) => ctrl.scrollUpTo(0),
         appBar: ShadowAppBar(
           title: ctrl.onFollowing ? 'Following' : 'Followers',
         ),

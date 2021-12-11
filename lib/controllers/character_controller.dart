@@ -7,9 +7,9 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class CharacterController extends OverscrollController {
+class CharacterController extends ScrollingController {
   // GetBuilder ids.
   static const ID_MAIN = 0;
   static const ID_MEDIA = 1;
@@ -55,9 +55,6 @@ class CharacterController extends OverscrollController {
     refetch();
   }
 
-  @override
-  bool get hasNextPage => _onAnime ? _anime.hasNextPage : _manga.hasNextPage;
-
   Future<void> _fetch() async {
     final data = await Client.request(GqlQuery.character, {
       'id': id,
@@ -96,6 +93,9 @@ class CharacterController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
+    if (_onAnime && !_anime.hasNextPage) return;
+    if (!_onAnime && !_manga.hasNextPage) return;
+
     final data = await Client.request(GqlQuery.character, {
       'id': id,
       'withAnime': _onAnime,

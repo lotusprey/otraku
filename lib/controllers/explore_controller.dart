@@ -8,10 +8,20 @@ import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/local_settings.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
 // Searches and filters items from the Explorable enum
-class ExploreController extends OverscrollController implements Filterable {
+class ExploreController extends ScrollingController implements Filterable {
+  // ***************************************************************************
+  // CONSTANTS
+  // ***************************************************************************
+
+  static const ID_HEAD = 0;
+
+  // ***************************************************************************
+  // DATA
+  // ***************************************************************************
+
   final _isLoading = true.obs;
   final _results = PageModel<ExplorableModel>().obs;
   final _search = ''.obs;
@@ -19,6 +29,7 @@ class ExploreController extends OverscrollController implements Filterable {
   final _tags = <String, List<TagModel>>{};
   final _type = LocalSettings().defaultExplorable.obs;
   int _concurrentFetches = 0;
+  bool _searchMode = false;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
@@ -27,10 +38,9 @@ class ExploreController extends OverscrollController implements Filterable {
   };
 
   // ***************************************************************************
-  // GETTERS
+  // GETTERS & SETTERS
   // ***************************************************************************
 
-  @override
   bool get hasNextPage => _results().hasNextPage;
 
   bool get isLoading => _isLoading();
@@ -38,6 +48,8 @@ class ExploreController extends OverscrollController implements Filterable {
   Explorable get type => _type();
 
   String get search => _search();
+
+  bool get searchMode => _searchMode;
 
   List<ExplorableModel> get results => _results().items;
 
@@ -61,6 +73,14 @@ class ExploreController extends OverscrollController implements Filterable {
   }
 
   set search(String value) => _search.value = value.trim();
+
+  set searchMode(bool val) {
+    if (searchMode == val) return;
+    _searchMode = val;
+    update([ID_HEAD]);
+    if (_filters[Filterable.SEARCH] != null)
+      setFilterWithKey(Filterable.SEARCH, update: true);
+  }
 
   @override
   dynamic getFilterWithKey(String key) => _filters[key];
@@ -120,7 +140,6 @@ class ExploreController extends OverscrollController implements Filterable {
       _isLoading.value = true;
       _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
-      // TODO what to do with that?
       scrollUpTo(0);
     }
 

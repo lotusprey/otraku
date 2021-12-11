@@ -5,7 +5,6 @@ import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/reply_model.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -246,7 +245,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Theming.ICON_SMALL,
+              size: Consts.ICON_SMALL,
               color: widget.reply.isLiked
                   ? Theme.of(context).colorScheme.error
                   : null,

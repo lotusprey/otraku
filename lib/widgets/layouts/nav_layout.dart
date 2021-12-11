@@ -11,8 +11,8 @@ class NavLayout extends StatelessWidget {
     required this.child,
     required this.items,
     required this.onChanged,
+    required this.onSame,
     this.index = 0,
-    this.onSame,
     this.trySubtab,
     this.floating,
     this.appBar,
@@ -21,8 +21,8 @@ class NavLayout extends StatelessWidget {
   final Widget child;
   final Map<String, IconData> items;
   final void Function(int) onChanged;
+  final void Function(int) onSame;
   final int index;
-  final void Function(int)? onSame;
   final Widget? floating;
   final ShadowAppBar? appBar;
 
@@ -86,7 +86,7 @@ class NavLayout extends StatelessWidget {
                       if (i != index)
                         onChanged(i);
                       else
-                        onSame?.call(i);
+                        onSame(i);
                     },
                     child: SizedBox(
                       height: double.infinity,

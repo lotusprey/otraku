@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/explorable_model.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -122,7 +121,7 @@ class _Tile extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.thumbs_up_down_outlined,
-                                  size: Theming.ICON_SMALL,
+                                  size: Consts.ICON_SMALL,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(

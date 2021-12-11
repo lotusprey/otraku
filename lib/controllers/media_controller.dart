@@ -1,10 +1,10 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
 import 'package:otraku/models/media_model.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class MediaController extends OverscrollController {
+class MediaController extends ScrollingController {
   // Tabs.
   static const INFO = 0;
   static const OTHER = 1;
@@ -63,19 +63,6 @@ class MediaController extends OverscrollController {
     update([ID_INNER]);
   }
 
-  @override
-  bool get hasNextPage {
-    if (_tab == OTHER) {
-      if (_tab == CHARACTERS) return _model?.characters.hasNextPage ?? false;
-      if (_tab == STAFF) return _model?.characters.hasNextPage ?? false;
-    }
-
-    if (_tab == SOCIAL && _socialTab == REVIEWS)
-      return _model?.reviews.hasNextPage ?? false;
-
-    return false;
-  }
-
   // ***************************************************************************
   // FETCHING
   // ***************************************************************************
@@ -101,8 +88,19 @@ class MediaController extends OverscrollController {
   }
 
   @override
-  Future<void> fetchPage() async =>
-      _tab == OTHER ? _fetchOtherPage() : _fetchReviewPage();
+  Future<void> fetchPage() async {
+    if (_model == null) return;
+
+    if (_tab == OTHER) {
+      if (_tab == CHARACTERS && _model!.characters.hasNextPage ||
+          _tab == STAFF && _model!.staff.hasNextPage) return _fetchOtherPage();
+
+      return;
+    }
+
+    if (_tab == SOCIAL && _socialTab == REVIEWS && _model!.reviews.hasNextPage)
+      return _fetchReviewPage();
+  }
 
   Future<void> _fetchOtherPage() async {
     final ofCharacters = _otherTab == CHARACTERS;

@@ -8,7 +8,6 @@ import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fields/three_state_field.dart';
 import 'package:otraku/widgets/fields/two_state_field.dart';
 
@@ -77,7 +76,7 @@ class Sheet extends StatelessWidget {
                   icon: Icon(
                     Icons.done_rounded,
                     color: Theme.of(context).colorScheme.secondary,
-                    size: Theming.ICON_SMALL,
+                    size: Consts.ICON_SMALL,
                   ),
                   label: Text('Done',
                       style: Theme.of(context).textTheme.bodyText1),
@@ -388,7 +387,7 @@ class _SortingState extends State<_Sorting> {
                       ? Icons.arrow_downward_rounded
                       : Icons.arrow_upward_rounded,
                   color: Theme.of(context).colorScheme.secondary,
-                  size: Theming.ICON_SMALL,
+                  size: Consts.ICON_SMALL,
                 ),
             ],
           ),

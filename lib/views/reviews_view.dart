@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/user_reviews_controller.dart';
+import 'package:otraku/controllers/reviews_controller.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class ReviewsView extends StatelessWidget {
-  final int id;
   ReviewsView(this.id);
+
+  final int id;
 
   @override
   Widget build(BuildContext context) {

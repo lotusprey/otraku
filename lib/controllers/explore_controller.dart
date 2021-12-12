@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/page_model.dart';
@@ -34,7 +33,7 @@ class ExploreController extends ScrollingController implements Filterable {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
     Filterable.ID_NOT_IN: [],
-    Filterable.SORT: describeEnum(LocalSettings().defaultExploreSort),
+    Filterable.SORT: LocalSettings().defaultExploreSort.name,
   };
 
   // ***************************************************************************

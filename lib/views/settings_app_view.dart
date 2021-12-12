@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
@@ -72,7 +71,7 @@ class SettingsAppView extends StatelessWidget {
                 value: LocalSettings().defaultAnimeSort,
                 items: Map.fromIterable(
                   EntrySort.values,
-                  key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                  key: (v) => Convert.clarifyEnum(v.name)!,
                 ),
                 onChanged: (val) => LocalSettings().defaultAnimeSort = val,
               ),
@@ -81,7 +80,7 @@ class SettingsAppView extends StatelessWidget {
                 value: LocalSettings().defaultMangaSort,
                 items: Map.fromIterable(
                   EntrySort.values,
-                  key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                  key: (v) => Convert.clarifyEnum(v.name)!,
                 ),
                 onChanged: (val) => LocalSettings().defaultMangaSort = val,
               ),
@@ -90,7 +89,7 @@ class SettingsAppView extends StatelessWidget {
                 value: LocalSettings().defaultExploreSort,
                 items: Map.fromIterable(
                   MediaSort.values,
-                  key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                  key: (v) => Convert.clarifyEnum(v.name)!,
                 ),
                 onChanged: (val) => LocalSettings().defaultExploreSort = val,
               ),
@@ -99,7 +98,7 @@ class SettingsAppView extends StatelessWidget {
                 value: LocalSettings().defaultExplorable,
                 items: Map.fromIterable(
                   Explorable.values,
-                  key: (e) => Convert.clarifyEnum(describeEnum(e))!,
+                  key: (v) => Convert.clarifyEnum(v.name)!,
                 ),
                 onChanged: (val) => LocalSettings().defaultExplorable = val,
               ),

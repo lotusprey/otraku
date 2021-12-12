@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/models/studio_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -14,6 +13,7 @@ class StudioController extends ScrollingController {
 
   final int id;
   StudioModel? _model;
+  // TODO no obs
   final _media = GroupPageModel<ExplorableModel>().obs;
   MediaSort _sort = MediaSort.START_DATE_DESC;
   bool? _onList;
@@ -36,11 +36,7 @@ class StudioController extends ScrollingController {
   Future<void> _fetch() async {
     final data = await Client.request(
       GqlQuery.studio,
-      {
-        'id': id,
-        'withMain': true,
-        'sort': describeEnum(_sort),
-      },
+      {'id': id, 'withMain': true, 'sort': _sort.name},
     );
     if (data == null) return;
 
@@ -55,7 +51,7 @@ class StudioController extends ScrollingController {
 
     final data = await Client.request(
       GqlQuery.studio,
-      {'id': id, 'sort': describeEnum(_sort), 'onList': _onList},
+      {'id': id, 'sort': _sort.name, 'onList': _onList},
     );
     if (data == null) return;
 
@@ -71,7 +67,7 @@ class StudioController extends ScrollingController {
       {
         'id': id,
         'page': _media().nextPage,
-        'sort': describeEnum(_sort),
+        'sort': _sort.name,
         'onList': _onList,
       },
     );

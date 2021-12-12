@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
@@ -261,7 +260,7 @@ class CollectionSortSheet extends StatelessWidget {
     bool desc = entrySort.index % 2 != 0;
     final options = <String>[];
     for (int i = 0; i < EntrySort.values.length; i += 2)
-      options.add(Convert.clarifyEnum(describeEnum(EntrySort.values[i]))!);
+      options.add(Convert.clarifyEnum(EntrySort.values[i].name)!);
 
     return Sheet(
       height: options.length * 40 + 58,
@@ -308,7 +307,7 @@ class MediaSortSheet extends StatelessWidget {
     bool desc = initial.index % 2 != 0;
     final options = <String>[];
     for (int i = 0; i < MediaSort.values.length; i += 2)
-      options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
+      options.add(Convert.clarifyEnum(MediaSort.values[i].name)!);
 
     return Sheet(
       height: options.length * 40 + 58,

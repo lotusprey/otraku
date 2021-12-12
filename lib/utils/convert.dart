@@ -1,5 +1,3 @@
-import 'package:collection/collection.dart' show IterableExtension;
-import 'package:flutter/foundation.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/utils/local_settings.dart';
 
@@ -22,15 +20,9 @@ abstract class Convert {
     if (status == ListStatus.REPEATING)
       return isAnime ? 'Rewatching' : 'Rereading';
 
-    final str = describeEnum(status);
+    final str = status.name;
     return str[0] + str.substring(1).toLowerCase();
   }
-
-  /// Converts a [String] into [enum]. The [String] must be
-  /// as if it was acquired through [describeEnum()]
-  /// and the values must be the [enum] values.
-  static T? strToEnum<T>(String? str, List<T> values) =>
-      values.firstWhereOrNull((v) => describeEnum(v!) == str);
 
   // Removes all html tags.
   static String clearHtml(String? str) {

@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
@@ -119,11 +118,9 @@ class CollectionController extends ScrollingController implements Filterable {
     final bool splitCompleted =
         metaData['splitCompletedSectionByFormat'] ?? false;
 
-    _scoreFormat = Convert.strToEnum(
-          data['user']['mediaListOptions']['scoreFormat'],
-          ScoreFormat.values,
-        ) ??
-        ScoreFormat.POINT_10_DECIMAL;
+    _scoreFormat = ScoreFormat.values.byName(
+      data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
+    );
 
     _filters[Filterable.SORT] = ofAnime
         ? LocalSettings().defaultAnimeSort

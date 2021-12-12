@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/explorable.dart';
@@ -53,7 +52,7 @@ class StaffController extends ScrollingController {
       'withCharacters': true,
       'withStaff': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
     if (data == null) return;
 
@@ -72,7 +71,7 @@ class StaffController extends ScrollingController {
       'withCharacters': true,
       'withStaff': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
     if (data == null) return;
 
@@ -93,7 +92,7 @@ class StaffController extends ScrollingController {
       'withStaff': !_onCharacters,
       'characterPage': _characters.nextPage,
       'staffPage': _roles.nextPage,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
       'onList': _onList,
     });
     if (data == null) return;

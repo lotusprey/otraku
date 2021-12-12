@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
@@ -74,8 +73,8 @@ class FiltersView extends StatelessWidget {
     // Statuses.
     final statusOptions = <String>[];
     final statusValues = <String>[];
-    for (final s in MediaStatus.values) {
-      statusValues.add(describeEnum(s));
+    for (final v in MediaStatus.values) {
+      statusValues.add(v.name);
       statusOptions.add(Convert.clarifyEnum(statusValues.last)!);
     }
 
@@ -85,8 +84,8 @@ class FiltersView extends StatelessWidget {
     final iterable = explorable == Explorable.anime
         ? AnimeFormat.values
         : MangaFormat.values;
-    for (final f in iterable) {
-      formatValues.add(describeEnum(f));
+    for (final v in iterable) {
+      formatValues.add(v.name);
       formatOptions.add(Convert.clarifyEnum(formatValues.last)!);
     }
 
@@ -107,11 +106,8 @@ class FiltersView extends StatelessWidget {
               sheet: collectionTag != null
                   ? CollectionSortSheet(collectionTag!)
                   : MediaSortSheet(
-                      Convert.strToEnum(
-                        changes[Filterable.SORT],
-                        MediaSort.values,
-                      )!,
-                      (v) => changes[Filterable.SORT] = describeEnum(v),
+                      MediaSort.values.byName(changes[Filterable.SORT]),
+                      (v) => changes[Filterable.SORT] = v.name,
                     ),
             ),
           ),

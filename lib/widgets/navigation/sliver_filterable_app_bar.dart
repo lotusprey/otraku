@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -102,7 +101,7 @@ class SliverExploreAppBar extends StatelessWidget {
           [
             const SizedBox(width: 10),
             MediaSearchField(
-              hint: Convert.clarifyEnum(describeEnum(ctrl.type))!,
+              hint: Convert.clarifyEnum(ctrl.type.name)!,
               searchVal: ctrl.search,
               search: ctrl.type != Explorable.review
                   ? (val) {
@@ -123,7 +122,7 @@ class SliverExploreAppBar extends StatelessWidget {
                   const SizedBox(width: 15),
                   Flexible(
                     child: Text(
-                      Convert.clarifyEnum(describeEnum(ctrl.type))!,
+                      Convert.clarifyEnum(ctrl.type.name)!,
                       style: Theme.of(context).textTheme.headline1,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,

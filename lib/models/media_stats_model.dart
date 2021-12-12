@@ -61,7 +61,7 @@ class MediaStatsModel {
           model.statusNames.insert(
             index,
             Convert.adaptListStatus(
-              Convert.strToEnum(s['status'], ListStatus.values)!,
+              ListStatus.values.byName(s['status']),
               map['type'] == 'ANIME',
             ),
           );

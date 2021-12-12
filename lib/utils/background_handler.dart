@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/constants/notification_type.dart';
@@ -244,7 +243,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
     });
 
 void _show(NotificationModel model, String title, String payload) {
-  final id = describeEnum(model.type);
+  final id = model.type.name;
   final name = Convert.clarifyEnum(id)!;
 
   _notificationPlugin.show(

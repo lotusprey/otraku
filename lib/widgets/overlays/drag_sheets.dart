@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
@@ -192,7 +191,7 @@ class ExploreDragSheet extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
+              Convert.clarifyEnum(Explorable.values[i].name)!,
               style: i != ctrl.type.index
                   ? Theme.of(context).textTheme.headline1
                   : Theme.of(context).textTheme.headline1?.copyWith(

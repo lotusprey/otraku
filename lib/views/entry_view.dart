@@ -431,7 +431,7 @@ class _EditView extends StatelessWidget {
           ], minWidth: 165),
           ...advancedScoring,
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          _Label('Additional Settings'),
+          const _Label('Additional Settings'),
           _CheckBoxGrid(
             {
               'Private': model.private,
@@ -443,7 +443,7 @@ class _EditView extends StatelessWidget {
           ),
           if (model.customLists.isNotEmpty) ...[
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
-            _Label('Custom Lists'),
+            const _Label('Custom Lists'),
             _CheckBoxGrid(
               model.customLists,
               (key, val) => model.customLists[key] = val,
@@ -459,7 +459,7 @@ class _EditView extends StatelessWidget {
 }
 
 class _Label extends StatelessWidget {
-  _Label(this.label);
+  const _Label(this.label);
 
   final String label;
 

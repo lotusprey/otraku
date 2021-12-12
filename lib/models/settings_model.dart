@@ -1,4 +1,3 @@
-import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
 
@@ -32,11 +31,8 @@ class SettingsModel {
   final Map<String, bool> notificationOptions;
 
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(
-        scoreFormat: Convert.strToEnum(
-              map['mediaListOptions']['scoreFormat'],
-              ScoreFormat.values,
-            ) ??
-            ScoreFormat.POINT_10,
+        scoreFormat: ScoreFormat.values
+            .byName(map['mediaListOptions']['scoreFormat'] ?? 'POINT_10'),
         defaultSort:
             EntrySortHelper.getEnum(map['mediaListOptions']['rowOrder']),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',

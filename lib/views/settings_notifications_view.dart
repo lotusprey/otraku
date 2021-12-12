@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
@@ -22,7 +21,7 @@ class SettingsNotificationsView extends StatelessWidget {
     final siteValues = <bool>[];
     for (int i = 0; i < NotificationType.values.length - 1; i++)
       siteValues.add(
-        options[describeEnum(NotificationType.values[i])] ?? false,
+        options[NotificationType.values[i].name] ?? false,
       );
 
     final siteOptions = <Widget>[];
@@ -68,7 +67,7 @@ class SettingsNotificationsView extends StatelessWidget {
       final newOptions = [];
       for (int i = 0; i < values.length; i++)
         newOptions.add({
-          'type': describeEnum(NotificationType.values[i]),
+          'type': NotificationType.values[i].name,
           'enabled': values[i],
         });
       changes[key] = newOptions;

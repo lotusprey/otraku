@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/explorable.dart';
@@ -62,7 +61,7 @@ class CharacterController extends ScrollingController {
       'withAnime': true,
       'withManga': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
     if (data == null) return;
 
@@ -81,7 +80,7 @@ class CharacterController extends ScrollingController {
       'withAnime': true,
       'withManga': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
     if (body == null) return;
 
@@ -102,7 +101,7 @@ class CharacterController extends ScrollingController {
       'withManga': !_onAnime,
       'animePage': _anime.nextPage,
       'mangaPage': _manga.nextPage,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
       'onList': _onList,
     });
     if (data == null) return;

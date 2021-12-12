@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
@@ -126,7 +125,7 @@ class MediaInfoView {
             explorable.clearAllFilters(update: false);
             explorable.setFilterWithKey(
               Filterable.SORT,
-              value: describeEnum(MediaSort.TRENDING_DESC),
+              value: MediaSort.TRENDING_DESC.name,
             );
             explorable.setFilterWithKey(
               Filterable.GENRE_IN,
@@ -324,7 +323,7 @@ class __TagsState extends State<_Tags> {
             explorable.clearAllFilters(update: false);
             explorable.setFilterWithKey(
               Filterable.SORT,
-              value: describeEnum(MediaSort.TRENDING_DESC),
+              value: MediaSort.TRENDING_DESC.name,
             );
             explorable.setFilterWithKey(
               Filterable.TAG_IN,
@@ -400,7 +399,7 @@ class __TagsState extends State<_Tags> {
               explorable.clearAllFilters(update: false);
               explorable.setFilterWithKey(
                 Filterable.SORT,
-                value: describeEnum(MediaSort.TRENDING_DESC),
+                value: MediaSort.TRENDING_DESC.name,
               );
               explorable.setFilterWithKey(
                 Filterable.TAG_IN,

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/models/activity_model.dart';
@@ -54,7 +53,7 @@ class FeedController extends ScrollingController {
           'hasRepliesOrTypeText': LocalSettings().lastFeed ? null : true,
         },
         'page': clean ? 1 : _activities().nextPage,
-        'typeIn': _typeIn.map((t) => describeEnum(t)).toList(),
+        'typeIn': _typeIn.map((t) => t.name).toList(),
         'idNotInt': _idNotIn,
       },
     );

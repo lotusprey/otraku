@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/list_status.dart';
 
@@ -64,10 +63,9 @@ class EntryModel {
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
-      status: Convert.strToEnum(
-        map['mediaListEntry']['status'],
-        ListStatus.values,
-      ),
+      status: map['mediaListEntry']['status'] != null
+          ? ListStatus.values.byName(map['mediaListEntry']['status'])
+          : null,
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],
       progressVolumes: map['mediaListEntry']['progressVolumes'] ?? 0,
@@ -121,7 +119,7 @@ class EntryModel {
 
   Map<String, dynamic> toMap() => {
         'mediaId': mediaId,
-        'status': describeEnum(status ?? ListStatus.CURRENT),
+        'status': (status ?? ListStatus.CURRENT).name,
         'progress': progress,
         'progressVolumes': progressVolumes,
         'score': score,

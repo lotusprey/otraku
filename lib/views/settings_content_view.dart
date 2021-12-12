@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
@@ -158,14 +157,14 @@ class SettingsContentView extends StatelessWidget {
                   value: model.scoreFormat,
                   items: Map.fromIterable(
                     ScoreFormat.values,
-                    key: (v) => Convert.clarifyEnum(describeEnum(v))!,
+                    key: (v) => Convert.clarifyEnum(v.name)!,
                   ),
-                  onChanged: (val) {
+                  onChanged: (v) {
                     const key = 'scoreFormat';
-                    if (val == model.scoreFormat)
+                    if (v == model.scoreFormat)
                       changes.remove(key);
                     else
-                      changes[key] = describeEnum(val);
+                      changes[key] = v.name;
                   },
                 ),
                 DropDownField<EntrySort>(

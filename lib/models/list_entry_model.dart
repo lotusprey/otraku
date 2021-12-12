@@ -61,7 +61,9 @@ class ListEntryModel {
         progressVolumes: map['progressVolumes'] ?? 0,
         progressVolumesMax: map['media']['volumes'],
         score: (map['score'] ?? 0).toDouble(),
-        listStatus: Convert.strToEnum(map['status'], ListStatus.values),
+        listStatus: map['status'] != null
+            ? ListStatus.values.byName(map['status'])
+            : null,
         startDate: Convert.mapToDateTime(map['startedAt']),
         endDate: Convert.mapToDateTime(map['completedAt']),
         repeat: map['repeat'] ?? 0,

@@ -42,29 +42,33 @@ class EntryView extends StatelessWidget {
         // This is cached to not rebuild each time the sheet is scrolled.
         Widget? editView;
 
-        return DraggableScrollableSheet(
-          expand: false,
-          builder: (context, scrollCtrl) {
-            if (editView == null)
-              editView = Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.background,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: DraggableScrollableSheet(
+            expand: false,
+            builder: (context, scrollCtrl) {
+              if (editView == null)
+                editView = Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      child: ctrl.model != null
+                          ? _EditView(ctrl, scrollCtrl)
+                          : const Center(child: Loader()),
                     ),
-                    child: ctrl.model != null
-                        ? _EditView(ctrl, scrollCtrl)
-                        : const Center(child: Loader()),
-                  ),
-                  if (ctrl.model != null) _Buttons(ctrl, callback),
-                ],
-              );
+                    if (ctrl.model != null) _Buttons(ctrl, callback),
+                  ],
+                );
 
-            // TODO padding
-            return editView!;
-          },
+              return editView!;
+            },
+          ),
         );
       },
     );

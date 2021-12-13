@@ -42,7 +42,7 @@ class SliverCollectionAppBar extends StatelessWidget {
             searchMode: ctrl.searchMode,
             search: (val) {
               if (val == null) {
-                ctrl.searchMode = false;
+                ctrl.searchMode = !ctrl.searchMode;
                 return;
               }
 

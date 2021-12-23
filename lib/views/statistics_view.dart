@@ -88,7 +88,7 @@ class StatisticsView extends StatelessWidget {
                     stats: ctrl.model.lengths,
                     onAnime: ctrl.onAnime,
                     chartTab: ctrl.lengthChartTab,
-                    barWidth: 65,
+                    barWidth: 50,
                   ),
                 ),
               ],
@@ -214,7 +214,7 @@ class _BarChart extends StatelessWidget {
     else if (chartTab == StatisticsController.BY_MEAN_SCORE)
       values = stats.map((s) => s.meanScore).toList();
     else if (onAnime)
-      values = stats.map((s) => s.minutesWatched).toList();
+      values = stats.map((s) => s.hoursWatched).toList();
     else
       values = stats.map((s) => s.chaptersRead).toList();
 

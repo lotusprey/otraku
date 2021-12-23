@@ -157,7 +157,7 @@ class SettingsContentView extends StatelessWidget {
                   value: model.scoreFormat,
                   items: Map.fromIterable(
                     ScoreFormat.values,
-                    key: (v) => Convert.clarifyEnum(v.name)!,
+                    key: (v) => Convert.clarifyEnum((v as ScoreFormat).name)!,
                   ),
                   onChanged: (v) {
                     const key = 'scoreFormat';

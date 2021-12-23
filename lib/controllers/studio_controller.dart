@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:otraku/models/studio_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
@@ -13,13 +12,12 @@ class StudioController extends ScrollingController {
 
   final int id;
   StudioModel? _model;
-  // TODO no obs
-  final _media = GroupPageModel<ExplorableModel>().obs;
+  final _media = GroupPageModel<ExplorableModel>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
   bool? _onList;
 
   StudioModel? get model => _model;
-  GroupPageModel<ExplorableModel> get media => _media();
+  GroupPageModel<ExplorableModel> get media => _media;
 
   MediaSort get sort => _sort;
   set sort(MediaSort value) {
@@ -41,9 +39,8 @@ class StudioController extends ScrollingController {
     if (data == null) return;
 
     _model = StudioModel(data['Studio']);
-    update();
-
     _initMedia(data['Studio']['media'], false);
+    update();
   }
 
   Future<void> refetch() async {
@@ -56,17 +53,18 @@ class StudioController extends ScrollingController {
     if (data == null) return;
 
     _initMedia(data['Studio']['media'], true);
+    update();
   }
 
   @override
   Future<void> fetchPage() async {
-    if (!_media().hasNextPage) return;
+    if (!_media.hasNextPage) return;
 
     final data = await Client.request(
       GqlQuery.studio,
       {
         'id': id,
-        'page': _media().nextPage,
+        'page': _media.nextPage,
         'sort': _sort.name,
         'onList': _onList,
       },
@@ -74,6 +72,7 @@ class StudioController extends ScrollingController {
     if (data == null) return;
 
     _initMedia(data['Studio']['media'], false);
+    update();
   }
 
   Future<bool> toggleFavourite() async {
@@ -84,7 +83,7 @@ class StudioController extends ScrollingController {
   }
 
   void _initMedia(Map<String, dynamic> data, bool clear) {
-    if (clear) _media().clear();
+    if (clear) _media.clear();
 
     final categories = <String>[];
     final results = <List<ExplorableModel>>[];
@@ -102,11 +101,7 @@ class StudioController extends ScrollingController {
       results.last.add(ExplorableModel.anime(node));
     }
 
-    _media.update((m) => m!.append(
-          categories,
-          results,
-          data['pageInfo']['hasNextPage'],
-        ));
+    _media.append(categories, results, data['pageInfo']['hasNextPage']);
   }
 
   @override

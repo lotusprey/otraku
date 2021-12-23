@@ -34,6 +34,10 @@ class EntryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sidePadding = MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
+        ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
+        : 0.0;
+
     return GetBuilder<EntryController>(
       id: EntryController.ID_MAIN,
       tag: mediaId.toString(),
@@ -45,9 +49,12 @@ class EntryView extends StatelessWidget {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: sidePadding,
+            right: sidePadding,
           ),
           child: DraggableScrollableSheet(
             expand: false,
+            initialChildSize: 0.7,
             builder: (context, scrollCtrl) {
               if (editView == null)
                 editView = Stack(

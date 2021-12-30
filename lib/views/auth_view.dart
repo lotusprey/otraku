@@ -4,7 +4,6 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/local_settings.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -21,18 +20,12 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
-  bool _loading = true;
+  bool _loading = false;
 
-  void _verify(bool? primary) {
-    if (primary == null) primary = LocalSettings.onPrimaryAccount;
-    if (primary == null) {
-      setState(() => _loading = false);
-      return;
-    }
-
+  void _verify(int account) {
     if (!_loading) setState(() => _loading = true);
 
-    Client.logIn(primary).then((loggedIn) {
+    Client.logIn(account).then((loggedIn) {
       if (!loggedIn) {
         setState(() => _loading = false);
         return;
@@ -41,15 +34,12 @@ class _AuthViewState extends State<AuthView> {
       Navigator.pushReplacementNamed(
         context,
         RouteArg.home,
-        arguments: RouteArg(id: LocalSettings().id),
+        arguments: RouteArg(id: LocalSettings().idOf(account)),
       );
-
-      // Set up background tasks.
-      BackgroundHandler.init();
     });
   }
 
-  Future<void> _requestAccessToken(bool primary) async {
+  Future<void> _requestAccessToken(int account) async {
     setState(() => _loading = true);
 
     const redirectUrl =
@@ -73,27 +63,29 @@ class _AuthViewState extends State<AuthView> {
       final start = link.indexOf('=') + 1;
       final end = link.indexOf('&');
       await Client.register(
-        primary,
+        account,
         link.substring(start, end),
         int.parse(link.substring(link.lastIndexOf('=') + 1)),
       );
       closeWebView();
-      _verify(primary);
+      _verify(account);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _verify(null);
+    if (LocalSettings.selectedAccount == null) return;
+    _loading = true;
+    _verify(LocalSettings.selectedAccount!);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Scaffold(body: Center(child: Loader()));
 
-    final available0 = LocalSettings.isAvailableAccount(true);
-    final available1 = LocalSettings.isAvailableAccount(false);
+    final available0 = LocalSettings.isAvailableAccount(0);
+    final available1 = LocalSettings.isAvailableAccount(1);
 
     return Scaffold(
       body: Container(
@@ -129,7 +121,7 @@ class _AuthViewState extends State<AuthView> {
                         if (available0) ...[
                           const SizedBox(height: 5),
                           Text(
-                            LocalSettings().id0?.toString() ?? '',
+                            LocalSettings().idOf(0)?.toString() ?? '',
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ],
@@ -147,16 +139,15 @@ class _AuthViewState extends State<AuthView> {
                             mainAction: 'Yes',
                             secondaryAction: 'No',
                             onConfirm: () =>
-                                setState(() => Client.removeAccount(true)),
+                                setState(() => Client.removeAccount(0)),
                           ),
                         ),
                       ),
                     AppBarIcon(
                       icon: Ionicons.enter_outline,
                       tooltip: available0 ? 'Log In' : 'Connect',
-                      onTap: () => available0
-                          ? _verify(true)
-                          : _requestAccessToken(true),
+                      onTap: () =>
+                          available0 ? _verify(0) : _requestAccessToken(0),
                     ),
                   ],
                 ),
@@ -181,7 +172,7 @@ class _AuthViewState extends State<AuthView> {
                         if (available1) ...[
                           const SizedBox(height: 5),
                           Text(
-                            LocalSettings().id1?.toString() ?? '',
+                            LocalSettings().idOf(1)?.toString() ?? '',
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ],
@@ -199,16 +190,15 @@ class _AuthViewState extends State<AuthView> {
                             mainAction: 'Yes',
                             secondaryAction: 'No',
                             onConfirm: () =>
-                                setState(() => Client.removeAccount(false)),
+                                setState(() => Client.removeAccount(1)),
                           ),
                         ),
                       ),
                     AppBarIcon(
                       icon: Ionicons.enter_outline,
                       tooltip: available1 ? 'Log In' : 'Connect',
-                      onTap: () => available1
-                          ? _verify(false)
-                          : _requestAccessToken(false),
+                      onTap: () =>
+                          available1 ? _verify(1) : _requestAccessToken(1),
                     ),
                   ],
                 ),

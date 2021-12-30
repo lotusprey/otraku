@@ -44,11 +44,7 @@ class BackgroundHandler {
   }
 
   // Should be called if the user logs out of an account.
-  static void dispose() {
-    _didInit = false;
-    Workmanager().cancelAll();
-    _notificationPlugin.cancelAll();
-  }
+  static void clearNotifications() => _notificationPlugin.cancelAll();
 
   static void checkIfLaunchedByNotification() {
     if (_didCheckLaunch) return;
@@ -93,30 +89,28 @@ class BackgroundHandler {
 void _fetch() => Workmanager().executeTask((_, __) async {
       // Initialise local settings.
       await LocalSettings.init();
-      if (LocalSettings.onPrimaryAccount == null) return true;
+      if (LocalSettings.selectedAccount == null) return true;
 
       // Log in.
       if (!Client.loggedIn()) {
-        final ok = await Client.logIn(LocalSettings.onPrimaryAccount!);
+        final ok = await Client.logIn(LocalSettings.selectedAccount!);
         if (!ok) return true;
       }
 
       // Get new notifications.
       final data =
           await Client.request(GqlQuery.notifications, {'withCount': true});
-      if (data == null) return false;
 
-      final int newCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final int oldCount = LocalSettings().notificationCount;
-      final count = newCount < oldCount ? newCount : newCount - oldCount;
-      if (count < 1) return true;
+      int count = data?['Viewer']?['unreadNotificationCount'] ?? 0;
+      final ns = data?['Page']?['notifications'] ?? [];
+      if (count > ns.length) count = ns.length;
+      if (count == 0) return true;
 
-      // Save new notification count.
-      LocalSettings().notificationCount = newCount;
+      final last = LocalSettings().lastNotification;
+      LocalSettings().lastNotification = ns[0]['id'];
 
       // Show notifications.
-      final ns = data['Page']['notifications'];
-      for (int i = 0; i < count && i < ns.length; i++) {
+      for (int i = 0; i < count && ns[i]?['id'] != last; i++) {
         late NotificationModel model;
         try {
           model = NotificationModel(ns[i]);

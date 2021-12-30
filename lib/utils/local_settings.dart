@@ -19,7 +19,7 @@ class LocalSettings {
     this._leftHanded,
     this._analogueClock,
     this._lastFeed,
-    this._notificationCount,
+    this._lastNotification,
     this._id0,
     this._id1,
     this._expiration0,
@@ -42,7 +42,7 @@ class LocalSettings {
       s.read(_LEFT_HANDED) ?? false,
       s.read(_ANALOGUE_CLOCK) ?? false,
       s.read(_LAST_FEED) ?? false,
-      s.read(_NOTIFICATION_COUNT) ?? 0,
+      s.read(_LAST_NOTIFICATION) ?? -1,
       s.read(_ID_0),
       s.read(_ID_1),
       s.read(_EXPIRATION_0),
@@ -68,7 +68,7 @@ class LocalSettings {
   static const _LEFT_HANDED = 'leftHanded';
   static const _ANALOGUE_CLOCK = 'analogueClock';
   static const _LAST_FEED = 'lastFeed';
-  static const _NOTIFICATION_COUNT = 'notificationCount';
+  static const _LAST_NOTIFICATION = 'lastNotification0';
   static const _ID_0 = 'id0';
   static const _ID_1 = 'id1';
   static const _EXPIRATION_0 = 'expiration0';
@@ -99,24 +99,24 @@ class LocalSettings {
 
   static int? _account;
 
-  static bool? get onPrimaryAccount {
-    if (_account == null) return null;
-    return _account == 0 ? true : false;
-  }
+  static int? get selectedAccount => _account;
 
-  static set onPrimaryAccount(bool? v) {
-    if (v == null && _account != null)
+  static set selectedAccount(int? v) {
+    if (v == null && _account != null) {
       _account = null;
-    else if (v == true && _account != 0)
+      _it.lastNotification = -1;
+    } else if (v == 0 && _account != 0)
       _account = 0;
-    else if (v == false && _account != 1) _account = 1;
+    else if (v == 1 && _account != 1) _account = 1;
     _account != null
         ? _storage.write(_ACCOUNT, _account)
         : _storage.remove(_ACCOUNT);
   }
 
-  static bool isAvailableAccount(bool primary) =>
-      _storage.read(primary ? _ID_0 : _ID_1) != null;
+  static bool isAvailableAccount(int i) {
+    if (i < 0 || i > 1) return false;
+    return _storage.read(i == 0 ? _ID_0 : _ID_1) != null;
+  }
 
   static GetStorage get _storage => GetStorage(_SETTINGS);
 
@@ -132,7 +132,7 @@ class LocalSettings {
   bool _leftHanded;
   bool _analogueClock;
   bool _lastFeed;
-  int _notificationCount;
+  int _lastNotification;
   int? _id0;
   int? _id1;
   int? _expiration0;
@@ -150,20 +150,23 @@ class LocalSettings {
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
   bool get lastFeed => _lastFeed;
-  int get notificationCount => _notificationCount;
-  int? get id0 => _id0;
-  int? get id1 => _id1;
-  int? get expiration0 => _expiration0;
-  int? get expiration1 => _expiration1;
+  int get lastNotification => _lastNotification;
 
   int? get id {
     if (_account == null) return null;
     return _account == 0 ? _id0 : _id1;
   }
 
-  int? get expiration {
-    if (_account == null) return null;
-    return _account == 0 ? _expiration0 : _expiration1;
+  int? idOf(int v) {
+    if (v == 0) return _id0;
+    if (v == 1) return _id1;
+    return null;
+  }
+
+  int? expirationOf(int v) {
+    if (v == 0) return _expiration0;
+    if (v == 1) return _expiration1;
+    return null;
   }
 
   set themeMode(ThemeMode v) {
@@ -233,43 +236,26 @@ class LocalSettings {
     _storage.write(_LAST_FEED, v);
   }
 
-  set notificationCount(int v) {
-    if (v < 0) return;
-    _notificationCount = v;
-    _storage.write(_NOTIFICATION_COUNT, v);
+  set lastNotification(int v) {
+    _lastNotification = v;
+    v > -1
+        ? _storage.write(_LAST_NOTIFICATION, v)
+        : _storage.remove(_LAST_NOTIFICATION);
   }
 
-  set id0(int? v) {
-    _id0 = v;
-    v != null ? _storage.write(_ID_0, v) : _storage.remove(_ID_0);
-  }
-
-  set id1(int? v) {
-    _id1 = v;
-    v != null ? _storage.write(_ID_1, v) : _storage.remove(_ID_1);
-  }
-
-  set expiration0(int? v) {
-    _expiration0 = v;
+  void setIdOf(int a, int? v) {
+    if (a < 0 || a > 1) return;
+    a == 0 ? _id0 = v : _id1 = v;
     v != null
-        ? _storage.write(_EXPIRATION_0, v)
-        : _storage.remove(_EXPIRATION_0);
+        ? _storage.write(a == 0 ? _ID_0 : _ID_1, v)
+        : _storage.remove(a == 0 ? _ID_0 : _ID_1);
   }
 
-  set expiration1(int? v) {
-    _expiration1 = v;
+  void setExpirationOf(int a, int? v) {
+    if (a < 0 || a > 1) return;
+    a == 0 ? _expiration0 = v : _expiration1 = v;
     v != null
-        ? _storage.write(_EXPIRATION_1, v)
-        : _storage.remove(_EXPIRATION_1);
-  }
-
-  set id(int? v) {
-    if (_account == null) return;
-    _account == 0 ? id0 = v : id1 = v;
-  }
-
-  set expiration(int? v) {
-    if (_account == null) return;
-    _account == 0 ? expiration0 = v : expiration1 = v;
+        ? _storage.write(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1, v)
+        : _storage.remove(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1);
   }
 }

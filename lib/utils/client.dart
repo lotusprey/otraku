@@ -43,12 +43,14 @@ abstract class Client {
 
   // Save credentials to an account.
   static Future<void> register(
-    bool primary,
+    int account,
     String token,
     int expiration,
   ) async {
+    if (account < 0 || account > 1) return;
+
     await FlutterSecureStorage().write(
-      key: primary ? _TOKEN_0 : _TOKEN_1,
+      key: account == 0 ? _TOKEN_0 : _TOKEN_1,
       value: token,
     );
 
@@ -56,13 +58,11 @@ abstract class Client {
         .add(Duration(seconds: expiration, days: -1))
         .millisecondsSinceEpoch;
 
-    primary
-        ? LocalSettings().expiration0 = expiration
-        : LocalSettings().expiration1 = expiration;
+    LocalSettings().setExpirationOf(account, expiration);
   }
 
   // Try loading a saved account.
-  static Future<bool> logIn(bool primary) async {
+  static Future<bool> logIn(int account) async {
     //
     //
     //
@@ -71,37 +71,33 @@ abstract class Client {
     //
     //
     //
-
-    LocalSettings.onPrimaryAccount = primary;
+    if (account < 0 || account > 1) return false;
 
     if (_accessToken == null) {
       // Check the token's expiration date.
-      if (LocalSettings().expiration != null) {
+      if (LocalSettings().expirationOf(account) != null) {
         final date = DateTime.fromMillisecondsSinceEpoch(
-          LocalSettings().expiration!,
+          LocalSettings().expirationOf(account)!,
         );
         if (DateTime.now().compareTo(date) >= 0) {
-          removeAccount(primary);
+          removeAccount(account);
           return false;
         }
       }
 
       // Try to acquire the token from the storage.
-      _token =
-          await FlutterSecureStorage().read(key: primary ? _TOKEN_0 : _TOKEN_1);
+      _token = await FlutterSecureStorage()
+          .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
 
-      if (_accessToken == null) {
-        LocalSettings.onPrimaryAccount = null;
-        return false;
-      }
+      if (_accessToken == null) return false;
     }
 
     // Fetch the viewer's id, if needed.
-    if (LocalSettings().id == null) {
+    if (LocalSettings().idOf(account) == null) {
       final data = await request(_idQuery);
-      LocalSettings().id = data?['Viewer']?['id'];
-      if (LocalSettings().id == null) {
-        LocalSettings.onPrimaryAccount = null;
+      LocalSettings().setIdOf(account, data?['Viewer']?['id']);
+      if (LocalSettings().idOf(account) == null) {
+        LocalSettings.selectedAccount = null;
         _token = null;
         return false;
       }
@@ -113,28 +109,22 @@ abstract class Client {
   // Log out and show available accounts.
   static Future<void> logOut() async {
     _token = null;
-    LocalSettings.onPrimaryAccount = null;
-    BackgroundHandler.dispose();
+    LocalSettings.selectedAccount = null;
+    BackgroundHandler.clearNotifications();
     final context = RouteArg.navKey.currentContext;
     if (context == null) return;
     Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
   }
 
   // Remove a saved account.
-  static void removeAccount(bool primary) async {
-    if (primary) {
-      LocalSettings().id0 = null;
-      LocalSettings().expiration0 = null;
-      await FlutterSecureStorage().delete(key: _TOKEN_0);
-    } else {
-      LocalSettings().id1 = null;
-      LocalSettings().expiration1 = null;
-      await FlutterSecureStorage().delete(key: _TOKEN_1);
-    }
+  static void removeAccount(int account) async {
+    LocalSettings().setIdOf(account, null);
+    LocalSettings().setExpirationOf(account, null);
+    await FlutterSecureStorage()
+        .delete(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
   }
 
-  // The app needs both the accessToken and the viewer id.
-  static bool loggedIn() => _accessToken != null && LocalSettings().id != null;
+  static bool loggedIn() => _accessToken != null;
 
   // Send a request to the site.
   static Future<Map<String, dynamic>?> request(

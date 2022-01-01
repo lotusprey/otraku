@@ -97,7 +97,6 @@ abstract class Client {
       final data = await request(_idQuery);
       LocalSettings().setIdOf(account, data?['Viewer']?['id']);
       if (LocalSettings().idOf(account) == null) {
-        LocalSettings.selectedAccount = null;
         _token = null;
         return false;
       }

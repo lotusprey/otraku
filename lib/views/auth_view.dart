@@ -31,6 +31,7 @@ class _AuthViewState extends State<AuthView> {
         return;
       }
 
+      LocalSettings.selectedAccount = account;
       Navigator.pushReplacementNamed(
         context,
         RouteArg.home,
@@ -92,7 +93,7 @@ class _AuthViewState extends State<AuthView> {
         alignment: Alignment.bottomCenter,
         padding: Consts.PADDING,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 320),
+          constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_WIDE),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

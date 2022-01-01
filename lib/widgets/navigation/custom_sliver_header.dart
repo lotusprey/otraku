@@ -89,6 +89,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            DecoratedBox(
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.surface),
+            ),
             if (background != null)
               FlexibleSpaceBar(
                 collapseMode: CollapseMode.pin,

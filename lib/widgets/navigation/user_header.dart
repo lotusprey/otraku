@@ -32,6 +32,11 @@ class UserHeader extends StatelessWidget {
     final height = bannerHeight + avatarSize * 0.5;
     final avatar = avatarUrl ?? user?.avatar;
 
+    const maxWidth = Consts.OVERLAY_WIDE + 20;
+    final sidePadding = MediaQuery.of(context).size.width > maxWidth
+        ? (MediaQuery.of(context).size.width - maxWidth) / 2.0
+        : 10.0;
+
     return CustomSliverHeader(
       height: height,
       implyLeading: !isMe,
@@ -79,10 +84,6 @@ class UserHeader extends StatelessWidget {
       background: Stack(
         fit: StackFit.expand,
         children: [
-          DecoratedBox(
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.surface),
-          ),
           if (user?.banner != null)
             Column(
               children: [
@@ -116,7 +117,7 @@ class UserHeader extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.symmetric(horizontal: sidePadding),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [

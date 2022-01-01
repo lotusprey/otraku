@@ -45,10 +45,6 @@ class MediaHeader extends StatelessWidget {
       background: Stack(
         fit: StackFit.expand,
         children: [
-          DecoratedBox(
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.surface),
-          ),
           if (info?.banner != null)
             Column(
               children: [

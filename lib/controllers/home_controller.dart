@@ -1,7 +1,7 @@
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class HomeController extends ScrollingController {
@@ -55,7 +55,7 @@ class HomeController extends ScrollingController {
   @override
   void onInit() {
     super.onInit();
-    _homeTab = LocalSettings().defaultHomeTab;
+    _homeTab = Settings().defaultHomeTab;
     if (_siteSettings == null) _fetch();
   }
 }

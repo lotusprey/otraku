@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
@@ -174,7 +174,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ),
     ];
 
-    if (LocalSettings().leftHanded) children = children.reversed.toList();
+    if (Settings().leftHanded) children = children.reversed.toList();
 
     return FloatingListener(
       scrollCtrl: widget.ctrl.scrollCtrl,

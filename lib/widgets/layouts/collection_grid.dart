@@ -7,7 +7,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -21,8 +21,8 @@ class CollectionGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMe = ctrlTag == '${LocalSettings().id}true' ||
-        ctrlTag == '${LocalSettings().id}false';
+    final isMe =
+        ctrlTag == '${Settings().id}true' || ctrlTag == '${Settings().id}false';
     final sidePadding = MediaQuery.of(context).size.width > 1020
         ? (MediaQuery.of(context).size.width - 1000) / 2.0
         : 10.0;

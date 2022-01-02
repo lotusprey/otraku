@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/utils/theming.dart';
 
-class LocalSettings {
-  LocalSettings._(
+// Local settings.
+class Settings {
+  Settings._(
+    this._account,
     this._themeMode,
     this._lightTheme,
     this._darkTheme,
@@ -26,33 +28,33 @@ class LocalSettings {
     this._expiration1,
   );
 
-  factory LocalSettings._read() {
-    final s = _storage;
-    return LocalSettings._(
-      ThemeMode.values[(s.read(_THEME_MODE) ?? 0)],
-      s.read(_LIGHT_THEME) ?? 0,
-      s.read(_DARK_THEME) ?? 0,
-      s.read(_DEFAULT_HOME_TAB) ?? 0,
-      Explorable.values[s.read(_DEFAULT_EXPLORABLE) ?? 0],
-      EntrySort.values[s.read(_DEFAULT_ANIME_SORT) ?? 0],
-      EntrySort.values[s.read(_DEFAULT_MANGA_SORT) ?? 0],
+  factory Settings._read() {
+    return Settings._(
+      _box.get(_ACCOUNT),
+      ThemeMode.values[(_box.get(_THEME_MODE) ?? 0)],
+      _box.get(_LIGHT_THEME) ?? 0,
+      _box.get(_DARK_THEME) ?? 0,
+      _box.get(_DEFAULT_HOME_TAB) ?? 0,
+      Explorable.values[_box.get(_DEFAULT_EXPLORABLE) ?? 0],
+      EntrySort.values[_box.get(_DEFAULT_ANIME_SORT) ?? 0],
+      EntrySort.values[_box.get(_DEFAULT_MANGA_SORT) ?? 0],
       MediaSort.values[
-          s.read(_DEFAULT_EXPLORE_SORT) ?? MediaSort.TRENDING_DESC.index],
-      s.read(_CONFIRM_EXIT) ?? false,
-      s.read(_LEFT_HANDED) ?? false,
-      s.read(_ANALOGUE_CLOCK) ?? false,
-      s.read(_LAST_FEED) ?? false,
-      s.read(_LAST_NOTIFICATION) ?? -1,
-      s.read(_ID_0),
-      s.read(_ID_1),
-      s.read(_EXPIRATION_0),
-      s.read(_EXPIRATION_1),
+          _box.get(_DEFAULT_EXPLORE_SORT) ?? MediaSort.TRENDING_DESC.index],
+      _box.get(_CONFIRM_EXIT) ?? false,
+      _box.get(_LEFT_HANDED) ?? false,
+      _box.get(_ANALOGUE_CLOCK) ?? false,
+      _box.get(_LAST_FEED) ?? false,
+      _box.get(_LAST_NOTIFICATION) ?? -1,
+      _box.get(_ID_0),
+      _box.get(_ID_1),
+      _box.get(_EXPIRATION_0),
+      _box.get(_EXPIRATION_1),
     );
   }
 
-  factory LocalSettings() => _it;
+  factory Settings() => _it;
 
-  static late LocalSettings _it;
+  static late Settings _it;
 
   static const _SETTINGS = 'settings';
 
@@ -78,50 +80,18 @@ class LocalSettings {
   static bool _didInit = false;
 
   // Should be called before operating on the storage.
-  static Future<bool> init() async {
+  static Future<void> init() async {
     if (_didInit) return Future.value(true);
     _didInit = true;
-    //
-    //
-    //
-    // LEGACY CODE. To be removed after the next update.
-    GetStorage.init().then((_) => GetStorage().erase());
-    //
-    //
-    //
 
-    final ok = await GetStorage.init(_SETTINGS);
-    _account = _storage.read(_ACCOUNT);
-    _it = LocalSettings._read();
-
-    return ok;
+    await Hive.initFlutter();
+    await Hive.openBox(_SETTINGS);
+    _it = Settings._read();
   }
 
-  static int? _account;
+  static Box get _box => Hive.box(_SETTINGS);
 
-  static int? get selectedAccount => _account;
-
-  static set selectedAccount(int? v) {
-    if (v == null && _account != null) {
-      _account = null;
-      _storage.remove(_ACCOUNT);
-      _it.lastNotification = -1;
-    } else if (v == 0 && _account != 0) {
-      _account = 0;
-      _storage.write(_ACCOUNT, 0);
-    } else if (v == 1 && _account != 1) {
-      _account = 1;
-      _storage.write(_ACCOUNT, 1);
-    }
-  }
-
-  static bool isAvailableAccount(int i) {
-    if (i < 0 || i > 1) return false;
-    return _storage.read(i == 0 ? _ID_0 : _ID_1) != null;
-  }
-
-  static GetStorage get _storage => GetStorage(_SETTINGS);
-
+  int? _account;
   ThemeMode _themeMode;
   int _lightTheme;
   int _darkTheme;
@@ -140,6 +110,7 @@ class LocalSettings {
   int? _expiration0;
   int? _expiration1;
 
+  int? get selectedAccount => _account;
   ThemeMode get themeMode => _themeMode;
   int get lightTheme => _lightTheme;
   int get darkTheme => _darkTheme;
@@ -153,6 +124,11 @@ class LocalSettings {
   bool get analogueClock => _analogueClock;
   bool get lastFeed => _lastFeed;
   int get lastNotification => _lastNotification;
+
+  bool isAvailableAccount(int i) {
+    if (i < 0 || i > 1) return false;
+    return _box.get(i == 0 ? _ID_0 : _ID_1) != null;
+  }
 
   int? get id {
     if (_account == null) return null;
@@ -171,93 +147,105 @@ class LocalSettings {
     return null;
   }
 
+  set selectedAccount(int? v) {
+    if (v == null && _account != null) {
+      _account = null;
+      _box.delete(_ACCOUNT);
+      _it.lastNotification = -1;
+    } else if (v == 0 && _account != 0) {
+      _account = 0;
+      _box.put(_ACCOUNT, 0);
+    } else if (v == 1 && _account != 1) {
+      _account = 1;
+      _box.put(_ACCOUNT, 1);
+    }
+  }
+
   set themeMode(ThemeMode v) {
     if (v == _themeMode) return;
     _themeMode = v;
     Theming().refresh();
-    _storage.write(_THEME_MODE, v.index);
+    _box.put(_THEME_MODE, v.index);
   }
 
   set lightTheme(int v) {
     if (v < 0 || v >= Theming.themeCount || v == _lightTheme) return;
     _lightTheme = v;
     Theming().refresh();
-    _storage.write(_LIGHT_THEME, v);
+    _box.put(_LIGHT_THEME, v);
   }
 
   set darkTheme(int v) {
     if (v < 0 || v >= Theming.themeCount || v == _darkTheme) return;
     _darkTheme = v;
     Theming().refresh();
-    _storage.write(_DARK_THEME, v);
+    _box.put(_DARK_THEME, v);
   }
 
   set defaultHomeTab(int v) {
     if (v < 0 || v > 4) return;
     _defaultHomeTab = v;
-    _storage.write(_DEFAULT_HOME_TAB, v);
+    _box.put(_DEFAULT_HOME_TAB, v);
   }
 
   set defaultExplorable(Explorable v) {
     _defaultExplorable = v;
-    _storage.write(_DEFAULT_EXPLORABLE, v.index);
+    _box.put(_DEFAULT_EXPLORABLE, v.index);
   }
 
   set defaultAnimeSort(EntrySort v) {
     _defaultAnimeSort = v;
-    _storage.write(_DEFAULT_ANIME_SORT, v.index);
+    _box.put(_DEFAULT_ANIME_SORT, v.index);
   }
 
   set defaultMangaSort(EntrySort v) {
     _defaultMangaSort = v;
-    _storage.write(_DEFAULT_MANGA_SORT, v.index);
+    _box.put(_DEFAULT_MANGA_SORT, v.index);
   }
 
   set defaultExploreSort(MediaSort v) {
     _defaultExploreSort = v;
-    _storage.write(_DEFAULT_EXPLORE_SORT, v.index);
+    _box.put(_DEFAULT_EXPLORE_SORT, v.index);
   }
 
   set confirmExit(bool v) {
     _confirmExit = v;
-    _storage.write(_CONFIRM_EXIT, v);
+    _box.put(_CONFIRM_EXIT, v);
   }
 
   set leftHanded(bool v) {
     _leftHanded = v;
-    _storage.write(_LEFT_HANDED, v);
+    _box.put(_LEFT_HANDED, v);
   }
 
   set analogueClock(bool v) {
     _analogueClock = v;
-    _storage.write(_ANALOGUE_CLOCK, v);
+    _box.put(_ANALOGUE_CLOCK, v);
   }
 
   set lastFeed(bool v) {
     _lastFeed = v;
-    _storage.write(_LAST_FEED, v);
+    _box.put(_LAST_FEED, v);
   }
 
   set lastNotification(int v) {
     _lastNotification = v;
-    v > -1
-        ? _storage.write(_LAST_NOTIFICATION, v)
-        : _storage.remove(_LAST_NOTIFICATION);
+    v > -1 ? _box.put(_LAST_NOTIFICATION, v) : _box.delete(_LAST_NOTIFICATION);
   }
 
   void setIdOf(int a, int? v) {
     if (a < 0 || a > 1) return;
     a == 0 ? _id0 = v : _id1 = v;
     v != null
-        ? _storage.write(a == 0 ? _ID_0 : _ID_1, v)
-        : _storage.remove(a == 0 ? _ID_0 : _ID_1);
+        ? _box.put(a == 0 ? _ID_0 : _ID_1, v)
+        : _box.delete(a == 0 ? _ID_0 : _ID_1);
   }
 
   void setExpirationOf(int a, int? v) {
     if (a < 0 || a > 1) return;
     a == 0 ? _expiration0 = v : _expiration1 = v;
     v != null
-        ? _storage.write(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1, v)
-        : _storage.remove(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1);
+        ? _box.put(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1, v)
+        : _box.delete(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1);
   }
 }

@@ -7,7 +7,7 @@ import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
@@ -88,12 +88,12 @@ class BackgroundHandler {
 
 void _fetch() => Workmanager().executeTask((_, __) async {
       // Initialise local settings.
-      await LocalSettings.init();
-      if (LocalSettings.selectedAccount == null) return true;
+      await Settings.init();
+      if (Settings().selectedAccount == null) return true;
 
       // Log in.
       if (!Client.loggedIn()) {
-        final ok = await Client.logIn(LocalSettings.selectedAccount!);
+        final ok = await Client.logIn(Settings().selectedAccount!);
         if (!ok) return true;
       }
 
@@ -106,8 +106,8 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       if (count > ns.length) count = ns.length;
       if (count == 0) return true;
 
-      final last = LocalSettings().lastNotification;
-      LocalSettings().lastNotification = ns[0]['id'];
+      final last = Settings().lastNotification;
+      Settings().lastNotification = ns[0]['id'];
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {

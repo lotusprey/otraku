@@ -7,7 +7,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/feed_view.dart';
@@ -93,7 +93,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
-    if (!LocalSettings().confirmExit) return SynchronousFuture(true);
+    if (!Settings().confirmExit) return SynchronousFuture(true);
 
     bool ok = false;
     await showPopUp(

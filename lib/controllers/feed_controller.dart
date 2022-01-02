@@ -4,7 +4,7 @@ import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class FeedController extends ScrollingController {
@@ -24,9 +24,9 @@ class FeedController extends ScrollingController {
     fetchPage(clean: true);
   }
 
-  bool get onFollowing => LocalSettings().lastFeed;
+  bool get onFollowing => Settings().lastFeed;
   set onFollowing(bool v) {
-    LocalSettings().lastFeed = v;
+    Settings().lastFeed = v;
     fetchPage(clean: true);
   }
 
@@ -49,8 +49,8 @@ class FeedController extends ScrollingController {
         if (id != null) ...{
           'userId': id,
         } else ...{
-          'isFollowing': LocalSettings().lastFeed,
-          'hasRepliesOrTypeText': LocalSettings().lastFeed ? null : true,
+          'isFollowing': Settings().lastFeed,
+          'hasRepliesOrTypeText': Settings().lastFeed ? null : true,
         },
         'page': clean ? 1 : _activities().nextPage,
         'typeIn': _typeIn.map((t) => t.name).toList(),

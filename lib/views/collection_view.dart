@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/collection_grid.dart';
@@ -52,7 +52,7 @@ class HomeCollectionView extends StatelessWidget {
         physics: Consts.PHYSICS,
         controller: ctrl.scrollCtrl,
         slivers: [
-          SliverCollectionAppBar(tag, id != LocalSettings().id),
+          SliverCollectionAppBar(tag, id != Settings().id),
           SliverRefreshControl(
             onRefresh: ctrl.refetch,
             canRefresh: () => !ctrl.isLoading,

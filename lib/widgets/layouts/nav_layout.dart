@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
@@ -63,7 +63,7 @@ class NavLayout extends StatelessWidget {
       extendBody: true,
       appBar: appBar,
       floatingActionButton: floating,
-      floatingActionButtonLocation: LocalSettings().leftHanded
+      floatingActionButtonLocation: Settings().leftHanded
           ? FloatingActionButtonLocation.startFloat
           : FloatingActionButtonLocation.endFloat,
       body: SafeArea(bottom: false, child: body),

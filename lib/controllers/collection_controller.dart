@@ -7,7 +7,7 @@ import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class CollectionController extends ScrollingController implements Filterable {
@@ -122,9 +122,8 @@ class CollectionController extends ScrollingController implements Filterable {
       data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
     );
 
-    _filters[Filterable.SORT] = ofAnime
-        ? LocalSettings().defaultAnimeSort
-        : LocalSettings().defaultMangaSort;
+    _filters[Filterable.SORT] =
+        ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
 
     _customListNames.clear();
     _customListNames.addAll(List.from(metaData['customLists']));

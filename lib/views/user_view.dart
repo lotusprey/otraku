@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/user_header.dart';
@@ -50,7 +50,7 @@ class HomeUserView extends StatelessWidget {
           UserHeader(
             id: id,
             user: user.model,
-            isMe: id == LocalSettings().id,
+            isMe: id == Settings().id,
             avatarUrl: avatarUrl,
           ),
           if (user.model != null)
@@ -65,7 +65,7 @@ class HomeUserView extends StatelessWidget {
                   _Button(
                     Ionicons.film,
                     'Anime',
-                    () => id == LocalSettings().id
+                    () => id == Settings().id
                         ? Get.find<HomeController>().homeTab =
                             HomeView.ANIME_LIST
                         : Navigator.pushNamed(
@@ -77,7 +77,7 @@ class HomeUserView extends StatelessWidget {
                   _Button(
                     Ionicons.bookmark,
                     'Manga',
-                    () => id == LocalSettings().id
+                    () => id == Settings().id
                         ? Get.find<HomeController>().homeTab =
                             HomeView.MANGA_LIST
                         : Navigator.pushNamed(

@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -58,7 +58,7 @@ abstract class Client {
         .add(Duration(seconds: expiration, days: -1))
         .millisecondsSinceEpoch;
 
-    LocalSettings().setExpirationOf(account, expiration);
+    Settings().setExpirationOf(account, expiration);
   }
 
   // Try loading a saved account.
@@ -75,9 +75,9 @@ abstract class Client {
 
     if (_accessToken == null) {
       // Check the token's expiration date.
-      if (LocalSettings().expirationOf(account) != null) {
+      if (Settings().expirationOf(account) != null) {
         final date = DateTime.fromMillisecondsSinceEpoch(
-          LocalSettings().expirationOf(account)!,
+          Settings().expirationOf(account)!,
         );
         if (DateTime.now().compareTo(date) >= 0) {
           removeAccount(account);
@@ -93,10 +93,10 @@ abstract class Client {
     }
 
     // Fetch the viewer's id, if needed.
-    if (LocalSettings().idOf(account) == null) {
+    if (Settings().idOf(account) == null) {
       final data = await request(_idQuery);
-      LocalSettings().setIdOf(account, data?['Viewer']?['id']);
-      if (LocalSettings().idOf(account) == null) {
+      Settings().setIdOf(account, data?['Viewer']?['id']);
+      if (Settings().idOf(account) == null) {
         _token = null;
         return false;
       }
@@ -108,7 +108,7 @@ abstract class Client {
   // Log out and show available accounts.
   static Future<void> logOut() async {
     _token = null;
-    LocalSettings.selectedAccount = null;
+    Settings().selectedAccount = null;
     BackgroundHandler.clearNotifications();
     final context = RouteArg.navKey.currentContext;
     if (context == null) return;
@@ -116,9 +116,9 @@ abstract class Client {
   }
 
   // Remove a saved account.
-  static void removeAccount(int account) async {
-    LocalSettings().setIdOf(account, null);
-    LocalSettings().setExpirationOf(account, null);
+  static Future<void> removeAccount(int account) async {
+    Settings().setIdOf(account, null);
+    Settings().setExpirationOf(account, null);
     await FlutterSecureStorage()
         .delete(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
   }

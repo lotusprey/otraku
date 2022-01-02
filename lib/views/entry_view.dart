@@ -9,7 +9,7 @@ import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -120,8 +120,8 @@ class _ButtonsState extends State<_Buttons> {
                     onConfirm: () {
                       Get.find<CollectionController>(
                         tag: ctrl.model!.type == 'ANIME'
-                            ? '${LocalSettings().id}true'
-                            : '${LocalSettings().id}false',
+                            ? '${Settings().id}true'
+                            : '${Settings().id}false',
                       ).removeEntry(ctrl.oldModel!);
                       widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
                       Navigator.pop(context);
@@ -143,8 +143,8 @@ class _ButtonsState extends State<_Buttons> {
             setState(() => _loading = true);
             Get.find<CollectionController>(
               tag: ctrl.model!.type == 'ANIME'
-                  ? '${LocalSettings().id}true'
-                  : '${LocalSettings().id}false',
+                  ? '${Settings().id}true'
+                  : '${Settings().id}false',
             ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
               widget.callback?.call(ctrl.model!);
               Navigator.pop(context);
@@ -170,7 +170,7 @@ class _ButtonsState extends State<_Buttons> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: _loading
                   ? const [Center(child: Loader())]
-                  : LocalSettings().leftHanded
+                  : Settings().leftHanded
                       ? [save, remove]
                       : [remove, save],
             ),

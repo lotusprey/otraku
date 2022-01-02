@@ -3,7 +3,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 
 class EntryController extends GetxController {
   static const ID_MAIN = 0;
@@ -32,8 +32,8 @@ class EntryController extends GetxController {
       final customLists = Map.fromIterable(
         Get.find<CollectionController>(
           tag: _model!.type == 'ANIME'
-              ? '${LocalSettings().id}true'
-              : '${LocalSettings().id}false',
+              ? '${Settings().id}true'
+              : '${Settings().id}false',
         ).customListNames,
         key: (k) => k.toString(),
         value: (_) => false,

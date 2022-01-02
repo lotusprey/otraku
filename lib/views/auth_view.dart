@@ -4,7 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -31,11 +31,11 @@ class _AuthViewState extends State<AuthView> {
         return;
       }
 
-      LocalSettings.selectedAccount = account;
+      Settings().selectedAccount = account;
       Navigator.pushReplacementNamed(
         context,
         RouteArg.home,
-        arguments: RouteArg(id: LocalSettings().idOf(account)),
+        arguments: RouteArg(id: Settings().idOf(account)),
       );
     });
   }
@@ -76,17 +76,17 @@ class _AuthViewState extends State<AuthView> {
   @override
   void initState() {
     super.initState();
-    if (LocalSettings.selectedAccount == null) return;
+    if (Settings().selectedAccount == null) return;
     _loading = true;
-    _verify(LocalSettings.selectedAccount!);
+    _verify(Settings().selectedAccount!);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Scaffold(body: Center(child: Loader()));
 
-    final available0 = LocalSettings.isAvailableAccount(0);
-    final available1 = LocalSettings.isAvailableAccount(1);
+    final available0 = Settings().isAvailableAccount(0);
+    final available1 = Settings().isAvailableAccount(1);
 
     return Scaffold(
       body: Container(
@@ -122,7 +122,7 @@ class _AuthViewState extends State<AuthView> {
                         if (available0) ...[
                           const SizedBox(height: 5),
                           Text(
-                            LocalSettings().idOf(0)?.toString() ?? '',
+                            Settings().idOf(0)?.toString() ?? '',
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ],
@@ -139,8 +139,8 @@ class _AuthViewState extends State<AuthView> {
                             title: 'Remove Account?',
                             mainAction: 'Yes',
                             secondaryAction: 'No',
-                            onConfirm: () =>
-                                setState(() => Client.removeAccount(0)),
+                            onConfirm: () => Client.removeAccount(0)
+                                .then((_) => setState(() {})),
                           ),
                         ),
                       ),
@@ -173,7 +173,7 @@ class _AuthViewState extends State<AuthView> {
                         if (available1) ...[
                           const SizedBox(height: 5),
                           Text(
-                            LocalSettings().idOf(1)?.toString() ?? '',
+                            Settings().idOf(1)?.toString() ?? '',
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ],
@@ -190,8 +190,8 @@ class _AuthViewState extends State<AuthView> {
                             title: 'Remove Account?',
                             mainAction: 'Yes',
                             secondaryAction: 'No',
-                            onConfirm: () =>
-                                setState(() => Client.removeAccount(1)),
+                            onConfirm: () => Client.removeAccount(1)
+                                .then((_) => setState(() {})),
                           ),
                         ),
                       ),

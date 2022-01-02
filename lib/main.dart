@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/theming.dart';
 
 Future<void> main() async {
-  await LocalSettings.init();
+  await Settings.init();
   BackgroundHandler.init();
   runApp(App());
 }

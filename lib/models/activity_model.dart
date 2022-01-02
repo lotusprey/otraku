@@ -3,7 +3,7 @@ import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 
 class ActivityModel {
   final int id;
@@ -56,7 +56,7 @@ class ActivityModel {
   });
 
   factory ActivityModel(Map<String, dynamic> map) {
-    final myId = LocalSettings().id;
+    final myId = Settings().id;
 
     switch (map['type']) {
       case 'TEXT':

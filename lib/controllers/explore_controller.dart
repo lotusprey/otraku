@@ -6,7 +6,7 @@ import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 // Searches and filters items from the Explorable enum
@@ -26,14 +26,14 @@ class ExploreController extends ScrollingController implements Filterable {
   final _search = ''.obs;
   final _genres = <String>[];
   final _tags = <String, List<TagModel>>{};
-  final _type = LocalSettings().defaultExplorable.obs;
+  final _type = Settings().defaultExplorable.obs;
   int _concurrentFetches = 0;
   bool _searchMode = false;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
     Filterable.ID_NOT_IN: [],
-    Filterable.SORT: LocalSettings().defaultExploreSort.name,
+    Filterable.SORT: Settings().defaultExploreSort.name,
   };
 
   // ***************************************************************************

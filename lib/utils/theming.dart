@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:otraku/models/theme_model.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 
 class Theming with ChangeNotifier {
   Theming._() {
@@ -18,9 +18,9 @@ class Theming with ChangeNotifier {
   ThemeModel get theme => _theme;
 
   void _setTheme() {
-    final mode = LocalSettings().themeMode;
-    final light = LocalSettings().lightTheme;
-    final dark = LocalSettings().darkTheme;
+    final mode = Settings().themeMode;
+    final light = Settings().lightTheme;
+    final dark = Settings().darkTheme;
 
     final platform = SchedulerBinding.instance?.window.platformBrightness;
     final isDark = mode == ThemeMode.system

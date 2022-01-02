@@ -6,7 +6,7 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
@@ -34,29 +34,29 @@ class SettingsAppView extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               DropDownField<int>(
                 title: 'Light Theme',
-                value: LocalSettings().lightTheme,
+                value: Settings().lightTheme,
                 items: Theming.themes,
-                onChanged: (val) => LocalSettings().lightTheme = val,
+                onChanged: (val) => Settings().lightTheme = val,
               ),
               DropDownField<int>(
                 title: 'Dark Theme',
-                value: LocalSettings().darkTheme,
+                value: Settings().darkTheme,
                 items: Theming.themes,
-                onChanged: (val) => LocalSettings().darkTheme = val,
+                onChanged: (val) => Settings().darkTheme = val,
               ),
               DropDownField<ThemeMode>(
                 title: 'Theme Mode',
-                value: LocalSettings().themeMode,
+                value: Settings().themeMode,
                 items: const {
                   'Auto': ThemeMode.system,
                   'Light': ThemeMode.light,
                   'Dark': ThemeMode.dark,
                 },
-                onChanged: (val) => LocalSettings().themeMode = val,
+                onChanged: (val) => Settings().themeMode = val,
               ),
               DropDownField<int>(
                 title: 'Startup Page',
-                value: LocalSettings().defaultHomeTab,
+                value: Settings().defaultHomeTab,
                 items: {
                   'Feed': HomeView.FEED,
                   'Anime List': HomeView.ANIME_LIST,
@@ -64,43 +64,43 @@ class SettingsAppView extends StatelessWidget {
                   'Explore': HomeView.EXPLORE,
                   'Profile': HomeView.USER,
                 },
-                onChanged: (val) => LocalSettings().defaultHomeTab = val,
+                onChanged: (val) => Settings().defaultHomeTab = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',
-                value: LocalSettings().defaultAnimeSort,
+                value: Settings().defaultAnimeSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
                 ),
-                onChanged: (val) => LocalSettings().defaultAnimeSort = val,
+                onChanged: (val) => Settings().defaultAnimeSort = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Manga Sort',
-                value: LocalSettings().defaultMangaSort,
+                value: Settings().defaultMangaSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
                 ),
-                onChanged: (val) => LocalSettings().defaultMangaSort = val,
+                onChanged: (val) => Settings().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
                 title: 'Default Explore Sort',
-                value: LocalSettings().defaultExploreSort,
+                value: Settings().defaultExploreSort,
                 items: Map.fromIterable(
                   MediaSort.values,
                   key: (v) => Convert.clarifyEnum((v as MediaSort).name)!,
                 ),
-                onChanged: (val) => LocalSettings().defaultExploreSort = val,
+                onChanged: (val) => Settings().defaultExploreSort = val,
               ),
               DropDownField<Explorable>(
                 title: 'Default Explorable',
-                value: LocalSettings().defaultExplorable,
+                value: Settings().defaultExplorable,
                 items: Map.fromIterable(
                   Explorable.values,
                   key: (v) => Convert.clarifyEnum((v as Explorable).name)!,
                 ),
-                onChanged: (val) => LocalSettings().defaultExplorable = val,
+                onChanged: (val) => Settings().defaultExplorable = val,
               ),
             ]),
           ),
@@ -114,18 +114,18 @@ class SettingsAppView extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(
                 title: 'Left-Handed Mode',
-                initial: LocalSettings().leftHanded,
-                onChanged: (val) => LocalSettings().leftHanded = val,
+                initial: Settings().leftHanded,
+                onChanged: (val) => Settings().leftHanded = val,
               ),
               CheckBoxField(
                 title: '12 Hour Clock',
-                initial: LocalSettings().analogueClock,
-                onChanged: (val) => LocalSettings().analogueClock = val,
+                initial: Settings().analogueClock,
+                onChanged: (val) => Settings().analogueClock = val,
               ),
               CheckBoxField(
                 title: 'Confirm Exit',
-                initial: LocalSettings().confirmExit,
-                onChanged: (val) => LocalSettings().confirmExit = val,
+                initial: Settings().confirmExit,
+                onChanged: (val) => Settings().confirmExit = val,
               ),
             ]),
           ),

@@ -14,12 +14,13 @@ dependencies:
 
   http: ^0.13.4
   get: ^4.6.1
-  get_storage: ^2.0.3
+  hive: ^2.0.5
+  hive_flutter: ^1.1.0
   flutter_secure_storage: ^5.0.2
   url_launcher: ^6.0.17
   app_links: ^2.2.0 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
   workmanager: ^0.4.1
-  flutter_local_notifications: ^9.1.5
+  flutter_local_notifications: ^9.2.0
   flutter_widget_from_html_core: ^0.8.4
   ionicons: ^0.1.2
 

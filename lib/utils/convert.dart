@@ -1,5 +1,5 @@
 import 'package:otraku/constants/list_status.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 
 abstract class Convert {
   // Replaces _ with intervals and makes each word start with
@@ -63,7 +63,7 @@ abstract class Convert {
     if (seconds == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
 
-    if (LocalSettings().analogueClock) {
+    if (Settings().analogueClock) {
       final overflows = date.hour > 12;
       return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} '
           '${_MONTHS[date.month]} ${date.year}, '

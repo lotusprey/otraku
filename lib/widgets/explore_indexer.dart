@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/local_settings.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/views/entry_view.dart';
 import 'package:otraku/views/home_view.dart';
@@ -59,7 +59,7 @@ class ExploreIndexer extends StatelessWidget {
         );
         return;
       case Explorable.user:
-        if (id != LocalSettings().id)
+        if (id != Settings().id)
           Navigator.pushNamed(
             ctx,
             RouteArg.user,

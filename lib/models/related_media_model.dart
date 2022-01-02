@@ -23,7 +23,7 @@ class RelatedMediaModel extends ExplorableModel {
         relationType: Convert.clarifyEnum(map['relationType']),
         format: Convert.clarifyEnum(map['node']['format']),
         status: Convert.clarifyEnum(map['node']['status']),
-        imageUrl: map['node']['coverImage']['large'],
+        imageUrl: map['node']['coverImage']['extraLarge'],
         explorable: map['node']['type'] == 'ANIME'
             ? Explorable.anime
             : Explorable.manga,

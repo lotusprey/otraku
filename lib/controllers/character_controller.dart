@@ -148,7 +148,7 @@ class CharacterController extends ScrollingController {
       connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
+        imageUrl: connection['node']['coverImage']['extraLarge'],
         type: Explorable.anime,
         subtitle: Convert.clarifyEnum(connection['characterRole']),
         other: voiceActors,
@@ -166,7 +166,7 @@ class CharacterController extends ScrollingController {
       connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
+        imageUrl: connection['node']['coverImage']['extraLarge'],
         type: Explorable.manga,
         subtitle: Convert.clarifyEnum(connection['characterRole']),
       ));

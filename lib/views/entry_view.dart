@@ -34,8 +34,8 @@ class EntryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
-        ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE
+        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2
         : 0.0;
 
     return GetBuilder<EntryController>(

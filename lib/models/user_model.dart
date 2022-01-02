@@ -1,6 +1,7 @@
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/statistics_model.dart';
+import 'package:otraku/utils/convert.dart';
 
 class UserModel {
   static const ANIME_FAV = 0;
@@ -10,16 +11,16 @@ class UserModel {
   static const STUDIO_FAV = 4;
 
   final int? id;
-  final String? name;
-  final String? description;
+  final String name;
+  final String description;
   final String? avatar;
   final String? banner;
   bool isFollowing;
   final bool isFollower;
   final bool blocked;
-  final int? donatorTier;
-  final String? donatorBadge;
-  final String? moderatorStatus;
+  final int donatorTier;
+  final String donatorBadge;
+  final List<String> modRoles;
   final bool isMe;
   final StatisticsModel animeStats;
   final StatisticsModel mangaStats;
@@ -42,7 +43,7 @@ class UserModel {
     required this.banner,
     required this.donatorTier,
     required this.donatorBadge,
-    required this.moderatorStatus,
+    required this.modRoles,
     required this.animeStats,
     required this.mangaStats,
     this.blocked = false,
@@ -53,16 +54,18 @@ class UserModel {
 
   factory UserModel(final Map<String, dynamic> map, bool me) => UserModel._(
         id: map['id'],
-        name: map['name'],
-        description: map['about'],
+        name: map['name'] ?? '',
+        description: map['about'] ?? '',
         avatar: map['avatar']['large'],
         banner: map['bannerImage'],
         isFollowing: map['isFollowing'] ?? false,
         isFollower: map['isFollower'] ?? false,
         blocked: map['isBlocked'] ?? false,
-        donatorTier: map['donatorTier'],
-        donatorBadge: map['donatorBadge'],
-        moderatorStatus: map['moderatorStatus'],
+        donatorTier: map['donatorTier'] ?? 0,
+        donatorBadge: map['donatorBadge'] ?? '',
+        modRoles: List<String>.from(
+          map['moderatorRoles']?.map((r) => Convert.clarifyEnum(r)) ?? [],
+        ),
         animeStats: StatisticsModel(map['statistics']['anime']),
         mangaStats: StatisticsModel(map['statistics']['manga']),
         isMe: me,

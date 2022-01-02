@@ -21,7 +21,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage']['large'],
+        imageUrl: map['coverImage']['extraLarge'],
         explorable:
             map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       );
@@ -30,7 +30,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage']['large'],
+        imageUrl: map['coverImage']['extraLarge'],
         explorable: Explorable.anime,
       );
 
@@ -38,7 +38,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage']['large'],
+        imageUrl: map['coverImage']['extraLarge'],
         explorable: Explorable.manga,
       );
 

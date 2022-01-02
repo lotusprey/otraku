@@ -104,13 +104,15 @@ class LocalSettings {
   static set selectedAccount(int? v) {
     if (v == null && _account != null) {
       _account = null;
+      _storage.remove(_ACCOUNT);
       _it.lastNotification = -1;
-    } else if (v == 0 && _account != 0)
+    } else if (v == 0 && _account != 0) {
       _account = 0;
-    else if (v == 1 && _account != 1) _account = 1;
-    _account != null
-        ? _storage.write(_ACCOUNT, _account)
-        : _storage.remove(_ACCOUNT);
+      _storage.write(_ACCOUNT, 0);
+    } else if (v == 1 && _account != 1) {
+      _account = 1;
+      _storage.write(_ACCOUNT, 1);
+    }
   }
 
   static bool isAvailableAccount(int i) {

@@ -22,5 +22,5 @@ abstract class Consts {
   static const ICON_SMALL = 20.0;
 
   // Layout sizes.
-  static const OVERLAY_WIDE = 600.0;
+  static const LAYOUT_WIDE = 600.0;
 }

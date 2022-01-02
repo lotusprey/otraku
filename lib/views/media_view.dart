@@ -42,14 +42,7 @@ class MediaView extends StatelessWidget {
       id: MediaController.ID_BASE,
       tag: id.toString(),
       builder: (ctrl) {
-        final header = MediaHeader(
-          ctrl: ctrl,
-          imageUrl: coverUrl,
-          coverWidth: coverWidth,
-          coverHeight: coverHeight,
-          bannerHeight: bannerHeight,
-          height: headerHeight,
-        );
+        final header = MediaHeader(ctrl: ctrl, imageUrl: coverUrl);
 
         if (ctrl.model == null)
           return Scaffold(

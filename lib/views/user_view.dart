@@ -30,7 +30,7 @@ class HomeUserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const maxWidth = Consts.OVERLAY_WIDE + 20;
+    const maxWidth = Consts.LAYOUT_WIDE + 20;
     final sidePadding = MediaQuery.of(context).size.width > maxWidth
         ? (MediaQuery.of(context).size.width - maxWidth) / 2.0
         : 10.0;
@@ -143,7 +143,7 @@ class HomeUserView extends StatelessWidget {
                 ],
               ),
             ),
-          if (user.model?.description != null)
+          if (!(user.model?.description.isEmpty ?? true))
             SliverToBoxAdapter(
               child: Container(
                 margin: padding,
@@ -152,7 +152,7 @@ class HomeUserView extends StatelessWidget {
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: Consts.BORDER_RADIUS,
                 ),
-                child: HtmlContent(user.model!.description!),
+                child: HtmlContent(user.model!.description),
               ),
             ),
           SliverToBoxAdapter(

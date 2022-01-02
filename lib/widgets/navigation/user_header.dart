@@ -6,7 +6,6 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -26,21 +25,13 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const avatarSize = 150.0;
-    double bannerHeight = MediaQuery.of(context).size.width * 0.6;
-    if (bannerHeight > 400) bannerHeight = 400;
-    final height = bannerHeight + avatarSize * 0.5;
-    final avatar = avatarUrl ?? user?.avatar;
-
-    const maxWidth = Consts.OVERLAY_WIDE + 20;
-    final sidePadding = MediaQuery.of(context).size.width > maxWidth
-        ? (MediaQuery.of(context).size.width - maxWidth) / 2.0
-        : 10.0;
-
     return CustomSliverHeader(
-      height: height,
-      implyLeading: !isMe,
       title: user?.name,
+      image: user?.avatar ?? avatarUrl,
+      banner: user?.banner,
+      squareImage: true,
+      implyLeading: !isMe,
+      heroId: id,
       actions: [
         if (isMe)
           GetBuilder<HomeController>(
@@ -81,118 +72,53 @@ class UserHeader extends StatelessWidget {
             ),
           )
       ],
-      background: Stack(
-        fit: StackFit.expand,
-        children: [
-          if (user?.banner != null)
-            Column(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    child: FadeImage(user!.banner!),
-                    onTap: () => showPopUp(context, ImageDialog(user!.banner!)),
-                  ),
-                ),
-                SizedBox(height: height - bannerHeight),
-              ],
-            ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              height: height - bannerHeight,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 15,
-                    spreadRadius: 25,
-                    color: Theme.of(context).colorScheme.background,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: sidePadding),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            avatar != null
-                ? GestureDetector(
-                    child: Hero(
-                      tag: id,
-                      child: ClipRRect(
-                        borderRadius: Consts.BORDER_RADIUS,
-                        child: Container(
-                          height: avatarSize,
-                          width: avatarSize,
-                          child: FadeImage(
-                            avatar,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.bottomCenter,
-                          ),
-                        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: user != null
+            ? [
+                Text(
+                  user!.name,
+                  overflow: TextOverflow.fade,
+                  style: Theme.of(context).textTheme.headline1!.copyWith(
+                    shadows: [
+                      Shadow(
+                        color: Theme.of(context).colorScheme.background,
+                        blurRadius: 10,
                       ),
-                    ),
-                    onTap: () => showPopUp(context, ImageDialog(avatar)),
-                  )
-                : SizedBox(width: avatarSize),
-            const SizedBox(width: 10),
-            if (user != null)
-              Expanded(
-                child: SizedBox(
-                  height: avatarSize,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: Text(
-                          user!.name!,
-                          overflow: TextOverflow.fade,
-                          style:
-                              Theme.of(context).textTheme.headline1!.copyWith(
-                            shadows: [
-                              Shadow(
-                                color: Theme.of(context).colorScheme.background,
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (user!.donatorTier! > 0)
-                        Flexible(child: _AnimatedBadge(user!.donatorBadge)),
-                      if (user!.moderatorStatus != null)
-                        Flexible(
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 5),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.secondary,
-                              borderRadius: Consts.BORDER_RADIUS,
-                            ),
-                            child: Text(
-                              user!.moderatorStatus!,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.button,
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),
-              ),
-          ],
-        ),
+                if (user!.donatorTier > 0) _AnimatedBadge(user!.donatorBadge),
+                if (user!.modRoles.isNotEmpty)
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: Consts.BORDER_RADIUS,
+                      ),
+                      child: Text(
+                        user!.modRoles[0],
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                    ),
+                    onTap: () => showPopUp(
+                      context,
+                      TextDialog(
+                        title: 'Roles',
+                        text: user!.modRoles.join(', '),
+                      ),
+                    ),
+                  ),
+              ]
+            : [],
       ),
     );
   }

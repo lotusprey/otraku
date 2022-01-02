@@ -129,7 +129,7 @@ class StaffController extends ScrollingController {
                 ConnectionModel(
                   id: connection['node']['id'],
                   title: connection['node']['title']['userPreferred'],
-                  imageUrl: connection['node']['coverImage']['large'],
+                  imageUrl: connection['node']['coverImage']['extraLarge'],
                   subtitle: Convert.clarifyEnum(connection['node']['format']),
                   type: connection['node']['type'] == 'ANIME'
                       ? Explorable.anime
@@ -151,7 +151,7 @@ class StaffController extends ScrollingController {
       connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
+        imageUrl: connection['node']['coverImage']['extraLarge'],
         type: connection['node']['type'] == 'ANIME'
             ? Explorable.anime
             : Explorable.manga,

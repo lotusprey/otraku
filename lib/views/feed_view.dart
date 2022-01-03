@@ -27,8 +27,10 @@ class FeedView extends StatelessWidget {
       builder: (ctrl) => Scaffold(
         appBar: ShadowAppBar(title: 'Activities', actions: [_Filter(ctrl)]),
         body: SafeArea(
-          child: Obx(
-            () {
+          child: GetBuilder<FeedController>(
+            id: FeedController.ID_ACTIVITIES,
+            tag: id.toString(),
+            builder: (ctrl) {
               final activities = ctrl.activities;
 
               if (ctrl.isLoading) return const Center(child: Loader());
@@ -74,8 +76,9 @@ class HomeFeedView extends StatelessWidget {
           ),
           SliverPadding(
             padding: Consts.PADDING,
-            sliver: Obx(
-              () {
+            sliver: GetBuilder<FeedController>(
+              id: FeedController.ID_ACTIVITIES,
+              builder: (ctrl) {
                 final activities = ctrl.activities;
 
                 if (ctrl.isLoading)
@@ -129,8 +132,8 @@ class _Header extends StatelessWidget {
       _Filter(ctrl),
       GetBuilder<HomeController>(
         id: HomeController.ID_NOTIFICATIONS,
-        builder: (vCtrl) {
-          if (vCtrl.notificationCount < 1)
+        builder: (homeCtrl) {
+          if (homeCtrl.notificationCount < 1)
             return AppBarIcon(
               tooltip: 'Notifications',
               icon: Ionicons.notifications_outline,
@@ -167,7 +170,7 @@ class _Header extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          vCtrl.notificationCount.toString(),
+                          homeCtrl.notificationCount.toString(),
                           style: Theme.of(context)
                               .textTheme
                               .subtitle2!

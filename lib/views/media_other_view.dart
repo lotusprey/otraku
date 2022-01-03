@@ -33,7 +33,7 @@ class MediaOtherView {
           ),
         ]),
         SliverPadding(
-          padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+          padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
           sliver: ctrl.otherTab == MediaController.RELATIONS
               ? _RelationsGrid(ctrl.model!.otherMedia)
               : ctrl.otherTab == MediaController.CHARACTERS

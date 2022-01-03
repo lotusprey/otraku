@@ -131,9 +131,11 @@ class ActivityView extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: SizedBox(
                       height: 50,
-                      child: Obx(
-                        () => Center(
-                          child: ctrl.isLoading ? Loader() : null,
+                      child: GetBuilder<ActivityController>(
+                        id: ActivityController.ID_LOADING,
+                        tag: id.toString(),
+                        builder: (ctrl) => Center(
+                          child: ctrl.isLoading ? const Loader() : null,
                         ),
                       ),
                     ),

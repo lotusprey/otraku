@@ -79,7 +79,7 @@ class Settings {
 
   static bool _didInit = false;
 
-  // Should be called before operating on the storage.
+  // Should be called before use.
   static Future<void> init() async {
     if (_didInit) return Future.value(true);
     _didInit = true;

@@ -67,7 +67,7 @@ class _ReviewGrid extends StatelessWidget {
       );
 
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, i) => Column(
@@ -136,7 +136,7 @@ class _Ranks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
           height: Consts.MATERIAL_TAP_TARGET_SIZE,

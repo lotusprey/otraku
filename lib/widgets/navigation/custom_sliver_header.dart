@@ -107,8 +107,8 @@ class _Delegate implements SliverPersistentHeaderDelegate {
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            blurRadius: 10,
-            spreadRadius: 10,
+            blurRadius: 5,
+            spreadRadius: 5,
             color: Theme.of(context).colorScheme.background,
           ),
         ],

@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
@@ -14,13 +13,13 @@ class MediaModel {
   late EntryModel entry;
   final MediaStatsModel stats;
   final List<RelatedMediaModel> otherMedia;
-  final _characters = PageModel<ConnectionModel>().obs;
-  final _staff = PageModel<ConnectionModel>().obs;
-  final _reviews = PageModel<RelatedReviewModel>().obs;
+  final _characters = PageModel<ConnectionModel>();
+  final _staff = PageModel<ConnectionModel>();
+  final _reviews = PageModel<RelatedReviewModel>();
 
-  PageModel<ConnectionModel> get characters => _characters();
-  PageModel<ConnectionModel> get staff => _staff();
-  PageModel<RelatedReviewModel> get reviews => _reviews();
+  PageModel<ConnectionModel> get characters => _characters;
+  PageModel<ConnectionModel> get staff => _staff;
+  PageModel<RelatedReviewModel> get reviews => _reviews;
 
   MediaModel._({
     required this.info,
@@ -73,9 +72,7 @@ class MediaModel {
       ));
     }
 
-    _characters.update(
-      (c) => c!.append(items, map['characters']['pageInfo']['hasNextPage']),
-    );
+    _characters.append(items, map['characters']['pageInfo']['hasNextPage']);
   }
 
   void addStaff(final Map<String, dynamic> map) {
@@ -89,9 +86,7 @@ class MediaModel {
         type: Explorable.staff,
       ));
 
-    _staff.update(
-      (s) => s!.append(items, map['staff']['pageInfo']['hasNextPage']),
-    );
+    _staff.append(items, map['staff']['pageInfo']['hasNextPage']);
   }
 
   void addReviews(final Map<String, dynamic> map) {
@@ -101,8 +96,6 @@ class MediaModel {
         items.add(RelatedReviewModel(r));
       } catch (_) {}
 
-    _reviews.update(
-      (r) => r!.append(items, map['reviews']['pageInfo']['hasNextPage']),
-    );
+    _reviews.append(items, map['reviews']['pageInfo']['hasNextPage']);
   }
 }

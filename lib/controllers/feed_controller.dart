@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/page_model.dart';
@@ -8,15 +7,17 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class FeedController extends ScrollingController {
+  static const ID_ACTIVITIES = 0;
+
   FeedController(this.id);
 
   final int? id;
-  final _activities = PageModel<ActivityModel>().obs;
+  final _activities = PageModel<ActivityModel>();
   final _idNotIn = <int>[];
   late final List<ActivityType> _typeIn;
   bool _isLoading = false;
 
-  List<ActivityModel> get activities => _activities().items;
+  List<ActivityModel> get activities => _activities.items;
   List<ActivityType> get typeIn => [..._typeIn];
   set typeIn(List<ActivityType> vals) {
     _typeIn.clear();
@@ -34,13 +35,14 @@ class FeedController extends ScrollingController {
 
   @override
   Future<void> fetchPage({bool clean = false}) async {
-    if (!_activities().hasNextPage) return;
+    if (!_activities.hasNextPage) return;
     _isLoading = true;
 
     if (clean) {
       scrollUpTo(0);
       _idNotIn.clear();
-      _activities.update((a) => a!.clear());
+      _activities.clear();
+      update([ID_ACTIVITIES]);
     }
 
     final data = await Client.request(
@@ -52,7 +54,7 @@ class FeedController extends ScrollingController {
           'isFollowing': Settings().lastFeed,
           'hasRepliesOrTypeText': Settings().lastFeed ? null : true,
         },
-        'page': clean ? 1 : _activities().nextPage,
+        'page': clean ? 1 : _activities.nextPage,
         'typeIn': _typeIn.map((t) => t.name).toList(),
         'idNotInt': _idNotIn,
       },
@@ -66,22 +68,21 @@ class FeedController extends ScrollingController {
         _idNotIn.add(al.last.id);
       } catch (_) {}
 
-    _activities.update(
-      (a) => a!.append(al, data['Page']['pageInfo']['hasNextPage']),
-    );
-
+    _activities.append(al, data['Page']['pageInfo']['hasNextPage']);
     _isLoading = false;
+    update([ID_ACTIVITIES]);
   }
 
   ActivityModel? getActivity(int activityId) {
-    for (final a in _activities().items) if (a.id == activityId) return a;
+    for (final a in _activities.items) if (a.id == activityId) return a;
     return null;
   }
 
   void updateActivity(ActivityModel newActivity) {
-    for (int i = 0; i < _activities().items.length; i++)
-      if (_activities().items[i].id == newActivity.id) {
-        _activities.update((a) => a!.items[i] = newActivity);
+    for (int i = 0; i < _activities.items.length; i++)
+      if (_activities.items[i].id == newActivity.id) {
+        _activities.items[i] = newActivity;
+        update([ID_ACTIVITIES]);
         break;
       }
   }
@@ -91,9 +92,10 @@ class FeedController extends ScrollingController {
         await Client.request(GqlMutation.deleteActivity, {'id': activityId});
     if (data == null) return;
 
-    for (int i = 0; i < _activities().items.length; i++)
-      if (_activities().items[i].id == activityId) {
-        _activities.update((a) => a!.items.removeAt(i));
+    for (int i = 0; i < _activities.items.length; i++)
+      if (_activities.items[i].id == activityId) {
+        _activities.items.removeAt(i);
+        update([ID_ACTIVITIES]);
         break;
       }
   }

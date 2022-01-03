@@ -96,9 +96,9 @@ class _ShadowBody extends StatelessWidget {
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
           BoxShadow(
+            blurRadius: 5,
+            spreadRadius: 5,
             color: Theme.of(context).colorScheme.background,
-            offset: const Offset(0, 3),
-            blurRadius: 7,
           ),
         ],
       ),

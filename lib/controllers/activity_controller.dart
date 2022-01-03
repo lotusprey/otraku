@@ -7,19 +7,22 @@ import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class ActivityController extends ScrollingController {
+  static const ID_LOADING = 0;
+
   ActivityController(this.id, this.feedTag);
 
   final int id;
   final String? feedTag;
   ActivityModel? _model;
-  final _isLoading = true.obs;
+  bool _isLoading = true;
 
   ActivityModel? get model => _model;
-  bool get isLoading => _isLoading();
+  bool get isLoading => _isLoading;
 
   Future<void> fetch() async {
     if (_model != null && _model!.replies.items.isNotEmpty) return;
-    _isLoading.value = true;
+    _isLoading = true;
+    update([ID_LOADING]);
 
     final data = await Client.request(
       GqlQuery.activity,
@@ -29,7 +32,8 @@ class ActivityController extends ScrollingController {
 
     _model = ActivityModel(data['Activity']);
     _model!.appendReplies(data['Page']);
-    _isLoading.value = false;
+    _isLoading = false;
+    update([ID_LOADING]);
     update();
   }
 

@@ -73,17 +73,24 @@ class _CollectionGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final format = Convert.clarifyEnum(entry.format);
-    final timeUntilAiring = entry.airingAt == null
-        ? null
-        : '${format == null ? "" : ' • '}'
+    final details = <TextSpan>[];
+    if (entry.format != null)
+      details.add(TextSpan(text: Convert.clarifyEnum(entry.format)));
+    if (entry.airingAt != null)
+      details.add(TextSpan(
+        text: '${details.isEmpty ? "" : ' • '}'
             'Ep ${entry.nextEpisode} in '
-            '${Convert.timeUntilTimestamp(entry.airingAt)}';
-    final episodesBehind =
-        entry.nextEpisode == null || entry.nextEpisode! - 1 <= entry.progress
-            ? null
-            : '${format == null && entry.airingAt == null ? "" : ' • '}'
-                '${entry.nextEpisode! - 1 - entry.progress} ep behind';
+            '${Convert.timeUntilTimestamp(entry.airingAt)}',
+      ));
+    if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
+      details.add(TextSpan(
+        text: '${details.isEmpty ? "" : ' • '}'
+            '${entry.nextEpisode! - 1 - entry.progress} ep behind',
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            ?.copyWith(fontSize: Consts.FONT_SMALL),
+      ));
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -128,17 +135,7 @@ class _CollectionGridTile extends StatelessWidget {
                           RichText(
                             text: TextSpan(
                               style: Theme.of(context).textTheme.subtitle2,
-                              children: [
-                                TextSpan(text: format),
-                                TextSpan(text: timeUntilAiring),
-                                TextSpan(
-                                  text: episodesBehind,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      ?.copyWith(fontSize: Consts.FONT_SMALL),
-                                ),
-                              ],
+                              children: details,
                             ),
                           ),
                         ],

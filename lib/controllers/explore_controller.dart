@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
@@ -17,18 +16,20 @@ class ExploreController extends ScrollingController implements Filterable {
   // ***************************************************************************
 
   static const ID_HEAD = 0;
+  static const ID_BODY = 1;
+  static const ID_BUTTON = 2;
 
   // ***************************************************************************
   // DATA
   // ***************************************************************************
 
-  late final _debounce = Debounce(fetch);
-  final _isLoading = true.obs;
-  final _results = PageModel<ExplorableModel>().obs;
-  final _search = ''.obs;
+  final _results = PageModel<ExplorableModel>();
   final _genres = <String>[];
   final _tags = <String, List<TagModel>>{};
-  final _type = Settings().defaultExplorable.obs;
+  String _search = '';
+  Explorable _type = Settings().defaultExplorable;
+  late final _debounce = Debounce(fetch);
+  bool _isLoading = true;
   int _concurrentFetches = 0;
   bool _searchMode = false;
   Map<String, dynamic> _filters = {
@@ -42,17 +43,17 @@ class ExploreController extends ScrollingController implements Filterable {
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  bool get hasNextPage => _results().hasNextPage;
+  bool get hasNextPage => _results.hasNextPage;
 
-  bool get isLoading => _isLoading();
+  bool get isLoading => _isLoading;
 
-  Explorable get type => _type();
+  Explorable get type => _type;
 
-  String get search => _search();
+  String get search => _search;
 
   bool get searchMode => _searchMode;
 
-  List<ExplorableModel> get results => _results().items;
+  List<ExplorableModel> get results => _results.items;
 
   List<String> get genres => [..._genres];
 
@@ -63,7 +64,8 @@ class ExploreController extends ScrollingController implements Filterable {
   // ***************************************************************************
 
   set type(Explorable value) {
-    _type.value = value;
+    _type = value;
+    update([ID_HEAD, ID_BUTTON]);
 
     if (value == Explorable.anime)
       _filters[Filterable.TYPE] = 'ANIME';
@@ -74,7 +76,7 @@ class ExploreController extends ScrollingController implements Filterable {
   }
 
   set search(String value) {
-    _search.value = value.trim();
+    _search = value.trim();
     _debounce.run();
   }
 
@@ -141,29 +143,30 @@ class ExploreController extends ScrollingController implements Filterable {
     _concurrentFetches++;
 
     if (clean) {
-      _isLoading.value = true;
+      _isLoading = true;
       _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
       scrollUpTo(0);
+      update([ID_BODY]);
     }
 
     String query;
-    if (_type.value == Explorable.anime || _type.value == Explorable.manga)
+    if (_type == Explorable.anime || _type == Explorable.manga)
       query = GqlQuery.medias;
-    else if (_type.value == Explorable.character)
+    else if (_type == Explorable.character)
       query = GqlQuery.characters;
-    else if (_type.value == Explorable.staff)
+    else if (_type == Explorable.staff)
       query = GqlQuery.staffs;
-    else if (_type.value == Explorable.studio)
+    else if (_type == Explorable.studio)
       query = GqlQuery.studios;
-    else if (_type.value == Explorable.review)
+    else if (_type == Explorable.review)
       query = GqlQuery.reviews;
     else
       query = GqlQuery.users;
 
     Map<String, dynamic>? data = await Client.request(
       query,
-      {..._filters, if (_search() != '') 'search': _search()},
+      {..._filters, if (_search != '') 'search': _search},
     );
 
     _concurrentFetches--;
@@ -199,22 +202,15 @@ class ExploreController extends ScrollingController implements Filterable {
     else if (data['reviews'] != null)
       for (final r in data['reviews']) items.add(ExplorableModel.review(r));
 
-    if (clean)
-      _results.update((r) {
-        r!.clear();
-        r.append(items, data!['pageInfo']['hasNextPage']);
-      });
-    else
-      _results.update(
-        (r) => r!.append(items, data!['pageInfo']['hasNextPage']),
-      );
-
-    _isLoading.value = false;
+    if (clean) _results.clear();
+    _results.append(items, data['pageInfo']['hasNextPage']);
+    _isLoading = false;
+    update([ID_BODY]);
   }
 
   @override
   Future<void> fetchPage() async {
-    if (!_results().hasNextPage) return;
+    if (!_results.hasNextPage) return;
     _filters[Filterable.PAGE]++;
     await fetch(clean: false);
   }
@@ -247,8 +243,7 @@ class ExploreController extends ScrollingController implements Filterable {
           _tags[category]!.add(TagModel(t));
       }
 
-      _filters[Filterable.TYPE] =
-          _type() == Explorable.manga ? 'MANGA' : 'ANIME';
+      _filters[Filterable.TYPE] = _type == Explorable.manga ? 'MANGA' : 'ANIME';
 
       fetch();
     });

@@ -38,7 +38,7 @@ class SliverCollectionAppBar extends StatelessWidget {
           leading,
           MediaSearchField(
             hint: ctrl.currentName,
-            searchVal: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
+            value: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
             searchMode: ctrl.searchMode,
             search: (val) {
               if (val == null) {
@@ -96,48 +96,46 @@ class SliverExploreAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ExploreController>(
       id: ExploreController.ID_HEAD,
-      builder: (ctrl) => Obx(
-        () => SliverTransparentAppBar(
-          [
-            const SizedBox(width: 10),
-            MediaSearchField(
-              hint: Convert.clarifyEnum(ctrl.type.name)!,
-              searchVal: ctrl.search,
-              search: ctrl.type != Explorable.review
-                  ? (val) {
-                      if (val == null) {
-                        ctrl.searchMode = !ctrl.searchMode;
-                        return;
-                      }
-
-                      ctrl.search = val;
+      builder: (ctrl) => SliverTransparentAppBar(
+        [
+          const SizedBox(width: 10),
+          MediaSearchField(
+            hint: Convert.clarifyEnum(ctrl.type.name)!,
+            value: ctrl.search,
+            search: ctrl.type != Explorable.review
+                ? (val) {
+                    if (val == null) {
+                      ctrl.searchMode = !ctrl.searchMode;
+                      return;
                     }
-                  : null,
-              searchMode: ctrl.searchMode,
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(ctrl.type.icon,
-                      color: Theme.of(context).colorScheme.onBackground),
-                  const SizedBox(width: 15),
-                  Flexible(
-                    child: Text(
-                      Convert.clarifyEnum(ctrl.type.name)!,
-                      style: Theme.of(context).textTheme.headline1,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
+
+                    ctrl.search = val;
+                  }
+                : null,
+            searchMode: ctrl.searchMode,
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(ctrl.type.icon,
+                    color: Theme.of(context).colorScheme.onBackground),
+                const SizedBox(width: 15),
+                Flexible(
+                  child: Text(
+                    Convert.clarifyEnum(ctrl.type.name)!,
+                    style: Theme.of(context).textTheme.headline1,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
-              _FilterIcon(null)
-            else if (ctrl.type == Explorable.character ||
-                ctrl.type == Explorable.staff)
-              _BirthdayIcon(ctrl),
-          ],
-        ),
+          ),
+          if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
+            _FilterIcon(null)
+          else if (ctrl.type == Explorable.character ||
+              ctrl.type == Explorable.staff)
+            _BirthdayIcon(ctrl),
+        ],
       ),
     );
   }
@@ -147,14 +145,14 @@ class MediaSearchField extends StatefulWidget {
   MediaSearchField({
     required this.title,
     required this.hint,
-    required this.searchVal,
+    required this.value,
     required this.searchMode,
     required this.search,
   });
 
   final Widget title;
   final String hint;
-  final String searchVal;
+  final String value;
   final bool searchMode;
   final void Function(String?)? search;
 
@@ -169,7 +167,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
   @override
   void initState() {
     super.initState();
-    _ctrl = TextEditingController(text: widget.searchVal);
+    _ctrl = TextEditingController(text: widget.value);
     _empty = _ctrl.text.isEmpty;
   }
 

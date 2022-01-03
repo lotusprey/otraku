@@ -30,8 +30,6 @@ class ExploreView extends StatelessWidget {
           ),
           const _ExploreGrid(),
           const _EndOfListLoader(),
-          SliverToBoxAdapter(
-              child: SizedBox(height: NavLayout.offset(context))),
         ],
       ),
     );
@@ -43,34 +41,36 @@ class _ExploreGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ExploreController>();
+    return GetBuilder<ExploreController>(
+      id: ExploreController.ID_BODY,
+      builder: (ctrl) {
+        if (ctrl.isLoading)
+          return const SliverFillRemaining(child: Center(child: Loader()));
 
-    return Obx(() {
-      if (ctrl.isLoading)
-        return const SliverFillRemaining(child: Center(child: Loader()));
-
-      final results = ctrl.results;
-      if (results.isEmpty) {
-        return SliverFillRemaining(
-          child: Center(
-            child: Text(
-              'No results',
-              style: Theme.of(context).textTheme.subtitle1,
+        final results = ctrl.results;
+        if (results.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
+              child: Text(
+                'No results',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
             ),
-          ),
-        );
-      }
+          );
+        }
 
-      if (results[0].explorable == Explorable.studio) return TitleGrid(results);
+        if (results[0].explorable == Explorable.studio)
+          return TitleGrid(results);
 
-      if (results[0].explorable == Explorable.user)
-        return TileGrid(models: results, full: false);
+        if (results[0].explorable == Explorable.user)
+          return TileGrid(models: results, full: false);
 
-      if (results[0].explorable == Explorable.review)
-        return ReviewGrid(results);
+        if (results[0].explorable == Explorable.review)
+          return ReviewGrid(results);
 
-      return TileGrid(models: results);
-    });
+        return TileGrid(models: results);
+      },
+    );
   }
 }
 
@@ -79,17 +79,17 @@ class _EndOfListLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Center(
-          child: Obx(
-            () {
-              final ctrl = Get.find<ExploreController>();
-              return ctrl.hasNextPage && !ctrl.isLoading
-                  ? const Loader()
-                  : const SizedBox();
-            },
+    return GetBuilder<ExploreController>(
+      id: ExploreController.ID_BODY,
+      builder: (ctrl) => SliverToBoxAdapter(
+        child: Padding(
+          padding:
+              EdgeInsets.only(top: 20, bottom: NavLayout.offset(context) + 10),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: ctrl.hasNextPage && !ctrl.isLoading
+                ? const Loader()
+                : const SizedBox(),
           ),
         ),
       ),
@@ -102,9 +102,9 @@ class ExploreActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ExploreController>();
-    return Obx(
-      () => FloatingListener(
+    return GetBuilder<ExploreController>(
+      id: ExploreController.ID_BUTTON,
+      builder: (ctrl) => FloatingListener(
         scrollCtrl: ctrl.scrollCtrl,
         child: ActionButton(
           tooltip: 'Types',

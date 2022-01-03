@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
+import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -21,6 +22,7 @@ class ExploreController extends ScrollingController implements Filterable {
   // DATA
   // ***************************************************************************
 
+  late final _debounce = Debounce(fetch);
   final _isLoading = true.obs;
   final _results = PageModel<ExplorableModel>().obs;
   final _search = ''.obs;
@@ -71,7 +73,10 @@ class ExploreController extends ScrollingController implements Filterable {
     fetch();
   }
 
-  set search(String value) => _search.value = value.trim();
+  set search(String value) {
+    _search.value = value.trim();
+    _debounce.run();
+  }
 
   set searchMode(bool val) {
     if (searchMode == val) return;
@@ -247,12 +252,5 @@ class ExploreController extends ScrollingController implements Filterable {
 
       fetch();
     });
-
-    _search.firstRebuild = false;
-    debounce<String>(
-      _search,
-      (_) => fetch(),
-      time: const Duration(milliseconds: 600),
-    );
   }
 }

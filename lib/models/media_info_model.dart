@@ -18,7 +18,7 @@ class MediaInfoModel {
   final String? format;
   final String? status;
   final int? nextEpisode;
-  final String? timeUntilAiring;
+  final int? airingAt;
   final int? episodes;
   final String? duration;
   final int? chapters;
@@ -54,7 +54,7 @@ class MediaInfoModel {
     required this.format,
     required this.status,
     required this.nextEpisode,
-    required this.timeUntilAiring,
+    required this.airingAt,
     required this.episodes,
     required this.duration,
     required this.chapters,
@@ -104,8 +104,7 @@ class MediaInfoModel {
       format: Convert.clarifyEnum(map['format']),
       status: Convert.clarifyEnum(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
-      timeUntilAiring:
-          Convert.timeUntilTimestamp(map['nextAiringEpisode']?['airingAt']),
+      airingAt: map['nextAiringEpisode']?['airingAt'],
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/media_info_model.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -17,6 +18,25 @@ class MediaHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final info = ctrl.model?.info;
+
+    final details = <TextSpan>[];
+    if (info != null) {
+      if (info.format != null)
+        details.add(TextSpan(text: Convert.clarifyEnum(info.format)));
+      if (info.airingAt != null)
+        details.add(TextSpan(
+          text: '${details.isEmpty ? "" : ' • '}'
+              'Ep ${info.nextEpisode} in '
+              '${Convert.timeUntilTimestamp(info.airingAt)}',
+        ));
+      final progress = ctrl.model?.entry.progress ?? 0;
+      if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
+        details.add(TextSpan(
+          text: '${details.isEmpty ? "" : ' • '}'
+              '${info.nextEpisode! - 1 - progress} ep behind',
+          style: Theme.of(context).textTheme.bodyText1,
+        ));
+    }
 
     return CustomSliverHeader(
       title: info?.preferredTitle,
@@ -54,14 +74,15 @@ class MediaHeader extends StatelessWidget {
                     overflow: TextOverflow.fade,
                   ),
                 ),
-                if (info.nextEpisode != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Text(
-                      'Ep ${info.nextEpisode} in ${info.timeUntilAiring}',
-                      style: Theme.of(context).textTheme.bodyText1,
+                if (details.isNotEmpty) ...[
+                  const SizedBox(height: 5),
+                  RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.subtitle1,
+                      children: details,
                     ),
                   ),
+                ],
               ]
             : [],
       ),

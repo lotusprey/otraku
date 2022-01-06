@@ -35,7 +35,6 @@ class ExploreController extends ScrollingController implements Filterable {
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
-    Filterable.ID_NOT_IN: [],
     Filterable.SORT: Settings().defaultExploreSort.name,
   };
 
@@ -144,7 +143,6 @@ class ExploreController extends ScrollingController implements Filterable {
 
     if (clean) {
       _isLoading = true;
-      _filters[Filterable.ID_NOT_IN] = [];
       _filters[Filterable.PAGE] = 1;
       scrollUpTo(0);
       update([ID_BODY]);
@@ -175,28 +173,16 @@ class ExploreController extends ScrollingController implements Filterable {
     data = data['Page'];
 
     final items = <ExplorableModel>[];
-    final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
     if (data!['media'] != null)
-      for (final m in data['media']) {
-        items.add(ExplorableModel.media(m));
-        idNotIn.add(m['id']);
-      }
+      for (final m in data['media']) items.add(ExplorableModel.media(m));
     else if (data['characters'] != null)
-      for (final c in data['characters']) {
+      for (final c in data['characters'])
         items.add(ExplorableModel.character(c));
-        idNotIn.add(c['id']);
-      }
     else if (data['staff'] != null)
-      for (final s in data['staff']) {
-        items.add(ExplorableModel.staff(s));
-        idNotIn.add(s['id']);
-      }
+      for (final s in data['staff']) items.add(ExplorableModel.staff(s));
     else if (data['studios'] != null)
-      for (final s in data['studios']) {
-        items.add(ExplorableModel.studio(s));
-        idNotIn.add(s['id']);
-      }
+      for (final s in data['studios']) items.add(ExplorableModel.studio(s));
     else if (data['users'] != null)
       for (final u in data['users']) items.add(ExplorableModel.user(u));
     else if (data['reviews'] != null)

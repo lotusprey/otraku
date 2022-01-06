@@ -114,7 +114,7 @@ class RouteArg {
           ),
         );
       default:
-        return _unknown();
+        return null;
     }
   }
 

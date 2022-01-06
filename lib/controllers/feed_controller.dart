@@ -22,12 +22,13 @@ class FeedController extends ScrollingController {
   set typeIn(List<ActivityType> vals) {
     _typeIn.clear();
     _typeIn.addAll(vals);
+    Settings().feedActivityFilters = _typeIn.map((e) => e.index).toList();
     fetchPage(clean: true);
   }
 
-  bool get onFollowing => Settings().lastFeed;
+  bool get onFollowing => Settings().feedOnFollowing;
   set onFollowing(bool v) {
-    Settings().lastFeed = v;
+    Settings().feedOnFollowing = v;
     fetchPage(clean: true);
   }
 
@@ -51,8 +52,8 @@ class FeedController extends ScrollingController {
         if (id != null) ...{
           'userId': id,
         } else ...{
-          'isFollowing': Settings().lastFeed,
-          'hasRepliesOrTypeText': Settings().lastFeed ? null : true,
+          'isFollowing': Settings().feedOnFollowing,
+          'hasRepliesOrTypeText': Settings().feedOnFollowing ? null : true,
         },
         'page': clean ? 1 : _activities.nextPage,
         'typeIn': _typeIn.map((t) => t.name).toList(),
@@ -104,9 +105,12 @@ class FeedController extends ScrollingController {
   void onInit() {
     super.onInit();
 
-    _typeIn = id == null
-        ? [ActivityType.TEXT, ActivityType.ANIME_LIST, ActivityType.MANGA_LIST]
-        : ActivityType.values.toList();
+    _typeIn = id != null
+        ? ActivityType.values.toList()
+        : Settings()
+            .feedActivityFilters
+            .map((e) => ActivityType.values.elementAt(e))
+            .toList();
 
     fetchPage();
   }

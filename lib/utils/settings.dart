@@ -20,8 +20,9 @@ class Settings {
     this._confirmExit,
     this._leftHanded,
     this._analogueClock,
-    this._lastFeed,
-    this._lastNotification,
+    this._feedOnFollowing,
+    this._feedActivityFilters,
+    this._lastNotificationId,
     this._id0,
     this._id1,
     this._expiration0,
@@ -43,8 +44,9 @@ class Settings {
       _box.get(_CONFIRM_EXIT) ?? false,
       _box.get(_LEFT_HANDED) ?? false,
       _box.get(_ANALOGUE_CLOCK) ?? false,
-      _box.get(_LAST_FEED) ?? false,
-      _box.get(_LAST_NOTIFICATION) ?? -1,
+      _box.get(_FEED_ON_FOLLOWING) ?? false,
+      _box.get(_FEED_ACTIVITY_FILTERS) ?? [0, 1, 2],
+      _box.get(_LAST_NOTIFICATION_ID) ?? -1,
       _box.get(_ID_0),
       _box.get(_ID_1),
       _box.get(_EXPIRATION_0),
@@ -69,8 +71,9 @@ class Settings {
   static const _CONFIRM_EXIT = 'confirmExit';
   static const _LEFT_HANDED = 'leftHanded';
   static const _ANALOGUE_CLOCK = 'analogueClock';
-  static const _LAST_FEED = 'lastFeed';
-  static const _LAST_NOTIFICATION = 'lastNotification0';
+  static const _FEED_ON_FOLLOWING = 'feedOnFollowing';
+  static const _FEED_ACTIVITY_FILTERS = 'feedActivityFilters';
+  static const _LAST_NOTIFICATION_ID = 'lastNotificationId';
   static const _ID_0 = 'id0';
   static const _ID_1 = 'id1';
   static const _EXPIRATION_0 = 'expiration0';
@@ -103,8 +106,10 @@ class Settings {
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
-  bool _lastFeed;
-  int _lastNotification;
+  bool _feedOnFollowing;
+  List<int> _feedActivityFilters;
+  int _lastNotificationId;
+
   int? _id0;
   int? _id1;
   int? _expiration0;
@@ -122,8 +127,9 @@ class Settings {
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
-  bool get lastFeed => _lastFeed;
-  int get lastNotification => _lastNotification;
+  bool get feedOnFollowing => _feedOnFollowing;
+  List<int> get feedActivityFilters => _feedActivityFilters;
+  int get lastNotificationId => _lastNotificationId;
 
   bool isAvailableAccount(int i) {
     if (i < 0 || i > 1) return false;
@@ -151,7 +157,7 @@ class Settings {
     if (v == null && _account != null) {
       _account = null;
       _box.delete(_ACCOUNT);
-      _it.lastNotification = -1;
+      _it.lastNotificationId = -1;
     } else if (v == 0 && _account != 0) {
       _account = 0;
       _box.put(_ACCOUNT, 0);
@@ -223,14 +229,21 @@ class Settings {
     _box.put(_ANALOGUE_CLOCK, v);
   }
 
-  set lastFeed(bool v) {
-    _lastFeed = v;
-    _box.put(_LAST_FEED, v);
+  set feedOnFollowing(bool v) {
+    _feedOnFollowing = v;
+    _box.put(_FEED_ON_FOLLOWING, v);
   }
 
-  set lastNotification(int v) {
-    _lastNotification = v;
-    v > -1 ? _box.put(_LAST_NOTIFICATION, v) : _box.delete(_LAST_NOTIFICATION);
+  set feedActivityFilters(List<int> v) {
+    _feedActivityFilters = v;
+    _box.put(_FEED_ACTIVITY_FILTERS, v);
+  }
+
+  set lastNotificationId(int v) {
+    _lastNotificationId = v;
+    v > -1
+        ? _box.put(_LAST_NOTIFICATION_ID, v)
+        : _box.delete(_LAST_NOTIFICATION_ID);
   }
 
   void setIdOf(int a, int? v) {

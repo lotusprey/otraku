@@ -106,8 +106,8 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       if (count > ns.length) count = ns.length;
       if (count == 0) return true;
 
-      final last = Settings().lastNotification;
-      Settings().lastNotification = ns[0]['id'];
+      final last = Settings().lastNotificationId;
+      Settings().lastNotificationId = ns[0]['id'];
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {

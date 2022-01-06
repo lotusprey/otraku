@@ -6,12 +6,16 @@ enum ActivityType {
 }
 
 extension ActivityTypeExtension on ActivityType {
-  static const _activityNames = const {
-    ActivityType.TEXT: 'Statuses',
-    ActivityType.ANIME_LIST: 'Anime Progress',
-    ActivityType.MANGA_LIST: 'Manga Progress',
-    ActivityType.MESSAGE: 'Messages',
-  };
-
-  String get text => _activityNames[this]!;
+  String get text {
+    switch (this) {
+      case ActivityType.TEXT:
+        return 'Statuses';
+      case ActivityType.ANIME_LIST:
+        return 'Anime Progress';
+      case ActivityType.MANGA_LIST:
+        return 'Manga Progress';
+      case ActivityType.MESSAGE:
+        return 'Messages';
+    }
+  }
 }

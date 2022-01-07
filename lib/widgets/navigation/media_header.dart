@@ -71,6 +71,7 @@ class MediaHeader extends StatelessWidget {
                         ),
                       ],
                     ),
+                    maxLines: 8,
                     overflow: TextOverflow.fade,
                   ),
                 ),

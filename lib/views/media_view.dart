@@ -30,7 +30,7 @@ class MediaView extends StatelessWidget {
     final bannerHeight =
         coverHeight * 0.6 + Consts.MATERIAL_TAP_TARGET_SIZE + 10;
     final headerHeight = bannerHeight + coverHeight * 0.6;
-    final headerOffset = headerHeight - Consts.MATERIAL_TAP_TARGET_SIZE;
+    final headerOffset = headerHeight - Consts.MATERIAL_TAP_TARGET_SIZE - 10;
 
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));

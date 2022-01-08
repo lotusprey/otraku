@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -37,9 +36,9 @@ class _ChipGrid extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onClear,
                   child: Container(
-                    height: Theming.ICON_SMALL,
-                    width: Theming.ICON_SMALL,
-                    margin: Config.PADDING,
+                    height: Consts.ICON_SMALL,
+                    width: Consts.ICON_SMALL,
+                    margin: Consts.PADDING,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Theme.of(context).colorScheme.primary,
@@ -47,7 +46,7 @@ class _ChipGrid extends StatelessWidget {
                     child: Icon(
                       Icons.close,
                       color: Theme.of(context).colorScheme.background,
-                      size: Theming.ICON_SMALL,
+                      size: Consts.ICON_SMALL,
                     ),
                   ),
                 ),
@@ -63,7 +62,7 @@ class _ChipGrid extends StatelessWidget {
         children.isNotEmpty
             ? Wrap(spacing: 5, children: children)
             : SizedBox(
-                height: Config.MATERIAL_TAP_TARGET_SIZE,
+                height: Consts.MATERIAL_TAP_TARGET_SIZE,
                 child: Center(
                   child: Text(
                     'No $placeholder',

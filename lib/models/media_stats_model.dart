@@ -1,4 +1,4 @@
-import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/utils/convert.dart';
 
 class MediaStatsModel {
@@ -61,7 +61,7 @@ class MediaStatsModel {
           model.statusNames.insert(
             index,
             Convert.adaptListStatus(
-              Convert.strToEnum(s['status'], ListStatus.values)!,
+              ListStatus.values.byName(s['status']),
               map['type'] == 'ANIME',
             ),
           );

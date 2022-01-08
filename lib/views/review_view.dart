@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/review_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/review_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class ReviewView extends StatelessWidget {
   final int id;
@@ -17,144 +20,271 @@ class ReviewView extends StatelessWidget {
   ReviewView(this.id, this.bannerUrl);
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: SafeArea(
-          bottom: false,
-          child: GetBuilder<ReviewController>(
-              tag: id.toString(),
-              builder: (review) {
-                final model = review.model;
-                return CustomScrollView(
-                  physics: Config.PHYSICS,
-                  slivers: [
-                    _Header(id, bannerUrl),
-                    if (model != null)
-                      SliverPadding(
-                        padding: EdgeInsets.only(
-                          top: 15,
-                          left: 10,
-                          right: 10,
-                          bottom:
-                              MediaQuery.of(context).viewPadding.bottom + 10,
-                        ),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate.fixed([
-                            GestureDetector(
-                              onTap: () => ExploreIndexer.openPage(
-                                id: model.mediaId,
-                                imageUrl: model.mediaCover,
-                                explorable: model.explorable,
-                              ),
-                              child: Text(
-                                model.mediaTitle,
-                                style: Theme.of(context).textTheme.headline5,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            GestureDetector(
-                              onTap: () => ExploreIndexer.openPage(
-                                id: model.userId,
-                                imageUrl: model.userAvatar,
-                                explorable: Explorable.user,
-                              ),
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: Theme.of(context).textTheme.headline5,
-                                  children: [
-                                    TextSpan(
-                                      text: 'review by ',
-                                      style:
-                                          Theme.of(context).textTheme.subtitle1,
-                                    ),
-                                    TextSpan(text: model.userName),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Text(
-                                model.summary,
-                                style: Theme.of(context).textTheme.subtitle1,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            HtmlContent(model.text),
-                            Container(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              alignment: Alignment.center,
-                              child: ElevatedButton(
-                                onPressed: null,
-                                child: Text('${model.score}/100'),
-                                style: ElevatedButton.styleFrom(
-                                  textStyle: TextStyle(
-                                    fontSize: Theming.FONT_BIG,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            _RateButtons(model),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 10, top: 20),
-                              child: Text(
-                                model.createdAt,
-                                style: Theme.of(context).textTheme.subtitle1,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ]),
-                        ),
-                      ),
-                  ],
-                );
-              }),
-        ),
-      );
-}
-
-class _Header extends StatelessWidget {
-  final int id;
-  final String? bannerUrl;
-  _Header(this.id, this.bannerUrl);
-
-  @override
   Widget build(BuildContext context) {
-    return CustomSliverHeader(
-      height: 150,
-      background: Hero(
-        tag: id,
-        child: bannerUrl != null
-            ? Stack(
-                fit: StackFit.expand,
-                children: [
-                  FadeImage(bannerUrl!),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 15,
-                            spreadRadius: 25,
-                            color: Theme.of(context).colorScheme.background,
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: GetBuilder<ReviewController>(
+            init: ReviewController(id),
+            tag: id.toString(),
+            builder: (ctrl) {
+              final model = ctrl.model;
+              return CustomScrollView(
+                physics: Consts.PHYSICS,
+                slivers: [
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _HeaderDelegate(id, bannerUrl, model?.mediaTitle),
+                  ),
+                  // _Header(id, bannerUrl),
+                  if (model != null)
+                    SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: 15,
+                        left: 10,
+                        right: 10,
+                        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+                      ),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          GestureDetector(
+                            onTap: () => ExploreIndexer.openView(
+                              ctx: context,
+                              id: model.mediaId,
+                              imageUrl: model.mediaCover,
+                              explorable: model.explorable,
+                            ),
+                            child: Text(
+                              model.mediaTitle,
+                              style: Theme.of(context).textTheme.headline2,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ],
+                          const SizedBox(height: 5),
+                          GestureDetector(
+                            onTap: () => ExploreIndexer.openView(
+                              ctx: context,
+                              id: model.userId,
+                              imageUrl: model.userAvatar,
+                              explorable: Explorable.user,
+                            ),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.headline2,
+                                children: [
+                                  TextSpan(
+                                    text: 'review by ',
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1,
+                                  ),
+                                  TextSpan(text: model.userName),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Text(
+                              model.summary,
+                              style: Theme.of(context).textTheme.subtitle1,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          HtmlContent(model.text),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            alignment: Alignment.center,
+                            child: ElevatedButton(
+                              onPressed: null,
+                              child: Text('${model.score}/100'),
+                              style: ElevatedButton.styleFrom(
+                                textStyle: TextStyle(
+                                  fontSize: Consts.FONT_BIG,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          _RateButtons(model),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10, top: 20),
+                            child: Text(
+                              model.createdAt,
+                              style: Theme.of(context).textTheme.subtitle1,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ]),
                       ),
                     ),
-                  ),
                 ],
-              )
-            : const SizedBox(),
+              );
+            }),
       ),
     );
   }
+}
+
+class _HeaderDelegate extends SliverPersistentHeaderDelegate {
+  _HeaderDelegate(this.id, this.bannerUrl, this.title);
+
+  final int id;
+  final String? bannerUrl;
+  final String? title;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final extent = maxExtent - shrinkOffset;
+    final opacity = shrinkOffset < (maxExtent - minExtent)
+        ? shrinkOffset / (maxExtent - minExtent)
+        : 1.0;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 10,
+            spreadRadius: 10,
+            color: Theme.of(context).colorScheme.background,
+          ),
+        ],
+      ),
+      child: FlexibleSpaceBar.createSettings(
+        minExtent: minExtent,
+        maxExtent: maxExtent,
+        currentExtent: extent > minExtent ? extent : minExtent,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            FlexibleSpaceBar(
+              collapseMode: CollapseMode.pin,
+              stretchModes: [StretchMode.zoomBackground],
+              background: Column(
+                children: [
+                  bannerUrl != null
+                      ? Expanded(
+                          child: GestureDetector(
+                            child: Hero(child: FadeImage(bannerUrl!), tag: id),
+                            onTap: () =>
+                                showPopUp(context, ImageDialog(bannerUrl!)),
+                          ),
+                        )
+                      : DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.background,
+                          ),
+                        ),
+                  const SizedBox(height: 15),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 15,
+                      spreadRadius: 25,
+                      offset: const Offset(0, -15),
+                      color: Theme.of(context).colorScheme.background,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: const SizedBox(),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: minExtent,
+              child: Opacity(
+                opacity: opacity,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 10,
+                        spreadRadius: 10,
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: minExtent,
+              child: Row(
+                children: [
+                  IconShade(
+                    AppBarIcon(
+                      tooltip: 'Close',
+                      icon: Ionicons.chevron_back_outline,
+                      onTap: Navigator.of(context).pop,
+                    ),
+                  ),
+                  if (title != null)
+                    Expanded(
+                      child: Opacity(
+                        opacity: opacity,
+                        child: Text(
+                          title!,
+                          style: Theme.of(context).textTheme.headline2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 150;
+
+  @override
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+
+  @override
+  OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
+      OverScrollHeaderStretchConfiguration(stretchTriggerOffset: 100);
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      true;
+
+  @override
+  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
+      null;
+
+  @override
+  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
+
+  @override
+  TickerProvider? get vsync => null;
 }
 
 class _RateButtons extends StatefulWidget {

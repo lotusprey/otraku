@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/views/entry_view.dart';
 import 'package:otraku/views/home_view.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable explorable;
@@ -19,7 +22,8 @@ class ExploreIndexer extends StatelessWidget {
     required this.child,
   });
 
-  static void openPage({
+  static void openView({
+    required BuildContext ctx,
     required int id,
     required String? imageUrl,
     required Explorable explorable,
@@ -27,48 +31,74 @@ class ExploreIndexer extends StatelessWidget {
     switch (explorable) {
       case Explorable.anime:
       case Explorable.manga:
-        Navigation.it.push(Navigation.mediaRoute, args: [id, imageUrl]);
+        Navigator.pushNamed(
+          ctx,
+          RouteArg.media,
+          arguments: RouteArg(id: id, info: imageUrl),
+        );
         return;
       case Explorable.character:
-        Navigation.it.push(Navigation.characterRoute, args: [id, imageUrl]);
+        Navigator.pushNamed(
+          ctx,
+          RouteArg.character,
+          arguments: RouteArg(id: id, info: imageUrl),
+        );
         return;
       case Explorable.staff:
-        Navigation.it.push(Navigation.staffRoute, args: [id, imageUrl]);
+        Navigator.pushNamed(
+          ctx,
+          RouteArg.staff,
+          arguments: RouteArg(id: id, info: imageUrl),
+        );
         return;
       case Explorable.studio:
-        Navigation.it.push(Navigation.studioRoute, args: [id, imageUrl]);
+        Navigator.pushNamed(
+          ctx,
+          RouteArg.studio,
+          arguments: RouteArg(id: id, info: imageUrl),
+        );
         return;
       case Explorable.user:
-        if (id != Client.viewerId)
-          Navigation.it.push(Navigation.userRoute, args: [id, imageUrl]);
+        if (id != Settings().id)
+          Navigator.pushNamed(
+            ctx,
+            RouteArg.user,
+            arguments: RouteArg(id: id, info: imageUrl),
+          );
         else {
-          Config.homeIndex = HomeView.PROFILE;
-          Navigation.it.popToFirst();
+          Get.find<HomeController>().homeTab = HomeView.USER;
+          Navigator.popUntil(ctx, (r) => r.isFirst);
         }
         return;
       case Explorable.review:
-        Navigation.it.push(Navigation.reviewRoute, args: [id, imageUrl]);
+        Navigator.pushNamed(
+          ctx,
+          RouteArg.review,
+          arguments: RouteArg(id: id, info: imageUrl),
+        );
         return;
       default:
         return;
     }
   }
 
-  static void openEditPage(
-    int id, [
-    EntryModel? entry,
-    Function(EntryModel)? fn,
+  static void openEditView(
+    int id,
+    BuildContext context, [
+    EntryModel? model,
+    Function(EntryModel)? callback,
   ]) =>
-      Navigation.it.push(Navigation.entryRoute, args: [id, entry, fn]);
+      DragSheet.show(context, EntryView(id, model, callback));
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => openPage(id: id, imageUrl: imageUrl, explorable: explorable),
+      onTap: () => openView(
+          ctx: context, id: id, imageUrl: imageUrl, explorable: explorable),
       onLongPress: () {
         if (explorable == Explorable.anime || explorable == Explorable.manga)
-          openEditPage(id);
+          openEditView(id, context);
       },
       child: child,
     );

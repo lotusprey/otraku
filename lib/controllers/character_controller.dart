@@ -1,70 +1,21 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class CharacterController extends OverscrollController {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _characterQuery = r'''
-    query Character($id: Int, $sort: [MediaSort], $animePage: Int = 1, $mangaPage: Int = 1, 
-        $onList: Boolean, $withPerson: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
-      Character(id: $id) {
-        ...person @include(if: $withPerson)
-        anime: media(page: $animePage, type: ANIME, onList: $onList, sort: $sort) 
-          @include(if: $withAnime) {...media}
-        manga: media(page: $mangaPage, type: MANGA, onList: $onList, sort: $sort) 
-          @include(if: $withManga) {...media}
-      }
-    }
-    fragment person on Character {
-      id
-      name{userPreferred native alternative alternativeSpoiler}
-      image{large}
-      description(asHtml: true)
-      dateOfBirth{year month day}
-      gender
-      age
-      favourites 
-      isFavourite
-      isFavouriteBlocked
-    }
-    fragment media on MediaConnection {
-      pageInfo {hasNextPage}
-      edges {
-        characterRole
-        voiceActors(sort: [LANGUAGE]) {id name {userPreferred} image {large} language}
-        node {id type title {userPreferred} coverImage {large}}
-      }
-    }
-  ''';
-
-  static const _toggleFavouriteMutation = r'''
-    mutation ToggleFavouriteCharacter($id: Int) {
-      ToggleFavourite(characterId: $id) {
-        characters(page: 1, perPage: 1) {nodes{isFavourite}}
-      }
-    }
-  ''';
-
+class CharacterController extends ScrollingController {
   // GetBuilder ids.
   static const ID_MAIN = 0;
   static const ID_MEDIA = 1;
 
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
-  final int id;
   CharacterController(this.id);
 
+  final int id;
   CharacterModel? _model;
   final _anime = PageModel<ConnectionModel>();
   final _manga = PageModel<ConnectionModel>();
@@ -103,31 +54,20 @@ class CharacterController extends OverscrollController {
     refetch();
   }
 
-  @override
-  bool get hasNextPage => _onAnime ? _anime.hasNextPage : _manga.hasNextPage;
-
-  // ***************************************************************************
-  // FETCHING
-  // ***************************************************************************
-
-  Future<void> fetch() async {
-    if (_model != null) return;
-
-    final body = await Client.request(_characterQuery, {
+  Future<void> _fetch() async {
+    final data = await Client.request(GqlQuery.character, {
       'id': id,
-      'withPerson': true,
+      'withMain': true,
       'withAnime': true,
       'withManga': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
-    if (body == null) return;
+    if (data == null) return;
 
-    final data = body['Character'];
-
-    _model = CharacterModel(data);
-    _initAnime(data, false);
-    _initManga(data, false);
+    _model = CharacterModel(data['Character']);
+    _initAnime(data['Character'], false);
+    _initManga(data['Character'], false);
 
     update([ID_MAIN, ID_MEDIA]);
   }
@@ -135,12 +75,12 @@ class CharacterController extends OverscrollController {
   Future<void> refetch() async {
     scrollUpTo(0);
 
-    final body = await Client.request(_characterQuery, {
+    final body = await Client.request(GqlQuery.character, {
       'id': id,
       'withAnime': true,
       'withManga': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
     if (body == null) return;
 
@@ -152,13 +92,16 @@ class CharacterController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
-    final data = await Client.request(_characterQuery, {
+    if (_onAnime && !_anime.hasNextPage) return;
+    if (!_onAnime && !_manga.hasNextPage) return;
+
+    final data = await Client.request(GqlQuery.character, {
       'id': id,
       'withAnime': _onAnime,
       'withManga': !_onAnime,
       'animePage': _anime.nextPage,
       'mangaPage': _manga.nextPage,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
       'onList': _onList,
     });
     if (data == null) return;
@@ -172,14 +115,11 @@ class CharacterController extends OverscrollController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(_toggleFavouriteMutation, {'id': id});
+    final data =
+        await Client.request(GqlMutation.toggleFavourite, {'character': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }
-
-  // ***************************************************************************
-  // HELPER FUNCTIONS
-  // ***************************************************************************
 
   void _initAnime(Map<String, dynamic> data, bool clear) {
     if (clear) {
@@ -208,7 +148,7 @@ class CharacterController extends OverscrollController {
       connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
+        imageUrl: connection['node']['coverImage']['extraLarge'],
         type: Explorable.anime,
         subtitle: Convert.clarifyEnum(connection['characterRole']),
         other: voiceActors,
@@ -226,7 +166,7 @@ class CharacterController extends OverscrollController {
       connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
+        imageUrl: connection['node']['coverImage']['extraLarge'],
         type: Explorable.manga,
         subtitle: Convert.clarifyEnum(connection['characterRole']),
       ));
@@ -237,6 +177,6 @@ class CharacterController extends OverscrollController {
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    if (_model == null) _fetch();
   }
 }

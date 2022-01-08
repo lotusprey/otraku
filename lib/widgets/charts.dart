@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 
 class BarChart extends StatelessWidget {
@@ -33,7 +33,7 @@ class BarChart extends StatelessWidget {
         if (tabs == null)
           Padding(
             padding: const EdgeInsets.only(left: 10, top: 10),
-            child: Text(title, style: Theme.of(context).textTheme.headline6),
+            child: Text(title, style: Theme.of(context).textTheme.headline3),
           )
         else
           Wrap(
@@ -45,7 +45,7 @@ class BarChart extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline3,
                 ),
               ),
               tabs!,
@@ -54,7 +54,7 @@ class BarChart extends StatelessWidget {
         SizedBox(
           height: 280,
           child: ListView.builder(
-            physics: Config.PHYSICS,
+            physics: Consts.PHYSICS,
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.all(10),
             itemCount: names.length,
@@ -112,13 +112,13 @@ class PieChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.headline6),
+        Text(title, style: Theme.of(context).textTheme.headline3),
         const SizedBox(height: 5),
         Container(
           height: 225,
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           decoration: BoxDecoration(
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,

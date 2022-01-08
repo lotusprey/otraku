@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -20,9 +20,10 @@ class TileGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > 620
-        ? (MediaQuery.of(context).size.width - 600) / 2.0
-        : 10.0;
+    final sidePadding =
+        MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE + 20
+            ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2.0
+            : 10.0;
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
@@ -40,7 +41,7 @@ class TileGrid extends StatelessWidget {
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         itemCount: models.length,
         gridDelegate: gridDelegate,
         itemBuilder: (_, i) => _Tile(models[i], full),
@@ -77,7 +78,7 @@ class _Tile extends StatelessWidget {
             child: Hero(
               tag: data.id,
               child: ClipRRect(
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
                 child: Container(
                   color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(
@@ -95,7 +96,7 @@ class _Tile extends StatelessWidget {
               data.text1,
               overflow: TextOverflow.fade,
               maxLines: 2,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.bodyText2,
             ),
           ),
         ],

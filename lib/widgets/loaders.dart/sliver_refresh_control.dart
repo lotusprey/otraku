@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 
 class SliverRefreshControl extends StatelessWidget {

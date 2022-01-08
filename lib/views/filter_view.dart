@@ -1,24 +1,23 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/enums/anime_format.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/anime_format.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/manga_format.dart';
-import 'package:otraku/enums/media_status.dart';
+import 'package:otraku/constants/manga_format.dart';
+import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class FilterView extends StatelessWidget {
-  FilterView(this.collectionTag, this.isDefinitelyInactive);
+class FiltersView extends StatelessWidget {
+  FiltersView(this.collectionTag, this.isDefinitelyInactive);
 
   final String? collectionTag;
   final void Function(bool) isDefinitelyInactive;
@@ -74,8 +73,8 @@ class FilterView extends StatelessWidget {
     // Statuses.
     final statusOptions = <String>[];
     final statusValues = <String>[];
-    for (final s in MediaStatus.values) {
-      statusValues.add(describeEnum(s));
+    for (final v in MediaStatus.values) {
+      statusValues.add(v.name);
       statusOptions.add(Convert.clarifyEnum(statusValues.last)!);
     }
 
@@ -85,8 +84,8 @@ class FilterView extends StatelessWidget {
     final iterable = explorable == Explorable.anime
         ? AnimeFormat.values
         : MangaFormat.values;
-    for (final f in iterable) {
-      formatValues.add(describeEnum(f));
+    for (final v in iterable) {
+      formatValues.add(v.name);
       formatOptions.add(Convert.clarifyEnum(formatValues.last)!);
     }
 
@@ -107,11 +106,8 @@ class FilterView extends StatelessWidget {
               sheet: collectionTag != null
                   ? CollectionSortSheet(collectionTag!)
                   : MediaSortSheet(
-                      Convert.strToEnum(
-                        changes[Filterable.SORT],
-                        MediaSort.values,
-                      )!,
-                      (v) => changes[Filterable.SORT] = describeEnum(v),
+                      MediaSort.values.byName(changes[Filterable.SORT]),
+                      (v) => changes[Filterable.SORT] = v.name,
                     ),
             ),
           ),
@@ -148,8 +144,8 @@ class FilterView extends StatelessWidget {
         ],
       ),
       body: ListView(
-        physics: Config.PHYSICS,
-        padding: Config.PADDING,
+        physics: Consts.PHYSICS,
+        padding: Consts.PADDING,
         children: [
           if (collectionTag == null)
             DropDownField(

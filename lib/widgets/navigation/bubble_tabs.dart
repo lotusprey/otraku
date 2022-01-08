@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 
 class BubbleTabs<T> extends StatefulWidget {
   final Map<String, T> items;
@@ -60,13 +60,13 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
                   color: _val != values.elementAt(i)
                       ? null
                       : Theme.of(context).colorScheme.secondary,
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                 ),
                 child: Text(
                   widget.items.keys.elementAt(i),
                   style: _val != values.elementAt(i)
-                      ? Theme.of(context).textTheme.headline5
-                      : Theme.of(context).textTheme.headline5!.copyWith(
+                      ? Theme.of(context).textTheme.headline2
+                      : Theme.of(context).textTheme.headline2!.copyWith(
                           color: Theme.of(context).colorScheme.background),
                 ),
               ),

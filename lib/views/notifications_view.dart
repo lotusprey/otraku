@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -18,45 +18,50 @@ import 'package:otraku/widgets/overlays/toast.dart';
 class NotificationsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final notifications = Get.find<NotificationsController>();
-    return Scaffold(
-      appBar: ShadowAppBar(
-        title: 'Notifications',
-        actions: [
-          AppBarIcon(
-            tooltip: 'Filter',
-            icon: Ionicons.funnel_outline,
-            onTap: () => DragSheet.show(
-              context,
-              OptionDragSheet(
-                options: const [
-                  'All',
-                  'Activities',
-                  'Forum',
-                  'Media',
-                  'Follows',
-                ],
-                index: notifications.filter,
-                onTap: (val) => notifications.filter = val,
+    return GetBuilder<NotificationsController>(
+      init: NotificationsController(),
+      builder: (ctrl) => Scaffold(
+        appBar: ShadowAppBar(
+          title: 'Notifications',
+          actions: [
+            AppBarIcon(
+              tooltip: 'Filter',
+              icon: Ionicons.funnel_outline,
+              onTap: () => DragSheet.show(
+                context,
+                OptionDragSheet(
+                  options: const [
+                    'All',
+                    'Activities',
+                    'Forum',
+                    'Media',
+                    'Follows',
+                  ],
+                  index: ctrl.filter,
+                  onTap: (val) => ctrl.filter = val,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        body: GetBuilder<NotificationsController>(
+          id: NotificationsController.ID_LIST,
+          builder: (ctrl) {
+            final entries = ctrl.entries;
+            return ListView.builder(
+              padding: Consts.PADDING,
+              physics: Consts.PHYSICS,
+              controller: ctrl.scrollCtrl,
+              itemBuilder: (_, index) => _NotificationWidget(
+                entries[index],
+                index < ctrl.unreadCount,
+              ),
+              itemCount: entries.length,
+              itemExtent: 100,
+            );
+          },
+        ),
       ),
-      body: GetBuilder<NotificationsController>(builder: (notifications) {
-        final entries = notifications.entries;
-        return ListView.builder(
-          padding: Config.PADDING,
-          physics: Config.PHYSICS,
-          controller: notifications.scrollCtrl,
-          itemBuilder: (_, index) => _NotificationWidget(
-            entries[index],
-            index < notifications.unreadCount,
-          ),
-          itemCount: entries.length,
-          itemExtent: 100,
-        );
-      }),
     );
   }
 }
@@ -74,14 +79,15 @@ class _NotificationWidget extends StatelessWidget {
       child: Container(
         height: 90,
         decoration: BoxDecoration(
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
           children: [
             if (notification.imageUrl != null && notification.headId != null)
               GestureDetector(
-                onTap: () => ExploreIndexer.openPage(
+                onTap: () => ExploreIndexer.openView(
+                  ctx: context,
                   id: notification.headId!,
                   imageUrl: notification.imageUrl,
                   explorable: notification.explorable ?? Explorable.user,
@@ -89,11 +95,11 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditPage(notification.headId!);
+                    ExploreIndexer.openEditView(notification.headId!, context);
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
-                  borderRadius: BorderRadius.horizontal(left: Config.RADIUS),
+                  borderRadius: BorderRadius.horizontal(left: Consts.RADIUS),
                 ),
               ),
             Flexible(
@@ -107,13 +113,15 @@ class _NotificationWidget extends StatelessWidget {
                     case NotificationType.ACTIVITY_REPLY:
                     case NotificationType.ACTIVITY_REPLY_LIKE:
                     case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                      Navigation.it.push(
-                        Navigation.activityRoute,
-                        args: [notification.bodyId, null],
+                      Navigator.pushNamed(
+                        context,
+                        RouteArg.activity,
+                        arguments: RouteArg(id: notification.bodyId),
                       );
                       return;
                     case NotificationType.FOLLOWING:
-                      ExploreIndexer.openPage(
+                      ExploreIndexer.openView(
+                        ctx: context,
                         id: notification.headId!,
                         imageUrl: notification.imageUrl,
                         explorable: Explorable.user,
@@ -121,7 +129,8 @@ class _NotificationWidget extends StatelessWidget {
                       return;
                     case NotificationType.AIRING:
                     case NotificationType.RELATED_MEDIA_ADDITION:
-                      ExploreIndexer.openPage(
+                      ExploreIndexer.openView(
+                        ctx: context,
                         id: notification.bodyId!,
                         imageUrl: notification.imageUrl,
                         explorable: notification.explorable!,
@@ -140,15 +149,16 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditPage(notification.headId!);
+                    ExploreIndexer.openEditView(notification.headId!, context);
                 },
                 child: Padding(
-                  padding: Config.PADDING,
+                  padding: Consts.PADDING,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       RichText(
+                        maxLines: 3,
                         overflow: TextOverflow.fade,
                         text: TextSpan(
                           children: [
@@ -178,7 +188,7 @@ class _NotificationWidget extends StatelessWidget {
                 height: double.infinity,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.horizontal(right: Config.RADIUS),
+                  borderRadius: BorderRadius.horizontal(right: Consts.RADIUS),
                 ),
               ),
           ],
@@ -216,7 +226,7 @@ class _NotificationDialog extends StatelessWidget {
 
     return DialogBox(
       Padding(
-        padding: Config.PADDING,
+        padding: Consts.PADDING,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -228,7 +238,7 @@ class _NotificationDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     ClipRRect(
-                      borderRadius: Config.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RADIUS,
                       child: FadeImage(
                         model.imageUrl!,
                         width: coverWidth,

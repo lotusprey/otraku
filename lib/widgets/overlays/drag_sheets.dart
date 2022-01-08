@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 
 /// An implementation of [DraggableScrollableSheet].
@@ -20,7 +19,7 @@ class DragSheet extends StatelessWidget {
   DragSheet({
     required this.children,
     required this.ctx,
-    this.itemExtent = Config.MATERIAL_TAP_TARGET_SIZE,
+    this.itemExtent = Consts.MATERIAL_TAP_TARGET_SIZE,
   });
 
   final double itemExtent;
@@ -67,7 +66,7 @@ class DragSheet extends StatelessWidget {
         child: ListView.builder(
           controller: sctrollCtrl,
           padding: const EdgeInsets.only(top: 50),
-          physics: Config.PHYSICS,
+          physics: Consts.PHYSICS,
           itemCount: children.length,
           itemExtent: itemExtent,
           itemBuilder: (_, i) => children[i],
@@ -104,8 +103,9 @@ class OptionDragSheet extends StatelessWidget {
             child: Text(
               options[i],
               style: i != index
-                  ? Theme.of(context).textTheme.headline2
-                  : Theme.of(context).textTheme.headline1,
+                  ? Theme.of(context).textTheme.headline1
+                  : Theme.of(context).textTheme.headline1?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary),
             ),
           ),
         ),
@@ -145,13 +145,14 @@ class CollectionDragSheet extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: i != ctrl.listIndex
-                  ? Theme.of(context).textTheme.headline2
-                  : Theme.of(context).textTheme.headline1,
+                  ? Theme.of(context).textTheme.headline1
+                  : Theme.of(context).textTheme.headline1?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary),
             ),
             const SizedBox(height: 5),
             Text(
               counts[i].toString(),
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline3,
             ),
           ],
         ),
@@ -164,6 +165,7 @@ class CollectionDragSheet extends StatelessWidget {
 // Switch between explore types in the explore tab.
 class ExploreDragSheet extends StatelessWidget {
   ExploreDragSheet(this.ctx);
+
   final BuildContext ctx;
 
   @override
@@ -189,10 +191,11 @@ class ExploreDragSheet extends StatelessWidget {
             ),
             const SizedBox(width: 5),
             Text(
-              Convert.clarifyEnum(describeEnum(Explorable.values[i]))!,
+              Convert.clarifyEnum(Explorable.values[i].name)!,
               style: i != ctrl.type.index
-                  ? Theme.of(context).textTheme.headline2
-                  : Theme.of(context).textTheme.headline1,
+                  ? Theme.of(context).textTheme.headline1
+                  : Theme.of(context).textTheme.headline1?.copyWith(
+                      color: Theme.of(context).colorScheme.secondary),
             ),
           ],
         ),
@@ -230,16 +233,17 @@ class DragSheetListTile extends StatelessWidget {
               child: Text(
                 text,
                 style: selected
-                    ? Theme.of(context).textTheme.headline1
-                    : Theme.of(context).textTheme.headline2,
+                    ? Theme.of(context).textTheme.headline1?.copyWith(
+                        color: Theme.of(context).colorScheme.secondary)
+                    : Theme.of(context).textTheme.headline1,
               ),
             )
           : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon),
-                const SizedBox(width: 5),
-                Text(text, style: Theme.of(context).textTheme.headline2),
+                Icon(icon, color: Theme.of(context).colorScheme.onBackground),
+                const SizedBox(width: 10),
+                Text(text, style: Theme.of(context).textTheme.headline1),
               ],
             ),
     );

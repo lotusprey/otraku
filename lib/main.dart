@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:otraku/routing/route_parser.dart';
-import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/background_handler.dart';
+import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/theming.dart';
 
 Future<void> main() async {
-  await GetStorage.init();
+  await Settings.init();
   BackgroundHandler.init();
   runApp(App());
 }
@@ -18,26 +17,26 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
+  Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Otraku',
-        theme: Theming.it.theme.themeData,
-        routerDelegate: Navigation.it,
-        routeInformationParser: const RouteParser(),
+        theme: Theming().theme.themeData,
+        navigatorKey: RouteArg.navKey,
+        initialRoute: RouteArg.auth,
+        onGenerateRoute: RouteArg.generateRoute,
       );
 
   @override
   void initState() {
     super.initState();
-    Theming.it.addListener(() => setState(() {}));
+    Theming().addListener(() => setState(() {}));
     WidgetsBinding.instance?.window.onPlatformBrightnessChanged =
-        Theming.it.refresh;
+        Theming().refresh;
   }
 
   @override
   void dispose() {
-    Theming.it.dispose();
-    Navigation.it.dispose();
+    Theming().dispose();
     super.dispose();
   }
 }

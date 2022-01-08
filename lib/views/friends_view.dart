@@ -8,8 +8,10 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class FriendsView extends StatelessWidget {
+  FriendsView(this.id, this.onFollowing);
+
   final int id;
-  FriendsView(this.id);
+  final bool onFollowing;
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +19,12 @@ class FriendsView extends StatelessWidget {
     final keyFollowers = UniqueKey();
 
     return GetBuilder<FriendsController>(
+      init: FriendsController(id, onFollowing),
       tag: id.toString(),
       builder: (ctrl) => NavLayout(
-        onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
         index: ctrl.onFollowing ? 0 : 1,
+        onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
+        onSame: (_) => ctrl.scrollUpTo(0),
         appBar: ShadowAppBar(
           title: ctrl.onFollowing ? 'Following' : 'Followers',
         ),

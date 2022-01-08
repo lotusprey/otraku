@@ -1,25 +1,27 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/controllers/settings_controller.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/models/settings_model.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsNotificationsView extends StatelessWidget {
-  const SettingsNotificationsView();
+  SettingsNotificationsView(this.model, this.changes);
+
+  final SettingsModel model;
+  final Map<String, dynamic> changes;
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<SettingsController>();
-    final options = settings.model.notificationOptions;
+    final options = model.notificationOptions;
 
     final siteValues = <bool>[];
     for (int i = 0; i < NotificationType.values.length - 1; i++)
       siteValues.add(
-        options[describeEnum(NotificationType.values[i])] ?? false,
+        options[NotificationType.values[i].name] ?? false,
       );
 
     final siteOptions = <Widget>[];
@@ -43,7 +45,8 @@ class SettingsNotificationsView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
-        physics: Config.PHYSICS,
+        controller: Get.find<HomeController>().scrollCtrl,
+        physics: Consts.PHYSICS,
         slivers: [
           ...siteOptions,
           SliverToBoxAdapter(
@@ -56,19 +59,18 @@ class SettingsNotificationsView extends StatelessWidget {
 
   void changeSiteOption(List<bool> values) {
     const key = 'notificationOptions';
-    final settings = Get.find<SettingsController>();
 
-    if (settings.changes.containsKey(key))
+    if (changes.containsKey(key))
       for (int i = 0; i < values.length; i++)
-        settings.changes[key][i]['enabled'] = values[i];
+        changes[key][i]['enabled'] = values[i];
     else {
       final newOptions = [];
       for (int i = 0; i < values.length; i++)
         newOptions.add({
-          'type': describeEnum(NotificationType.values[i]),
+          'type': NotificationType.values[i].name,
           'enabled': values[i],
         });
-      settings.changes[key] = newOptions;
+      changes[key] = newOptions;
     }
   }
 }
@@ -81,7 +83,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.headline6),
+          child: Text(title, style: Theme.of(context).textTheme.headline3),
         ),
       );
 }

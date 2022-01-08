@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/constants/consts.dart';
 
 class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -27,7 +26,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
         Expanded(
           child: titleWidget != null
               ? titleWidget!
-              : Text(title, style: Theme.of(context).textTheme.headline2),
+              : Text(title, style: Theme.of(context).textTheme.headline1),
         ),
         ...actions,
       ]),
@@ -35,7 +34,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Config.MATERIAL_TAP_TARGET_SIZE);
+  Size get preferredSize => Size.fromHeight(Consts.MATERIAL_TAP_TARGET_SIZE);
 }
 
 class SliverShadowAppBar extends StatelessWidget {
@@ -62,10 +61,10 @@ class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
       _ShadowBody(children);
 
   @override
-  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -92,14 +91,14 @@ class _ShadowBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Config.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.MATERIAL_TAP_TARGET_SIZE,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
           BoxShadow(
+            blurRadius: 5,
+            spreadRadius: 5,
             color: Theme.of(context).colorScheme.background,
-            offset: const Offset(0, 3),
-            blurRadius: 7,
           ),
         ],
       ),
@@ -132,9 +131,9 @@ class _SliverTransparentAppBarDelegate
   ) =>
       ClipRect(
         child: BackdropFilter(
-          filter: Config.filter,
+          filter: Consts.filter,
           child: Container(
-            height: Config.MATERIAL_TAP_TARGET_SIZE,
+            height: Consts.MATERIAL_TAP_TARGET_SIZE,
             color: Theme.of(context).cardColor,
             child: Row(children: children),
           ),
@@ -142,10 +141,10 @@ class _SliverTransparentAppBarDelegate
       );
 
   @override
-  double get maxExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Config.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -184,11 +183,11 @@ class AppBarIcon extends StatelessWidget {
       icon: Icon(icon),
       tooltip: tooltip,
       onPressed: onTap,
-      iconSize: Theming.ICON_BIG,
+      iconSize: Consts.ICON_BIG,
       splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
-      padding: Config.PADDING,
+      padding: Consts.PADDING,
     );
   }
 }

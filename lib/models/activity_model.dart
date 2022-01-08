@@ -1,9 +1,9 @@
-import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/constants/activity_type.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/reply_model.dart';
 import 'package:otraku/models/page_model.dart';
+import 'package:otraku/utils/settings.dart';
 
 class ActivityModel {
   final int id;
@@ -56,7 +56,7 @@ class ActivityModel {
   });
 
   factory ActivityModel(Map<String, dynamic> map) {
-    final myId = Client.viewerId;
+    final myId = Settings().id;
 
     switch (map['type']) {
       case 'TEXT':
@@ -105,7 +105,7 @@ class ActivityModel {
           recieverImage: null,
           mediaId: map['media']['id'],
           mediaTitle: map['media']['title']['userPreferred'],
-          mediaImage: map['media']['coverImage']['large'],
+          mediaImage: map['media']['coverImage']['extraLarge'],
           mediaFormat: Convert.clarifyEnum(map['media']['format']),
           mediaType: Explorable.anime,
           siteUrl: map['siteUrl'],
@@ -136,7 +136,7 @@ class ActivityModel {
           recieverImage: null,
           mediaId: map['media']['id'],
           mediaTitle: map['media']['title']['userPreferred'],
-          mediaImage: map['media']['coverImage']['large'],
+          mediaImage: map['media']['coverImage']['extraLarge'],
           mediaFormat: Convert.clarifyEnum(map['media']['format']),
           mediaType: Explorable.manga,
           siteUrl: map['siteUrl'],

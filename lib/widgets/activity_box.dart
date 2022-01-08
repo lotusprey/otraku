@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/activity_type.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/constants/activity_type.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -38,7 +37,7 @@ class ActivityBox extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: Config.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RADIUS,
                       child: FadeImage(model.agentImage, height: 50, width: 50),
                     ),
                     const SizedBox(width: 10),
@@ -68,7 +67,7 @@ class ActivityBox extends StatelessWidget {
                 imageUrl: model.recieverImage,
                 explorable: Explorable.user,
                 child: ClipRRect(
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                   child: FadeImage(model.recieverImage!, height: 50, width: 50),
                 ),
               ),
@@ -93,12 +92,10 @@ class ActivityBox extends StatelessWidget {
                     : model.toggleSubscription(),
               );
             },
-            pushActivityPage: () => Navigation.it.push(
-              Navigation.activityRoute,
-              args: [
-                model.id,
-                feed.id?.toString() ?? FeedController.HOME_FEED_TAG,
-              ],
+            pushActivityPage: () => Navigator.pushNamed(
+              context,
+              RouteArg.activity,
+              arguments: RouteArg(id: model.id, info: feed.id?.toString()),
             ),
           ),
         ),
@@ -116,10 +113,10 @@ class ActivityBoxBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: Config.PADDING,
+      padding: Consts.PADDING,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: Column(
         children: [
@@ -183,12 +180,12 @@ class _InteractionButtonsState extends State<InteractionButtons> {
       children: [
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          constraints: const BoxConstraints(maxHeight: Theming.ICON_SMALL),
+          constraints: const BoxConstraints(maxHeight: Consts.ICON_SMALL),
           splashColor: Colors.transparent,
           tooltip: 'More',
           icon: const Icon(
             Ionicons.ellipsis_horizontal,
-            size: Theming.ICON_SMALL,
+            size: Consts.ICON_SMALL,
           ),
           onPressed: () {
             final children = <Widget>[];
@@ -270,7 +267,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 const SizedBox(width: 5),
-                const Icon(Ionicons.chatbox, size: Theming.ICON_SMALL),
+                const Icon(Ionicons.chatbox, size: Consts.ICON_SMALL),
               ],
             ),
           ),
@@ -298,7 +295,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 const SizedBox(width: 5),
                 Icon(
                   Icons.favorite,
-                  size: Theming.ICON_SMALL,
+                  size: Consts.ICON_SMALL,
                   color: widget.model.isLiked
                       ? Theme.of(context).colorScheme.error
                       : null,
@@ -327,12 +324,12 @@ class ActivityBoxBodyMedia extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
               child: FadeImage(activity.mediaImage!, width: 70),
             ),
             Expanded(
               child: Padding(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,

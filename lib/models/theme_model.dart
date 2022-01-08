@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/constants/consts.dart';
 
 class ThemeModel {
   final Brightness brightness;
@@ -68,30 +67,30 @@ class ThemeModel {
           elevation: 10,
           backgroundColor: surface,
           shape:
-              const RoundedRectangleBorder(borderRadius: Config.BORDER_RADIUS),
+              const RoundedRectangleBorder(borderRadius: Consts.BORDER_RADIUS),
           titleTextStyle: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           contentTextStyle: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.normal,
           ),
         ),
-        iconTheme: IconThemeData(color: primary, size: Theming.ICON_BIG),
+        iconTheme: IconThemeData(color: primary, size: Consts.ICON_BIG),
         tooltipTheme: TooltipThemeData(
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
-          textStyle: TextStyle(fontSize: Theming.FONT_MEDIUM, color: primary),
+          textStyle: TextStyle(fontSize: Consts.FONT_MEDIUM, color: primary),
         ),
         scrollbarTheme: ScrollbarThemeData(
-          radius: Config.RADIUS,
+          radius: Consts.RADIUS,
           thumbColor: MaterialStateProperty.all(primary),
         ),
         sliderTheme: SliderThemeData(
@@ -120,22 +119,22 @@ class ThemeModel {
           filled: true,
           fillColor: surface,
           hintStyle: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             borderSide: BorderSide.none,
           ),
         ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Theming.FONT_MEDIUM,
+              fontSize: Consts.FONT_MEDIUM,
             )),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
             )),
             foregroundColor: MaterialStateProperty.all(secondary),
             overlayColor: MaterialStateProperty.all(highlight),
@@ -144,69 +143,60 @@ class ThemeModel {
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Theming.FONT_MEDIUM,
+              fontSize: Consts.FONT_MEDIUM,
               fontWeight: FontWeight.w500,
             )),
             backgroundColor: MaterialStateProperty.all(secondary),
             foregroundColor: MaterialStateProperty.all(background),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
             )),
           ),
         ),
         textTheme: TextTheme(
           headline1: TextStyle(
-            fontSize: Theming.FONT_BIG,
-            color: secondary,
+            fontSize: Consts.FONT_BIG,
+            color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline2: TextStyle(
-            fontSize: Theming.FONT_BIG,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline3: TextStyle(
-            fontSize: Theming.FONT_BIG,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
             fontWeight: FontWeight.w500,
           ),
           headline4: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
-            color: secondary,
-            fontWeight: FontWeight.w500,
-          ),
-          headline5: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
-            color: onBackground,
-            fontWeight: FontWeight.w500,
-          ),
-          headline6: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.normal,
           ),
           bodyText1: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: secondary,
             fontWeight: FontWeight.normal,
           ),
           bodyText2: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
             fontWeight: FontWeight.normal,
           ),
           subtitle1: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: primary,
+            fontWeight: FontWeight.normal,
           ),
           subtitle2: TextStyle(
-            fontSize: Theming.FONT_SMALL,
+            fontSize: Consts.FONT_SMALL,
             color: primary,
             fontWeight: FontWeight.normal,
           ),
           button: TextStyle(
-            fontSize: Theming.FONT_MEDIUM,
+            fontSize: Consts.FONT_MEDIUM,
             color: background,
             fontWeight: FontWeight.normal,
           ),
@@ -266,20 +256,20 @@ class ThemeModel {
     );
   }
 
-  factory ThemeModel.read(String key) {
-    final Map<String, dynamic> map = Config.storage.read(key) ?? {};
+  // factory ThemeModel.read(String key) {
+  //   final Map<String, dynamic> map = Config.storage.read(key) ?? {};
 
-    return ThemeModel(
-      brightness: map['brightness'] ?? Brightness.dark,
-      background: map['background'] ?? Color(0xFF0F171E),
-      onBackground: map['onBackground'] ?? Color(0xFFCAD5E2),
-      surface: map['surface'] ?? Color(0xFF1D2835),
-      onSurface: map['onSurface'] ?? Color(0xFFCAD5E2),
-      primary: map['primary'] ?? Color(0xFF56789F),
-      secondary: map['secondary'] ?? Color(0xFF45A0F2),
-      onSecondary: map['onSecondary'] ?? Color(0xFF0F171E),
-      error: map['error'] ?? Color(0xFFD74761),
-      onError: map['onError'] ?? Color(0xFF0F171E),
-    );
-  }
+  //   return ThemeModel(
+  //     brightness: map['brightness'] ?? Brightness.dark,
+  //     background: map['background'] ?? Color(0xFF0F171E),
+  //     onBackground: map['onBackground'] ?? Color(0xFFCAD5E2),
+  //     surface: map['surface'] ?? Color(0xFF1D2835),
+  //     onSurface: map['onSurface'] ?? Color(0xFFCAD5E2),
+  //     primary: map['primary'] ?? Color(0xFF56789F),
+  //     secondary: map['secondary'] ?? Color(0xFF45A0F2),
+  //     onSecondary: map['onSecondary'] ?? Color(0xFF0F171E),
+  //     error: map['error'] ?? Color(0xFFD74761),
+  //     onError: map['onError'] ?? Color(0xFF0F171E),
+  //   );
+  // }
 }

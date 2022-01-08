@@ -1,21 +1,7 @@
-import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/score_format.dart';
 
 class SettingsModel {
-  final ScoreFormat scoreFormat;
-  final EntrySort defaultSort;
-  final String titleLanguage;
-  final String staffNameLanguage;
-  final int activityMergeTime;
-  final bool splitCompletedAnime;
-  final bool splitCompletedManga;
-  final bool displayAdultContent;
-  final bool airingNotifications;
-  final bool advancedScoringEnabled;
-  final List<String> advancedScores;
-  final Map<String, bool> notificationOptions;
-
   SettingsModel._({
     required this.scoreFormat,
     required this.defaultSort,
@@ -31,12 +17,22 @@ class SettingsModel {
     required this.notificationOptions,
   });
 
+  final ScoreFormat scoreFormat;
+  final EntrySort defaultSort;
+  final String titleLanguage;
+  final String staffNameLanguage;
+  final int activityMergeTime;
+  final bool splitCompletedAnime;
+  final bool splitCompletedManga;
+  final bool displayAdultContent;
+  final bool airingNotifications;
+  final bool advancedScoringEnabled;
+  final List<String> advancedScores;
+  final Map<String, bool> notificationOptions;
+
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(
-        scoreFormat: Convert.strToEnum(
-              map['mediaListOptions']['scoreFormat'],
-              ScoreFormat.values,
-            ) ??
-            ScoreFormat.POINT_10,
+        scoreFormat: ScoreFormat.values
+            .byName(map['mediaListOptions']['scoreFormat'] ?? 'POINT_10'),
         defaultSort:
             EntrySortHelper.getEnum(map['mediaListOptions']['rowOrder']),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',

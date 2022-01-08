@@ -2,26 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/activity_controller.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/reply_model.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/triangle_clip.dart';
 
 class ActivityView extends StatelessWidget {
   final int id;
+  final String? feedTag;
 
-  ActivityView(this.id);
+  ActivityView(this.id, this.feedTag);
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ActivityController>(
+        init: ActivityController(id, feedTag),
         tag: id.toString(),
         builder: (ctrl) {
           final model = ctrl.model;
@@ -41,7 +41,7 @@ class ActivityView extends StatelessWidget {
                                 Hero(
                                   tag: model.agentId,
                                   child: ClipRRect(
-                                    borderRadius: Config.BORDER_RADIUS,
+                                    borderRadius: Consts.BORDER_RADIUS,
                                     child: FadeImage(
                                       model.agentImage,
                                       height: 40,
@@ -76,7 +76,7 @@ class ActivityView extends StatelessWidget {
                             imageUrl: model.recieverImage,
                             explorable: Explorable.user,
                             child: ClipRRect(
-                              borderRadius: Config.BORDER_RADIUS,
+                              borderRadius: Consts.BORDER_RADIUS,
                               child: FadeImage(
                                 model.recieverImage!,
                                 height: 40,
@@ -92,13 +92,13 @@ class ActivityView extends StatelessWidget {
             body: SafeArea(
               bottom: false,
               child: CustomScrollView(
-                physics: Config.PHYSICS,
+                physics: Consts.PHYSICS,
                 controller: ctrl.scrollCtrl,
                 slivers: [
                   if (model != null) ...[
                     SliverToBoxAdapter(
                         child: Padding(
-                      padding: Config.PADDING,
+                      padding: Consts.PADDING,
                       child: ActivityBoxBody(
                         model,
                         InteractionButtons(
@@ -119,7 +119,7 @@ class ActivityView extends StatelessWidget {
                       ),
                     )),
                     SliverPadding(
-                      padding: Config.PADDING,
+                      padding: Consts.PADDING,
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => _UserReply(model.replies.items[i]),
@@ -131,9 +131,11 @@ class ActivityView extends StatelessWidget {
                   SliverToBoxAdapter(
                     child: SizedBox(
                       height: 50,
-                      child: Obx(
-                        () => Center(
-                          child: ctrl.isLoading ? Loader() : null,
+                      child: GetBuilder<ActivityController>(
+                        id: ActivityController.ID_LOADING,
+                        tag: id.toString(),
+                        builder: (ctrl) => Center(
+                          child: ctrl.isLoading ? const Loader() : null,
                         ),
                       ),
                     ),
@@ -164,7 +166,7 @@ class _UserReply extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
                 child: FadeImage(
                   reply.userImage,
                   height: 50,
@@ -177,20 +179,12 @@ class _UserReply extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        ClipPath(
-          clipper: TriangleClip(),
-          child: Container(
-            width: 50,
-            height: 10,
-            color: Theme.of(context).colorScheme.surface,
-          ),
-        ),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
           ),
           child: Column(
             children: [
@@ -253,7 +247,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Theming.ICON_SMALL,
+              size: Consts.ICON_SMALL,
               color: widget.reply.isLiked
                   ? Theme.of(context).colorScheme.error
                   : null,

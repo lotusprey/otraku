@@ -68,14 +68,14 @@ class StatisticsModel {
 class NumberStatistics {
   final int count;
   final double meanScore;
-  final int minutesWatched;
+  final int hoursWatched;
   final int chaptersRead;
   final String number;
 
   NumberStatistics._({
     required this.count,
     required this.meanScore,
-    required this.minutesWatched,
+    required this.hoursWatched,
     required this.chaptersRead,
     required this.number,
   });
@@ -84,7 +84,7 @@ class NumberStatistics {
       NumberStatistics._(
         count: map['count'],
         meanScore: map['meanScore'].toDouble(),
-        minutesWatched: map['minutesWatched'],
+        hoursWatched: map['minutesWatched'] ~/ 60,
         chaptersRead: map['chaptersRead'],
         number: (map[key] ?? '?').toString(),
       );
@@ -93,14 +93,14 @@ class NumberStatistics {
 class EnumStatistics {
   final int count;
   final double meanScore;
-  final int minutesWatched;
+  final int hoursWatched;
   final int chaptersRead;
   final String value;
 
   EnumStatistics._({
     required this.count,
     required this.meanScore,
-    required this.minutesWatched,
+    required this.hoursWatched,
     required this.chaptersRead,
     required this.value,
   });
@@ -109,7 +109,7 @@ class EnumStatistics {
       EnumStatistics._(
         count: map['count'],
         meanScore: map['meanScore'].toDouble(),
-        minutesWatched: map['minutesWatched'],
+        hoursWatched: map['minutesWatched'] ~/ 60,
         chaptersRead: map['chaptersRead'],
         value: Convert.clarifyEnum(map[key])!,
       );

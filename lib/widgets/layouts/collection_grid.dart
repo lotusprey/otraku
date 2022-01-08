@@ -2,28 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-class MediaList extends StatelessWidget {
-  MediaList(this.ctrlTag);
+class CollectionGrid extends StatelessWidget {
+  CollectionGrid(this.ctrlTag);
 
   final String ctrlTag;
 
   @override
   Widget build(BuildContext context) {
-    final isMe = ctrlTag == CollectionController.ANIME ||
-        ctrlTag == CollectionController.MANGA;
-    final sidePadding = MediaQuery.of(context).size.width > 620
-        ? (MediaQuery.of(context).size.width - 600) / 2.0
+    final isMe =
+        ctrlTag == '${Settings().id}true' || ctrlTag == '${Settings().id}false';
+    final sidePadding = MediaQuery.of(context).size.width > 1020
+        ? (MediaQuery.of(context).size.width - 1000) / 2.0
         : 10.0;
 
     return GetBuilder<CollectionController>(
@@ -47,12 +48,15 @@ class MediaList extends StatelessWidget {
         return SliverPadding(
           padding:
               EdgeInsets.only(left: sidePadding, right: sidePadding, top: 15),
-          sliver: SliverFixedExtentList(
+          sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (_, i) => _MediaListTile(ctrl.entries[i], ctrl, isMe),
+              (_, i) => _CollectionGridTile(ctrl.entries[i], ctrl, isMe),
               childCount: ctrl.entries.length,
             ),
-            itemExtent: 150,
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              minWidth: 350,
+              height: 150,
+            ),
           ),
         );
       },
@@ -60,8 +64,8 @@ class MediaList extends StatelessWidget {
   }
 }
 
-class _MediaListTile extends StatelessWidget {
-  _MediaListTile(this.entry, this.ctrl, this.isMe);
+class _CollectionGridTile extends StatelessWidget {
+  _CollectionGridTile(this.entry, this.ctrl, this.isMe);
 
   final ListEntryModel entry;
   final CollectionController ctrl;
@@ -69,23 +73,29 @@ class _MediaListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final format = Convert.clarifyEnum(entry.format);
-    final timeUntilAiring = entry.airingAt == null
-        ? null
-        : '${format == null ? "" : ' • '}'
+    final details = <TextSpan>[];
+    if (entry.format != null)
+      details.add(TextSpan(text: Convert.clarifyEnum(entry.format)));
+    if (entry.airingAt != null)
+      details.add(TextSpan(
+        text: '${details.isEmpty ? "" : ' • '}'
             'Ep ${entry.nextEpisode} in '
-            '${Convert.timeUntilTimestamp(entry.airingAt)}';
-    final episodesBehind =
-        entry.nextEpisode == null || entry.nextEpisode! - 1 <= entry.progress
-            ? null
-            : '${format == null && entry.airingAt == null ? "" : ' • '}'
-                '${entry.nextEpisode! - 1 - entry.progress} ep behind';
+            '${Convert.timeUntilTimestamp(entry.airingAt)}',
+      ));
+    if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
+      details.add(TextSpan(
+        text: '${details.isEmpty ? "" : ' • '}'
+            '${entry.nextEpisode! - 1 - entry.progress} ep behind',
+        style: Theme.of(context)
+            .textTheme
+            .bodyText1
+            ?.copyWith(fontSize: Consts.FONT_SMALL),
+      ));
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: ExploreIndexer(
         id: entry.mediaId,
@@ -102,12 +112,12 @@ class _MediaListTile extends StatelessWidget {
                   color: Theme.of(context).colorScheme.surface,
                   child: FadeImage(entry.cover),
                 ),
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
               ),
             ),
             Expanded(
               child: Padding(
-                padding: Config.PADDING,
+                padding: Consts.PADDING,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,17 +135,7 @@ class _MediaListTile extends StatelessWidget {
                           RichText(
                             text: TextSpan(
                               style: Theme.of(context).textTheme.subtitle2,
-                              children: [
-                                TextSpan(text: format),
-                                TextSpan(text: timeUntilAiring),
-                                TextSpan(
-                                  text: episodesBehind,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText1
-                                      ?.copyWith(fontSize: Theming.FONT_SMALL),
-                                ),
-                              ],
+                              children: details,
                             ),
                           ),
                         ],
@@ -145,7 +145,7 @@ class _MediaListTile extends StatelessWidget {
                       height: 5,
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       decoration: BoxDecoration(
-                        borderRadius: Config.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RADIUS,
                         gradient: LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,
@@ -174,7 +174,7 @@ class _MediaListTile extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Ionicons.repeat,
-                                  size: Theming.ICON_SMALL,
+                                  size: Consts.ICON_SMALL,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
@@ -190,12 +190,12 @@ class _MediaListTile extends StatelessWidget {
                           IconButton(
                             tooltip: 'Comment',
                             constraints: const BoxConstraints(
-                              maxHeight: Theming.ICON_SMALL,
+                              maxHeight: Consts.ICON_SMALL,
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                             icon: const Icon(
                               Ionicons.chatbox,
-                              size: Theming.ICON_SMALL,
+                              size: Consts.ICON_SMALL,
                             ),
                             onPressed: () => showPopUp(
                               context,
@@ -231,21 +231,21 @@ class _MediaListTile extends StatelessWidget {
         if (entry.score == 3)
           return const Icon(
             Icons.sentiment_very_satisfied,
-            size: Theming.ICON_SMALL,
+            size: Consts.ICON_SMALL,
           );
 
         if (entry.score == 2)
-          return const Icon(Icons.sentiment_neutral, size: Theming.ICON_SMALL);
+          return const Icon(Icons.sentiment_neutral, size: Consts.ICON_SMALL);
 
         return const Icon(
           Icons.sentiment_very_dissatisfied,
-          size: Theming.ICON_SMALL,
+          size: Consts.ICON_SMALL,
         );
       case ScoreFormat.POINT_5:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, size: Theming.ICON_SMALL),
+            const Icon(Icons.star_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(0),
@@ -257,7 +257,7 @@ class _MediaListTile extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Theming.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(
@@ -271,7 +271,7 @@ class _MediaListTile extends StatelessWidget {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Theming.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
               entry.score.toStringAsFixed(0),
@@ -307,7 +307,13 @@ class _Progress extends StatelessWidget {
         maximumSize: MaterialStateProperty.all(const Size.fromHeight(20)),
         padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
       ),
-      onPressed: () => increment!(entry),
+      onPressed: () {
+        if (entry.progressMax == null ||
+            entry.progress < entry.progressMax! - 1)
+          increment!(entry);
+        else
+          ExploreIndexer.openEditView(entry.mediaId, context);
+      },
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(
@@ -316,7 +322,7 @@ class _Progress extends StatelessWidget {
             const SizedBox(width: 5),
             Icon(
               Ionicons.add_outline,
-              size: Theming.ICON_SMALL,
+              size: Consts.ICON_SMALL,
               color: Theme.of(context).colorScheme.primary,
             ),
           ],

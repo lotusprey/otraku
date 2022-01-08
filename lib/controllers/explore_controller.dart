@@ -1,134 +1,58 @@
-import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/tag_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
 // Searches and filters items from the Explorable enum
-class ExploreController extends OverscrollController implements Filterable {
+class ExploreController extends ScrollingController implements Filterable {
   // ***************************************************************************
   // CONSTANTS
   // ***************************************************************************
 
-  static const _mediaQuery = r'''
-    query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
-        $status_not_in: [MediaStatus], $format_in: [MediaFormat], $format_not_in: [MediaFormat], 
-        $genre_in: [String], $genre_not_in: [String], $tag_in: [String], $tag_not_in: [String], 
-        $onList: Boolean, $isAdult: Boolean, $startDate_greater: FuzzyDateInt, 
-        $startDate_lesser: FuzzyDateInt, $countryOfOrigin: CountryCode, $source: MediaSource, 
-        $season: MediaSeason, $id_not_in: [Int], $sort: [MediaSort]) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        media(type: $type, search: $search, status_in: $status_in, status_not_in: $status_not_in, 
-        format_in: $format_in, format_not_in: $format_not_in, genre_in: $genre_in, 
-        genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
-        onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
-        startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
-        source: $source, season: $season, id_not_in: $id_not_in, sort: $sort) {
-          id type title {userPreferred} coverImage {large}
-        }
-      }
-    }
-  ''';
-
-  static const _charactersQuery = r'''
-    query Characters($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
-          id name {userPreferred} image {large}
-        }
-      }
-    }
-  ''';
-
-  static const _staffQuery = r'''
-    query Staff($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
-          id name {userPreferred} image {large}
-        }
-      }
-    }
-  ''';
-
-  static const _studiosQuery = r'''
-    query Studios($page: Int, $search: String, $id_not_in: [Int]) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        studios(search: $search, id_not_in: $id_not_in) {id name}
-      }
-    }
-  ''';
-
-  static const _usersQuery = r'''
-    query Users($page: Int, $search: String) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        users(search: $search) {id name avatar {large}}
-      }
-    }
-  ''';
-
-  static const _reviewsQuery = r'''
-    query Reviews($page: Int) {
-      Page(page: $page, perPage: 30) {
-        pageInfo {hasNextPage}
-        reviews(sort: CREATED_AT_DESC) {
-          id
-          summary 
-          body(asHtml: true)
-          rating
-          ratingAmount
-          media {id type title{userPreferred} bannerImage}
-          user {id name}
-        }
-      }
-    }
-  ''';
+  static const ID_HEAD = 0;
+  static const ID_BODY = 1;
+  static const ID_BUTTON = 2;
 
   // ***************************************************************************
   // DATA
   // ***************************************************************************
 
-  final _isLoading = true.obs;
-  final _results = PageModel<ExplorableModel>().obs;
-  final _search = ''.obs;
+  final _results = PageModel<ExplorableModel>();
   final _genres = <String>[];
   final _tags = <String, List<TagModel>>{};
-  final _type = Explorable.values
-      .elementAt(Config.storage.read(Config.DEFAULT_EXPLORE) ?? 0)
-      .obs;
+  String _search = '';
+  Explorable _type = Settings().defaultExplorable;
+  late final _debounce = Debounce(fetch);
+  bool _isLoading = true;
   int _concurrentFetches = 0;
+  bool _searchMode = false;
   Map<String, dynamic> _filters = {
     Filterable.PAGE: 1,
     Filterable.TYPE: 'ANIME',
-    Filterable.ID_NOT_IN: [],
-    Filterable.SORT: describeEnum(MediaSort.values
-        .elementAt(Config.storage.read(Config.DEFAULT_EXPLORE_SORT) ?? 3)),
+    Filterable.SORT: Settings().defaultExploreSort.name,
   };
 
   // ***************************************************************************
-  // GETTERS
+  // GETTERS & SETTERS
   // ***************************************************************************
 
-  @override
-  bool get hasNextPage => _results().hasNextPage;
+  bool get hasNextPage => _results.hasNextPage;
 
-  bool get isLoading => _isLoading();
+  bool get isLoading => _isLoading;
 
-  Explorable get type => _type();
+  Explorable get type => _type;
 
-  String get search => _search();
+  String get search => _search;
 
-  List<ExplorableModel> get results => _results().items;
+  bool get searchMode => _searchMode;
+
+  List<ExplorableModel> get results => _results.items;
 
   List<String> get genres => [..._genres];
 
@@ -139,7 +63,8 @@ class ExploreController extends OverscrollController implements Filterable {
   // ***************************************************************************
 
   set type(Explorable value) {
-    _type.value = value;
+    _type = value;
+    update([ID_HEAD, ID_BUTTON]);
 
     if (value == Explorable.anime)
       _filters[Filterable.TYPE] = 'ANIME';
@@ -149,7 +74,18 @@ class ExploreController extends OverscrollController implements Filterable {
     fetch();
   }
 
-  set search(String value) => _search.value = value.trim();
+  set search(String value) {
+    _search = value.trim();
+    _debounce.run();
+  }
+
+  set searchMode(bool val) {
+    if (searchMode == val) return;
+    _searchMode = val;
+    update([ID_HEAD]);
+    if (_filters[Filterable.SEARCH] != null)
+      setFilterWithKey(Filterable.SEARCH, update: true);
+  }
 
   @override
   dynamic getFilterWithKey(String key) => _filters[key];
@@ -206,38 +142,29 @@ class ExploreController extends OverscrollController implements Filterable {
     _concurrentFetches++;
 
     if (clean) {
-      _isLoading.value = true;
-      _filters[Filterable.ID_NOT_IN] = [];
+      _isLoading = true;
       _filters[Filterable.PAGE] = 1;
       scrollUpTo(0);
+      update([ID_BODY]);
     }
 
     String query;
-    switch (_type.value) {
-      case Explorable.anime:
-      case Explorable.manga:
-        query = _mediaQuery;
-        break;
-      case Explorable.character:
-        query = _charactersQuery;
-        break;
-      case Explorable.staff:
-        query = _staffQuery;
-        break;
-      case Explorable.studio:
-        query = _studiosQuery;
-        break;
-      case Explorable.user:
-        query = _usersQuery;
-        break;
-      case Explorable.review:
-        query = _reviewsQuery;
-        break;
-    }
+    if (_type == Explorable.anime || _type == Explorable.manga)
+      query = GqlQuery.medias;
+    else if (_type == Explorable.character)
+      query = GqlQuery.characters;
+    else if (_type == Explorable.staff)
+      query = GqlQuery.staffs;
+    else if (_type == Explorable.studio)
+      query = GqlQuery.studios;
+    else if (_type == Explorable.review)
+      query = GqlQuery.reviews;
+    else
+      query = GqlQuery.users;
 
     Map<String, dynamic>? data = await Client.request(
       query,
-      {..._filters, if (_search() != '') 'search': _search()},
+      {..._filters, if (_search != '') 'search': _search},
     );
 
     _concurrentFetches--;
@@ -246,48 +173,30 @@ class ExploreController extends OverscrollController implements Filterable {
     data = data['Page'];
 
     final items = <ExplorableModel>[];
-    final List<dynamic> idNotIn = _filters[Filterable.ID_NOT_IN];
 
     if (data!['media'] != null)
-      for (final m in data['media']) {
-        items.add(ExplorableModel.media(m));
-        idNotIn.add(m['id']);
-      }
+      for (final m in data['media']) items.add(ExplorableModel.media(m));
     else if (data['characters'] != null)
-      for (final c in data['characters']) {
+      for (final c in data['characters'])
         items.add(ExplorableModel.character(c));
-        idNotIn.add(c['id']);
-      }
     else if (data['staff'] != null)
-      for (final s in data['staff']) {
-        items.add(ExplorableModel.staff(s));
-        idNotIn.add(s['id']);
-      }
+      for (final s in data['staff']) items.add(ExplorableModel.staff(s));
     else if (data['studios'] != null)
-      for (final s in data['studios']) {
-        items.add(ExplorableModel.studio(s));
-        idNotIn.add(s['id']);
-      }
+      for (final s in data['studios']) items.add(ExplorableModel.studio(s));
     else if (data['users'] != null)
       for (final u in data['users']) items.add(ExplorableModel.user(u));
     else if (data['reviews'] != null)
       for (final r in data['reviews']) items.add(ExplorableModel.review(r));
 
-    if (clean)
-      _results.update((r) {
-        r!.clear();
-        r.append(items, data!['pageInfo']['hasNextPage']);
-      });
-    else
-      _results.update(
-        (r) => r!.append(items, data!['pageInfo']['hasNextPage']),
-      );
-
-    _isLoading.value = false;
+    if (clean) _results.clear();
+    _results.append(items, data['pageInfo']['hasNextPage']);
+    _isLoading = false;
+    update([ID_BODY]);
   }
 
   @override
   Future<void> fetchPage() async {
+    if (!_results.hasNextPage) return;
     _filters[Filterable.PAGE]++;
     await fetch(clean: false);
   }
@@ -320,17 +229,9 @@ class ExploreController extends OverscrollController implements Filterable {
           _tags[category]!.add(TagModel(t));
       }
 
-      _filters[Filterable.TYPE] =
-          _type() == Explorable.manga ? 'MANGA' : 'ANIME';
+      _filters[Filterable.TYPE] = _type == Explorable.manga ? 'MANGA' : 'ANIME';
 
       fetch();
     });
-
-    _search.firstRebuild = false;
-    debounce<String>(
-      _search,
-      (_) => fetch(),
-      time: const Duration(milliseconds: 600),
-    );
   }
 }

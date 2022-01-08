@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
@@ -31,7 +30,7 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
     int crossAxisCount = (constraints.crossAxisExtent + crossAxisSpacing) ~/
         (minWidth + crossAxisSpacing);
 
-    if (crossAxisCount < 1) crossAxisCount++;
+    if (crossAxisCount < 1) crossAxisCount = 1;
 
     double usableCrossAxisExtent =
         constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);

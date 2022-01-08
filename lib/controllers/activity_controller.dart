@@ -3,123 +3,46 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/models/reply_model.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class ActivityController extends OverscrollController {
-  static const _activityQuery = r'''
-    query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
-      Activity(id: $id) @include(if: $withActivity) {
-        ... on TextActivity {
-          id
-          type
-          replyCount
-          likeCount
-          isLiked
-          isSubscribed
-          createdAt
-          siteUrl
-          user {id name avatar {large}}
-          text(asHtml: true)
-        }
-        ... on ListActivity {
-          id
-          type
-          replyCount
-          likeCount
-          isLiked
-          isSubscribed
-          createdAt
-          siteUrl
-          user {id name avatar {large}}
-          media {id type title{userPreferred} coverImage{large} format}
-          progress
-          status
-        }
-        ... on MessageActivity {
-          id
-          type
-          replyCount
-          likeCount
-          isLiked
-          isSubscribed
-          isPrivate
-          createdAt
-          siteUrl
-          recipient {id name avatar {large}}
-          messenger {id name avatar {large}}
-          message(asHtml: true)
-        }
-      }
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        activityReplies(activityId: $id) {
-          id
-          likeCount
-          isLiked
-          createdAt
-          text(asHtml: true)
-          user {id name avatar {large}}
-        }
-      }
-    }
-  ''';
+class ActivityController extends ScrollingController {
+  static const ID_LOADING = 0;
 
-  static const _toggleLikeMutation = r'''
-    mutation ToggleLike($id: Int, $type: LikeableType) {
-      ToggleLikeV2(id: $id, type: $type) {
-        ... on ListActivity {likeCount isLiked}
-        ... on TextActivity {likeCount isLiked}
-        ... on MessageActivity {likeCount isLiked}
-        ... on ActivityReply {likeCount isLiked}
-      }
-    }
-  ''';
-
-  static const _toggleSubscriptionMutation = r'''
-    mutation ToggleSubscription($id: Int, $subscribe: Boolean) {
-      ToggleActivitySubscription(activityId: $id, subscribe: $subscribe) {
-        ... on ListActivity {isSubscribed}
-        ... on TextActivity {isSubscribed}
-        ... on MessageActivity {isSubscribed}
-      }
-    }
-  ''';
-
-  static const _deleteMutation = r'''
-    mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
-  ''';
+  ActivityController(this.id, this.feedTag);
 
   final int id;
   final String? feedTag;
-  ActivityController(this.id, this.feedTag);
-
   ActivityModel? _model;
-  final _isLoading = true.obs;
+  bool _isLoading = true;
 
   ActivityModel? get model => _model;
-  bool get isLoading => _isLoading();
-
-  @override
-  bool get hasNextPage => _model!.replies.hasNextPage;
+  bool get isLoading => _isLoading;
 
   Future<void> fetch() async {
     if (_model != null && _model!.replies.items.isNotEmpty) return;
-    _isLoading.value = true;
+    _isLoading = true;
+    update([ID_LOADING]);
 
-    final data =
-        await Client.request(_activityQuery, {'id': id, 'withActivity': true});
+    final data = await Client.request(
+      GqlQuery.activity,
+      {'id': id, 'withActivity': true},
+    );
     if (data == null) return;
 
     _model = ActivityModel(data['Activity']);
     _model!.appendReplies(data['Page']);
-    _isLoading.value = false;
+    _isLoading = false;
+    update([ID_LOADING]);
     update();
   }
 
   @override
   Future<void> fetchPage() async {
+    if (!_model!.replies.hasNextPage) return;
+
     final data = await Client.request(
-      _activityQuery,
+      GqlQuery.activity,
       {'id': id, 'page': _model!.replies.nextPage},
     );
     if (data == null) return;
@@ -130,7 +53,7 @@ class ActivityController extends OverscrollController {
 
   static Future<bool> toggleSubscription(ActivityModel activityModel) async {
     final data = await Client.request(
-      _toggleSubscriptionMutation,
+      GqlMutation.toggleActivitySubscription,
       {'id': activityModel.id, 'subscribe': activityModel.isSubscribed},
     );
     return data != null;
@@ -138,7 +61,7 @@ class ActivityController extends OverscrollController {
 
   static Future<bool> toggleLike(ActivityModel am) async {
     final data = await Client.request(
-      _toggleLikeMutation,
+      GqlMutation.toggleLike,
       {'id': am.id, 'type': 'ACTIVITY'},
     );
     return data != null;
@@ -146,7 +69,7 @@ class ActivityController extends OverscrollController {
 
   static Future<bool> toggleReplyLike(ReplyModel reply) async {
     final data = await Client.request(
-      _toggleLikeMutation,
+      GqlMutation.toggleLike,
       {'id': reply.id, 'type': 'ACTIVITY_REPLY'},
     );
     return data != null;
@@ -161,7 +84,7 @@ class ActivityController extends OverscrollController {
     if (feedTag != null)
       await Get.find<FeedController>(tag: feedTag).deleteActivity(id);
     else
-      await Client.request(_deleteMutation, {'id': id});
+      await Client.request(GqlMutation.deleteActivity, {'id': id});
   }
 
   @override

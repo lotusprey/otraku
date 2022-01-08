@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
@@ -15,10 +16,10 @@ import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class MediaView extends StatelessWidget {
+  MediaView(this.id, this.coverUrl);
+
   final int id;
   final String? coverUrl;
-
-  MediaView(this.id, this.coverUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +28,9 @@ class MediaView extends StatelessWidget {
         : 150.0;
     final coverHeight = coverWidth / 0.7;
     final bannerHeight =
-        coverHeight * 0.6 + Config.MATERIAL_TAP_TARGET_SIZE + 10;
+        coverHeight * 0.6 + Consts.MATERIAL_TAP_TARGET_SIZE + 10;
     final headerHeight = bannerHeight + coverHeight * 0.6;
-    final headerOffset = headerHeight - Config.MATERIAL_TAP_TARGET_SIZE;
+    final headerOffset = headerHeight - Consts.MATERIAL_TAP_TARGET_SIZE - 10;
 
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
@@ -37,17 +38,11 @@ class MediaView extends StatelessWidget {
     const keys = [ValueKey(0), ValueKey(1), ValueKey(2)];
 
     return GetBuilder<MediaController>(
+      init: MediaController(id),
       id: MediaController.ID_BASE,
       tag: id.toString(),
       builder: (ctrl) {
-        final header = MediaHeader(
-          ctrl: ctrl,
-          imageUrl: coverUrl,
-          coverWidth: coverWidth,
-          coverHeight: coverHeight,
-          bannerHeight: bannerHeight,
-          height: headerHeight,
-        );
+        final header = MediaHeader(ctrl: ctrl, imageUrl: coverUrl);
 
         if (ctrl.model == null)
           return Scaffold(
@@ -67,6 +62,7 @@ class MediaView extends StatelessWidget {
           builder: (_) => NavLayout(
             index: ctrl.tab,
             onChanged: (page) => ctrl.tab = page,
+            onSame: (_) => ctrl.scrollUpTo(headerOffset),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
                 if (goRight && ctrl.otherTab < 2) {
@@ -108,7 +104,7 @@ class MediaView extends StatelessWidget {
               tag: id.toString(),
               builder: (_) => CustomScrollView(
                 controller: ctrl.scrollCtrl,
-                physics: Config.PHYSICS,
+                physics: Consts.PHYSICS,
                 slivers: [
                   header,
                   if (ctrl.tab == MediaController.INFO)
@@ -163,28 +159,22 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ActionButton(
         icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
         tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-        onTap: () => widget.ctrl.toggleFavourite().then(
-              (ok) => ok
-                  ? setState(
-                      () => model.info.isFavourite = !model.info.isFavourite,
-                    )
-                  : null,
-            ),
+        onTap: () => widget.ctrl.toggleFavourite().then((_) => setState(() {})),
       ),
       const SizedBox(width: 10),
       ActionButton(
         icon: model.entry.status == null ? Icons.add : Icons.edit,
         tooltip: model.entry.status == null ? 'Add' : 'Edit',
-        onTap: () => ExploreIndexer.openEditPage(
+        onTap: () => ExploreIndexer.openEditView(
           model.info.id,
+          context,
           model.entry,
           (EntryModel entry) => setState(() => model.entry = entry),
         ),
       ),
     ];
 
-    if (Config.storage.read(Config.LEFT_HANDED) ?? false)
-      children = children.reversed.toList();
+    if (Settings().leftHanded) children = children.reversed.toList();
 
     return FloatingListener(
       scrollCtrl: widget.ctrl.scrollCtrl,

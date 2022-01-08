@@ -1,15 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:otraku/enums/notification_type.dart';
+import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
-import 'package:otraku/routing/navigation.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/config.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -21,7 +20,7 @@ class BackgroundHandler {
   static bool _didInit = false;
   static bool _didCheckLaunch = false;
 
-  static void init() {
+  static Future<void> init() async {
     if (_didInit) return;
     _didInit = true;
 
@@ -34,17 +33,20 @@ class BackgroundHandler {
       onSelectNotification: (payload) async => _handleNotification(payload),
     );
 
-    Workmanager().initialize(_fetch);
+    await Workmanager().initialize(_fetch);
 
     if (Platform.isAndroid)
       Workmanager().registerPeriodicTask(
         '0',
-        'notification',
+        'notifications',
         constraints: Constraints(networkType: NetworkType.connected),
       );
   }
 
-  static void checkLaunchedByNotification() {
+  // Should be called if the user logs out of an account.
+  static void clearNotifications() => _notificationPlugin.cancelAll();
+
+  static void checkIfLaunchedByNotification() {
     if (_didCheckLaunch) return;
     _didCheckLaunch = true;
 
@@ -62,12 +64,12 @@ class BackgroundHandler {
     final id = int.tryParse(uri.pathSegments[1]) ?? -1;
     if (id < 0) return;
 
-    if (uri.pathSegments[0] == Navigation.threadRoute) {
-      final ctx = Navigation.it.ctx;
-      if (ctx == null) return;
+    final context = RouteArg.navKey.currentContext;
+    if (context == null) return;
 
+    if (uri.pathSegments[0] == RouteArg.thread) {
       showPopUp(
-        ctx,
+        context,
         ConfirmationDialog(
           title: 'Sorry! Forum is not yet supported!',
           mainAction: 'Ok',
@@ -76,41 +78,42 @@ class BackgroundHandler {
       return;
     }
 
-    Navigation.it.push('/${uri.pathSegments[0]}', args: [id, null, null]);
+    Navigator.pushNamed(
+      context,
+      '/${uri.pathSegments[0]}',
+      arguments: RouteArg(id: id),
+    );
   }
 }
 
-void _fetch() => Workmanager().executeTask((_, input) async {
-      await GetStorage.init();
+void _fetch() => Workmanager().executeTask((_, __) async {
+      // Initialise local settings.
+      await Settings.init();
+      if (Settings().selectedAccount == null) return true;
 
       // Log in.
-      if (Client.viewerId == null) {
-        final ok = await Client.logIn();
+      if (!Client.loggedIn()) {
+        final ok = await Client.logIn(Settings().selectedAccount!);
         if (!ok) return true;
       }
 
-      // Get the count of new notifications.
-      Map<String, dynamic>? data = await Client.request(_countQuery);
-      if (data == null) return false;
-
-      final int newCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final int oldCount =
-          Config.storage.read(Config.LAST_NOTIFICATION_COUNT) ?? 0;
-      final count = newCount < oldCount ? newCount : newCount - oldCount;
-      if (count < 1) return true;
-
       // Get new notifications.
-      data = await Client.request(_notificationQuery, {'perPage': count});
-      if (data == null) return false;
+      final data =
+          await Client.request(GqlQuery.notifications, {'withCount': true});
 
-      // Save new notification count.
-      Config.storage.write(Config.LAST_NOTIFICATION_COUNT, newCount);
+      int count = data?['Viewer']?['unreadNotificationCount'] ?? 0;
+      final ns = data?['Page']?['notifications'] ?? [];
+      if (count > ns.length) count = ns.length;
+      if (count == 0) return true;
+
+      final last = Settings().lastNotificationId;
+      Settings().lastNotificationId = ns[0]['id'];
 
       // Show notifications.
-      for (final n in data['Page']['notifications']) {
+      for (int i = 0; i < count && ns[i]?['id'] != last; i++) {
         late NotificationModel model;
         try {
-          model = NotificationModel(n);
+          model = NotificationModel(ns[i]);
         } catch (_) {
           continue;
         }
@@ -120,14 +123,14 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             _show(
               model,
               'New Follow',
-              '${Navigation.userRoute}/${model.bodyId}',
+              '${RouteArg.user}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_MESSAGE:
             _show(
               model,
               'New Message',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY:
@@ -135,91 +138,91 @@ void _fetch() => Workmanager().executeTask((_, input) async {
             _show(
               model,
               'New Reply',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_MENTION:
             _show(
               model,
               'New Mention',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_LIKE:
             _show(
               model,
               'New Activity Like',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
             _show(
               model,
               'New Reply Like',
-              '${Navigation.activityRoute}/${model.bodyId}',
+              '${RouteArg.activity}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
             _show(
               model,
               'New Forum Reply',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_MENTION:
             _show(
               model,
               'New Forum Mention',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_SUBSCRIBED:
             _show(
               model,
               'New Forum Comment',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_LIKE:
             _show(
               model,
               'New Forum Like',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_LIKE:
             _show(
               model,
               'New Forum Comment Like',
-              '${Navigation.threadRoute}/${model.bodyId}',
+              '${RouteArg.thread}/${model.bodyId}',
             );
             break;
           case NotificationType.AIRING:
             _show(
               model,
               'New Episode',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
             _show(
               model,
               'New Addition',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.MEDIA_DATA_CHANGE:
             _show(
               model,
               'Modified Media',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.MEDIA_MERGE:
             _show(
               model,
               'Merged Media',
-              '${Navigation.mediaRoute}/${model.bodyId}',
+              '${RouteArg.media}/${model.bodyId}',
             );
             break;
           case NotificationType.MEDIA_DELETION:
@@ -234,7 +237,7 @@ void _fetch() => Workmanager().executeTask((_, input) async {
     });
 
 void _show(NotificationModel model, String title, String payload) {
-  final id = describeEnum(model.type);
+  final id = model.type.name;
   final name = Convert.clarifyEnum(id)!;
 
   _notificationPlugin.show(
@@ -252,137 +255,3 @@ void _show(NotificationModel model, String title, String payload) {
     payload: payload,
   );
 }
-
-const _countQuery = 'query Count {Viewer {unreadNotificationCount}}';
-
-const _notificationQuery = r'''
-  query Notifications($perPage: Int) {
-    Page(perPage: $perPage) {
-      notifications(resetNotificationCount: false) {
-        ... on FollowingNotification {
-          id
-          type
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityMessageNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityReplyNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityReplySubscribedNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentReplyNotification {
-          id
-          type
-          context
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityMentionNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentMentionNotification {
-          id
-          type
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentSubscribedNotification {
-          id
-          type
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityLikeNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ActivityReplyLikeNotification {
-          id
-          type
-          activityId
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadLikeNotification {
-          id
-          type
-          thread {id title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on ThreadCommentLikeNotification {
-          id
-          type
-          commentId
-          thread {title}
-          user {id name avatar {large}}
-          createdAt
-        }
-        ... on RelatedMediaAdditionNotification {
-          id
-          type
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on MediaDataChangeNotification {
-          id
-          type
-          reason
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on MediaMergeNotification {
-          id
-          type
-          reason
-          deletedMediaTitles
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-        ... on MediaDeletionNotification {
-          id
-          type
-          reason
-          deletedMediaTitle
-          createdAt
-        }
-        ... on AiringNotification {
-          id
-          type
-          episode
-          media {id type title {userPreferred} coverImage {large}}
-          createdAt
-        }
-      }
-    }
-  }
-''';

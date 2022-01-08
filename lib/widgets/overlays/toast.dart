@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 
 class Toast {
   Toast._();
@@ -21,10 +21,10 @@ class Toast {
                 MediaQuery.of(ctx).viewPadding.bottom +
                 MediaQuery.of(ctx).viewInsets.bottom,
           ),
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: Theme.of(ctx).colorScheme.surface,
-            borderRadius: Config.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RADIUS,
             boxShadow: [
               BoxShadow(
                   color: Theme.of(ctx).colorScheme.background, blurRadius: 10),

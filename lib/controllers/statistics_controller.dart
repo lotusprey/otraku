@@ -2,8 +2,9 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/models/user_model.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class StatisticsController extends GetxController {
+class StatisticsController extends ScrollingController {
   // Bar chart tabs.
   static const BY_COUNT = 0;
   static const BY_HOUR_OR_CHAPTER = 1;

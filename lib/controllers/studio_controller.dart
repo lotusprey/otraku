@@ -1,68 +1,23 @@
-import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 import 'package:otraku/models/studio_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/group_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class StudioController extends OverscrollController {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _studioQuery = r'''
-    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $isMain: Boolean, $onList: Boolean, $withStudio: Boolean = false) {
-      Studio(id: $id) {
-        ...studio @include(if: $withStudio)
-        media(page: $page, sort: $sort, isMain: $isMain, onList: $onList) {
-          pageInfo {hasNextPage}
-          nodes {
-            id
-            title {userPreferred}
-            coverImage {large}
-            startDate {year}
-            status(version: 2)
-          }
-        }
-      }
-    }
-    fragment studio on Studio {
-      id
-      name
-      favourites
-      isFavourite
-      isAnimationStudio
-    }
-  ''';
-
-  static const _toggleFavouriteMutation = r'''
-    mutation ToggleFavouriteStudio($id: Int) {
-      ToggleFavourite(studioId: $id) {
-        studios(page: 1, perPage: 1) {nodes{isFavourite}}
-      }
-    }
-  ''';
-
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
-  final int id;
+class StudioController extends ScrollingController {
   StudioController(this.id);
 
+  final int id;
   StudioModel? _model;
-  final _media = GroupPageModel<ExplorableModel>().obs;
+  final _media = GroupPageModel<ExplorableModel>();
   MediaSort _sort = MediaSort.START_DATE_DESC;
   bool? _onList;
 
   StudioModel? get model => _model;
-  GroupPageModel<ExplorableModel> get media => _media();
-
-  @override
-  bool get hasNextPage => _media().hasNextPage;
+  GroupPageModel<ExplorableModel> get media => _media;
 
   MediaSort get sort => _sort;
   set sort(MediaSort value) {
@@ -76,67 +31,59 @@ class StudioController extends OverscrollController {
     refetch();
   }
 
-  // ***************************************************************************
-  // FETCHING
-  // ***************************************************************************
-
-  Future<void> fetch() async {
+  Future<void> _fetch() async {
     final data = await Client.request(
-      _studioQuery,
-      {
-        'id': id,
-        'withStudio': true,
-        'sort': describeEnum(_sort),
-      },
+      GqlQuery.studio,
+      {'id': id, 'withMain': true, 'sort': _sort.name},
     );
     if (data == null) return;
 
     _model = StudioModel(data['Studio']);
-    update();
-
     _initMedia(data['Studio']['media'], false);
+    update();
   }
 
   Future<void> refetch() async {
     scrollUpTo(0);
 
     final data = await Client.request(
-      _studioQuery,
-      {'id': id, 'sort': describeEnum(_sort), 'onList': _onList},
+      GqlQuery.studio,
+      {'id': id, 'sort': _sort.name, 'onList': _onList},
     );
     if (data == null) return;
 
     _initMedia(data['Studio']['media'], true);
+    update();
   }
 
   @override
   Future<void> fetchPage() async {
+    if (!_media.hasNextPage) return;
+
     final data = await Client.request(
-      _studioQuery,
+      GqlQuery.studio,
       {
         'id': id,
-        'page': _media().nextPage,
-        'sort': describeEnum(_sort),
+        'page': _media.nextPage,
+        'sort': _sort.name,
         'onList': _onList,
       },
     );
     if (data == null) return;
 
     _initMedia(data['Studio']['media'], false);
+    update();
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(_toggleFavouriteMutation, {'id': id});
+    final data =
+        await Client.request(GqlMutation.toggleFavourite, {'studio': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }
 
-  // ***************************************************************************
-  // HELPER FUNCTIONS
-  // ***************************************************************************
-
   void _initMedia(Map<String, dynamic> data, bool clear) {
-    if (clear) _media().clear();
+    if (clear) _media.clear();
 
     final categories = <String>[];
     final results = <List<ExplorableModel>>[];
@@ -154,16 +101,12 @@ class StudioController extends OverscrollController {
       results.last.add(ExplorableModel.anime(node));
     }
 
-    _media.update((m) => m!.append(
-          categories,
-          results,
-          data['pageInfo']['hasNextPage'],
-        ));
+    _media.append(categories, results, data['pageInfo']['hasNextPage']);
   }
 
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    if (_model == null) _fetch();
   }
 }

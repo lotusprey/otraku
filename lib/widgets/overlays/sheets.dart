@@ -1,14 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/models/tag_model.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/widgets/fields/three_state_field.dart';
 import 'package:otraku/widgets/fields/two_state_field.dart';
 
@@ -24,8 +22,8 @@ class Sheet extends StatelessWidget {
         builder: (_) => sheet,
         isScrollControlled: isScrollControlled,
         backgroundColor: Colors.transparent,
-        barrierColor: barrierColour ??
-            Theme.of(ctx).colorScheme.background.withAlpha(200),
+        barrierColor:
+            barrierColour ?? Theme.of(ctx).colorScheme.surface.withAlpha(150),
       );
 
   Sheet({
@@ -55,7 +53,7 @@ class Sheet extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
         boxShadow: const [
           BoxShadow(
             blurRadius: 15,
@@ -77,7 +75,7 @@ class Sheet extends StatelessWidget {
                   icon: Icon(
                     Icons.done_rounded,
                     color: Theme.of(context).colorScheme.secondary,
-                    size: Theming.ICON_SMALL,
+                    size: Consts.ICON_SMALL,
                   ),
                   label: Text('Done',
                       style: Theme.of(context).textTheme.bodyText1),
@@ -106,11 +104,11 @@ class SelectionSheet<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Sheet(
         height: fixHeight
-            ? options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50
+            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 50
             : null,
         child: ListView.builder(
           physics:
-              fixHeight ? const NeverScrollableScrollPhysics() : Config.PHYSICS,
+              fixHeight ? const NeverScrollableScrollPhysics() : Consts.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 10),
           itemBuilder: (_, index) => TwoStateField(
             title: options[index],
@@ -119,7 +117,7 @@ class SelectionSheet<T> extends StatelessWidget {
                 val ? names.add(values[index]) : names.remove(values[index]),
           ),
           itemCount: options.length,
-          itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
+          itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
         ),
         onDone: () => onDone(names),
       );
@@ -145,11 +143,11 @@ class SelectionToggleSheet<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Sheet(
         height: fixHeight
-            ? options.length * Config.MATERIAL_TAP_TARGET_SIZE + 50
+            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 50
             : null,
         child: ListView.builder(
           physics:
-              fixHeight ? const NeverScrollableScrollPhysics() : Config.PHYSICS,
+              fixHeight ? const NeverScrollableScrollPhysics() : Consts.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 10),
           itemBuilder: (_, index) => ThreeStateField(
             title: options[index],
@@ -170,7 +168,7 @@ class SelectionToggleSheet<T> extends StatelessWidget {
             },
           ),
           itemCount: options.length,
-          itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
+          itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
         ),
         onDone: () => onDone(inclusive, exclusive),
       );
@@ -196,10 +194,10 @@ class TagSelectionSheet extends StatelessWidget {
     for (int i = 0; i < tags.length; i++) {
       slivers.add(SliverToBoxAdapter(
         child: Padding(
-          padding: Config.PADDING,
+          padding: Consts.PADDING,
           child: Text(
             tags.entries.elementAt(i).key,
-            style: Theme.of(context).textTheme.headline4,
+            style: Theme.of(context).textTheme.headline1,
           ),
         ),
       ));
@@ -230,7 +228,7 @@ class TagSelectionSheet extends StatelessWidget {
           childCount: tags.entries.elementAt(i).value.length,
           semanticIndexOffset: count,
         ),
-        itemExtent: Config.MATERIAL_TAP_TARGET_SIZE,
+        itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
       ));
 
       count += tags.entries.elementAt(i).value.length;
@@ -239,7 +237,7 @@ class TagSelectionSheet extends StatelessWidget {
     return Sheet(
       height: null,
       child: CustomScrollView(
-        physics: Config.PHYSICS,
+        physics: Consts.PHYSICS,
         semanticChildCount: count,
         slivers: slivers,
       ),
@@ -262,7 +260,7 @@ class CollectionSortSheet extends StatelessWidget {
     bool desc = entrySort.index % 2 != 0;
     final options = <String>[];
     for (int i = 0; i < EntrySort.values.length; i += 2)
-      options.add(Convert.clarifyEnum(describeEnum(EntrySort.values[i]))!);
+      options.add(Convert.clarifyEnum(EntrySort.values[i].name)!);
 
     return Sheet(
       height: options.length * 40 + 58,
@@ -309,7 +307,7 @@ class MediaSortSheet extends StatelessWidget {
     bool desc = initial.index % 2 != 0;
     final options = <String>[];
     for (int i = 0; i < MediaSort.values.length; i += 2)
-      options.add(Convert.clarifyEnum(describeEnum(MediaSort.values[i]))!);
+      options.add(Convert.clarifyEnum(MediaSort.values[i].name)!);
 
     return Sheet(
       height: options.length * 40 + 58,
@@ -388,7 +386,7 @@ class _SortingState extends State<_Sorting> {
                       ? Icons.arrow_downward_rounded
                       : Icons.arrow_upward_rounded,
                   color: Theme.of(context).colorScheme.secondary,
-                  size: Theming.ICON_SMALL,
+                  size: Consts.ICON_SMALL,
                 ),
             ],
           ),

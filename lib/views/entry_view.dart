@@ -3,128 +3,195 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/entry_controller.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
-import 'package:otraku/enums/list_status.dart';
-import 'package:otraku/enums/score_format.dart';
+import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/models/settings_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/expandable_field.dart';
+import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 import 'package:otraku/widgets/fields/score_picker.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
+/// A [DraggableScrollableSheet] for entry editing
+/// Should be opened with [DragSheet.show].
 class EntryView extends StatelessWidget {
-  final int mediaId;
-  final Function(EntryModel)? callback;
+  EntryView(this.mediaId, [this.model, this.callback]);
 
-  EntryView(this.mediaId, this.callback);
+  final int mediaId;
+  final EntryModel? model;
+  final void Function(EntryModel)? callback;
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<EntryController>(
-      id: EntryController.MAIN_ID,
-      tag: mediaId.toString(),
-      builder: (entryCtrl) {
-        final model = entryCtrl.model;
+    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE
+        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2
+        : 0.0;
 
-        return Scaffold(
-          appBar: ShadowAppBar(
-            title: 'Edit',
-            actions: [_Actions(entryCtrl, callback)],
+    return GetBuilder<EntryController>(
+      id: EntryController.ID_MAIN,
+      tag: mediaId.toString(),
+      init: EntryController(mediaId, model),
+      builder: (ctrl) {
+        // This is cached to not rebuild each time the sheet is scrolled.
+        Widget? editView;
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: sidePadding,
+            right: sidePadding,
           ),
-          body: model != null
-              ? _Content(entryCtrl, Get.find<ViewerController>().settings!)
-              : const Center(child: Loader()),
+          child: DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.7,
+            builder: (context, scrollCtrl) {
+              if (editView == null)
+                editView = Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius:
+                            BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                      child: ctrl.model != null
+                          ? _EditView(ctrl, scrollCtrl)
+                          : const Center(child: Loader()),
+                    ),
+                    if (ctrl.model != null) _Buttons(ctrl, callback),
+                  ],
+                );
+
+              return editView!;
+            },
+          ),
         );
       },
     );
   }
 }
 
-class _Actions extends StatefulWidget {
-  final EntryController ctrl;
-  final Function(EntryModel)? callback;
+class _Buttons extends StatefulWidget {
+  _Buttons(this.ctrl, this.callback);
 
-  _Actions(this.ctrl, this.callback);
+  final EntryController ctrl;
+  final void Function(EntryModel)? callback;
+
   @override
-  __ActionsState createState() => __ActionsState();
+  State<_Buttons> createState() => _ButtonsState();
 }
 
-class __ActionsState extends State<_Actions> {
+class _ButtonsState extends State<_Buttons> {
   bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
     final ctrl = widget.ctrl;
-    final actions = <Widget>[];
 
-    if (ctrl.model != null) {
-      if (_loading)
-        actions.add(const Padding(padding: Config.PADDING, child: Loader()));
-      else {
-        if (ctrl.model!.entryId != null)
-          actions.add(AppBarIcon(
-            icon: Ionicons.trash_bin_outline,
-            tooltip: 'Remove',
-            onTap: () => showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Remove entry?',
-                mainAction: 'Yes',
-                secondaryAction: 'No',
-                onConfirm: () {
-                  Get.find<CollectionController>(
-                    tag: ctrl.model!.type == 'ANIME'
-                        ? CollectionController.ANIME
-                        : CollectionController.MANGA,
-                  ).removeEntry(ctrl.oldModel!);
-                  widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
-                  Navigator.of(context).pop();
-                },
+    final remove = Expanded(
+      child: ctrl.model!.status != null
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: TextButton.icon(
+                style: Theme.of(context).textButtonTheme.style!.copyWith(
+                      foregroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                label: Text('Remove'),
+                icon: Icon(Ionicons.trash_bin_outline),
+                onPressed: () => showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Remove entry?',
+                    mainAction: 'Yes',
+                    secondaryAction: 'No',
+                    onConfirm: () {
+                      Get.find<CollectionController>(
+                        tag: ctrl.model!.type == 'ANIME'
+                            ? '${Settings().id}true'
+                            : '${Settings().id}false',
+                      ).removeEntry(ctrl.oldModel!);
+                      widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
               ),
+            )
+          : const SizedBox(),
+    );
+
+    final save = Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: TextButton.icon(
+          label: Text('Save'),
+          icon: Icon(Ionicons.save_outline),
+          onPressed: () {
+            setState(() => _loading = true);
+            Get.find<CollectionController>(
+              tag: ctrl.model!.type == 'ANIME'
+                  ? '${Settings().id}true'
+                  : '${Settings().id}false',
+            ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
+              widget.callback?.call(ctrl.model!);
+              Navigator.pop(context);
+            });
+          },
+        ),
+      ),
+    );
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: Consts.filter,
+          child: Container(
+            height: MediaQuery.of(context).viewPadding.bottom + 50,
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewPadding.bottom,
             ),
-          ));
-
-        actions.add(AppBarIcon(
-            icon: Ionicons.save_outline,
-            tooltip: 'Save',
-            onTap: () {
-              setState(() => _loading = true);
-              Get.find<CollectionController>(
-                tag: ctrl.model!.type == 'ANIME'
-                    ? CollectionController.ANIME
-                    : CollectionController.MANGA,
-              ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
-                widget.callback?.call(ctrl.model!);
-                Navigator.of(context).pop();
-              });
-            }));
-      }
-    }
-
-    return Row(children: actions);
+            width: double.infinity,
+            color: Theme.of(context).cardColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: _loading
+                  ? const [Center(child: Loader())]
+                  : Settings().leftHanded
+                      ? [save, remove]
+                      : [remove, save],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
-class _Content extends StatelessWidget {
-  final EntryController entry;
-  final SettingsModel settings;
-  _Content(this.entry, this.settings);
+class _EditView extends StatelessWidget {
+  _EditView(this.ctrl, this.scrollCtrl);
+
+  final EntryController ctrl;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
-    final old = entry.oldModel!;
-    final model = entry.model!;
+    final settings = Get.find<HomeController>().siteSettings!;
+    final old = ctrl.oldModel!;
+    final model = ctrl.model!;
 
     final advancedScoring = <Widget>[];
     if (settings.advancedScoringEnabled &&
@@ -156,7 +223,7 @@ class _Content extends StatelessWidget {
 
               if (model.score != avg) {
                 model.score = avg;
-                entry.update([EntryController.SCORE_ID]);
+                ctrl.update([EntryController.ID_SCORE]);
               }
             },
           ),
@@ -168,12 +235,13 @@ class _Content extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
-        physics: Config.PHYSICS,
+        controller: scrollCtrl,
+        physics: Consts.PHYSICS,
         slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([
             GetBuilder<EntryController>(
-              id: EntryController.STATUS_ID,
+              id: EntryController.ID_STATUS,
               tag: model.mediaId.toString(),
               builder: (_) => DropDownField<ListStatus?>(
                 hint: 'Add',
@@ -190,7 +258,7 @@ class _Content extends StatelessWidget {
                       model.status == ListStatus.CURRENT &&
                       model.startedAt == null) {
                     model.startedAt = DateTime.now();
-                    entry.update([EntryController.START_DATE_ID]);
+                    ctrl.update([EntryController.ID_START_DATE]);
                     Toast.show(context, 'Start date changed');
                     return;
                   }
@@ -199,13 +267,13 @@ class _Content extends StatelessWidget {
                       model.status == ListStatus.COMPLETED &&
                       model.completedAt == null) {
                     model.completedAt = DateTime.now();
-                    entry.update([EntryController.COMPLETE_DATE_ID]);
+                    ctrl.update([EntryController.ID_COMPLETE_DATE]);
                     String text = 'Completed date changed';
 
                     if (model.progressMax != null &&
                         model.progress < model.progressMax!) {
                       model.progress = model.progressMax!;
-                      entry.update([EntryController.PROGRESS_ID]);
+                      ctrl.update([EntryController.ID_PROGRESS]);
                       text = 'Completed date & progress changed';
                     }
 
@@ -217,7 +285,7 @@ class _Content extends StatelessWidget {
             InputFieldStructure(
               title: 'Progress',
               child: GetBuilder<EntryController>(
-                id: EntryController.PROGRESS_ID,
+                id: EntryController.ID_PROGRESS,
                 tag: model.mediaId.toString(),
                 builder: (_) => NumberField(
                   value: model.progress,
@@ -233,14 +301,14 @@ class _Content extends StatelessWidget {
                       if (old.status == model.status &&
                           old.status != ListStatus.COMPLETED) {
                         model.status = ListStatus.COMPLETED;
-                        entry.update([EntryController.STATUS_ID]);
+                        ctrl.update([EntryController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.completedAt == model.completedAt &&
                           old.completedAt == null) {
                         model.completedAt = DateTime.now();
-                        entry.update([EntryController.COMPLETE_DATE_ID]);
+                        ctrl.update([EntryController.ID_COMPLETE_DATE]);
                         text = text == null
                             ? 'Completed date changed'
                             : 'Status & Completed date changed';
@@ -257,13 +325,13 @@ class _Content extends StatelessWidget {
                           (old.status == null ||
                               old.status == ListStatus.PLANNING)) {
                         model.status = ListStatus.CURRENT;
-                        entry.update([EntryController.STATUS_ID]);
+                        ctrl.update([EntryController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.startedAt == null && model.startedAt == null) {
                         model.startedAt = DateTime.now();
-                        entry.update([EntryController.START_DATE_ID]);
+                        ctrl.update([EntryController.ID_START_DATE]);
                         text = text == null
                             ? 'Start date changed'
                             : 'Status & start date changed';
@@ -298,7 +366,7 @@ class _Content extends StatelessWidget {
             child: InputFieldStructure(
               title: 'Score',
               child: GetBuilder<EntryController>(
-                id: EntryController.SCORE_ID,
+                id: EntryController.ID_SCORE,
                 tag: model.mediaId.toString(),
                 builder: (_) => ScorePicker(model),
               ),
@@ -319,7 +387,7 @@ class _Content extends StatelessWidget {
             InputFieldStructure(
               title: 'Started',
               child: GetBuilder<EntryController>(
-                id: EntryController.START_DATE_ID,
+                id: EntryController.ID_START_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.startedAt,
@@ -330,7 +398,7 @@ class _Content extends StatelessWidget {
 
                     if (old.status == null && model.status == null) {
                       model.status = ListStatus.CURRENT;
-                      entry.update([EntryController.STATUS_ID]);
+                      ctrl.update([EntryController.ID_STATUS]);
                       Toast.show(context, 'Status changed');
                     }
                   },
@@ -341,7 +409,7 @@ class _Content extends StatelessWidget {
             InputFieldStructure(
               title: 'Completed',
               child: GetBuilder<EntryController>(
-                id: EntryController.COMPLETE_DATE_ID,
+                id: EntryController.ID_COMPLETE_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.completedAt,
@@ -354,13 +422,13 @@ class _Content extends StatelessWidget {
                         old.status != ListStatus.REPEATING &&
                         old.status == model.status) {
                       model.status = ListStatus.COMPLETED;
-                      entry.update([EntryController.STATUS_ID]);
+                      ctrl.update([EntryController.ID_STATUS]);
                       String text = 'Status changed';
 
                       if (model.progressMax != null &&
                           model.progress < model.progressMax!) {
                         model.progress = model.progressMax!;
-                        entry.update([EntryController.PROGRESS_ID]);
+                        ctrl.update([EntryController.ID_PROGRESS]);
                         text = 'Status & progress changed';
                       }
 
@@ -374,7 +442,7 @@ class _Content extends StatelessWidget {
           ], minWidth: 165),
           ...advancedScoring,
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          _Label('Additional Settings'),
+          const _Label('Additional Settings'),
           _CheckBoxGrid(
             {
               'Private': model.private,
@@ -386,12 +454,15 @@ class _Content extends StatelessWidget {
           ),
           if (model.customLists.isNotEmpty) ...[
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
-            _Label('Custom Lists'),
+            const _Label('Custom Lists'),
             _CheckBoxGrid(
               model.customLists,
               (key, val) => model.customLists[key] = val,
             ),
           ],
+          SliverToBoxAdapter(
+            child: SizedBox(height: NavLayout.offset(context)),
+          ),
         ],
       ),
     );
@@ -399,9 +470,9 @@ class _Content extends StatelessWidget {
 }
 
 class _Label extends StatelessWidget {
-  final String label;
+  const _Label(this.label);
 
-  _Label(this.label);
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -412,10 +483,10 @@ class _Label extends StatelessWidget {
 }
 
 class _FieldGrid extends StatelessWidget {
+  _FieldGrid(this.list, {required this.minWidth});
+
   final List<Widget> list;
   final double minWidth;
-
-  _FieldGrid(this.list, {required this.minWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -430,10 +501,10 @@ class _FieldGrid extends StatelessWidget {
 }
 
 class _CheckBoxGrid extends StatelessWidget {
+  _CheckBoxGrid(this.map, this.onChanged);
+
   final Map<String, bool> map;
   final Function(String, bool) onChanged;
-
-  _CheckBoxGrid(this.map, this.onChanged);
 
   @override
   Widget build(BuildContext context) {
@@ -451,7 +522,7 @@ class _CheckBoxGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 180,
         mainAxisSpacing: 0,
-        height: Config.MATERIAL_TAP_TARGET_SIZE,
+        height: Consts.MATERIAL_TAP_TARGET_SIZE,
       ),
     );
   }

@@ -1,148 +1,13 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class NotificationsController extends OverscrollController {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _notificationQuery = r'''
-    query ViewerData($page: Int = 1, $filter: [NotificationType]) {
-      Viewer {unreadNotificationCount}
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        notifications(type_in: $filter, resetNotificationCount: true) {
-          ... on FollowingNotification {
-            id
-            type
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityMessageNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityReplyNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityReplySubscribedNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentReplyNotification {
-            id
-            type
-            context
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityMentionNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentMentionNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentSubscribedNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityLikeNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityReplyLikeNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadLikeNotification {
-            id
-            type
-            thread {id title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentLikeNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on RelatedMediaAdditionNotification {
-            id
-            type
-            media {id type title {userPreferred} coverImage {large}}
-            createdAt
-          }
-          ... on MediaDataChangeNotification {
-            id
-            type
-            reason
-            media {id type title {userPreferred} coverImage {large}}
-            createdAt
-          }
-          ... on MediaMergeNotification {
-            id
-            type
-            reason
-            deletedMediaTitles
-            media {id type title {userPreferred} coverImage {large}}
-            createdAt
-          }
-          ... on MediaDeletionNotification {
-            id
-            type
-            reason
-            deletedMediaTitle
-            createdAt
-          }
-          ... on AiringNotification {
-            id
-            type
-            episode
-            media {id type title {userPreferred} coverImage {large}}
-            createdAt
-          }
-        }
-      }
-    }
-  ''';
+class NotificationsController extends ScrollingController {
+  static const ID_LIST = 0;
 
   static const _filters = const [
     null,
@@ -165,35 +30,29 @@ class NotificationsController extends OverscrollController {
     const ['FOLLOWING'],
   ];
 
-  // ***************************************************************************
-  // DATA & GETTERS & SETTERS
-  // ***************************************************************************
-
   int _unreadCount = 0;
   int _filter = 0;
   final _entries = PageModel<NotificationModel>();
 
-  @override
-  bool get hasNextPage => _entries.hasNextPage;
   int get unreadCount => _unreadCount;
   int get filter => _filter;
   set filter(int val) {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
-    fetch();
+    _fetch();
     scrollUpTo(0);
   }
 
   List<NotificationModel> get entries => _entries.items;
 
-  // ***************************************************************************
-  // FETCHING
-  // ***************************************************************************
-
-  Future<void> fetch() async {
+  Future<void> _fetch() async {
     final data = await Client.request(
-      _notificationQuery,
-      _filter != 0 ? {'filter': _filters[_filter]} : null,
+      GqlQuery.notifications,
+      {
+        'withCount': true,
+        'resetCount': true,
+        if (_filter != 0) 'filter': _filters[_filter],
+      },
     );
     if (data == null) return;
 
@@ -206,14 +65,16 @@ class NotificationsController extends OverscrollController {
       } catch (_) {}
 
     _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
-    Get.find<ViewerController>().nullifyUnread();
-    update();
+    Get.find<HomeController>().nullifyUnread();
+    update([ID_LIST]);
   }
 
   @override
   Future<void> fetchPage() async {
+    if (!_entries.hasNextPage) return;
+
     Map<String, dynamic>? data = await Client.request(
-      _notificationQuery,
+      GqlQuery.notifications,
       {
         'page': _entries.nextPage,
         if (_filter != 0) 'filter': _filters[_filter],
@@ -224,16 +85,16 @@ class NotificationsController extends OverscrollController {
     _unreadCount = data['Viewer']['unreadNotificationCount'];
     data = data['Page'];
 
-    final List<NotificationModel> nl = [];
+    final nl = <NotificationModel>[];
     for (final n in data!['notifications']) nl.add(NotificationModel(n));
 
     _entries.append(nl, data['pageInfo']['hasNextPage']);
-    update();
+    update([ID_LIST]);
   }
 
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    _fetch();
   }
 }

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/utils/background_handler.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 abstract class Client {
@@ -12,79 +14,118 @@ abstract class Client {
 
   static const _idQuery = 'query Id {Viewer {id}}';
 
+  //
+  //
+  //
+  // LEGACY CODE. To be removed after the next update.
   static const _TOKEN_KEY = 'accessToken1';
-  static const _ID_KEY = 'viewerId1';
-  static const _EXPIRATION_KEY = 'expirationMillis1';
+  //
+  //
+  //
+
+  static const _HEADERS_AUTH_KEY = 'Authorization';
+  static const _TOKEN_0 = 'token0';
+  static const _TOKEN_1 = 'token1';
 
   static final Map<String, String> _headers = {
-    'Authorization': 'Bearer $_accessToken',
     'Accept': 'application/json',
     'Content-type': 'application/json',
   };
 
   static String? _accessToken;
-  static int? _viewerId;
-  static int? get viewerId => _viewerId;
 
-  // Sets new credentials, when acquiring a token.
-  static setCredentials(String token, int expiration) {
-    _accessToken = token;
-    FlutterSecureStorage().write(key: _TOKEN_KEY, value: _accessToken);
-    Config.storage.write(
-      _EXPIRATION_KEY,
-      DateTime.now()
-          .add(Duration(seconds: expiration, days: -1))
-          .millisecondsSinceEpoch,
-    );
+  static set _token(String? v) {
+    _accessToken = v;
+    v != null
+        ? _headers[_HEADERS_AUTH_KEY] = 'Bearer $_accessToken'
+        : _headers.remove(_HEADERS_AUTH_KEY);
   }
 
-  // Verifies credentials.
-  static Future<bool> logIn() async {
+  // Save credentials to an account.
+  static Future<void> register(
+    int account,
+    String token,
+    int expiration,
+  ) async {
+    if (account < 0 || account > 1) return;
+
+    await FlutterSecureStorage().write(
+      key: account == 0 ? _TOKEN_0 : _TOKEN_1,
+      value: token,
+    );
+
+    expiration = DateTime.now()
+        .add(Duration(seconds: expiration, days: -1))
+        .millisecondsSinceEpoch;
+
+    Settings().setExpirationOf(account, expiration);
+  }
+
+  // Try loading a saved account.
+  static Future<bool> logIn(int account) async {
+    //
+    //
+    //
+    // LEGACY CODE. To be removed after the next update.
+    FlutterSecureStorage().delete(key: _TOKEN_KEY);
+    //
+    //
+    //
+    if (account < 0 || account > 1) return false;
+
     if (_accessToken == null) {
       // Check the token's expiration date.
-      final int? millis = Config.storage.read(_EXPIRATION_KEY);
-      if (millis != null) {
-        final date = DateTime.fromMillisecondsSinceEpoch(millis);
+      if (Settings().expirationOf(account) != null) {
+        final date = DateTime.fromMillisecondsSinceEpoch(
+          Settings().expirationOf(account)!,
+        );
         if (DateTime.now().compareTo(date) >= 0) {
-          FlutterSecureStorage().deleteAll();
-          Config.storage.remove(_ID_KEY);
-          Config.storage.remove(_EXPIRATION_KEY);
+          removeAccount(account);
           return false;
         }
       }
 
-      // Try to acquire the token from the secure storage.
-      _accessToken = await FlutterSecureStorage().read(key: _TOKEN_KEY);
+      // Try to acquire the token from the storage.
+      _token = await FlutterSecureStorage()
+          .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
+
       if (_accessToken == null) return false;
     }
 
-    // Try to acquire the viewer's id from the storage.
-    if (_viewerId == null) _viewerId = Config.storage.read(_ID_KEY);
-
     // Fetch the viewer's id, if needed.
-    if (_viewerId == null) {
+    if (Settings().idOf(account) == null) {
       final data = await request(_idQuery);
-      if (data == null) return false;
-      _viewerId = data['Viewer']['id'];
-      Config.storage.write(_ID_KEY, _viewerId);
+      Settings().setIdOf(account, data?['Viewer']?['id']);
+      if (Settings().idOf(account) == null) {
+        _token = null;
+        return false;
+      }
     }
 
     return true;
   }
 
-  // Clears all data and logs out.
+  // Log out and show available accounts.
   static Future<void> logOut() async {
-    FlutterSecureStorage().deleteAll();
-    Config.storage.erase();
-    _accessToken = null;
-    _viewerId = null;
-    Navigation.it.setBasePage(Navigation.authRoute);
+    _token = null;
+    Settings().selectedAccount = null;
+    BackgroundHandler.clearNotifications();
+    final context = RouteArg.navKey.currentContext;
+    if (context == null) return;
+    Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
   }
 
-  // The app needs both the accessToken and the viewer id.
-  static bool loggedIn() => _accessToken != null && _viewerId != null;
+  // Remove a saved account.
+  static Future<void> removeAccount(int account) async {
+    Settings().setIdOf(account, null);
+    Settings().setExpirationOf(account, null);
+    await FlutterSecureStorage()
+        .delete(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
+  }
 
-  // Sends a request to the site.
+  static bool loggedIn() => _accessToken != null;
+
+  // Send a request to the site.
   static Future<Map<String, dynamic>?> request(
     String query, [
     Map<String, dynamic>? variables,
@@ -115,7 +156,6 @@ abstract class Client {
           .toList();
 
       _handleErr(apiErr: messages);
-
       return null;
     }
 
@@ -129,7 +169,7 @@ abstract class Client {
   }) {
     assert(ioErr != null || apiErr != null);
 
-    final context = Navigation.it.ctx;
+    final context = RouteArg.navKey.currentContext;
     if (context == null) return;
 
     if (ioErr != null) {
@@ -150,7 +190,7 @@ abstract class Client {
     if (apiErr != null &&
         (apiErr.contains('Unauthorized.') ||
             apiErr.contains('Invalid token'))) {
-      Navigation.it.setBasePage(Navigation.authRoute);
+      Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
       return;
     }
 

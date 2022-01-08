@@ -1,9 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/viewer_controller.dart';
+import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/entry_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 
 class ScorePicker extends StatelessWidget {
@@ -12,14 +12,14 @@ class ScorePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    switch (describeEnum(Get.find<ViewerController>().settings!.scoreFormat)) {
-      case 'POINT_3':
+    switch (Get.find<HomeController>().siteSettings!.scoreFormat) {
+      case ScoreFormat.POINT_3:
         return _SmileyScorePicker(data);
-      case 'POINT_5':
+      case ScoreFormat.POINT_5:
         return _StarScorePicker(data);
-      case 'POINT_10':
+      case ScoreFormat.POINT_10:
         return _TenScorePicker(data);
-      case 'POINT_10_DECIMAL':
+      case ScoreFormat.POINT_10_DECIMAL:
         return _TenDecimalScorePicker(data);
       default:
         return _HundredScorePicker(data);
@@ -55,7 +55,7 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -97,7 +97,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Config.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RADIUS,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

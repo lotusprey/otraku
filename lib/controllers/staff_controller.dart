@@ -1,93 +1,21 @@
-import 'package:flutter/foundation.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/models/connection_model.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class StaffController extends OverscrollController {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _staffQuery = r'''
-    query Staff($id: Int, $sort: [MediaSort], $characterPage: Int = 1, $staffPage: Int = 1, 
-        $onList: Boolean, $withPerson: Boolean = false, $withCharacters: Boolean = false, $withStaff: Boolean = false) {
-      Staff(id: $id) {
-        ...person @include(if: $withPerson)
-        characterMedia(page: $characterPage, sort: $sort, onList: $onList) @include(if: $withCharacters) {
-          pageInfo {hasNextPage}
-          edges {
-            characterRole
-            node {
-              id
-              type
-              title {userPreferred}
-              coverImage {large}
-              format
-            }
-            characters {
-              id
-              name {userPreferred}
-              image {large}
-            }
-          }
-        }
-        staffMedia(page: $staffPage, sort: $sort, onList: $onList) @include(if: $withStaff) {
-          pageInfo {hasNextPage}
-          edges {
-            staffRole
-            node {
-              id
-              type
-              title {userPreferred}
-              coverImage {large}
-            }
-          }
-        }
-      }
-    }
-    fragment person on Staff {
-      id
-      name{userPreferred native alternative}
-      image{large}
-      description(asHtml: true)
-      languageV2
-      primaryOccupations
-      dateOfBirth{year month day}
-      dateOfDeath{year month day}
-      gender
-      age
-      yearsActive
-      homeTown
-      favourites 
-      isFavourite
-      isFavouriteBlocked
-    }
-  ''';
-
-  static const _toggleFavouriteMutation = r'''
-    mutation ToggleFavouriteStaff($id: Int) {
-      ToggleFavourite(staffId: $id) {
-        staff(page: 1, perPage: 1) {nodes{isFavourite}}
-      }
-    }
-  ''';
-
-  // GetBuilder id.
+class StaffController extends ScrollingController {
+  // GetBuilder ids.
   static const ID_MAIN = 0;
   static const ID_MEDIA = 1;
 
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
-  final int id;
   StaffController(this.id);
 
+  final int id;
   StaffModel? _model;
   final _characters = PageModel<ConnectionModel>();
   final _roles = PageModel<ConnectionModel>();
@@ -117,32 +45,20 @@ class StaffController extends OverscrollController {
     refetch();
   }
 
-  @override
-  bool get hasNextPage =>
-      _onCharacters ? _characters.hasNextPage : _roles.hasNextPage;
-
-  // ***************************************************************************
-  // FETCHING
-  // ***************************************************************************
-
-  Future<void> fetch() async {
-    if (_model != null) return;
-
-    final body = await Client.request(_staffQuery, {
+  Future<void> _fetch() async {
+    final data = await Client.request(GqlQuery.staff, {
       'id': id,
-      'withPerson': true,
+      'withMain': true,
       'withCharacters': true,
       'withStaff': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
-    if (body == null) return;
+    if (data == null) return;
 
-    final data = body['Staff'];
-
-    _model = StaffModel(data);
-    _initCharacters(data, false);
-    _initRoles(data, false);
+    _model = StaffModel(data['Staff']);
+    _initCharacters(data['Staff'], false);
+    _initRoles(data['Staff'], false);
 
     update([ID_MAIN, ID_MEDIA]);
   }
@@ -150,12 +66,12 @@ class StaffController extends OverscrollController {
   Future<void> refetch() async {
     scrollUpTo(0);
 
-    final data = await Client.request(_staffQuery, {
+    final data = await Client.request(GqlQuery.staff, {
       'id': id,
       'withCharacters': true,
       'withStaff': true,
       'onList': _onList,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
     });
     if (data == null) return;
 
@@ -167,13 +83,16 @@ class StaffController extends OverscrollController {
 
   @override
   Future<void> fetchPage() async {
-    final data = await Client.request(_staffQuery, {
+    if (_onCharacters && !_characters.hasNextPage) return;
+    if (!_onCharacters && !_roles.hasNextPage) return;
+
+    final data = await Client.request(GqlQuery.staff, {
       'id': id,
       'withCharacters': _onCharacters,
       'withStaff': !_onCharacters,
       'characterPage': _characters.nextPage,
       'staffPage': _roles.nextPage,
-      'sort': describeEnum(_sort),
+      'sort': _sort.name,
       'onList': _onList,
     });
     if (data == null) return;
@@ -187,14 +106,11 @@ class StaffController extends OverscrollController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(_toggleFavouriteMutation, {'id': id});
+    final data =
+        await Client.request(GqlMutation.toggleFavourite, {'staff': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }
-
-  // ***************************************************************************
-  // HELPER FUNCTIONS
-  // ***************************************************************************
 
   void _initCharacters(Map<String, dynamic> data, bool clear) {
     if (clear) _characters.clear();
@@ -213,7 +129,7 @@ class StaffController extends OverscrollController {
                 ConnectionModel(
                   id: connection['node']['id'],
                   title: connection['node']['title']['userPreferred'],
-                  imageUrl: connection['node']['coverImage']['large'],
+                  imageUrl: connection['node']['coverImage']['extraLarge'],
                   subtitle: Convert.clarifyEnum(connection['node']['format']),
                   type: connection['node']['type'] == 'ANIME'
                       ? Explorable.anime
@@ -235,7 +151,7 @@ class StaffController extends OverscrollController {
       connections.add(ConnectionModel(
         id: connection['node']['id'],
         title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['large'],
+        imageUrl: connection['node']['coverImage']['extraLarge'],
         type: connection['node']['type'] == 'ANIME'
             ? Explorable.anime
             : Explorable.manga,
@@ -251,6 +167,6 @@ class StaffController extends OverscrollController {
   @override
   void onInit() {
     super.onInit();
-    fetch();
+    if (_model == null) _fetch();
   }
 }

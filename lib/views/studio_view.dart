@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/studio_controller.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -15,20 +14,25 @@ import 'package:otraku/widgets/overlays/toast.dart';
 
 class StudioView extends StatelessWidget {
   final int id;
-  final String name;
+  final String? name;
 
   StudioView(this.id, this.name);
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<StudioController>(tag: id.toString());
+    final sidePadding =
+        MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE + 20
+            ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2.0
+            : 10.0;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: Obx(
-          () => CustomScrollView(
-            physics: Config.PHYSICS,
+        child: GetBuilder<StudioController>(
+          init: StudioController(id),
+          tag: id.toString(),
+          builder: (ctrl) => CustomScrollView(
+            physics: Consts.PHYSICS,
             controller: ctrl.scrollCtrl,
             semanticChildCount: ctrl.media.mediaCount,
             slivers: [
@@ -38,22 +42,23 @@ class StudioView extends StatelessWidget {
                 favourites: ctrl.model?.favourites,
                 text: ctrl.model?.name,
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: Config.PADDING,
-                  child: GestureDetector(
-                    onTap: () => Toast.copy(context, name),
-                    child: Hero(
-                      tag: id,
-                      child: Text(
-                        name,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headline2,
+              if (name != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: Consts.PADDING,
+                    child: GestureDetector(
+                      onTap: () => Toast.copy(context, name!),
+                      child: Hero(
+                        tag: id,
+                        child: Text(
+                          name!,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
               if (ctrl.model != null) ...[
                 SliverShadowAppBar([
                   const Spacer(),
@@ -102,10 +107,13 @@ class StudioView extends StatelessWidget {
                   for (int i = 0; i < ctrl.media.names.length; i++) ...[
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: Config.PADDING,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: sidePadding,
+                          vertical: 10,
+                        ),
                         child: Text(
                           ctrl.media.names[i],
-                          style: Theme.of(context).textTheme.headline3,
+                          style: Theme.of(context).textTheme.headline1,
                         ),
                       ),
                     ),

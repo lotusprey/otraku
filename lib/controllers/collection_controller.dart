@@ -1,104 +1,16 @@
 import 'dart:math';
 
-import 'package:otraku/enums/entry_sort.dart';
-import 'package:otraku/enums/score_format.dart';
-import 'package:otraku/utils/config.dart';
-import 'package:otraku/utils/convert.dart';
+import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
-import 'package:otraku/utils/overscroll_controller.dart';
+import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 
-class CollectionController extends OverscrollController implements Filterable {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _collectionQuery = r'''
-    query Collection($userId: Int, $type: MediaType) {
-      MediaListCollection(userId: $userId, type: $type) {
-        lists {
-          name
-          isCustomList
-          isSplitCompletedList
-          status
-          entries {...data}
-        }
-        user {
-          mediaListOptions {
-            rowOrder
-            scoreFormat
-            animeList {sectionOrder customLists splitCompletedSectionByFormat}
-            mangaList {sectionOrder customLists splitCompletedSectionByFormat}
-          }
-        }
-      }
-    }
-  '''
-      '''$_fragment''';
-
-  static const _updateEntryMutation = r'''
-    mutation UpdateEntry($mediaId: Int, $status: MediaListStatus,
-        $score: Float, $progress: Int, $progressVolumes: Int, $repeat: Int,
-        $private: Boolean, $notes: String, $hiddenFromStatusLists: Boolean,
-        $customLists: [String], $startedAt: FuzzyDateInput, $completedAt: FuzzyDateInput,
-        $advancedScores: [Float]) {
-      SaveMediaListEntry(mediaId: $mediaId, status: $status, score: $score,
-        progress: $progress, progressVolumes: $progressVolumes, repeat: $repeat,
-        private: $private, notes: $notes, hiddenFromStatusLists: $hiddenFromStatusLists,
-        customLists: $customLists, startedAt: $startedAt, completedAt: $completedAt,
-        advancedScores: $advancedScores) {...data}
-    }
-  '''
-      '''$_fragment''';
-
-  static const _updateProgressMutation = r'''
-    mutation UpdateProgress($mediaId: Int, $progress: Int) {
-      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {...data customLists}
-    }
-  '''
-      '''$_fragment''';
-
-  static const _fragment = r'''
-    fragment data on MediaList {
-      id
-      mediaId
-      status
-      score
-      progress
-      progressVolumes
-      repeat
-      notes
-      startedAt {year month day}
-      completedAt {year month day}
-      updatedAt
-      createdAt
-      media {
-        title {userPreferred}
-        format
-        status(version: 2)
-        startDate {year month day}
-        endDate {year month day}
-        episodes
-        chapters
-        volumes
-        coverImage {extraLarge}
-        nextAiringEpisode {episode airingAt}
-        genres
-        countryOfOrigin
-      }
-    }
-  ''';
-
-  static const _removeEntryMutation = r'''
-    mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
-  ''';
-
-  static const ANIME = 'anime';
-  static const MANGA = 'manga';
-
+class CollectionController extends ScrollingController implements Filterable {
   // GetBuilder ids.
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
@@ -119,22 +31,29 @@ class CollectionController extends OverscrollController implements Filterable {
   final _customListNames = <String>[];
   int _listIndex = 0;
   bool _isLoading = true;
+  bool _searchMode = false;
   ScoreFormat? _scoreFormat;
 
   // ***************************************************************************
   // GETTERS & SETTERS
   // ***************************************************************************
 
-  @override
-  bool get hasNextPage => false;
-
   int get listIndex => _listIndex;
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
+  bool get searchMode => _searchMode;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
   List<String> get customListNames => [..._customListNames];
+
+  set searchMode(bool v) {
+    if (_searchMode == v) return;
+    _searchMode = v;
+    update([ID_HEAD]);
+    if (_filters[Filterable.SEARCH] != null)
+      setFilterWithKey(Filterable.SEARCH, update: true);
+  }
 
   List<String> get listNames {
     final n = <String>[];
@@ -182,7 +101,7 @@ class CollectionController extends OverscrollController implements Filterable {
     if (_lists.isEmpty) _updateLoading(true);
 
     Map<String, dynamic>? data = await Client.request(
-      _collectionQuery,
+      GqlQuery.collection,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
@@ -199,16 +118,12 @@ class CollectionController extends OverscrollController implements Filterable {
     final bool splitCompleted =
         metaData['splitCompletedSectionByFormat'] ?? false;
 
-    _scoreFormat = Convert.strToEnum(
-          data['user']['mediaListOptions']['scoreFormat'],
-          ScoreFormat.values,
-        ) ??
-        ScoreFormat.POINT_10_DECIMAL;
-
-    final key = ofAnime ? Config.DEFAULT_ANIME_SORT : Config.DEFAULT_MANGA_SORT;
-    _filters[Filterable.SORT] = EntrySort.values.elementAt(
-      Config.storage.read(key) ?? 0,
+    _scoreFormat = ScoreFormat.values.byName(
+      data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
     );
+
+    _filters[Filterable.SORT] =
+        ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
 
     _customListNames.clear();
     _customListNames.addAll(List.from(metaData['customLists']));
@@ -240,12 +155,10 @@ class CollectionController extends OverscrollController implements Filterable {
     return _fetch();
   }
 
-  @override
-  Future<void> fetchPage() async {}
-
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
     // Update database item.
-    final data = await Client.request(_updateEntryMutation, newEntry.toMap());
+    final data =
+        await Client.request(GqlMutation.updateEntry, newEntry.toMap());
     if (data == null) return;
 
     final entry = ListEntryModel(data['SaveMediaListEntry']);
@@ -335,7 +248,7 @@ class CollectionController extends OverscrollController implements Filterable {
 
     // Update database item.
     final data = await Client.request(
-      _updateProgressMutation,
+      GqlMutation.updateProgress,
       {'mediaId': model.mediaId, 'progress': model.progress + 1},
     );
     if (data == null) return;
@@ -398,8 +311,10 @@ class CollectionController extends OverscrollController implements Filterable {
 
   Future<void> removeEntry(EntryModel entry) async {
     // Update database item.
-    final data =
-        await Client.request(_removeEntryMutation, {'entryId': entry.entryId});
+    final data = await Client.request(
+      GqlMutation.removeEntry,
+      {'entryId': entry.entryId},
+    );
 
     if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
       return;

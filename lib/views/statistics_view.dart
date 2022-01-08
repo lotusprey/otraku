@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -20,12 +20,14 @@ class StatisticsView extends StatelessWidget {
     final keyManga = UniqueKey();
 
     return GetBuilder<StatisticsController>(
+      init: StatisticsController(id),
       id: StatisticsController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {
         return NavLayout(
-          onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
           index: ctrl.onAnime ? 0 : 1,
+          onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
+          onSame: (_) => ctrl.scrollUpTo(0),
           appBar: ShadowAppBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
@@ -34,16 +36,17 @@ class StatisticsView extends StatelessWidget {
             'Manga': Ionicons.bookmark_outline,
           },
           child: ListView(
+            controller: ctrl.scrollCtrl,
             key: ctrl.onAnime ? keyAnime : keyManga,
             padding:
                 EdgeInsets.only(top: 10, bottom: NavLayout.offset(context)),
-            physics: Config.PHYSICS,
+            physics: Consts.PHYSICS,
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 10),
                 child: Text(
                   'Details',
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline3,
                 ),
               ),
               _Details(ctrl),
@@ -85,7 +88,7 @@ class StatisticsView extends StatelessWidget {
                     stats: ctrl.model.lengths,
                     onAnime: ctrl.onAnime,
                     chartTab: ctrl.lengthChartTab,
-                    barWidth: 65,
+                    barWidth: 50,
                   ),
                 ),
               ],
@@ -154,13 +157,13 @@ class _Details extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
-      padding: Config.PADDING,
+      padding: Consts.PADDING,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       itemBuilder: (_, i) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          borderRadius: Config.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RADIUS,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
@@ -211,7 +214,7 @@ class _BarChart extends StatelessWidget {
     else if (chartTab == StatisticsController.BY_MEAN_SCORE)
       values = stats.map((s) => s.meanScore).toList();
     else if (onAnime)
-      values = stats.map((s) => s.minutesWatched).toList();
+      values = stats.map((s) => s.hoursWatched).toList();
     else
       values = stats.map((s) => s.chaptersRead).toList();
 

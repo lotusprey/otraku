@@ -1,13 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/routing/navigation.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/enums/media_sort.dart';
+import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
@@ -67,15 +66,15 @@ class MediaInfoView {
       if (model.description.isNotEmpty)
         SliverToBoxAdapter(
           child: Padding(
-            padding: Config.PADDING,
+            padding: Consts.PADDING,
             child: InputFieldStructure(
               title: 'Description',
               child: GestureDetector(
                 child: Container(
-                  padding: Config.PADDING,
+                  padding: Consts.PADDING,
                   decoration: BoxDecoration(
                     color: Theme.of(ctx).colorScheme.surface,
-                    borderRadius: Config.BORDER_RADIUS,
+                    borderRadius: Consts.BORDER_RADIUS,
                   ),
                   child: Text(
                     model.description,
@@ -105,7 +104,7 @@ class MediaInfoView {
             (_, i) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
                 color: Theme.of(ctx).colorScheme.surface,
               ),
               child: InputFieldStructure(
@@ -126,7 +125,7 @@ class MediaInfoView {
             explorable.clearAllFilters(update: false);
             explorable.setFilterWithKey(
               Filterable.SORT,
-              value: describeEnum(MediaSort.TRENDING_DESC),
+              value: MediaSort.TRENDING_DESC.name,
             );
             explorable.setFilterWithKey(
               Filterable.GENRE_IN,
@@ -134,15 +133,16 @@ class MediaInfoView {
             );
             explorable.type = model.type;
             explorable.search = '';
-            Config.homeIndex = HomeView.EXPLORE;
-            Navigation.it.popToFirst();
+            Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+            Navigator.popUntil(ctx, (r) => r.isFirst);
           },
         ),
       if (model.studios.isNotEmpty)
         _ScrollCards(
           title: 'Studios',
           items: model.studios.keys.toList(),
-          onTap: (index) => ExploreIndexer.openPage(
+          onTap: (index) => ExploreIndexer.openView(
+            ctx: ctx,
             id: model.studios[model.studios.keys.elementAt(index)]!,
             imageUrl: model.studios.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -152,7 +152,8 @@ class MediaInfoView {
         _ScrollCards(
           title: 'Producers',
           items: model.producers.keys.toList(),
-          onTap: (index) => ExploreIndexer.openPage(
+          onTap: (index) => ExploreIndexer.openView(
+            ctx: ctx,
             id: model.producers[model.producers.keys.elementAt(index)]!,
             imageUrl: model.producers.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -224,16 +225,16 @@ class _ScrollCards extends StatelessWidget {
               height: 40,
               child: ListView.builder(
                 padding: const EdgeInsets.only(left: 10),
-                physics: Config.PHYSICS,
+                physics: Consts.PHYSICS,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, index) => GestureDetector(
                   onTap: () => onTap(index),
                   onLongPress: () => Toast.copy(context, items[index]),
                   child: Container(
                     margin: const EdgeInsets.only(right: 10),
-                    padding: Config.PADDING,
+                    padding: Consts.PADDING,
                     decoration: BoxDecoration(
-                      borderRadius: Config.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RADIUS,
                       color: Theme.of(context).colorScheme.surface,
                     ),
                     child: Text(items[index]),
@@ -260,19 +261,19 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Config.MATERIAL_TAP_TARGET_SIZE + 10,
+            height: Consts.MATERIAL_TAP_TARGET_SIZE + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  borderRadius: Config.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RADIUS,
                   color: Theme.of(context).colorScheme.surface,
                 ),
                 child: SingleChildScrollView(
-                  padding: Config.PADDING,
+                  padding: Consts.PADDING,
                   scrollDirection: Axis.horizontal,
-                  physics: Config.PHYSICS,
+                  physics: Consts.PHYSICS,
                   child: Center(child: Text(titles[i])),
                 ),
               ),
@@ -322,7 +323,7 @@ class __TagsState extends State<_Tags> {
             explorable.clearAllFilters(update: false);
             explorable.setFilterWithKey(
               Filterable.SORT,
-              value: describeEnum(MediaSort.TRENDING_DESC),
+              value: MediaSort.TRENDING_DESC.name,
             );
             explorable.setFilterWithKey(
               Filterable.TAG_IN,
@@ -330,8 +331,8 @@ class __TagsState extends State<_Tags> {
             );
             explorable.type = ctrl.model!.info.type;
             explorable.search = '';
-            Config.homeIndex = HomeView.EXPLORE;
-            Navigation.it.popToFirst();
+            Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+            Navigator.popUntil(context, (r) => r.isFirst);
           },
           onLongPress: () => showPopUp(
             context,
@@ -340,7 +341,7 @@ class __TagsState extends State<_Tags> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
               color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
@@ -398,7 +399,7 @@ class __TagsState extends State<_Tags> {
               explorable.clearAllFilters(update: false);
               explorable.setFilterWithKey(
                 Filterable.SORT,
-                value: describeEnum(MediaSort.TRENDING_DESC),
+                value: MediaSort.TRENDING_DESC.name,
               );
               explorable.setFilterWithKey(
                 Filterable.TAG_IN,
@@ -406,8 +407,8 @@ class __TagsState extends State<_Tags> {
               );
               explorable.type = ctrl.model!.info.type;
               explorable.search = '';
-              Config.homeIndex = HomeView.EXPLORE;
-              Navigation.it.popToFirst();
+              Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+              Navigator.popUntil(context, (r) => r.isFirst);
             },
             onLongPress: () => showPopUp(
               context,
@@ -416,7 +417,7 @@ class __TagsState extends State<_Tags> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Config.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RADIUS,
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Row(
@@ -447,7 +448,7 @@ class __TagsState extends State<_Tags> {
       padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Config.MATERIAL_TAP_TARGET_SIZE,
+          height: Consts.MATERIAL_TAP_TARGET_SIZE,
           minWidth: 175,
         ),
         delegate: delegate,

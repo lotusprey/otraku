@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
@@ -10,6 +11,7 @@ class NavLayout extends StatelessWidget {
     required this.child,
     required this.items,
     required this.onChanged,
+    required this.onSame,
     this.index = 0,
     this.trySubtab,
     this.floating,
@@ -19,6 +21,7 @@ class NavLayout extends StatelessWidget {
   final Widget child;
   final Map<String, IconData> items;
   final void Function(int) onChanged;
+  final void Function(int) onSame;
   final int index;
   final Widget? floating;
   final ShadowAppBar? appBar;
@@ -60,14 +63,13 @@ class NavLayout extends StatelessWidget {
       extendBody: true,
       appBar: appBar,
       floatingActionButton: floating,
-      floatingActionButtonLocation:
-          (Config.storage.read(Config.LEFT_HANDED) ?? false)
-              ? FloatingActionButtonLocation.startFloat
-              : FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: Settings().leftHanded
+          ? FloatingActionButtonLocation.startFloat
+          : FloatingActionButtonLocation.endFloat,
       body: SafeArea(bottom: false, child: body),
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(
-          filter: Config.filter,
+          filter: Consts.filter,
           child: Container(
             height: MediaQuery.of(context).viewPadding.bottom + 50,
             padding: EdgeInsets.only(
@@ -81,7 +83,10 @@ class NavLayout extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      if (i != index) onChanged(i);
+                      if (i != index)
+                        onChanged(i);
+                      else
+                        onSame(i);
                     },
                     child: SizedBox(
                       height: double.infinity,

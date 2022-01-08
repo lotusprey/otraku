@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_review_model.dart';
-import 'package:otraku/utils/config.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/enums/explorable.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -68,7 +67,7 @@ class _ReviewGrid extends StatelessWidget {
       );
 
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
           (_, i) => Column(
@@ -83,7 +82,7 @@ class _ReviewGrid extends StatelessWidget {
                     Hero(
                       tag: items[i].userId,
                       child: ClipRRect(
-                        borderRadius: Config.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RADIUS,
                         child: FadeImage(
                           items[i].avatar,
                           height: 50,
@@ -104,10 +103,10 @@ class _ReviewGrid extends StatelessWidget {
                   explorable: Explorable.review,
                   child: Container(
                     width: double.infinity,
-                    padding: Config.PADDING,
+                    padding: Consts.PADDING,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      borderRadius: Config.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RADIUS,
                     ),
                     child: Text(
                       items[i].summary,
@@ -137,10 +136,10 @@ class _Ranks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 5, left: 10, right: 10),
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Config.MATERIAL_TAP_TARGET_SIZE,
+          height: Consts.MATERIAL_TAP_TARGET_SIZE,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
@@ -148,13 +147,13 @@ class _Ranks extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: Config.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RADIUS,
             ),
             child: Row(
               children: [
                 Icon(
                   rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
-                  size: Theming.ICON_BIG,
+                  size: Consts.ICON_BIG,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
                 const SizedBox(width: 5),

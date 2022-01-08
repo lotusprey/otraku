@@ -1,4 +1,4 @@
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/convert.dart';
 
@@ -18,7 +18,7 @@ class MediaInfoModel {
   final String? format;
   final String? status;
   final int? nextEpisode;
-  final String? timeUntilAiring;
+  final int? airingAt;
   final int? episodes;
   final String? duration;
   final int? chapters;
@@ -54,7 +54,7 @@ class MediaInfoModel {
     required this.format,
     required this.status,
     required this.nextEpisode,
-    required this.timeUntilAiring,
+    required this.airingAt,
     required this.episodes,
     required this.duration,
     required this.chapters,
@@ -98,14 +98,13 @@ class MediaInfoModel {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms']),
-      cover: map['coverImage']['extraLarge'] ?? map['coverImage']['large'],
+      cover: map['coverImage']['extraLarge'] ?? map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       description: Convert.clearHtml(map['description']),
       format: Convert.clarifyEnum(map['format']),
       status: Convert.clarifyEnum(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
-      timeUntilAiring:
-          Convert.timeUntilTimestamp(map['nextAiringEpisode']?['airingAt']),
+      airingAt: map['nextAiringEpisode']?['airingAt'],
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],

@@ -1,4 +1,4 @@
-import 'package:otraku/enums/explorable.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ReviewModel {
@@ -45,7 +45,7 @@ class ReviewModel {
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage']['large'],
+        mediaCover: map['media']['coverImage']['extraLarge'],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',

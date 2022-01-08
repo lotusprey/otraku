@@ -1,63 +1,25 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/review_model.dart';
 import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/graphql.dart';
 
 class ReviewController extends GetxController {
-  // ***************************************************************************
-  // CONSTANTS
-  // ***************************************************************************
-
-  static const _reviewQuery = r'''
-    query Review($id: Int) {
-      Review(id: $id) {
-        id
-        summary
-        body(asHtml: true)
-        score
-        rating
-        ratingAmount
-        userRating
-        createdAt
-        media {id type title {userPreferred} coverImage {large} bannerImage}
-        user {id name avatar {large}}
-      }
-    }
-  ''';
-
-  static const _rateMutation = r'''
-    mutation Rate($id: Int, $rating: ReviewRating) {
-      RateReview(reviewId: $id, rating: $rating) {
-        rating
-        ratingAmount
-        userRating
-      }
-    }
-  ''';
-
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
-  final int _id;
   ReviewController(this._id);
 
+  final int _id;
   ReviewModel? _model;
 
   ReviewModel? get model => _model;
 
-  // ***************************************************************************
-  // FETCHING
-  // ***************************************************************************
-
   Future<void> fetch() async {
-    final data = await Client.request(_reviewQuery, {'id': _id});
+    final data = await Client.request(GqlQuery.review, {'id': _id});
     if (data == null) return;
     _model = ReviewModel(data['Review']);
     update();
   }
 
   Future<void> rate(bool? rating) async {
-    final data = await Client.request(_rateMutation, {
+    final data = await Client.request(GqlMutation.rateReview, {
       'id': _id,
       'rating': rating == null
           ? 'NO_VOTE'

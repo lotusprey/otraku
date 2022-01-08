@@ -1,4 +1,4 @@
-import 'package:otraku/enums/list_status.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/utils/convert.dart';
 
 class ListEntryModel {
@@ -11,13 +11,13 @@ class ListEntryModel {
   final int? airingAt;
   final int? createdAt;
   final int? updatedAt;
-  final List<String> genres;
   final int progress;
   final int? progressMax;
   final int progressVolumes;
   final int? progressVolumesMax;
   final ListStatus? listStatus;
   final String? country;
+  final List<String> genres;
   double score;
   int repeat;
   String? notes;
@@ -49,7 +49,7 @@ class ListEntryModel {
   });
 
   factory ListEntryModel(Map<String, dynamic> map) => ListEntryModel._(
-        mediaId: map['mediaId'],
+        mediaId: map['media']['id'],
         title: map['media']['title']['userPreferred'],
         cover: map['media']['coverImage']['extraLarge'],
         nextEpisode: map['media']['nextAiringEpisode']?['episode'],
@@ -61,7 +61,9 @@ class ListEntryModel {
         progressVolumes: map['progressVolumes'] ?? 0,
         progressVolumesMax: map['media']['volumes'],
         score: (map['score'] ?? 0).toDouble(),
-        listStatus: Convert.strToEnum(map['status'], ListStatus.values),
+        listStatus: map['status'] != null
+            ? ListStatus.values.byName(map['status'])
+            : null,
         startDate: Convert.mapToDateTime(map['startedAt']),
         endDate: Convert.mapToDateTime(map['completedAt']),
         repeat: map['repeat'] ?? 0,

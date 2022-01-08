@@ -99,7 +99,7 @@ class _AuthViewState extends State<AuthView> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'Otraku\nAn unofficial AniList app',
+                'Otraku for AniList',
                 style: Theme.of(context).textTheme.headline1,
               ),
               const SizedBox(height: 20),

@@ -22,8 +22,8 @@ class Sheet extends StatelessWidget {
         builder: (_) => sheet,
         isScrollControlled: isScrollControlled,
         backgroundColor: Colors.transparent,
-        barrierColor: barrierColour ??
-            Theme.of(ctx).colorScheme.background.withAlpha(200),
+        barrierColor:
+            barrierColour ?? Theme.of(ctx).colorScheme.surface.withAlpha(150),
       );
 
   Sheet({

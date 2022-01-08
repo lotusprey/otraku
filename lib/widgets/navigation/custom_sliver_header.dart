@@ -16,6 +16,7 @@ class CustomSliverHeader extends StatelessWidget {
     required this.actions,
     required this.child,
     required this.heroId,
+    this.maxWidth = Consts.LAYOUT_WIDE,
   });
 
   final String? title;
@@ -27,12 +28,14 @@ class CustomSliverHeader extends StatelessWidget {
   final Widget? child;
   final int heroId;
 
+  /// If not null the row with the [image] and the [child] will be restrained.
+  final double? maxWidth;
+
   @override
   Widget build(BuildContext context) {
-    final maxWidth = Consts.LAYOUT_WIDE + 20;
-    final sidePadding = MediaQuery.of(context).size.width > maxWidth
-        ? (MediaQuery.of(context).size.width - maxWidth) / 2
-        : 10.0;
+    double sidePadding = 10;
+    if (maxWidth != null && MediaQuery.of(context).size.width > maxWidth! + 20)
+      sidePadding = (MediaQuery.of(context).size.width - maxWidth!) / 2;
 
     final imageWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.35

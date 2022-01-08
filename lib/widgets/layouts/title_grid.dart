@@ -13,9 +13,10 @@ class TitleGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > 620
-        ? (MediaQuery.of(context).size.width - 600) / 2.0
-        : 10.0;
+    final sidePadding =
+        MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE + 20
+            ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2.0
+            : 10.0;
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,

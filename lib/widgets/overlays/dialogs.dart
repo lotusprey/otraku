@@ -5,7 +5,7 @@ import 'package:otraku/widgets/html_content.dart';
 Future<dynamic> showPopUp(BuildContext ctx, Widget child) => showDialog(
       context: ctx,
       builder: (ctx) => PopUpAnimation(child),
-      barrierColor: Theme.of(ctx).colorScheme.background.withAlpha(200),
+      barrierColor: Theme.of(ctx).colorScheme.surface.withAlpha(150),
     );
 
 class PopUpAnimation extends StatefulWidget {

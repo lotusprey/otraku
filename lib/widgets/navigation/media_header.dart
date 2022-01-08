@@ -45,6 +45,7 @@ class MediaHeader extends StatelessWidget {
       squareImage: false,
       implyLeading: true,
       heroId: ctrl.id,
+      maxWidth: null,
       actions: [
         if (info?.siteUrl != null)
           IconShade(AppBarIcon(

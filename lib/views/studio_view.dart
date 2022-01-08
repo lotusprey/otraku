@@ -20,6 +20,11 @@ class StudioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sidePadding =
+        MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE + 20
+            ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2.0
+            : 10.0;
+
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -102,7 +107,10 @@ class StudioView extends StatelessWidget {
                   for (int i = 0; i < ctrl.media.names.length; i++) ...[
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: Consts.PADDING,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: sidePadding,
+                          vertical: 10,
+                        ),
                         child: Text(
                           ctrl.media.names[i],
                           style: Theme.of(context).textTheme.headline1,

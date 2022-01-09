@@ -14,15 +14,6 @@ abstract class Client {
 
   static const _idQuery = 'query Id {Viewer {id}}';
 
-  //
-  //
-  //
-  // LEGACY CODE. To be removed after the next update.
-  static const _TOKEN_KEY = 'accessToken1';
-  //
-  //
-  //
-
   static const _HEADERS_AUTH_KEY = 'Authorization';
   static const _TOKEN_0 = 'token0';
   static const _TOKEN_1 = 'token1';
@@ -63,14 +54,6 @@ abstract class Client {
 
   // Try loading a saved account.
   static Future<bool> logIn(int account) async {
-    //
-    //
-    //
-    // LEGACY CODE. To be removed after the next update.
-    FlutterSecureStorage().delete(key: _TOKEN_KEY);
-    //
-    //
-    //
     if (account < 0 || account > 1) return false;
 
     if (_accessToken == null) {

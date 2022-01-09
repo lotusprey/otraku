@@ -42,7 +42,7 @@ class HomeController extends ScrollingController {
 
     _siteSettings = SettingsModel(data['Viewer']);
     _notificationCount = data['Viewer']['unreadNotificationCount'] ?? 0;
-    update([ID_SETTINGS]);
+    update([ID_SETTINGS, ID_NOTIFICATIONS]);
   }
 
   Future<bool> updateSettings(Map<String, dynamic> variables) async {

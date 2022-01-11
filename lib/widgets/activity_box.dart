@@ -16,10 +16,10 @@ import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ActivityBox extends StatelessWidget {
-  final FeedController feed;
-  final ActivityModel model;
+  ActivityBox({required this.ctrl, required this.model});
 
-  ActivityBox({required this.feed, required this.model});
+  final FeedController ctrl;
+  final ActivityModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -79,23 +79,23 @@ class ActivityBox extends StatelessWidget {
           model,
           InteractionButtons(
             model: model,
-            delete: () => feed.deleteActivity(model.id),
+            delete: () => ctrl.deleteActivity(model.id),
             toggleLike: () async {
               await ActivityController.toggleLike(model).then(
-                (ok) => ok ? feed.updateActivity(model) : model.toggleLike(),
+                (ok) => ok ? ctrl.updateActivity(model) : model.toggleLike(),
               );
             },
             toggleSubscribtion: () {
               ActivityController.toggleSubscription(model).then(
                 (ok) => ok
-                    ? feed.updateActivity(model)
+                    ? ctrl.updateActivity(model)
                     : model.toggleSubscription(),
               );
             },
             pushActivityPage: () => Navigator.pushNamed(
               context,
               RouteArg.activity,
-              arguments: RouteArg(id: model.id, info: feed.id?.toString()),
+              arguments: RouteArg(id: model.id, info: ctrl.id?.toString()),
             ),
           ),
         ),
@@ -105,9 +105,10 @@ class ActivityBox extends StatelessWidget {
 }
 
 class ActivityBoxBody extends StatelessWidget {
+  ActivityBoxBody(this.model, this.interactions);
+
   final ActivityModel model;
   final Widget interactions;
-  ActivityBoxBody(this.model, this.interactions);
 
   @override
   Widget build(BuildContext context) {

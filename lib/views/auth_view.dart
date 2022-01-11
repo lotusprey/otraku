@@ -61,14 +61,42 @@ class _AuthViewState extends State<AuthView> {
     }
 
     AppLinks(onAppLink: (Uri _, String link) async {
-      final start = link.indexOf('=') + 1;
-      final end = link.indexOf('&');
-      await Client.register(
-        account,
-        link.substring(start, end),
-        int.parse(link.substring(link.lastIndexOf('=') + 1)),
-      );
       closeWebView();
+
+      final start = link.indexOf('=') + 1;
+      final middle = link.indexOf('&');
+      final end = link.lastIndexOf('=') + 1;
+
+      if (start < 1 || middle < 1 || end < 1) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            content: 'Needed data is missing',
+            title: 'Faulty response',
+            mainAction: 'Ok',
+          ),
+        );
+        setState(() => _loading = false);
+        return;
+      }
+
+      final token = link.substring(start, middle);
+      final expiration = int.tryParse(link.substring(end)) ?? -1;
+
+      if (token.isEmpty || expiration < 0) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            content: 'Could not parse data',
+            title: 'Faulty response',
+            mainAction: 'Ok',
+          ),
+        );
+        setState(() => _loading = false);
+        return;
+      }
+
+      await Client.register(account, token, expiration);
       _verify(account);
     });
   }

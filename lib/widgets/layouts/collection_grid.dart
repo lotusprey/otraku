@@ -31,17 +31,18 @@ class CollectionGrid extends StatelessWidget {
       id: CollectionController.ID_BODY,
       tag: ctrlTag,
       builder: (ctrl) {
+        if (ctrl.isLoading)
+          return SliverFillRemaining(child: Center(child: const Loader()));
+
         if (ctrl.entries.isEmpty)
           return SliverFillRemaining(
             child: Center(
-              child: ctrl.isLoading
-                  ? const Loader()
-                  : Text(
-                      ctrl.isEmpty
-                          ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
-                          : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
+              child: Text(
+                ctrl.isEmpty
+                    ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
+                    : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
             ),
           );
 

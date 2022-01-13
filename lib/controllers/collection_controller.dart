@@ -86,28 +86,20 @@ class CollectionController extends ScrollingController implements Filterable {
     _filter();
   }
 
-  void _updateLoading(bool val) {
-    if (_isLoading == val) return;
-
-    _isLoading = val;
-    update([ID_HEAD, ID_BODY]);
-  }
-
   // ***************************************************************************
   // FETCHING
   // ***************************************************************************
 
   Future<void> _fetch() async {
-    if (_lists.isEmpty) _updateLoading(true);
-
     Map<String, dynamic>? data = await Client.request(
       GqlQuery.collection,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
     if (data == null) {
-      _updateLoading(false);
-      return null;
+      _isLoading = false;
+      update([ID_HEAD, ID_BODY]);
+      return;
     }
 
     data = data['MediaListCollection'];
@@ -144,15 +136,15 @@ class CollectionController extends ScrollingController implements Filterable {
       _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
 
     scrollUpTo(0);
-    _listIndex = 0;
+    if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
     _filter();
   }
 
   Future<void> refetch() async {
-    _entries.clear();
-    _lists.clear();
-    return _fetch();
+    _isLoading = true;
+    update([ID_HEAD, ID_BODY]);
+    await _fetch();
   }
 
   Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {

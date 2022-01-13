@@ -9,6 +9,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
 class UserHeader extends StatelessWidget {
   final int id;
@@ -33,22 +34,7 @@ class UserHeader extends StatelessWidget {
       implyLeading: !isMe,
       heroId: id,
       actions: [
-        if (isMe)
-          GetBuilder<HomeController>(
-            id: HomeController.ID_SETTINGS,
-            builder: (ctrl) {
-              if (ctrl.siteSettings == null) return const SizedBox();
-
-              return IconShade(
-                AppBarIcon(
-                  tooltip: 'Settings',
-                  icon: Ionicons.cog_outline,
-                  onTap: () => Navigator.pushNamed(context, RouteArg.settings),
-                ),
-              );
-            },
-          )
-        else if (user != null)
+        if (!isMe && user != null)
           Padding(
             padding: const EdgeInsets.all(10),
             child: ElevatedButton.icon(
@@ -70,7 +56,28 @@ class UserHeader extends StatelessWidget {
               onPressed:
                   Get.find<UserController>(tag: id.toString()).toggleFollow,
             ),
-          )
+          ),
+        if (user?.siteUrl != null)
+          IconShade(AppBarIcon(
+            tooltip: 'More',
+            icon: Ionicons.ellipsis_horizontal,
+            onTap: () => DragSheet.show(context, LinkDragSheet(user!.siteUrl!)),
+          )),
+        if (isMe)
+          GetBuilder<HomeController>(
+            id: HomeController.ID_SETTINGS,
+            builder: (ctrl) {
+              if (ctrl.siteSettings == null) return const SizedBox();
+
+              return IconShade(
+                AppBarIcon(
+                  tooltip: 'Settings',
+                  icon: Ionicons.cog_outline,
+                  onTap: () => Navigator.pushNamed(context, RouteArg.settings),
+                ),
+              );
+            },
+          ),
       ],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,

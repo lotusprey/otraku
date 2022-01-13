@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// An implementation of [DraggableScrollableSheet].
 class DragSheet extends StatelessWidget {
@@ -202,6 +205,38 @@ class ExploreDragSheet extends StatelessWidget {
       ));
 
     return DragSheet(ctx: ctx, children: children);
+  }
+}
+
+// Sheet with options to copy or open a link.
+class LinkDragSheet extends StatelessWidget {
+  const LinkDragSheet(this.link);
+
+  final String link;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragSheet(
+      ctx: context,
+      children: [
+        DragSheetListTile(
+          text: 'Copy Link',
+          icon: Ionicons.clipboard_outline,
+          onTap: () => Toast.copy(context, link),
+        ),
+        DragSheetListTile(
+          text: 'Open in Browser',
+          icon: Ionicons.link_outline,
+          onTap: () {
+            try {
+              launch(link);
+            } catch (err) {
+              Toast.show(context, 'Couldn\'t open link: $err');
+            }
+          },
+        ),
+      ],
+    );
   }
 }
 

@@ -322,6 +322,7 @@ abstract class GqlQuery {
         isFollowing
         isFollower
         isBlocked
+        siteUrl
         donatorTier
         donatorBadge
         moderatorRoles

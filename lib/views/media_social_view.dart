@@ -12,11 +12,7 @@ import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 
 abstract class MediaSocialView {
-  static List<Widget> children(
-    BuildContext ctx,
-    MediaController ctrl,
-    double headerOffset,
-  ) {
+  static List<Widget> children(BuildContext ctx, MediaController ctrl) {
     final model = ctrl.model!;
 
     return [
@@ -28,10 +24,10 @@ abstract class MediaSocialView {
           },
           current: () => ctrl.socialTab,
           onChanged: (int val) {
-            ctrl.scrollUpTo(headerOffset);
+            ctrl.scrollUpTo(0);
             ctrl.socialTab = val;
           },
-          onSame: () => ctrl.scrollUpTo(headerOffset),
+          onSame: () => ctrl.scrollUpTo(0),
         ),
       ]),
       if (ctrl.socialTab == MediaController.REVIEWS)

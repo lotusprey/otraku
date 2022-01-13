@@ -23,15 +23,6 @@ class MediaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final coverWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.35
-        : 150.0;
-    final coverHeight = coverWidth / 0.7;
-    final bannerHeight =
-        coverHeight * 0.6 + Consts.MATERIAL_TAP_TARGET_SIZE + 10;
-    final headerHeight = bannerHeight + coverHeight * 0.6;
-    final headerOffset = headerHeight - Consts.MATERIAL_TAP_TARGET_SIZE - 10;
-
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
 
@@ -62,16 +53,16 @@ class MediaView extends StatelessWidget {
           builder: (_) => NavLayout(
             index: ctrl.tab,
             onChanged: (page) => ctrl.tab = page,
-            onSame: (_) => ctrl.scrollUpTo(headerOffset),
+            onSame: (_) => ctrl.scrollUpTo(0),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
                 if (goRight && ctrl.otherTab < 2) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.otherTab++;
                   return true;
                 }
                 if (!goRight && ctrl.otherTab > 0) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.otherTab--;
                   return true;
                 }
@@ -79,12 +70,12 @@ class MediaView extends StatelessWidget {
 
               if (ctrl.tab == MediaController.SOCIAL) {
                 if (goRight && ctrl.socialTab < 1) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.socialTab++;
                   return true;
                 }
                 if (!goRight && ctrl.socialTab > 0) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.socialTab--;
                   return true;
                 }
@@ -110,9 +101,9 @@ class MediaView extends StatelessWidget {
                   if (ctrl.tab == MediaController.INFO)
                     ...MediaInfoView.children(context, ctrl)
                   else if (ctrl.tab == MediaController.OTHER)
-                    ...MediaOtherView.children(context, ctrl, headerOffset)
+                    ...MediaOtherView.children(context, ctrl)
                   else
-                    ...MediaSocialView.children(context, ctrl, headerOffset),
+                    ...MediaSocialView.children(context, ctrl),
                   footer,
                 ],
               ),
@@ -126,6 +117,7 @@ class MediaView extends StatelessWidget {
 
 class _ActionButtons extends StatefulWidget {
   _ActionButtons(this.ctrl);
+
   final MediaController ctrl;
 
   @override

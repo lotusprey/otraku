@@ -192,55 +192,48 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                 onTap: () => widget.search!(null),
               ),
           ] else
-            WillPopScope(
-              onWillPop: () {
-                widget.search!(null);
-                return Future.value(false);
-              },
-              child: Expanded(
-                child: Container(
-                  height: 35,
-                  padding: const EdgeInsets.only(right: 10),
-                  child: TextField(
-                    controller: _ctrl,
-                    autofocus: true,
-                    scrollPhysics: Consts.PHYSICS,
-                    cursorColor: Theme.of(context).colorScheme.secondary,
-                    style: Theme.of(context).textTheme.bodyText2,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(30),
-                    ],
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      hintText: widget.hint,
-                      suffixIcon: _empty
-                          ? IconButton(
-                              tooltip: 'Hide',
-                              constraints: const BoxConstraints(maxWidth: 40),
-                              padding: const EdgeInsets.all(0),
-                              icon:
-                                  const Icon(Ionicons.chevron_forward_outline),
-                              iconSize: Consts.ICON_SMALL,
-                              splashColor: Colors.transparent,
-                              color: Theme.of(context).colorScheme.primary,
-                              onPressed: () => widget.search!(null),
-                            )
-                          : IconButton(
-                              tooltip: 'Clear',
-                              constraints: const BoxConstraints(maxWidth: 40),
-                              padding: const EdgeInsets.all(0),
-                              icon: const Icon(Icons.close_rounded),
-                              iconSize: Consts.ICON_SMALL,
-                              splashColor: Colors.transparent,
-                              color: Theme.of(context).colorScheme.primary,
-                              onPressed: () {
-                                _ctrl.clear();
-                                _update('');
-                              },
-                            ),
-                    ),
-                    onChanged: (text) => _update(text),
+            Expanded(
+              child: Container(
+                height: 35,
+                padding: const EdgeInsets.only(right: 10),
+                child: TextField(
+                  controller: _ctrl,
+                  autofocus: true,
+                  scrollPhysics: Consts.PHYSICS,
+                  cursorColor: Theme.of(context).colorScheme.secondary,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(30),
+                  ],
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.only(left: 10),
+                    hintText: widget.hint,
+                    suffixIcon: _empty
+                        ? IconButton(
+                            tooltip: 'Hide',
+                            constraints: const BoxConstraints(maxWidth: 40),
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Ionicons.chevron_forward_outline),
+                            iconSize: Consts.ICON_SMALL,
+                            splashColor: Colors.transparent,
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () => widget.search!(null),
+                          )
+                        : IconButton(
+                            tooltip: 'Clear',
+                            constraints: const BoxConstraints(maxWidth: 40),
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Icons.close_rounded),
+                            iconSize: Consts.ICON_SMALL,
+                            splashColor: Colors.transparent,
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              _ctrl.clear();
+                              _update('');
+                            },
+                          ),
                   ),
+                  onChanged: (text) => _update(text),
                 ),
               ),
             ),

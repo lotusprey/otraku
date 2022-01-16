@@ -93,6 +93,19 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
+    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.searchMode) {
+      exploreCtrl.searchMode = false;
+      return SynchronousFuture(false);
+    }
+    if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.searchMode) {
+      animeCtrl.searchMode = false;
+      return SynchronousFuture(false);
+    }
+    if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.searchMode) {
+      mangaCtrl.searchMode = false;
+      return SynchronousFuture(false);
+    }
+
     if (!Settings().confirmExit) return SynchronousFuture(true);
 
     bool ok = false;

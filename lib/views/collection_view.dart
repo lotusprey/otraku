@@ -23,10 +23,17 @@ class CollectionView extends StatelessWidget {
     return GetBuilder<CollectionController>(
       init: CollectionController(id, ofAnime),
       tag: tag,
-      builder: (ctrl) => Scaffold(
-        floatingActionButton: CollectionActionButton(tag),
-        body: SafeArea(
-          child: HomeCollectionView(id: id, ofAnime: ofAnime, key: null),
+      builder: (ctrl) => WillPopScope(
+        onWillPop: () {
+          if (!ctrl.searchMode) return Future.value(true);
+          ctrl.searchMode = false;
+          return Future.value(false);
+        },
+        child: Scaffold(
+          floatingActionButton: CollectionActionButton(tag),
+          body: SafeArea(
+            child: HomeCollectionView(id: id, ofAnime: ofAnime, key: null),
+          ),
         ),
       ),
     );

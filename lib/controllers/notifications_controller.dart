@@ -11,7 +11,8 @@ class NotificationsController extends ScrollingController {
 
   static const _filters = const [
     null,
-    const [
+    ['AIRING'],
+    [
       'ACTIVITY_MESSAGE',
       'ACTIVITY_REPLY',
       'ACTIVITY_REPLY_SUBSCRIBED',
@@ -19,15 +20,20 @@ class NotificationsController extends ScrollingController {
       'ACTIVITY_LIKE',
       'ACTIVITY_REPLY_LIKE',
     ],
-    const [
+    [
       'THREAD_COMMENT_REPLY',
       'THREAD_COMMENT_MENTION',
       'THREAD_SUBSCRIBED',
       'THREAD_LIKE',
       'THREAD_COMMENT_LIKE',
     ],
-    const ['AIRING', 'RELATED_MEDIA_ADDITION'],
-    const ['FOLLOWING'],
+    ['FOLLOWING'],
+    [
+      'RELATED_MEDIA_ADDITION',
+      'MEDIA_DATA_CHANGE',
+      'MEDIA_MERGE',
+      'MEDIA_DELETION',
+    ],
   ];
 
   int _unreadCount = 0;
@@ -62,7 +68,7 @@ class NotificationsController extends ScrollingController {
     for (final n in data['Page']['notifications'])
       try {
         nl.add(NotificationModel(n));
-      } catch (_) {}
+      } catch (e) {}
 
     _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
     Get.find<HomeController>().nullifyUnread();
@@ -76,6 +82,8 @@ class NotificationsController extends ScrollingController {
     Map<String, dynamic>? data = await Client.request(
       GqlQuery.notifications,
       {
+        'withCount': true,
+        'resetCount': true,
         'page': _entries.nextPage,
         if (_filter != 0) 'filter': _filters[_filter],
       },

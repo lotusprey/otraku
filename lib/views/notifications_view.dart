@@ -32,10 +32,11 @@ class NotificationsView extends StatelessWidget {
                 OptionDragSheet(
                   options: const [
                     'All',
-                    'Activities',
+                    'Airing',
+                    'Activity',
                     'Forum',
-                    'Media',
                     'Follows',
+                    'Media',
                   ],
                   index: ctrl.filter,
                   onTap: (val) => ctrl.filter = val,

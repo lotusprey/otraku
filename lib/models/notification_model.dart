@@ -220,7 +220,6 @@ class NotificationModel {
           id: map['id'],
           type: NotificationType.MEDIA_DATA_CHANGE,
           headId: map['media']['id'],
-          bodyId: map['media']['id'],
           imageUrl: map['media']['coverImage']['extraLarge'],
           details: map['reason'],
           texts: [
@@ -241,7 +240,6 @@ class NotificationModel {
           id: map['id'],
           type: NotificationType.MEDIA_MERGE,
           headId: map['media']['id'],
-          bodyId: map['media']['id'],
           imageUrl: map['media']['coverImage']['extraLarge'],
           details: map['reason'],
           texts: [

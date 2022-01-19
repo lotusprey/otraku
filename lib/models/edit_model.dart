@@ -1,7 +1,7 @@
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/list_status.dart';
 
-class EntryModel {
+class EditModel {
   final int mediaId;
   int? entryId;
   final String? type;
@@ -20,7 +20,7 @@ class EntryModel {
   Map<String, double> advancedScores;
   Map<String, bool> customLists;
 
-  EntryModel._({
+  EditModel._({
     required this.mediaId,
     required this.type,
     this.entryId,
@@ -40,9 +40,9 @@ class EntryModel {
     this.customLists = const {},
   });
 
-  factory EntryModel(Map<String, dynamic> map) {
+  factory EditModel(Map<String, dynamic> map) {
     if (map['mediaListEntry'] == null)
-      return EntryModel._(
+      return EditModel._(
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
@@ -59,7 +59,7 @@ class EntryModel {
       for (final e in map['mediaListEntry']['customLists'].entries)
         customLists[e.key] = e.value;
 
-    return EntryModel._(
+    return EditModel._(
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
@@ -82,7 +82,7 @@ class EntryModel {
     );
   }
 
-  factory EntryModel.copy(final EntryModel copy) => EntryModel._(
+  factory EditModel.copy(final EditModel copy) => EditModel._(
         type: copy.type,
         mediaId: copy.mediaId,
         entryId: copy.entryId,
@@ -110,7 +110,7 @@ class EntryModel {
         customLists: {...copy.customLists},
       );
 
-  factory EntryModel.emptyCopy(final EntryModel copy) => EntryModel._(
+  factory EditModel.emptyCopy(final EditModel copy) => EditModel._(
         type: copy.type,
         mediaId: copy.mediaId,
         progressMax: copy.progressMax,

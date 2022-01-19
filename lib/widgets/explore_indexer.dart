@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/views/entry_view.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 
@@ -85,10 +85,10 @@ class ExploreIndexer extends StatelessWidget {
   static void openEditView(
     int id,
     BuildContext context, [
-    EntryModel? model,
-    Function(EntryModel)? callback,
+    EditModel? model,
+    Function(EditModel)? callback,
   ]) =>
-      DragSheet.show(context, EntryView(id, model, callback));
+      DragSheet.show(context, EditView(id, model, callback));
 
   @override
   Widget build(BuildContext context) {

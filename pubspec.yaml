@@ -53,3 +53,4 @@ flutter:
           weight: 500
         - asset: assets/fonts/Rubik-MediumItalic.ttf
           weight: 500
+          style: italic

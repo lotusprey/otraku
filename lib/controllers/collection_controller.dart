@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_model.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
@@ -118,7 +118,7 @@ class CollectionController extends ScrollingController implements Filterable {
         ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
 
     _customListNames.clear();
-    _customListNames.addAll(List.from(metaData['customLists']));
+    for (final l in metaData['customLists'] ?? []) _customListNames.add(l);
 
     _lists.clear();
     for (final String section in metaData['sectionOrder']) {
@@ -147,7 +147,7 @@ class CollectionController extends ScrollingController implements Filterable {
     await _fetch();
   }
 
-  Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
+  Future<void> updateEntry(EditModel oldEntry, EditModel newEntry) async {
     // Update database item.
     final data =
         await Client.request(GqlMutation.updateEntry, newEntry.toMap());
@@ -301,7 +301,7 @@ class CollectionController extends ScrollingController implements Filterable {
     _filter();
   }
 
-  Future<void> removeEntry(EntryModel entry) async {
+  Future<void> removeEntry(EditModel entry) async {
     // Update database item.
     final data = await Client.request(
       GqlMutation.removeEntry,

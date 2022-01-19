@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/media_info_view.dart';
@@ -161,7 +161,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
           model.info.id,
           context,
           model.entry,
-          (EntryModel entry) => setState(() => model.entry = entry),
+          (EditModel entry) => setState(() => model.entry = entry),
         ),
       ),
     ];

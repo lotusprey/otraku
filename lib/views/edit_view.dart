@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/entry_controller.dart';
+import 'package:otraku/controllers/edit_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
@@ -25,12 +25,12 @@ import 'package:otraku/widgets/overlays/toast.dart';
 
 /// A [DraggableScrollableSheet] for entry editing
 /// Should be opened with [DragSheet.show].
-class EntryView extends StatelessWidget {
-  EntryView(this.mediaId, [this.model, this.callback]);
+class EditView extends StatelessWidget {
+  EditView(this.mediaId, [this.model, this.callback]);
 
   final int mediaId;
-  final EntryModel? model;
-  final void Function(EntryModel)? callback;
+  final EditModel? model;
+  final void Function(EditModel)? callback;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,10 @@ class EntryView extends StatelessWidget {
         ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2
         : 0.0;
 
-    return GetBuilder<EntryController>(
-      id: EntryController.ID_MAIN,
+    return GetBuilder<EditController>(
+      id: EditController.ID_MAIN,
       tag: mediaId.toString(),
-      init: EntryController(mediaId, model),
+      init: EditController(mediaId, model),
       builder: (ctrl) {
         // This is cached to not rebuild each time the sheet is scrolled.
         Widget? editView;
@@ -85,8 +85,8 @@ class EntryView extends StatelessWidget {
 class _Buttons extends StatefulWidget {
   _Buttons(this.ctrl, this.callback);
 
-  final EntryController ctrl;
-  final void Function(EntryModel)? callback;
+  final EditController ctrl;
+  final void Function(EditModel)? callback;
 
   @override
   State<_Buttons> createState() => _ButtonsState();
@@ -122,8 +122,8 @@ class _ButtonsState extends State<_Buttons> {
                         tag: ctrl.model!.type == 'ANIME'
                             ? '${Settings().id}true'
                             : '${Settings().id}false',
-                      ).removeEntry(ctrl.oldModel!);
-                      widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
+                      ).removeEntry(ctrl.currModel!);
+                      widget.callback?.call(EditModel.emptyCopy(ctrl.model!));
                       Navigator.pop(context);
                     },
                   ),
@@ -145,7 +145,7 @@ class _ButtonsState extends State<_Buttons> {
               tag: ctrl.model!.type == 'ANIME'
                   ? '${Settings().id}true'
                   : '${Settings().id}false',
-            ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
+            ).updateEntry(ctrl.currModel!, ctrl.model!).then((_) {
               widget.callback?.call(ctrl.model!);
               Navigator.pop(context);
             });
@@ -184,13 +184,13 @@ class _ButtonsState extends State<_Buttons> {
 class _EditView extends StatelessWidget {
   _EditView(this.ctrl, this.scrollCtrl);
 
-  final EntryController ctrl;
+  final EditController ctrl;
   final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<HomeController>().siteSettings!;
-    final old = ctrl.oldModel!;
+    final old = ctrl.currModel!;
     final model = ctrl.model!;
 
     final advancedScoring = <Widget>[];
@@ -223,7 +223,7 @@ class _EditView extends StatelessWidget {
 
               if (model.score != avg) {
                 model.score = avg;
-                ctrl.update([EntryController.ID_SCORE]);
+                ctrl.update([EditController.ID_SCORE]);
               }
             },
           ),
@@ -240,8 +240,8 @@ class _EditView extends StatelessWidget {
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([
-            GetBuilder<EntryController>(
-              id: EntryController.ID_STATUS,
+            GetBuilder<EditController>(
+              id: EditController.ID_STATUS,
               tag: model.mediaId.toString(),
               builder: (_) => DropDownField<ListStatus?>(
                 hint: 'Add',
@@ -258,7 +258,7 @@ class _EditView extends StatelessWidget {
                       model.status == ListStatus.CURRENT &&
                       model.startedAt == null) {
                     model.startedAt = DateTime.now();
-                    ctrl.update([EntryController.ID_START_DATE]);
+                    ctrl.update([EditController.ID_START_DATE]);
                     Toast.show(context, 'Start date changed');
                     return;
                   }
@@ -267,13 +267,13 @@ class _EditView extends StatelessWidget {
                       model.status == ListStatus.COMPLETED &&
                       model.completedAt == null) {
                     model.completedAt = DateTime.now();
-                    ctrl.update([EntryController.ID_COMPLETE_DATE]);
+                    ctrl.update([EditController.ID_COMPLETE_DATE]);
                     String text = 'Completed date changed';
 
                     if (model.progressMax != null &&
                         model.progress < model.progressMax!) {
                       model.progress = model.progressMax!;
-                      ctrl.update([EntryController.ID_PROGRESS]);
+                      ctrl.update([EditController.ID_PROGRESS]);
                       text = 'Completed date & progress changed';
                     }
 
@@ -284,8 +284,8 @@ class _EditView extends StatelessWidget {
             ),
             InputFieldStructure(
               title: 'Progress',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_PROGRESS,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_PROGRESS,
                 tag: model.mediaId.toString(),
                 builder: (_) => NumberField(
                   value: model.progress,
@@ -301,14 +301,14 @@ class _EditView extends StatelessWidget {
                       if (old.status == model.status &&
                           old.status != ListStatus.COMPLETED) {
                         model.status = ListStatus.COMPLETED;
-                        ctrl.update([EntryController.ID_STATUS]);
+                        ctrl.update([EditController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.completedAt == model.completedAt &&
                           old.completedAt == null) {
                         model.completedAt = DateTime.now();
-                        ctrl.update([EntryController.ID_COMPLETE_DATE]);
+                        ctrl.update([EditController.ID_COMPLETE_DATE]);
                         text = text == null
                             ? 'Completed date changed'
                             : 'Status & Completed date changed';
@@ -325,13 +325,13 @@ class _EditView extends StatelessWidget {
                           (old.status == null ||
                               old.status == ListStatus.PLANNING)) {
                         model.status = ListStatus.CURRENT;
-                        ctrl.update([EntryController.ID_STATUS]);
+                        ctrl.update([EditController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.startedAt == null && model.startedAt == null) {
                         model.startedAt = DateTime.now();
-                        ctrl.update([EntryController.ID_START_DATE]);
+                        ctrl.update([EditController.ID_START_DATE]);
                         text = text == null
                             ? 'Start date changed'
                             : 'Status & start date changed';
@@ -365,8 +365,8 @@ class _EditView extends StatelessWidget {
           SliverToBoxAdapter(
             child: InputFieldStructure(
               title: 'Score',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_SCORE,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_SCORE,
                 tag: model.mediaId.toString(),
                 builder: (_) => ScorePicker(model),
               ),
@@ -386,8 +386,8 @@ class _EditView extends StatelessWidget {
           _FieldGrid([
             InputFieldStructure(
               title: 'Started',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_START_DATE,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_START_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.startedAt,
@@ -398,7 +398,7 @@ class _EditView extends StatelessWidget {
 
                     if (old.status == null && model.status == null) {
                       model.status = ListStatus.CURRENT;
-                      ctrl.update([EntryController.ID_STATUS]);
+                      ctrl.update([EditController.ID_STATUS]);
                       Toast.show(context, 'Status changed');
                     }
                   },
@@ -408,8 +408,8 @@ class _EditView extends StatelessWidget {
             ),
             InputFieldStructure(
               title: 'Completed',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_COMPLETE_DATE,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_COMPLETE_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.completedAt,
@@ -422,13 +422,13 @@ class _EditView extends StatelessWidget {
                         old.status != ListStatus.REPEATING &&
                         old.status == model.status) {
                       model.status = ListStatus.COMPLETED;
-                      ctrl.update([EntryController.ID_STATUS]);
+                      ctrl.update([EditController.ID_STATUS]);
                       String text = 'Status changed';
 
                       if (model.progressMax != null &&
                           model.progress < model.progressMax!) {
                         model.progress = model.progressMax!;
-                        ctrl.update([EntryController.ID_PROGRESS]);
+                        ctrl.update([EditController.ID_PROGRESS]);
                         text = 'Status & progress changed';
                       }
 

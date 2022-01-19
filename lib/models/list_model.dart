@@ -57,73 +57,73 @@ class ListModel {
   int Function(ListEntryModel, ListEntryModel) _compareFn(final EntrySort? s) {
     switch (s) {
       case EntrySort.TITLE:
-        return (a, b) => a.title.compareTo(b.title);
+        return (a, b) => a.titles[0].compareTo(b.titles[0]);
       case EntrySort.TITLE_DESC:
-        return (a, b) => b.title.compareTo(a.title);
+        return (a, b) => b.titles[0].compareTo(a.titles[0]);
       case EntrySort.SCORE:
         return (a, b) {
           final comparison = a.score.compareTo(b.score);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.SCORE_DESC:
         return (a, b) {
           final comparison = b.score.compareTo(a.score);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.UPDATED_AT:
         return (a, b) {
           final comparison = a.updatedAt!.compareTo(b.updatedAt!);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.UPDATED_AT_DESC:
         return (a, b) {
           final comparison = b.updatedAt!.compareTo(a.updatedAt!);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.CREATED_AT:
         return (a, b) {
           final comparison = a.createdAt!.compareTo(b.createdAt!);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.CREATED_AT_DESC:
         return (a, b) {
           final comparison = b.createdAt!.compareTo(a.createdAt!);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.PROGRESS:
         return (a, b) {
           final comparison = a.progress.compareTo(b.progress);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.PROGRESS_DESC:
         return (a, b) {
           final comparison = b.progress.compareTo(a.progress);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.REPEAT:
         return (a, b) {
           final comparison = a.repeat.compareTo(b.repeat);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.REPEAT_DESC:
         return (a, b) {
           final comparison = b.repeat.compareTo(a.repeat);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.AIRING_AT:
         return (a, b) {
           if (a.airingAt == null) {
-            if (b.airingAt == null) return a.title.compareTo(b.title);
+            if (b.airingAt == null) return a.titles[0].compareTo(b.titles[0]);
             return 1;
           }
 
@@ -131,12 +131,12 @@ class ListModel {
 
           final comparison = a.airingAt!.compareTo(b.airingAt!);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       case EntrySort.AIRING_AT_DESC:
         return (a, b) {
           if (b.airingAt == null) {
-            if (a.airingAt == null) return a.title.compareTo(b.title);
+            if (a.airingAt == null) return a.titles[0].compareTo(b.titles[0]);
             return -1;
           }
 
@@ -144,7 +144,7 @@ class ListModel {
 
           final comparison = b.airingAt!.compareTo(a.airingAt!);
           if (comparison != 0) return comparison;
-          return a.title.compareTo(b.title);
+          return a.titles[0].compareTo(b.titles[0]);
         };
       default:
         return (_, __) => 0;

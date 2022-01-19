@@ -364,7 +364,15 @@ class CollectionController extends ScrollingController implements Filterable {
     final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
-      if (search != '' && !entry.title.toLowerCase().contains(search)) continue;
+      if (search != '') {
+        bool contains = false;
+        for (final title in entry.titles)
+          if (title.toLowerCase().contains(search)) {
+            contains = true;
+            break;
+          }
+        if (!contains) continue;
+      }
 
       if (country != null && entry.country != country) continue;
 

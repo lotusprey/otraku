@@ -129,8 +129,10 @@ class _CollectionGridTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Flexible(
-                            child:
-                                Text(entry.title, overflow: TextOverflow.fade),
+                            child: Text(
+                              entry.titles[0],
+                              overflow: TextOverflow.fade,
+                            ),
                           ),
                           const SizedBox(height: 5),
                           RichText(

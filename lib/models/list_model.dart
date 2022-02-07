@@ -146,6 +146,112 @@ class ListModel {
           if (comparison != 0) return comparison;
           return a.titles[0].compareTo(b.titles[0]);
         };
+      case EntrySort.STARTED_RELEASING:
+        return (a, b) {
+          if (a.releaseStart == null) {
+            if (b.releaseStart == null)
+              return a.titles[0].compareTo(b.titles[0]);
+            return 1;
+          }
+
+          if (b.releaseStart == null) return -1;
+
+          final comparison = a.releaseStart!.compareTo(b.releaseStart!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.STARTED_RELEASING_DESC:
+        return (a, b) {
+          if (b.releaseStart == null) {
+            if (a.releaseStart == null)
+              return a.titles[0].compareTo(b.titles[0]);
+            return -1;
+          }
+
+          if (a.releaseStart == null) return 1;
+
+          final comparison = b.releaseStart!.compareTo(a.releaseStart!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.ENDED_RELEASING:
+        return (a, b) {
+          if (a.releaseEnd == null) {
+            if (b.releaseEnd == null) return a.titles[0].compareTo(b.titles[0]);
+            return 1;
+          }
+
+          if (b.releaseEnd == null) return -1;
+
+          final comparison = a.releaseEnd!.compareTo(b.releaseEnd!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.ENDED_RELEASING_DESC:
+        return (a, b) {
+          if (b.releaseEnd == null) {
+            if (a.releaseEnd == null) return a.titles[0].compareTo(b.titles[0]);
+            return -1;
+          }
+
+          if (a.releaseEnd == null) return 1;
+
+          final comparison = b.releaseEnd!.compareTo(a.releaseEnd!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.STARTED_WATCHING:
+        return (a, b) {
+          if (a.watchStart == null) {
+            if (b.watchStart == null) return a.titles[0].compareTo(b.titles[0]);
+            return 1;
+          }
+
+          if (b.watchStart == null) return -1;
+
+          final comparison = a.watchStart!.compareTo(b.watchStart!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.STARTED_WATCHING_DESC:
+        return (a, b) {
+          if (b.watchStart == null) {
+            if (a.watchStart == null) return a.titles[0].compareTo(b.titles[0]);
+            return -1;
+          }
+
+          if (a.watchStart == null) return 1;
+
+          final comparison = b.watchStart!.compareTo(a.watchStart!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.ENDED_WATCHING:
+        return (a, b) {
+          if (a.watchEnd == null) {
+            if (b.watchEnd == null) return a.titles[0].compareTo(b.titles[0]);
+            return 1;
+          }
+
+          if (b.watchEnd == null) return -1;
+
+          final comparison = a.watchEnd!.compareTo(b.watchEnd!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
+      case EntrySort.ENDED_WATCHING_DESC:
+        return (a, b) {
+          if (b.watchEnd == null) {
+            if (a.watchEnd == null) return a.titles[0].compareTo(b.titles[0]);
+            return -1;
+          }
+
+          if (a.watchEnd == null) return 1;
+
+          final comparison = b.watchEnd!.compareTo(a.watchEnd!);
+          if (comparison != 0) return comparison;
+          return a.titles[0].compareTo(b.titles[0]);
+        };
       default:
         return (_, __) => 0;
     }

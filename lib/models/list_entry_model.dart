@@ -21,8 +21,10 @@ class ListEntryModel {
   double score;
   int repeat;
   String? notes;
-  DateTime? startDate;
-  DateTime? endDate;
+  int? releaseStart;
+  int? releaseEnd;
+  int? watchStart;
+  int? watchEnd;
 
   ListEntryModel._({
     required this.mediaId,
@@ -43,8 +45,10 @@ class ListEntryModel {
     required this.score,
     required this.repeat,
     required this.notes,
-    required this.startDate,
-    required this.endDate,
+    required this.releaseStart,
+    required this.releaseEnd,
+    required this.watchStart,
+    required this.watchEnd,
     required this.country,
   });
 
@@ -73,8 +77,10 @@ class ListEntryModel {
       listStatus: map['status'] != null
           ? ListStatus.values.byName(map['status'])
           : null,
-      startDate: Convert.mapToDateTime(map['startedAt']),
-      endDate: Convert.mapToDateTime(map['completedAt']),
+      releaseStart: Convert.mapToMillis(map['media']['startDate']),
+      releaseEnd: Convert.mapToMillis(map['media']['endDate']),
+      watchStart: Convert.mapToMillis(map['startedAt']),
+      watchEnd: Convert.mapToMillis(map['completedAt']),
       repeat: map['repeat'] ?? 0,
       notes: map['notes'],
       createdAt: map['createdAt'],

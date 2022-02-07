@@ -45,6 +45,13 @@ abstract class Convert {
     return '$month $day, ${map['year']}';
   }
 
+  // Converts a map (representing a date) to milliseconds count.
+  static int? mapToMillis(Map<String, dynamic> map) {
+    if (map['year'] == null) return null;
+    return DateTime(map['year'], map['month'] ?? 0, map['day'] ?? 0)
+        .millisecondsSinceEpoch;
+  }
+
   // Converts a map (representing a date) to DateTime.
   static DateTime? mapToDateTime(Map<String, dynamic> map) {
     if (map['year'] == null || map['month'] == null || map['day'] == null)

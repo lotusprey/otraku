@@ -11,7 +11,7 @@ class ListEntryModel {
   final int? airingAt;
   final int? createdAt;
   final int? updatedAt;
-  final int progress;
+  int progress;
   final int? progressMax;
   final int progressVolumes;
   final int? progressVolumesMax;

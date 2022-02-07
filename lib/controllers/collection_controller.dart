@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/edit_model.dart';
@@ -233,72 +234,65 @@ class CollectionController extends ScrollingController implements Filterable {
     _filter();
   }
 
-  Future<void> incrementProgress(ListEntryModel model) async {
-    if (model.progress == model.progressMax) return;
+  /// When the progress of an entry is changed, this should be called
+  /// to reflect it into the database. When reaching the last episode,
+  /// [updateEntry] should be called instead.
+  Future<void> updateProgress(ListEntryModel model) async {
+    if (model.progressMax != null && model.progress > model.progressMax! - 1)
+      return;
 
-    final oldListStatus = model.listStatus;
+    final progress = model.progress;
 
     // Update database item.
     final data = await Client.request(
       GqlMutation.updateProgress,
-      {'mediaId': model.mediaId, 'progress': model.progress + 1},
+      {'mediaId': model.mediaId, 'progress': progress},
     );
     if (data == null) return;
 
-    model = ListEntryModel(data['SaveMediaListEntry']);
+    final sorting = _filters[Filterable.SORT];
+    final needsSort = sorting == EntrySort.PROGRESS ||
+        sorting == EntrySort.PROGRESS_DESC ||
+        sorting == EntrySort.UPDATED_AT ||
+        sorting == EntrySort.UPDATED_AT_DESC;
 
-    final customLists = <String>[];
-    if (data['SaveMediaListEntry']['customLists'] != null)
-      for (final e in data['SaveMediaListEntry']['customLists'].entries)
-        if (e.value) customLists.add(e.key.toString().toLowerCase());
-
-    // Remove from status list.
+    // Update status list.
     for (final list in _lists) {
       if (list.isCustomList ||
-          list.status == null ||
-          list.status != oldListStatus ||
-          (list.splitCompletedListFormat != null &&
-              list.splitCompletedListFormat != model.format)) continue;
-
-      list.removeByMediaId(model.mediaId);
-      break;
-    }
-
-    // Add to status list.
-    for (final list in _lists) {
-      if (list.isCustomList ||
-          list.status == null ||
           list.status != model.listStatus ||
           (list.splitCompletedListFormat != null &&
               list.splitCompletedListFormat != model.format)) continue;
 
-      list.insertSorted(model, _filters[Filterable.SORT]);
+      for (final entry in list.entries)
+        if (entry.mediaId == model.mediaId) {
+          entry.progress = progress;
+          break;
+        }
+
+      if (needsSort) list.sort(sorting);
       break;
     }
 
-    // Replace in custom lists.
+    // Update custom lists.
+    final customLists = <String>[];
+    if (data['SaveMediaListEntry']?['customLists'] != null)
+      for (final e in data['SaveMediaListEntry']['customLists'].entries)
+        if (e.value) customLists.add(e.key.toString().toLowerCase());
+
     if (customLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < customLists.length; i++)
-          if (customLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(model.mediaId);
-            list.insertSorted(model, _filters[Filterable.SORT]);
+          if (list.isCustomList && customLists[i] == list.name.toLowerCase()) {
+            for (final entry in list.entries)
+              if (entry.mediaId == model.mediaId) {
+                entry.progress = progress;
+                break;
+              }
+
+            if (needsSort) list.sort(sorting);
             customLists.removeAt(i);
             break;
           }
-
-    // Remove the old status list if it is empty.
-    for (int i = 0; i < _lists.length; i++)
-      if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) {
-          _listIndex--;
-          scrollUpTo(0);
-        }
-        _lists.removeAt(i);
-        break;
-      }
-
-    _filter();
   }
 
   Future<void> removeEntry(EditModel entry) async {

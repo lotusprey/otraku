@@ -9,7 +9,7 @@
      <application 
           android:allowBackup="false" 
           android:fullBackupContent="@xml/backup_rules" 
-          android:name="io.flutter.app.FlutterApplication"
+          android:name="${applicationName}"
           android:label="Otraku" 
           android:icon="@mipmap/ic_launcher">
           <activity 

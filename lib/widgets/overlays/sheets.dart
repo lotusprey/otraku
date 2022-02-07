@@ -7,8 +7,7 @@ import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/fields/three_state_field.dart';
-import 'package:otraku/widgets/fields/two_state_field.dart';
+import 'package:otraku/widgets/fields/checkbox_field.dart';
 
 class Sheet extends StatelessWidget {
   static void show({
@@ -110,11 +109,11 @@ class SelectionSheet<T> extends StatelessWidget {
           physics:
               fixHeight ? const NeverScrollableScrollPhysics() : Consts.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          itemBuilder: (_, index) => TwoStateField(
+          itemBuilder: (_, index) => CheckBoxField(
             title: options[index],
             initial: names.contains(values[index]),
-            onChanged: (val) =>
-                val ? names.add(values[index]) : names.remove(values[index]),
+            onChanged: (v) =>
+                v ? names.add(values[index]) : names.remove(values[index]),
           ),
           itemCount: options.length,
           itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
@@ -149,9 +148,9 @@ class SelectionToggleSheet<T> extends StatelessWidget {
           physics:
               fixHeight ? const NeverScrollableScrollPhysics() : Consts.PHYSICS,
           padding: const EdgeInsets.symmetric(vertical: 10),
-          itemBuilder: (_, index) => ThreeStateField(
+          itemBuilder: (_, index) => CheckBoxTriField(
             title: options[index],
-            initialState: inclusive.contains(values[index])
+            initial: inclusive.contains(values[index])
                 ? 1
                 : exclusive.contains(values[index])
                     ? 2
@@ -206,9 +205,9 @@ class TagSelectionSheet extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (_, index) {
             final val = tags.entries.elementAt(i).value[index].name;
-            return ThreeStateField(
+            return CheckBoxTriField(
               title: val,
-              initialState: inclusive.contains(val)
+              initial: inclusive.contains(val)
                   ? 1
                   : exclusive.contains(val)
                       ? 2

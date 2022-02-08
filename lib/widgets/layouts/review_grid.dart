@@ -15,9 +15,11 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > 620
-        ? (MediaQuery.of(context).size.width - 600) / 2.0
-        : 10.0;
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
+            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
+            : 0.0);
+
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,

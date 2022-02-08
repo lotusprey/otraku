@@ -23,9 +23,11 @@ class CollectionGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMe =
         ctrlTag == '${Settings().id}true' || ctrlTag == '${Settings().id}false';
-    final sidePadding = MediaQuery.of(context).size.width > 1020
-        ? (MediaQuery.of(context).size.width - 1000) / 2.0
-        : 10.0;
+
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > 1000
+            ? (MediaQuery.of(context).size.width - 1000) / 2
+            : 0.0);
 
     return GetBuilder<CollectionController>(
       id: CollectionController.ID_BODY,

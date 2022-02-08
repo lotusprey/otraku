@@ -30,10 +30,10 @@ class HomeUserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const maxWidth = Consts.LAYOUT_WIDE + 20;
-    final sidePadding = MediaQuery.of(context).size.width > maxWidth
-        ? (MediaQuery.of(context).size.width - maxWidth) / 2.0
-        : 10.0;
+    final sidePadding =
+        10.0 + MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
+            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
+            : 0.0;
 
     final padding = EdgeInsets.only(
       left: sidePadding,

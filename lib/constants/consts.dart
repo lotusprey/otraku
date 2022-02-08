@@ -14,13 +14,16 @@ abstract class Consts {
       AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
   static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
 
-  // Font & icon sizes.
+  // Layout sizes.
+  static const OVERLAY_WIDE = 600.0;
+  static const OVERLAY_TIGHT = 300.0;
+
+  // Font sizes.
   static const FONT_BIG = 20.0;
   static const FONT_MEDIUM = 15.0;
   static const FONT_SMALL = 13.0;
+
+  // Icon sizes.
   static const ICON_BIG = 25.0;
   static const ICON_SMALL = 20.0;
-
-  // Layout sizes.
-  static const LAYOUT_WIDE = 650.0;
 }

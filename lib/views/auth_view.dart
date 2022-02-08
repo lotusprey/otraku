@@ -121,7 +121,7 @@ class _AuthViewState extends State<AuthView> {
         alignment: Alignment.bottomCenter,
         padding: Consts.PADDING,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_WIDE),
+          constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_WIDE),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,

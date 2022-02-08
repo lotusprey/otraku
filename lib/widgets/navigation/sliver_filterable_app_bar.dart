@@ -109,7 +109,7 @@ class SliverExploreAppBar extends StatelessWidget {
                       return;
                     }
 
-                    ctrl.search = val;
+                    if (ctrl.search != val) ctrl.search = val;
                   }
                 : null,
             searchMode: ctrl.searchMode,
@@ -161,8 +161,8 @@ class MediaSearchField extends StatefulWidget {
 }
 
 class _MediaSearchFieldState extends State<MediaSearchField> {
-  late bool _empty;
   late TextEditingController _ctrl;
+  late bool _empty;
 
   @override
   void initState() {

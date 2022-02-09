@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/utils/filterable.dart';
-import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 
 class Sheet extends StatelessWidget {
-  static void show({
+  static Future<T?> show<T>({
     required BuildContext ctx,
     required Widget sheet,
     bool isScrollControlled = true,
     Color? barrierColour,
   }) =>
-      showModalBottomSheet(
+      showModalBottomSheet<T>(
         context: ctx,
         builder: (_) => sheet,
         isScrollControlled: isScrollControlled,
@@ -37,22 +31,24 @@ class Sheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomMargin = MediaQuery.of(context).viewPadding.bottom + 20;
-    final sideMargin = MediaQuery.of(context).size.width > 420
-        ? (MediaQuery.of(context).size.width - 400) / 2
-        : 20.0;
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > Consts.OVERLAY_TIGHT
+            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_TIGHT) / 2
+            : 0.0);
 
     return Container(
-      height: height != null ? (height! + bottomMargin) : null,
+      height: height != null
+          ? (height! + MediaQuery.of(context).viewPadding.bottom)
+          : null,
       margin: EdgeInsets.only(
-        left: sideMargin,
-        right: sideMargin,
-        bottom: bottomMargin,
+        left: sidePadding,
+        right: sidePadding,
+        bottom: MediaQuery.of(context).viewPadding.bottom,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: BorderRadius.vertical(top: Consts.RADIUS),
         boxShadow: const [
           BoxShadow(
             blurRadius: 15,
@@ -87,23 +83,21 @@ class Sheet extends StatelessWidget {
 
 class SelectionSheet<T> extends StatelessWidget {
   SelectionSheet({
-    required this.onDone,
     required this.options,
     required this.values,
-    required this.names,
+    required this.selected,
     this.fixHeight = false,
   });
 
   final List<String> options;
   final List<T> values;
-  final List<T> names;
-  final void Function(List<T>) onDone;
+  final List<T> selected;
   final bool fixHeight;
 
   @override
   Widget build(BuildContext context) => Sheet(
         height: fixHeight
-            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 50
+            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20
             : null,
         child: ListView.builder(
           physics:
@@ -111,20 +105,19 @@ class SelectionSheet<T> extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           itemBuilder: (_, index) => CheckBoxField(
             title: options[index],
-            initial: names.contains(values[index]),
-            onChanged: (v) =>
-                v ? names.add(values[index]) : names.remove(values[index]),
+            initial: selected.contains(values[index]),
+            onChanged: (v) => v
+                ? selected.add(values[index])
+                : selected.remove(values[index]),
           ),
           itemCount: options.length,
           itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
         ),
-        onDone: () => onDone(names),
       );
 }
 
 class SelectionToggleSheet<T> extends StatelessWidget {
   SelectionToggleSheet({
-    required this.onDone,
     required this.options,
     required this.values,
     required this.inclusive,
@@ -136,13 +129,12 @@ class SelectionToggleSheet<T> extends StatelessWidget {
   final List<T> values;
   final List<T> inclusive;
   final List<T> exclusive;
-  final void Function(List<T>, List<T>) onDone;
   final bool fixHeight;
 
   @override
   Widget build(BuildContext context) => Sheet(
         height: fixHeight
-            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 50
+            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20
             : null,
         child: ListView.builder(
           physics:
@@ -153,7 +145,7 @@ class SelectionToggleSheet<T> extends StatelessWidget {
             initial: inclusive.contains(values[index])
                 ? 1
                 : exclusive.contains(values[index])
-                    ? 2
+                    ? -1
                     : 0,
             onChanged: (state) {
               if (state == 0)
@@ -169,7 +161,6 @@ class SelectionToggleSheet<T> extends StatelessWidget {
           itemCount: options.length,
           itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
         ),
-        onDone: () => onDone(inclusive, exclusive),
       );
 }
 
@@ -178,25 +169,24 @@ class TagSelectionSheet extends StatelessWidget {
     required this.tags,
     required this.inclusive,
     required this.exclusive,
-    required this.onDone,
   });
 
   final Map<String, List<TagModel>> tags;
   final List<String> inclusive;
   final List<String> exclusive;
-  final void Function(List<String>, List<String>) onDone;
 
   @override
   Widget build(BuildContext context) {
     int count = 0;
     final slivers = <Widget>[];
+    slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 10)));
     for (int i = 0; i < tags.length; i++) {
       slivers.add(SliverToBoxAdapter(
         child: Padding(
-          padding: Consts.PADDING,
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: Text(
             tags.entries.elementAt(i).key,
-            style: Theme.of(context).textTheme.headline1,
+            style: Theme.of(context).textTheme.headline2,
           ),
         ),
       ));
@@ -210,7 +200,7 @@ class TagSelectionSheet extends StatelessWidget {
               initial: inclusive.contains(val)
                   ? 1
                   : exclusive.contains(val)
-                      ? 2
+                      ? -1
                       : 0,
               onChanged: (state) {
                 if (state == 0)
@@ -232,6 +222,7 @@ class TagSelectionSheet extends StatelessWidget {
 
       count += tags.entries.elementAt(i).value.length;
     }
+    slivers.add(const SliverToBoxAdapter(child: SizedBox(height: 10)));
 
     return Sheet(
       height: null,
@@ -240,161 +231,6 @@ class TagSelectionSheet extends StatelessWidget {
         semanticChildCount: count,
         slivers: slivers,
       ),
-      onDone: () => onDone(inclusive, exclusive),
     );
   }
-}
-
-class CollectionSortSheet extends StatelessWidget {
-  CollectionSortSheet(this.ctrlTag);
-
-  final String ctrlTag;
-
-  @override
-  Widget build(BuildContext context) {
-    final collection = Get.find<CollectionController>(tag: ctrlTag);
-    final EntrySort entrySort = collection.getFilterWithKey(Filterable.SORT);
-
-    int index = entrySort.index ~/ 2;
-    bool desc = entrySort.index % 2 != 0;
-    final options = <String>[];
-    for (int i = 0; i < EntrySort.values.length; i += 2)
-      options.add(Convert.clarifyEnum(EntrySort.values[i].name)!);
-
-    return Sheet(
-      height: options.length * 40 + 58,
-      onDone: () {
-        collection.setFilterWithKey(
-          Filterable.SORT,
-          value: desc
-              ? EntrySort.values[index * 2 + 1]
-              : EntrySort.values[index * 2],
-        );
-        collection.sort();
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          Text('Sort', style: Theme.of(context).textTheme.subtitle1),
-          Expanded(
-            child: _Sorting(
-              onChanged: (i, d) {
-                index = i;
-                desc = d;
-              },
-              names: options,
-              index: index,
-              desc: desc,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MediaSortSheet extends StatelessWidget {
-  MediaSortSheet(this.initial, this.onTap);
-
-  final MediaSort initial;
-  final void Function(MediaSort) onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    int index = initial.index ~/ 2;
-    bool desc = initial.index % 2 != 0;
-    final options = <String>[];
-    for (int i = 0; i < MediaSort.values.length; i += 2)
-      options.add(Convert.clarifyEnum(MediaSort.values[i].name)!);
-
-    return Sheet(
-      height: options.length * 40 + 58,
-      onDone: () => desc
-          ? onTap(MediaSort.values[index * 2 + 1])
-          : onTap(MediaSort.values[index * 2]),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 10),
-          Text('Sort', style: Theme.of(context).textTheme.subtitle1),
-          Expanded(
-            child: _Sorting(
-              onChanged: (i, d) {
-                index = i;
-                desc = d;
-              },
-              names: options,
-              index: index,
-              desc: desc,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Sorting extends StatefulWidget {
-  _Sorting({
-    required this.names,
-    required this.onChanged,
-    required this.index,
-    required this.desc,
-  });
-
-  final List<String> names;
-  final void Function(int, bool) onChanged;
-  final int index;
-  final bool desc;
-
-  @override
-  _SortingState createState() => _SortingState();
-}
-
-class _SortingState extends State<_Sorting> {
-  late int _index;
-  late bool _desc;
-
-  @override
-  void initState() {
-    super.initState();
-    _index = widget.index;
-    _desc = widget.desc;
-  }
-
-  @override
-  Widget build(BuildContext context) => ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: widget.names.length,
-        itemExtent: 40,
-        itemBuilder: (_, i) => GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                widget.names[i],
-                style: i != _index
-                    ? Theme.of(context).textTheme.bodyText2
-                    : Theme.of(context).textTheme.bodyText1,
-              ),
-              if (i == _index)
-                Icon(
-                  _desc
-                      ? Icons.arrow_downward_rounded
-                      : Icons.arrow_upward_rounded,
-                  color: Theme.of(context).colorScheme.secondary,
-                  size: Consts.ICON_SMALL,
-                ),
-            ],
-          ),
-          onTap: () {
-            i != _index
-                ? setState(() => _index = i)
-                : setState(() => _desc = !_desc);
-            widget.onChanged(_index, _desc);
-          },
-        ),
-      );
 }

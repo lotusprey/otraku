@@ -79,16 +79,18 @@ class ChipGrid extends StatefulWidget {
   final String title;
   final String placeholder;
   final List<String> names;
+  final Future<void> Function(List<String>) onEdit;
   final void Function(
     List<String> inclusive,
     void Function(List<String>) onDone,
-  ) edit;
+  )? edit;
 
   ChipGrid({
     required this.title,
     required this.placeholder,
     required this.names,
-    required this.edit,
+    required this.onEdit,
+    this.edit,
   });
 
   @override
@@ -110,13 +112,7 @@ class _ChipGridState extends State<ChipGrid> {
       title: widget.title,
       placeholder: widget.placeholder,
       children: children,
-      onEdit: () => widget.edit(
-        [...widget.names],
-        (names) => setState(() {
-          widget.names.clear();
-          widget.names.addAll(names);
-        }),
-      ),
+      onEdit: () => widget.onEdit(widget.names).then((_) => setState(() {})),
       onClear: () => setState(() => widget.names.clear()),
     );
   }
@@ -127,18 +123,14 @@ class ChipToggleGrid extends StatefulWidget {
   final String placeholder;
   final List<String> inclusive;
   final List<String> exclusive;
-  final void Function(
-    List<String> inclusive,
-    List<String> exclusive,
-    void Function(List<String>, List<String>) onDone,
-  ) edit;
+  final Future<void> Function(List<String>, List<String>) onEdit;
 
   ChipToggleGrid({
     required this.title,
     required this.placeholder,
     required this.inclusive,
     required this.exclusive,
-    required this.edit,
+    required this.onEdit,
   });
 
   @override
@@ -176,16 +168,9 @@ class _ChipToggleGridState extends State<ChipToggleGrid> {
       title: widget.title,
       placeholder: widget.placeholder,
       children: children,
-      onEdit: () => widget.edit(
-        [...widget.inclusive],
-        [...widget.exclusive],
-        (inclusive, exclusive) => setState(() {
-          widget.inclusive.clear();
-          widget.exclusive.clear();
-          widget.inclusive.addAll(inclusive);
-          widget.exclusive.addAll(exclusive);
-        }),
-      ),
+      onEdit: () => widget
+          .onEdit(widget.inclusive, widget.exclusive)
+          .then((_) => setState(() {})),
       onClear: () => setState(() {
         widget.inclusive.clear();
         widget.exclusive.clear();

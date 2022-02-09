@@ -34,9 +34,10 @@ class DragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > 420
-        ? (MediaQuery.of(context).size.width - 400) / 2
-        : 20.0;
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > Consts.OVERLAY_TIGHT
+            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_TIGHT) / 2
+            : 0.0);
 
     final availableHeight = MediaQuery.of(ctx).size.height;
     final requiredHeight = children.length * itemExtent + 60;

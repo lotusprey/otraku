@@ -16,7 +16,7 @@ abstract class Consts {
 
   // Layout sizes.
   static const OVERLAY_WIDE = 600.0;
-  static const OVERLAY_TIGHT = 300.0;
+  static const OVERLAY_TIGHT = 400.0;
 
   // Font sizes.
   static const FONT_BIG = 20.0;

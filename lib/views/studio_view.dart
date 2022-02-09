@@ -4,11 +4,14 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/studio_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -25,13 +28,17 @@ class StudioView extends StatelessWidget {
             ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
             : 0.0);
 
-    return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: GetBuilder<StudioController>(
-          init: StudioController(id),
-          tag: id.toString(),
-          builder: (ctrl) => CustomScrollView(
+    return GetBuilder<StudioController>(
+      init: StudioController(id),
+      tag: id.toString(),
+      builder: (ctrl) => Scaffold(
+        floatingActionButton: ctrl.model != null ? _ActionButton(id) : null,
+        floatingActionButtonLocation: Settings().leftHanded
+            ? FloatingActionButtonLocation.startFloat
+            : FloatingActionButtonLocation.endFloat,
+        body: SafeArea(
+          bottom: false,
+          child: CustomScrollView(
             physics: Consts.PHYSICS,
             controller: ctrl.scrollCtrl,
             semanticChildCount: ctrl.media.mediaCount,
@@ -60,37 +67,6 @@ class StudioView extends StatelessWidget {
                   ),
                 ),
               if (ctrl.model != null) ...[
-                SliverShadowAppBar([
-                  const Spacer(),
-                  AppBarIcon(
-                    tooltip: 'Filter',
-                    icon: Ionicons.funnel_outline,
-                    onTap: () => DragSheet.show(
-                      context,
-                      OptionDragSheet(
-                        options: const ['Everything', 'On List', 'Not On List'],
-                        index: ctrl.onList == null
-                            ? 0
-                            : ctrl.onList!
-                                ? 1
-                                : 2,
-                        onTap: (val) => ctrl.onList = val == 0
-                            ? null
-                            : val == 1
-                                ? true
-                                : false,
-                      ),
-                    ),
-                  ),
-                  AppBarIcon(
-                    tooltip: 'Sort',
-                    icon: Ionicons.filter_outline,
-                    onTap: () => Sheet.show(
-                      ctx: context,
-                      sheet: MediaSortSheet(ctrl.sort, (s) => ctrl.sort = s),
-                    ),
-                  ),
-                ]),
                 if (ctrl.media.names.isEmpty)
                   SliverFillRemaining(
                     child: Center(
@@ -138,6 +114,85 @@ class StudioView extends StatelessWidget {
               ],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionButton extends StatelessWidget {
+  const _ActionButton(this.id);
+
+  final int id;
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<StudioController>(
+      tag: id.toString(),
+      builder: (ctrl) => FloatingListener(
+        scrollCtrl: ctrl.scrollCtrl,
+        child: ActionButton(
+          icon: Ionicons.funnel_outline,
+          tooltip: 'Filter',
+          onTap: () {
+            MediaSort sort = ctrl.sort;
+            bool? onList = ctrl.onList;
+
+            final sortItems = <String, int>{};
+            for (int i = 0; i < MediaSort.values.length; i += 2) {
+              String key = Convert.clarifyEnum(MediaSort.values[i].name)!;
+              sortItems[key] = i ~/ 2;
+            }
+
+            Sheet.show(
+              ctx: context,
+              sheet: Sheet(
+                height: MediaQuery.of(context).size.width < 360 ? 330 : 180,
+                child: GridView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  gridDelegate:
+                      const SliverGridDelegateWithMinWidthAndFixedHeight(
+                    minWidth: 155,
+                    height: 75,
+                  ),
+                  children: [
+                    DropDownField<int>(
+                      title: 'Sort',
+                      value: sort.index ~/ 2,
+                      items: sortItems,
+                      onChanged: (val) {
+                        int index = val * 2;
+                        if (sort.index % 2 != 0) index++;
+                        sort = MediaSort.values[index];
+                      },
+                    ),
+                    DropDownField<bool>(
+                      title: 'Order',
+                      value: sort.index % 2 == 0,
+                      items: const {'Ascending': true, 'Descending': false},
+                      onChanged: (val) {
+                        int index = sort.index;
+                        if (index % 2 == 0 && !val) index++;
+                        if (index % 2 != 0 && val) index--;
+                        sort = MediaSort.values[index];
+                      },
+                    ),
+                    DropDownField<bool?>(
+                      title: 'List Filter',
+                      value: onList,
+                      items: const {
+                        'Everything': null,
+                        'On List': true,
+                        'Not On List': false,
+                      },
+                      onChanged: (val) => onList = val,
+                    ),
+                  ],
+                ),
+              ),
+            ).then((_) => ctrl.filter(sort, onList));
+          },
         ),
       ),
     );

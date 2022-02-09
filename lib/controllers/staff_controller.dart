@@ -34,14 +34,12 @@ class StaffController extends ScrollingController {
   }
 
   MediaSort get sort => _sort;
-  set sort(MediaSort value) {
-    _sort = value;
-    refetch();
-  }
-
   bool? get onList => _onList;
-  set onList(bool? val) {
-    _onList = val;
+
+  void filter(MediaSort sortVal, bool? onListVal) {
+    if (sortVal == _sort && onListVal == _onList) return;
+    _sort = sortVal;
+    _onList = onListVal;
     refetch();
   }
 

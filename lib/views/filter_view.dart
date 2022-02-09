@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/anime_format.dart';
 import 'package:otraku/constants/explorable.dart';
@@ -66,10 +66,6 @@ class FiltersView extends StatelessWidget {
     if (collectionTag == null)
       changes[Filterable.SORT] = filterable.getFilterWithKey(Filterable.SORT);
 
-    // Countries.
-    final countries = <String, String?>{'All': null};
-    for (final e in Convert.COUNTRY_CODES.entries) countries[e.value] = e.key;
-
     // Statuses.
     final statusOptions = <String>[];
     final statusValues = <String>[];
@@ -98,19 +94,6 @@ class FiltersView extends StatelessWidget {
       appBar: ShadowAppBar(
         title: 'Filters',
         actions: [
-          AppBarIcon(
-            tooltip: 'Sort',
-            icon: Ionicons.filter_outline,
-            onTap: () => Sheet.show(
-              ctx: context,
-              sheet: collectionTag != null
-                  ? CollectionSortSheet(collectionTag!)
-                  : MediaSortSheet(
-                      MediaSort.values.byName(changes[Filterable.SORT]),
-                      (v) => changes[Filterable.SORT] = v.name,
-                    ),
-            ),
-          ),
           AppBarIcon(
             tooltip: 'Clear',
             icon: Icons.close,
@@ -148,54 +131,38 @@ class FiltersView extends StatelessWidget {
         padding: Consts.PADDING,
         children: [
           if (collectionTag == null)
-            DropDownField(
-              title: 'List Filter',
-              value: changes[Filterable.ON_LIST],
-              items: {
-                'All': null,
-                'In My List': true,
-                'Not In My List': false,
-              },
-              onChanged: (val) => changes[Filterable.ON_LIST] = val,
-            ),
-          const SizedBox(height: 10),
-          DropDownField(
-            title: 'Country',
-            value: changes[Filterable.COUNTRY],
-            items: countries,
-            onChanged: (val) => changes[Filterable.COUNTRY] = val,
-          ),
-          const SizedBox(height: 10),
+            _ExploreSorting(changes)
+          else
+            _CollectionSorting(collectionTag!),
+          _DropDownRow(changes, collectionTag == null),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
             names: changes[Filterable.STATUS_IN],
-            edit: (names, onDone) => Sheet.show(
+            onEdit: (selected) => Sheet.show(
               ctx: context,
+              isScrollControlled: statusOptions.length <= 10,
               sheet: SelectionSheet(
                 options: statusOptions,
                 values: statusValues,
-                names: names,
+                selected: selected,
                 fixHeight: statusOptions.length <= 10,
-                onDone: onDone,
               ),
-              isScrollControlled: statusOptions.length <= 10,
             ),
           ),
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
             names: changes[Filterable.FORMAT_IN],
-            edit: (names, onDone) => Sheet.show(
+            onEdit: (selected) => Sheet.show(
               ctx: context,
+              isScrollControlled: formatOptions.length <= 10,
               sheet: SelectionSheet(
                 options: formatOptions,
                 values: formatValues,
-                names: names,
+                selected: selected,
                 fixHeight: formatOptions.length <= 10,
-                onDone: onDone,
               ),
-              isScrollControlled: formatOptions.length <= 10,
             ),
           ),
           ChipToggleGrid(
@@ -203,7 +170,7 @@ class FiltersView extends StatelessWidget {
             placeholder: 'genres',
             inclusive: changes[Filterable.GENRE_IN],
             exclusive: changes[Filterable.GENRE_NOT_IN],
-            edit: (inclusive, exclusive, onDone) => Sheet.show(
+            onEdit: (inclusive, exclusive) => Sheet.show(
               ctx: context,
               isScrollControlled: false,
               sheet: SelectionToggleSheet(
@@ -212,7 +179,6 @@ class FiltersView extends StatelessWidget {
                 inclusive: inclusive,
                 exclusive: exclusive,
                 fixHeight: explorer.genres.length <= 10,
-                onDone: onDone,
               ),
             ),
           ),
@@ -222,17 +188,195 @@ class FiltersView extends StatelessWidget {
               placeholder: 'tags',
               inclusive: changes[Filterable.TAG_IN],
               exclusive: changes[Filterable.TAG_NOT_IN],
-              edit: (inclusive, exclusive, onDone) => Sheet.show(
+              onEdit: (inclusive, exclusive) => Sheet.show(
                 ctx: context,
                 isScrollControlled: false,
                 sheet: TagSelectionSheet(
                   tags: explorer.tags,
                   inclusive: inclusive,
                   exclusive: exclusive,
-                  onDone: onDone,
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CollectionSorting extends StatefulWidget {
+  const _CollectionSorting(this.ctrlTag);
+
+  final String ctrlTag;
+
+  @override
+  __CollectionSortingState createState() => __CollectionSortingState();
+}
+
+class __CollectionSortingState extends State<_CollectionSorting> {
+  final _sortItems = <String, int>{};
+  late CollectionController _ctrl;
+  late EntrySort _sort;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = Get.find<CollectionController>(tag: widget.ctrlTag);
+    _sort = _ctrl.getFilterWithKey(Filterable.SORT);
+    for (int i = 0; i < EntrySort.values.length; i += 2) {
+      String key = Convert.clarifyEnum(EntrySort.values[i].name)!;
+      _sortItems[key] = i ~/ 2;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: DropDownField<int>(
+              title: 'Sort',
+              value: _sort.index ~/ 2,
+              items: _sortItems,
+              onChanged: (val) {
+                int index = val * 2;
+                if (_sort.index % 2 != 0) index++;
+
+                _sort = EntrySort.values[index];
+                _ctrl.setFilterWithKey(Filterable.SORT, value: _sort);
+                _ctrl.sort();
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: DropDownField<bool>(
+              title: 'Order',
+              value: _sort.index % 2 == 0,
+              items: const {'Ascending': true, 'Descending': false},
+              onChanged: (val) {
+                int index = _sort.index;
+                if (!val) index++;
+
+                _sort = EntrySort.values[index];
+                _ctrl.setFilterWithKey(Filterable.SORT, value: _sort);
+                _ctrl.sort();
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExploreSorting extends StatefulWidget {
+  const _ExploreSorting(this.changes);
+
+  final Map<String, dynamic> changes;
+
+  @override
+  __ExploreSortingState createState() => __ExploreSortingState();
+}
+
+class __ExploreSortingState extends State<_ExploreSorting> {
+  final _sortItems = <String, int>{};
+  late MediaSort _sort;
+
+  @override
+  void initState() {
+    super.initState();
+    _sort = MediaSort.values.byName(widget.changes[Filterable.SORT]);
+    for (int i = 0; i < MediaSort.values.length; i += 2) {
+      String key = Convert.clarifyEnum(MediaSort.values[i].name)!;
+      _sortItems[key] = i ~/ 2;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: DropDownField<int>(
+              title: 'Sort',
+              value: _sort.index ~/ 2,
+              items: _sortItems,
+              onChanged: (val) {
+                int index = val * 2;
+                if (_sort.index % 2 != 0) index++;
+
+                _sort = MediaSort.values[index];
+                widget.changes[Filterable.SORT] = _sort.name;
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: DropDownField<bool>(
+              title: 'Order',
+              value: _sort.index % 2 == 0,
+              items: const {'Ascending': true, 'Descending': false},
+              onChanged: (val) {
+                int index = _sort.index;
+                if (index % 2 == 0 && !val) index++;
+                if (index % 2 != 0 && val) index--;
+
+                _sort = MediaSort.values[index];
+                widget.changes[Filterable.SORT] = _sort.name;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DropDownRow extends StatelessWidget {
+  const _DropDownRow(this.changes, this.withListFilter);
+
+  final Map<String, dynamic> changes;
+  final bool withListFilter;
+
+  @override
+  Widget build(BuildContext context) {
+    // Countries.
+    final countries = <String, String?>{'All': null};
+    for (final e in Convert.COUNTRY_CODES.entries) countries[e.value] = e.key;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: DropDownField(
+              title: 'Country',
+              value: changes[Filterable.COUNTRY],
+              items: countries,
+              onChanged: (val) => changes[Filterable.COUNTRY] = val,
+            ),
+          ),
+          const SizedBox(width: 10),
+          if (withListFilter)
+            Expanded(
+              child: DropDownField(
+                title: 'List Filter',
+                value: changes[Filterable.ON_LIST],
+                items: const {
+                  'Everything': null,
+                  'On List': true,
+                  'Not On List': false,
+                },
+                onChanged: (val) => changes[Filterable.ON_LIST] = val,
+              ),
+            )
+          else
+            const Spacer(),
         ],
       ),
     );

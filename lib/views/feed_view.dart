@@ -201,16 +201,19 @@ class _Filter extends StatelessWidget {
     return AppBarIcon(
       tooltip: 'Filter',
       icon: Ionicons.funnel_outline,
-      onTap: () => Sheet.show(
-        ctx: context,
-        sheet: SelectionSheet<ActivityType>(
-          options: ActivityType.values.map((v) => v.text).toList(),
-          values: ActivityType.values,
-          names: ctrl.typeIn,
-          onDone: (typeIn) => ctrl.typeIn = typeIn,
-          fixHeight: true,
-        ),
-      ),
+      onTap: () {
+        final typeIn = ctrl.typeIn;
+
+        Sheet.show(
+          ctx: context,
+          sheet: SelectionSheet<ActivityType>(
+            options: ActivityType.values.map((v) => v.text).toList(),
+            values: ActivityType.values,
+            selected: typeIn,
+            fixHeight: true,
+          ),
+        ).then((_) => ctrl.typeIn = typeIn);
+      },
     );
   }
 }

@@ -18,6 +18,7 @@ class ListEntryModel {
   final ListStatus? listStatus;
   final String? country;
   final List<String> genres;
+  final List<int> tags;
   double score;
   int repeat;
   String? notes;
@@ -38,6 +39,7 @@ class ListEntryModel {
     required this.createdAt,
     required this.updatedAt,
     required this.genres,
+    required this.tags,
     required this.progress,
     required this.progressMax,
     required this.progressVolumes,
@@ -60,6 +62,9 @@ class ListEntryModel {
       titles.add(map['media']['title']['romaji']);
     if (map['media']['title']['native'] != null)
       titles.add(map['media']['title']['native']);
+
+    final tags = <int>[];
+    for (final t in map['media']['tags']) tags.add(t['id']);
 
     return ListEntryModel._(
       mediaId: map['media']['id'],
@@ -86,6 +91,7 @@ class ListEntryModel {
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
       genres: List.from(map['media']['genres']),
+      tags: tags,
       country: map['media']['countryOfOrigin'],
     );
   }

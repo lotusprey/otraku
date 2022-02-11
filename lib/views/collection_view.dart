@@ -8,7 +8,7 @@ import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/layouts/collection_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
+import 'package:otraku/widgets/navigation/sliver_filter_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class CollectionView extends StatelessWidget {

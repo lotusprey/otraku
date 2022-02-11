@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
@@ -24,14 +25,14 @@ class RouteArg {
   const RouteArg({
     this.id,
     this.info,
+    this.object,
     this.variant,
-    this.callback,
   });
 
   final int? id;
   final String? info;
   final bool? variant;
-  final Function? callback;
+  final Object? object;
 
   /// Used to provide context when it's unavailable
   /// through [RouteArg.navKey.currentContext].
@@ -106,12 +107,9 @@ class RouteArg {
           builder: (_) => ActivityView(arg!.id!, arg.info),
         );
       case filters:
-        if (arg?.callback is! void Function(bool)) return _unknown();
+        if (arg?.object is! FilterModel) return _unknown();
         return MaterialPageRoute(
-          builder: (_) => FiltersView(
-            arg!.info,
-            arg.callback as void Function(bool),
-          ),
+          builder: (_) => FiltersView(arg!.object as FilterModel),
         );
       default:
         return null;

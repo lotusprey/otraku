@@ -6,8 +6,6 @@ import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
@@ -121,18 +119,11 @@ class MediaInfoView {
           title: 'Genres',
           items: model.genres,
           onTap: (index) {
-            final explorable = Get.find<ExploreController>();
-            explorable.clearAllFilters(update: false);
-            explorable.setFilterWithKey(
-              Filterable.SORT,
-              value: MediaSort.TRENDING_DESC.name,
-            );
-            explorable.setFilterWithKey(
-              Filterable.GENRE_IN,
-              value: [model.genres[index]],
-            );
-            explorable.type = model.type;
-            explorable.search = '';
+            final filters = Get.find<ExploreController>().filters;
+            filters.clear();
+            filters.genreIn.add(model.genres[index]);
+            filters.type = model.type;
+            filters.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(ctx, (r) => r.isFirst);
           },
@@ -319,18 +310,11 @@ class __TagsState extends State<_Tags> {
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            final explorable = Get.find<ExploreController>();
-            explorable.clearAllFilters(update: false);
-            explorable.setFilterWithKey(
-              Filterable.SORT,
-              value: MediaSort.TRENDING_DESC.name,
-            );
-            explorable.setFilterWithKey(
-              Filterable.TAG_IN,
-              value: [tags[i].name],
-            );
-            explorable.type = ctrl.model!.info.type;
-            explorable.search = '';
+            final filters = Get.find<ExploreController>().filters;
+            filters.clear();
+            filters.tagIn.add(tags[i].name);
+            filters.type = ctrl.model!.info.type;
+            filters.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
@@ -386,27 +370,22 @@ class __TagsState extends State<_Tags> {
               onPressed: () => setState(
                 () => ctrl.showSpoilerTags = !ctrl.showSpoilerTags,
               ),
-              icon: Icon(ctrl.showSpoilerTags
-                  ? Ionicons.eye_off_outline
-                  : Ionicons.eye_outline),
+              icon: Icon(
+                ctrl.showSpoilerTags
+                    ? Ionicons.eye_off_outline
+                    : Ionicons.eye_outline,
+              ),
               label: Text('Spoilers'),
             );
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              final explorable = Get.find<ExploreController>();
-              explorable.clearAllFilters(update: false);
-              explorable.setFilterWithKey(
-                Filterable.SORT,
-                value: MediaSort.TRENDING_DESC.name,
-              );
-              explorable.setFilterWithKey(
-                Filterable.TAG_IN,
-                value: [tags[i].name],
-              );
-              explorable.type = ctrl.model!.info.type;
-              explorable.search = '';
+              final filters = Get.find<ExploreController>().filters;
+              filters.clear();
+              filters.tagIn.add(tags[i].name);
+              filters.type = ctrl.model!.info.type;
+              filters.search = '';
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigator.popUntil(context, (r) => r.isFirst);
             },

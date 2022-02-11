@@ -2,17 +2,15 @@ import 'dart:math';
 
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
-import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
-class CollectionController extends ScrollingController implements Filterable {
-  // GetBuilder ids.
+class CollectionController extends ScrollingController {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
 
@@ -22,13 +20,14 @@ class CollectionController extends ScrollingController implements Filterable {
   // DATA
   // ***************************************************************************
 
-  CollectionController(this.userId, this.ofAnime);
+  CollectionController(this.userId, ofAnime) {
+    filters = CollectionFilterModel(ofAnime, _onFilterChange);
+  }
 
   final int userId;
-  final bool ofAnime;
+  late final CollectionFilterModel filters;
   final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[];
-  final _filters = <String, dynamic>{};
   final _customListNames = <String>[];
   int _listIndex = 0;
   bool _isLoading = true;
@@ -51,9 +50,8 @@ class CollectionController extends ScrollingController implements Filterable {
   set searchMode(bool v) {
     if (_searchMode == v) return;
     _searchMode = v;
+    filters.search = '';
     update([ID_HEAD]);
-    if (_filters[Filterable.SEARCH] != null)
-      setFilterWithKey(Filterable.SEARCH, update: true);
   }
 
   List<String> get listNames {
@@ -82,9 +80,92 @@ class CollectionController extends ScrollingController implements Filterable {
     _filter();
   }
 
-  void sort() {
-    for (final list in _lists) list.sort(_filters[Filterable.SORT]);
+  void sort() => _onFilterChange(content: true, frame: false, meta: true);
+
+  void _onFilterChange({
+    bool content = false,
+    bool frame = false,
+    bool meta = false,
+  }) {
+    if (meta) for (final list in _lists) list.sort(filters.sort);
     _filter();
+  }
+
+  void _filter() {
+    if (_lists.isEmpty) return;
+
+    final search = filters.search.toLowerCase();
+    final tagIdIn = filters.tagIdIn;
+    final tagIdNotIn = filters.tagIdNotIn;
+
+    final list = _lists[_listIndex];
+    final e = <ListEntryModel>[];
+
+    for (final entry in list.entries) {
+      if (search.isNotEmpty) {
+        bool contains = false;
+        for (final title in entry.titles)
+          if (title.toLowerCase().contains(search)) {
+            contains = true;
+            break;
+          }
+        if (!contains) continue;
+      }
+
+      if (filters.country != null && entry.country != filters.country) continue;
+
+      if (filters.formats.isNotEmpty && !filters.formats.contains(entry.format))
+        continue;
+
+      if (filters.statuses.isNotEmpty &&
+          !filters.statuses.contains(entry.status)) continue;
+
+      if (filters.genreIn.isNotEmpty) {
+        bool isIn = true;
+        for (final genre in filters.genreIn)
+          if (!entry.genres.contains(genre)) {
+            isIn = false;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (filters.genreNotIn.isNotEmpty) {
+        bool isIn = false;
+        for (final genre in filters.genreNotIn)
+          if (entry.genres.contains(genre)) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      if (tagIdIn.isNotEmpty) {
+        bool isIn = true;
+        for (final tagId in tagIdIn)
+          if (!entry.tags.contains(tagId)) {
+            isIn = false;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (tagIdNotIn.isNotEmpty) {
+        bool isIn = false;
+        for (final tagId in tagIdNotIn)
+          if (entry.tags.contains(tagId)) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      e.add(entry);
+    }
+
+    _entries.clear();
+    _entries.addAll(e);
+    update([ID_BODY, ID_HEAD]);
   }
 
   // ***************************************************************************
@@ -94,7 +175,7 @@ class CollectionController extends ScrollingController implements Filterable {
   Future<void> _fetch() async {
     Map<String, dynamic>? data = await Client.request(
       GqlQuery.collection,
-      {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
+      {'userId': userId, 'type': filters.typeName},
     );
 
     if (data == null) {
@@ -105,7 +186,7 @@ class CollectionController extends ScrollingController implements Filterable {
 
     data = data['MediaListCollection'];
 
-    final metaData = ofAnime
+    final metaData = filters.ofAnime
         ? data!['user']['mediaListOptions']['animeList']
         : data!['user']['mediaListOptions']['mangaList'];
     final bool splitCompleted =
@@ -114,9 +195,6 @@ class CollectionController extends ScrollingController implements Filterable {
     _scoreFormat = ScoreFormat.values.byName(
       data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
     );
-
-    _filters[Filterable.SORT] =
-        ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
 
     _customListNames.clear();
     for (final l in metaData['customLists'] ?? []) _customListNames.add(l);
@@ -130,11 +208,11 @@ class CollectionController extends ScrollingController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
     }
 
     for (final l in data['lists'])
-      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
 
     scrollUpTo(0);
     if (_listIndex >= _lists.length) _listIndex = 0;
@@ -196,7 +274,7 @@ class CollectionController extends ScrollingController implements Filterable {
         if (entry.listStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
-          list.insertSorted(entry, _filters[Filterable.SORT]);
+          list.insertSorted(entry, filters.sort);
           added = true;
           break;
         }
@@ -211,7 +289,7 @@ class CollectionController extends ScrollingController implements Filterable {
       for (final list in _lists)
         for (int i = 0; i < newCustomLists.length; i++)
           if (newCustomLists[i] == list.name.toLowerCase()) {
-            list.insertSorted(entry, _filters[Filterable.SORT]);
+            list.insertSorted(entry, filters.sort);
             newCustomLists.removeAt(i);
             break;
           }
@@ -250,7 +328,7 @@ class CollectionController extends ScrollingController implements Filterable {
     );
     if (data == null) return;
 
-    final sorting = _filters[Filterable.SORT];
+    final sorting = filters.sort;
     final needsSort = sorting == EntrySort.PROGRESS ||
         sorting == EntrySort.PROGRESS_DESC ||
         sorting == EntrySort.UPDATED_AT ||
@@ -337,112 +415,6 @@ class CollectionController extends ScrollingController implements Filterable {
       }
 
     _filter();
-  }
-
-  // ***************************************************************************
-  // FILTERING
-  // ***************************************************************************
-
-  void _filter([bool updateHeader = true]) {
-    if (_lists.isEmpty) return;
-
-    final String? country = _filters[Filterable.COUNTRY];
-    final List<String>? formatIn = _filters[Filterable.FORMAT_IN];
-    final List<String>? statusIn = _filters[Filterable.STATUS_IN];
-    final List<String>? genreIn = _filters[Filterable.GENRE_IN];
-    final List<String>? genreNotIn = _filters[Filterable.GENRE_NOT_IN];
-    final search =
-        (_filters[Filterable.SEARCH] as String?)?.toLowerCase() ?? '';
-
-    final list = _lists[_listIndex];
-    final e = <ListEntryModel>[];
-
-    for (final entry in list.entries) {
-      if (search != '') {
-        bool contains = false;
-        for (final title in entry.titles)
-          if (title.toLowerCase().contains(search)) {
-            contains = true;
-            break;
-          }
-        if (!contains) continue;
-      }
-
-      if (country != null && entry.country != country) continue;
-
-      if (formatIn != null && !formatIn.contains(entry.format)) continue;
-
-      if (statusIn != null && !statusIn.contains(entry.status)) continue;
-
-      if (genreIn != null) {
-        bool isIn = true;
-        for (final genre in genreIn)
-          if (!entry.genres.contains(genre)) {
-            isIn = false;
-            break;
-          }
-        if (!isIn) continue;
-      }
-
-      if (genreNotIn != null) {
-        bool isIn = false;
-        for (final genre in genreNotIn)
-          if (entry.genres.contains(genre)) {
-            isIn = true;
-            break;
-          }
-        if (isIn) continue;
-      }
-
-      e.add(entry);
-    }
-
-    _entries.clear();
-    _entries.addAll(e);
-    update([ID_BODY, if (updateHeader) ID_HEAD]);
-  }
-
-  @override
-  dynamic getFilterWithKey(String key) => _filters[key];
-
-  @override
-  void setFilterWithKey(String key, {dynamic value, bool update = false}) {
-    if (value == null ||
-        (value is List && value.isEmpty) ||
-        (value is String && value.trim().isEmpty))
-      _filters.remove(key);
-    else
-      _filters[key] = value;
-
-    if (!update) return;
-
-    scrollUpTo(0);
-    _filter(false);
-  }
-
-  @override
-  void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
-        Filterable.COUNTRY,
-        Filterable.STATUS_IN,
-        Filterable.FORMAT_IN,
-        Filterable.GENRE_IN,
-        Filterable.GENRE_NOT_IN,
-      ], update: update);
-
-  @override
-  void clearFiltersWithKeys(List<String> keys, {bool update = true}) {
-    for (final key in keys) _filters.remove(key);
-
-    if (!update) return;
-
-    scrollUpTo(0);
-    _filter(false);
-  }
-
-  @override
-  bool anyActiveFilterFrom(List<String> keys) {
-    for (final k in keys) if (_filters.containsKey(k)) return true;
-    return false;
   }
 
   @override

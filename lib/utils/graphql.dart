@@ -100,7 +100,7 @@ abstract class GqlQuery {
         $genre_in: [String], $genre_not_in: [String], $tag_in: [String], $tag_not_in: [String], 
         $onList: Boolean, $isAdult: Boolean, $startDate_greater: FuzzyDateInt, 
         $startDate_lesser: FuzzyDateInt, $countryOfOrigin: CountryCode, $source: MediaSource, 
-        $season: MediaSeason, $id_not_in: [Int], $sort: [MediaSort]) {
+        $season: MediaSeason, $sort: [MediaSort]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
         media(type: $type, search: $search, status_in: $status_in, status_not_in: $status_not_in, 
@@ -108,7 +108,7 @@ abstract class GqlQuery {
         genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
         onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
         startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
-        source: $source, season: $season, id_not_in: $id_not_in, sort: $sort) {
+        source: $source, season: $season, sort: $sort) {
           id type title {userPreferred} coverImage {extraLarge}
         }
       }
@@ -149,10 +149,10 @@ abstract class GqlQuery {
   ''';
 
   static const characters = r'''
-    query Characters($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
+    query Characters($page: Int, $search: String, $isBirthday: Boolean) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        characters(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
+        characters(search: $search, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
           id name {userPreferred} image {large}
         }
       }
@@ -216,10 +216,10 @@ abstract class GqlQuery {
   ''';
 
   static const staffs = r'''
-    query Staff($page: Int, $search: String, $id_not_in: [Int], $isBirthday: Boolean) {
+    query Staff($page: Int, $search: String, $isBirthday: Boolean) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        staff(search: $search, id_not_in: $id_not_in, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
+        staff(search: $search, sort: FAVOURITES_DESC, isBirthday: $isBirthday) {
           id name {userPreferred} image {large}
         }
       }
@@ -246,10 +246,10 @@ abstract class GqlQuery {
   ''';
 
   static const studios = r'''
-    query Studios($page: Int, $search: String, $id_not_in: [Int]) {
+    query Studios($page: Int, $search: String) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        studios(search: $search, id_not_in: $id_not_in) {id name}
+        studios(search: $search) {id name}
       }
     }
   ''';
@@ -383,10 +383,10 @@ abstract class GqlQuery {
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
   static const activities = r'''
-    query Activities($userId: Int, $page: Int = 1, $idNotIn: [Int], $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
+    query Activities($userId: Int, $page: Int = 1, $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(userId: $userId, id_not_in: $idNotIn, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: ID_DESC) {
+        activities(userId: $userId, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: ID_DESC) {
           ... on TextActivity {...textActivity}
           ... on ListActivity {...listActivity}
           ... on MessageActivity {...messageActivity}
@@ -655,6 +655,7 @@ abstract class _GqlFragment {
       nextAiringEpisode {episode airingAt}
       countryOfOrigin
       genres
+      tags {id}
     }
     fragment entry on MediaList {
       id

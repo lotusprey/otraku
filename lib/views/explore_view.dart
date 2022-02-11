@@ -9,7 +9,7 @@ import 'package:otraku/widgets/layouts/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/sliver_filterable_app_bar.dart';
+import 'package:otraku/widgets/navigation/sliver_filter_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
@@ -108,23 +108,27 @@ class ExploreActionButton extends StatelessWidget {
         scrollCtrl: ctrl.scrollCtrl,
         child: ActionButton(
           tooltip: 'Types',
-          icon: ctrl.type.icon,
-          onTap: () => DragSheet.show(context, ExploreDragSheet(context)),
+          icon: ctrl.filters.type.icon,
+          onTap: () => DragSheet.show(
+            context,
+            ExploreDragSheet(context, ctrl.filters),
+          ),
           onSwipe: (goRight) {
-            final index = ctrl.type.index;
             if (goRight) {
-              if (index < Explorable.values.length - 1)
-                ctrl.type = Explorable.values.elementAt(index + 1);
+              if (ctrl.filters.type.index < Explorable.values.length - 1)
+                ctrl.filters.type =
+                    Explorable.values.elementAt(ctrl.filters.type.index + 1);
               else
-                ctrl.type = Explorable.values.elementAt(0);
+                ctrl.filters.type = Explorable.values.elementAt(0);
             } else {
-              if (index > 0)
-                ctrl.type = Explorable.values.elementAt(index - 1);
+              if (ctrl.filters.type.index > 0)
+                ctrl.filters.type =
+                    Explorable.values.elementAt(ctrl.filters.type.index - 1);
               else
-                ctrl.type = Explorable.values.last;
+                ctrl.filters.type = Explorable.values.last;
             }
 
-            return ctrl.type.icon;
+            return ctrl.filters.type.icon;
           },
         ),
       ),

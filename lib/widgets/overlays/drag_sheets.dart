@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -168,35 +168,34 @@ class CollectionDragSheet extends StatelessWidget {
 
 // Switch between explore types in the explore tab.
 class ExploreDragSheet extends StatelessWidget {
-  ExploreDragSheet(this.ctx);
+  ExploreDragSheet(this.ctx, this.filters);
 
   final BuildContext ctx;
+  final ExploreFilterModel filters;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = Get.find<ExploreController>();
-
     final children = <Widget>[];
     for (int i = 0; i < Explorable.values.length; i++)
       children.add(GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
           Navigator.pop(context);
-          ctrl.type = Explorable.values[i];
+          filters.type = Explorable.values[i];
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Explorable.values[i].icon,
-              color: i != ctrl.type.index
+              color: i != filters.type.index
                   ? Theme.of(context).colorScheme.onBackground
                   : Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(width: 5),
             Text(
               Convert.clarifyEnum(Explorable.values[i].name)!,
-              style: i != ctrl.type.index
+              style: i != filters.type.index
                   ? Theme.of(context).textTheme.headline1
                   : Theme.of(context).textTheme.headline1?.copyWith(
                       color: Theme.of(context).colorScheme.secondary),

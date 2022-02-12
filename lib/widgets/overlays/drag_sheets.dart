@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/models/filter_model.dart';
+import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -168,10 +168,10 @@ class CollectionDragSheet extends StatelessWidget {
 
 // Switch between explore types in the explore tab.
 class ExploreDragSheet extends StatelessWidget {
-  ExploreDragSheet(this.ctx, this.filters);
+  ExploreDragSheet(this.ctx, this.ctrl);
 
   final BuildContext ctx;
-  final ExploreFilterModel filters;
+  final ExploreController ctrl;
 
   @override
   Widget build(BuildContext context) {
@@ -181,21 +181,21 @@ class ExploreDragSheet extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: () {
           Navigator.pop(context);
-          filters.type = Explorable.values[i];
+          ctrl.type = Explorable.values[i];
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Explorable.values[i].icon,
-              color: i != filters.type.index
+              color: i != ctrl.type.index
                   ? Theme.of(context).colorScheme.onBackground
                   : Theme.of(context).colorScheme.secondary,
             ),
             const SizedBox(width: 5),
             Text(
               Convert.clarifyEnum(Explorable.values[i].name)!,
-              style: i != filters.type.index
+              style: i != ctrl.type.index
                   ? Theme.of(context).textTheme.headline1
                   : Theme.of(context).textTheme.headline1?.copyWith(
                       color: Theme.of(context).colorScheme.secondary),

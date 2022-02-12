@@ -119,11 +119,11 @@ class MediaInfoView {
           title: 'Genres',
           items: model.genres,
           onTap: (index) {
-            final filters = Get.find<ExploreController>().filters;
-            filters.clear();
-            filters.genreIn.add(model.genres[index]);
-            filters.type = model.type;
-            filters.search = '';
+            final explCtrl = Get.find<ExploreController>();
+            explCtrl.filters.clear();
+            explCtrl.filters.genreIn.add(model.genres[index]);
+            explCtrl.type = model.type;
+            explCtrl.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(ctx, (r) => r.isFirst);
           },
@@ -310,11 +310,11 @@ class __TagsState extends State<_Tags> {
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            final filters = Get.find<ExploreController>().filters;
-            filters.clear();
-            filters.tagIn.add(tags[i].name);
-            filters.type = ctrl.model!.info.type;
-            filters.search = '';
+            final explCtrl = Get.find<ExploreController>();
+            explCtrl.filters.clear();
+            explCtrl.filters.tagIn.add(tags[i].name);
+            explCtrl.type = ctrl.model!.info.type;
+            explCtrl.search = '';
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
@@ -381,11 +381,11 @@ class __TagsState extends State<_Tags> {
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              final filters = Get.find<ExploreController>().filters;
-              filters.clear();
-              filters.tagIn.add(tags[i].name);
-              filters.type = ctrl.model!.info.type;
-              filters.search = '';
+              final explCtrl = Get.find<ExploreController>();
+              explCtrl.filters.clear();
+              explCtrl.filters.tagIn.add(tags[i].name);
+              explCtrl.type = ctrl.model!.info.type;
+              explCtrl.search = '';
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigator.popUntil(context, (r) => r.isFirst);
             },

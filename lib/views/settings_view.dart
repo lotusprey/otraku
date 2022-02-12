@@ -26,11 +26,10 @@ class SettingsView extends StatelessWidget {
         if (changes.isNotEmpty &&
             state.controller != null &&
             await state.controller!.updateSettings(changes)) {
-          if (changes.containsKey('displayAdultContent')) {
-            final filters = Get.find<ExploreController>().filters;
-            changes['displayAdultContent']
-                ? filters.isAdult = null
-                : filters.isAdult = false;
+          if (changes['displayAdultContent'] == false) {
+            final ctrl = Get.find<ExploreController>();
+            ctrl.filters.isAdult = false;
+            ctrl.fetch();
           }
 
           if (changes.containsKey('scoreFormat') ||

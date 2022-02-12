@@ -1,64 +1,99 @@
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/tag_collection_model.dart';
 import 'package:otraku/utils/settings.dart';
 
-/// Called on certain changes. The parameters specify the type of change.
-/// [content] - main content of the view should be updated.
-/// [frame]   - header or FAB should be updated.
-/// [meta]    - additional behind the scene changes.
-///             [CollectionFilterModel] - sort entries.
-///             [ExploreFilterModel]    - trigger debounce for search.
-typedef OnFilterChange = void Function({bool content, bool frame, bool meta});
+class FilterModel {
+  FilterModel._({
+    required this.ofAnime,
+    required this.ofCollection,
+    required this.collectionFilter,
+    required this.exploreFilter,
+  });
 
-// Holds filter data for collections and explore tab.
-abstract class FilterModel {
-  FilterModel(this._onChange, this._type);
+  factory FilterModel.collection(bool ofAnime, CollectionFilterModel model) =>
+      FilterModel._(
+        ofAnime: ofAnime,
+        ofCollection: true,
+        collectionFilter: model,
+        exploreFilter: null,
+      );
 
-  // Called when certain fields change.
-  final OnFilterChange _onChange;
+  factory FilterModel.explore(bool ofAnime, ExploreFilterModel model) =>
+      FilterModel._(
+        ofAnime: ofAnime,
+        ofCollection: false,
+        collectionFilter: null,
+        exploreFilter: model,
+      );
 
+  final bool ofAnime;
+  final bool ofCollection;
+  final CollectionFilterModel? collectionFilter;
+  final ExploreFilterModel? exploreFilter;
+
+  FilterModel copy() => ofCollection
+      ? FilterModel.collection(ofAnime, collectionFilter!.copy())
+      : FilterModel.explore(ofAnime, exploreFilter!.copy());
+
+  void clear() => ofCollection
+      ? collectionFilter!.clear(refresh: true)
+      : exploreFilter!.clear(refresh: true);
+
+  void assign(FilterModel other, TagCollectionModel tags) {
+    if (ofCollection != other.ofCollection) return;
+    ofCollection
+        ? collectionFilter!.assign(other.collectionFilter!, tags)
+        : exploreFilter!.assign(other.exploreFilter!);
+  }
+}
+
+class CollectionFilterModel {
+  CollectionFilterModel(this._onChange, bool ofAnime) {
+    sort = ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
+  }
+
+  final void Function(bool)? _onChange;
   final List<String> statuses = [];
   final List<String> formats = [];
   final List<String> genreIn = [];
   final List<String> genreNotIn = [];
   final List<String> tagIn = [];
   final List<String> tagNotIn = [];
+  final List<int> tagIdIn = [];
+  final List<int> tagIdNotIn = [];
   String? country;
+  late EntrySort sort;
 
-  String _search = '';
-  String get search => _search;
+  CollectionFilterModel copy() {
+    final model = CollectionFilterModel(null, true);
+    model.sort = sort;
+    model.country = country;
+    model.statuses.addAll(statuses);
+    model.formats.addAll(formats);
+    model.genreIn.addAll(genreIn);
+    model.genreNotIn.addAll(genreNotIn);
+    model.tagIn.addAll(tagIn);
+    model.tagNotIn.addAll(tagNotIn);
+    return model;
+  }
 
-  var _type = Explorable.anime;
-  Explorable get type => _type;
-
-  void refresh() => _onChange(content: true);
-
-  // Clear general filters.
-  void clear() {
+  void clear({bool refresh = false}) {
+    country = null;
     statuses.clear();
     formats.clear();
     genreIn.clear();
     genreNotIn.clear();
     tagIn.clear();
     tagNotIn.clear();
-    country = null;
+    tagIdIn.clear();
+    tagIdNotIn.clear();
+    if (refresh) _onChange?.call(false);
   }
 
-  // Copy data to another object.
-  FilterModel _copy(FilterModel other) {
-    other.statuses.addAll(statuses);
-    other.formats.addAll(formats);
-    other.genreIn.addAll(genreIn);
-    other.genreNotIn.addAll(genreNotIn);
-    other.tagIn.addAll(tagIn);
-    other.tagNotIn.addAll(tagNotIn);
-    other.country = country;
-    return other;
-  }
-
-  // Assign fields from an object.
-  void assign(FilterModel other, TagCollectionModel tags) {
+  void assign(CollectionFilterModel other, TagCollectionModel tags) {
+    final mustSort = sort != other.sort;
+    sort = other.sort;
+    country = other.country;
     statuses.clear();
     statuses.addAll(other.statuses);
     formats.clear();
@@ -71,179 +106,96 @@ abstract class FilterModel {
     tagIn.addAll(other.tagIn);
     tagNotIn.clear();
     tagNotIn.addAll(other.tagNotIn);
-    country = other.country;
-  }
-}
-
-class CollectionFilterModel extends FilterModel {
-  CollectionFilterModel._({
-    required this.sort,
-    required bool ofAnime,
-    required OnFilterChange onChange,
-  }) : super(onChange, ofAnime ? Explorable.anime : Explorable.manga);
-
-  factory CollectionFilterModel(bool ofAnime, OnFilterChange onChange) {
-    return CollectionFilterModel._(
-      sort: ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort,
-      ofAnime: ofAnime,
-      onChange: onChange,
-    );
-  }
-
-  EntrySort sort;
-  final List<int> tagIdIn = [];
-  final List<int> tagIdNotIn = [];
-
-  bool get ofAnime => _type == Explorable.anime;
-
-  String get typeName => _type == Explorable.anime ? 'ANIME' : 'MANGA';
-
-  set search(String val) {
-    val = val.trim();
-    if (_search == val) return;
-    _search = val;
-    _onChange(content: true);
-  }
-
-  @override
-  void clear() {
-    super.clear();
-    tagIdIn.clear();
-    tagIdNotIn.clear();
-  }
-
-  CollectionFilterModel copy() {
-    final other = CollectionFilterModel._(
-      sort: sort,
-      ofAnime: ofAnime,
-      onChange: _onChange,
-    );
-    _copy(other);
-    return other;
-  }
-
-  @override
-  void assign(FilterModel other, TagCollectionModel tags) {
-    super.assign(other, tags);
-    if (other is! CollectionFilterModel) return;
-
     tagIdIn.clear();
     tagIdNotIn.clear();
     for (final t in tagIn) {
-      final index = tags.indices[t];
-      if (index == null) continue;
-      tagIdIn.add(tags.ids[index]);
+      final i = tags.indices[t];
+      if (i == null) continue;
+      tagIdIn.add(tags.ids[i]);
     }
     for (final t in tagNotIn) {
-      final index = tags.indices[t];
-      if (index == null) continue;
-      tagIdNotIn.add(tags.ids[index]);
+      final i = tags.indices[t];
+      if (i == null) continue;
+      tagIdNotIn.add(tags.ids[i]);
     }
-
-    if (sort != other.sort) {
-      sort = other.sort;
-      _onChange(content: true, meta: true);
-    } else {
-      _onChange(content: true);
-    }
+    _onChange?.call(mustSort);
   }
 }
 
-class ExploreFilterModel extends FilterModel {
-  ExploreFilterModel._({
-    required this.sort,
-    required Explorable type,
-    required OnFilterChange onChange,
-  }) : super(onChange, type);
+class ExploreFilterModel {
+  ExploreFilterModel(this._onChange);
 
-  factory ExploreFilterModel(OnFilterChange onChange) {
-    return ExploreFilterModel._(
-      sort: Settings().defaultExploreSort.name,
-      type: Settings().defaultExplorable,
-      onChange: onChange,
-    );
-  }
-
-  int page = 1;
-  String sort;
+  final void Function()? _onChange;
+  final List<String> statuses = [];
+  final List<String> formats = [];
+  final List<String> genreIn = [];
+  final List<String> genreNotIn = [];
+  final List<String> tagIn = [];
+  final List<String> tagNotIn = [];
+  String? country;
   bool? onList;
-  bool? isAdult;
-
-  bool _isBirthday = false;
-  bool get isBirthday => _isBirthday;
-  set isBirthday(bool val) {
-    if (_isBirthday == val) return;
-    _isBirthday = val;
-    _onChange(content: true);
-  }
-
-  set search(String val) {
-    val = val.trim();
-    if (_search == val) return;
-    _search = val;
-    _onChange(content: true, meta: true);
-  }
-
-  set type(Explorable val) {
-    if (_type == val) return;
-    _type = val;
-    formats.clear();
-    _onChange(content: true, frame: true);
-  }
-
-  @override
-  void clear() {
-    super.clear();
-    onList = null;
-    page = 1;
-  }
+  bool isAdult = false;
+  String sort = Settings().defaultExploreSort.name;
 
   ExploreFilterModel copy() {
-    final other = ExploreFilterModel._(
-      sort: sort,
-      type: _type,
-      onChange: _onChange,
-    );
-    _copy(other);
-    other.onList = onList;
-    return other;
+    final model = ExploreFilterModel(null);
+    model.sort = sort;
+    model.onList = onList;
+    model.country = country;
+    model.isAdult = isAdult;
+    model.statuses.addAll(statuses);
+    model.formats.addAll(formats);
+    model.genreIn.addAll(genreIn);
+    model.genreNotIn.addAll(genreNotIn);
+    model.tagIn.addAll(tagIn);
+    model.tagNotIn.addAll(tagNotIn);
+    return model;
   }
 
-  @override
-  void assign(FilterModel other, TagCollectionModel tags) {
-    super.assign(other, tags);
-    if (other is! ExploreFilterModel) return;
-    page = 1;
+  void clear({bool refresh = false}) {
+    onList = null;
+    country = null;
+    isAdult = false;
+    statuses.clear();
+    formats.clear();
+    genreIn.clear();
+    genreNotIn.clear();
+    tagIn.clear();
+    tagNotIn.clear();
+    if (refresh) _onChange?.call();
+  }
+
+  void assign(ExploreFilterModel other) {
     sort = other.sort;
     onList = other.onList;
-    _onChange(content: true);
+    country = other.country;
+    isAdult = other.isAdult;
+    statuses.clear();
+    statuses.addAll(other.statuses);
+    formats.clear();
+    formats.addAll(other.formats);
+    genreIn.clear();
+    genreIn.addAll(other.genreIn);
+    genreNotIn.clear();
+    genreNotIn.addAll(other.genreNotIn);
+    tagIn.clear();
+    tagIn.addAll(other.tagIn);
+    tagNotIn.clear();
+    tagNotIn.addAll(other.tagNotIn);
+    _onChange?.call();
   }
 
-  // Create variables for a GraphQl request.
   Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{
-      'page': page,
-      'sort': sort,
-      if (search.isNotEmpty) 'search': search,
-      if (isAdult != null) 'isAdult': isAdult,
-    };
+    final map = <String, dynamic>{'sort': sort, 'isAdult': isAdult};
 
-    if (type == Explorable.anime || type == Explorable.manga) {
-      if (type == Explorable.anime) map['type'] = 'ANIME';
-      if (type == Explorable.manga) map['type'] = 'MANGA';
-
-      if (statuses.isNotEmpty) map['status_in'] = statuses;
-      if (formats.isNotEmpty) map['format_in'] = formats;
-      if (genreIn.isNotEmpty) map['genre_in'] = genreIn;
-      if (genreNotIn.isNotEmpty) map['genre_not_in'] = genreNotIn;
-      if (tagIn.isNotEmpty) map['tag_in'] = tagIn;
-      if (tagNotIn.isNotEmpty) map['tag_not_in'] = tagNotIn;
-      if (country != null) map['countryOfOrigin'] = country;
-      if (onList != null) map['onList'] = onList;
-    }
-
-    if ((type == Explorable.character || type == Explorable.staff) &&
-        _isBirthday) map['isBirthday'] = true;
+    if (statuses.isNotEmpty) map['status_in'] = statuses;
+    if (formats.isNotEmpty) map['format_in'] = formats;
+    if (genreIn.isNotEmpty) map['genre_in'] = genreIn;
+    if (genreNotIn.isNotEmpty) map['genre_not_in'] = genreNotIn;
+    if (tagIn.isNotEmpty) map['tag_in'] = tagIn;
+    if (tagNotIn.isNotEmpty) map['tag_not_in'] = tagNotIn;
+    if (country != null) map['countryOfOrigin'] = country;
+    if (onList != null) map['onList'] = onList;
 
     return map;
   }

@@ -106,10 +106,10 @@ class RouteArg {
         return MaterialPageRoute(
           builder: (_) => ActivityView(arg!.id!, arg.info),
         );
-      case filters:
+      case filter:
         if (arg?.object is! FilterModel) return _unknown();
         return MaterialPageRoute(
-          builder: (_) => FiltersView(arg!.object as FilterModel),
+          builder: (_) => FilterView(arg?.object as FilterModel),
         );
       default:
         return null;
@@ -134,7 +134,7 @@ class RouteArg {
   static const statistics = '/statistics';
   static const reviews = '/reviews';
   static const activity = '/activity';
-  static const filters = '/filters';
+  static const filter = '/filter';
   static const thread = '/thread';
 
   // A placeholder for unknown routes.

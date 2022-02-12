@@ -38,7 +38,7 @@ class SliverCollectionAppBar extends StatelessWidget {
           leading,
           MediaSearchField(
             hint: ctrl.currentName,
-            value: ctrl.filters.search,
+            value: ctrl.search,
             searchMode: ctrl.searchMode,
             search: (val) {
               if (val == null) {
@@ -46,7 +46,7 @@ class SliverCollectionAppBar extends StatelessWidget {
                 return;
               }
 
-              ctrl.filters.search = val;
+              ctrl.search = val;
             },
             title: Row(
               mainAxisSize: MainAxisSize.min,
@@ -78,7 +78,7 @@ class SliverCollectionAppBar extends StatelessWidget {
               );
             },
           ),
-          _FilterIcon(ctrl.filters),
+          _FilterIcon(FilterModel.collection(ctrl.ofAnime, ctrl.filters)),
         ]);
       },
     );
@@ -93,13 +93,13 @@ class SliverExploreAppBar extends StatelessWidget {
     return GetBuilder<ExploreController>(
       id: ExploreController.ID_HEAD,
       builder: (ctrl) {
-        final type = ctrl.filters.type;
+        final type = ctrl.type;
         return SliverTransparentAppBar(
           [
             const SizedBox(width: 10),
             MediaSearchField(
               hint: Convert.clarifyEnum(type.name)!,
-              value: ctrl.filters.search,
+              value: ctrl.search,
               search: type != Explorable.review
                   ? (val) {
                       if (val == null) {
@@ -107,7 +107,7 @@ class SliverExploreAppBar extends StatelessWidget {
                         return;
                       }
 
-                      if (ctrl.filters.search != val) ctrl.filters.search = val;
+                      ctrl.search = val;
                     }
                   : null,
               searchMode: ctrl.searchMode,
@@ -130,10 +130,12 @@ class SliverExploreAppBar extends StatelessWidget {
                 ],
               ),
             ),
-            if (type == Explorable.anime || type == Explorable.manga)
-              _FilterIcon(ctrl.filters)
+            if (type == Explorable.anime)
+              _FilterIcon(FilterModel.explore(true, ctrl.filters))
+            else if (type == Explorable.manga)
+              _FilterIcon(FilterModel.explore(false, ctrl.filters))
             else if (type == Explorable.character || type == Explorable.staff)
-              _BirthdayIcon(ctrl.filters),
+              _BirthdayIcon(ctrl),
           ],
         );
       },
@@ -278,7 +280,7 @@ class _FilterIconState extends State<_FilterIcon> {
         icon: Ionicons.funnel_outline,
         onTap: () => Navigator.pushNamed(
           context,
-          RouteArg.filters,
+          RouteArg.filter,
           arguments: RouteArg(object: widget.filters),
         ).then((_) {
           if (_active != _isActive()) setState(() => _active = !_active);
@@ -287,24 +289,34 @@ class _FilterIconState extends State<_FilterIcon> {
       );
 
   bool _isActive() {
-    final filters = widget.filters;
+    if (widget.filters.ofCollection) {
+      final f = widget.filters.collectionFilter!;
+      return f.country != null ||
+          f.statuses.isNotEmpty ||
+          f.formats.isNotEmpty ||
+          f.genreIn.isNotEmpty ||
+          f.genreNotIn.isNotEmpty ||
+          f.tagIn.isNotEmpty ||
+          f.tagNotIn.isNotEmpty;
+    }
 
-    if (filters is ExploreFilterModel && filters.onList != null) return true;
-
-    return filters.country != null ||
-        filters.statuses.isNotEmpty ||
-        filters.formats.isNotEmpty ||
-        filters.genreIn.isNotEmpty ||
-        filters.genreNotIn.isNotEmpty ||
-        filters.tagIn.isNotEmpty ||
-        filters.tagNotIn.isNotEmpty;
+    final f = widget.filters.exploreFilter!;
+    return f.isAdult ||
+        f.country != null ||
+        f.onList != null ||
+        f.statuses.isNotEmpty ||
+        f.formats.isNotEmpty ||
+        f.genreIn.isNotEmpty ||
+        f.genreNotIn.isNotEmpty ||
+        f.tagIn.isNotEmpty ||
+        f.tagNotIn.isNotEmpty;
   }
 }
 
 class _BirthdayIcon extends StatefulWidget {
-  _BirthdayIcon(this.model);
+  _BirthdayIcon(this.ctrl);
 
-  final ExploreFilterModel model;
+  final ExploreController ctrl;
 
   @override
   State<_BirthdayIcon> createState() => _BirthdayIconState();
@@ -316,7 +328,7 @@ class _BirthdayIconState extends State<_BirthdayIcon> {
   @override
   void initState() {
     super.initState();
-    _active = widget.model.isBirthday;
+    _active = widget.ctrl.isBirthday;
   }
 
   @override
@@ -325,11 +337,11 @@ class _BirthdayIconState extends State<_BirthdayIcon> {
         tooltip: 'Birthday Filter',
         colour: _active ? Theme.of(context).colorScheme.secondary : null,
         onTap: () {
-          if (widget.model.isBirthday) {
-            widget.model.isBirthday = false;
+          if (widget.ctrl.isBirthday) {
+            widget.ctrl.isBirthday = false;
             setState(() => _active = false);
           } else {
-            widget.model.isBirthday = true;
+            widget.ctrl.isBirthday = true;
             setState(() => _active = true);
           }
         },

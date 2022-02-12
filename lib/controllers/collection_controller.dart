@@ -20,11 +20,12 @@ class CollectionController extends ScrollingController {
   // DATA
   // ***************************************************************************
 
-  CollectionController(this.userId, ofAnime) {
-    filters = CollectionFilterModel(ofAnime, _onFilterChange);
+  CollectionController(this.userId, this.ofAnime) {
+    filters = CollectionFilterModel(_onFilterChange, ofAnime);
   }
 
   final int userId;
+  final bool ofAnime;
   late final CollectionFilterModel filters;
   final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[];
@@ -32,6 +33,7 @@ class CollectionController extends ScrollingController {
   int _listIndex = 0;
   bool _isLoading = true;
   bool _searchMode = false;
+  String _search = '';
   ScoreFormat? _scoreFormat;
 
   // ***************************************************************************
@@ -42,15 +44,23 @@ class CollectionController extends ScrollingController {
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
   bool get searchMode => _searchMode;
+  String get search => _search;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
   List<String> get customListNames => [..._customListNames];
 
+  set search(String val) {
+    val = val.trimLeft();
+    if (_search == val) return;
+    _search = val;
+    _filter();
+  }
+
   set searchMode(bool v) {
     if (_searchMode == v) return;
     _searchMode = v;
-    filters.search = '';
+    _search = '';
     update([ID_HEAD]);
   }
 
@@ -77,24 +87,18 @@ class CollectionController extends ScrollingController {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
     scrollUpTo(0);
+    _filter(true);
+  }
+
+  void _onFilterChange(bool withSort) {
+    if (withSort) for (final list in _lists) list.sort(filters.sort);
     _filter();
   }
 
-  void sort() => _onFilterChange(content: true, frame: false, meta: true);
-
-  void _onFilterChange({
-    bool content = false,
-    bool frame = false,
-    bool meta = false,
-  }) {
-    if (meta) for (final list in _lists) list.sort(filters.sort);
-    _filter();
-  }
-
-  void _filter() {
+  void _filter([bool updateHead = false]) {
     if (_lists.isEmpty) return;
 
-    final search = filters.search.toLowerCase();
+    final searchLower = _search.toLowerCase();
     final tagIdIn = filters.tagIdIn;
     final tagIdNotIn = filters.tagIdNotIn;
 
@@ -102,7 +106,7 @@ class CollectionController extends ScrollingController {
     final e = <ListEntryModel>[];
 
     for (final entry in list.entries) {
-      if (search.isNotEmpty) {
+      if (searchLower.isNotEmpty) {
         bool contains = false;
         for (final title in entry.titles)
           if (title.toLowerCase().contains(search)) {
@@ -165,7 +169,7 @@ class CollectionController extends ScrollingController {
 
     _entries.clear();
     _entries.addAll(e);
-    update([ID_BODY, ID_HEAD]);
+    update([ID_BODY, if (updateHead) ID_HEAD]);
   }
 
   // ***************************************************************************
@@ -175,7 +179,7 @@ class CollectionController extends ScrollingController {
   Future<void> _fetch() async {
     Map<String, dynamic>? data = await Client.request(
       GqlQuery.collection,
-      {'userId': userId, 'type': filters.typeName},
+      {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
     if (data == null) {
@@ -186,7 +190,7 @@ class CollectionController extends ScrollingController {
 
     data = data['MediaListCollection'];
 
-    final metaData = filters.ofAnime
+    final metaData = ofAnime
         ? data!['user']['mediaListOptions']['animeList']
         : data!['user']['mediaListOptions']['mangaList'];
     final bool splitCompleted =

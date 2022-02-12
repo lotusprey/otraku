@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/anime_format.dart';
-import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/models/filter_model.dart';
@@ -15,20 +14,14 @@ import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class FiltersView extends StatelessWidget {
-  FiltersView(this.model);
+class FilterView extends StatelessWidget {
+  FilterView(this.model);
 
   final FilterModel model;
 
   @override
   Widget build(BuildContext context) {
-    CollectionFilterModel? collectionFilters;
-    ExploreFilterModel? exploreFilters;
-    if (model is CollectionFilterModel)
-      collectionFilters = (model as CollectionFilterModel).copy();
-    if (model is ExploreFilterModel)
-      exploreFilters = (model as ExploreFilterModel).copy();
-    final FilterModel filters = collectionFilters ?? exploreFilters!;
+    final copy = model.copy();
 
     // Statuses.
     final statusOptions = <String>[];
@@ -41,9 +34,7 @@ class FiltersView extends StatelessWidget {
     // Formats.
     final formatOptions = <String>[];
     final formatValues = <String>[];
-    final formatEnum = model.type == Explorable.anime
-        ? AnimeFormat.values
-        : MangaFormat.values;
+    final formatEnum = model.ofAnime ? AnimeFormat.values : MangaFormat.values;
     for (final v in formatEnum) {
       formatValues.add(v.name);
       formatOptions.add(Convert.clarifyEnum(formatValues.last)!);
@@ -58,7 +49,6 @@ class FiltersView extends StatelessWidget {
             icon: Icons.close,
             onTap: () {
               model.clear();
-              model.refresh();
               Navigator.pop(context);
             },
           ),
@@ -66,10 +56,7 @@ class FiltersView extends StatelessWidget {
             tooltip: 'Apply',
             icon: Icons.done_rounded,
             onTap: () {
-              model.assign(
-                filters,
-                Get.find<ExploreController>().tagCollection,
-              );
+              model.assign(copy, Get.find<ExploreController>().tagCollection);
               Navigator.pop(context);
             },
           ),
@@ -79,13 +66,17 @@ class FiltersView extends StatelessWidget {
         physics: Consts.PHYSICS,
         padding: Consts.PADDING,
         children: [
-          if (collectionFilters != null) _CollectionSorting(collectionFilters),
-          if (exploreFilters != null) _ExploreSorting(exploreFilters),
-          _DropDownRow(filters),
+          if (copy.ofCollection)
+            _CollectionSorting(copy.collectionFilter!)
+          else
+            _ExploreSorting(copy.exploreFilter!),
+          _DropDownRow(copy),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
-            names: filters.statuses,
+            names: copy.ofCollection
+                ? copy.collectionFilter!.statuses
+                : copy.exploreFilter!.statuses,
             onEdit: (selected) => Sheet.show(
               ctx: context,
               isScrollControlled: statusOptions.length <= 10,
@@ -100,7 +91,9 @@ class FiltersView extends StatelessWidget {
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            names: filters.formats,
+            names: copy.ofCollection
+                ? copy.collectionFilter!.formats
+                : copy.exploreFilter!.formats,
             onEdit: (selected) => Sheet.show(
               ctx: context,
               isScrollControlled: formatOptions.length <= 10,
@@ -115,10 +108,18 @@ class FiltersView extends StatelessWidget {
           ChipTagGrid(
             title: 'Tags',
             placeholder: 'tags',
-            inclusiveGenres: filters.genreIn,
-            exclusiveGenres: filters.genreNotIn,
-            inclusiveTags: filters.tagIn,
-            exclusiveTags: filters.tagNotIn,
+            inclusiveGenres: copy.ofCollection
+                ? copy.collectionFilter!.genreIn
+                : copy.exploreFilter!.genreIn,
+            exclusiveGenres: copy.ofCollection
+                ? copy.collectionFilter!.genreNotIn
+                : copy.exploreFilter!.genreNotIn,
+            inclusiveTags: copy.ofCollection
+                ? copy.collectionFilter!.tagIn
+                : copy.exploreFilter!.tagIn,
+            exclusiveTags: copy.ofCollection
+                ? copy.collectionFilter!.tagNotIn
+                : copy.exploreFilter!.tagNotIn,
           ),
         ],
       ),
@@ -262,30 +263,39 @@ class _DropDownRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Expanded(
-            child: DropDownField<String?>(
-              title: 'Country',
-              value: model.country,
-              items: countries,
-              onChanged: (val) => model.country = val,
+          if (model.ofCollection) ...[
+            Expanded(
+              child: DropDownField<String?>(
+                title: 'Country',
+                value: model.collectionFilter!.country,
+                items: countries,
+                onChanged: (val) => model.collectionFilter!.country = val,
+              ),
             ),
-          ),
-          if (model is ExploreFilterModel) ...[
+            const Spacer(),
+          ] else ...[
+            Expanded(
+              child: DropDownField<String?>(
+                title: 'Country',
+                value: model.exploreFilter!.country,
+                items: countries,
+                onChanged: (val) => model.exploreFilter!.country = val,
+              ),
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: DropDownField<bool?>(
                 title: 'List Filter',
-                value: (model as ExploreFilterModel).onList,
+                value: model.exploreFilter!.onList,
                 items: const {
                   'Everything': null,
                   'On List': true,
                   'Not On List': false,
                 },
-                onChanged: (val) => (model as ExploreFilterModel).onList = val,
+                onChanged: (val) => model.exploreFilter!.onList = val,
               ),
-            ),
-          ] else
-            const Spacer(),
+            )
+          ],
         ],
       ),
     );

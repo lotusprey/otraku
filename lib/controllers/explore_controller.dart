@@ -7,6 +7,7 @@ import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/settings.dart';
 
 // Searches and filters items from the Explorable enum
 class ExploreController extends ScrollingController {
@@ -14,14 +15,14 @@ class ExploreController extends ScrollingController {
   static const ID_BODY = 1;
   static const ID_BUTTON = 2;
 
-  // ***************************************************************************
-  // DATA
-  // ***************************************************************************
-
-  late final filters = ExploreFilterModel(_onFilterChange);
+  late final filters = ExploreFilterModel(fetch);
   late final TagCollectionModel tagCollection;
   final _results = PageModel<ExplorableModel>();
   late final _debounce = Debounce(fetch);
+  int _page = 1;
+  Explorable _type = Settings().defaultExplorable;
+  String _search = '';
+  bool _isBirthday = false;
   bool _isLoading = true;
   int _concurrentFetches = 0;
   bool _searchMode = false;
@@ -36,26 +37,39 @@ class ExploreController extends ScrollingController {
 
   List<ExplorableModel> get results => _results.items;
 
+  Explorable get type => _type;
+
+  String get search => _search;
+
+  set type(Explorable val) {
+    if (_type == val) return;
+    _type = val;
+    filters.formats.clear();
+    update([ID_HEAD, ID_BUTTON]);
+    fetch();
+  }
+
+  set search(String val) {
+    val = val.trimLeft();
+    if (_search == val) return;
+    _search = val;
+    _search.isEmpty ? fetch() : _debounce.run();
+  }
+
   bool get searchMode => _searchMode;
 
   set searchMode(bool val) {
     if (searchMode == val) return;
     _searchMode = val;
+    _search = '';
     update([ID_HEAD]);
-    if (filters.search.isNotEmpty) filters.search = '';
   }
 
-  void _onFilterChange({
-    bool content = false,
-    bool frame = false,
-    bool meta = false,
-  }) {
-    if (meta && filters.search.isNotEmpty) {
-      _debounce.run();
-      return;
-    }
+  bool get isBirthday => _isBirthday;
 
-    if (frame) update([ID_HEAD, ID_BUTTON]);
+  set isBirthday(bool val) {
+    if (_isBirthday == val) return;
+    _isBirthday = val;
     fetch();
   }
 
@@ -68,26 +82,38 @@ class ExploreController extends ScrollingController {
 
     if (clean) {
       _isLoading = true;
-      filters.page = 1;
+      _page = 1;
       scrollUpTo(0);
       update([ID_BODY]);
     }
 
     late String query;
-    if (filters.type == Explorable.anime || filters.type == Explorable.manga)
+    if (_type == Explorable.anime || _type == Explorable.manga)
       query = GqlQuery.medias;
-    else if (filters.type == Explorable.character)
+    else if (_type == Explorable.character)
       query = GqlQuery.characters;
-    else if (filters.type == Explorable.staff)
+    else if (_type == Explorable.staff)
       query = GqlQuery.staffs;
-    else if (filters.type == Explorable.studio)
+    else if (_type == Explorable.studio)
       query = GqlQuery.studios;
-    else if (filters.type == Explorable.review)
+    else if (_type == Explorable.review)
       query = GqlQuery.reviews;
     else
       query = GqlQuery.users;
 
-    Map<String, dynamic>? data = await Client.request(query, filters.toMap());
+    final variables = filters.toMap();
+    variables['page'] = _page;
+    if (_search.isNotEmpty) variables['search'] = _search;
+
+    if (type == Explorable.anime)
+      variables['type'] = 'ANIME';
+    else if (type == Explorable.manga)
+      variables['type'] = 'MANGA';
+    else if (type == Explorable.character || type == Explorable.staff) {
+      if (_isBirthday) variables['isBirthday'] = _isBirthday;
+    }
+
+    Map<String, dynamic>? data = await Client.request(query, variables);
 
     _concurrentFetches--;
     if (data == null || (_concurrentFetches > 0 && clean)) return;
@@ -119,7 +145,7 @@ class ExploreController extends ScrollingController {
   @override
   Future<void> fetchPage() async {
     if (!_results.hasNextPage) return;
-    filters.page++;
+    _page++;
     await fetch(clean: false);
   }
 
@@ -129,7 +155,6 @@ class ExploreController extends ScrollingController {
 
     const query = '''
         query Filters {
-          Viewer {options {displayAdultContent}}
           GenreCollection
           MediaTagCollection {id name description category isGeneralSpoiler}
         }
@@ -137,12 +162,7 @@ class ExploreController extends ScrollingController {
 
     Client.request(query).then((data) {
       if (data == null) return;
-
-      if (data['Viewer']?['options']?['displayAdultContent'] == false)
-        filters.isAdult = false;
-
       tagCollection = TagCollectionModel(data);
-
       fetch();
     });
   }

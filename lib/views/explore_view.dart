@@ -108,27 +108,25 @@ class ExploreActionButton extends StatelessWidget {
         scrollCtrl: ctrl.scrollCtrl,
         child: ActionButton(
           tooltip: 'Types',
-          icon: ctrl.filters.type.icon,
+          icon: ctrl.type.icon,
           onTap: () => DragSheet.show(
             context,
-            ExploreDragSheet(context, ctrl.filters),
+            ExploreDragSheet(context, ctrl),
           ),
           onSwipe: (goRight) {
             if (goRight) {
-              if (ctrl.filters.type.index < Explorable.values.length - 1)
-                ctrl.filters.type =
-                    Explorable.values.elementAt(ctrl.filters.type.index + 1);
+              if (ctrl.type.index < Explorable.values.length - 1)
+                ctrl.type = Explorable.values.elementAt(ctrl.type.index + 1);
               else
-                ctrl.filters.type = Explorable.values.elementAt(0);
+                ctrl.type = Explorable.values.elementAt(0);
             } else {
-              if (ctrl.filters.type.index > 0)
-                ctrl.filters.type =
-                    Explorable.values.elementAt(ctrl.filters.type.index - 1);
+              if (ctrl.type.index > 0)
+                ctrl.type = Explorable.values.elementAt(ctrl.type.index - 1);
               else
-                ctrl.filters.type = Explorable.values.last;
+                ctrl.type = Explorable.values.last;
             }
 
-            return ctrl.filters.type.icon;
+            return ctrl.type.icon;
           },
         ),
       ),

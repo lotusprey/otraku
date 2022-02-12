@@ -41,8 +41,8 @@ class CollectionGrid extends StatelessWidget {
             child: Center(
               child: Text(
                 ctrl.isEmpty
-                    ? 'No ${ctrl.filters.ofAnime ? 'Anime' : 'Manga'}'
-                    : 'No ${ctrl.filters.ofAnime ? 'Anime' : 'Manga'} Results',
+                    ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
+                    : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
             ),

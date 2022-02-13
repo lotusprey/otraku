@@ -142,21 +142,18 @@ class TagSheet extends StatelessWidget {
       builder: (_, scrollCtrl) {
         if (sheet == null)
           sheet = Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_WIDE),
-              child: Container(
-                padding: const EdgeInsets.only(top: 20),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: _TagSheetBody(
-                  inclusiveGenres: inclusiveGenres,
-                  exclusiveGenres: exclusiveGenres,
-                  inclusiveTags: inclusiveTags,
-                  exclusiveTags: exclusiveTags,
-                  scrollCtrl: scrollCtrl,
-                ),
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.vertical(top: Consts.RADIUS),
+              ),
+              child: _TagSheetBody(
+                inclusiveGenres: inclusiveGenres,
+                exclusiveGenres: exclusiveGenres,
+                inclusiveTags: inclusiveTags,
+                exclusiveTags: exclusiveTags,
+                scrollCtrl: scrollCtrl,
               ),
             ),
           );
@@ -209,56 +206,66 @@ class __TagSheetBodyState extends State<_TagSheetBody> {
       exclusive = widget.exclusiveGenres;
     }
 
-    return Column(
+    return Stack(
       children: [
-        Container(
-          height: 50,
-          child: ListView.builder(
-            physics: Consts.PHYSICS,
-            padding: const EdgeInsets.symmetric(horizontal: 5),
-            scrollDirection: Axis.horizontal,
-            itemCount: _tags.categoryNames.length,
-            itemBuilder: (_, i) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: ChipOptionField(
-                name: _tags.categoryNames[i],
-                selected: i == _index,
-                onTap: () => setState(() => _index = i),
+        ListView.builder(
+          physics: Consts.PHYSICS,
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: 10,
+            top: 60,
+          ),
+          controller: widget.scrollCtrl,
+          itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+          itemCount: listItems.length,
+          itemBuilder: (_, i) {
+            final name = _tags.names[listItems[i]];
+            return CheckBoxTriField(
+              key: UniqueKey(),
+              title: name,
+              initial: inclusive.contains(name)
+                  ? 1
+                  : exclusive.contains(name)
+                      ? -1
+                      : 0,
+              onChanged: (state) {
+                if (state == 0)
+                  exclusive.remove(name);
+                else if (state == 1)
+                  inclusive.add(name);
+                else {
+                  inclusive.remove(name);
+                  exclusive.add(name);
+                }
+              },
+            );
+          },
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Consts.RADIUS),
+          child: BackdropFilter(
+            filter: Consts.filter,
+            child: Container(
+              height: 60,
+              color: Theme.of(context).cardColor,
+              child: ListView.builder(
+                physics: Consts.PHYSICS,
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                scrollDirection: Axis.horizontal,
+                itemCount: _tags.categoryNames.length,
+                itemBuilder: (_, i) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: ChipOptionField(
+                    name: _tags.categoryNames[i],
+                    selected: i == _index,
+                    onTap: () => setState(() => _index = i),
+                  ),
+                ),
               ),
             ),
           ),
         ),
-        Expanded(
-          child: ListView.builder(
-            physics: Consts.PHYSICS,
-            padding: Consts.PADDING,
-            controller: widget.scrollCtrl,
-            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
-            itemCount: listItems.length,
-            itemBuilder: (_, i) {
-              final name = _tags.names[listItems[i]];
-              return CheckBoxTriField(
-                key: UniqueKey(),
-                title: name,
-                initial: inclusive.contains(name)
-                    ? 1
-                    : exclusive.contains(name)
-                        ? -1
-                        : 0,
-                onChanged: (state) {
-                  if (state == 0)
-                    exclusive.remove(name);
-                  else if (state == 1)
-                    inclusive.add(name);
-                  else {
-                    inclusive.remove(name);
-                    exclusive.add(name);
-                  }
-                },
-              );
-            },
-          ),
-        )
       ],
     );
   }

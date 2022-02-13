@@ -250,10 +250,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
               },
             ));
 
-            DragSheet.show(
-              context,
-              DragSheet(ctx: context, children: children),
-            );
+            DragSheet.show(context, DragSheet(children: children));
           },
         ),
         Tooltip(

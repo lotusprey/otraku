@@ -21,39 +21,24 @@ class DragSheet extends StatelessWidget {
 
   DragSheet({
     required this.children,
-    required this.ctx,
     this.itemExtent = Consts.MATERIAL_TAP_TARGET_SIZE,
   });
 
   final double itemExtent;
   final List<Widget> children;
 
-  /// A workaround for a bug: [showModalBottomSheet] doesn't respect the top
-  /// padding, so [SafeArea] & [MediaQuery.of(context).padding.top] don't work.
-  final BuildContext ctx;
-
   @override
   Widget build(BuildContext context) {
-    final sidePadding = 10.0 +
-        (MediaQuery.of(context).size.width > Consts.OVERLAY_TIGHT
-            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_TIGHT) / 2
-            : 0.0);
-
-    final availableHeight = MediaQuery.of(ctx).size.height;
     final requiredHeight = children.length * itemExtent + 60;
-
-    final size = requiredHeight < availableHeight
-        ? requiredHeight / availableHeight
-        : 1.0;
+    double height = requiredHeight / MediaQuery.of(context).size.height;
+    if (height > 0.9) height = 0.9;
 
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: size,
-      minChildSize: size < 0.25 ? size : 0.25,
+      initialChildSize: height,
+      minChildSize: height < 0.25 ? height : 0.25,
       builder: (_, sctrollCtrl) => Container(
-        margin: EdgeInsets.only(top: MediaQuery.of(ctx).viewInsets.top),
-        padding:
-            EdgeInsets.only(left: sidePadding, right: sidePadding, bottom: 10),
+        alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
@@ -67,13 +52,21 @@ class DragSheet extends StatelessWidget {
             ],
           ),
         ),
-        child: ListView.builder(
-          controller: sctrollCtrl,
-          padding: const EdgeInsets.only(top: 50),
-          physics: Consts.PHYSICS,
-          itemCount: children.length,
-          itemExtent: itemExtent,
-          itemBuilder: (_, i) => children[i],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
+          child: ListView.builder(
+            controller: sctrollCtrl,
+            padding: const EdgeInsets.only(
+              top: 50,
+              bottom: 10,
+              left: 10,
+              right: 10,
+            ),
+            physics: Consts.PHYSICS,
+            itemCount: children.length,
+            itemExtent: itemExtent,
+            itemBuilder: (_, i) => children[i],
+          ),
         ),
       ),
     );
@@ -115,7 +108,7 @@ class OptionDragSheet extends StatelessWidget {
         ),
       ));
 
-    return DragSheet(ctx: context, children: children);
+    return DragSheet(children: children);
   }
 }
 
@@ -162,7 +155,7 @@ class CollectionDragSheet extends StatelessWidget {
         ),
       ));
 
-    return DragSheet(ctx: ctx, itemExtent: 60, children: children);
+    return DragSheet(children: children, itemExtent: 60);
   }
 }
 
@@ -204,7 +197,7 @@ class ExploreDragSheet extends StatelessWidget {
         ),
       ));
 
-    return DragSheet(ctx: ctx, children: children);
+    return DragSheet(children: children);
   }
 }
 
@@ -217,7 +210,6 @@ class LinkDragSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DragSheet(
-      ctx: context,
       children: [
         DragSheetListTile(
           text: 'Copy Link',

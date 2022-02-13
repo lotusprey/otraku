@@ -1,7 +1,6 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/models/tag_collection_model.dart';
 import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -16,7 +15,6 @@ class ExploreController extends ScrollingController {
   static const ID_BUTTON = 2;
 
   late final filters = ExploreFilterModel(fetch);
-  late final TagCollectionModel tagCollection;
   final _results = PageModel<ExplorableModel>();
   late final _debounce = Debounce(fetch);
   int _page = 1;
@@ -152,18 +150,6 @@ class ExploreController extends ScrollingController {
   @override
   void onInit() {
     super.onInit();
-
-    const query = '''
-        query Filters {
-          GenreCollection
-          MediaTagCollection {id name description category isGeneralSpoiler}
-        }
-      ''';
-
-    Client.request(query).then((data) {
-      if (data == null) return;
-      tagCollection = TagCollectionModel(data);
-      fetch();
-    });
+    fetch();
   }
 }

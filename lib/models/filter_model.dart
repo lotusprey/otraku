@@ -1,5 +1,6 @@
+import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/models/tag_collection_model.dart';
+import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/utils/settings.dart';
 
 class FilterModel {
@@ -39,10 +40,10 @@ class FilterModel {
       ? collectionFilter!.clear(refresh: true)
       : exploreFilter!.clear(refresh: true);
 
-  void assign(FilterModel other, TagCollectionModel tags) {
+  void assign(FilterModel other) {
     if (ofCollection != other.ofCollection) return;
     ofCollection
-        ? collectionFilter!.assign(other.collectionFilter!, tags)
+        ? collectionFilter!.assign(other.collectionFilter!)
         : exploreFilter!.assign(other.exploreFilter!);
   }
 }
@@ -90,7 +91,7 @@ class CollectionFilterModel {
     if (refresh) _onChange?.call(false);
   }
 
-  void assign(CollectionFilterModel other, TagCollectionModel tags) {
+  void assign(CollectionFilterModel other) {
     final mustSort = sort != other.sort;
     sort = other.sort;
     country = other.country;
@@ -108,15 +109,18 @@ class CollectionFilterModel {
     tagNotIn.addAll(other.tagNotIn);
     tagIdIn.clear();
     tagIdNotIn.clear();
-    for (final t in tagIn) {
-      final i = tags.indices[t];
-      if (i == null) continue;
-      tagIdIn.add(tags.ids[i]);
-    }
-    for (final t in tagNotIn) {
-      final i = tags.indices[t];
-      if (i == null) continue;
-      tagIdNotIn.add(tags.ids[i]);
+    final tags = Get.find<TagGroupController>().model;
+    if (tags != null) {
+      for (final t in tagIn) {
+        final i = tags.indices[t];
+        if (i == null) continue;
+        tagIdIn.add(tags.ids[i]);
+      }
+      for (final t in tagNotIn) {
+        final i = tags.indices[t];
+        if (i == null) continue;
+        tagIdNotIn.add(tags.ids[i]);
+      }
     }
     _onChange?.call(mustSort);
   }
@@ -134,7 +138,6 @@ class ExploreFilterModel {
   final List<String> tagNotIn = [];
   String? country;
   bool? onList;
-  bool isAdult = false;
   String sort = Settings().defaultExploreSort.name;
 
   ExploreFilterModel copy() {
@@ -142,7 +145,6 @@ class ExploreFilterModel {
     model.sort = sort;
     model.onList = onList;
     model.country = country;
-    model.isAdult = isAdult;
     model.statuses.addAll(statuses);
     model.formats.addAll(formats);
     model.genreIn.addAll(genreIn);
@@ -155,7 +157,6 @@ class ExploreFilterModel {
   void clear({bool refresh = false}) {
     onList = null;
     country = null;
-    isAdult = false;
     statuses.clear();
     formats.clear();
     genreIn.clear();
@@ -169,7 +170,6 @@ class ExploreFilterModel {
     sort = other.sort;
     onList = other.onList;
     country = other.country;
-    isAdult = other.isAdult;
     statuses.clear();
     statuses.addAll(other.statuses);
     formats.clear();
@@ -186,7 +186,7 @@ class ExploreFilterModel {
   }
 
   Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{'sort': sort, 'isAdult': isAdult};
+    final map = <String, dynamic>{'sort': sort};
 
     if (statuses.isNotEmpty) map['status_in'] = statuses;
     if (formats.isNotEmpty) map['format_in'] = formats;

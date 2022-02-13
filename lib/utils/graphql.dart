@@ -96,19 +96,16 @@ abstract class GqlQuery {
 
   static const medias = r'''
     query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
-        $status_not_in: [MediaStatus], $format_in: [MediaFormat], $format_not_in: [MediaFormat], 
-        $genre_in: [String], $genre_not_in: [String], $tag_in: [String], $tag_not_in: [String], 
-        $onList: Boolean, $isAdult: Boolean, $startDate_greater: FuzzyDateInt, 
+        $format_in: [MediaFormat], $genre_in: [String], $genre_not_in: [String],
+        $tag_in: [String], $tag_not_in: [String], $onList: Boolean, $startDate_greater: FuzzyDateInt, 
         $startDate_lesser: FuzzyDateInt, $countryOfOrigin: CountryCode, $source: MediaSource, 
         $season: MediaSeason, $sort: [MediaSort]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        media(type: $type, search: $search, status_in: $status_in, status_not_in: $status_not_in, 
-        format_in: $format_in, format_not_in: $format_not_in, genre_in: $genre_in, 
-        genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
-        onList: $onList, isAdult: $isAdult, startDate_greater: $startDate_greater, 
-        startDate_lesser: $startDate_lesser, countryOfOrigin: $countryOfOrigin, 
-        source: $source, season: $season, sort: $sort) {
+        media(type: $type, search: $search, status_in: $status_in, format_in: $format_in,
+        genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
+        onList: $onList, startDate_greater: $startDate_greater, startDate_lesser: $startDate_lesser,
+        countryOfOrigin: $countryOfOrigin, source: $source, season: $season, sort: $sort) {
           id type title {userPreferred} coverImage {extraLarge}
         }
       }

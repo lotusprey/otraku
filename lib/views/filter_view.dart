@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/anime_format.dart';
 import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/controllers/explore_controller.dart';
+import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/manga_format.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -56,7 +57,7 @@ class FilterView extends StatelessWidget {
             tooltip: 'Apply',
             icon: Icons.done_rounded,
             onTap: () {
-              model.assign(copy, Get.find<ExploreController>().tagCollection);
+              model.assign(copy);
               Navigator.pop(context);
             },
           ),
@@ -105,21 +106,28 @@ class FilterView extends StatelessWidget {
               ),
             ),
           ),
-          ChipTagGrid(
-            title: 'Tags',
-            placeholder: 'tags',
-            inclusiveGenres: copy.ofCollection
-                ? copy.collectionFilter!.genreIn
-                : copy.exploreFilter!.genreIn,
-            exclusiveGenres: copy.ofCollection
-                ? copy.collectionFilter!.genreNotIn
-                : copy.exploreFilter!.genreNotIn,
-            inclusiveTags: copy.ofCollection
-                ? copy.collectionFilter!.tagIn
-                : copy.exploreFilter!.tagIn,
-            exclusiveTags: copy.ofCollection
-                ? copy.collectionFilter!.tagNotIn
-                : copy.exploreFilter!.tagNotIn,
+          GetBuilder<TagGroupController>(
+            builder: (ctrl) {
+              if (ctrl.model == null)
+                const SizedBox(height: 30, child: Loader());
+
+              return ChipTagGrid(
+                title: 'Tags',
+                placeholder: 'tags',
+                inclusiveGenres: copy.ofCollection
+                    ? copy.collectionFilter!.genreIn
+                    : copy.exploreFilter!.genreIn,
+                exclusiveGenres: copy.ofCollection
+                    ? copy.collectionFilter!.genreNotIn
+                    : copy.exploreFilter!.genreNotIn,
+                inclusiveTags: copy.ofCollection
+                    ? copy.collectionFilter!.tagIn
+                    : copy.exploreFilter!.tagIn,
+                exclusiveTags: copy.ofCollection
+                    ? copy.collectionFilter!.tagNotIn
+                    : copy.exploreFilter!.tagNotIn,
+              );
+            },
           ),
         ],
       ),

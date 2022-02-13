@@ -301,8 +301,7 @@ class _FilterIconState extends State<_FilterIcon> {
     }
 
     final f = widget.filters.exploreFilter!;
-    return f.isAdult ||
-        f.country != null ||
+    return f.country != null ||
         f.onList != null ||
         f.statuses.isNotEmpty ||
         f.formats.isNotEmpty ||

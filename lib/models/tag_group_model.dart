@@ -1,8 +1,8 @@
 import 'dart:collection';
 
 // Stores all tags (genres as treated as tags too).
-class TagCollectionModel {
-  TagCollectionModel._({
+class TagGroupModel {
+  TagGroupModel._({
     required this.categoryNames,
     required this.categoryItems,
     required this.ids,
@@ -11,7 +11,7 @@ class TagCollectionModel {
     required this.indices,
   });
 
-  factory TagCollectionModel(Map<String, dynamic> map) {
+  factory TagGroupModel(Map<String, dynamic> map) {
     final categoryNames = <String>['Genres'];
     final categoryItems = <List<int>>[[]];
     final ids = <int>[];
@@ -53,7 +53,7 @@ class TagCollectionModel {
       indices.putIfAbsent(t['name'], () => names.length - 1);
     }
 
-    return TagCollectionModel._(
+    return TagGroupModel._(
       categoryNames: categoryNames,
       categoryItems: categoryItems,
       ids: ids,

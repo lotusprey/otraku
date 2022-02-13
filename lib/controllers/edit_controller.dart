@@ -31,6 +31,7 @@ class EditController extends GetxController {
 
     _currModel = EditModel(data['Media']);
 
+    // TODO custom lists not showing in media page
     if (_currModel!.customLists.isEmpty)
       _currModel!.customLists = Map.fromIterable(
         Get.find<CollectionController>(

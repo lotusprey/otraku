@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/models/tag_collection_model.dart';
+import 'package:otraku/controllers/tag_group_controller.dart';
+import 'package:otraku/models/tag_group_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
@@ -119,54 +119,6 @@ class SelectionSheet<T> extends StatelessWidget {
       );
 }
 
-class SelectionToggleSheet<T> extends StatelessWidget {
-  SelectionToggleSheet({
-    required this.options,
-    required this.values,
-    required this.inclusive,
-    required this.exclusive,
-    this.fixHeight = false,
-  });
-
-  final List<String> options;
-  final List<T> values;
-  final List<T> inclusive;
-  final List<T> exclusive;
-  final bool fixHeight;
-
-  @override
-  Widget build(BuildContext context) => Sheet(
-        height: fixHeight
-            ? options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20
-            : null,
-        child: ListView.builder(
-          physics:
-              fixHeight ? const NeverScrollableScrollPhysics() : Consts.PHYSICS,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          itemBuilder: (_, index) => CheckBoxTriField(
-            title: options[index],
-            initial: inclusive.contains(values[index])
-                ? 1
-                : exclusive.contains(values[index])
-                    ? -1
-                    : 0,
-            onChanged: (state) {
-              if (state == 0)
-                exclusive.remove(values[index]);
-              else if (state == 1)
-                inclusive.add(values[index]);
-              else {
-                inclusive.remove(values[index]);
-                exclusive.add(values[index]);
-              }
-            },
-          ),
-          itemCount: options.length,
-          itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
-        ),
-      );
-}
-
 class TagSheet extends StatelessWidget {
   TagSheet({
     required this.inclusiveGenres,
@@ -235,13 +187,13 @@ class _TagSheetBody extends StatefulWidget {
 }
 
 class __TagSheetBodyState extends State<_TagSheetBody> {
-  late final TagCollectionModel _tags;
+  late final TagGroupModel _tags;
   int _index = 0;
 
   @override
   void initState() {
     super.initState();
-    _tags = Get.find<ExploreController>().tagCollection;
+    _tags = Get.find<TagGroupController>().model!;
   }
 
   @override

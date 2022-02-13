@@ -12,7 +12,7 @@ abstract class Consts {
   static const FADE_DURATION = Duration(milliseconds: 300);
   static const PHYSICS =
       AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
-  static final filter = ImageFilter.blur(sigmaX: 10, sigmaY: 10);
+  static final filter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);
 
   // Layout sizes.
   static const OVERLAY_WIDE = 600.0;

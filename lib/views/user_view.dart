@@ -150,7 +150,7 @@ class HomeUserView extends StatelessWidget {
                 padding: Consts.PADDING,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                 ),
                 child: HtmlContent(user.model!.description),
               ),
@@ -173,7 +173,7 @@ class _Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: Consts.BORDER_RADIUS,
+      borderRadius: Consts.BORDER_RAD_MIN,
       onTap: onTap,
       child: Row(
         children: [

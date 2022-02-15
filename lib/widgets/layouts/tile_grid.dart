@@ -79,7 +79,7 @@ class _Tile extends StatelessWidget {
             child: Hero(
               tag: data.id,
               child: ClipRRect(
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
                 child: Container(
                   color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(

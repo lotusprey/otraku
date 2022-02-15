@@ -118,7 +118,7 @@ class PieChart extends StatelessWidget {
           height: 225,
           padding: Consts.PADDING,
           decoration: BoxDecoration(
-            borderRadius: Consts.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RAD_MIN,
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,

@@ -5,15 +5,19 @@ import 'package:otraku/constants/anime_format.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/models/filter_model.dart';
+import 'package:otraku/models/tag_group_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/manga_format.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/widgets/fields/checkbox_field.dart';
+import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/opaque_sheets.dart';
 
 class FilterView extends StatelessWidget {
   FilterView(this.model);
@@ -78,14 +82,12 @@ class FilterView extends StatelessWidget {
             names: copy.ofCollection
                 ? copy.collectionFilter!.statuses
                 : copy.exploreFilter!.statuses,
-            onEdit: (selected) => Sheet.show(
-              ctx: context,
-              isScrollControlled: statusOptions.length <= 10,
-              sheet: SelectionSheet(
+            onEdit: (selected) => showDragSheet(
+              context,
+              SelectionOpaqueSheet(
                 options: statusOptions,
                 values: statusValues,
                 selected: selected,
-                fixHeight: statusOptions.length <= 10,
               ),
             ),
           ),
@@ -95,14 +97,12 @@ class FilterView extends StatelessWidget {
             names: copy.ofCollection
                 ? copy.collectionFilter!.formats
                 : copy.exploreFilter!.formats,
-            onEdit: (selected) => Sheet.show(
-              ctx: context,
-              isScrollControlled: formatOptions.length <= 10,
-              sheet: SelectionSheet(
+            onEdit: (selected) => showDragSheet(
+              context,
+              SelectionOpaqueSheet(
                 options: formatOptions,
                 values: formatValues,
                 selected: selected,
-                fixHeight: formatOptions.length <= 10,
               ),
             ),
           ),
@@ -306,6 +306,113 @@ class _DropDownRow extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class TagSheetBody extends StatefulWidget {
+  TagSheetBody({
+    required this.inclusiveGenres,
+    required this.exclusiveGenres,
+    required this.inclusiveTags,
+    required this.exclusiveTags,
+    required this.scrollCtrl,
+  });
+
+  final List<String> inclusiveGenres;
+  final List<String> exclusiveGenres;
+  final List<String> inclusiveTags;
+  final List<String> exclusiveTags;
+  final ScrollController scrollCtrl;
+
+  @override
+  _TagSheetBodyState createState() => _TagSheetBodyState();
+}
+
+class _TagSheetBodyState extends State<TagSheetBody> {
+  late final TagGroupModel _tags;
+  int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tags = Get.find<TagGroupController>().model!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final listItems = _tags.categoryItems[_index];
+    late final List<String> inclusive;
+    late final List<String> exclusive;
+    if (_index > 0) {
+      inclusive = widget.inclusiveTags;
+      exclusive = widget.exclusiveTags;
+    } else {
+      inclusive = widget.inclusiveGenres;
+      exclusive = widget.exclusiveGenres;
+    }
+
+    return Stack(
+      children: [
+        ListView.builder(
+          physics: Consts.PHYSICS,
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: 10,
+            top: 60,
+          ),
+          controller: widget.scrollCtrl,
+          itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+          itemCount: listItems.length,
+          itemBuilder: (_, i) {
+            final name = _tags.names[listItems[i]];
+            return CheckBoxTriField(
+              key: UniqueKey(),
+              title: name,
+              initial: inclusive.contains(name)
+                  ? 1
+                  : exclusive.contains(name)
+                      ? -1
+                      : 0,
+              onChanged: (state) {
+                if (state == 0)
+                  exclusive.remove(name);
+                else if (state == 1)
+                  inclusive.add(name);
+                else {
+                  inclusive.remove(name);
+                  exclusive.add(name);
+                }
+              },
+            );
+          },
+        ),
+        ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+          child: BackdropFilter(
+            filter: Consts.filter,
+            child: Container(
+              height: 60,
+              color: Theme.of(context).cardColor,
+              child: ListView.builder(
+                physics: Consts.PHYSICS,
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                scrollDirection: Axis.horizontal,
+                itemCount: _tags.categoryNames.length,
+                itemBuilder: (_, i) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: ChipOptionField(
+                    name: _tags.categoryNames[i],
+                    selected: i == _index,
+                    onTap: () => setState(() => _index = i),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -17,14 +17,15 @@ import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/opaque_sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class StaffView extends StatelessWidget {
+  StaffView(this.id, this.imageUrl);
+
   final int id;
   final String? imageUrl;
-
-  StaffView(this.id, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +84,7 @@ class StaffView extends StatelessWidget {
                               child: Hero(
                                 tag: ctrl.id,
                                 child: ClipRRect(
-                                  borderRadius: Consts.BORDER_RADIUS,
+                                  borderRadius: Consts.BORDER_RAD_MIN,
                                   child: Image.network(
                                     imageUrl!,
                                     fit: BoxFit.cover,
@@ -181,11 +182,12 @@ class _ActionButton extends StatelessWidget {
               sortItems[key] = i ~/ 2;
             }
 
-            Sheet.show(
-              ctx: context,
-              sheet: Sheet(
+            showDragSheet(
+              context,
+              OpaqueSheet(
                 height: MediaQuery.of(context).size.width < 360 ? 330 : 180,
-                child: GridView(
+                builder: (context, scrollCtrl) => GridView(
+                  controller: scrollCtrl,
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   gridDelegate:
@@ -270,7 +272,7 @@ class _Details extends StatelessWidget {
                       padding: Consts.PADDING,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                       ),
                       child: Text(
                         Convert.clearHtml(model.description),

@@ -20,6 +20,12 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<!-- Url launcher -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  		<string>https</string>
+	</array>
+	<!-- Deep links -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

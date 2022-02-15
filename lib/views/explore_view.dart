@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/utils/convert.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/layouts/review_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -109,9 +110,32 @@ class ExploreActionButton extends StatelessWidget {
         child: ActionButton(
           tooltip: 'Types',
           icon: ctrl.type.icon,
-          onTap: () => DragSheet.show(
+          onTap: () => showDragSheet(
             context,
-            ExploreDragSheet(context, ctrl),
+            DynamicGradientDragSheet(
+              onTap: (i) => ctrl.type = Explorable.values[i],
+              itemCount: Explorable.values.length,
+              itemBuilder: (_, i) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Explorable.values[i].icon,
+                    color: i != ctrl.type.index
+                        ? Theme.of(context).colorScheme.onBackground
+                        : Theme.of(context).colorScheme.secondary,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    Convert.clarifyEnum(Explorable.values[i].name)!,
+                    style: i != ctrl.type.index
+                        ? Theme.of(context).textTheme.headline1
+                        : Theme.of(context).textTheme.headline1?.copyWith(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                  ),
+                ],
+              ),
+            ),
           ),
           onSwipe: (goRight) {
             if (goRight) {

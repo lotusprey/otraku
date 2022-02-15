@@ -7,13 +7,11 @@ import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ActivityBox extends StatelessWidget {
   ActivityBox({required this.ctrl, required this.model});
@@ -37,7 +35,7 @@ class ActivityBox extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: Consts.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RAD_MIN,
                       child: FadeImage(model.agentImage, height: 50, width: 50),
                     ),
                     const SizedBox(width: 10),
@@ -67,7 +65,7 @@ class ActivityBox extends StatelessWidget {
                 imageUrl: model.recieverImage,
                 explorable: Explorable.user,
                 child: ClipRRect(
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                   child: FadeImage(model.recieverImage!, height: 50, width: 50),
                 ),
               ),
@@ -117,7 +115,7 @@ class ActivityBoxBody extends StatelessWidget {
       padding: Consts.PADDING,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Column(
         children: [
@@ -191,7 +189,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
           onPressed: () {
             final children = <Widget>[];
             if (model.deletable)
-              children.add(DragSheetListTile(
+              children.add(GradientDragSheetTile(
                 text: 'Delete',
                 icon: Ionicons.trash_outline,
                 onTap: () => showPopUp(
@@ -211,7 +209,8 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   ),
                 ),
               ));
-            children.add(DragSheetListTile(
+
+            children.add(GradientDragSheetTile(
               text: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
               icon: !model.isSubscribed
                   ? Ionicons.notifications_outline
@@ -221,36 +220,13 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 widget.toggleSubscribtion();
               },
             ));
-            children.add(DragSheetListTile(
-              text: 'Copy Link',
-              icon: Ionicons.clipboard_outline,
-              onTap: () {
-                if (model.siteUrl == null) {
-                  Toast.show(context, 'Url is null');
-                  return;
-                }
 
-                Toast.copy(context, model.siteUrl!);
-              },
-            ));
-            children.add(DragSheetListTile(
-              text: 'Open in Browser',
-              icon: Ionicons.link_outline,
-              onTap: () {
-                if (model.siteUrl == null) {
-                  Toast.show(context, 'Url is null');
-                  return;
-                }
+            if (model.siteUrl != null)
+              children.addAll(
+                FixedGradientDragSheet.linkTiles(context, model.siteUrl!),
+              );
 
-                try {
-                  launch(model.siteUrl!);
-                } catch (err) {
-                  Toast.show(context, 'Couldn\'t open link: $err');
-                }
-              },
-            ));
-
-            DragSheet.show(context, DragSheet(children: children));
+            showDragSheet(context, FixedGradientDragSheet(children: children));
           },
         ),
         Tooltip(
@@ -322,7 +298,7 @@ class ActivityBoxBodyMedia extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: Consts.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RAD_MIN,
               child: FadeImage(activity.mediaImage!, width: 70),
             ),
             Expanded(

@@ -5,7 +5,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/layouts/collection_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filter_app_bar.dart';
@@ -88,9 +88,32 @@ class CollectionActionButton extends StatelessWidget {
       child: ActionButton(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
-        onTap: () => DragSheet.show(
+        onTap: () => showDragSheet(
           context,
-          CollectionDragSheet(context, ctrlTag),
+          DynamicGradientDragSheet(
+            itemExtent: 60,
+            itemCount: ctrl.listNames.length,
+            onTap: (i) => ctrl.listIndex = i,
+            itemBuilder: (_, i) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ctrl.listNames[i],
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: i != ctrl.listIndex
+                      ? Theme.of(context).textTheme.headline1
+                      : Theme.of(context).textTheme.headline1?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  ctrl.listCounts[i].toString(),
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+              ],
+            ),
+          ),
         ),
         onSwipe: (goRight) {
           if (goRight) {

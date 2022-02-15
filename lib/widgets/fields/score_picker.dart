@@ -57,7 +57,7 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -100,7 +100,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

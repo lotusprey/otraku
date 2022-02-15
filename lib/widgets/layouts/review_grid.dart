@@ -68,7 +68,7 @@ class _Tile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RAD_MIN,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,7 +77,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Consts.RADIUS),
+                  borderRadius: BorderRadius.vertical(top: Consts.RADIUS_MIN),
                   child: Hero(
                     tag: model.id,
                     child: FadeImage(model.imageUrl!),

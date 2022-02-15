@@ -12,7 +12,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends StatelessWidget {
@@ -27,21 +27,23 @@ class NotificationsView extends StatelessWidget {
             AppBarIcon(
               tooltip: 'Filter',
               icon: Ionicons.funnel_outline,
-              onTap: () => DragSheet.show(
-                context,
-                OptionDragSheet(
-                  options: const [
-                    'All',
-                    'Airing',
-                    'Activity',
-                    'Forum',
-                    'Follows',
-                    'Media',
-                  ],
-                  index: ctrl.filter,
-                  onTap: (val) => ctrl.filter = val,
-                ),
-              ),
+              onTap: () {
+                showDragSheet(
+                  context,
+                  DynamicGradientDragSheet(
+                    itemCount: 6,
+                    onTap: (i) => ctrl.filter = i,
+                    itemBuilder: (_, i) => Text(
+                      NotificationsController.FILTERS[i],
+                      style: i != ctrl.filter
+                          ? Theme.of(context).textTheme.headline1
+                          : Theme.of(context).textTheme.headline1?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -80,7 +82,7 @@ class _NotificationWidget extends StatelessWidget {
       child: Container(
         height: 90,
         decoration: BoxDecoration(
-          borderRadius: Consts.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RAD_MIN,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
@@ -100,7 +102,8 @@ class _NotificationWidget extends StatelessWidget {
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
-                  borderRadius: BorderRadius.horizontal(left: Consts.RADIUS),
+                  borderRadius:
+                      BorderRadius.horizontal(left: Consts.RADIUS_MIN),
                 ),
               ),
             Flexible(
@@ -189,7 +192,8 @@ class _NotificationWidget extends StatelessWidget {
                 height: double.infinity,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
-                  borderRadius: BorderRadius.horizontal(right: Consts.RADIUS),
+                  borderRadius:
+                      BorderRadius.horizontal(right: Consts.RADIUS_MIN),
                 ),
               ),
           ],
@@ -239,7 +243,7 @@ class _NotificationDialog extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     ClipRRect(
-                      borderRadius: Consts.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RAD_MIN,
                       child: FadeImage(
                         model.imageUrl!,
                         width: coverWidth,

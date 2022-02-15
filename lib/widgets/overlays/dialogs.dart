@@ -150,10 +150,10 @@ class ImageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      shape: const RoundedRectangleBorder(borderRadius: Consts.BORDER_RADIUS),
+      shape: const RoundedRectangleBorder(borderRadius: Consts.BORDER_RAD_MIN),
       backgroundColor: Colors.transparent,
       child: ClipRRect(
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
         child: Image.network(url, fit: fit),
       ),
     );
@@ -200,7 +200,7 @@ class _DialogColumn extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Consts.RADIUS),
+              borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MIN),
               color: Theme.of(context).colorScheme.background,
             ),
             padding: Consts.PADDING,
@@ -212,7 +212,7 @@ class _DialogColumn extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius:
-                    const BorderRadius.vertical(bottom: Consts.RADIUS),
+                    const BorderRadius.vertical(bottom: Consts.RADIUS_MIN),
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Scrollbar(

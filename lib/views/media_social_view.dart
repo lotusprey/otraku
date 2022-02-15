@@ -78,7 +78,7 @@ class _ReviewGrid extends StatelessWidget {
                     Hero(
                       tag: items[i].userId,
                       child: ClipRRect(
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                         child: FadeImage(
                           items[i].avatar,
                           height: 50,
@@ -102,7 +102,7 @@ class _ReviewGrid extends StatelessWidget {
                     padding: Consts.PADDING,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      borderRadius: Consts.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RAD_MIN,
                     ),
                     child: Text(
                       items[i].summary,
@@ -143,7 +143,7 @@ class _Ranks extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: Consts.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RAD_MIN,
             ),
             child: Row(
               children: [

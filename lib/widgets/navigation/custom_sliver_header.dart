@@ -174,7 +174,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: heroId,
                       child: ClipRRect(
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                         child: Container(
                           height: imageHeight,
                           width: imageWidth,

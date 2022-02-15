@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/opaque_sheets.dart';
 
 class _ChipGrid extends StatelessWidget {
   _ChipGrid({
@@ -243,13 +245,16 @@ class _ChipTagGridState extends State<ChipTagGrid> {
       title: widget.title,
       placeholder: widget.placeholder,
       children: children,
-      onEdit: () => Sheet.show(
-        ctx: context,
-        sheet: TagSheet(
-          inclusiveGenres: widget.inclusiveGenres,
-          exclusiveGenres: widget.exclusiveGenres,
-          inclusiveTags: widget.inclusiveTags,
-          exclusiveTags: widget.exclusiveTags,
+      onEdit: () => showDragSheet(
+        context,
+        OpaqueSheet(
+          builder: (context, scrollCtrl) => TagSheetBody(
+            inclusiveGenres: widget.inclusiveGenres,
+            exclusiveGenres: widget.exclusiveGenres,
+            inclusiveTags: widget.inclusiveTags,
+            exclusiveTags: widget.exclusiveTags,
+            scrollCtrl: scrollCtrl,
+          ),
         ),
       ).then((_) => setState(() {})),
       onClear: () => setState(() {

@@ -9,7 +9,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 
 class UserHeader extends StatelessWidget {
   final int id;
@@ -61,7 +61,10 @@ class UserHeader extends StatelessWidget {
           IconShade(AppBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
-            onTap: () => DragSheet.show(context, LinkDragSheet(user!.siteUrl!)),
+            onTap: () => showDragSheet(
+              context,
+              FixedGradientDragSheet.link(context, user!.siteUrl!),
+            ),
           )),
         if (isMe)
           GetBuilder<HomeController>(
@@ -108,7 +111,7 @@ class UserHeader extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.secondary,
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                       ),
                       child: Text(
                         user!.modRoles[0],
@@ -206,7 +209,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: _animation.value,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Text(
         widget.text!,

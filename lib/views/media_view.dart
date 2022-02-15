@@ -13,7 +13,7 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 
 class MediaView extends StatelessWidget {
   MediaView(this.id, this.coverUrl);
@@ -137,12 +137,19 @@ class __ActionButtonsState extends State<_ActionButtons> {
         ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
-          onTap: () => DragSheet.show(
+          onTap: () => showDragSheet(
             context,
-            OptionDragSheet(
-              options: widget.ctrl.availableLanguages,
-              index: widget.ctrl.language,
-              onTap: (val) => widget.ctrl.language = val,
+            DynamicGradientDragSheet(
+              onTap: (i) => widget.ctrl.language = i,
+              itemCount: widget.ctrl.availableLanguages.length,
+              itemBuilder: (_, i) => Text(
+                widget.ctrl.availableLanguages[i],
+                style: i != widget.ctrl.language
+                    ? Theme.of(context).textTheme.headline1
+                    : Theme.of(context).textTheme.headline1?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+              ),
             ),
           ),
         ),

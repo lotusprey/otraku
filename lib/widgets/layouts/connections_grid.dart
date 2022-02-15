@@ -47,7 +47,7 @@ class _MediaConnectionTile extends StatelessWidget {
       alignment: Alignment.topCenter,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: Consts.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RAD_MIN,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
@@ -65,7 +65,7 @@ class _MediaConnectionTile extends StatelessWidget {
                       ClipRRect(
                         child: FadeImage(item.imageUrl, width: 75),
                         borderRadius:
-                            BorderRadius.horizontal(left: Consts.RADIUS),
+                            BorderRadius.horizontal(left: Consts.RADIUS_MIN),
                       ),
                       Expanded(
                         child: Padding(
@@ -137,7 +137,7 @@ class _MediaConnectionTile extends StatelessWidget {
                             width: 75,
                           ),
                           borderRadius:
-                              BorderRadius.horizontal(right: Consts.RADIUS),
+                              BorderRadius.horizontal(right: Consts.RADIUS_MIN),
                         ),
                       ],
                     ),

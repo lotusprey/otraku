@@ -9,6 +9,15 @@ import 'package:otraku/utils/scrolling_controller.dart';
 class NotificationsController extends ScrollingController {
   static const ID_LIST = 0;
 
+  static const FILTERS = [
+    'All',
+    'Airing',
+    'Activity',
+    'Forum',
+    'Follows',
+    'Media',
+  ];
+
   static const _filters = const [
     null,
     ['AIRING'],

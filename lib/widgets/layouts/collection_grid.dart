@@ -104,7 +104,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: ExploreIndexer(
         id: widget.model.mediaId,
@@ -121,7 +121,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
                   color: Theme.of(context).colorScheme.surface,
                   child: FadeImage(widget.model.cover),
                 ),
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
               ),
             ),
             Expanded(
@@ -156,7 +156,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
                       height: 5,
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       decoration: BoxDecoration(
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                         gradient: LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,

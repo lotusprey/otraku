@@ -72,7 +72,7 @@ class MediaInfoView {
                   padding: Consts.PADDING,
                   decoration: BoxDecoration(
                     color: Theme.of(ctx).colorScheme.surface,
-                    borderRadius: Consts.BORDER_RADIUS,
+                    borderRadius: Consts.BORDER_RAD_MIN,
                   ),
                   child: Text(
                     model.description,
@@ -102,7 +102,7 @@ class MediaInfoView {
             (_, i) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
                 color: Theme.of(ctx).colorScheme.surface,
               ),
               child: InputFieldStructure(
@@ -225,7 +225,7 @@ class _ScrollCards extends StatelessWidget {
                     margin: const EdgeInsets.only(right: 10),
                     padding: Consts.PADDING,
                     decoration: BoxDecoration(
-                      borderRadius: Consts.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RAD_MIN,
                       color: Theme.of(context).colorScheme.surface,
                     ),
                     child: Text(items[index]),
@@ -258,7 +258,7 @@ class _Titles extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                   color: Theme.of(context).colorScheme.surface,
                 ),
                 child: SingleChildScrollView(
@@ -325,7 +325,7 @@ class __TagsState extends State<_Tags> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              borderRadius: Consts.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RAD_MIN,
               color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
@@ -396,7 +396,7 @@ class __TagsState extends State<_Tags> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Row(

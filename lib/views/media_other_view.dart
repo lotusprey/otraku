@@ -81,7 +81,7 @@ class _RelationsGrid extends StatelessWidget {
               Hero(
                 tag: items[i].id,
                 child: ClipRRect(
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: FadeImage(items[i].imageUrl!, width: 125),

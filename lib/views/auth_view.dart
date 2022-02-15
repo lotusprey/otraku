@@ -53,6 +53,7 @@ class _AuthViewState extends State<AuthView> {
         context,
         ConfirmationDialog(
           title: 'Could not open AniList',
+          content: err.toString(),
           mainAction: 'Oh No',
         ),
       );
@@ -135,7 +136,7 @@ class _AuthViewState extends State<AuthView> {
                 padding: Consts.PADDING,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                 ),
                 child: Row(
                   children: [
@@ -186,7 +187,7 @@ class _AuthViewState extends State<AuthView> {
                 padding: Consts.PADDING,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                 ),
                 child: Row(
                   children: [

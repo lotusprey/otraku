@@ -7,8 +7,10 @@ abstract class Consts {
   // General.
   static const MATERIAL_TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
-  static const RADIUS = Radius.circular(10);
-  static const BORDER_RADIUS = BorderRadius.all(RADIUS);
+  static const RADIUS_MIN = Radius.circular(10);
+  static const RADIUS_MAX = Radius.circular(20);
+  static const BORDER_RAD_MIN = BorderRadius.all(RADIUS_MIN);
+  static const BORDER_RAD_MAX = BorderRadius.all(RADIUS_MAX);
   static const FADE_DURATION = Duration(milliseconds: 300);
   static const PHYSICS =
       AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());

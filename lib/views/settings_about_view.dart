@@ -20,7 +20,7 @@ class SettingsAboutView extends StatelessWidget {
       children: [
         Center(
           child: ClipRRect(
-            borderRadius: Consts.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RAD_MIN,
             child: Image.asset(
               'assets/icons/about_icon.png',
               fit: BoxFit.contain,

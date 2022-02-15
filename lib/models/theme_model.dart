@@ -67,7 +67,7 @@ class ThemeModel {
           elevation: 10,
           backgroundColor: surface,
           shape:
-              const RoundedRectangleBorder(borderRadius: Consts.BORDER_RADIUS),
+              const RoundedRectangleBorder(borderRadius: Consts.BORDER_RAD_MIN),
           titleTextStyle: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
@@ -84,13 +84,13 @@ class ThemeModel {
           padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: surface,
-            borderRadius: Consts.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RAD_MIN,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
           textStyle: TextStyle(fontSize: Consts.FONT_MEDIUM, color: primary),
         ),
         scrollbarTheme: ScrollbarThemeData(
-          radius: Consts.RADIUS,
+          radius: Consts.RADIUS_MIN,
           thumbColor: MaterialStateProperty.all(primary),
         ),
         sliderTheme: SliderThemeData(
@@ -124,7 +124,7 @@ class ThemeModel {
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
-            borderRadius: Consts.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RAD_MIN,
             borderSide: BorderSide.none,
           ),
         ),
@@ -134,7 +134,7 @@ class ThemeModel {
               fontSize: Consts.FONT_MEDIUM,
             )),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RAD_MIN,
             )),
             foregroundColor: MaterialStateProperty.all(secondary),
             overlayColor: MaterialStateProperty.all(highlight),
@@ -150,7 +150,7 @@ class ThemeModel {
             foregroundColor: MaterialStateProperty.all(background),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RAD_MIN,
             )),
           ),
         ),

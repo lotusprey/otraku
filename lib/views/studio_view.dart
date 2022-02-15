@@ -12,14 +12,15 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/opaque_sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class StudioView extends StatelessWidget {
+  StudioView(this.id, this.name);
+
   final int id;
   final String? name;
-
-  StudioView(this.id, this.name);
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +145,12 @@ class _ActionButton extends StatelessWidget {
               sortItems[key] = i ~/ 2;
             }
 
-            Sheet.show(
-              ctx: context,
-              sheet: Sheet(
+            showDragSheet(
+              context,
+              OpaqueSheet(
                 height: MediaQuery.of(context).size.width < 360 ? 330 : 180,
-                child: GridView(
+                builder: (context, scrollCtrl) => GridView(
+                  controller: scrollCtrl,
                   physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   gridDelegate:

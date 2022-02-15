@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -61,7 +61,10 @@ class MediaHeader extends StatelessWidget {
           IconShade(AppBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
-            onTap: () => DragSheet.show(context, LinkDragSheet(info!.siteUrl!)),
+            onTap: () => showDragSheet(
+              context,
+              FixedGradientDragSheet.link(context, info!.siteUrl!),
+            ),
           )),
       ],
       child: Column(

@@ -12,7 +12,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends StatelessWidget {
@@ -28,7 +28,7 @@ class NotificationsView extends StatelessWidget {
               tooltip: 'Filter',
               icon: Ionicons.funnel_outline,
               onTap: () {
-                showDragSheet(
+                showSheet(
                   context,
                   DynamicGradientDragSheet(
                     itemCount: 6,

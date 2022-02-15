@@ -11,8 +11,7 @@ import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
-import 'package:otraku/widgets/overlays/opaque_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 
 class FeedView extends StatelessWidget {
@@ -205,7 +204,7 @@ class _Filter extends StatelessWidget {
       onTap: () {
         final typeIn = ctrl.typeIn;
 
-        showDragSheet(
+        showSheet(
           context,
           SelectionOpaqueSheet<ActivityType>(
             options: ActivityType.values.map((v) => v.text).toList(),

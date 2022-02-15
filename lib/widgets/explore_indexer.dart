@@ -7,7 +7,7 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable explorable;
@@ -88,7 +88,7 @@ class ExploreIndexer extends StatelessWidget {
     EditModel? model,
     Function(EditModel)? callback,
   ]) =>
-      showDragSheet(context, EditView(id, model, callback));
+      showSheet(context, EditView(id, model, callback));
 
   @override
   Widget build(BuildContext context) {

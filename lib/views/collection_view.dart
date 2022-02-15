@@ -5,11 +5,11 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/layouts/collection_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filter_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CollectionView extends StatelessWidget {
   CollectionView(this.id, this.ofAnime);
@@ -88,7 +88,7 @@ class CollectionActionButton extends StatelessWidget {
       child: ActionButton(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
-        onTap: () => showDragSheet(
+        onTap: () => showSheet(
           context,
           DynamicGradientDragSheet(
             itemExtent: 60,

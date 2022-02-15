@@ -7,11 +7,11 @@ import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ActivityBox extends StatelessWidget {
   ActivityBox({required this.ctrl, required this.model});
@@ -226,7 +226,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 FixedGradientDragSheet.linkTiles(context, model.siteUrl!),
               );
 
-            showDragSheet(context, FixedGradientDragSheet(children: children));
+            showSheet(context, FixedGradientDragSheet(children: children));
           },
         ),
         Tooltip(

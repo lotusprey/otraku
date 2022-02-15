@@ -13,14 +13,14 @@ class EditController extends GetxController {
   static const ID_START_DATE = 4;
   static const ID_COMPLETE_DATE = 5;
 
-  EditController(this._id, this._currModel);
+  EditController(this._id, this._oldModel);
 
   final int _id;
-  EditModel? _currModel;
-  EditModel? _nextModel;
+  EditModel? _oldModel;
+  EditModel? _newModel;
 
-  EditModel? get model => _nextModel;
-  EditModel? get currModel => _currModel;
+  EditModel? get model => _newModel;
+  EditModel? get oldModel => _oldModel;
 
   Future<void> _fetch() async {
     final data = await Client.request(GqlQuery.media, {
@@ -29,29 +29,29 @@ class EditController extends GetxController {
     });
     if (data == null) return;
 
-    _currModel = EditModel(data['Media']);
+    _oldModel = EditModel(data['Media']);
 
     // TODO custom lists not showing in media page
-    if (_currModel!.customLists.isEmpty)
-      _currModel!.customLists = Map.fromIterable(
+    if (_oldModel!.customLists.isEmpty)
+      _oldModel!.customLists = Map.fromIterable(
         Get.find<CollectionController>(
-          tag: _currModel!.type == 'ANIME'
+          tag: _oldModel!.type == 'ANIME'
               ? '${Settings().id}true'
               : '${Settings().id}false',
         ).customListNames,
         value: (_) => false,
       );
 
-    _nextModel = EditModel.copy(_currModel!);
+    _newModel = EditModel.copy(_oldModel!);
     update([ID_MAIN]);
   }
 
   @override
   void onInit() {
     super.onInit();
-    if (_currModel == null)
+    if (_oldModel == null)
       _fetch();
     else
-      _nextModel = EditModel.copy(_currModel!);
+      _newModel = EditModel.copy(_oldModel!);
   }
 }

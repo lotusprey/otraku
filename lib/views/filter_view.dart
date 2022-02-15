@@ -14,11 +14,10 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
-import 'package:otraku/widgets/overlays/opaque_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
+/// A sheet for collection/explore filtering. Should be opened with [showSheet].
 class FilterView extends StatelessWidget {
   FilterView(this.model);
 
@@ -45,31 +44,31 @@ class FilterView extends StatelessWidget {
       formatOptions.add(Convert.clarifyEnum(formatValues.last)!);
     }
 
-    return Scaffold(
-      appBar: ShadowAppBar(
-        title: 'Filters',
-        actions: [
-          AppBarIcon(
-            tooltip: 'Clear',
-            icon: Icons.close,
-            onTap: () {
-              model.clear();
-              Navigator.pop(context);
-            },
-          ),
-          AppBarIcon(
-            tooltip: 'Apply',
-            icon: Icons.done_rounded,
-            onTap: () {
-              model.assign(copy);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-      body: ListView(
+    return OpaqueSheetView(
+      buttons: [
+        OpaqueSheetViewButton(
+          text: 'Clear',
+          icon: Icons.close,
+          warning: true,
+          onTap: () {
+            model.clear();
+            Navigator.pop(context);
+          },
+        ),
+        OpaqueSheetViewButton(
+          text: 'Apply',
+          icon: Icons.done_rounded,
+          onTap: () {
+            model.assign(copy);
+            Navigator.pop(context);
+          },
+        ),
+      ],
+      builder: (context, scrollCtrl) => ListView(
+        controller: scrollCtrl,
         physics: Consts.PHYSICS,
-        padding: Consts.PADDING,
+        padding:
+            const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 60),
         children: [
           if (copy.ofCollection)
             _CollectionSorting(copy.collectionFilter!)
@@ -82,7 +81,7 @@ class FilterView extends StatelessWidget {
             names: copy.ofCollection
                 ? copy.collectionFilter!.statuses
                 : copy.exploreFilter!.statuses,
-            onEdit: (selected) => showDragSheet(
+            onEdit: (selected) => showSheet(
               context,
               SelectionOpaqueSheet(
                 options: statusOptions,
@@ -97,7 +96,7 @@ class FilterView extends StatelessWidget {
             names: copy.ofCollection
                 ? copy.collectionFilter!.formats
                 : copy.exploreFilter!.formats,
-            onEdit: (selected) => showDragSheet(
+            onEdit: (selected) => showSheet(
               context,
               SelectionOpaqueSheet(
                 options: formatOptions,

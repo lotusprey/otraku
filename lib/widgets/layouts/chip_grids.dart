@@ -6,8 +6,7 @@ import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
-import 'package:otraku/widgets/overlays/opaque_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class _ChipGrid extends StatelessWidget {
   _ChipGrid({
@@ -245,7 +244,7 @@ class _ChipTagGridState extends State<ChipTagGrid> {
       title: widget.title,
       placeholder: widget.placeholder,
       children: children,
-      onEdit: () => showDragSheet(
+      onEdit: () => showSheet(
         context,
         OpaqueSheet(
           builder: (context, scrollCtrl) => TagSheetBody(

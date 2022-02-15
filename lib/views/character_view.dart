@@ -17,8 +17,7 @@ import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
-import 'package:otraku/widgets/overlays/opaque_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class CharacterView extends StatelessWidget {
@@ -196,14 +195,16 @@ class _ActionButton extends StatelessWidget {
             for (int i = 0; i < ctrl.availableLanguages.length; i++)
               languageItems[ctrl.availableLanguages[i]] = i;
 
-            showDragSheet(
+            showSheet(
               context,
               OpaqueSheet(
-                height: MediaQuery.of(context).size.width < 360 ? 330 : 180,
+                height: 0.3,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 20,
+                  ),
                   gridDelegate:
                       const SliverGridDelegateWithMinWidthAndFixedHeight(
                     minWidth: 155,

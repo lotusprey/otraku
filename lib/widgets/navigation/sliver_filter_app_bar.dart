@@ -9,7 +9,9 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
   SliverCollectionAppBar(this.ctrlTag, this.canPop);
@@ -278,11 +280,7 @@ class _FilterIconState extends State<_FilterIcon> {
   Widget build(BuildContext context) => AppBarIcon(
         tooltip: 'Filter',
         icon: Ionicons.funnel_outline,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.filter,
-          arguments: RouteArg(object: widget.filters),
-        ).then((_) {
+        onTap: () => showSheet(context, FilterView(widget.filters)).then((_) {
           if (_active != _isActive()) setState(() => _active = !_active);
         }),
         colour: _active ? Theme.of(context).colorScheme.secondary : null,

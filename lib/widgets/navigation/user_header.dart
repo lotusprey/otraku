@@ -9,7 +9,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/gradient_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class UserHeader extends StatelessWidget {
   final int id;
@@ -61,7 +61,7 @@ class UserHeader extends StatelessWidget {
           IconShade(AppBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
-            onTap: () => showDragSheet(
+            onTap: () => showSheet(
               context,
               FixedGradientDragSheet.link(context, user!.siteUrl!),
             ),

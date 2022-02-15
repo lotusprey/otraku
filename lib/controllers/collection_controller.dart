@@ -221,7 +221,7 @@ class CollectionController extends ScrollingController {
     scrollUpTo(0);
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
-    _filter();
+    _filter(true);
   }
 
   Future<void> refetch() async {

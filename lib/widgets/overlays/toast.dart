@@ -8,34 +8,36 @@ class Toast {
   static OverlayEntry? _entry;
   static bool _busy = false;
 
-  static void show(final BuildContext ctx, final String text) {
+  static void show(final BuildContext context, final String text) {
     _busy = true;
     _entry?.remove();
 
     _entry = OverlayEntry(
-      builder: (ctx) => Align(
+      builder: (context) => Align(
         alignment: Alignment.bottomCenter,
         child: Container(
           margin: EdgeInsets.only(
             bottom: 70 +
-                MediaQuery.of(ctx).viewPadding.bottom +
-                MediaQuery.of(ctx).viewInsets.bottom,
+                MediaQuery.of(context).viewPadding.bottom +
+                MediaQuery.of(context).viewInsets.bottom,
           ),
           padding: Consts.PADDING,
           decoration: BoxDecoration(
-            color: Theme.of(ctx).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: Consts.BORDER_RAD_MIN,
             boxShadow: [
               BoxShadow(
-                  color: Theme.of(ctx).colorScheme.background, blurRadius: 10),
+                color: Theme.of(context).colorScheme.background,
+                blurRadius: 10,
+              ),
             ],
           ),
-          child: Text(text, style: Theme.of(ctx).textTheme.bodyText1),
+          child: Text(text, style: Theme.of(context).textTheme.bodyText1),
         ),
       ),
     );
 
-    Overlay.of(ctx)!.insert(_entry!);
+    Overlay.of(context)!.insert(_entry!);
 
     Future.delayed(const Duration(seconds: 2)).then((_) {
       if (!_busy) {
@@ -47,7 +49,7 @@ class Toast {
     _busy = false;
   }
 
-  static void copy(final BuildContext ctx, final String text) =>
+  static void copy(final BuildContext context, final String text) =>
       Clipboard.setData(ClipboardData(text: text))
-          .then((_) => show(ctx, 'Copied'));
+          .then((_) => show(context, 'Copied'));
 }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/favourites_view.dart';
 import 'package:otraku/views/feed_view.dart';
-import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/views/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
@@ -22,17 +20,11 @@ import 'package:otraku/views/user_view.dart';
 /// A routing helper. When passing arguments to named routes, they should always
 /// be an instance of [RouteArg] or [null].
 class RouteArg {
-  const RouteArg({
-    this.id,
-    this.info,
-    this.object,
-    this.variant,
-  });
+  const RouteArg({this.id, this.info, this.variant});
 
   final int? id;
   final String? info;
   final bool? variant;
-  final Object? object;
 
   /// Used to provide context when it's unavailable
   /// through [RouteArg.navKey.currentContext].
@@ -106,11 +98,6 @@ class RouteArg {
         return MaterialPageRoute(
           builder: (_) => ActivityView(arg!.id!, arg.info),
         );
-      case filter:
-        if (arg?.object is! FilterModel) return _unknown();
-        return MaterialPageRoute(
-          builder: (_) => FilterView(arg?.object as FilterModel),
-        );
       default:
         return null;
     }
@@ -134,7 +121,6 @@ class RouteArg {
   static const statistics = '/statistics';
   static const reviews = '/reviews';
   static const activity = '/activity';
-  static const filter = '/filter';
   static const thread = '/thread';
 
   // A placeholder for unknown routes.

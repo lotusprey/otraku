@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/html_content.dart';
 
-Future<dynamic> showPopUp(BuildContext ctx, Widget child) => showDialog(
+Future<T?> showPopUp<T>(BuildContext ctx, Widget child) => showDialog<T>(
       context: ctx,
       builder: (ctx) => PopUpAnimation(child),
       barrierColor: Theme.of(ctx).colorScheme.surface.withAlpha(150),

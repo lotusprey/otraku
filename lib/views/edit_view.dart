@@ -14,17 +14,16 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/expandable_field.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 import 'package:otraku/widgets/fields/score_picker.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-/// A [DraggableScrollableSheet] for entry editing
-/// Should be opened with [DragSheet.show].
+/// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
   EditView(this.mediaId, [this.model, this.callback]);
 
@@ -34,149 +33,84 @@ class EditView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
-        ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
-        : 0.0;
-
     return GetBuilder<EditController>(
       id: EditController.ID_MAIN,
       tag: mediaId.toString(),
       init: EditController(mediaId, model),
       builder: (ctrl) {
-        // This is cached to not rebuild each time the sheet is scrolled.
-        Widget? editView;
+        final buttons = <Widget>[];
+        if (ctrl.model != null) {
+          if (ctrl.oldModel?.status != null)
+            buttons.add(OpaqueSheetViewButton(
+              text: 'Remove',
+              icon: Ionicons.trash_bin_outline,
+              warning: true,
+              onTap: () => showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Remove entry?',
+                  mainAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: () {
+                    Get.find<CollectionController>(
+                      tag: ctrl.model!.type == 'ANIME'
+                          ? '${Settings().id}true'
+                          : '${Settings().id}false',
+                    ).removeEntry(ctrl.oldModel!);
+                    callback?.call(EditModel.emptyCopy(ctrl.model!));
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ));
+          else
+            buttons.add(const Spacer());
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: sidePadding,
-            right: sidePadding,
-          ),
-          child: DraggableScrollableSheet(
-            expand: false,
-            initialChildSize: 0.7,
-            builder: (context, scrollCtrl) {
-              if (editView == null)
-                editView = Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      child: ctrl.model != null
-                          ? _EditView(ctrl, scrollCtrl)
-                          : const Center(child: Loader()),
-                    ),
-                    if (ctrl.model != null) _Buttons(ctrl, callback),
-                  ],
-                );
+          buttons.add(_SaveButton(ctrl, callback));
+        }
 
-              return editView!;
-            },
-          ),
+        return OpaqueSheetView(
+          buttons: buttons,
+          builder: (context, scrollCtrl) => ctrl.model != null
+              ? _EditView(ctrl, scrollCtrl)
+              : const Center(child: Loader()),
         );
       },
     );
   }
 }
 
-class _Buttons extends StatefulWidget {
-  _Buttons(this.ctrl, this.callback);
+class _SaveButton extends StatefulWidget {
+  _SaveButton(this.ctrl, this.callback);
 
   final EditController ctrl;
   final void Function(EditModel)? callback;
 
   @override
-  State<_Buttons> createState() => _ButtonsState();
+  __SaveButtonState createState() => __SaveButtonState();
 }
 
-class _ButtonsState extends State<_Buttons> {
+class __SaveButtonState extends State<_SaveButton> {
   bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = widget.ctrl;
+    if (_loading) const Loader();
 
-    final remove = Expanded(
-      child: ctrl.model!.status != null
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: TextButton.icon(
-                style: Theme.of(context).textButtonTheme.style!.copyWith(
-                      foregroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                label: Text('Remove'),
-                icon: Icon(Ionicons.trash_bin_outline),
-                onPressed: () => showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Remove entry?',
-                    mainAction: 'Yes',
-                    secondaryAction: 'No',
-                    onConfirm: () {
-                      Get.find<CollectionController>(
-                        tag: ctrl.model!.type == 'ANIME'
-                            ? '${Settings().id}true'
-                            : '${Settings().id}false',
-                      ).removeEntry(ctrl.currModel!);
-                      widget.callback?.call(EditModel.emptyCopy(ctrl.model!));
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-              ),
-            )
-          : const SizedBox(),
-    );
-
-    final save = Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: TextButton.icon(
-          label: Text('Save'),
-          icon: Icon(Ionicons.save_outline),
-          onPressed: () {
-            setState(() => _loading = true);
-            Get.find<CollectionController>(
-              tag: ctrl.model!.type == 'ANIME'
-                  ? '${Settings().id}true'
-                  : '${Settings().id}false',
-            ).updateEntry(ctrl.currModel!, ctrl.model!).then((_) {
-              widget.callback?.call(ctrl.model!);
-              Navigator.pop(context);
-            });
-          },
-        ),
-      ),
-    );
-
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: Consts.filter,
-          child: Container(
-            height: MediaQuery.of(context).viewPadding.bottom + 50,
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewPadding.bottom,
-            ),
-            width: double.infinity,
-            color: Theme.of(context).cardColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: _loading
-                  ? const [Center(child: Loader())]
-                  : Settings().leftHanded
-                      ? [save, remove]
-                      : [remove, save],
-            ),
-          ),
-        ),
-      ),
+    return OpaqueSheetViewButton(
+      text: 'Save',
+      icon: Ionicons.save_outline,
+      onTap: () {
+        setState(() => _loading = true);
+        Get.find<CollectionController>(
+          tag: widget.ctrl.model!.type == 'ANIME'
+              ? '${Settings().id}true'
+              : '${Settings().id}false',
+        ).updateEntry(widget.ctrl.oldModel!, widget.ctrl.model!).then((_) {
+          widget.callback?.call(widget.ctrl.model!);
+          Navigator.pop(context);
+        });
+      },
     );
   }
 }
@@ -190,7 +124,7 @@ class _EditView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<HomeController>().siteSettings!;
-    final old = ctrl.currModel!;
+    final old = ctrl.oldModel!;
     final model = ctrl.model!;
 
     final advancedScoring = <Widget>[];
@@ -460,9 +394,7 @@ class _EditView extends StatelessWidget {
               (key, val) => model.customLists[key] = val,
             ),
           ],
-          SliverToBoxAdapter(
-            child: SizedBox(height: NavLayout.offset(context)),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
     );

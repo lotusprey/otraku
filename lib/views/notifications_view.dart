@@ -7,6 +7,7 @@ import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -98,7 +99,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditView(notification.headId!, context);
+                    showSheet(context, EditView(notification.headId!));
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
@@ -153,7 +154,7 @@ class _NotificationWidget extends StatelessWidget {
                 onLongPress: () {
                   if (notification.explorable == Explorable.anime ||
                       notification.explorable == Explorable.manga)
-                    ExploreIndexer.openEditView(notification.headId!, context);
+                    showSheet(context, EditView(notification.headId!));
                 },
                 child: Padding(
                   padding: Consts.PADDING,

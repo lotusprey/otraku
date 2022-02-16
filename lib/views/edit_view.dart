@@ -25,18 +25,24 @@ import 'package:otraku/widgets/overlays/toast.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
-  EditView(this.mediaId, [this.model, this.callback]);
+  EditView(
+    this.mediaId, {
+    this.model,
+    this.callback,
+    this.complete = false,
+  });
 
   final int mediaId;
   final EditModel? model;
   final void Function(EditModel)? callback;
+  final bool complete;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<EditController>(
       id: EditController.ID_MAIN,
       tag: mediaId.toString(),
-      init: EditController(mediaId, model),
+      init: EditController(mediaId, model, complete),
       builder: (ctrl) {
         final buttons = <Widget>[];
         if (ctrl.model != null) {

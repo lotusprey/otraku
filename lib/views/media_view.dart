@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
@@ -164,11 +163,13 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ActionButton(
         icon: model.entry.status == null ? Icons.add : Icons.edit,
         tooltip: model.entry.status == null ? 'Add' : 'Edit',
-        onTap: () => ExploreIndexer.openEditView(
-          model.info.id,
+        onTap: () => showSheet(
           context,
-          model.entry,
-          (EditModel entry) => setState(() => model.entry = entry),
+          EditView(
+            model.info.id,
+            model: model.entry,
+            callback: (entry) => setState(() => model.entry = entry),
+          ),
         ),
       ),
     ];

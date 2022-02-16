@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -11,9 +12,10 @@ class EditController extends GetxController {
   static const ID_START_DATE = 4;
   static const ID_COMPLETE_DATE = 5;
 
-  EditController(this._id, this._oldModel);
+  EditController(this._id, this._oldModel, this._complete);
 
   final int _id;
+  final bool _complete;
   EditModel? _oldModel;
   EditModel? _newModel;
 
@@ -28,8 +30,19 @@ class EditController extends GetxController {
     if (data == null) return;
 
     _oldModel = EditModel(data['Media']);
+    _completeEntry(_oldModel!);
     _newModel = EditModel.copy(_oldModel!);
     update([ID_MAIN]);
+  }
+
+  // If needed, set the model as completed media.
+  void _completeEntry(EditModel _model) {
+    if (!_complete) return;
+    _model.status = ListStatus.COMPLETED;
+    _model.completedAt = DateTime.now();
+    if (_model.progressMax != null) _model.progress = _model.progressMax!;
+    if (_model.progressVolumesMax != null)
+      _model.progressVolumes = _model.progressVolumesMax!;
   }
 
   @override
@@ -37,7 +50,9 @@ class EditController extends GetxController {
     super.onInit();
     if (_oldModel == null)
       _fetch();
-    else
+    else {
+      _completeEntry(_oldModel!);
       _newModel = EditModel.copy(_oldModel!);
+    }
   }
 }

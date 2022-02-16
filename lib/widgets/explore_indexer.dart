@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -82,14 +81,6 @@ class ExploreIndexer extends StatelessWidget {
     }
   }
 
-  static void openEditView(
-    int id,
-    BuildContext context, [
-    EditModel? model,
-    Function(EditModel)? callback,
-  ]) =>
-      showSheet(context, EditView(id, model, callback));
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -98,7 +89,7 @@ class ExploreIndexer extends StatelessWidget {
           ctx: context, id: id, imageUrl: imageUrl, explorable: explorable),
       onLongPress: () {
         if (explorable == Explorable.anime || explorable == Explorable.manga)
-          openEditView(id, context);
+          showSheet(context, EditView(id));
       },
       child: child,
     );

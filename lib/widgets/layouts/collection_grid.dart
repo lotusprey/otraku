@@ -8,11 +8,13 @@ import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CollectionGrid extends StatelessWidget {
   CollectionGrid(this.ctrlTag);
@@ -329,7 +331,7 @@ class _Progress extends StatelessWidget {
             model.progress < model.progressMax! - 1)
           increment!();
         else
-          ExploreIndexer.openEditView(model.mediaId, context);
+          showSheet(context, EditView(model.mediaId, complete: true));
       },
       child: Tooltip(
         message: 'Increment Progress',

@@ -200,17 +200,15 @@ class DynamicGradientDragSheet extends StatelessWidget {
     required this.onTap,
     required this.itemBuilder,
     required this.itemCount,
-    this.itemExtent = Consts.MATERIAL_TAP_TARGET_SIZE,
   });
 
   final void Function(int) onTap;
   final Widget Function(BuildContext, int) itemBuilder;
   final int itemCount;
-  final double itemExtent;
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = itemCount * itemExtent + 60;
+    final requiredHeight = itemCount * Consts.MATERIAL_TAP_TARGET_SIZE + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -240,12 +238,11 @@ class DynamicGradientDragSheet extends StatelessWidget {
             physics: Consts.PHYSICS,
             padding: const EdgeInsets.only(
               top: 50,
-              bottom: 10,
               left: 10,
               right: 10,
             ),
             itemCount: itemCount,
-            itemExtent: itemExtent,
+            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
             itemBuilder: (context, i) => GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: itemBuilder(context, i),
@@ -266,29 +263,33 @@ class DynamicGradientDragSheet extends StatelessWidget {
 class FixedGradientDragSheet extends StatelessWidget {
   FixedGradientDragSheet({required this.children});
 
-  // A default version with commonly used buttons.
-  factory FixedGradientDragSheet.link(BuildContext context, String link) =>
-      FixedGradientDragSheet(children: linkTiles(context, link));
-
-  // Common buttons for link copying and webpage opening.
-  static List<Widget> linkTiles(BuildContext context, String link) => [
-        GradientDragSheetTile(
-          text: 'Copy Link',
-          icon: Ionicons.clipboard_outline,
-          onTap: () => Toast.copy(context, link),
-        ),
-        GradientDragSheetTile(
-          text: 'Open in Browser',
-          icon: Ionicons.link_outline,
-          onTap: () {
-            try {
-              launch(link);
-            } catch (err) {
-              Toast.show(context, 'Couldn\'t open link: $err');
-            }
-          },
-        ),
-      ];
+  // A version with the given buttons, along with copy/open link buttons.
+  factory FixedGradientDragSheet.link(
+    BuildContext context,
+    String link, [
+    List<Widget> children = const [],
+  ]) =>
+      FixedGradientDragSheet(
+        children: [
+          ...children,
+          GradientDragSheetTile(
+            text: 'Copy Link',
+            icon: Ionicons.clipboard_outline,
+            onTap: () => Toast.copy(context, link),
+          ),
+          GradientDragSheetTile(
+            text: 'Open in Browser',
+            icon: Ionicons.link_outline,
+            onTap: () {
+              try {
+                launch(link);
+              } catch (err) {
+                Toast.show(context, 'Couldn\'t open link: $err');
+              }
+            },
+          ),
+        ],
+      );
 
   final List<Widget> children;
 

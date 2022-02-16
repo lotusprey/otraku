@@ -91,24 +91,23 @@ class CollectionActionButton extends StatelessWidget {
         onTap: () => showSheet(
           context,
           DynamicGradientDragSheet(
-            itemExtent: 60,
             itemCount: ctrl.listNames.length,
             onTap: (i) => ctrl.listIndex = i,
-            itemBuilder: (_, i) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            itemBuilder: (_, i) => Row(
               children: [
-                Text(
-                  ctrl.listNames[i],
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: i != ctrl.listIndex
-                      ? Theme.of(context).textTheme.headline1
-                      : Theme.of(context).textTheme.headline1?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary),
+                Flexible(
+                  child: Text(
+                    ctrl.listNames[i],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: i != ctrl.listIndex
+                        ? Theme.of(context).textTheme.headline1
+                        : Theme.of(context).textTheme.headline1?.copyWith(
+                            color: Theme.of(context).colorScheme.secondary),
+                  ),
                 ),
-                const SizedBox(height: 5),
                 Text(
-                  ctrl.listCounts[i].toString(),
+                  ' ${ctrl.listCounts[i]}',
                   style: Theme.of(context).textTheme.headline3,
                 ),
               ],

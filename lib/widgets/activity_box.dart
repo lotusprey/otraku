@@ -221,12 +221,10 @@ class _InteractionButtonsState extends State<InteractionButtons> {
               },
             ));
 
-            if (model.siteUrl != null)
-              children.addAll(
-                FixedGradientDragSheet.linkTiles(context, model.siteUrl!),
-              );
-
-            showSheet(context, FixedGradientDragSheet(children: children));
+            showSheet(
+              context,
+              FixedGradientDragSheet.link(context, model.siteUrl!, children),
+            );
           },
         ),
         Tooltip(

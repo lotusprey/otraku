@@ -2,13 +2,13 @@ abstract class GqlQuery {
   static const collection = r'''
     query Collection($userId: Int, $type: MediaType) {
       MediaListCollection(userId: $userId, type: $type) {
-        lists {name isCustomList isSplitCompletedList status entries {...entry media{...main}}}
+        lists {name isCustomList isSplitCompletedList status entries {...entry media {...main}}}
         user {
           mediaListOptions {
             rowOrder
             scoreFormat
-            animeList {sectionOrder customLists splitCompletedSectionByFormat}
-            mangaList {sectionOrder customLists splitCompletedSectionByFormat}
+            animeList {sectionOrder splitCompletedSectionByFormat}
+            mangaList {sectionOrder splitCompletedSectionByFormat}
           }
         }
       }

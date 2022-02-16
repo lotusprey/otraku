@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/list_status.dart';
 
@@ -41,23 +43,33 @@ class EditModel {
   });
 
   factory EditModel(Map<String, dynamic> map) {
+    final customLists = <String, bool>{};
+    if (map['mediaListEntry']?['customLists'] != null) {
+      for (final e in map['mediaListEntry']['customLists'].entries)
+        customLists[e.key] = e.value;
+    } else {
+      final settings = Get.find<HomeController>().siteSettings;
+      if (settings != null) {
+        if (map['type'] == 'ANIME')
+          for (final c in settings.animeCustomLists) customLists[c] = false;
+        else
+          for (final c in settings.mangaCustomLists) customLists[c] = false;
+      }
+    }
+
     if (map['mediaListEntry'] == null)
       return EditModel._(
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
         progressVolumesMax: map['volumes'],
+        customLists: customLists,
       );
 
     final advancedScores = <String, double>{};
     if (map['mediaListEntry']['advancedScores'] != null)
       for (final e in map['mediaListEntry']['advancedScores'].entries)
         advancedScores[e.key] = e.value.toDouble();
-
-    final customLists = <String, bool>{};
-    if (map['mediaListEntry']['customLists'] != null)
-      for (final e in map['mediaListEntry']['customLists'].entries)
-        customLists[e.key] = e.value;
 
     return EditModel._(
       type: map['type'],

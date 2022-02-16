@@ -29,7 +29,6 @@ class CollectionController extends ScrollingController {
   late final CollectionFilterModel filters;
   final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[];
-  final _customListNames = <String>[];
   int _listIndex = 0;
   bool _isLoading = true;
   bool _searchMode = false;
@@ -48,7 +47,6 @@ class CollectionController extends ScrollingController {
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
-  List<String> get customListNames => [..._customListNames];
 
   set search(String val) {
     val = val.trimLeft();
@@ -199,9 +197,6 @@ class CollectionController extends ScrollingController {
     _scoreFormat = ScoreFormat.values.byName(
       data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
     );
-
-    _customListNames.clear();
-    for (final l in metaData['customLists'] ?? []) _customListNames.add(l);
 
     _lists.clear();
     for (final String section in metaData['sectionOrder']) {

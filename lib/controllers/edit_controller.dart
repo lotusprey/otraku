@@ -1,9 +1,7 @@
 import 'package:get/get.dart';
-import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/settings.dart';
 
 class EditController extends GetxController {
   static const ID_MAIN = 0;
@@ -30,18 +28,6 @@ class EditController extends GetxController {
     if (data == null) return;
 
     _oldModel = EditModel(data['Media']);
-
-    // TODO custom lists not showing in media page
-    if (_oldModel!.customLists.isEmpty)
-      _oldModel!.customLists = Map.fromIterable(
-        Get.find<CollectionController>(
-          tag: _oldModel!.type == 'ANIME'
-              ? '${Settings().id}true'
-              : '${Settings().id}false',
-        ).customListNames,
-        value: (_) => false,
-      );
-
     _newModel = EditModel.copy(_oldModel!);
     update([ID_MAIN]);
   }

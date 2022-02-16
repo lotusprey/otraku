@@ -95,7 +95,7 @@ class __SaveButtonState extends State<_SaveButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) const Loader();
+    if (_loading) return const Expanded(child: Center(child: Loader()));
 
     return OpaqueSheetViewButton(
       text: 'Save',

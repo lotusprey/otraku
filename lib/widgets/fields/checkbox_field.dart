@@ -66,6 +66,8 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
             Expanded(
               child: Text(
                 widget.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyText2,
               ),
             ),

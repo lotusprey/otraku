@@ -48,7 +48,7 @@ class FeedView extends StatelessWidget {
                 padding: Consts.PADDING,
                 controller: ctrl.scrollCtrl,
                 itemBuilder: (_, i) =>
-                    ActivityBox(feed: ctrl, model: ctrl.activities[i]),
+                    ActivityBox(ctrl: ctrl, model: ctrl.activities[i]),
                 itemCount: ctrl.activities.length,
               );
             },
@@ -98,7 +98,7 @@ class HomeFeedView extends StatelessWidget {
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (_, i) => ActivityBox(feed: ctrl, model: activities[i]),
+                    (_, i) => ActivityBox(ctrl: ctrl, model: activities[i]),
                     childCount: activities.length,
                   ),
                 );
@@ -201,16 +201,18 @@ class _Filter extends StatelessWidget {
     return AppBarIcon(
       tooltip: 'Filter',
       icon: Ionicons.funnel_outline,
-      onTap: () => Sheet.show(
-        ctx: context,
-        sheet: SelectionSheet<ActivityType>(
-          options: ActivityType.values.map((v) => v.text).toList(),
-          values: ActivityType.values,
-          names: ctrl.typeIn,
-          onDone: (typeIn) => ctrl.typeIn = typeIn,
-          fixHeight: true,
-        ),
-      ),
+      onTap: () {
+        final typeIn = ctrl.typeIn;
+
+        showSheet(
+          context,
+          SelectionOpaqueSheet<ActivityType>(
+            options: ActivityType.values.map((v) => v.text).toList(),
+            values: ActivityType.values,
+            selected: typeIn,
+          ),
+        ).then((_) => ctrl.typeIn = typeIn);
+      },
     );
   }
 }

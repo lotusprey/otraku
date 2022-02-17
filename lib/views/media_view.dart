@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaView extends StatelessWidget {
   MediaView(this.id, this.coverUrl);
@@ -23,15 +22,6 @@ class MediaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final coverWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.35
-        : 150.0;
-    final coverHeight = coverWidth / 0.7;
-    final bannerHeight =
-        coverHeight * 0.6 + Consts.MATERIAL_TAP_TARGET_SIZE + 10;
-    final headerHeight = bannerHeight + coverHeight * 0.6;
-    final headerOffset = headerHeight - Consts.MATERIAL_TAP_TARGET_SIZE - 10;
-
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
 
@@ -62,16 +52,16 @@ class MediaView extends StatelessWidget {
           builder: (_) => NavLayout(
             index: ctrl.tab,
             onChanged: (page) => ctrl.tab = page,
-            onSame: (_) => ctrl.scrollUpTo(headerOffset),
+            onSame: (_) => ctrl.scrollUpTo(0),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
                 if (goRight && ctrl.otherTab < 2) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.otherTab++;
                   return true;
                 }
                 if (!goRight && ctrl.otherTab > 0) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.otherTab--;
                   return true;
                 }
@@ -79,12 +69,12 @@ class MediaView extends StatelessWidget {
 
               if (ctrl.tab == MediaController.SOCIAL) {
                 if (goRight && ctrl.socialTab < 1) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.socialTab++;
                   return true;
                 }
                 if (!goRight && ctrl.socialTab > 0) {
-                  ctrl.scrollUpTo(headerOffset);
+                  ctrl.scrollUpTo(0);
                   ctrl.socialTab--;
                   return true;
                 }
@@ -110,9 +100,9 @@ class MediaView extends StatelessWidget {
                   if (ctrl.tab == MediaController.INFO)
                     ...MediaInfoView.children(context, ctrl)
                   else if (ctrl.tab == MediaController.OTHER)
-                    ...MediaOtherView.children(context, ctrl, headerOffset)
+                    ...MediaOtherView.children(context, ctrl)
                   else
-                    ...MediaSocialView.children(context, ctrl, headerOffset),
+                    ...MediaSocialView.children(context, ctrl),
                   footer,
                 ],
               ),
@@ -126,6 +116,7 @@ class MediaView extends StatelessWidget {
 
 class _ActionButtons extends StatefulWidget {
   _ActionButtons(this.ctrl);
+
   final MediaController ctrl;
 
   @override
@@ -145,12 +136,19 @@ class __ActionButtonsState extends State<_ActionButtons> {
         ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
-          onTap: () => DragSheet.show(
+          onTap: () => showSheet(
             context,
-            OptionDragSheet(
-              options: widget.ctrl.availableLanguages,
-              index: widget.ctrl.language,
-              onTap: (val) => widget.ctrl.language = val,
+            DynamicGradientDragSheet(
+              onTap: (i) => widget.ctrl.language = i,
+              itemCount: widget.ctrl.availableLanguages.length,
+              itemBuilder: (_, i) => Text(
+                widget.ctrl.availableLanguages[i],
+                style: i != widget.ctrl.language
+                    ? Theme.of(context).textTheme.headline1
+                    : Theme.of(context).textTheme.headline1?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+              ),
             ),
           ),
         ),
@@ -165,11 +163,13 @@ class __ActionButtonsState extends State<_ActionButtons> {
       ActionButton(
         icon: model.entry.status == null ? Icons.add : Icons.edit,
         tooltip: model.entry.status == null ? 'Add' : 'Edit',
-        onTap: () => ExploreIndexer.openEditView(
-          model.info.id,
+        onTap: () => showSheet(
           context,
-          model.entry,
-          (EntryModel entry) => setState(() => model.entry = entry),
+          EditView(
+            model.info.id,
+            model: model.entry,
+            callback: (entry) => setState(() => model.entry = entry),
+          ),
         ),
       ),
     ];

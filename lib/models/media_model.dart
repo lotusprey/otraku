@@ -1,5 +1,5 @@
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_info_model.dart';
@@ -10,7 +10,7 @@ import 'package:otraku/models/page_model.dart';
 
 class MediaModel {
   final MediaInfoModel info;
-  late EntryModel entry;
+  late EditModel entry;
   final MediaStatsModel stats;
   final List<RelatedMediaModel> otherMedia;
   final _characters = PageModel<ConnectionModel>();
@@ -35,7 +35,7 @@ class MediaModel {
 
     return MediaModel._(
       info: MediaInfoModel(map),
-      entry: EntryModel(map),
+      entry: EditModel(map),
       stats: MediaStatsModel(map),
       otherMedia: other,
     )..addReviews(map);

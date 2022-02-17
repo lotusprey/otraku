@@ -1,17 +1,16 @@
 import 'dart:math';
 
+import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
-import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
-class CollectionController extends ScrollingController implements Filterable {
-  // GetBuilder ids.
+class CollectionController extends ScrollingController {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
 
@@ -21,17 +20,19 @@ class CollectionController extends ScrollingController implements Filterable {
   // DATA
   // ***************************************************************************
 
-  CollectionController(this.userId, this.ofAnime);
+  CollectionController(this.userId, this.ofAnime) {
+    filters = CollectionFilterModel(_onFilterChange, ofAnime);
+  }
 
   final int userId;
   final bool ofAnime;
+  late final CollectionFilterModel filters;
   final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[];
-  final _filters = <String, dynamic>{};
-  final _customListNames = <String>[];
   int _listIndex = 0;
   bool _isLoading = true;
   bool _searchMode = false;
+  String _search = '';
   ScoreFormat? _scoreFormat;
 
   // ***************************************************************************
@@ -42,17 +43,23 @@ class CollectionController extends ScrollingController implements Filterable {
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
   bool get searchMode => _searchMode;
+  String get search => _search;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
-  List<String> get customListNames => [..._customListNames];
+
+  set search(String val) {
+    val = val.trimLeft();
+    if (_search == val) return;
+    _search = val;
+    _filter();
+  }
 
   set searchMode(bool v) {
     if (_searchMode == v) return;
     _searchMode = v;
+    _search = '';
     update([ID_HEAD]);
-    if (_filters[Filterable.SEARCH] != null)
-      setFilterWithKey(Filterable.SEARCH, update: true);
   }
 
   List<String> get listNames {
@@ -78,19 +85,89 @@ class CollectionController extends ScrollingController implements Filterable {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
     scrollUpTo(0);
+    _filter(true);
+  }
+
+  void _onFilterChange(bool withSort) {
+    if (withSort) for (final list in _lists) list.sort(filters.sort);
     _filter();
   }
 
-  void sort() {
-    for (final list in _lists) list.sort(_filters[Filterable.SORT]);
-    _filter();
-  }
+  void _filter([bool updateHead = false]) {
+    if (_lists.isEmpty) return;
 
-  void _updateLoading(bool val) {
-    if (_isLoading == val) return;
+    final searchLower = _search.toLowerCase();
+    final tagIdIn = filters.tagIdIn;
+    final tagIdNotIn = filters.tagIdNotIn;
 
-    _isLoading = val;
-    update([ID_HEAD, ID_BODY]);
+    final list = _lists[_listIndex];
+    final e = <ListEntryModel>[];
+
+    for (final entry in list.entries) {
+      if (searchLower.isNotEmpty) {
+        bool contains = false;
+        for (final title in entry.titles)
+          if (title.toLowerCase().contains(search)) {
+            contains = true;
+            break;
+          }
+        if (!contains) continue;
+      }
+
+      if (filters.country != null && entry.country != filters.country) continue;
+
+      if (filters.formats.isNotEmpty && !filters.formats.contains(entry.format))
+        continue;
+
+      if (filters.statuses.isNotEmpty &&
+          !filters.statuses.contains(entry.status)) continue;
+
+      if (filters.genreIn.isNotEmpty) {
+        bool isIn = true;
+        for (final genre in filters.genreIn)
+          if (!entry.genres.contains(genre)) {
+            isIn = false;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (filters.genreNotIn.isNotEmpty) {
+        bool isIn = false;
+        for (final genre in filters.genreNotIn)
+          if (entry.genres.contains(genre)) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      if (tagIdIn.isNotEmpty) {
+        bool isIn = true;
+        for (final tagId in tagIdIn)
+          if (!entry.tags.contains(tagId)) {
+            isIn = false;
+            break;
+          }
+        if (!isIn) continue;
+      }
+
+      if (tagIdNotIn.isNotEmpty) {
+        bool isIn = false;
+        for (final tagId in tagIdNotIn)
+          if (entry.tags.contains(tagId)) {
+            isIn = true;
+            break;
+          }
+        if (isIn) continue;
+      }
+
+      e.add(entry);
+    }
+
+    _entries.clear();
+    _entries.addAll(e);
+    update([ID_BODY, if (updateHead) ID_HEAD]);
   }
 
   // ***************************************************************************
@@ -98,16 +175,15 @@ class CollectionController extends ScrollingController implements Filterable {
   // ***************************************************************************
 
   Future<void> _fetch() async {
-    if (_lists.isEmpty) _updateLoading(true);
-
     Map<String, dynamic>? data = await Client.request(
       GqlQuery.collection,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
 
     if (data == null) {
-      _updateLoading(false);
-      return null;
+      _isLoading = false;
+      update([ID_HEAD, ID_BODY]);
+      return;
     }
 
     data = data['MediaListCollection'];
@@ -122,12 +198,6 @@ class CollectionController extends ScrollingController implements Filterable {
       data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
     );
 
-    _filters[Filterable.SORT] =
-        ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
-
-    _customListNames.clear();
-    _customListNames.addAll(List.from(metaData['customLists']));
-
     _lists.clear();
     for (final String section in metaData['sectionOrder']) {
       final index = (data['lists'] as List<dynamic>)
@@ -137,29 +207,41 @@ class CollectionController extends ScrollingController implements Filterable {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
     }
 
     for (final l in data['lists'])
-      _lists.add(ListModel(l, splitCompleted)..sort(_filters[Filterable.SORT]));
+      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
 
     scrollUpTo(0);
-    _listIndex = 0;
+    if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
-    _filter();
+    _filter(true);
   }
 
   Future<void> refetch() async {
-    _entries.clear();
-    _lists.clear();
-    return _fetch();
+    _isLoading = true;
+    update([ID_HEAD, ID_BODY]);
+    await _fetch();
   }
 
-  Future<void> updateEntry(EntryModel oldEntry, EntryModel newEntry) async {
-    // Update database item.
-    final data =
-        await Client.request(GqlMutation.updateEntry, newEntry.toMap());
+  Future<void> updateEntry(EditModel oldEntry, EditModel newEntry) async {
+    // Update database item. Due to AL API bug, the tags cannot be obtained
+    // from the [SaveMediaListEntry] mutation, so only half of the data is
+    // obtained from the first request. The other half comes from a second
+    // request.
+    final data = await Client.request(
+      GqlMutation.updateEntry,
+      newEntry.toMap(),
+    );
     if (data == null) return;
+
+    final mediaData = await Client.request(
+      GqlQuery.media,
+      {'id': newEntry.mediaId, 'withMain': true},
+    );
+    if (mediaData == null) return;
+    data['SaveMediaListEntry']['media'] = mediaData['Media'];
 
     final entry = ListEntryModel(data['SaveMediaListEntry']);
 
@@ -203,7 +285,7 @@ class CollectionController extends ScrollingController implements Filterable {
         if (entry.listStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
-          list.insertSorted(entry, _filters[Filterable.SORT]);
+          list.insertSorted(entry, filters.sort);
           added = true;
           break;
         }
@@ -218,7 +300,7 @@ class CollectionController extends ScrollingController implements Filterable {
       for (final list in _lists)
         for (int i = 0; i < newCustomLists.length; i++)
           if (newCustomLists[i] == list.name.toLowerCase()) {
-            list.insertSorted(entry, _filters[Filterable.SORT]);
+            list.insertSorted(entry, filters.sort);
             newCustomLists.removeAt(i);
             break;
           }
@@ -241,75 +323,68 @@ class CollectionController extends ScrollingController implements Filterable {
     _filter();
   }
 
-  Future<void> incrementProgress(ListEntryModel model) async {
-    if (model.progress == model.progressMax) return;
+  /// When the progress of an entry is changed, this should be called
+  /// to reflect it into the database. When reaching the last episode,
+  /// [updateEntry] should be called instead.
+  Future<void> updateProgress(ListEntryModel model) async {
+    if (model.progressMax != null && model.progress > model.progressMax! - 1)
+      return;
 
-    final oldListStatus = model.listStatus;
+    final progress = model.progress;
 
     // Update database item.
     final data = await Client.request(
       GqlMutation.updateProgress,
-      {'mediaId': model.mediaId, 'progress': model.progress + 1},
+      {'mediaId': model.mediaId, 'progress': progress},
     );
     if (data == null) return;
 
-    model = ListEntryModel(data['SaveMediaListEntry']);
+    final sorting = filters.sort;
+    final needsSort = sorting == EntrySort.PROGRESS ||
+        sorting == EntrySort.PROGRESS_DESC ||
+        sorting == EntrySort.UPDATED_AT ||
+        sorting == EntrySort.UPDATED_AT_DESC;
 
-    final customLists = <String>[];
-    if (data['SaveMediaListEntry']['customLists'] != null)
-      for (final e in data['SaveMediaListEntry']['customLists'].entries)
-        if (e.value) customLists.add(e.key.toString().toLowerCase());
-
-    // Remove from status list.
+    // Update status list.
     for (final list in _lists) {
       if (list.isCustomList ||
-          list.status == null ||
-          list.status != oldListStatus ||
-          (list.splitCompletedListFormat != null &&
-              list.splitCompletedListFormat != model.format)) continue;
-
-      list.removeByMediaId(model.mediaId);
-      break;
-    }
-
-    // Add to status list.
-    for (final list in _lists) {
-      if (list.isCustomList ||
-          list.status == null ||
           list.status != model.listStatus ||
           (list.splitCompletedListFormat != null &&
               list.splitCompletedListFormat != model.format)) continue;
 
-      list.insertSorted(model, _filters[Filterable.SORT]);
+      for (final entry in list.entries)
+        if (entry.mediaId == model.mediaId) {
+          entry.progress = progress;
+          break;
+        }
+
+      if (needsSort) list.sort(sorting);
       break;
     }
 
-    // Replace in custom lists.
+    // Update custom lists.
+    final customLists = <String>[];
+    if (data['SaveMediaListEntry']?['customLists'] != null)
+      for (final e in data['SaveMediaListEntry']['customLists'].entries)
+        if (e.value) customLists.add(e.key.toString().toLowerCase());
+
     if (customLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < customLists.length; i++)
-          if (customLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(model.mediaId);
-            list.insertSorted(model, _filters[Filterable.SORT]);
+          if (list.isCustomList && customLists[i] == list.name.toLowerCase()) {
+            for (final entry in list.entries)
+              if (entry.mediaId == model.mediaId) {
+                entry.progress = progress;
+                break;
+              }
+
+            if (needsSort) list.sort(sorting);
             customLists.removeAt(i);
             break;
           }
-
-    // Remove the old status list if it is empty.
-    for (int i = 0; i < _lists.length; i++)
-      if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) {
-          _listIndex--;
-          scrollUpTo(0);
-        }
-        _lists.removeAt(i);
-        break;
-      }
-
-    _filter();
   }
 
-  Future<void> removeEntry(EntryModel entry) async {
+  Future<void> removeEntry(EditModel entry) async {
     // Update database item.
     final data = await Client.request(
       GqlMutation.removeEntry,
@@ -351,104 +426,6 @@ class CollectionController extends ScrollingController implements Filterable {
       }
 
     _filter();
-  }
-
-  // ***************************************************************************
-  // FILTERING
-  // ***************************************************************************
-
-  void _filter([bool updateHeader = true]) {
-    if (_lists.isEmpty) return;
-
-    final String? country = _filters[Filterable.COUNTRY];
-    final List<String>? formatIn = _filters[Filterable.FORMAT_IN];
-    final List<String>? statusIn = _filters[Filterable.STATUS_IN];
-    final List<String>? genreIn = _filters[Filterable.GENRE_IN];
-    final List<String>? genreNotIn = _filters[Filterable.GENRE_NOT_IN];
-    final search =
-        (_filters[Filterable.SEARCH] as String?)?.toLowerCase() ?? '';
-
-    final list = _lists[_listIndex];
-    final e = <ListEntryModel>[];
-
-    for (final entry in list.entries) {
-      if (search != '' && !entry.title.toLowerCase().contains(search)) continue;
-
-      if (country != null && entry.country != country) continue;
-
-      if (formatIn != null && !formatIn.contains(entry.format)) continue;
-
-      if (statusIn != null && !statusIn.contains(entry.status)) continue;
-
-      if (genreIn != null) {
-        bool isIn = true;
-        for (final genre in genreIn)
-          if (!entry.genres.contains(genre)) {
-            isIn = false;
-            break;
-          }
-        if (!isIn) continue;
-      }
-
-      if (genreNotIn != null) {
-        bool isIn = false;
-        for (final genre in genreNotIn)
-          if (entry.genres.contains(genre)) {
-            isIn = true;
-            break;
-          }
-        if (isIn) continue;
-      }
-
-      e.add(entry);
-    }
-
-    _entries.clear();
-    _entries.addAll(e);
-    update([ID_BODY, if (updateHeader) ID_HEAD]);
-  }
-
-  @override
-  dynamic getFilterWithKey(String key) => _filters[key];
-
-  @override
-  void setFilterWithKey(String key, {dynamic value, bool update = false}) {
-    if (value == null ||
-        (value is List && value.isEmpty) ||
-        (value is String && value.trim().isEmpty))
-      _filters.remove(key);
-    else
-      _filters[key] = value;
-
-    if (!update) return;
-
-    scrollUpTo(0);
-    _filter(false);
-  }
-
-  @override
-  void clearAllFilters({bool update = true}) => clearFiltersWithKeys([
-        Filterable.COUNTRY,
-        Filterable.STATUS_IN,
-        Filterable.FORMAT_IN,
-        Filterable.GENRE_IN,
-        Filterable.GENRE_NOT_IN,
-      ], update: update);
-
-  @override
-  void clearFiltersWithKeys(List<String> keys, {bool update = true}) {
-    for (final key in keys) _filters.remove(key);
-
-    if (!update) return;
-
-    scrollUpTo(0);
-    _filter(false);
-  }
-
-  @override
-  bool anyActiveFilterFrom(List<String> keys) {
-    for (final k in keys) if (_filters.containsKey(k)) return true;
-    return false;
   }
 
   @override

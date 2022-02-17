@@ -20,7 +20,7 @@ class SettingsAboutView extends StatelessWidget {
       children: [
         Center(
           child: ClipRRect(
-            borderRadius: Consts.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RAD_MIN,
             child: Image.asset(
               'assets/icons/about_icon.png',
               fit: BoxFit.contain,
@@ -32,7 +32,7 @@ class SettingsAboutView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v. 1.1.6',
+            'Otraku - v. 1.1.7',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline2,
           ),

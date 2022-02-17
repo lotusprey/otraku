@@ -6,10 +6,12 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SliverCollectionAppBar extends StatelessWidget {
   SliverCollectionAppBar(this.ctrlTag, this.canPop);
@@ -38,7 +40,7 @@ class SliverCollectionAppBar extends StatelessWidget {
           leading,
           MediaSearchField(
             hint: ctrl.currentName,
-            value: ctrl.getFilterWithKey(Filterable.SEARCH) ?? '',
+            value: ctrl.search,
             searchMode: ctrl.searchMode,
             search: (val) {
               if (val == null) {
@@ -46,11 +48,7 @@ class SliverCollectionAppBar extends StatelessWidget {
                 return;
               }
 
-              ctrl.setFilterWithKey(
-                Filterable.SEARCH,
-                value: val,
-                update: true,
-              );
+              ctrl.search = val;
             },
             title: Row(
               mainAxisSize: MainAxisSize.min,
@@ -82,7 +80,7 @@ class SliverCollectionAppBar extends StatelessWidget {
               );
             },
           ),
-          _FilterIcon(ctrlTag),
+          _FilterIcon(FilterModel.collection(ctrl.ofAnime, ctrl.filters)),
         ]);
       },
     );
@@ -96,47 +94,53 @@ class SliverExploreAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ExploreController>(
       id: ExploreController.ID_HEAD,
-      builder: (ctrl) => SliverTransparentAppBar(
-        [
-          const SizedBox(width: 10),
-          MediaSearchField(
-            hint: Convert.clarifyEnum(ctrl.type.name)!,
-            value: ctrl.search,
-            search: ctrl.type != Explorable.review
-                ? (val) {
-                    if (val == null) {
-                      ctrl.searchMode = !ctrl.searchMode;
-                      return;
-                    }
+      builder: (ctrl) {
+        final type = ctrl.type;
+        return SliverTransparentAppBar(
+          [
+            const SizedBox(width: 10),
+            MediaSearchField(
+              hint: Convert.clarifyEnum(type.name)!,
+              value: ctrl.search,
+              search: type != Explorable.review
+                  ? (val) {
+                      if (val == null) {
+                        ctrl.searchMode = !ctrl.searchMode;
+                        return;
+                      }
 
-                    ctrl.search = val;
-                  }
-                : null,
-            searchMode: ctrl.searchMode,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(ctrl.type.icon,
-                    color: Theme.of(context).colorScheme.onBackground),
-                const SizedBox(width: 15),
-                Flexible(
-                  child: Text(
-                    Convert.clarifyEnum(ctrl.type.name)!,
-                    style: Theme.of(context).textTheme.headline1,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
+                      ctrl.search = val;
+                    }
+                  : null,
+              searchMode: ctrl.searchMode,
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    type.icon,
+                    color: Theme.of(context).colorScheme.onBackground,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 15),
+                  Flexible(
+                    child: Text(
+                      Convert.clarifyEnum(type.name)!,
+                      style: Theme.of(context).textTheme.headline1,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
-            _FilterIcon(null)
-          else if (ctrl.type == Explorable.character ||
-              ctrl.type == Explorable.staff)
-            _BirthdayIcon(ctrl),
-        ],
-      ),
+            if (type == Explorable.anime)
+              _FilterIcon(FilterModel.explore(true, ctrl.filters))
+            else if (type == Explorable.manga)
+              _FilterIcon(FilterModel.explore(false, ctrl.filters))
+            else if (type == Explorable.character || type == Explorable.staff)
+              _BirthdayIcon(ctrl),
+          ],
+        );
+      },
     );
   }
 }
@@ -161,8 +165,8 @@ class MediaSearchField extends StatefulWidget {
 }
 
 class _MediaSearchFieldState extends State<MediaSearchField> {
-  late bool _empty;
   late TextEditingController _ctrl;
+  late bool _empty;
 
   @override
   void initState() {
@@ -192,55 +196,48 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                 onTap: () => widget.search!(null),
               ),
           ] else
-            WillPopScope(
-              onWillPop: () {
-                widget.search!(null);
-                return Future.value(false);
-              },
-              child: Expanded(
-                child: Container(
-                  height: 35,
-                  padding: const EdgeInsets.only(right: 10),
-                  child: TextField(
-                    controller: _ctrl,
-                    autofocus: true,
-                    scrollPhysics: Consts.PHYSICS,
-                    cursorColor: Theme.of(context).colorScheme.secondary,
-                    style: Theme.of(context).textTheme.bodyText2,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(30),
-                    ],
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(left: 10),
-                      hintText: widget.hint,
-                      suffixIcon: _empty
-                          ? IconButton(
-                              tooltip: 'Hide',
-                              constraints: const BoxConstraints(maxWidth: 40),
-                              padding: const EdgeInsets.all(0),
-                              icon:
-                                  const Icon(Ionicons.chevron_forward_outline),
-                              iconSize: Consts.ICON_SMALL,
-                              splashColor: Colors.transparent,
-                              color: Theme.of(context).colorScheme.primary,
-                              onPressed: () => widget.search!(null),
-                            )
-                          : IconButton(
-                              tooltip: 'Clear',
-                              constraints: const BoxConstraints(maxWidth: 40),
-                              padding: const EdgeInsets.all(0),
-                              icon: const Icon(Icons.close_rounded),
-                              iconSize: Consts.ICON_SMALL,
-                              splashColor: Colors.transparent,
-                              color: Theme.of(context).colorScheme.primary,
-                              onPressed: () {
-                                _ctrl.clear();
-                                _update('');
-                              },
-                            ),
-                    ),
-                    onChanged: (text) => _update(text),
+            Expanded(
+              child: Container(
+                height: 35,
+                padding: const EdgeInsets.only(right: 10),
+                child: TextField(
+                  controller: _ctrl,
+                  autofocus: true,
+                  scrollPhysics: Consts.PHYSICS,
+                  cursorColor: Theme.of(context).colorScheme.secondary,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(30),
+                  ],
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.only(left: 10),
+                    hintText: widget.hint,
+                    suffixIcon: _empty
+                        ? IconButton(
+                            tooltip: 'Hide',
+                            constraints: const BoxConstraints(maxWidth: 40),
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Ionicons.chevron_forward_outline),
+                            iconSize: Consts.ICON_SMALL,
+                            splashColor: Colors.transparent,
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () => widget.search!(null),
+                          )
+                        : IconButton(
+                            tooltip: 'Clear',
+                            constraints: const BoxConstraints(maxWidth: 40),
+                            padding: const EdgeInsets.all(0),
+                            icon: const Icon(Icons.close_rounded),
+                            iconSize: Consts.ICON_SMALL,
+                            splashColor: Colors.transparent,
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              _ctrl.clear();
+                              _update('');
+                            },
+                          ),
                   ),
+                  onChanged: (text) => _update(text),
                 ),
               ),
             ),
@@ -256,61 +253,61 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
 }
 
 class _FilterIcon extends StatefulWidget {
-  _FilterIcon(this.collectionTag);
+  _FilterIcon(this.filters);
 
-  final String? collectionTag;
+  final FilterModel filters;
 
   @override
   _FilterIconState createState() => _FilterIconState();
 }
 
 class _FilterIconState extends State<_FilterIcon> {
-  late Filterable _filterable;
   late bool _active;
 
   @override
   void initState() {
     super.initState();
-    if (widget.collectionTag != null)
-      _filterable = Get.find<CollectionController>(tag: widget.collectionTag);
-    else
-      _filterable = Get.find<ExploreController>();
-    _active = _checkIfActive();
+    _active = _isActive();
   }
 
   @override
   void didUpdateWidget(covariant _FilterIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _active = _checkIfActive();
+    _active = _isActive();
   }
 
   @override
   Widget build(BuildContext context) => AppBarIcon(
         tooltip: 'Filter',
         icon: Ionicons.funnel_outline,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.filters,
-          arguments: RouteArg(
-            info: widget.collectionTag,
-            callback: (bool definitelyInactive) => definitelyInactive
-                ? setState(() => _active = false)
-                : setState(() => _active = _checkIfActive()),
-          ),
-        ),
+        onTap: () => showSheet(context, FilterView(widget.filters)).then((_) {
+          if (_active != _isActive()) setState(() => _active = !_active);
+        }),
         colour: _active ? Theme.of(context).colorScheme.secondary : null,
       );
 
-  bool _checkIfActive() => _filterable.anyActiveFilterFrom(const [
-        Filterable.ON_LIST,
-        Filterable.COUNTRY,
-        Filterable.STATUS_IN,
-        Filterable.FORMAT_IN,
-        Filterable.GENRE_IN,
-        Filterable.GENRE_NOT_IN,
-        Filterable.TAG_IN,
-        Filterable.TAG_NOT_IN,
-      ]);
+  bool _isActive() {
+    if (widget.filters.ofCollection) {
+      final f = widget.filters.collectionFilter!;
+      return f.country != null ||
+          f.statuses.isNotEmpty ||
+          f.formats.isNotEmpty ||
+          f.genreIn.isNotEmpty ||
+          f.genreNotIn.isNotEmpty ||
+          f.tagIn.isNotEmpty ||
+          f.tagNotIn.isNotEmpty;
+    }
+
+    final f = widget.filters.exploreFilter!;
+    return f.country != null ||
+        f.onList != null ||
+        f.statuses.isNotEmpty ||
+        f.formats.isNotEmpty ||
+        f.genreIn.isNotEmpty ||
+        f.genreNotIn.isNotEmpty ||
+        f.tagIn.isNotEmpty ||
+        f.tagNotIn.isNotEmpty;
+  }
 }
 
 class _BirthdayIcon extends StatefulWidget {
@@ -328,7 +325,7 @@ class _BirthdayIconState extends State<_BirthdayIcon> {
   @override
   void initState() {
     super.initState();
-    _active = widget.ctrl.anyActiveFilterFrom([Filterable.IS_BIRTHDAY]);
+    _active = widget.ctrl.isBirthday;
   }
 
   @override
@@ -337,15 +334,11 @@ class _BirthdayIconState extends State<_BirthdayIcon> {
         tooltip: 'Birthday Filter',
         colour: _active ? Theme.of(context).colorScheme.secondary : null,
         onTap: () {
-          if (widget.ctrl.anyActiveFilterFrom([Filterable.IS_BIRTHDAY])) {
-            widget.ctrl.setFilterWithKey(Filterable.IS_BIRTHDAY, update: true);
+          if (widget.ctrl.isBirthday) {
+            widget.ctrl.isBirthday = false;
             setState(() => _active = false);
           } else {
-            widget.ctrl.setFilterWithKey(
-              Filterable.IS_BIRTHDAY,
-              update: true,
-              value: true,
-            );
+            widget.ctrl.isBirthday = true;
             setState(() => _active = true);
           }
         },

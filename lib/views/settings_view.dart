@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/utils/filterable.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/settings_app_view.dart';
 import 'package:otraku/views/settings_content_view.dart';
@@ -27,15 +25,6 @@ class SettingsView extends StatelessWidget {
         if (changes.isNotEmpty &&
             state.controller != null &&
             await state.controller!.updateSettings(changes)) {
-          if (changes.containsKey('displayAdultContent')) {
-            if (changes['displayAdultContent'])
-              Get.find<ExploreController>()
-                  .setFilterWithKey(Filterable.IS_ADULT);
-            else
-              Get.find<ExploreController>()
-                  .setFilterWithKey(Filterable.IS_ADULT, value: false);
-          }
-
           if (changes.containsKey('scoreFormat') ||
               changes.containsKey('titleLanguage')) {
             Get.find<CollectionController>(

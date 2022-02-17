@@ -8,11 +8,13 @@ import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CollectionGrid extends StatelessWidget {
   CollectionGrid(this.ctrlTag);
@@ -23,25 +25,28 @@ class CollectionGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMe =
         ctrlTag == '${Settings().id}true' || ctrlTag == '${Settings().id}false';
-    final sidePadding = MediaQuery.of(context).size.width > 1020
-        ? (MediaQuery.of(context).size.width - 1000) / 2.0
-        : 10.0;
+
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > 1000
+            ? (MediaQuery.of(context).size.width - 1000) / 2
+            : 0.0);
 
     return GetBuilder<CollectionController>(
       id: CollectionController.ID_BODY,
       tag: ctrlTag,
       builder: (ctrl) {
+        if (ctrl.isLoading)
+          return SliverFillRemaining(child: Center(child: const Loader()));
+
         if (ctrl.entries.isEmpty)
           return SliverFillRemaining(
             child: Center(
-              child: ctrl.isLoading
-                  ? const Loader()
-                  : Text(
-                      ctrl.isEmpty
-                          ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
-                          : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
+              child: Text(
+                ctrl.isEmpty
+                    ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
+                    : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
             ),
           );
 
@@ -64,28 +69,34 @@ class CollectionGrid extends StatelessWidget {
   }
 }
 
-class _CollectionGridTile extends StatelessWidget {
-  _CollectionGridTile(this.entry, this.ctrl, this.isMe);
+class _CollectionGridTile extends StatefulWidget {
+  _CollectionGridTile(this.model, this.ctrl, this.isMe);
 
-  final ListEntryModel entry;
+  final ListEntryModel model;
   final CollectionController ctrl;
   final bool isMe;
 
   @override
+  State<_CollectionGridTile> createState() => _CollectionGridTileState();
+}
+
+class _CollectionGridTileState extends State<_CollectionGridTile> {
+  @override
   Widget build(BuildContext context) {
     final details = <TextSpan>[];
-    if (entry.format != null)
-      details.add(TextSpan(text: Convert.clarifyEnum(entry.format)));
-    if (entry.airingAt != null)
+    if (widget.model.format != null)
+      details.add(TextSpan(text: Convert.clarifyEnum(widget.model.format)));
+    if (widget.model.airingAt != null)
       details.add(TextSpan(
         text: '${details.isEmpty ? "" : ' • '}'
-            'Ep ${entry.nextEpisode} in '
-            '${Convert.timeUntilTimestamp(entry.airingAt)}',
+            'Ep ${widget.model.nextEpisode} in '
+            '${Convert.timeUntilTimestamp(widget.model.airingAt)}',
       ));
-    if (entry.nextEpisode != null && entry.nextEpisode! - 1 > entry.progress)
+    if (widget.model.nextEpisode != null &&
+        widget.model.nextEpisode! - 1 > widget.model.progress)
       details.add(TextSpan(
         text: '${details.isEmpty ? "" : ' • '}'
-            '${entry.nextEpisode! - 1 - entry.progress} ep behind',
+            '${widget.model.nextEpisode! - 1 - widget.model.progress} ep behind',
         style: Theme.of(context)
             .textTheme
             .bodyText1
@@ -95,24 +106,24 @@ class _CollectionGridTile extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: ExploreIndexer(
-        id: entry.mediaId,
+        id: widget.model.mediaId,
         explorable: Explorable.anime,
-        imageUrl: entry.cover,
+        imageUrl: widget.model.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: entry.mediaId,
+              tag: widget.model.mediaId,
               child: ClipRRect(
                 child: Container(
                   width: 95,
                   color: Theme.of(context).colorScheme.surface,
-                  child: FadeImage(entry.cover),
+                  child: FadeImage(widget.model.cover),
                 ),
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
               ),
             ),
             Expanded(
@@ -128,8 +139,10 @@ class _CollectionGridTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Flexible(
-                            child:
-                                Text(entry.title, overflow: TextOverflow.fade),
+                            child: Text(
+                              widget.model.titles[0],
+                              overflow: TextOverflow.fade,
+                            ),
                           ),
                           const SizedBox(height: 5),
                           RichText(
@@ -145,7 +158,7 @@ class _CollectionGridTile extends StatelessWidget {
                       height: 5,
                       margin: const EdgeInsets.symmetric(vertical: 3),
                       decoration: BoxDecoration(
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                         gradient: LinearGradient(
                           colors: [
                             Theme.of(context).colorScheme.primary,
@@ -155,8 +168,8 @@ class _CollectionGridTile extends StatelessWidget {
                           ],
                           stops: [
                             0.0,
-                            entry.progressPercent(),
-                            entry.progressPercent(),
+                            widget.model.progressPercent(),
+                            widget.model.progressPercent(),
                             1.0,
                           ],
                         ),
@@ -166,7 +179,7 @@ class _CollectionGridTile extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Tooltip(message: 'Score', child: _buildScore(context)),
-                        if (entry.repeat > 0)
+                        if (widget.model.repeat > 0)
                           Tooltip(
                             message: 'Repeats',
                             child: Row(
@@ -178,7 +191,7 @@ class _CollectionGridTile extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  entry.repeat.toString(),
+                                  widget.model.repeat.toString(),
                                   style: Theme.of(context).textTheme.subtitle2,
                                 ),
                               ],
@@ -186,7 +199,7 @@ class _CollectionGridTile extends StatelessWidget {
                           )
                         else
                           const SizedBox(),
-                        if (entry.notes != null)
+                        if (widget.model.notes != null)
                           IconButton(
                             tooltip: 'Comment',
                             constraints: const BoxConstraints(
@@ -201,15 +214,20 @@ class _CollectionGridTile extends StatelessWidget {
                               context,
                               TextDialog(
                                 title: 'Comment',
-                                text: entry.notes!,
+                                text: widget.model.notes!,
                               ),
                             ),
                           )
                         else
                           const SizedBox(),
                         _Progress(
-                          entry,
-                          isMe ? ctrl.incrementProgress : null,
+                          model: widget.model,
+                          increment: widget.isMe
+                              ? () {
+                                  setState(() => widget.model.progress++);
+                                  widget.ctrl.updateProgress(widget.model);
+                                }
+                              : null,
                         ),
                       ],
                     ),
@@ -224,17 +242,17 @@ class _CollectionGridTile extends StatelessWidget {
   }
 
   Widget _buildScore(BuildContext context) {
-    if (entry.score == 0) return const SizedBox();
+    if (widget.model.score == 0) return const SizedBox();
 
-    switch (ctrl.scoreFormat) {
+    switch (widget.ctrl.scoreFormat) {
       case ScoreFormat.POINT_3:
-        if (entry.score == 3)
+        if (widget.model.score == 3)
           return const Icon(
             Icons.sentiment_very_satisfied,
             size: Consts.ICON_SMALL,
           );
 
-        if (entry.score == 2)
+        if (widget.model.score == 2)
           return const Icon(Icons.sentiment_neutral, size: Consts.ICON_SMALL);
 
         return const Icon(
@@ -248,7 +266,7 @@ class _CollectionGridTile extends StatelessWidget {
             const Icon(Icons.star_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
-              entry.score.toStringAsFixed(0),
+              widget.model.score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.subtitle2,
             ),
           ],
@@ -260,8 +278,8 @@ class _CollectionGridTile extends StatelessWidget {
             const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
-              entry.score.toStringAsFixed(
-                entry.score.truncate() == entry.score ? 0 : 1,
+              widget.model.score.toStringAsFixed(
+                widget.model.score.truncate() == widget.model.score ? 0 : 1,
               ),
               style: Theme.of(context).textTheme.subtitle2,
             ),
@@ -274,7 +292,7 @@ class _CollectionGridTile extends StatelessWidget {
             const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
             const SizedBox(width: 5),
             Text(
-              entry.score.toStringAsFixed(0),
+              widget.model.score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.subtitle2,
             ),
           ],
@@ -284,20 +302,21 @@ class _CollectionGridTile extends StatelessWidget {
 }
 
 class _Progress extends StatelessWidget {
-  final ListEntryModel entry;
-  final Future<void> Function(ListEntryModel)? increment;
-  _Progress(this.entry, this.increment);
+  _Progress({required this.model, required this.increment});
+
+  final ListEntryModel model;
+  final Function()? increment;
 
   @override
   Widget build(BuildContext context) {
     final text = Text(
-      entry.progress == entry.progressMax
-          ? entry.progress.toString()
-          : '${entry.progress}/${entry.progressMax ?? "?"}',
+      model.progress == model.progressMax
+          ? model.progress.toString()
+          : '${model.progress}/${model.progressMax ?? "?"}',
       style: Theme.of(context).textTheme.subtitle2,
     );
 
-    if (increment == null || entry.progress == entry.progressMax)
+    if (increment == null || model.progress == model.progressMax)
       return Tooltip(message: 'Progress', child: text);
 
     return TextButton(
@@ -308,11 +327,11 @@ class _Progress extends StatelessWidget {
         padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
       ),
       onPressed: () {
-        if (entry.progressMax == null ||
-            entry.progress < entry.progressMax! - 1)
-          increment!(entry);
+        if (model.progressMax == null ||
+            model.progress < model.progressMax! - 1)
+          increment!();
         else
-          ExploreIndexer.openEditView(entry.mediaId, context);
+          showSheet(context, EditView(model.mediaId, complete: true));
       },
       child: Tooltip(
         message: 'Increment Progress',

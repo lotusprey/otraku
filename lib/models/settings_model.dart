@@ -14,6 +14,8 @@ class SettingsModel {
     required this.displayAdultContent,
     required this.advancedScoringEnabled,
     required this.advancedScores,
+    required this.animeCustomLists,
+    required this.mangaCustomLists,
     required this.notificationOptions,
   });
 
@@ -28,6 +30,8 @@ class SettingsModel {
   final bool airingNotifications;
   final bool advancedScoringEnabled;
   final List<String> advancedScores;
+  final List<String> animeCustomLists;
+  final List<String> mangaCustomLists;
   final Map<String, bool> notificationOptions;
 
   factory SettingsModel(Map<String, dynamic> map) => SettingsModel._(
@@ -52,6 +56,12 @@ class SettingsModel {
             false,
         advancedScores: List<String>.from(
           map['mediaListOptions']['animeList']['advancedScoring'] ?? [],
+        ),
+        animeCustomLists: List<String>.from(
+          map['mediaListOptions']['animeList']['customLists'] ?? [],
+        ),
+        mangaCustomLists: List<String>.from(
+          map['mediaListOptions']['mangaList']['customLists'] ?? [],
         ),
         notificationOptions: Map.fromIterable(
           map['options']['notificationOptions'],

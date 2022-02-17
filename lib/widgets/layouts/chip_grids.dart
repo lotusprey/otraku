@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class _ChipGrid extends StatelessWidget {
-  final String title;
-  final String placeholder;
-  final List<Widget> children;
-  final void Function() onEdit;
-  final void Function()? onClear;
-
   _ChipGrid({
     required this.title,
     required this.placeholder,
@@ -20,6 +16,12 @@ class _ChipGrid extends StatelessWidget {
     required this.onEdit,
     this.onClear,
   });
+
+  final String title;
+  final String placeholder;
+  final List<Widget> children;
+  final void Function() onEdit;
+  final void Function()? onClear;
 
   @override
   Widget build(BuildContext context) {
@@ -76,20 +78,17 @@ class _ChipGrid extends StatelessWidget {
 }
 
 class ChipGrid extends StatefulWidget {
-  final String title;
-  final String placeholder;
-  final List<String> names;
-  final void Function(
-    List<String> inclusive,
-    void Function(List<String>) onDone,
-  ) edit;
-
   ChipGrid({
     required this.title,
     required this.placeholder,
     required this.names,
-    required this.edit,
+    required this.onEdit,
   });
+
+  final String title;
+  final String placeholder;
+  final List<String> names;
+  final Future<void> Function(List<String>) onEdit;
 
   @override
   _ChipGridState createState() => _ChipGridState();
@@ -110,97 +109,9 @@ class _ChipGridState extends State<ChipGrid> {
       title: widget.title,
       placeholder: widget.placeholder,
       children: children,
-      onEdit: () => widget.edit(
-        [...widget.names],
-        (names) => setState(() {
-          widget.names.clear();
-          widget.names.addAll(names);
-        }),
-      ),
+      onEdit: () => widget.onEdit(widget.names).then((_) => setState(() {})),
       onClear: () => setState(() => widget.names.clear()),
     );
-  }
-}
-
-class ChipToggleGrid extends StatefulWidget {
-  final String title;
-  final String placeholder;
-  final List<String> inclusive;
-  final List<String> exclusive;
-  final void Function(
-    List<String> inclusive,
-    List<String> exclusive,
-    void Function(List<String>, List<String>) onDone,
-  ) edit;
-
-  ChipToggleGrid({
-    required this.title,
-    required this.placeholder,
-    required this.inclusive,
-    required this.exclusive,
-    required this.edit,
-  });
-
-  @override
-  _ChipToggleGridState createState() => _ChipToggleGridState();
-}
-
-class _ChipToggleGridState extends State<ChipToggleGrid> {
-  @override
-  Widget build(BuildContext context) {
-    final children = <Widget>[];
-
-    for (int i = 0; i < widget.inclusive.length; i++) {
-      final name = widget.inclusive[i];
-      children.add(ChipToggleField(
-        key: UniqueKey(),
-        name: Convert.clarifyEnum(name)!,
-        initial: true,
-        onChanged: (positive) => _toggle(name, positive),
-        onRemoved: () => setState(() => widget.inclusive.removeAt(i)),
-      ));
-    }
-
-    for (int i = 0; i < widget.exclusive.length; i++) {
-      final name = widget.exclusive[i];
-      children.add(ChipToggleField(
-        key: UniqueKey(),
-        name: Convert.clarifyEnum(name)!,
-        initial: false,
-        onChanged: (positive) => _toggle(name, positive),
-        onRemoved: () => setState(() => widget.exclusive.removeAt(i)),
-      ));
-    }
-
-    return _ChipGrid(
-      title: widget.title,
-      placeholder: widget.placeholder,
-      children: children,
-      onEdit: () => widget.edit(
-        [...widget.inclusive],
-        [...widget.exclusive],
-        (inclusive, exclusive) => setState(() {
-          widget.inclusive.clear();
-          widget.exclusive.clear();
-          widget.inclusive.addAll(inclusive);
-          widget.exclusive.addAll(exclusive);
-        }),
-      ),
-      onClear: () => setState(() {
-        widget.inclusive.clear();
-        widget.exclusive.clear();
-      }),
-    );
-  }
-
-  void _toggle(String name, bool positive) {
-    if (positive) {
-      widget.inclusive.add(name);
-      widget.exclusive.remove(name);
-    } else {
-      widget.exclusive.add(name);
-      widget.inclusive.remove(name);
-    }
   }
 }
 
@@ -256,5 +167,121 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
         });
       },
     );
+  }
+}
+
+class ChipTagGrid extends StatefulWidget {
+  ChipTagGrid({
+    required this.title,
+    required this.placeholder,
+    required this.inclusiveGenres,
+    required this.exclusiveGenres,
+    required this.inclusiveTags,
+    required this.exclusiveTags,
+  });
+
+  final String title;
+  final String placeholder;
+  final List<String> inclusiveGenres;
+  final List<String> exclusiveGenres;
+  final List<String> inclusiveTags;
+  final List<String> exclusiveTags;
+
+  @override
+  _ChipTagGridState createState() => _ChipTagGridState();
+}
+
+class _ChipTagGridState extends State<ChipTagGrid> {
+  @override
+  Widget build(BuildContext context) {
+    final children = <Widget>[];
+
+    for (int i = 0; i < widget.inclusiveGenres.length; i++) {
+      final name = widget.inclusiveGenres[i];
+      children.add(ChipToggleField(
+        key: UniqueKey(),
+        name: Convert.clarifyEnum(name)!,
+        initial: true,
+        onChanged: (positive) => _toggleGenre(name, positive),
+        onRemoved: () => setState(() => widget.inclusiveGenres.remove(name)),
+      ));
+    }
+
+    for (int i = 0; i < widget.inclusiveTags.length; i++) {
+      final name = widget.inclusiveTags[i];
+      children.add(ChipToggleField(
+        key: UniqueKey(),
+        name: Convert.clarifyEnum(name)!,
+        initial: true,
+        onChanged: (positive) => _toggleTag(name, positive),
+        onRemoved: () => setState(() => widget.inclusiveTags.remove(name)),
+      ));
+    }
+
+    for (int i = 0; i < widget.exclusiveGenres.length; i++) {
+      final name = widget.exclusiveGenres[i];
+      children.add(ChipToggleField(
+        key: UniqueKey(),
+        name: Convert.clarifyEnum(name)!,
+        initial: false,
+        onChanged: (positive) => _toggleGenre(name, positive),
+        onRemoved: () => setState(() => widget.exclusiveGenres.remove(name)),
+      ));
+    }
+
+    for (int i = 0; i < widget.exclusiveTags.length; i++) {
+      final name = widget.exclusiveTags[i];
+      children.add(ChipToggleField(
+        key: UniqueKey(),
+        name: Convert.clarifyEnum(name)!,
+        initial: false,
+        onChanged: (positive) => _toggleTag(name, positive),
+        onRemoved: () => setState(() => widget.exclusiveTags.remove(name)),
+      ));
+    }
+
+    return _ChipGrid(
+      title: widget.title,
+      placeholder: widget.placeholder,
+      children: children,
+      onEdit: () => showSheet(
+        context,
+        OpaqueSheet(
+          builder: (context, scrollCtrl) => TagSheetBody(
+            inclusiveGenres: widget.inclusiveGenres,
+            exclusiveGenres: widget.exclusiveGenres,
+            inclusiveTags: widget.inclusiveTags,
+            exclusiveTags: widget.exclusiveTags,
+            scrollCtrl: scrollCtrl,
+          ),
+        ),
+      ).then((_) => setState(() {})),
+      onClear: () => setState(() {
+        widget.inclusiveGenres.clear();
+        widget.exclusiveGenres.clear();
+        widget.inclusiveTags.clear();
+        widget.exclusiveTags.clear();
+      }),
+    );
+  }
+
+  void _toggleGenre(String name, bool positive) {
+    if (positive) {
+      widget.inclusiveGenres.add(name);
+      widget.exclusiveGenres.remove(name);
+    } else {
+      widget.exclusiveGenres.add(name);
+      widget.inclusiveGenres.remove(name);
+    }
+  }
+
+  void _toggleTag(String name, bool positive) {
+    if (positive) {
+      widget.inclusiveTags.add(name);
+      widget.exclusiveTags.remove(name);
+    } else {
+      widget.exclusiveTags.add(name);
+      widget.inclusiveTags.remove(name);
+    }
   }
 }

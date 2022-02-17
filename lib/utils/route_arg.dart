@@ -5,7 +5,6 @@ import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/favourites_view.dart';
 import 'package:otraku/views/feed_view.dart';
-import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/views/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
@@ -21,17 +20,11 @@ import 'package:otraku/views/user_view.dart';
 /// A routing helper. When passing arguments to named routes, they should always
 /// be an instance of [RouteArg] or [null].
 class RouteArg {
-  const RouteArg({
-    this.id,
-    this.info,
-    this.variant,
-    this.callback,
-  });
+  const RouteArg({this.id, this.info, this.variant});
 
   final int? id;
   final String? info;
   final bool? variant;
-  final Function? callback;
 
   /// Used to provide context when it's unavailable
   /// through [RouteArg.navKey.currentContext].
@@ -105,14 +98,6 @@ class RouteArg {
         return MaterialPageRoute(
           builder: (_) => ActivityView(arg!.id!, arg.info),
         );
-      case filters:
-        if (arg?.callback is! void Function(bool)) return _unknown();
-        return MaterialPageRoute(
-          builder: (_) => FiltersView(
-            arg!.info,
-            arg.callback as void Function(bool),
-          ),
-        );
       default:
         return null;
     }
@@ -136,7 +121,6 @@ class RouteArg {
   static const statistics = '/statistics';
   static const reviews = '/reviews';
   static const activity = '/activity';
-  static const filters = '/filters';
   static const thread = '/thread';
 
   // A placeholder for unknown routes.

@@ -11,12 +11,7 @@ import 'package:otraku/widgets/navigation/bubble_tabs.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class MediaOtherView {
-  static List<Widget> children(
-    BuildContext ctx,
-    MediaController ctrl,
-    double headerOffset,
-  ) =>
-      [
+  static List<Widget> children(BuildContext ctx, MediaController ctrl) => [
         SliverShadowAppBar([
           BubbleTabs(
             items: const {
@@ -26,10 +21,10 @@ class MediaOtherView {
             },
             current: () => ctrl.otherTab,
             onChanged: (int val) {
-              ctrl.scrollUpTo(headerOffset);
+              ctrl.scrollUpTo(0);
               ctrl.otherTab = val;
             },
-            onSame: () => ctrl.scrollUpTo(headerOffset),
+            onSame: () => ctrl.scrollUpTo(0),
           ),
         ]),
         SliverPadding(
@@ -86,7 +81,7 @@ class _RelationsGrid extends StatelessWidget {
               Hero(
                 tag: items[i].id,
                 child: ClipRRect(
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                   child: Container(
                     color: Theme.of(context).colorScheme.surface,
                     child: FadeImage(items[i].imageUrl!, width: 125),

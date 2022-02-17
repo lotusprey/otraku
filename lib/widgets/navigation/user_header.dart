@@ -9,6 +9,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class UserHeader extends StatelessWidget {
   final int id;
@@ -33,22 +34,7 @@ class UserHeader extends StatelessWidget {
       implyLeading: !isMe,
       heroId: id,
       actions: [
-        if (isMe)
-          GetBuilder<HomeController>(
-            id: HomeController.ID_SETTINGS,
-            builder: (ctrl) {
-              if (ctrl.siteSettings == null) return const SizedBox();
-
-              return IconShade(
-                AppBarIcon(
-                  tooltip: 'Settings',
-                  icon: Ionicons.cog_outline,
-                  onTap: () => Navigator.pushNamed(context, RouteArg.settings),
-                ),
-              );
-            },
-          )
-        else if (user != null)
+        if (!isMe && user != null)
           Padding(
             padding: const EdgeInsets.all(10),
             child: ElevatedButton.icon(
@@ -70,7 +56,31 @@ class UserHeader extends StatelessWidget {
               onPressed:
                   Get.find<UserController>(tag: id.toString()).toggleFollow,
             ),
-          )
+          ),
+        if (user?.siteUrl != null)
+          IconShade(AppBarIcon(
+            tooltip: 'More',
+            icon: Ionicons.ellipsis_horizontal,
+            onTap: () => showSheet(
+              context,
+              FixedGradientDragSheet.link(context, user!.siteUrl!),
+            ),
+          )),
+        if (isMe)
+          GetBuilder<HomeController>(
+            id: HomeController.ID_SETTINGS,
+            builder: (ctrl) {
+              if (ctrl.siteSettings == null) return const SizedBox();
+
+              return IconShade(
+                AppBarIcon(
+                  tooltip: 'Settings',
+                  icon: Ionicons.cog_outline,
+                  onTap: () => Navigator.pushNamed(context, RouteArg.settings),
+                ),
+              );
+            },
+          ),
       ],
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -101,7 +111,7 @@ class UserHeader extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.secondary,
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                       ),
                       child: Text(
                         user!.modRoles[0],
@@ -199,7 +209,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: _animation.value,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Text(
         widget.text!,

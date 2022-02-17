@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/entry_controller.dart';
+import 'package:otraku/controllers/edit_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
@@ -14,169 +14,109 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/expandable_field.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 import 'package:otraku/widgets/fields/score_picker.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-/// A [DraggableScrollableSheet] for entry editing
-/// Should be opened with [DragSheet.show].
-class EntryView extends StatelessWidget {
-  EntryView(this.mediaId, [this.model, this.callback]);
+/// A sheet for entry editing. Should be opened with [showSheet].
+class EditView extends StatelessWidget {
+  EditView(
+    this.mediaId, {
+    this.model,
+    this.callback,
+    this.complete = false,
+  });
 
   final int mediaId;
-  final EntryModel? model;
-  final void Function(EntryModel)? callback;
+  final EditModel? model;
+  final void Function(EditModel)? callback;
+  final bool complete;
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2
-        : 0.0;
-
-    return GetBuilder<EntryController>(
-      id: EntryController.ID_MAIN,
+    return GetBuilder<EditController>(
+      id: EditController.ID_MAIN,
       tag: mediaId.toString(),
-      init: EntryController(mediaId, model),
+      init: EditController(mediaId, model, complete),
       builder: (ctrl) {
-        // This is cached to not rebuild each time the sheet is scrolled.
-        Widget? editView;
+        final buttons = <Widget>[];
+        if (ctrl.model != null) {
+          if (ctrl.oldModel?.status != null)
+            buttons.add(OpaqueSheetViewButton(
+              text: 'Remove',
+              icon: Ionicons.trash_bin_outline,
+              warning: true,
+              onTap: () => showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Remove entry?',
+                  mainAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: () {
+                    Get.find<CollectionController>(
+                      tag: ctrl.model!.type == 'ANIME'
+                          ? '${Settings().id}true'
+                          : '${Settings().id}false',
+                    ).removeEntry(ctrl.oldModel!);
+                    callback?.call(EditModel.emptyCopy(ctrl.model!));
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ));
+          else
+            buttons.add(const Spacer());
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: sidePadding,
-            right: sidePadding,
-          ),
-          child: DraggableScrollableSheet(
-            expand: false,
-            initialChildSize: 0.7,
-            builder: (context, scrollCtrl) {
-              if (editView == null)
-                editView = Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(20)),
-                      ),
-                      child: ctrl.model != null
-                          ? _EditView(ctrl, scrollCtrl)
-                          : const Center(child: Loader()),
-                    ),
-                    if (ctrl.model != null) _Buttons(ctrl, callback),
-                  ],
-                );
+          buttons.add(_SaveButton(ctrl, callback));
+        }
 
-              return editView!;
-            },
-          ),
+        return OpaqueSheetView(
+          buttons: buttons,
+          builder: (context, scrollCtrl) => ctrl.model != null
+              ? _EditView(ctrl, scrollCtrl)
+              : const Center(child: Loader()),
         );
       },
     );
   }
 }
 
-class _Buttons extends StatefulWidget {
-  _Buttons(this.ctrl, this.callback);
+class _SaveButton extends StatefulWidget {
+  _SaveButton(this.ctrl, this.callback);
 
-  final EntryController ctrl;
-  final void Function(EntryModel)? callback;
+  final EditController ctrl;
+  final void Function(EditModel)? callback;
 
   @override
-  State<_Buttons> createState() => _ButtonsState();
+  __SaveButtonState createState() => __SaveButtonState();
 }
 
-class _ButtonsState extends State<_Buttons> {
+class __SaveButtonState extends State<_SaveButton> {
   bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = widget.ctrl;
+    if (_loading) return const Expanded(child: Center(child: Loader()));
 
-    final remove = Expanded(
-      child: ctrl.model!.status != null
-          ? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: TextButton.icon(
-                style: Theme.of(context).textButtonTheme.style!.copyWith(
-                      foregroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                label: Text('Remove'),
-                icon: Icon(Ionicons.trash_bin_outline),
-                onPressed: () => showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Remove entry?',
-                    mainAction: 'Yes',
-                    secondaryAction: 'No',
-                    onConfirm: () {
-                      Get.find<CollectionController>(
-                        tag: ctrl.model!.type == 'ANIME'
-                            ? '${Settings().id}true'
-                            : '${Settings().id}false',
-                      ).removeEntry(ctrl.oldModel!);
-                      widget.callback?.call(EntryModel.emptyCopy(ctrl.model!));
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-              ),
-            )
-          : const SizedBox(),
-    );
-
-    final save = Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: TextButton.icon(
-          label: Text('Save'),
-          icon: Icon(Ionicons.save_outline),
-          onPressed: () {
-            setState(() => _loading = true);
-            Get.find<CollectionController>(
-              tag: ctrl.model!.type == 'ANIME'
-                  ? '${Settings().id}true'
-                  : '${Settings().id}false',
-            ).updateEntry(ctrl.oldModel!, ctrl.model!).then((_) {
-              widget.callback?.call(ctrl.model!);
-              Navigator.pop(context);
-            });
-          },
-        ),
-      ),
-    );
-
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: Consts.filter,
-          child: Container(
-            height: MediaQuery.of(context).viewPadding.bottom + 50,
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewPadding.bottom,
-            ),
-            width: double.infinity,
-            color: Theme.of(context).cardColor,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: _loading
-                  ? const [Center(child: Loader())]
-                  : Settings().leftHanded
-                      ? [save, remove]
-                      : [remove, save],
-            ),
-          ),
-        ),
-      ),
+    return OpaqueSheetViewButton(
+      text: 'Save',
+      icon: Ionicons.save_outline,
+      onTap: () {
+        setState(() => _loading = true);
+        Get.find<CollectionController>(
+          tag: widget.ctrl.model!.type == 'ANIME'
+              ? '${Settings().id}true'
+              : '${Settings().id}false',
+        ).updateEntry(widget.ctrl.oldModel!, widget.ctrl.model!).then((_) {
+          widget.callback?.call(widget.ctrl.model!);
+          Navigator.pop(context);
+        });
+      },
     );
   }
 }
@@ -184,7 +124,7 @@ class _ButtonsState extends State<_Buttons> {
 class _EditView extends StatelessWidget {
   _EditView(this.ctrl, this.scrollCtrl);
 
-  final EntryController ctrl;
+  final EditController ctrl;
   final ScrollController scrollCtrl;
 
   @override
@@ -223,7 +163,7 @@ class _EditView extends StatelessWidget {
 
               if (model.score != avg) {
                 model.score = avg;
-                ctrl.update([EntryController.ID_SCORE]);
+                ctrl.update([EditController.ID_SCORE]);
               }
             },
           ),
@@ -240,8 +180,8 @@ class _EditView extends StatelessWidget {
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([
-            GetBuilder<EntryController>(
-              id: EntryController.ID_STATUS,
+            GetBuilder<EditController>(
+              id: EditController.ID_STATUS,
               tag: model.mediaId.toString(),
               builder: (_) => DropDownField<ListStatus?>(
                 hint: 'Add',
@@ -258,7 +198,7 @@ class _EditView extends StatelessWidget {
                       model.status == ListStatus.CURRENT &&
                       model.startedAt == null) {
                     model.startedAt = DateTime.now();
-                    ctrl.update([EntryController.ID_START_DATE]);
+                    ctrl.update([EditController.ID_START_DATE]);
                     Toast.show(context, 'Start date changed');
                     return;
                   }
@@ -267,13 +207,13 @@ class _EditView extends StatelessWidget {
                       model.status == ListStatus.COMPLETED &&
                       model.completedAt == null) {
                     model.completedAt = DateTime.now();
-                    ctrl.update([EntryController.ID_COMPLETE_DATE]);
+                    ctrl.update([EditController.ID_COMPLETE_DATE]);
                     String text = 'Completed date changed';
 
                     if (model.progressMax != null &&
                         model.progress < model.progressMax!) {
                       model.progress = model.progressMax!;
-                      ctrl.update([EntryController.ID_PROGRESS]);
+                      ctrl.update([EditController.ID_PROGRESS]);
                       text = 'Completed date & progress changed';
                     }
 
@@ -284,8 +224,8 @@ class _EditView extends StatelessWidget {
             ),
             InputFieldStructure(
               title: 'Progress',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_PROGRESS,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_PROGRESS,
                 tag: model.mediaId.toString(),
                 builder: (_) => NumberField(
                   value: model.progress,
@@ -301,14 +241,14 @@ class _EditView extends StatelessWidget {
                       if (old.status == model.status &&
                           old.status != ListStatus.COMPLETED) {
                         model.status = ListStatus.COMPLETED;
-                        ctrl.update([EntryController.ID_STATUS]);
+                        ctrl.update([EditController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.completedAt == model.completedAt &&
                           old.completedAt == null) {
                         model.completedAt = DateTime.now();
-                        ctrl.update([EntryController.ID_COMPLETE_DATE]);
+                        ctrl.update([EditController.ID_COMPLETE_DATE]);
                         text = text == null
                             ? 'Completed date changed'
                             : 'Status & Completed date changed';
@@ -325,13 +265,13 @@ class _EditView extends StatelessWidget {
                           (old.status == null ||
                               old.status == ListStatus.PLANNING)) {
                         model.status = ListStatus.CURRENT;
-                        ctrl.update([EntryController.ID_STATUS]);
+                        ctrl.update([EditController.ID_STATUS]);
                         text = 'Status changed';
                       }
 
                       if (old.startedAt == null && model.startedAt == null) {
                         model.startedAt = DateTime.now();
-                        ctrl.update([EntryController.ID_START_DATE]);
+                        ctrl.update([EditController.ID_START_DATE]);
                         text = text == null
                             ? 'Start date changed'
                             : 'Status & start date changed';
@@ -365,8 +305,8 @@ class _EditView extends StatelessWidget {
           SliverToBoxAdapter(
             child: InputFieldStructure(
               title: 'Score',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_SCORE,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_SCORE,
                 tag: model.mediaId.toString(),
                 builder: (_) => ScorePicker(model),
               ),
@@ -386,8 +326,8 @@ class _EditView extends StatelessWidget {
           _FieldGrid([
             InputFieldStructure(
               title: 'Started',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_START_DATE,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_START_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.startedAt,
@@ -398,7 +338,7 @@ class _EditView extends StatelessWidget {
 
                     if (old.status == null && model.status == null) {
                       model.status = ListStatus.CURRENT;
-                      ctrl.update([EntryController.ID_STATUS]);
+                      ctrl.update([EditController.ID_STATUS]);
                       Toast.show(context, 'Status changed');
                     }
                   },
@@ -408,8 +348,8 @@ class _EditView extends StatelessWidget {
             ),
             InputFieldStructure(
               title: 'Completed',
-              child: GetBuilder<EntryController>(
-                id: EntryController.ID_COMPLETE_DATE,
+              child: GetBuilder<EditController>(
+                id: EditController.ID_COMPLETE_DATE,
                 tag: model.mediaId.toString(),
                 builder: (_) => DateField(
                   date: model.completedAt,
@@ -422,13 +362,13 @@ class _EditView extends StatelessWidget {
                         old.status != ListStatus.REPEATING &&
                         old.status == model.status) {
                       model.status = ListStatus.COMPLETED;
-                      ctrl.update([EntryController.ID_STATUS]);
+                      ctrl.update([EditController.ID_STATUS]);
                       String text = 'Status changed';
 
                       if (model.progressMax != null &&
                           model.progress < model.progressMax!) {
                         model.progress = model.progressMax!;
-                        ctrl.update([EntryController.ID_PROGRESS]);
+                        ctrl.update([EditController.ID_PROGRESS]);
                         text = 'Status & progress changed';
                       }
 
@@ -460,9 +400,7 @@ class _EditView extends StatelessWidget {
               (key, val) => model.customLists[key] = val,
             ),
           ],
-          SliverToBoxAdapter(
-            child: SizedBox(height: NavLayout.offset(context)),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
     );

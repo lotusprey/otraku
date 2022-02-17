@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MediaHeader extends StatelessWidget {
   final MediaController ctrl;
@@ -23,19 +22,30 @@ class MediaHeader extends StatelessWidget {
     if (info != null) {
       if (info.format != null)
         details.add(TextSpan(text: Convert.clarifyEnum(info.format)));
+
+      final status = ctrl.model?.entry.status;
+      if (status != null)
+        details.add(TextSpan(
+          text: '${details.isEmpty ? "" : ' • '}'
+              '${Convert.adaptListStatus(status, info.type == Explorable.anime)}',
+        ));
+
       if (info.airingAt != null)
         details.add(TextSpan(
           text: '${details.isEmpty ? "" : ' • '}'
               'Ep ${info.nextEpisode} in '
               '${Convert.timeUntilTimestamp(info.airingAt)}',
         ));
-      final progress = ctrl.model?.entry.progress ?? 0;
-      if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
-        details.add(TextSpan(
-          text: '${details.isEmpty ? "" : ' • '}'
-              '${info.nextEpisode! - 1 - progress} ep behind',
-          style: Theme.of(context).textTheme.bodyText1,
-        ));
+
+      if (status != null) {
+        final progress = ctrl.model?.entry.progress ?? 0;
+        if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
+          details.add(TextSpan(
+            text: '${details.isEmpty ? "" : ' • '}'
+                '${info.nextEpisode! - 1 - progress} ep behind',
+            style: Theme.of(context).textTheme.bodyText1,
+          ));
+      }
     }
 
     return CustomSliverHeader(
@@ -51,7 +61,10 @@ class MediaHeader extends StatelessWidget {
           IconShade(AppBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
-            onTap: () => _showSheet(context, info!),
+            onTap: () => showSheet(
+              context,
+              FixedGradientDragSheet.link(context, info!.siteUrl!),
+            ),
           )),
       ],
       child: Column(
@@ -89,39 +102,5 @@ class MediaHeader extends StatelessWidget {
             : [],
       ),
     );
-  }
-
-  void _showSheet(BuildContext context, MediaInfoModel model) {
-    final children = <Widget>[];
-    children.add(DragSheetListTile(
-      text: 'Copy Link',
-      icon: Ionicons.clipboard_outline,
-      onTap: () {
-        if (model.siteUrl == null) {
-          Toast.show(context, 'Url is null');
-          return;
-        }
-
-        Toast.copy(context, model.siteUrl!);
-      },
-    ));
-    children.add(DragSheetListTile(
-      text: 'Open in Browser',
-      icon: Ionicons.link_outline,
-      onTap: () {
-        if (model.siteUrl == null) {
-          Toast.show(context, 'Url is null');
-          return;
-        }
-
-        try {
-          launch(model.siteUrl!);
-        } catch (err) {
-          Toast.show(context, 'Couldn\'t open link: $err');
-        }
-      },
-    ));
-
-    DragSheet.show(context, DragSheet(children: children, ctx: context));
   }
 }

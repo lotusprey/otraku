@@ -2,34 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/models/entry_model.dart';
+import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 
 class ScorePicker extends StatelessWidget {
-  final EntryModel data;
-  ScorePicker(this.data);
+  ScorePicker(this.model);
+
+  final EditModel model;
 
   @override
   Widget build(BuildContext context) {
-    switch (Get.find<HomeController>().siteSettings!.scoreFormat) {
+    switch (Get.find<HomeController>().siteSettings?.scoreFormat) {
       case ScoreFormat.POINT_3:
-        return _SmileyScorePicker(data);
+        return _SmileyScorePicker(model);
       case ScoreFormat.POINT_5:
-        return _StarScorePicker(data);
+        return _StarScorePicker(model);
       case ScoreFormat.POINT_10:
-        return _TenScorePicker(data);
+        return _TenScorePicker(model);
       case ScoreFormat.POINT_10_DECIMAL:
-        return _TenDecimalScorePicker(data);
+        return _TenDecimalScorePicker(model);
       default:
-        return _HundredScorePicker(data);
+        return _HundredScorePicker(model);
     }
   }
 }
 
 class _SmileyScorePicker extends StatefulWidget {
-  final EntryModel data;
-  _SmileyScorePicker(this.data);
+  _SmileyScorePicker(this.model);
+
+  final EditModel model;
 
   @override
   __SmileyScorePickerState createState() => __SmileyScorePickerState();
@@ -43,19 +45,19 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
           ? Theme.of(context).colorScheme.secondary
           : Theme.of(context).colorScheme.primary,
       onPressed: () => score == index
-          ? setState(() => widget.data.score = 0)
-          : setState(() => widget.data.score = index.toDouble()),
+          ? setState(() => widget.model.score = 0)
+          : setState(() => widget.model.score = index.toDouble()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final score = widget.data.score.floor();
+    final score = widget.model.score.floor();
 
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,8 +72,9 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
 }
 
 class _StarScorePicker extends StatefulWidget {
-  final EntryModel data;
-  _StarScorePicker(this.data);
+  _StarScorePicker(this.model);
+
+  final EditModel model;
 
   @override
   __StarScorePickerState createState() => __StarScorePickerState();
@@ -85,19 +88,19 @@ class __StarScorePickerState extends State<_StarScorePicker> {
           : const Icon(Icons.star_border),
       color: Theme.of(context).colorScheme.secondary,
       onPressed: () => score != index
-          ? setState(() => widget.data.score = index.toDouble())
-          : setState(() => widget.data.score = 0),
+          ? setState(() => widget.model.score = index.toDouble())
+          : setState(() => widget.model.score = 0),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final score = widget.data.score.floor();
+    final score = widget.model.score.floor();
 
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -114,8 +117,9 @@ class __StarScorePickerState extends State<_StarScorePicker> {
 }
 
 class _TenScorePicker extends StatefulWidget {
-  final EntryModel data;
-  _TenScorePicker(this.data);
+  _TenScorePicker(this.model);
+
+  final EditModel model;
 
   @override
   _TenScorePickerState createState() => _TenScorePickerState();
@@ -124,14 +128,14 @@ class _TenScorePicker extends StatefulWidget {
 class _TenScorePickerState extends State<_TenScorePicker> {
   @override
   Widget build(BuildContext context) {
-    final score = widget.data.score.truncateToDouble();
+    final score = widget.model.score.truncateToDouble();
 
     return Row(
       children: [
         Expanded(
           child: Slider.adaptive(
             value: score,
-            onChanged: (value) => setState(() => widget.data.score = value),
+            onChanged: (val) => setState(() => widget.model.score = val),
             min: 0,
             max: 10,
             divisions: 10,
@@ -147,8 +151,9 @@ class _TenScorePickerState extends State<_TenScorePicker> {
 }
 
 class _TenDecimalScorePicker extends StatefulWidget {
-  final EntryModel data;
-  _TenDecimalScorePicker(this.data);
+  _TenDecimalScorePicker(this.model);
+
+  final EditModel model;
 
   @override
   _TenDecimalScorePickerState createState() => _TenDecimalScorePickerState();
@@ -157,14 +162,15 @@ class _TenDecimalScorePicker extends StatefulWidget {
 class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
   @override
   Widget build(BuildContext context) {
-    final score = widget.data.score;
+    final score = widget.model.score;
 
     return Row(
       children: [
         Expanded(
           child: Slider.adaptive(
             value: score,
-            onChanged: (value) => setState(() => widget.data.score = value),
+            onChanged: (val) =>
+                setState(() => widget.model.score = val.toPrecision(1)),
             min: 0,
             max: 10,
             divisions: 100,
@@ -180,13 +186,14 @@ class _TenDecimalScorePickerState extends State<_TenDecimalScorePicker> {
 }
 
 class _HundredScorePicker extends StatelessWidget {
-  final EntryModel data;
-  _HundredScorePicker(this.data);
+  _HundredScorePicker(this.model);
+
+  final EditModel model;
 
   @override
   Widget build(BuildContext context) => NumberField(
-        value: data.score.floor(),
+        value: model.score.floor(),
         maxValue: 100,
-        update: (value) => data.score = value.toDouble(),
+        update: (val) => model.score = val.toDouble(),
       );
 }

@@ -18,6 +18,7 @@ class UserModel {
   bool isFollowing;
   final bool isFollower;
   final bool blocked;
+  final String? siteUrl;
   final int donatorTier;
   final String donatorBadge;
   final List<String> modRoles;
@@ -41,6 +42,7 @@ class UserModel {
     required this.description,
     required this.avatar,
     required this.banner,
+    required this.siteUrl,
     required this.donatorTier,
     required this.donatorBadge,
     required this.modRoles,
@@ -60,6 +62,7 @@ class UserModel {
         banner: map['bannerImage'],
         isFollowing: map['isFollowing'] ?? false,
         isFollower: map['isFollower'] ?? false,
+        siteUrl: map['siteUrl'],
         blocked: map['isBlocked'] ?? false,
         donatorTier: map['donatorTier'] ?? 0,
         donatorBadge: map['donatorBadge'] ?? '',

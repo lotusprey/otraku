@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/models/entry_model.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/views/entry_view.dart';
+import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreIndexer extends StatelessWidget {
   final Explorable explorable;
@@ -82,14 +81,6 @@ class ExploreIndexer extends StatelessWidget {
     }
   }
 
-  static void openEditView(
-    int id,
-    BuildContext context, [
-    EntryModel? model,
-    Function(EntryModel)? callback,
-  ]) =>
-      DragSheet.show(context, EntryView(id, model, callback));
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -98,7 +89,7 @@ class ExploreIndexer extends StatelessWidget {
           ctx: context, id: id, imageUrl: imageUrl, explorable: explorable),
       onLongPress: () {
         if (explorable == Explorable.anime || explorable == Explorable.manga)
-          openEditView(id, context);
+          showSheet(context, EditView(id));
       },
       child: child,
     );

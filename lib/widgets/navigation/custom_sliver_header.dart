@@ -16,7 +16,7 @@ class CustomSliverHeader extends StatelessWidget {
     required this.actions,
     required this.child,
     required this.heroId,
-    this.maxWidth = Consts.LAYOUT_WIDE,
+    this.maxWidth = Consts.OVERLAY_WIDE,
   });
 
   final String? title;
@@ -174,7 +174,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: heroId,
                       child: ClipRRect(
-                        borderRadius: Consts.BORDER_RADIUS,
+                        borderRadius: Consts.BORDER_RAD_MIN,
                         child: Container(
                           height: imageHeight,
                           width: imageWidth,

@@ -20,10 +20,11 @@ class TileGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding =
-        MediaQuery.of(context).size.width > Consts.LAYOUT_WIDE + 20
-            ? (MediaQuery.of(context).size.width - Consts.LAYOUT_WIDE) / 2.0
-            : 10.0;
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
+            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
+            : 0.0);
+
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
@@ -78,7 +79,7 @@ class _Tile extends StatelessWidget {
             child: Hero(
               tag: data.id,
               child: ClipRRect(
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
                 child: Container(
                   color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(

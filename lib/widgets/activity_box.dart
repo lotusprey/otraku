@@ -7,19 +7,17 @@ import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/activity_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/overlays/drag_sheets.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:otraku/widgets/overlays/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ActivityBox extends StatelessWidget {
-  final FeedController feed;
-  final ActivityModel model;
+  ActivityBox({required this.ctrl, required this.model});
 
-  ActivityBox({required this.feed, required this.model});
+  final FeedController ctrl;
+  final ActivityModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,7 @@ class ActivityBox extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: Consts.BORDER_RADIUS,
+                      borderRadius: Consts.BORDER_RAD_MIN,
                       child: FadeImage(model.agentImage, height: 50, width: 50),
                     ),
                     const SizedBox(width: 10),
@@ -67,7 +65,7 @@ class ActivityBox extends StatelessWidget {
                 imageUrl: model.recieverImage,
                 explorable: Explorable.user,
                 child: ClipRRect(
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                   child: FadeImage(model.recieverImage!, height: 50, width: 50),
                 ),
               ),
@@ -79,23 +77,23 @@ class ActivityBox extends StatelessWidget {
           model,
           InteractionButtons(
             model: model,
-            delete: () => feed.deleteActivity(model.id),
+            delete: () => ctrl.deleteActivity(model.id),
             toggleLike: () async {
               await ActivityController.toggleLike(model).then(
-                (ok) => ok ? feed.updateActivity(model) : model.toggleLike(),
+                (ok) => ok ? ctrl.updateActivity(model) : model.toggleLike(),
               );
             },
             toggleSubscribtion: () {
               ActivityController.toggleSubscription(model).then(
                 (ok) => ok
-                    ? feed.updateActivity(model)
+                    ? ctrl.updateActivity(model)
                     : model.toggleSubscription(),
               );
             },
             pushActivityPage: () => Navigator.pushNamed(
               context,
               RouteArg.activity,
-              arguments: RouteArg(id: model.id, info: feed.id?.toString()),
+              arguments: RouteArg(id: model.id, info: ctrl.id?.toString()),
             ),
           ),
         ),
@@ -105,9 +103,10 @@ class ActivityBox extends StatelessWidget {
 }
 
 class ActivityBoxBody extends StatelessWidget {
+  ActivityBoxBody(this.model, this.interactions);
+
   final ActivityModel model;
   final Widget interactions;
-  ActivityBoxBody(this.model, this.interactions);
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +115,7 @@ class ActivityBoxBody extends StatelessWidget {
       padding: Consts.PADDING,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RADIUS,
+        borderRadius: Consts.BORDER_RAD_MIN,
       ),
       child: Column(
         children: [
@@ -190,7 +189,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
           onPressed: () {
             final children = <Widget>[];
             if (model.deletable)
-              children.add(DragSheetListTile(
+              children.add(GradientDragSheetTile(
                 text: 'Delete',
                 icon: Ionicons.trash_outline,
                 onTap: () => showPopUp(
@@ -210,7 +209,8 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   ),
                 ),
               ));
-            children.add(DragSheetListTile(
+
+            children.add(GradientDragSheetTile(
               text: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
               icon: !model.isSubscribed
                   ? Ionicons.notifications_outline
@@ -220,38 +220,10 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 widget.toggleSubscribtion();
               },
             ));
-            children.add(DragSheetListTile(
-              text: 'Copy Link',
-              icon: Ionicons.clipboard_outline,
-              onTap: () {
-                if (model.siteUrl == null) {
-                  Toast.show(context, 'Url is null');
-                  return;
-                }
 
-                Toast.copy(context, model.siteUrl!);
-              },
-            ));
-            children.add(DragSheetListTile(
-              text: 'Open in Browser',
-              icon: Ionicons.link_outline,
-              onTap: () {
-                if (model.siteUrl == null) {
-                  Toast.show(context, 'Url is null');
-                  return;
-                }
-
-                try {
-                  launch(model.siteUrl!);
-                } catch (err) {
-                  Toast.show(context, 'Couldn\'t open link: $err');
-                }
-              },
-            ));
-
-            DragSheet.show(
+            showSheet(
               context,
-              DragSheet(ctx: context, children: children),
+              FixedGradientDragSheet.link(context, model.siteUrl!, children),
             );
           },
         ),
@@ -324,7 +296,7 @@ class ActivityBoxBodyMedia extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: Consts.BORDER_RADIUS,
+              borderRadius: Consts.BORDER_RAD_MIN,
               child: FadeImage(activity.mediaImage!, width: 70),
             ),
             Expanded(

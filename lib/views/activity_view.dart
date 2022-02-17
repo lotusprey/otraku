@@ -41,7 +41,7 @@ class ActivityView extends StatelessWidget {
                                 Hero(
                                   tag: model.agentId,
                                   child: ClipRRect(
-                                    borderRadius: Consts.BORDER_RADIUS,
+                                    borderRadius: Consts.BORDER_RAD_MIN,
                                     child: FadeImage(
                                       model.agentImage,
                                       height: 40,
@@ -76,7 +76,7 @@ class ActivityView extends StatelessWidget {
                             imageUrl: model.recieverImage,
                             explorable: Explorable.user,
                             child: ClipRRect(
-                              borderRadius: Consts.BORDER_RADIUS,
+                              borderRadius: Consts.BORDER_RAD_MIN,
                               child: FadeImage(
                                 model.recieverImage!,
                                 height: 40,
@@ -166,7 +166,7 @@ class _UserReply extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: Consts.BORDER_RADIUS,
+                borderRadius: Consts.BORDER_RAD_MIN,
                 child: FadeImage(
                   reply.userImage,
                   height: 50,
@@ -184,7 +184,7 @@ class _UserReply extends StatelessWidget {
           padding: Consts.PADDING,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.BORDER_RADIUS,
+            borderRadius: Consts.BORDER_RAD_MIN,
           ),
           child: Column(
             children: [

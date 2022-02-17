@@ -36,22 +36,23 @@ class CharacterController extends ScrollingController {
     update([ID_MEDIA]);
   }
 
-  int get language => _language;
-  set language(int val) {
-    _language = val;
-    update([ID_MEDIA]);
-  }
-
   MediaSort get sort => _sort;
-  set sort(MediaSort value) {
-    _sort = value;
-    refetch();
-  }
-
   bool? get onList => _onList;
-  set onList(bool? val) {
-    _onList = val;
-    refetch();
+  int get language => _language;
+
+  void filter(int languageVal, MediaSort sortVal, bool? onListVal) {
+    final mustRefetch = sortVal != _sort || onListVal != _onList;
+
+    if (languageVal != _language) {
+      _language = languageVal;
+      if (!mustRefetch) update([ID_MEDIA]);
+    }
+
+    if (mustRefetch) {
+      _sort = sortVal;
+      _onList = onListVal;
+      refetch();
+    }
   }
 
   Future<void> _fetch() async {

@@ -21,7 +21,7 @@ class _ExpandableFieldState extends State<ExpandableField> {
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RAD_MIN,
         ),
         child: TextField(
           style: Theme.of(context).textTheme.bodyText2,

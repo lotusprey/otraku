@@ -15,9 +15,11 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > 620
-        ? (MediaQuery.of(context).size.width - 600) / 2.0
-        : 10.0;
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
+            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
+            : 0.0);
+
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
@@ -66,7 +68,7 @@ class _Tile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.BORDER_RADIUS,
+          borderRadius: Consts.BORDER_RAD_MIN,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,7 +77,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Consts.RADIUS),
+                  borderRadius: BorderRadius.vertical(top: Consts.RADIUS_MIN),
                   child: Hero(
                     tag: model.id,
                     child: FadeImage(model.imageUrl!),

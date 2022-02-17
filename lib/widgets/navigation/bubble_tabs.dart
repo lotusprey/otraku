@@ -60,7 +60,7 @@ class _BubbleTabsState<T> extends State<BubbleTabs<T>> {
                   color: _val != values.elementAt(i)
                       ? null
                       : Theme.of(context).colorScheme.secondary,
-                  borderRadius: Consts.BORDER_RADIUS,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                 ),
                 child: Text(
                   widget.items.keys.elementAt(i),

@@ -76,7 +76,7 @@ class ActivityController extends ScrollingController {
   }
 
   void updateModel() {
-    if (feedTag != null)
+    if (Get.isRegistered<FeedController>(tag: feedTag))
       Get.find<FeedController>(tag: feedTag).updateActivity(_model!);
   }
 

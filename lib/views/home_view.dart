@@ -6,6 +6,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
@@ -35,6 +36,7 @@ class _HomeViewState extends State<HomeView> {
   late final HomeController homeCtrl;
   late final ExploreController exploreCtrl;
   late final FeedController feedCtrl;
+  late final TagGroupController tagCtrl;
   late final UserController userCtrl;
   late final CollectionController animeCtrl;
   late final CollectionController mangaCtrl;
@@ -93,6 +95,19 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
+    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.searchMode) {
+      exploreCtrl.searchMode = false;
+      return SynchronousFuture(false);
+    }
+    if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.searchMode) {
+      animeCtrl.searchMode = false;
+      return SynchronousFuture(false);
+    }
+    if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.searchMode) {
+      mangaCtrl.searchMode = false;
+      return SynchronousFuture(false);
+    }
+
     if (!Settings().confirmExit) return SynchronousFuture(true);
 
     bool ok = false;
@@ -115,6 +130,7 @@ class _HomeViewState extends State<HomeView> {
     homeCtrl = Get.put(HomeController());
     exploreCtrl = Get.put(ExploreController());
     feedCtrl = Get.put(FeedController(null));
+    tagCtrl = Get.put(TagGroupController());
     userCtrl = Get.put(
       UserController(widget.id),
       tag: widget.id.toString(),
@@ -150,6 +166,7 @@ class _HomeViewState extends State<HomeView> {
     Get.delete<HomeController>();
     Get.delete<ExploreController>();
     Get.delete<FeedController>();
+    Get.delete<TagGroupController>();
     Get.delete<UserController>(tag: widget.id.toString());
     Get.delete<CollectionController>(tag: '${widget.id}true');
     Get.delete<CollectionController>(tag: '${widget.id}false');

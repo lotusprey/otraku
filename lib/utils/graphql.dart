@@ -14,7 +14,7 @@ abstract class GqlQuery {
       }
     }
   '''
-      '${_GqlFragment.mediaMain}';
+      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
   static const media = r'''
     query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
@@ -92,7 +92,7 @@ abstract class GqlQuery {
       }
     }
   '''
-      '${_GqlFragment.mediaMain}';
+      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
   static const medias = r'''
     query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
@@ -550,17 +550,16 @@ abstract class GqlMutation {
         progress: $progress, progressVolumes: $progressVolumes, repeat: $repeat,
         private: $private, notes: $notes, hiddenFromStatusLists: $hiddenFromStatusLists,
         customLists: $customLists, startedAt: $startedAt, completedAt: $completedAt,
-        advancedScores: $advancedScores) {...entry media{...main}}
+        advancedScores: $advancedScores) {...entry}
     }
   '''
-      '${_GqlFragment.mediaMain}';
+      '${_GqlFragment.entry}';
 
   static const updateProgress = r'''
     mutation UpdateProgress($mediaId: Int, $progress: Int) {
-      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {...entry media{...main}}
+      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {customLists}
     }
-  '''
-      '${_GqlFragment.mediaMain}';
+  ''';
 
   static const removeEntry = r'''
     mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
@@ -654,6 +653,9 @@ abstract class _GqlFragment {
       genres
       tags {id}
     }
+  ''';
+
+  static const entry = r'''
     fragment entry on MediaList {
       id
       status

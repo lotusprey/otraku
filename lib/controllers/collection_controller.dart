@@ -226,10 +226,22 @@ class CollectionController extends ScrollingController {
   }
 
   Future<void> updateEntry(EditModel oldEntry, EditModel newEntry) async {
-    // Update database item.
-    final data =
-        await Client.request(GqlMutation.updateEntry, newEntry.toMap());
+    // Update database item. Due to AL API bug, the tags cannot be obtained
+    // from the [SaveMediaListEntry] mutation, so only half of the data is
+    // obtained from the first request. The other half comes from a second
+    // request.
+    final data = await Client.request(
+      GqlMutation.updateEntry,
+      newEntry.toMap(),
+    );
     if (data == null) return;
+
+    final mediaData = await Client.request(
+      GqlQuery.media,
+      {'id': newEntry.mediaId, 'withMain': true},
+    );
+    if (mediaData == null) return;
+    data['SaveMediaListEntry']['media'] = mediaData['Media'];
 
     final entry = ListEntryModel(data['SaveMediaListEntry']);
 

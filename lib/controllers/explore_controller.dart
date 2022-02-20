@@ -59,8 +59,11 @@ class ExploreController extends ScrollingController {
   set searchMode(bool val) {
     if (searchMode == val) return;
     _searchMode = val;
-    _search = '';
     update([ID_HEAD]);
+    if (_search.isNotEmpty) {
+      _search = '';
+      fetch();
+    }
   }
 
   bool get isBirthday => _isBirthday;

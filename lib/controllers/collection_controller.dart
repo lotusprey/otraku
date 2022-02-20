@@ -58,8 +58,11 @@ class CollectionController extends ScrollingController {
   set searchMode(bool v) {
     if (_searchMode == v) return;
     _searchMode = v;
-    _search = '';
     update([ID_HEAD]);
+    if (_search.isNotEmpty) {
+      _search = '';
+      _filter();
+    }
   }
 
   List<String> get listNames {

@@ -41,8 +41,8 @@ class SliverCollectionAppBar extends StatelessWidget {
           MediaSearchField(
             hint: ctrl.currentName,
             value: ctrl.search,
-            searchMode: ctrl.searchMode,
-            search: (val) {
+            isSearchActive: ctrl.searchMode,
+            onSearch: (val) {
               if (val == null) {
                 ctrl.searchMode = !ctrl.searchMode;
                 return;
@@ -102,7 +102,7 @@ class SliverExploreAppBar extends StatelessWidget {
             MediaSearchField(
               hint: Convert.clarifyEnum(type.name)!,
               value: ctrl.search,
-              search: type != Explorable.review
+              onSearch: type != Explorable.review
                   ? (val) {
                       if (val == null) {
                         ctrl.searchMode = !ctrl.searchMode;
@@ -112,7 +112,7 @@ class SliverExploreAppBar extends StatelessWidget {
                       ctrl.search = val;
                     }
                   : null,
-              searchMode: ctrl.searchMode,
+              isSearchActive: ctrl.searchMode,
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -150,22 +150,28 @@ class MediaSearchField extends StatefulWidget {
     required this.title,
     required this.hint,
     required this.value,
-    required this.searchMode,
-    required this.search,
+    required this.isSearchActive,
+    required this.onSearch,
   });
 
   final Widget title;
   final String hint;
   final String value;
-  final bool searchMode;
-  final void Function(String?)? search;
+  final bool isSearchActive;
+
+  /// If [null], search mode cannot be turned on. When [null] is
+  /// passed to this, the search mode must be toggled by the parent.
+  final void Function(String?)? onSearch;
 
   @override
   _MediaSearchFieldState createState() => _MediaSearchFieldState();
 }
 
 class _MediaSearchFieldState extends State<MediaSearchField> {
-  late TextEditingController _ctrl;
+  late final TextEditingController _ctrl;
+
+  /// This is compared with wether the [_ctrl]'s text is empty, so changes
+  /// from empty to not empty and vice versa can update the clear/hide icons.
   late bool _empty;
 
   @override
@@ -173,6 +179,15 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
     super.initState();
     _ctrl = TextEditingController(text: widget.value);
     _empty = _ctrl.text.isEmpty;
+  }
+
+  @override
+  void didUpdateWidget(covariant MediaSearchField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_ctrl.text != widget.value) {
+      _ctrl.text = widget.value;
+      _empty = _ctrl.text.isEmpty;
+    }
   }
 
   @override
@@ -187,13 +202,13 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (!widget.searchMode) ...[
+          if (!widget.isSearchActive) ...[
             Expanded(child: widget.title),
-            if (widget.search != null)
+            if (widget.onSearch != null)
               AppBarIcon(
                 tooltip: 'Search',
                 icon: Ionicons.search_outline,
-                onTap: () => widget.search!(null),
+                onTap: () => widget.onSearch?.call(null),
               ),
           ] else
             Expanded(
@@ -206,9 +221,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                   scrollPhysics: Consts.PHYSICS,
                   cursorColor: Theme.of(context).colorScheme.secondary,
                   style: Theme.of(context).textTheme.bodyText2,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(30),
-                  ],
+                  inputFormatters: [LengthLimitingTextInputFormatter(30)],
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.only(left: 10),
                     hintText: widget.hint,
@@ -221,7 +234,7 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                             iconSize: Consts.ICON_SMALL,
                             splashColor: Colors.transparent,
                             color: Theme.of(context).colorScheme.primary,
-                            onPressed: () => widget.search!(null),
+                            onPressed: () => widget.onSearch?.call(null),
                           )
                         : IconButton(
                             tooltip: 'Clear',
@@ -233,22 +246,22 @@ class _MediaSearchFieldState extends State<MediaSearchField> {
                             color: Theme.of(context).colorScheme.primary,
                             onPressed: () {
                               _ctrl.clear();
-                              _update('');
+                              widget.onSearch?.call('');
+                              setState(() => _empty = true);
                             },
                           ),
                   ),
-                  onChanged: (text) => _update(text),
+                  onChanged: (text) {
+                    widget.onSearch?.call(text);
+                    if (_empty != _ctrl.text.isEmpty)
+                      setState(() => _empty = _ctrl.text.isEmpty);
+                  },
                 ),
               ),
             ),
         ],
       ),
     );
-  }
-
-  void _update(String text) {
-    widget.search?.call(text);
-    if (_empty != text.isEmpty) setState(() => _empty = text.isEmpty);
   }
 }
 

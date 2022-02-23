@@ -201,6 +201,7 @@ class _ActionButton extends StatelessWidget {
                 height: 0.3,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
+                  physics: Consts.PHYSICS,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,

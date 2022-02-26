@@ -46,24 +46,7 @@ class _AuthViewState extends State<AuthView> {
     const redirectUrl =
         'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
 
-    try {
-      await launch(redirectUrl);
-    } catch (err) {
-      showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Could not open AniList',
-          content: err.toString(),
-          mainAction: 'Oh No',
-        ),
-      );
-      setState(() => _loading = false);
-      return;
-    }
-
-    AppLinks(onAppLink: (Uri _, String link) async {
-      closeWebView();
-
+    AppLinks(onAppLink: (_, link) async {
       final start = link.indexOf('=') + 1;
       final middle = link.indexOf('&');
       final end = link.lastIndexOf('=') + 1;
@@ -100,6 +83,21 @@ class _AuthViewState extends State<AuthView> {
       await Client.register(account, token, expiration);
       _verify(account);
     });
+
+    try {
+      await launch(redirectUrl, forceSafariVC: false);
+    } catch (err) {
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not open AniList',
+          content: err.toString(),
+          mainAction: 'Oh No',
+        ),
+      );
+      setState(() => _loading = false);
+      return;
+    }
   }
 
   @override

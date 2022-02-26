@@ -65,25 +65,22 @@ class MediaInfoView {
         SliverToBoxAdapter(
           child: Padding(
             padding: Consts.PADDING,
-            child: InputFieldStructure(
-              title: 'Description',
-              child: GestureDetector(
-                child: Container(
-                  padding: Consts.PADDING,
-                  decoration: BoxDecoration(
-                    color: Theme.of(ctx).colorScheme.surface,
-                    borderRadius: Consts.BORDER_RAD_MIN,
-                  ),
-                  child: Text(
-                    model.description,
-                    overflow: TextOverflow.fade,
-                    maxLines: 5,
-                  ),
+            child: GestureDetector(
+              child: Container(
+                padding: Consts.PADDING,
+                decoration: BoxDecoration(
+                  color: Theme.of(ctx).colorScheme.surface,
+                  borderRadius: Consts.BORDER_RAD_MIN,
                 ),
-                onTap: () => showPopUp(
-                  ctx,
-                  TextDialog(title: 'Description', text: model.description),
+                child: Text(
+                  model.description,
+                  overflow: TextOverflow.fade,
+                  maxLines: 4,
                 ),
+              ),
+              onTap: () => showPopUp(
+                ctx,
+                TextDialog(title: 'Description', text: model.description),
               ),
             ),
           ),

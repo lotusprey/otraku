@@ -185,11 +185,12 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                const SizedBox(width: 5),
                                 const Icon(
                                   Ionicons.repeat,
                                   size: Consts.ICON_SMALL,
                                 ),
-                                const SizedBox(width: 5),
+                                const SizedBox(width: 3),
                                 Text(
                                   widget.model.repeat.toString(),
                                   style: Theme.of(context).textTheme.subtitle2,
@@ -203,9 +204,9 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
                           IconButton(
                             tooltip: 'Comment',
                             constraints: const BoxConstraints(
-                              maxHeight: Consts.ICON_SMALL,
+                              maxHeight: Consts.ICON_SMALL + 10,
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
                             icon: const Icon(
                               Ionicons.chatbox,
                               size: Consts.ICON_SMALL,
@@ -264,7 +265,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.star_rounded, size: Consts.ICON_SMALL),
-            const SizedBox(width: 5),
+            const SizedBox(width: 3),
             Text(
               widget.model.score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.subtitle2,
@@ -276,7 +277,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
-            const SizedBox(width: 5),
+            const SizedBox(width: 3),
             Text(
               widget.model.score.toStringAsFixed(
                 widget.model.score.truncate() == widget.model.score ? 0 : 1,
@@ -290,7 +291,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
-            const SizedBox(width: 5),
+            const SizedBox(width: 3),
             Text(
               widget.model.score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.subtitle2,
@@ -322,8 +323,8 @@ class _Progress extends StatelessWidget {
     return TextButton(
       style: ButtonStyle(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        minimumSize: MaterialStateProperty.all(const Size(0, 20)),
-        maximumSize: MaterialStateProperty.all(const Size.fromHeight(20)),
+        minimumSize: MaterialStateProperty.all(const Size(0, 30)),
+        maximumSize: MaterialStateProperty.all(const Size.fromHeight(30)),
         padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
       ),
       onPressed: () {
@@ -338,7 +339,7 @@ class _Progress extends StatelessWidget {
         child: Row(
           children: [
             text,
-            const SizedBox(width: 5),
+            const SizedBox(width: 3),
             Icon(
               Ionicons.add_outline,
               size: Consts.ICON_SMALL,

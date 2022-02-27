@@ -41,8 +41,10 @@ class _NumberFieldState extends State<NumberField> {
                 ],
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyText2,
-                decoration: const InputDecoration(border: InputBorder.none),
-                onChanged: (value) => _validateInput(),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.all(0),
+                ),
               ),
             ),
             IconButton(
@@ -55,9 +57,9 @@ class _NumberFieldState extends State<NumberField> {
 
   void _validateInput({num add = 0}) {
     num result;
-    bool needEdit = true;
+    bool needCursorReset = true;
 
-    if (_controller.text == '')
+    if (_controller.text.isEmpty)
       result = 0;
     else {
       final number = num.parse(_controller.text) + add;
@@ -69,23 +71,23 @@ class _NumberFieldState extends State<NumberField> {
       else {
         result = number;
         if (add == 0 && int.tryParse(_controller.text) == null)
-          needEdit = false;
+          needCursorReset = false;
       }
     }
 
     widget.update(result);
 
-    if (needEdit) {
-      final text = result.toString();
-      _controller.value = _controller.value.copyWith(
-        text: text,
-        selection: TextSelection(
-          baseOffset: text.length,
-          extentOffset: text.length,
-        ),
-        composing: TextRange.empty,
-      );
-    }
+    if (!needCursorReset) return;
+
+    final text = result.toString();
+    _controller.value = _controller.value.copyWith(
+      text: text,
+      selection: TextSelection(
+        baseOffset: text.length,
+        extentOffset: text.length,
+      ),
+      composing: TextRange.empty,
+    );
   }
 
   @override

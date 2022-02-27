@@ -43,15 +43,14 @@ class _AuthViewState extends State<AuthView> {
   Future<void> _requestAccessToken(int account) async {
     setState(() => _loading = true);
 
-    const redirectUrl =
-        'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
-
+    // Prepare to receive an authentication token.
     AppLinks(onAppLink: (_, link) async {
       final start = link.indexOf('=') + 1;
       final middle = link.indexOf('&');
       final end = link.lastIndexOf('=') + 1;
 
       if (start < 1 || middle < 1 || end < 1) {
+        setState(() => _loading = false);
         showPopUp(
           context,
           ConfirmationDialog(
@@ -60,7 +59,6 @@ class _AuthViewState extends State<AuthView> {
             mainAction: 'Ok',
           ),
         );
-        setState(() => _loading = false);
         return;
       }
 
@@ -68,6 +66,7 @@ class _AuthViewState extends State<AuthView> {
       final expiration = int.tryParse(link.substring(end)) ?? -1;
 
       if (token.isEmpty || expiration < 0) {
+        setState(() => _loading = false);
         showPopUp(
           context,
           ConfirmationDialog(
@@ -76,7 +75,6 @@ class _AuthViewState extends State<AuthView> {
             mainAction: 'Ok',
           ),
         );
-        setState(() => _loading = false);
         return;
       }
 
@@ -84,15 +82,19 @@ class _AuthViewState extends State<AuthView> {
       _verify(account);
     });
 
+    // Redirect to the browser for authentication.
     try {
-      await launch(redirectUrl, forceSafariVC: false);
+      await launch(
+        'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
+        forceSafariVC: false,
+      );
     } catch (err) {
       showPopUp(
         context,
         ConfirmationDialog(
           title: 'Could not open AniList',
           content: err.toString(),
-          mainAction: 'Oh No',
+          mainAction: 'Ok',
         ),
       );
       setState(() => _loading = false);

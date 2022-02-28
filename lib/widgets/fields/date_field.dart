@@ -3,50 +3,43 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 
 class DateField extends StatefulWidget {
+  DateField({required this.date, required this.onChanged});
+
   final DateTime? date;
   final Function(DateTime?) onChanged;
-  final String helpText;
-
-  DateField({
-    required this.date,
-    required this.onChanged,
-    required this.helpText,
-  });
 
   @override
   _DateFieldState createState() => _DateFieldState();
 }
 
 class _DateFieldState extends State<DateField> {
-  final constraints = const BoxConstraints(
-    maxWidth: 30,
-    minHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
-  );
-
   DateTime? _date;
 
   Widget _picker(DateTime? initialDate) {
     return IconButton(
-      tooltip: 'Pick ${widget.helpText}',
+      tooltip: 'Date Picker',
       icon: const Icon(Ionicons.calendar_clear_outline),
       onPressed: () => showDatePicker(
         context: context,
         initialDate: initialDate!,
         firstDate: DateTime(1920),
         lastDate: DateTime.now(),
-        helpText: widget.helpText,
         errorInvalidText: 'Enter date in valid range',
         errorFormatText: 'Enter valid date',
         confirmText: 'Confirm',
         cancelText: 'Cancel',
         fieldLabelText: '',
+        helpText: '',
       ).then((pickedDate) {
         if (pickedDate == null) return;
         setState(() => _date = pickedDate);
         widget.onChanged(pickedDate);
       }),
       padding: const EdgeInsets.all(0),
-      constraints: constraints,
+      constraints: const BoxConstraints(
+        minHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
+        maxWidth: 30,
+      ),
     );
   }
 
@@ -64,14 +57,17 @@ class _DateFieldState extends State<DateField> {
                   _picker(_date),
                   Text('${_date!.year}-${_date!.month}-${_date!.day}'),
                   IconButton(
-                    tooltip: 'Pick ${widget.helpText}',
+                    tooltip: 'Clear',
                     icon: const Icon(Icons.clear),
                     onPressed: () {
                       setState(() => _date = null);
                       widget.onChanged(null);
                     },
                     padding: const EdgeInsets.all(0),
-                    constraints: constraints,
+                    constraints: const BoxConstraints(
+                      minHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
+                      maxWidth: 30,
+                    ),
                   ),
                 ],
               )

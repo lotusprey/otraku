@@ -132,9 +132,12 @@ class ActivityBoxBody extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                model.createdAt,
-                style: Theme.of(context).textTheme.subtitle2,
+              Flexible(
+                child: Text(
+                  model.createdAt,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
               ),
               interactions,
             ],

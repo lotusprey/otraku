@@ -181,7 +181,11 @@ class __CollectionSortingState extends State<_CollectionSorting> {
               items: const {'Ascending': true, 'Descending': false},
               onChanged: (val) {
                 int index = widget.model.sort.index;
-                if (!val) index++;
+                if (!val && index % 2 == 0) {
+                  index++;
+                } else if (val && index % 2 != 0) {
+                  index--;
+                }
                 widget.model.sort = EntrySort.values[index];
               },
             ),
@@ -242,8 +246,11 @@ class __ExploreSortingState extends State<_ExploreSorting> {
               items: const {'Ascending': true, 'Descending': false},
               onChanged: (val) {
                 int index = _sort.index;
-                if (index % 2 == 0 && !val) index++;
-                if (index % 2 != 0 && val) index--;
+                if (!val && index % 2 == 0) {
+                  index++;
+                } else if (val && index % 2 != 0) {
+                  index--;
+                }
                 _sort = MediaSort.values[index];
                 widget.model.sort = _sort.name;
               },

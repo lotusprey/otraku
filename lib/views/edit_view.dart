@@ -342,7 +342,6 @@ class _EditView extends StatelessWidget {
                       Toast.show(context, 'Status changed');
                     }
                   },
-                  helpText: 'Started',
                 ),
               ),
             ),
@@ -375,7 +374,6 @@ class _EditView extends StatelessWidget {
                       Toast.show(context, text);
                     }
                   },
-                  helpText: 'Completed',
                 ),
               ),
             ),

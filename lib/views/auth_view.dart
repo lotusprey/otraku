@@ -20,6 +20,7 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
+  StreamSubscription<String>? _sub;
   bool _loading = false;
 
   void _verify(int account) {
@@ -43,32 +44,15 @@ class _AuthViewState extends State<AuthView> {
   Future<void> _requestAccessToken(int account) async {
     setState(() => _loading = true);
 
-    const redirectUrl =
-        'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
-
-    try {
-      await launch(redirectUrl);
-    } catch (err) {
-      showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Could not open AniList',
-          content: err.toString(),
-          mainAction: 'Oh No',
-        ),
-      );
-      setState(() => _loading = false);
-      return;
-    }
-
-    AppLinks(onAppLink: (Uri _, String link) async {
-      closeWebView();
-
+    // Prepare to receive an authentication token.
+    _sub?.cancel();
+    _sub = AppLinks().stringLinkStream.listen((link) async {
       final start = link.indexOf('=') + 1;
       final middle = link.indexOf('&');
       final end = link.lastIndexOf('=') + 1;
 
       if (start < 1 || middle < 1 || end < 1) {
+        setState(() => _loading = false);
         showPopUp(
           context,
           ConfirmationDialog(
@@ -77,7 +61,6 @@ class _AuthViewState extends State<AuthView> {
             mainAction: 'Ok',
           ),
         );
-        setState(() => _loading = false);
         return;
       }
 
@@ -85,6 +68,7 @@ class _AuthViewState extends State<AuthView> {
       final expiration = int.tryParse(link.substring(end)) ?? -1;
 
       if (token.isEmpty || expiration < 0) {
+        setState(() => _loading = false);
         showPopUp(
           context,
           ConfirmationDialog(
@@ -93,13 +77,31 @@ class _AuthViewState extends State<AuthView> {
             mainAction: 'Ok',
           ),
         );
-        setState(() => _loading = false);
         return;
       }
 
       await Client.register(account, token, expiration);
       _verify(account);
     });
+
+    // Redirect to the browser for authentication.
+    try {
+      await launch(
+        'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
+        forceSafariVC: false,
+      );
+    } catch (err) {
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not open AniList',
+          content: err.toString(),
+          mainAction: 'Ok',
+        ),
+      );
+      setState(() => _loading = false);
+      return;
+    }
   }
 
   @override
@@ -108,6 +110,12 @@ class _AuthViewState extends State<AuthView> {
     if (Settings().selectedAccount == null) return;
     _loading = true;
     _verify(Settings().selectedAccount!);
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
   @override

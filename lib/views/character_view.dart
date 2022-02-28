@@ -201,6 +201,7 @@ class _ActionButton extends StatelessWidget {
                 height: 0.3,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
+                  physics: Consts.PHYSICS,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,
@@ -227,8 +228,11 @@ class _ActionButton extends StatelessWidget {
                       items: const {'Ascending': true, 'Descending': false},
                       onChanged: (val) {
                         int index = sort.index;
-                        if (index % 2 == 0 && !val) index++;
-                        if (index % 2 != 0 && val) index--;
+                        if (!val && index % 2 == 0) {
+                          index++;
+                        } else if (val && index % 2 != 0) {
+                          index--;
+                        }
                         sort = MediaSort.values[index];
                       },
                     ),

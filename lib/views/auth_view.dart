@@ -20,6 +20,7 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
+  StreamSubscription<String>? _sub;
   bool _loading = false;
 
   void _verify(int account) {
@@ -44,7 +45,8 @@ class _AuthViewState extends State<AuthView> {
     setState(() => _loading = true);
 
     // Prepare to receive an authentication token.
-    AppLinks(onAppLink: (_, link) async {
+    _sub?.cancel();
+    _sub = AppLinks().stringLinkStream.listen((link) async {
       final start = link.indexOf('=') + 1;
       final middle = link.indexOf('&');
       final end = link.lastIndexOf('=') + 1;
@@ -108,6 +110,12 @@ class _AuthViewState extends State<AuthView> {
     if (Settings().selectedAccount == null) return;
     _loading = true;
     _verify(Settings().selectedAccount!);
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
   @override

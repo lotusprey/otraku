@@ -36,15 +36,13 @@ class CollectionGrid extends StatelessWidget {
       tag: ctrlTag,
       builder: (ctrl) {
         if (ctrl.isLoading)
-          return SliverFillRemaining(child: Center(child: const Loader()));
+          return const SliverFillRemaining(child: Center(child: Loader()));
 
         if (ctrl.entries.isEmpty)
           return SliverFillRemaining(
             child: Center(
               child: Text(
-                ctrl.isEmpty
-                    ? 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}'
-                    : 'No ${ctrl.ofAnime ? 'Anime' : 'Manga'} Results',
+                'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
             ),
@@ -55,7 +53,7 @@ class CollectionGrid extends StatelessWidget {
               EdgeInsets.only(left: sidePadding, right: sidePadding, top: 15),
           sliver: SliverGrid(
             delegate: SliverChildBuilderDelegate(
-              (_, i) => _CollectionGridTile(ctrl.entries[i], ctrl, isMe),
+              (_, i) => _Tile(ctrl, ctrl.entries[i], isMe),
               childCount: ctrl.entries.length,
             ),
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
@@ -69,33 +67,183 @@ class CollectionGrid extends StatelessWidget {
   }
 }
 
-class _CollectionGridTile extends StatefulWidget {
-  _CollectionGridTile(this.model, this.ctrl, this.isMe);
+class _Tile extends StatelessWidget {
+  _Tile(this.ctrl, this.model, this.isMe);
 
-  final ListEntryModel model;
   final CollectionController ctrl;
+  final ListEntryModel model;
   final bool isMe;
 
   @override
-  State<_CollectionGridTile> createState() => _CollectionGridTileState();
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: Consts.BORDER_RAD_MIN,
+      ),
+      child: ExploreIndexer(
+        id: model.mediaId,
+        explorable: Explorable.anime,
+        imageUrl: model.cover,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Hero(
+              tag: model.mediaId,
+              child: ClipRRect(
+                borderRadius: Consts.BORDER_RAD_MIN,
+                child: Container(
+                  width: 95,
+                  color: Theme.of(context).colorScheme.surface,
+                  child: FadeImage(model.cover),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: Consts.PADDING,
+                child: _TileContent(ctrl, model, isMe),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _CollectionGridTileState extends State<_CollectionGridTile> {
+class _TileContent extends StatefulWidget {
+  _TileContent(this.ctrl, this.model, this.isMe);
+
+  final CollectionController ctrl;
+  final ListEntryModel model;
+  final bool isMe;
+
+  @override
+  State<_TileContent> createState() => __TileContentState();
+}
+
+class __TileContentState extends State<_TileContent> {
   @override
   Widget build(BuildContext context) {
-    final details = <TextSpan>[];
+    final model = widget.model;
+    double progressPercent = 1;
+    if (model.progressMax != null)
+      progressPercent = model.progress / model.progressMax!;
+    else if (model.nextEpisode != null)
+      progressPercent = model.progress / (model.nextEpisode! - 1);
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Flexible(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(
+                child: Text(
+                  widget.model.titles[0],
+                  overflow: TextOverflow.fade,
+                ),
+              ),
+              const SizedBox(height: 5),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.subtitle2,
+                  children: _buildDetails(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          height: 5,
+          margin: const EdgeInsets.symmetric(vertical: 3),
+          decoration: BoxDecoration(
+            borderRadius: Consts.BORDER_RAD_MIN,
+            gradient: LinearGradient(
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.background,
+                Theme.of(context).colorScheme.background,
+              ],
+              stops: [0.0, progressPercent, progressPercent, 1.0],
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Tooltip(message: 'Score', child: _buildScore(context)),
+            if (widget.model.repeat > 0)
+              Tooltip(
+                message: 'Repeats',
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(width: 5),
+                    const Icon(
+                      Ionicons.repeat,
+                      size: Consts.ICON_SMALL,
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      widget.model.repeat.toString(),
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                  ],
+                ),
+              )
+            else
+              const SizedBox(),
+            if (widget.model.notes != null)
+              IconButton(
+                tooltip: 'Comment',
+                constraints: const BoxConstraints(
+                  maxHeight: Consts.ICON_SMALL + 10,
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                icon: const Icon(
+                  Ionicons.chatbox,
+                  size: Consts.ICON_SMALL,
+                ),
+                onPressed: () => showPopUp(
+                  context,
+                  TextDialog(
+                    title: 'Comment',
+                    text: widget.model.notes!,
+                  ),
+                ),
+              )
+            else
+              const SizedBox(),
+            _buildProgressButton(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  List<TextSpan> _buildDetails() {
+    final ts = <TextSpan>[];
+
     if (widget.model.format != null)
-      details.add(TextSpan(text: Convert.clarifyEnum(widget.model.format)));
+      ts.add(TextSpan(text: Convert.clarifyEnum(widget.model.format)));
+
     if (widget.model.airingAt != null)
-      details.add(TextSpan(
-        text: '${details.isEmpty ? "" : ' • '}'
+      ts.add(TextSpan(
+        text: '${ts.isEmpty ? "" : ' • '}'
             'Ep ${widget.model.nextEpisode} in '
             '${Convert.timeUntilTimestamp(widget.model.airingAt)}',
       ));
+
     if (widget.model.nextEpisode != null &&
         widget.model.nextEpisode! - 1 > widget.model.progress)
-      details.add(TextSpan(
-        text: '${details.isEmpty ? "" : ' • '}'
+      ts.add(TextSpan(
+        text: '${ts.isEmpty ? "" : ' • '}'
             '${widget.model.nextEpisode! - 1 - widget.model.progress} ep behind',
         style: Theme.of(context)
             .textTheme
@@ -103,143 +251,7 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
             ?.copyWith(fontSize: Consts.FONT_SMALL),
       ));
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RAD_MIN,
-      ),
-      child: ExploreIndexer(
-        id: widget.model.mediaId,
-        explorable: Explorable.anime,
-        imageUrl: widget.model.cover,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Hero(
-              tag: widget.model.mediaId,
-              child: ClipRRect(
-                child: Container(
-                  width: 95,
-                  color: Theme.of(context).colorScheme.surface,
-                  child: FadeImage(widget.model.cover),
-                ),
-                borderRadius: Consts.BORDER_RAD_MIN,
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: Consts.PADDING,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              widget.model.titles[0],
-                              overflow: TextOverflow.fade,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.subtitle2,
-                              children: details,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      height: 5,
-                      margin: const EdgeInsets.symmetric(vertical: 3),
-                      decoration: BoxDecoration(
-                        borderRadius: Consts.BORDER_RAD_MIN,
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.primary,
-                            Theme.of(context).colorScheme.background,
-                            Theme.of(context).colorScheme.background,
-                          ],
-                          stops: [
-                            0.0,
-                            widget.model.progressPercent(),
-                            widget.model.progressPercent(),
-                            1.0,
-                          ],
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Tooltip(message: 'Score', child: _buildScore(context)),
-                        if (widget.model.repeat > 0)
-                          Tooltip(
-                            message: 'Repeats',
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const SizedBox(width: 5),
-                                const Icon(
-                                  Ionicons.repeat,
-                                  size: Consts.ICON_SMALL,
-                                ),
-                                const SizedBox(width: 3),
-                                Text(
-                                  widget.model.repeat.toString(),
-                                  style: Theme.of(context).textTheme.subtitle2,
-                                ),
-                              ],
-                            ),
-                          )
-                        else
-                          const SizedBox(),
-                        if (widget.model.notes != null)
-                          IconButton(
-                            tooltip: 'Comment',
-                            constraints: const BoxConstraints(
-                              maxHeight: Consts.ICON_SMALL + 10,
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            icon: const Icon(
-                              Ionicons.chatbox,
-                              size: Consts.ICON_SMALL,
-                            ),
-                            onPressed: () => showPopUp(
-                              context,
-                              TextDialog(
-                                title: 'Comment',
-                                text: widget.model.notes!,
-                              ),
-                            ),
-                          )
-                        else
-                          const SizedBox(),
-                        _Progress(
-                          model: widget.model,
-                          increment: widget.isMe
-                              ? () {
-                                  setState(() => widget.model.progress++);
-                                  widget.ctrl.updateProgress(widget.model);
-                                }
-                              : null,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return ts;
   }
 
   Widget _buildScore(BuildContext context) {
@@ -300,16 +312,9 @@ class _CollectionGridTileState extends State<_CollectionGridTile> {
         );
     }
   }
-}
 
-class _Progress extends StatelessWidget {
-  _Progress({required this.model, required this.increment});
-
-  final ListEntryModel model;
-  final Function()? increment;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildProgressButton() {
+    final model = widget.model;
     final text = Text(
       model.progress == model.progressMax
           ? model.progress.toString()
@@ -317,7 +322,7 @@ class _Progress extends StatelessWidget {
       style: Theme.of(context).textTheme.subtitle2,
     );
 
-    if (increment == null || model.progress == model.progressMax)
+    if (!widget.isMe || model.progress == model.progressMax)
       return Tooltip(message: 'Progress', child: text);
 
     return TextButton(
@@ -329,9 +334,10 @@ class _Progress extends StatelessWidget {
       ),
       onPressed: () {
         if (model.progressMax == null ||
-            model.progress < model.progressMax! - 1)
-          increment!();
-        else
+            model.progress < model.progressMax! - 1) {
+          setState(() => model.progress++);
+          widget.ctrl.updateProgress(model);
+        } else
           showSheet(context, EditView(model.mediaId, complete: true));
       },
       child: Tooltip(

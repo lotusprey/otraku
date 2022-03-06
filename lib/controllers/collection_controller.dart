@@ -20,15 +20,13 @@ class CollectionController extends ScrollingController {
   // DATA
   // ***************************************************************************
 
-  CollectionController(this.userId, this.ofAnime) {
-    filters = CollectionFilterModel(_onFilterChange, ofAnime);
-  }
+  CollectionController(this.userId, this.ofAnime);
 
   final int userId;
   final bool ofAnime;
-  late final CollectionFilterModel filters;
   final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[];
+  late final filters = CollectionFilterModel(ofAnime, _onFilterChange);
   int _listIndex = 0;
   bool _isLoading = true;
   bool _searchMode = false;

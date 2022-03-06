@@ -14,9 +14,9 @@ class ExploreController extends ScrollingController {
   static const ID_BODY = 1;
   static const ID_BUTTON = 2;
 
-  late final filters = ExploreFilterModel(fetch);
   final _results = PageModel<ExplorableModel>();
   late final _debounce = Debounce(fetch);
+  late final filters = ExploreFilterModel(_type == Explorable.anime, fetch);
   int _page = 1;
   Explorable _type = Settings().defaultExplorable;
   String _search = '';
@@ -42,7 +42,7 @@ class ExploreController extends ScrollingController {
   set type(Explorable val) {
     if (_type == val) return;
     _type = val;
-    filters.formats.clear();
+    filters.ofAnime = val == Explorable.anime;
     update([ID_HEAD, ID_BUTTON]);
     fetch();
   }

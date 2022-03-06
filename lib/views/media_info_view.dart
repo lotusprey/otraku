@@ -117,7 +117,7 @@ class MediaInfoView {
           items: model.genres,
           onTap: (index) {
             final explCtrl = Get.find<ExploreController>();
-            explCtrl.filters.clear();
+            explCtrl.filters.clear(false);
             explCtrl.filters.genreIn.add(model.genres[index]);
             explCtrl.type = model.type;
             explCtrl.search = '';
@@ -308,7 +308,7 @@ class __TagsState extends State<_Tags> {
           behavior: HitTestBehavior.opaque,
           onTap: () {
             final explCtrl = Get.find<ExploreController>();
-            explCtrl.filters.clear();
+            explCtrl.filters.clear(false);
             explCtrl.filters.tagIn.add(tags[i].name);
             explCtrl.type = ctrl.model!.info.type;
             explCtrl.search = '';
@@ -379,7 +379,7 @@ class __TagsState extends State<_Tags> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               final explCtrl = Get.find<ExploreController>();
-              explCtrl.filters.clear();
+              explCtrl.filters.clear(false);
               explCtrl.filters.tagIn.add(tags[i].name);
               explCtrl.type = ctrl.model!.info.type;
               explCtrl.search = '';

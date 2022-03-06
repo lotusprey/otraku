@@ -13,6 +13,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -25,7 +26,12 @@ class FilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final copy = model.copy();
+    late final FilterModel copy;
+    if (model is CollectionFilterModel)
+      copy = CollectionFilterModel(model.ofAnime, null);
+    else if (model is ExploreFilterModel)
+      copy = ExploreFilterModel(model.ofAnime, null);
+    copy.copy(model);
 
     // Statuses.
     final statusOptions = <String>[];
@@ -51,7 +57,7 @@ class FilterView extends StatelessWidget {
           icon: Icons.close,
           warning: true,
           onTap: () {
-            model.clear();
+            model.clear(true);
             Navigator.pop(context);
           },
         ),
@@ -59,7 +65,7 @@ class FilterView extends StatelessWidget {
           text: 'Apply',
           icon: Icons.done_rounded,
           onTap: () {
-            model.assign(copy);
+            model.copy(copy);
             Navigator.pop(context);
           },
         ),
@@ -70,17 +76,48 @@ class FilterView extends StatelessWidget {
         padding:
             const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 60),
         children: [
-          if (copy.ofCollection)
-            _CollectionSorting(copy.collectionFilter!)
-          else
-            _ExploreSorting(copy.exploreFilter!),
-          _DropDownRow(copy),
+          GridView(
+            shrinkWrap: true,
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              minWidth: 140,
+              height: 75,
+            ),
+            children: [
+              if (copy is CollectionFilterModel) ...[
+                SortDropDown(
+                  EntrySort.values,
+                  () => copy.sort.index,
+                  (EntrySort val) => copy.sort = val,
+                ),
+                OrderDropDown(
+                  EntrySort.values,
+                  () => copy.sort.index,
+                  (EntrySort val) => copy.sort = val,
+                )
+              ] else if (copy is ExploreFilterModel) ...[
+                SortDropDown(
+                  MediaSort.values,
+                  () => copy.sort.index,
+                  (MediaSort val) => copy.sort = val,
+                ),
+                OrderDropDown(
+                  MediaSort.values,
+                  () => copy.sort.index,
+                  (MediaSort val) => copy.sort = val,
+                )
+              ],
+              CountryDropDown(copy.country, (val) => copy.country = val),
+              if (copy is ExploreFilterModel)
+                ListPresenceDropDown(
+                  copy.onList,
+                  (val) => (copy as ExploreFilterModel).onList = val,
+                ),
+            ],
+          ),
           ChipGrid(
             title: 'Status',
             placeholder: 'statuses',
-            names: copy.ofCollection
-                ? copy.collectionFilter!.statuses
-                : copy.exploreFilter!.statuses,
+            names: copy.statuses,
             onEdit: (selected) => showSheet(
               context,
               SelectionOpaqueSheet(
@@ -93,9 +130,7 @@ class FilterView extends StatelessWidget {
           ChipGrid(
             title: 'Format',
             placeholder: 'formats',
-            names: copy.ofCollection
-                ? copy.collectionFilter!.formats
-                : copy.exploreFilter!.formats,
+            names: copy.formats,
             onEdit: (selected) => showSheet(
               context,
               SelectionOpaqueSheet(
@@ -113,18 +148,10 @@ class FilterView extends StatelessWidget {
               return ChipTagGrid(
                 title: 'Tags',
                 placeholder: 'tags',
-                inclusiveGenres: copy.ofCollection
-                    ? copy.collectionFilter!.genreIn
-                    : copy.exploreFilter!.genreIn,
-                exclusiveGenres: copy.ofCollection
-                    ? copy.collectionFilter!.genreNotIn
-                    : copy.exploreFilter!.genreNotIn,
-                inclusiveTags: copy.ofCollection
-                    ? copy.collectionFilter!.tagIn
-                    : copy.exploreFilter!.tagIn,
-                exclusiveTags: copy.ofCollection
-                    ? copy.collectionFilter!.tagNotIn
-                    : copy.exploreFilter!.tagNotIn,
+                inclusiveGenres: copy.genreIn,
+                exclusiveGenres: copy.genreNotIn,
+                inclusiveTags: copy.tagIn,
+                exclusiveTags: copy.tagNotIn,
               );
             },
           ),
@@ -134,184 +161,95 @@ class FilterView extends StatelessWidget {
   }
 }
 
-class _CollectionSorting extends StatefulWidget {
-  const _CollectionSorting(this.model);
+/// [DropDownField] implementations used for filtering.
 
-  final CollectionFilterModel model;
+class SortDropDown<T extends Enum> extends StatelessWidget {
+  SortDropDown(this.values, this.index, this.onChange);
 
-  @override
-  __CollectionSortingState createState() => __CollectionSortingState();
-}
-
-class __CollectionSortingState extends State<_CollectionSorting> {
-  final _sortItems = <String, int>{};
-
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < EntrySort.values.length; i += 2) {
-      String key = Convert.clarifyEnum(EntrySort.values[i].name)!;
-      _sortItems[key] = i ~/ 2;
-    }
-  }
+  final List<T> values;
+  final int Function() index;
+  final void Function(T) onChange;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropDownField<int>(
-              title: 'Sort',
-              value: widget.model.sort.index ~/ 2,
-              items: _sortItems,
-              onChanged: (val) {
-                int index = val * 2;
-                if (widget.model.sort.index % 2 != 0) index++;
-                widget.model.sort = EntrySort.values[index];
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: DropDownField<bool>(
-              title: 'Order',
-              value: widget.model.sort.index % 2 == 0,
-              items: const {'Ascending': true, 'Descending': false},
-              onChanged: (val) {
-                int index = widget.model.sort.index;
-                if (!val && index % 2 == 0) {
-                  index++;
-                } else if (val && index % 2 != 0) {
-                  index--;
-                }
-                widget.model.sort = EntrySort.values[index];
-              },
-            ),
-          ),
-        ],
-      ),
+    final items = <String, int>{};
+    for (int i = 0; i < values.length; i += 2) {
+      String key = Convert.clarifyEnum(values[i].name)!;
+      items[key] = i ~/ 2;
+    }
+
+    return DropDownField<int>(
+      title: 'Sort',
+      value: index() ~/ 2,
+      items: items,
+      onChanged: (val) {
+        int i = val * 2;
+        if (index() % 2 != 0) i++;
+        onChange(values[i]);
+      },
     );
   }
 }
 
-class _ExploreSorting extends StatefulWidget {
-  const _ExploreSorting(this.model);
+class OrderDropDown<T extends Enum> extends StatelessWidget {
+  OrderDropDown(this.values, this.index, this.onChange);
 
-  final ExploreFilterModel model;
-
-  @override
-  __ExploreSortingState createState() => __ExploreSortingState();
-}
-
-class __ExploreSortingState extends State<_ExploreSorting> {
-  final _sortItems = <String, int>{};
-  late MediaSort _sort;
-
-  @override
-  void initState() {
-    super.initState();
-    _sort = MediaSort.values.byName(widget.model.sort);
-    for (int i = 0; i < MediaSort.values.length; i += 2) {
-      String key = Convert.clarifyEnum(MediaSort.values[i].name)!;
-      _sortItems[key] = i ~/ 2;
-    }
-  }
+  final List<T> values;
+  final int Function() index;
+  final void Function(T) onChange;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropDownField<int>(
-              title: 'Sort',
-              value: _sort.index ~/ 2,
-              items: _sortItems,
-              onChanged: (val) {
-                int index = val * 2;
-                if (_sort.index % 2 != 0) index++;
-                _sort = MediaSort.values[index];
-                widget.model.sort = _sort.name;
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: DropDownField<bool>(
-              title: 'Order',
-              value: _sort.index % 2 == 0,
-              items: const {'Ascending': true, 'Descending': false},
-              onChanged: (val) {
-                int index = _sort.index;
-                if (!val && index % 2 == 0) {
-                  index++;
-                } else if (val && index % 2 != 0) {
-                  index--;
-                }
-                _sort = MediaSort.values[index];
-                widget.model.sort = _sort.name;
-              },
-            ),
-          ),
-        ],
-      ),
+    return DropDownField<bool>(
+      title: 'Order',
+      value: index() % 2 == 0,
+      items: const {'Ascending': true, 'Descending': false},
+      onChanged: (val) {
+        int i = index();
+        if (!val && i % 2 == 0) {
+          i++;
+        } else if (val && i % 2 != 0) {
+          i--;
+        }
+        onChange(values[i]);
+      },
     );
   }
 }
 
-class _DropDownRow extends StatelessWidget {
-  const _DropDownRow(this.model);
+class CountryDropDown extends StatelessWidget {
+  CountryDropDown(this.value, this.onChange);
 
-  final FilterModel model;
+  final String? value;
+  final void Function(String?) onChange;
 
   @override
   Widget build(BuildContext context) {
-    // Countries.
     final countries = <String, String?>{'All': null};
     for (final e in Convert.COUNTRY_CODES.entries) countries[e.value] = e.key;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        children: [
-          if (model.ofCollection) ...[
-            Expanded(
-              child: DropDownField<String?>(
-                title: 'Country',
-                value: model.collectionFilter!.country,
-                items: countries,
-                onChanged: (val) => model.collectionFilter!.country = val,
-              ),
-            ),
-            const Spacer(),
-          ] else ...[
-            Expanded(
-              child: DropDownField<String?>(
-                title: 'Country',
-                value: model.exploreFilter!.country,
-                items: countries,
-                onChanged: (val) => model.exploreFilter!.country = val,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: DropDownField<bool?>(
-                title: 'List Filter',
-                value: model.exploreFilter!.onList,
-                items: const {
-                  'Everything': null,
-                  'On List': true,
-                  'Not On List': false,
-                },
-                onChanged: (val) => model.exploreFilter!.onList = val,
-              ),
-            )
-          ],
-        ],
-      ),
+    return DropDownField<String?>(
+      title: 'Country',
+      value: value,
+      items: countries,
+      onChanged: onChange,
+    );
+  }
+}
+
+class ListPresenceDropDown extends StatelessWidget {
+  ListPresenceDropDown(this.value, this.onChange);
+
+  final bool? value;
+  final void Function(bool?) onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropDownField<bool?>(
+      title: 'List Filter',
+      value: value,
+      items: const {'Everything': null, 'On List': true, 'Not On List': false},
+      onChanged: onChange,
     );
   }
 }

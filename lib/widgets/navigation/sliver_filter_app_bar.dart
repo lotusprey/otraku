@@ -80,7 +80,7 @@ class SliverCollectionAppBar extends StatelessWidget {
               );
             },
           ),
-          _FilterIcon(FilterModel.collection(ctrl.ofAnime, ctrl.filters)),
+          _FilterIcon(ctrl.filters),
         ]);
       },
     );
@@ -132,10 +132,8 @@ class SliverExploreAppBar extends StatelessWidget {
                 ],
               ),
             ),
-            if (type == Explorable.anime)
-              _FilterIcon(FilterModel.explore(true, ctrl.filters))
-            else if (type == Explorable.manga)
-              _FilterIcon(FilterModel.explore(false, ctrl.filters))
+            if (type == Explorable.anime || type == Explorable.manga)
+              _FilterIcon(ctrl.filters)
             else if (type == Explorable.character || type == Explorable.staff)
               _BirthdayIcon(ctrl),
           ],
@@ -300,26 +298,18 @@ class _FilterIconState extends State<_FilterIcon> {
       );
 
   bool _isActive() {
-    if (widget.filters.ofCollection) {
-      final f = widget.filters.collectionFilter!;
-      return f.country != null ||
-          f.statuses.isNotEmpty ||
-          f.formats.isNotEmpty ||
-          f.genreIn.isNotEmpty ||
-          f.genreNotIn.isNotEmpty ||
-          f.tagIn.isNotEmpty ||
-          f.tagNotIn.isNotEmpty;
-    }
-
-    final f = widget.filters.exploreFilter!;
-    return f.country != null ||
-        f.onList != null ||
+    final f = widget.filters;
+    if (f.country != null ||
         f.statuses.isNotEmpty ||
         f.formats.isNotEmpty ||
         f.genreIn.isNotEmpty ||
         f.genreNotIn.isNotEmpty ||
         f.tagIn.isNotEmpty ||
-        f.tagNotIn.isNotEmpty;
+        f.tagNotIn.isNotEmpty) return true;
+
+    if (f is ExploreFilterModel && f.onList != null) return true;
+
+    return false;
   }
 }
 

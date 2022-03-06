@@ -1,98 +1,35 @@
 import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/utils/settings.dart';
 
-class FilterModel {
-  FilterModel._({
-    required this.ofAnime,
-    required this.ofCollection,
-    required this.collectionFilter,
-    required this.exploreFilter,
-  });
+abstract class FilterModel<T extends Enum> {
+  FilterModel(this._ofAnime, this.sort);
 
-  factory FilterModel.collection(bool ofAnime, CollectionFilterModel model) =>
-      FilterModel._(
-        ofAnime: ofAnime,
-        ofCollection: true,
-        collectionFilter: model,
-        exploreFilter: null,
-      );
-
-  factory FilterModel.explore(bool ofAnime, ExploreFilterModel model) =>
-      FilterModel._(
-        ofAnime: ofAnime,
-        ofCollection: false,
-        collectionFilter: null,
-        exploreFilter: model,
-      );
-
-  final bool ofAnime;
-  final bool ofCollection;
-  final CollectionFilterModel? collectionFilter;
-  final ExploreFilterModel? exploreFilter;
-
-  FilterModel copy() => ofCollection
-      ? FilterModel.collection(ofAnime, collectionFilter!.copy())
-      : FilterModel.explore(ofAnime, exploreFilter!.copy());
-
-  void clear() => ofCollection
-      ? collectionFilter!.clear(refresh: true)
-      : exploreFilter!.clear(refresh: true);
-
-  void assign(FilterModel other) {
-    if (ofCollection != other.ofCollection) return;
-    ofCollection
-        ? collectionFilter!.assign(other.collectionFilter!)
-        : exploreFilter!.assign(other.exploreFilter!);
-  }
-}
-
-class CollectionFilterModel {
-  CollectionFilterModel(this._onChange, bool ofAnime) {
-    sort = ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
-  }
-
-  final void Function(bool)? _onChange;
   final List<String> statuses = [];
   final List<String> formats = [];
   final List<String> genreIn = [];
   final List<String> genreNotIn = [];
   final List<String> tagIn = [];
   final List<String> tagNotIn = [];
-  final List<int> tagIdIn = [];
-  final List<int> tagIdNotIn = [];
   String? country;
-  late EntrySort sort;
+  T sort;
 
-  CollectionFilterModel copy() {
-    final model = CollectionFilterModel(null, true);
-    model.sort = sort;
-    model.country = country;
-    model.statuses.addAll(statuses);
-    model.formats.addAll(formats);
-    model.genreIn.addAll(genreIn);
-    model.genreNotIn.addAll(genreNotIn);
-    model.tagIn.addAll(tagIn);
-    model.tagNotIn.addAll(tagNotIn);
-    return model;
-  }
+  bool _ofAnime;
+  bool get ofAnime => _ofAnime;
 
-  void clear({bool refresh = false}) {
-    country = null;
+  void clear(bool refresh) {
     statuses.clear();
     formats.clear();
     genreIn.clear();
     genreNotIn.clear();
     tagIn.clear();
     tagNotIn.clear();
-    tagIdIn.clear();
-    tagIdNotIn.clear();
-    if (refresh) _onChange?.call(false);
+    country = null;
   }
 
-  void assign(CollectionFilterModel other) {
-    final mustSort = sort != other.sort;
+  void copy(covariant FilterModel<T> other) {
     sort = other.sort;
     country = other.country;
     statuses.clear();
@@ -107,8 +44,39 @@ class CollectionFilterModel {
     tagIn.addAll(other.tagIn);
     tagNotIn.clear();
     tagNotIn.addAll(other.tagNotIn);
+  }
+}
+
+class CollectionFilterModel extends FilterModel<EntrySort> {
+  CollectionFilterModel(bool ofAnime, this.onChange)
+      : super(
+          ofAnime,
+          ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort,
+        );
+
+  final List<int> tagIdIn = [];
+  final List<int> tagIdNotIn = [];
+  final void Function(bool)? onChange;
+
+  @override
+  void clear(bool refresh) {
+    super.clear(refresh);
     tagIdIn.clear();
     tagIdNotIn.clear();
+    if (refresh) onChange?.call(false);
+  }
+
+  @override
+  void copy(covariant CollectionFilterModel other) {
+    final mustSort = sort != other.sort;
+    super.copy(other);
+    tagIdIn.clear();
+    tagIdNotIn.clear();
+    if (onChange == null) {
+      tagIdIn.addAll(other.tagIdIn);
+      tagIdNotIn.addAll(other.tagIdNotIn);
+      return;
+    }
     final tags = Get.find<TagGroupController>().model;
     if (tags != null) {
       for (final t in tagIn) {
@@ -122,71 +90,38 @@ class CollectionFilterModel {
         tagIdNotIn.add(tags.ids[i]);
       }
     }
-    _onChange?.call(mustSort);
+    onChange?.call(mustSort);
   }
 }
 
-class ExploreFilterModel {
-  ExploreFilterModel(this._onChange);
+class ExploreFilterModel extends FilterModel<MediaSort> {
+  ExploreFilterModel(bool ofAnime, this.onChange)
+      : super(ofAnime, Settings().defaultExploreSort);
 
-  final void Function()? _onChange;
-  final List<String> statuses = [];
-  final List<String> formats = [];
-  final List<String> genreIn = [];
-  final List<String> genreNotIn = [];
-  final List<String> tagIn = [];
-  final List<String> tagNotIn = [];
-  String? country;
   bool? onList;
-  String sort = Settings().defaultExploreSort.name;
+  final void Function()? onChange;
 
-  ExploreFilterModel copy() {
-    final model = ExploreFilterModel(null);
-    model.sort = sort;
-    model.onList = onList;
-    model.country = country;
-    model.statuses.addAll(statuses);
-    model.formats.addAll(formats);
-    model.genreIn.addAll(genreIn);
-    model.genreNotIn.addAll(genreNotIn);
-    model.tagIn.addAll(tagIn);
-    model.tagNotIn.addAll(tagNotIn);
-    return model;
+  set ofAnime(bool val) {
+    _ofAnime = val;
+    formats.clear();
   }
 
-  void clear({bool refresh = false}) {
+  @override
+  void clear(bool refresh) {
+    super.clear(refresh);
     onList = null;
-    country = null;
-    statuses.clear();
-    formats.clear();
-    genreIn.clear();
-    genreNotIn.clear();
-    tagIn.clear();
-    tagNotIn.clear();
-    if (refresh) _onChange?.call();
+    if (refresh) onChange?.call();
   }
 
-  void assign(ExploreFilterModel other) {
-    sort = other.sort;
+  @override
+  void copy(covariant ExploreFilterModel other) {
+    super.copy(other);
     onList = other.onList;
-    country = other.country;
-    statuses.clear();
-    statuses.addAll(other.statuses);
-    formats.clear();
-    formats.addAll(other.formats);
-    genreIn.clear();
-    genreIn.addAll(other.genreIn);
-    genreNotIn.clear();
-    genreNotIn.addAll(other.genreNotIn);
-    tagIn.clear();
-    tagIn.addAll(other.tagIn);
-    tagNotIn.clear();
-    tagNotIn.addAll(other.tagNotIn);
-    _onChange?.call();
+    onChange?.call();
   }
 
   Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{'sort': sort};
+    final map = <String, dynamic>{'sort': sort.name};
 
     if (statuses.isNotEmpty) map['status_in'] = statuses;
     if (formats.isNotEmpty) map['format_in'] = formats;

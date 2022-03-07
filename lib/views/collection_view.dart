@@ -25,8 +25,8 @@ class CollectionView extends StatelessWidget {
       tag: tag,
       builder: (ctrl) => WillPopScope(
         onWillPop: () {
-          if (!ctrl.searchMode) return Future.value(true);
-          ctrl.searchMode = false;
+          if (ctrl.search == null) return Future.value(true);
+          ctrl.search = null;
           return Future.value(false);
         },
         child: Scaffold(

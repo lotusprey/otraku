@@ -29,8 +29,7 @@ class CollectionController extends ScrollingController {
   late final filters = CollectionFilterModel(ofAnime, _onFilterChange);
   int _listIndex = 0;
   bool _isLoading = true;
-  bool _searchMode = false;
-  String _search = '';
+  String? _search;
   ScoreFormat? _scoreFormat;
 
   // ***************************************************************************
@@ -40,27 +39,23 @@ class CollectionController extends ScrollingController {
   int get listIndex => _listIndex;
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
-  bool get searchMode => _searchMode;
-  String get search => _search;
+  String? get search => _search;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
 
-  set search(String val) {
-    val = val.trimLeft();
+  set search(String? val) {
+    val = val?.trimLeft();
     if (_search == val) return;
+    final oldVal = _search;
     _search = val;
-    _filter();
-  }
 
-  set searchMode(bool v) {
-    if (_searchMode == v) return;
-    _searchMode = v;
-    update([ID_HEAD]);
-    if (_search.isNotEmpty) {
-      _search = '';
+    if ((oldVal == null) != (val == null)) {
+      update([ID_HEAD]);
+      if ((oldVal?.isNotEmpty ?? false) || (val?.isNotEmpty ?? false))
+        _filter();
+    } else
       _filter();
-    }
   }
 
   List<String> get listNames {
@@ -97,7 +92,7 @@ class CollectionController extends ScrollingController {
   void _filter([bool updateHead = false]) {
     if (_lists.isEmpty) return;
 
-    final searchLower = _search.toLowerCase();
+    final searchLower = _search?.toLowerCase() ?? '';
     final tagIdIn = filters.tagIdIn;
     final tagIdNotIn = filters.tagIdNotIn;
 
@@ -108,7 +103,7 @@ class CollectionController extends ScrollingController {
       if (searchLower.isNotEmpty) {
         bool contains = false;
         for (final title in entry.titles)
-          if (title.toLowerCase().contains(search)) {
+          if (title.toLowerCase().contains(searchLower)) {
             contains = true;
             break;
           }

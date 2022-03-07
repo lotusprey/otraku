@@ -120,7 +120,7 @@ class MediaInfoView {
             explCtrl.filters.clear(false);
             explCtrl.filters.genreIn.add(model.genres[index]);
             explCtrl.type = model.type;
-            explCtrl.search = '';
+            explCtrl.search = null;
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(ctx, (r) => r.isFirst);
           },
@@ -311,7 +311,7 @@ class __TagsState extends State<_Tags> {
             explCtrl.filters.clear(false);
             explCtrl.filters.tagIn.add(tags[i].name);
             explCtrl.type = ctrl.model!.info.type;
-            explCtrl.search = '';
+            explCtrl.search = null;
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
@@ -382,7 +382,7 @@ class __TagsState extends State<_Tags> {
               explCtrl.filters.clear(false);
               explCtrl.filters.tagIn.add(tags[i].name);
               explCtrl.type = ctrl.model!.info.type;
-              explCtrl.search = '';
+              explCtrl.search = null;
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigator.popUntil(context, (r) => r.isFirst);
             },

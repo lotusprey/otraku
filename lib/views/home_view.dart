@@ -63,19 +63,28 @@ class _HomeViewState extends State<HomeView> {
                 feedCtrl.scrollUpTo(0);
                 return;
               case HomeView.ANIME_LIST:
-                animeCtrl.scrollCtrl.pos.pixels > 0
-                    ? animeCtrl.scrollUpTo(0)
-                    : animeCtrl.searchMode = !animeCtrl.searchMode;
+                if (animeCtrl.scrollCtrl.pos.pixels > 0)
+                  animeCtrl.scrollUpTo(0);
+                else
+                  animeCtrl.search == null
+                      ? animeCtrl.search = ''
+                      : animeCtrl.search = null;
                 return;
               case HomeView.MANGA_LIST:
-                mangaCtrl.scrollCtrl.pos.pixels > 0
-                    ? mangaCtrl.scrollUpTo(0)
-                    : mangaCtrl.searchMode = !mangaCtrl.searchMode;
+                if (mangaCtrl.scrollCtrl.pos.pixels > 0)
+                  mangaCtrl.scrollUpTo(0);
+                else
+                  mangaCtrl.search == null
+                      ? mangaCtrl.search = ''
+                      : mangaCtrl.search = null;
                 return;
               case HomeView.EXPLORE:
-                exploreCtrl.scrollCtrl.pos.pixels > 0
-                    ? exploreCtrl.scrollUpTo(0)
-                    : exploreCtrl.searchMode = !exploreCtrl.searchMode;
+                if (exploreCtrl.scrollCtrl.pos.pixels > 0)
+                  exploreCtrl.scrollUpTo(0);
+                else
+                  exploreCtrl.search == null
+                      ? exploreCtrl.search = ''
+                      : exploreCtrl.search = null;
                 return;
               case HomeView.USER:
                 userCtrl.scrollUpTo(0);
@@ -95,16 +104,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
-    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.searchMode) {
-      exploreCtrl.searchMode = false;
+    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.search != null) {
+      exploreCtrl.search = null;
       return SynchronousFuture(false);
     }
-    if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.searchMode) {
-      animeCtrl.searchMode = false;
+    if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.search != null) {
+      animeCtrl.search = null;
       return SynchronousFuture(false);
     }
-    if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.searchMode) {
-      mangaCtrl.searchMode = false;
+    if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.search != null) {
+      mangaCtrl.search = null;
       return SynchronousFuture(false);
     }
 

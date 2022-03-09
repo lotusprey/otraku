@@ -13,6 +13,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
+import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/layouts/chip_grids.dart';
@@ -78,6 +79,7 @@ class FilterView extends StatelessWidget {
         children: [
           GridView(
             shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 140,
               height: 75,
@@ -275,17 +277,23 @@ class TagSheetBody extends StatefulWidget {
 
 class _TagSheetBodyState extends State<TagSheetBody> {
   late final TagGroupModel _tags;
+  late final List<int> _categoryIndices;
+  late final List<int> _itemIndices;
+  String _filter = '';
   int _index = 0;
 
   @override
   void initState() {
     super.initState();
     _tags = Get.find<TagGroupController>().model!;
+    _itemIndices = [..._tags.categoryItems[_index]];
+    _categoryIndices = [];
+    for (int i = 0; i < _tags.categoryNames.length; i++)
+      _categoryIndices.add(i);
   }
 
   @override
   Widget build(BuildContext context) {
-    final listItems = _tags.categoryItems[_index];
     late final List<String> inclusive;
     late final List<String> exclusive;
     if (_index > 0) {
@@ -298,60 +306,131 @@ class _TagSheetBodyState extends State<TagSheetBody> {
 
     return Stack(
       children: [
-        ListView.builder(
-          physics: Consts.PHYSICS,
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 10,
-            top: 60,
+        if (_itemIndices.isNotEmpty)
+          ListView.builder(
+            physics: Consts.PHYSICS,
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              bottom: 10,
+              top: 90,
+            ),
+            controller: widget.scrollCtrl,
+            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+            itemCount: _itemIndices.length,
+            itemBuilder: (_, i) {
+              final name = _tags.names[_itemIndices[i]];
+              return CheckBoxTriField(
+                key: UniqueKey(),
+                title: name,
+                initial: inclusive.contains(name)
+                    ? 1
+                    : exclusive.contains(name)
+                        ? -1
+                        : 0,
+                onChanged: (state) {
+                  if (state == 0)
+                    exclusive.remove(name);
+                  else if (state == 1)
+                    inclusive.add(name);
+                  else {
+                    inclusive.remove(name);
+                    exclusive.add(name);
+                  }
+                },
+              );
+            },
+          )
+        else
+          Center(
+            child: Text(
+              'No Results',
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
           ),
-          controller: widget.scrollCtrl,
-          itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
-          itemCount: listItems.length,
-          itemBuilder: (_, i) {
-            final name = _tags.names[listItems[i]];
-            return CheckBoxTriField(
-              key: UniqueKey(),
-              title: name,
-              initial: inclusive.contains(name)
-                  ? 1
-                  : exclusive.contains(name)
-                      ? -1
-                      : 0,
-              onChanged: (state) {
-                if (state == 0)
-                  exclusive.remove(name);
-                else if (state == 1)
-                  inclusive.add(name);
-                else {
-                  inclusive.remove(name);
-                  exclusive.add(name);
-                }
-              },
-            );
-          },
-        ),
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
           child: BackdropFilter(
             filter: Consts.filter,
             child: Container(
-              height: 60,
+              height: 95,
               color: Theme.of(context).cardColor,
-              child: ListView.builder(
-                physics: Consts.PHYSICS,
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                scrollDirection: Axis.horizontal,
-                itemCount: _tags.categoryNames.length,
-                itemBuilder: (_, i) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: ChipOptionField(
-                    name: _tags.categoryNames[i],
-                    selected: i == _index,
-                    onTap: () => setState(() => _index = i),
+              padding: const EdgeInsets.only(top: 10, bottom: 5),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      bottom: 5,
+                    ),
+                    child: SearchField(
+                      hint: 'Tag',
+                      value: _filter,
+                      onChange: (val) {
+                        _filter = val.toLowerCase();
+                        _categoryIndices.clear();
+                        _itemIndices.clear();
+
+                        categoryLoop:
+                        for (int i = 0; i < _tags.categoryNames.length; i++)
+                          for (final j in _tags.categoryItems[i])
+                            if (_tags.names[j]
+                                .toLowerCase()
+                                .contains(_filter)) {
+                              _categoryIndices.add(i);
+                              continue categoryLoop;
+                            }
+
+                        if (_categoryIndices.isEmpty) {
+                          _index = 0;
+                          setState(() {});
+                          return;
+                        }
+
+                        if (_index >= _categoryIndices.length)
+                          _index = _categoryIndices.length - 1;
+
+                        final itemsIndex = _categoryIndices[_index];
+                        for (final i in _tags.categoryItems[itemsIndex])
+                          if (_tags.names[i].toLowerCase().contains(_filter))
+                            _itemIndices.add(i);
+
+                        setState(() {});
+                      },
+                    ),
                   ),
-                ),
+                  SizedBox(
+                    height: 40,
+                    child: ListView.builder(
+                      physics: Consts.PHYSICS,
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _categoryIndices.length,
+                      itemBuilder: (_, i) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: ChipOptionField(
+                          name: _tags.categoryNames[_categoryIndices[i]],
+                          selected: i == _index,
+                          onTap: () {
+                            if (_index == i) return;
+
+                            _index = i;
+                            _itemIndices.clear();
+
+                            final itemsIndex = _categoryIndices[_index];
+                            for (final i in _tags.categoryItems[itemsIndex])
+                              if (_tags.names[i]
+                                  .toLowerCase()
+                                  .contains(_filter)) _itemIndices.add(i);
+
+                            setState(() {});
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -6,7 +6,7 @@ class SearchField extends StatefulWidget {
   SearchField({
     required this.hint,
     required this.onChange,
-    this.value = '',
+    required this.value,
     this.onHide,
   });
 

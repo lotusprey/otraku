@@ -27,27 +27,31 @@ class OpaqueSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget? sheet;
 
-    return DraggableScrollableSheet(
-      expand: false,
-      maxChildSize: 0.9,
-      initialChildSize: height,
-      minChildSize: height < 0.25 ? height : 0.25,
-      builder: (context, scrollCtrl) {
-        if (sheet == null)
-          sheet = Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
-                borderRadius:
-                    const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: DraggableScrollableSheet(
+        expand: false,
+        maxChildSize: 0.9,
+        initialChildSize: height,
+        minChildSize: height < 0.25 ? height : 0.25,
+        builder: (context, scrollCtrl) {
+          if (sheet == null)
+            sheet = Center(
+              child: Container(
+                constraints:
+                    const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+                ),
+                child: builder(context, scrollCtrl),
               ),
-              child: builder(context, scrollCtrl),
-            ),
-          );
+            );
 
-        return sheet!;
-      },
+          return sheet!;
+        },
+      ),
     );
   }
 }
@@ -107,53 +111,51 @@ class OpaqueSheetView extends StatelessWidget {
     return DraggableScrollableSheet(
       expand: false,
       maxChildSize: 0.9,
-      initialChildSize: 0.7,
       builder: (context, scrollCtrl) {
-        if (sheet == null)
-          sheet = Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_WIDE),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
-                borderRadius:
-                    const BorderRadius.vertical(top: Consts.RADIUS_MAX),
-              ),
-              child: Stack(
-                children: [
-                  builder(context, scrollCtrl),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: Consts.filter,
-                        child: Container(
-                          height:
-                              MediaQuery.of(context).viewPadding.bottom + 50,
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                            bottom: MediaQuery.of(context).viewPadding.bottom,
-                          ),
-                          color: Theme.of(context).cardColor,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: Settings().leftHanded
-                                ? buttons.reversed.toList()
-                                : buttons,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-
+        if (sheet == null) sheet = _sheetBody(context, scrollCtrl);
         return sheet!;
       },
     );
   }
+
+  Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
+      Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_WIDE),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+          ),
+          child: Stack(
+            children: [
+              builder(context, scrollCtrl),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: Consts.filter,
+                    child: Container(
+                      height: MediaQuery.of(context).viewPadding.bottom + 50,
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        bottom: MediaQuery.of(context).viewPadding.bottom,
+                      ),
+                      color: Theme.of(context).cardColor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: Settings().leftHanded
+                            ? buttons.reversed.toList()
+                            : buttons,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }
 
 /// Buttons, typically used in [OpaqueSheetView]

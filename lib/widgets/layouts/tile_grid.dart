@@ -32,10 +32,10 @@ class TileGrid extends StatelessWidget {
       top: 15,
     );
 
-    final gridDelegate = SliverGridDelegateWithMaxWidthAndAddedHeight(
-      maxWidth: 125,
-      additionalHeight: 40,
-      rawWHRatio: full ? 0.65 : 1.0,
+    final gridDelegate = SliverGridDelegateWithMinWidthAndExtraHeight(
+      minWidth: 100,
+      extraHeight: 40,
+      rawHWRatio: full ? 1.53 : 1.0,
     );
 
     if (scrollCtrl != null)

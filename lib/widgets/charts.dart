@@ -21,7 +21,7 @@ class BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double maxHeight = 200.0;
+    double maxHeight = 190.0;
     num maxValue = 0;
     for (final v in values) if (maxValue < v) maxValue = v;
     maxHeight /= maxValue;
@@ -68,20 +68,20 @@ class BarChart extends StatelessWidget {
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  height: values[i] * maxHeight,
+                  height: values[i] * maxHeight + 10,
                   margin: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: const [0.5, 1],
+                      stops: const [0, 1],
                       colors: [
                         Theme.of(context).colorScheme.secondary,
                         Theme.of(context)
                             .colorScheme
                             .secondary
-                            .withOpacity(0.2),
+                            .withOpacity(0.1),
                       ],
                     ),
                   ),
@@ -100,7 +100,8 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  PieChart({required this.title, required this.names, required this.values});
+  PieChart({required this.title, required this.names, required this.values})
+      : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
@@ -122,9 +123,9 @@ class PieChart extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              stops: const [0.5, 1],
+              stops: const [0, 1],
               colors: [
-                Theme.of(context).colorScheme.surface.withOpacity(0.4),
+                Theme.of(context).colorScheme.surface.withOpacity(0.3),
                 Theme.of(context).colorScheme.surface,
               ],
             ),
@@ -195,6 +196,7 @@ class PieChart extends StatelessWidget {
 /// make the [categories] distinguishable.
 class _PieLines extends CustomPainter {
   _PieLines(this.colour, this.categories);
+
   final Color colour;
   final List<int> categories;
 
@@ -212,10 +214,11 @@ class _PieLines extends CustomPainter {
 
     final radius = math.min(size.width, size.height) / 2;
     final center = Offset(radius, radius);
+    final offset = math.pi * 2 - categories.length * 0.05;
     double angle = math.pi;
 
     for (int i = 0; i < categories.length; i++) {
-      angle -= categories[i] / total * math.pi * 2;
+      angle -= 0.05 + (categories[i] / total) * offset;
 
       final point = Offset(
         center.dx + radius * math.sin(angle),

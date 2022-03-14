@@ -10,6 +10,8 @@ import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:path_provider_android/path_provider_android.dart';
+import 'package:path_provider_ios/path_provider_ios.dart';
 import 'package:workmanager/workmanager.dart';
 
 final _notificationPlugin = FlutterLocalNotificationsPlugin();
@@ -88,6 +90,14 @@ class BackgroundHandler {
 
 void _fetch() => Workmanager().executeTask((_, __) async {
       // Initialise local settings.
+
+      // After Flutter 2.11, remove unnecessary path_provider
+      // versions and uncomment the following line:
+      //
+      // DartPluginRegistrant.ensureInitialized();
+      if (Platform.isAndroid) PathProviderAndroid.registerWith();
+      if (Platform.isIOS) PathProviderIOS.registerWith();
+
       await Settings.init();
       if (Settings().selectedAccount == null) return true;
 

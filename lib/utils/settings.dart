@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/utils/theming.dart';
+import 'package:path_provider/path_provider.dart';
 
 // Local settings.
 class Settings {
@@ -87,7 +89,11 @@ class Settings {
     if (_didInit) return Future.value(true);
     _didInit = true;
 
-    await Hive.initFlutter();
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Configure home directory if not in the browser.
+    if (!kIsWeb) Hive.init((await getApplicationDocumentsDirectory()).path);
+
     await Hive.openBox(_SETTINGS);
     _it = Settings._read();
   }

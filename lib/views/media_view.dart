@@ -7,6 +7,7 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
+import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -25,7 +26,7 @@ class MediaView extends StatelessWidget {
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
 
-    const keys = [ValueKey(0), ValueKey(1), ValueKey(2)];
+    const keys = [ValueKey(0), ValueKey(1), ValueKey(2), ValueKey(3)];
 
     return GetBuilder<MediaController>(
       init: MediaController(id),
@@ -55,27 +56,40 @@ class MediaView extends StatelessWidget {
             onSame: (_) => ctrl.scrollUpTo(0),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
-                if (goRight && ctrl.otherTab < 2) {
+                if (goRight && !ctrl.otherTabToggled) {
                   ctrl.scrollUpTo(0);
-                  ctrl.otherTab++;
+                  ctrl.otherTabToggled = true;
                   return true;
                 }
-                if (!goRight && ctrl.otherTab > 0) {
+                if (!goRight && ctrl.otherTabToggled) {
                   ctrl.scrollUpTo(0);
-                  ctrl.otherTab--;
+                  ctrl.otherTabToggled = false;
+                  return true;
+                }
+              }
+
+              if (ctrl.tab == MediaController.PEOPLE) {
+                if (goRight && !ctrl.peopleTabToggled) {
+                  ctrl.scrollUpTo(0);
+                  ctrl.peopleTabToggled = true;
+                  return true;
+                }
+                if (!goRight && ctrl.peopleTabToggled) {
+                  ctrl.scrollUpTo(0);
+                  ctrl.peopleTabToggled = false;
                   return true;
                 }
               }
 
               if (ctrl.tab == MediaController.SOCIAL) {
-                if (goRight && ctrl.socialTab < 1) {
+                if (goRight && !ctrl.socialTabToggled) {
                   ctrl.scrollUpTo(0);
-                  ctrl.socialTab++;
+                  ctrl.socialTabToggled = true;
                   return true;
                 }
-                if (!goRight && ctrl.socialTab > 0) {
+                if (!goRight && ctrl.socialTabToggled) {
                   ctrl.scrollUpTo(0);
-                  ctrl.socialTab--;
+                  ctrl.socialTabToggled = false;
                   return true;
                 }
               }
@@ -85,8 +99,9 @@ class MediaView extends StatelessWidget {
             floating: _ActionButtons(ctrl),
             items: const {
               'Info': Ionicons.book_outline,
-              'Other': Icons.emoji_people_outlined,
-              'Social': Icons.rate_review_outlined,
+              'Other': Ionicons.layers_outline,
+              'People': Icons.emoji_people_outlined,
+              'Social': Ionicons.stats_chart_outline,
             },
             child: GetBuilder<MediaController>(
               key: keys[ctrl.tab],
@@ -101,6 +116,8 @@ class MediaView extends StatelessWidget {
                     ...MediaInfoView.children(context, ctrl)
                   else if (ctrl.tab == MediaController.OTHER)
                     ...MediaOtherView.children(context, ctrl)
+                  else if (ctrl.tab == MediaController.PEOPLE)
+                    ...MediaPeopleView.children(context, ctrl)
                   else
                     ...MediaSocialView.children(context, ctrl),
                   footer,
@@ -129,9 +146,8 @@ class __ActionButtonsState extends State<_ActionButtons> {
     final model = widget.ctrl.model!;
 
     List<Widget> children = [
-      if (widget.ctrl.tab == MediaController.OTHER &&
-          widget.ctrl.otherTab == MediaController.CHARACTERS &&
-          model.characters.items.isNotEmpty &&
+      if (widget.ctrl.tab == MediaController.PEOPLE &&
+          !widget.ctrl.peopleTabToggled &&
           widget.ctrl.availableLanguages.length > 1) ...[
         ActionButton(
           tooltip: 'Language',

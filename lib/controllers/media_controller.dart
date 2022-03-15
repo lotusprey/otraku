@@ -8,16 +8,8 @@ class MediaController extends ScrollingController {
   // Tabs.
   static const INFO = 0;
   static const OTHER = 1;
-  static const SOCIAL = 2;
-
-  // Tabs of 'Other'.
-  static const RELATIONS = 0;
-  static const CHARACTERS = 1;
-  static const STAFF = 2;
-
-  // Tabs of 'Social'.
-  static const REVIEWS = 0;
-  static const STATS = 1;
+  static const PEOPLE = 2;
+  static const SOCIAL = 3;
 
   // GetBuilder ids.
   static const ID_BASE = 0;
@@ -29,13 +21,12 @@ class MediaController extends ScrollingController {
   final int id;
   MediaModel? _model;
   int _tab = INFO;
-  int _otherTab = RELATIONS;
-  int _socialTab = REVIEWS;
+  bool _otherTabToggled = false;
+  bool _peopleTabToggled = false;
+  bool _socialTabToggled = false;
   int _language = 0;
   bool showSpoilerTags = false;
-  final _availableLanguages = <String>[];
-
-  List<String> get availableLanguages => [..._availableLanguages];
+  final availableLanguages = <String>[];
 
   MediaModel? get model => _model;
 
@@ -51,15 +42,21 @@ class MediaController extends ScrollingController {
     update([ID_OUTER]);
   }
 
-  int get otherTab => _otherTab;
-  set otherTab(final int val) {
-    _otherTab = val;
+  bool get otherTabToggled => _otherTabToggled;
+  set otherTabToggled(bool val) {
+    _otherTabToggled = val;
+    update([ID_INNER]);
+  }
+
+  bool get peopleTabToggled => _peopleTabToggled;
+  set peopleTabToggled(bool val) {
+    _peopleTabToggled = val;
     update([ID_OUTER]);
   }
 
-  int get socialTab => _socialTab;
-  set socialTab(final int val) {
-    _socialTab = val;
+  bool get socialTabToggled => _socialTabToggled;
+  set socialTabToggled(bool val) {
+    _socialTabToggled = val;
     update([ID_INNER]);
   }
 
@@ -74,6 +71,7 @@ class MediaController extends ScrollingController {
       'id': id,
       'withMain': true,
       'withDetails': true,
+      'withRecommendations': true,
       'withCharacters': true,
       'withStaff': true,
       'withReviews': true,
@@ -81,7 +79,8 @@ class MediaController extends ScrollingController {
     if (result == null) return;
 
     _model = MediaModel(result['Media']);
-    _model!.addCharacters(result['Media'], _availableLanguages);
+    _model!.addRecommendations(result['Media']);
+    _model!.addCharacters(result['Media'], availableLanguages);
     _model!.addStaff(result['Media']);
 
     update([ID_BASE]);
@@ -91,48 +90,64 @@ class MediaController extends ScrollingController {
   Future<void> fetchPage() async {
     if (_model == null) return;
 
-    if (_tab == OTHER) {
-      if (_tab == CHARACTERS && _model!.characters.hasNextPage ||
-          _tab == STAFF && _model!.staff.hasNextPage) return _fetchOtherPage();
+    switch (_tab) {
+      case OTHER:
+        if (!_otherTabToggled || !_model!.recommendations.hasNextPage) return;
 
-      return;
+        final result = await Client.request(GqlQuery.media, {
+          'id': id,
+          'withRecommendations': true,
+          'recommendationPage': _model!.recommendations.nextPage,
+        });
+
+        if (result == null) return;
+        _model!.addRecommendations(result['Media']);
+
+        update([ID_INNER]);
+        return;
+      case PEOPLE:
+        if (!_peopleTabToggled) {
+          if (!_model!.characters.hasNextPage) return;
+
+          final result = await Client.request(GqlQuery.media, {
+            'id': id,
+            'withCharacters': true,
+            'characterPage': _model!.characters.nextPage,
+          });
+
+          if (result == null) return;
+          _model!.addCharacters(result['Media'], availableLanguages);
+        } else {
+          if (!_model!.staff.hasNextPage) return;
+
+          final result = await Client.request(GqlQuery.media, {
+            'id': id,
+            'withStaff': true,
+            'staffPage': _model!.staff.nextPage,
+          });
+
+          if (result == null) return;
+          _model!.addStaff(result['Media']);
+        }
+        update([ID_INNER]);
+        return;
+      case SOCIAL:
+        if (_socialTabToggled || !_model!.reviews.hasNextPage) return;
+
+        final result = await Client.request(GqlQuery.media, {
+          'id': id,
+          'withReviews': true,
+          'reviewPage': _model!.reviews.nextPage,
+        });
+
+        if (result == null) return;
+        _model!.addReviews(result['Media']);
+
+        update([ID_INNER]);
+        return;
+      default:
+        return;
     }
-
-    if (_tab == SOCIAL && _socialTab == REVIEWS && _model!.reviews.hasNextPage)
-      return _fetchReviewPage();
-  }
-
-  Future<void> _fetchOtherPage() async {
-    final ofCharacters = _otherTab == CHARACTERS;
-
-    final result = await Client.request(GqlQuery.media, {
-      'id': id,
-      'withCharacters': ofCharacters,
-      'withStaff': !ofCharacters,
-      'characterPage': _model!.characters.nextPage,
-      'staffPage': _model!.staff.nextPage,
-    });
-
-    if (result == null) return;
-    if (ofCharacters)
-      _model!.addCharacters(result['Media'], _availableLanguages);
-    else
-      _model!.addStaff(result['Media']);
-
-    update([ID_INNER]);
-  }
-
-  Future<void> _fetchReviewPage() async {
-    final result = await Client.request(GqlQuery.media, {
-      'id': id,
-      'withReviews': true,
-      'reviewPage': _model!.reviews.nextPage,
-    });
-
-    if (result == null) return;
-    _model!.addReviews(result['Media']);
-
-    update([ID_INNER]);
   }
 
   Future<bool> toggleFavourite() async {
@@ -142,6 +157,20 @@ class MediaController extends ScrollingController {
     );
     if (data != null) _model!.info.isFavourite = !_model!.info.isFavourite;
     return _model!.info.isFavourite;
+  }
+
+  // TODO validation error from GraphQl?
+  Future<bool> rateRecommendation(int recommendationId, bool? rating) async {
+    final data = await Client.request(GqlMutation.rateRecommendation, {
+      'id': id,
+      'recommendationId': recommendationId,
+      'rating': rating == null
+          ? 'NO_RATING'
+          : rating
+              ? 'RATE_UP'
+              : 'RATE_DOWN',
+    });
+    return data != null;
   }
 
   @override

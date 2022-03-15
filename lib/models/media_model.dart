@@ -1,6 +1,7 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
+import 'package:otraku/models/recommended_model.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/models/related_media_model.dart';
@@ -13,10 +14,12 @@ class MediaModel {
   late EditModel entry;
   final MediaStatsModel stats;
   final List<RelatedMediaModel> otherMedia;
+  final _recommendations = PageModel<RecommendedModel>();
   final _characters = PageModel<ConnectionModel>();
   final _staff = PageModel<ConnectionModel>();
   final _reviews = PageModel<RelatedReviewModel>();
 
+  PageModel<RecommendedModel> get recommendations => _recommendations;
   PageModel<ConnectionModel> get characters => _characters;
   PageModel<ConnectionModel> get staff => _staff;
   PageModel<RelatedReviewModel> get reviews => _reviews;
@@ -31,7 +34,7 @@ class MediaModel {
   factory MediaModel(final Map<String, dynamic> map) {
     final other = <RelatedMediaModel>[];
     for (final relation in map['relations']['edges'])
-      other.add(RelatedMediaModel(relation));
+      if (relation['node'] != null) other.add(RelatedMediaModel(relation));
 
     return MediaModel._(
       info: MediaInfoModel(map),
@@ -41,17 +44,25 @@ class MediaModel {
     )..addReviews(map);
   }
 
-  void addCharacters(
-    final Map<String, dynamic> map,
-    final List<String?> availableLanguages,
-  ) {
+  void addRecommendations(Map<String, dynamic> map) {
+    final items = <RecommendedModel>[];
+    for (final rec in map['recommendations']['nodes'])
+      if (rec['mediaRecommendation'] != null) items.add(RecommendedModel(rec));
+
+    _recommendations.append(
+      items,
+      map['recommendations']['pageInfo']['hasNextPage'],
+    );
+  }
+
+  void addCharacters(Map<String, dynamic> map, List<String> languages) {
     final items = <ConnectionModel>[];
     for (final connection in map['characters']['edges']) {
       final voiceActors = <ConnectionModel>[];
       for (final va in connection['voiceActors']) {
         final language = Convert.clarifyEnum(va['language']);
-        if (!availableLanguages.contains(language))
-          availableLanguages.add(language);
+        if (language != null && !languages.contains(language))
+          languages.add(language);
 
         voiceActors.add(ConnectionModel(
           id: va['id'],
@@ -75,7 +86,7 @@ class MediaModel {
     _characters.append(items, map['characters']['pageInfo']['hasNextPage']);
   }
 
-  void addStaff(final Map<String, dynamic> map) {
+  void addStaff(Map<String, dynamic> map) {
     final items = <ConnectionModel>[];
     for (final connection in map['staff']['edges'])
       items.add(ConnectionModel(
@@ -89,7 +100,7 @@ class MediaModel {
     _staff.append(items, map['staff']['pageInfo']['hasNextPage']);
   }
 
-  void addReviews(final Map<String, dynamic> map) {
+  void addReviews(Map<String, dynamic> map) {
     final items = <RelatedReviewModel>[];
     for (final r in map['reviews']['nodes'])
       try {

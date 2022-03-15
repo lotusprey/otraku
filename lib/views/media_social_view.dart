@@ -18,19 +18,16 @@ abstract class MediaSocialView {
     return [
       SliverShadowAppBar([
         BubbleTabs(
-          items: const {
-            'Reviews': MediaController.REVIEWS,
-            'Stats': MediaController.STATS,
-          },
-          current: () => ctrl.socialTab,
-          onChanged: (int val) {
+          items: const {'Reviews': false, 'Stats': true},
+          current: () => ctrl.socialTabToggled,
+          onChanged: (bool val) {
             ctrl.scrollUpTo(0);
-            ctrl.socialTab = val;
+            ctrl.socialTabToggled = val;
           },
           onSame: () => ctrl.scrollUpTo(0),
         ),
       ]),
-      if (ctrl.socialTab == MediaController.REVIEWS)
+      if (!ctrl.socialTabToggled)
         _ReviewGrid(model.reviews.items, model.info.banner)
       else ...[
         if (model.stats.rankTexts.isNotEmpty)

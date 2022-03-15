@@ -16,6 +16,9 @@ abstract class Consts {
       AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
   static final filter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);
 
+  // Optimal height to width ratio for a media cover.
+  static const COVER_HW_RATIO = 1.53;
+
   // Layout sizes.
   static const OVERLAY_WIDE = 600.0;
   static const OVERLAY_TIGHT = 400.0;

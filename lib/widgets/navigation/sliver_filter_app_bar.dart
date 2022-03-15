@@ -117,7 +117,9 @@ class SliverExploreAppBar extends StatelessWidget {
             if (type == Explorable.anime || type == Explorable.manga)
               _FilterIcon(ctrl.filters)
             else if (type == Explorable.character || type == Explorable.staff)
-              _BirthdayIcon(ctrl),
+              _BirthdayIcon(ctrl)
+            else
+              const SizedBox(width: 10),
           ],
         );
       },

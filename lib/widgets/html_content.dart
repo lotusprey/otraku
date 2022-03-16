@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -60,6 +61,19 @@ class HtmlContent extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.primary,
               borderRadius: Consts.BORDER_RAD_MIN,
+            ),
+          );
+
+        if (element.localName == 'img')
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: ClipRRect(
+              borderRadius: Consts.BORDER_RAD_MIN,
+              child: FadeImage(
+                element.attributes['src'] ?? '',
+                width: null,
+                height: null,
+              ),
             ),
           );
 

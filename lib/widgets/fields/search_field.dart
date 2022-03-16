@@ -60,6 +60,7 @@ class _SearchFieldState extends State<SearchField> {
                 tooltip: 'Clear',
                 iconSize: Consts.ICON_SMALL,
                 icon: const Icon(Icons.close_rounded),
+                color: Theme.of(context).colorScheme.onBackground,
                 splashColor: Colors.transparent,
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
@@ -73,6 +74,7 @@ class _SearchFieldState extends State<SearchField> {
                     tooltip: 'Hide',
                     iconSize: Consts.ICON_SMALL,
                     icon: const Icon(Ionicons.chevron_forward_outline),
+                    color: Theme.of(context).colorScheme.onBackground,
                     splashColor: Colors.transparent,
                     padding: const EdgeInsets.all(0),
                     onPressed: widget.onHide,

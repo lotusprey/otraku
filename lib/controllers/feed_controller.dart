@@ -36,7 +36,7 @@ class FeedController extends ScrollingController {
 
   @override
   Future<void> fetchPage({bool clean = false}) async {
-    if (!_activities.hasNextPage) return;
+    if (!clean && !_activities.hasNextPage) return;
     _isLoading = true;
 
     if (clean) {

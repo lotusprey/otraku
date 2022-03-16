@@ -26,7 +26,7 @@ class RecommendedModel {
   }
 
   final int id;
-  final int rating;
+  int rating;
   bool? userRating;
   final String title;
   final Explorable type;

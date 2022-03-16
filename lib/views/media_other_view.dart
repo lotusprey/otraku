@@ -73,44 +73,52 @@ class _RelationsGrid extends StatelessWidget {
             id: items[i].id,
             imageUrl: items[i].imageUrl,
             explorable: items[i].type,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Hero(
-                  tag: items[i].id,
-                  child: ClipRRect(
-                    borderRadius: Consts.BORDER_RAD_MIN,
-                    child: Container(
-                      color: Theme.of(context).colorScheme.surface,
-                      child: FadeImage(
-                        items[i].imageUrl,
-                        width: 100 / Consts.COVER_HW_RATIO,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: Consts.BORDER_RAD_MIN,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Hero(
+                    tag: items[i].id,
+                    child: ClipRRect(
+                      borderRadius: Consts.BORDER_RAD_MIN,
+                      child: Container(
+                        color: Theme.of(context).colorScheme.surface,
+                        child: FadeImage(
+                          items[i].imageUrl,
+                          width: 100 / Consts.COVER_HW_RATIO,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          items[i].title,
-                          overflow: TextOverflow.fade,
-                        ),
+                  Expanded(
+                    child: Padding(
+                      padding: Consts.PADDING,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              items[i].title,
+                              overflow: TextOverflow.fade,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          RichText(
+                            text: TextSpan(
+                              style: Theme.of(context).textTheme.subtitle1,
+                              children: details,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 5),
-                      RichText(
-                        text: TextSpan(
-                          style: Theme.of(context).textTheme.subtitle1,
-                          children: details,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -200,18 +208,34 @@ class __RatingState extends State<_Rating> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // TODO update count
         GestureDetector(
           onTap: () {
-            final old = widget.model.userRating;
-            setState(
-              () => widget.model.userRating != true
-                  ? widget.model.userRating = true
-                  : widget.model.userRating = null,
-            );
+            final oldRating = widget.model.rating;
+            final oldUserRating = widget.model.userRating;
+
+            setState(() {
+              switch (widget.model.userRating) {
+                case true:
+                  widget.model.rating--;
+                  widget.model.userRating = null;
+                  break;
+                case false:
+                  widget.model.rating += 2;
+                  widget.model.userRating = true;
+                  break;
+                case null:
+                  widget.model.rating++;
+                  widget.model.userRating = true;
+                  break;
+              }
+            });
 
             widget.rate(widget.model.id, widget.model.userRating).then((ok) {
-              if (!ok) setState(() => widget.model.userRating = old);
+              if (!ok)
+                setState(() {
+                  widget.model.rating = oldRating;
+                  widget.model.userRating = oldUserRating;
+                });
             });
           },
           child: Icon(
@@ -227,15 +251,32 @@ class __RatingState extends State<_Rating> {
         const SizedBox(width: 5),
         GestureDetector(
           onTap: () {
-            final old = widget.model.userRating;
-            setState(
-              () => widget.model.userRating != false
-                  ? widget.model.userRating = false
-                  : widget.model.userRating = null,
-            );
+            final oldRating = widget.model.rating;
+            final oldUserRating = widget.model.userRating;
+
+            setState(() {
+              switch (widget.model.userRating) {
+                case true:
+                  widget.model.rating -= 2;
+                  widget.model.userRating = false;
+                  break;
+                case false:
+                  widget.model.rating--;
+                  widget.model.userRating = null;
+                  break;
+                case null:
+                  widget.model.rating--;
+                  widget.model.userRating = false;
+                  break;
+              }
+            });
 
             widget.rate(widget.model.id, widget.model.userRating).then((ok) {
-              if (!ok) setState(() => widget.model.userRating = old);
+              if (!ok)
+                setState(() {
+                  widget.model.rating = oldRating;
+                  widget.model.userRating = oldUserRating;
+                });
             });
           },
           child: Icon(

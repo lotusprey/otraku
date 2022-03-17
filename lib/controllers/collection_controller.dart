@@ -86,7 +86,7 @@ class CollectionController extends ScrollingController {
 
   void _onFilterChange(bool withSort) {
     if (withSort) for (final list in _lists) list.sort(filters.sort);
-    _filter();
+    _filter(true);
   }
 
   void _filter([bool updateHead = false]) {

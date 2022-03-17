@@ -71,6 +71,7 @@ class SliverCollectionAppBar extends StatelessWidget {
               );
             },
           ),
+          _ReleaseFilterIcon(ctrl),
           _FilterIcon(ctrl.filters),
         ]);
       },
@@ -237,6 +238,39 @@ class _FilterIconState extends State<_FilterIcon> {
     if (f is ExploreFilterModel && f.onList != null) return true;
 
     return false;
+  }
+}
+
+class _ReleaseFilterIcon extends StatefulWidget {
+  const _ReleaseFilterIcon(this.ctrl);
+
+  final CollectionController ctrl;
+
+  @override
+  State<_ReleaseFilterIcon> createState() => __ReleaseFilterIconState();
+}
+
+class __ReleaseFilterIconState extends State<_ReleaseFilterIcon> {
+  @override
+  Widget build(BuildContext context) {
+    final releaseMode = widget.ctrl.filters.releaseMode;
+    return AppBarIcon(
+      icon: Ionicons.tv_outline,
+      tooltip: releaseMode == null
+          ? 'Show Releasing'
+          : releaseMode
+              ? 'Show Finished'
+              : 'Show All',
+      colour: releaseMode == null
+          ? null
+          : releaseMode
+              ? Theme.of(context).colorScheme.secondary
+              : Theme.of(context).colorScheme.error,
+      onTap: () {
+        widget.ctrl.filters.toggleReleaseMode();
+        setState(() {});
+      },
+    );
   }
 }
 

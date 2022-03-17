@@ -115,7 +115,5 @@ class Theming with ChangeNotifier {
       error: Color(0xFFE32749),
       onError: Color(0xFFE0EBF5),
     ),
-    // 'Custom #1': ThemeModel.read(_CUSTOM_1),
-    // 'Custom #2': ThemeModel.read(_CUSTOM_2),
   };
 }

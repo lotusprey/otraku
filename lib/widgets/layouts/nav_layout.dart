@@ -57,7 +57,9 @@ class NavLayout extends StatelessWidget {
       },
     );
 
-    final full = MediaQuery.of(context).size.width > items.length * 130;
+    // Navigation bar item width.
+    final width =
+        MediaQuery.of(context).size.width > items.length * 130 ? 130.0 : 50.0;
 
     return Scaffold(
       extendBody: true,
@@ -82,15 +84,10 @@ class NavLayout extends StatelessWidget {
                 for (int i = 0; i < items.length; i++)
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      if (i != index)
-                        onChanged(i);
-                      else
-                        onSame(i);
-                    },
+                    onTap: () => i != index ? onChanged(i) : onSame(i),
                     child: SizedBox(
                       height: double.infinity,
-                      width: full ? 130 : 50,
+                      width: width,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -100,7 +97,7 @@ class NavLayout extends StatelessWidget {
                                 ? null
                                 : Theme.of(context).colorScheme.secondary,
                           ),
-                          if (full) ...[
+                          if (width > 50) ...[
                             const SizedBox(width: 5),
                             Text(
                               items.keys.elementAt(i),

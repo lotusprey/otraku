@@ -58,6 +58,12 @@ class ThemeModel {
           error: error,
           onError: onError,
         ),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: secondary,
           selectionColor: highlight,

@@ -56,15 +56,17 @@ class SettingsView extends StatelessWidget {
           ];
 
         return NavLayout(
-          index: ctrl.settingsTab,
-          onChanged: (i) => ctrl.settingsTab = i,
-          onSame: (_) => ctrl.scrollUpTo(0),
-          items: const {
-            'App': Ionicons.color_palette_outline,
-            'Content': Ionicons.tv_outline,
-            'Notifications': Ionicons.notifications_outline,
-            'About': Ionicons.information_outline,
-          },
+          navRow: NavIconRow(
+            index: ctrl.settingsTab,
+            onChanged: (i) => ctrl.settingsTab = i,
+            onSame: (_) => ctrl.scrollUpTo(0),
+            items: const {
+              'App': Ionicons.color_palette_outline,
+              'Content': Ionicons.tv_outline,
+              'Notifications': Ionicons.notifications_outline,
+              'About': Ionicons.information_outline,
+            },
+          ),
           appBar: ShadowAppBar(title: _pageNames[ctrl.settingsTab]),
           child: _tabs![ctrl.settingsTab],
         );

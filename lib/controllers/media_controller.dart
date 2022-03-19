@@ -24,15 +24,15 @@ class MediaController extends ScrollingController {
   bool _otherTabToggled = false;
   bool _peopleTabToggled = false;
   bool _socialTabToggled = false;
-  int _language = 0;
+  int _langIndex = 0;
   bool showSpoilerTags = false;
-  final availableLanguages = <String>[];
+  final languages = <String>[];
 
   MediaModel? get model => _model;
 
-  int get language => _language;
-  set language(int val) {
-    _language = val;
+  int get langIndex => _langIndex;
+  set langIndex(int val) {
+    _langIndex = val;
     update([ID_INNER]);
   }
 
@@ -80,7 +80,7 @@ class MediaController extends ScrollingController {
 
     _model = MediaModel(result['Media']);
     _model!.addRecommendations(result['Media']);
-    _model!.addCharacters(result['Media'], availableLanguages);
+    _model!.addCharacters(result['Media'], languages);
     _model!.addStaff(result['Media']);
 
     update([ID_BASE]);
@@ -116,7 +116,7 @@ class MediaController extends ScrollingController {
           });
 
           if (result == null) return;
-          _model!.addCharacters(result['Media'], availableLanguages);
+          _model!.addCharacters(result['Media'], languages);
         } else {
           if (!_model!.staff.hasNextPage) return;
 
@@ -159,11 +159,10 @@ class MediaController extends ScrollingController {
     return _model!.info.isFavourite;
   }
 
-  // TODO validation error from GraphQl?
   Future<bool> rateRecommendation(int recommendationId, bool? rating) async {
     final data = await Client.request(GqlMutation.rateRecommendation, {
       'id': id,
-      'recommendationId': recommendationId,
+      'recommendedId': recommendationId,
       'rating': rating == null
           ? 'NO_RATING'
           : rating

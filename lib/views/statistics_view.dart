@@ -25,16 +25,18 @@ class StatisticsView extends StatelessWidget {
       tag: id.toString(),
       builder: (ctrl) {
         return NavLayout(
-          index: ctrl.onAnime ? 0 : 1,
-          onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
-          onSame: (_) => ctrl.scrollUpTo(0),
+          navRow: NavIconRow(
+            index: ctrl.onAnime ? 0 : 1,
+            onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
+            onSame: (_) => ctrl.scrollUpTo(0),
+            items: const {
+              'Anime': Ionicons.film_outline,
+              'Manga': Ionicons.bookmark_outline,
+            },
+          ),
           appBar: ShadowAppBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
-          items: const {
-            'Anime': Ionicons.film_outline,
-            'Manga': Ionicons.bookmark_outline,
-          },
           child: ListView(
             controller: ctrl.scrollCtrl,
             key: ctrl.onAnime ? keyAnime : keyManga,

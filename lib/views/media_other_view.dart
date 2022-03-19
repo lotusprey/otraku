@@ -261,7 +261,7 @@ class __RatingState extends State<_Rating> {
                   widget.model.userRating = false;
                   break;
                 case false:
-                  widget.model.rating--;
+                  widget.model.rating++;
                   widget.model.userRating = null;
                   break;
                 case null:

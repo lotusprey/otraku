@@ -22,12 +22,13 @@ class MediaPeopleView {
           padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
           sliver: !ctrl.peopleTabToggled
               ? _PeopleGrid(
-                  items: ctrl.model!.characters.items,
+                  items: ctrl.model!.charactersByLanguage(
+                    ctrl.languages[ctrl.langIndex],
+                  ),
                   placeholder: 'No Characters',
-                  preferredSubtitle:
-                      ctrl.language < ctrl.availableLanguages.length
-                          ? ctrl.availableLanguages[ctrl.language]
-                          : null,
+                  preferredSubtitle: ctrl.langIndex < ctrl.languages.length
+                      ? ctrl.languages[ctrl.langIndex]
+                      : null,
                 )
               : _PeopleGrid(
                   items: ctrl.model!.staff.items,

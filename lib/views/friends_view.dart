@@ -22,16 +22,18 @@ class FriendsView extends StatelessWidget {
       init: FriendsController(id, onFollowing),
       tag: id.toString(),
       builder: (ctrl) => NavLayout(
-        index: ctrl.onFollowing ? 0 : 1,
-        onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
-        onSame: (_) => ctrl.scrollUpTo(0),
+        navRow: NavIconRow(
+          index: ctrl.onFollowing ? 0 : 1,
+          onChanged: (page) => ctrl.onFollowing = page == 0 ? true : false,
+          onSame: (_) => ctrl.scrollUpTo(0),
+          items: const {
+            'Following': Ionicons.people_circle,
+            'Followers': Ionicons.person_circle,
+          },
+        ),
         appBar: ShadowAppBar(
           title: ctrl.onFollowing ? 'Following' : 'Followers',
         ),
-        items: const {
-          'Following': Ionicons.people_circle,
-          'Followers': Ionicons.person_circle,
-        },
         child: ctrl.users.isNotEmpty
             ? TileGrid(
                 models: ctrl.users,

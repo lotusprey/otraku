@@ -51,9 +51,17 @@ class MediaView extends StatelessWidget {
           id: MediaController.ID_OUTER,
           tag: id.toString(),
           builder: (_) => NavLayout(
-            index: ctrl.tab,
-            onChanged: (page) => ctrl.tab = page,
-            onSame: (_) => ctrl.scrollUpTo(0),
+            navRow: NavIconRow(
+              index: ctrl.tab,
+              onChanged: (page) => ctrl.tab = page,
+              onSame: (_) => ctrl.scrollUpTo(0),
+              items: const {
+                'Info': Ionicons.book_outline,
+                'Other': Ionicons.layers_outline,
+                'People': Icons.emoji_people_outlined,
+                'Social': Ionicons.stats_chart_outline,
+              },
+            ),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
                 if (goRight && !ctrl.otherTabToggled) {
@@ -97,12 +105,6 @@ class MediaView extends StatelessWidget {
               return false;
             },
             floating: _ActionButtons(ctrl),
-            items: const {
-              'Info': Ionicons.book_outline,
-              'Other': Ionicons.layers_outline,
-              'People': Icons.emoji_people_outlined,
-              'Social': Ionicons.stats_chart_outline,
-            },
             child: GetBuilder<MediaController>(
               key: keys[ctrl.tab],
               id: MediaController.ID_INNER,
@@ -148,18 +150,18 @@ class __ActionButtonsState extends State<_ActionButtons> {
     List<Widget> children = [
       if (widget.ctrl.tab == MediaController.PEOPLE &&
           !widget.ctrl.peopleTabToggled &&
-          widget.ctrl.availableLanguages.length > 1) ...[
+          widget.ctrl.languages.length > 1) ...[
         ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
           onTap: () => showSheet(
             context,
             DynamicGradientDragSheet(
-              onTap: (i) => widget.ctrl.language = i,
-              itemCount: widget.ctrl.availableLanguages.length,
+              onTap: (i) => widget.ctrl.langIndex = i,
+              itemCount: widget.ctrl.languages.length,
               itemBuilder: (_, i) => Text(
-                widget.ctrl.availableLanguages[i],
-                style: i != widget.ctrl.language
+                widget.ctrl.languages[i],
+                style: i != widget.ctrl.langIndex
                     ? Theme.of(context).textTheme.headline1
                     : Theme.of(context).textTheme.headline1?.copyWith(
                           color: Theme.of(context).colorScheme.secondary,

@@ -53,51 +53,53 @@ class _HomeViewState extends State<HomeView> {
       builder: (homeCtrl) => WillPopScope(
         onWillPop: () => _onWillPop(context),
         child: NavLayout(
-          index: homeCtrl.homeTab,
+          navRow: NavIconRow(
+            index: homeCtrl.homeTab,
+            onChanged: (i) => homeCtrl.homeTab = i,
+            items: const {
+              'Feed': Ionicons.file_tray_outline,
+              'Anime': Ionicons.film_outline,
+              'Manga': Ionicons.bookmark_outline,
+              'Explore': Ionicons.compass_outline,
+              'Profile': Ionicons.person_outline,
+            },
+            onSame: (i) {
+              switch (i) {
+                case HomeView.FEED:
+                  feedCtrl.scrollUpTo(0);
+                  return;
+                case HomeView.ANIME_LIST:
+                  if (animeCtrl.scrollCtrl.pos.pixels > 0)
+                    animeCtrl.scrollUpTo(0);
+                  else
+                    animeCtrl.search == null
+                        ? animeCtrl.search = ''
+                        : animeCtrl.search = null;
+                  return;
+                case HomeView.MANGA_LIST:
+                  if (mangaCtrl.scrollCtrl.pos.pixels > 0)
+                    mangaCtrl.scrollUpTo(0);
+                  else
+                    mangaCtrl.search == null
+                        ? mangaCtrl.search = ''
+                        : mangaCtrl.search = null;
+                  return;
+                case HomeView.EXPLORE:
+                  if (exploreCtrl.scrollCtrl.pos.pixels > 0)
+                    exploreCtrl.scrollUpTo(0);
+                  else
+                    exploreCtrl.search == null
+                        ? exploreCtrl.search = ''
+                        : exploreCtrl.search = null;
+                  return;
+                case HomeView.USER:
+                  userCtrl.scrollUpTo(0);
+                  return;
+              }
+            },
+          ),
           child: tabs[homeCtrl.homeTab],
           floating: fabs[homeCtrl.homeTab],
-          onChanged: (i) => homeCtrl.homeTab = i,
-          onSame: (i) {
-            switch (i) {
-              case HomeView.FEED:
-                feedCtrl.scrollUpTo(0);
-                return;
-              case HomeView.ANIME_LIST:
-                if (animeCtrl.scrollCtrl.pos.pixels > 0)
-                  animeCtrl.scrollUpTo(0);
-                else
-                  animeCtrl.search == null
-                      ? animeCtrl.search = ''
-                      : animeCtrl.search = null;
-                return;
-              case HomeView.MANGA_LIST:
-                if (mangaCtrl.scrollCtrl.pos.pixels > 0)
-                  mangaCtrl.scrollUpTo(0);
-                else
-                  mangaCtrl.search == null
-                      ? mangaCtrl.search = ''
-                      : mangaCtrl.search = null;
-                return;
-              case HomeView.EXPLORE:
-                if (exploreCtrl.scrollCtrl.pos.pixels > 0)
-                  exploreCtrl.scrollUpTo(0);
-                else
-                  exploreCtrl.search == null
-                      ? exploreCtrl.search = ''
-                      : exploreCtrl.search = null;
-                return;
-              case HomeView.USER:
-                userCtrl.scrollUpTo(0);
-                return;
-            }
-          },
-          items: const {
-            'Feed': Ionicons.file_tray_outline,
-            'Anime': Ionicons.film_outline,
-            'Manga': Ionicons.bookmark_outline,
-            'Explore': Ionicons.compass_outline,
-            'Profile': Ionicons.person_outline,
-          },
         ),
       ),
     );

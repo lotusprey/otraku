@@ -38,26 +38,9 @@ class SliverCollectionAppBar extends StatelessWidget {
         return SliverTransparentAppBar([
           leading,
           _MediaSearchField(
-            hint: ctrl.currentName,
             value: ctrl.search,
+            title: ctrl.currentName,
             onChanged: (val) => ctrl.search = val,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    ctrl.currentName,
-                    style: Theme.of(context).textTheme.headline1,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Text(
-                  ' ${ctrl.currentCount}',
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ],
-            ),
           ),
           AppBarIcon(
             tooltip: 'Random',
@@ -92,28 +75,10 @@ class SliverExploreAppBar extends StatelessWidget {
           [
             const SizedBox(width: 10),
             _MediaSearchField(
-              hint: Convert.clarifyEnum(type.name)!,
               value: ctrl.search,
+              title: Convert.clarifyEnum(type.name)!,
               onChanged:
                   type != Explorable.review ? (val) => ctrl.search = val : null,
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    type.icon,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
-                  const SizedBox(width: 15),
-                  Flexible(
-                    child: Text(
-                      Convert.clarifyEnum(type.name)!,
-                      style: Theme.of(context).textTheme.headline1,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ),
-                ],
-              ),
             ),
             if (type == Explorable.anime || type == Explorable.manga)
               _FilterIcon(ctrl.filters)
@@ -131,13 +96,11 @@ class SliverExploreAppBar extends StatelessWidget {
 class _MediaSearchField extends StatefulWidget {
   _MediaSearchField({
     required this.title,
-    required this.hint,
     required this.value,
     required this.onChanged,
   });
 
-  final Widget title;
-  final String hint;
+  final String title;
   final String? value;
 
   /// If [null], search mode cannot be turned on; [value] & [hint] are ignored.
@@ -169,7 +132,14 @@ class _MediaSearchFieldState extends State<_MediaSearchField> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (_value == null) ...[
-            Expanded(child: widget.title),
+            Expanded(
+              child: Text(
+                widget.title,
+                style: Theme.of(context).textTheme.headline1,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
             if (widget.onChanged != null)
               AppBarIcon(
                 tooltip: 'Search',
@@ -180,7 +150,7 @@ class _MediaSearchFieldState extends State<_MediaSearchField> {
             Expanded(
               child: SearchField(
                 value: _value!,
-                hint: widget.hint,
+                hint: widget.title,
                 onChange: (val) => widget.onChanged?.call(val),
                 onHide: () => widget.onChanged?.call(null),
               ),

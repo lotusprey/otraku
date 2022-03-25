@@ -1,10 +1,10 @@
+import 'package:otraku/models/relation_model.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
@@ -17,15 +17,17 @@ class StaffController extends ScrollingController {
 
   final int id;
   StaffModel? _model;
-  final _characters = PageModel<ConnectionModel>();
-  final _roles = PageModel<ConnectionModel>();
+  final _media = <RelationModel>[];
+  final _characters = PageModel<RelationModel>();
+  final _roles = PageModel<RelationModel>();
   bool _onCharacters = true;
-  MediaSort _sort = MediaSort.POPULARITY_DESC;
+  MediaSort _sort = MediaSort.START_DATE_DESC;
   bool? _onList;
 
   StaffModel? get model => _model;
-  List<ConnectionModel> get characters => _characters.items;
-  List<ConnectionModel> get roles => _roles.items;
+  List<RelationModel> get media => _media;
+  List<RelationModel> get characters => _characters.items;
+  List<RelationModel> get roles => _roles.items;
 
   bool get onCharacters => _onCharacters;
   set onCharacters(bool val) {
@@ -111,32 +113,37 @@ class StaffController extends ScrollingController {
   }
 
   void _initCharacters(Map<String, dynamic> data, bool clear) {
-    if (clear) _characters.clear();
+    if (clear) {
+      _characters.clear();
+      _media.clear();
+    }
 
-    final connections = <ConnectionModel>[];
-    for (final connection in data['characterMedia']['edges'])
-      for (final char in connection['characters'])
-        if (char != null)
-          connections.add(ConnectionModel(
-              id: char['id'],
-              title: char['name']['userPreferred'],
-              imageUrl: char['image']['large'],
-              type: Explorable.character,
-              subtitle: Convert.clarifyEnum(connection['characterRole']),
-              other: [
-                ConnectionModel(
-                  id: connection['node']['id'],
-                  title: connection['node']['title']['userPreferred'],
-                  imageUrl: connection['node']['coverImage']['extraLarge'],
-                  subtitle: Convert.clarifyEnum(connection['node']['format']),
-                  type: connection['node']['type'] == 'ANIME'
-                      ? Explorable.anime
-                      : Explorable.manga,
-                ),
-              ]));
+    final items = <RelationModel>[];
+    for (final m in data['characterMedia']['edges'])
+      for (final c in m['characters']) {
+        if (c == null) continue;
+
+        _media.add(RelationModel(
+          id: m['node']['id'],
+          title: m['node']['title']['userPreferred'],
+          imageUrl: m['node']['coverImage']['extraLarge'],
+          subtitle: Convert.clarifyEnum(m['node']['format']),
+          type: m['node']['type'] == 'ANIME'
+              ? Explorable.anime
+              : Explorable.manga,
+        ));
+
+        items.add(RelationModel(
+          id: c['id'],
+          title: c['name']['userPreferred'],
+          imageUrl: c['image']['large'],
+          type: Explorable.character,
+          subtitle: Convert.clarifyEnum(m['characterRole']),
+        ));
+      }
 
     _characters.append(
-      connections,
+      items,
       data['characterMedia']['pageInfo']['hasNextPage'],
     );
   }
@@ -144,20 +151,19 @@ class StaffController extends ScrollingController {
   void _initRoles(Map<String, dynamic> data, bool clear) {
     if (clear) _roles.clear();
 
-    final connections = <ConnectionModel>[];
-    for (final connection in data['staffMedia']['edges'])
-      connections.add(ConnectionModel(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['extraLarge'],
-        type: connection['node']['type'] == 'ANIME'
-            ? Explorable.anime
-            : Explorable.manga,
-        subtitle: Convert.clarifyEnum(connection['staffRole']),
+    final items = <RelationModel>[];
+    for (final s in data['staffMedia']['edges'])
+      items.add(RelationModel(
+        id: s['node']['id'],
+        title: s['node']['title']['userPreferred'],
+        imageUrl: s['node']['coverImage']['extraLarge'],
+        subtitle: s['staffRole'],
+        type:
+            s['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       ));
 
     _roles.append(
-      connections,
+      items,
       data['staffMedia']['pageInfo']['hasNextPage'],
     );
   }

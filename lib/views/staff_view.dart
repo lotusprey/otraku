@@ -10,10 +10,10 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/layouts/relation_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
 import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/layouts/connections_grid.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -119,34 +119,27 @@ class StaffView extends StatelessWidget {
                     },
                   ),
                 ]),
-                GetBuilder<StaffController>(
-                  id: StaffController.ID_MEDIA,
-                  tag: id.toString(),
-                  builder: (ctrl) {
-                    final connections =
-                        ctrl.onCharacters ? ctrl.characters : ctrl.roles;
-
-                    if (connections.isEmpty)
-                      return SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: Text(
-                            'No resuts',
-                            style: Theme.of(context).textTheme.subtitle1,
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    left: 10,
+                    right: 10,
+                    bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+                  ),
+                  sliver: GetBuilder<StaffController>(
+                    id: StaffController.ID_MEDIA,
+                    tag: id.toString(),
+                    builder: (ctrl) => ctrl.onCharacters
+                        ? RelationGrid(
+                            items: ctrl.characters,
+                            connections: ctrl.media,
+                            placeholder: 'No characters',
+                          )
+                        : RelationGrid(
+                            items: ctrl.roles,
+                            placeholder: 'No Roles',
                           ),
-                        ),
-                      );
-
-                    return SliverPadding(
-                      padding: EdgeInsets.only(
-                        top: 10,
-                        left: 10,
-                        right: 10,
-                        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
-                      ),
-                      sliver: ConnectionsGrid(connections: connections),
-                    );
-                  },
+                  ),
                 ),
               ],
             ),

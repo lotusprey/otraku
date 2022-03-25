@@ -157,7 +157,10 @@ class __ActionButtonsState extends State<_ActionButtons> {
           onTap: () => showSheet(
             context,
             DynamicGradientDragSheet(
-              onTap: (i) => widget.ctrl.langIndex = i,
+              onTap: (i) {
+                widget.ctrl.scrollUpTo(0);
+                widget.ctrl.langIndex = i;
+              },
               itemCount: widget.ctrl.languages.length,
               itemBuilder: (_, i) => Text(
                 widget.ctrl.languages[i],

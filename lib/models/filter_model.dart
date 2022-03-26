@@ -64,7 +64,17 @@ class CollectionFilterModel extends FilterModel<EntrySort> {
     super.clear(refresh);
     tagIdIn.clear();
     tagIdNotIn.clear();
-    if (refresh) onChange?.call(false);
+
+    final defaultSort =
+        ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
+
+    if (sort == defaultSort) {
+      if (refresh) onChange?.call(false);
+      return;
+    }
+
+    sort = defaultSort;
+    if (refresh) onChange?.call(true);
   }
 
   @override
@@ -132,6 +142,7 @@ class ExploreFilterModel extends FilterModel<MediaSort> {
   void clear(bool refresh) {
     super.clear(refresh);
     onList = null;
+    sort = Settings().defaultExploreSort;
     if (refresh) onChange?.call();
   }
 

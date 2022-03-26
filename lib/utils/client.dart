@@ -12,25 +12,10 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 abstract class Client {
   static final _url = Uri.parse('https://graphql.anilist.co');
 
-  static const _idQuery = 'query Id {Viewer {id}}';
-
-  static const _HEADERS_AUTH_KEY = 'Authorization';
   static const _TOKEN_0 = 'token0';
   static const _TOKEN_1 = 'token1';
 
-  static final Map<String, String> _headers = {
-    'Accept': 'application/json',
-    'Content-type': 'application/json',
-  };
-
   static String? _accessToken;
-
-  static set _token(String? v) {
-    _accessToken = v;
-    v != null
-        ? _headers[_HEADERS_AUTH_KEY] = 'Bearer $_accessToken'
-        : _headers.remove(_HEADERS_AUTH_KEY);
-  }
 
   // Save credentials to an account.
   static Future<void> register(
@@ -69,7 +54,7 @@ abstract class Client {
       }
 
       // Try to acquire the token from the storage.
-      _token = await FlutterSecureStorage()
+      _accessToken = await FlutterSecureStorage()
           .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
 
       if (_accessToken == null) return false;
@@ -77,10 +62,10 @@ abstract class Client {
 
     // Fetch the viewer's id, if needed.
     if (Settings().idOf(account) == null) {
-      final data = await request(_idQuery);
+      final data = await request('query Id {Viewer {id}}');
       Settings().setIdOf(account, data?['Viewer']?['id']);
       if (Settings().idOf(account) == null) {
-        _token = null;
+        _accessToken = null;
         return false;
       }
     }
@@ -90,7 +75,7 @@ abstract class Client {
 
   // Log out and show available accounts.
   static Future<void> logOut() async {
-    _token = null;
+    _accessToken = null;
     Settings().selectedAccount = null;
     BackgroundHandler.clearNotifications();
     final context = RouteArg.navKey.currentContext;
@@ -118,7 +103,11 @@ abstract class Client {
     final response = await post(
       _url,
       body: json.encode({'query': query, 'variables': variables}),
-      headers: _headers,
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $_accessToken',
+      },
     ).catchError((e) => err = e);
 
     if (err != null) {

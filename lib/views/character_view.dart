@@ -9,7 +9,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/layouts/relation_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
@@ -318,8 +318,8 @@ class _Details extends StatelessWidget {
           const SizedBox(height: 10),
           if (model.description.isNotEmpty)
             Expanded(
-              child: InputFieldStructure(
-                title: 'Description',
+              child: LabeledField(
+                label: 'Description',
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(

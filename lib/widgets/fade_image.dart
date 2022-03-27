@@ -19,22 +19,19 @@ class FadeImage extends StatelessWidget {
   final Alignment alignment;
 
   @override
-  Widget build(BuildContext context) {
-    return FadeInImage.memoryNetwork(
-      fit: fit,
-      image: imageUrl,
-      width: width,
-      height: height,
-      alignment: alignment,
-      fadeInDuration: Consts.FADE_DURATION,
-      fadeOutDuration: Consts.FADE_DURATION,
-      placeholder: _transparentImage,
-      imageErrorBuilder: (_, err, stackTrace) =>
-          const SizedBox(height: 5, width: 5),
-    );
-  }
+  Widget build(BuildContext context) => FadeInImage.memoryNetwork(
+        fit: fit,
+        image: imageUrl,
+        width: width,
+        height: height,
+        alignment: alignment,
+        fadeInDuration: Consts.FADE_DURATION,
+        fadeOutDuration: Consts.FADE_DURATION,
+        placeholder: _transparentImage,
+        imageErrorBuilder: (_, err, stackTrace) =>
+            const SizedBox(height: 5, width: 5),
+      );
 
-  // A transparent image
   static final Uint8List _transparentImage = Uint8List.fromList(<int>[
     0x89,
     0x50,

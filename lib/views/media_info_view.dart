@@ -8,7 +8,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -102,8 +102,8 @@ class MediaInfoView {
                 borderRadius: Consts.BORDER_RAD_MIN,
                 color: Theme.of(ctx).colorScheme.surface,
               ),
-              child: InputFieldStructure(
-                title: infoTitles[i],
+              child: LabeledField(
+                label: infoTitles[i],
                 child: Text(infoChildren[i].toString()),
               ),
             ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/labeled_field.dart';
 
 class DropDownField<T> extends StatefulWidget {
   DropDownField({
@@ -50,8 +50,8 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
         ),
       ));
 
-    return InputFieldStructure(
-      title: widget.title,
+    return LabeledField(
+      label: widget.title,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(

@@ -6,8 +6,9 @@ import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 
-class ScorePicker extends StatelessWidget {
-  ScorePicker(this.model);
+// Score picker.
+class ScoreField extends StatelessWidget {
+  ScoreField(this.model);
 
   final EditModel model;
 

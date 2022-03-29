@@ -9,6 +9,7 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
     this.mainAxisSpacing = 10.0,
     this.crossAxisSpacing = 10.0,
   })  : assert(minWidth > 0),
+        assert(height > 0),
         assert(mainAxisSpacing >= 0),
         assert(crossAxisSpacing >= 0);
 

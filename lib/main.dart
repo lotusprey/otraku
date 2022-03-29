@@ -24,6 +24,13 @@ class _AppState extends State<App> {
         navigatorKey: RouteArg.navKey,
         initialRoute: RouteArg.auth,
         onGenerateRoute: RouteArg.generateRoute,
+
+        /// Override the [textScaleFactor] as to not break the app visually.
+        /// [child] shouldn't be null, because [onGenerateRoute] is provided.
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
+          child: child!,
+        ),
       );
 
   @override

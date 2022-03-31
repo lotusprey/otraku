@@ -15,7 +15,7 @@ class Theming with ChangeNotifier {
 
   late ThemeModel _theme;
 
-  ThemeModel get theme => _theme;
+  ThemeData get theme => _theme.themeData;
 
   void _setTheme() {
     final mode = Settings().themeMode;
@@ -28,7 +28,17 @@ class Theming with ChangeNotifier {
         : mode == ThemeMode.dark;
 
     _theme = _themes.values.elementAt(isDark ? dark : light);
-    SystemChrome.setSystemUIOverlayStyle(_theme.overlayStyle);
+
+    final overlayBrightness = _theme.brightness == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: _theme.background,
+      statusBarBrightness: _theme.brightness,
+      statusBarIconBrightness: overlayBrightness,
+      systemNavigationBarColor: _theme.background,
+      systemNavigationBarIconBrightness: overlayBrightness,
+    ));
   }
 
   void refresh() {

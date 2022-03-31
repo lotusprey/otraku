@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:otraku/constants/consts.dart';
 
 class ThemeModel {
@@ -20,22 +19,9 @@ class ThemeModel {
 
   Color get highlight => primary.withAlpha(100);
 
-  SystemUiOverlayStyle get overlayStyle {
-    final overlayBrightness =
-        brightness == Brightness.dark ? Brightness.light : Brightness.dark;
-
-    return SystemUiOverlayStyle(
-      statusBarColor: background,
-      statusBarBrightness: brightness,
-      statusBarIconBrightness: overlayBrightness,
-      systemNavigationBarColor: background,
-      systemNavigationBarIconBrightness: overlayBrightness,
-    );
-  }
-
   ThemeData get themeData => ThemeData(
         fontFamily: 'Rubik',
-        brightness: brightness,
+        useMaterial3: true,
         scaffoldBackgroundColor: background,
         cardColor: translucent,
         disabledColor: primary,
@@ -72,8 +58,9 @@ class ThemeModel {
         dialogTheme: DialogTheme(
           elevation: 10,
           backgroundColor: surface,
-          shape:
-              const RoundedRectangleBorder(borderRadius: Consts.BORDER_RAD_MIN),
+          shape: const RoundedRectangleBorder(
+            borderRadius: Consts.BORDER_RAD_MIN,
+          ),
           titleTextStyle: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
@@ -85,7 +72,6 @@ class ThemeModel {
             fontWeight: FontWeight.normal,
           ),
         ),
-        iconTheme: IconThemeData(color: primary, size: Consts.ICON_BIG),
         tooltipTheme: TooltipThemeData(
           padding: Consts.PADDING,
           decoration: BoxDecoration(
@@ -134,18 +120,7 @@ class ThemeModel {
             borderSide: BorderSide.none,
           ),
         ),
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Consts.FONT_MEDIUM,
-            )),
-            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.BORDER_RAD_MIN,
-            )),
-            foregroundColor: MaterialStateProperty.all(secondary),
-            overlayColor: MaterialStateProperty.all(highlight),
-          ),
-        ),
+        iconTheme: IconThemeData(color: primary, size: Consts.ICON_BIG),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
@@ -154,6 +129,18 @@ class ThemeModel {
             )),
             backgroundColor: MaterialStateProperty.all(secondary),
             foregroundColor: MaterialStateProperty.all(background),
+            overlayColor: MaterialStateProperty.all(highlight),
+            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+              borderRadius: Consts.BORDER_RAD_MIN,
+            )),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            textStyle: MaterialStateProperty.all(const TextStyle(
+              fontSize: Consts.FONT_MEDIUM,
+            )),
+            foregroundColor: MaterialStateProperty.all(secondary),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
               borderRadius: Consts.BORDER_RAD_MIN,

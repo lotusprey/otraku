@@ -19,7 +19,7 @@ class FavouritesController extends ScrollingController {
   set pageIndex(int index) {
     if (index < 0 || index > 4) return;
     _pageIndex = index;
-    scrollUpTo(0).then((_) => update());
+    scrollCtrl.scrollUpTo(0).then((_) => update());
   }
 
   @override

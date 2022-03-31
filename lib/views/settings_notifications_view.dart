@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/notification_type.dart';
@@ -9,10 +7,11 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsNotificationsView extends StatelessWidget {
-  SettingsNotificationsView(this.model, this.changes);
+  SettingsNotificationsView(this.model, this.changes, this.scrollCtrl);
 
   final SettingsModel model;
   final Map<String, dynamic> changes;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class SettingsNotificationsView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
-        controller: Get.find<HomeController>().scrollCtrl,
+        controller: scrollCtrl,
         physics: Consts.PHYSICS,
         slivers: [
           ...siteOptions,

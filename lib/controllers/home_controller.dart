@@ -12,21 +12,22 @@ class HomeController extends ScrollingController {
 
   SettingsModel? _siteSettings;
   late int _homeTab;
-  int _settingsTab = 0;
   int _notificationCount = 0;
+  late bool _onFeed = Settings().inboxOnFeed;
 
   SettingsModel? get siteSettings => _siteSettings;
+
+  bool get onFeed => _onFeed;
+  set onFeed(bool v) {
+    _onFeed = v;
+    Settings().inboxOnFeed = v;
+    update([ID_HOME]);
+  }
 
   int get homeTab => _homeTab;
   set homeTab(int v) {
     _homeTab = v;
     update([ID_HOME]);
-  }
-
-  int get settingsTab => _settingsTab;
-  set settingsTab(int v) {
-    _settingsTab = v;
-    update([ID_SETTINGS]);
   }
 
   int get notificationCount => _notificationCount;

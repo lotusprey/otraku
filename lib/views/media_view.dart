@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/media_info_view.dart';
@@ -54,7 +55,7 @@ class MediaView extends StatelessWidget {
             navRow: NavIconRow(
               index: ctrl.tab,
               onChanged: (page) => ctrl.tab = page,
-              onSame: (_) => ctrl.scrollUpTo(0),
+              onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
               items: const {
                 'Info': Ionicons.book_outline,
                 'Other': Ionicons.layers_outline,
@@ -65,12 +66,12 @@ class MediaView extends StatelessWidget {
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
                 if (goRight && !ctrl.otherTabToggled) {
-                  ctrl.scrollUpTo(0);
+                  ctrl.scrollCtrl.scrollUpTo(0);
                   ctrl.otherTabToggled = true;
                   return true;
                 }
                 if (!goRight && ctrl.otherTabToggled) {
-                  ctrl.scrollUpTo(0);
+                  ctrl.scrollCtrl.scrollUpTo(0);
                   ctrl.otherTabToggled = false;
                   return true;
                 }
@@ -78,12 +79,12 @@ class MediaView extends StatelessWidget {
 
               if (ctrl.tab == MediaController.PEOPLE) {
                 if (goRight && !ctrl.peopleTabToggled) {
-                  ctrl.scrollUpTo(0);
+                  ctrl.scrollCtrl.scrollUpTo(0);
                   ctrl.peopleTabToggled = true;
                   return true;
                 }
                 if (!goRight && ctrl.peopleTabToggled) {
-                  ctrl.scrollUpTo(0);
+                  ctrl.scrollCtrl.scrollUpTo(0);
                   ctrl.peopleTabToggled = false;
                   return true;
                 }
@@ -91,12 +92,12 @@ class MediaView extends StatelessWidget {
 
               if (ctrl.tab == MediaController.SOCIAL) {
                 if (goRight && !ctrl.socialTabToggled) {
-                  ctrl.scrollUpTo(0);
+                  ctrl.scrollCtrl.scrollUpTo(0);
                   ctrl.socialTabToggled = true;
                   return true;
                 }
                 if (!goRight && ctrl.socialTabToggled) {
-                  ctrl.scrollUpTo(0);
+                  ctrl.scrollCtrl.scrollUpTo(0);
                   ctrl.socialTabToggled = false;
                   return true;
                 }
@@ -158,7 +159,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
             context,
             DynamicGradientDragSheet(
               onTap: (i) {
-                widget.ctrl.scrollUpTo(0);
+                widget.ctrl.scrollCtrl.scrollUpTo(0);
                 widget.ctrl.langIndex = i;
               },
               itemCount: widget.ctrl.languages.length,

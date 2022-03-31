@@ -77,7 +77,7 @@ class ExploreController extends ScrollingController {
     if (clean) {
       _isLoading = true;
       _page = 1;
-      scrollUpTo(0);
+      scrollCtrl.scrollUpTo(0);
       update([ID_BODY]);
     }
 

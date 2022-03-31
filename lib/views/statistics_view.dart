@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -28,7 +29,7 @@ class StatisticsView extends StatelessWidget {
           navRow: NavIconRow(
             index: ctrl.onAnime ? 0 : 1,
             onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
-            onSame: (_) => ctrl.scrollUpTo(0),
+            onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
             items: const {
               'Anime': Ionicons.film_outline,
               'Manga': Ionicons.bookmark_outline,

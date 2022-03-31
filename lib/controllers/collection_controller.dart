@@ -80,7 +80,7 @@ class CollectionController extends ScrollingController {
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
-    scrollUpTo(0);
+    scrollCtrl.scrollUpTo(0);
     _filter(true);
   }
 
@@ -209,7 +209,7 @@ class CollectionController extends ScrollingController {
     for (final l in data['lists'])
       _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
 
-    scrollUpTo(0);
+    scrollCtrl.scrollUpTo(0);
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
     _filter(true);
@@ -311,7 +311,7 @@ class CollectionController extends ScrollingController {
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex && _listIndex != 0) {
           _listIndex--;
-          scrollUpTo(0);
+          scrollCtrl.scrollUpTo(0);
         }
         _lists.removeAt(i--);
       }
@@ -416,7 +416,7 @@ class CollectionController extends ScrollingController {
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex && _listIndex != 0) {
           _listIndex--;
-          scrollUpTo(0);
+          scrollCtrl.scrollUpTo(0);
         }
         _lists.removeAt(i--);
       }

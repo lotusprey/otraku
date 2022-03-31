@@ -4,6 +4,7 @@ import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -21,10 +22,10 @@ abstract class MediaSocialView {
           items: const {'Reviews': false, 'Stats': true},
           current: () => ctrl.socialTabToggled,
           onChanged: (bool val) {
-            ctrl.scrollUpTo(0);
+            ctrl.scrollCtrl.scrollUpTo(0);
             ctrl.socialTabToggled = val;
           },
-          onSame: () => ctrl.scrollUpTo(0),
+          onSame: () => ctrl.scrollCtrl.scrollUpTo(0),
         ),
       ]),
       if (!ctrl.socialTabToggled)

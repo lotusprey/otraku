@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,22 +17,27 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class OpaqueSheet extends StatelessWidget {
-  OpaqueSheet({required this.builder, this.height = 0.5});
+  OpaqueSheet({required this.builder, this.initialHeight});
 
   final Widget Function(BuildContext, ScrollController) builder;
-  final double height;
+  final double? initialHeight;
 
   @override
   Widget build(BuildContext context) {
     Widget? sheet;
+
+    double initialSize = initialHeight != null
+        ? initialHeight! / MediaQuery.of(context).size.height
+        : 0.5;
+    if (initialSize > 0.9) initialSize = 0.9;
 
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: DraggableScrollableSheet(
         expand: false,
         maxChildSize: 0.9,
-        initialChildSize: height,
-        minChildSize: height < 0.25 ? height : 0.25,
+        initialChildSize: initialSize,
+        minChildSize: initialSize < 0.25 ? initialSize : 0.25,
         builder: (context, scrollCtrl) {
           if (sheet == null)
             sheet = Center(
@@ -51,46 +55,6 @@ class OpaqueSheet extends StatelessWidget {
 
           return sheet!;
         },
-      ),
-    );
-  }
-}
-
-/// An implementation of [DraggableScrollableSheet]
-/// with opaque background and list selectable options.
-class SelectionOpaqueSheet<T> extends StatelessWidget {
-  SelectionOpaqueSheet({
-    required this.options,
-    required this.values,
-    required this.selected,
-  });
-
-  final List<String> options;
-  final List<T> values;
-  final List<T> selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final requiredHeight =
-        options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20;
-    double height = requiredHeight / MediaQuery.of(context).size.height;
-    if (height > 0.9) height = 0.9;
-
-    return OpaqueSheet(
-      height: height,
-      builder: (context, scrollCtrl) => ListView.builder(
-        controller: scrollCtrl,
-        physics: Consts.PHYSICS,
-        padding: Consts.PADDING,
-        itemCount: options.length,
-        itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
-        itemBuilder: (_, index) => CheckBoxField(
-          title: options[index],
-          initial: selected.contains(values[index]),
-          onChanged: (val) => val
-              ? selected.add(values[index])
-              : selected.remove(values[index]),
-        ),
       ),
     );
   }

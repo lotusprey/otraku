@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/theming.dart';
@@ -15,14 +13,16 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsAppView extends StatelessWidget {
-  const SettingsAppView();
+  SettingsAppView(this.scrollCtrl);
+
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
-        controller: Get.find<HomeController>().scrollCtrl,
+        controller: scrollCtrl,
         physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
@@ -58,7 +58,7 @@ class SettingsAppView extends StatelessWidget {
                 title: 'Startup Page',
                 value: Settings().defaultHomeTab,
                 items: {
-                  'Feed': HomeView.FEED,
+                  'Inbox': HomeView.INBOX,
                   'Anime List': HomeView.ANIME_LIST,
                   'Manga List': HomeView.MANGA_LIST,
                   'Explore': HomeView.EXPLORE,

@@ -22,6 +22,7 @@ class Settings {
     this._confirmExit,
     this._leftHanded,
     this._analogueClock,
+    this._inboxOnFeed,
     this._feedOnFollowing,
     this._feedActivityFilters,
     this._lastNotificationId,
@@ -46,6 +47,7 @@ class Settings {
       _box.get(_CONFIRM_EXIT) ?? false,
       _box.get(_LEFT_HANDED) ?? false,
       _box.get(_ANALOGUE_CLOCK) ?? false,
+      _box.get(_INBOX_ON_FEED) ?? true,
       _box.get(_FEED_ON_FOLLOWING) ?? false,
       _box.get(_FEED_ACTIVITY_FILTERS) ?? [0, 1, 2],
       _box.get(_LAST_NOTIFICATION_ID) ?? -1,
@@ -73,6 +75,7 @@ class Settings {
   static const _CONFIRM_EXIT = 'confirmExit';
   static const _LEFT_HANDED = 'leftHanded';
   static const _ANALOGUE_CLOCK = 'analogueClock';
+  static const _INBOX_ON_FEED = 'inboxOnFeed';
   static const _FEED_ON_FOLLOWING = 'feedOnFollowing';
   static const _FEED_ACTIVITY_FILTERS = 'feedActivityFilters';
   static const _LAST_NOTIFICATION_ID = 'lastNotificationId';
@@ -112,6 +115,7 @@ class Settings {
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
+  bool _inboxOnFeed;
   bool _feedOnFollowing;
   List<int> _feedActivityFilters;
   int _lastNotificationId;
@@ -133,6 +137,7 @@ class Settings {
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
+  bool get inboxOnFeed => _inboxOnFeed;
   bool get feedOnFollowing => _feedOnFollowing;
   List<int> get feedActivityFilters => _feedActivityFilters;
   int get lastNotificationId => _lastNotificationId;
@@ -233,6 +238,11 @@ class Settings {
   set analogueClock(bool v) {
     _analogueClock = v;
     _box.put(_ANALOGUE_CLOCK, v);
+  }
+
+  set inboxOnFeed(bool v) {
+    _inboxOnFeed = v;
+    _box.put(_INBOX_ON_FEED, v);
   }
 
   set feedOnFollowing(bool v) {

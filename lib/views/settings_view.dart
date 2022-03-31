@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/settings_app_view.dart';
 import 'package:otraku/views/settings_content_view.dart';
@@ -11,8 +12,21 @@ import 'package:otraku/views/settings_about_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
-class SettingsView extends StatelessWidget {
-  final changes = <String, dynamic>{};
+class SettingsView extends StatefulWidget {
+  @override
+  State<SettingsView> createState() => _SettingsViewState();
+}
+
+class _SettingsViewState extends State<SettingsView> {
+  final _changes = <String, dynamic>{};
+  final _ctrl = ScrollController();
+  int _tabIndex = 0;
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     const _pageNames = ['App', 'Content', 'Notifications', 'About'];
@@ -22,11 +36,11 @@ class SettingsView extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: HomeController.ID_SETTINGS,
       dispose: (state) async {
-        if (changes.isNotEmpty &&
+        if (_changes.isNotEmpty &&
             state.controller != null &&
-            await state.controller!.updateSettings(changes)) {
-          if (changes.containsKey('scoreFormat') ||
-              changes.containsKey('titleLanguage')) {
+            await state.controller!.updateSettings(_changes)) {
+          if (_changes.containsKey('scoreFormat') ||
+              _changes.containsKey('titleLanguage')) {
             Get.find<CollectionController>(
               tag: '${Settings().id}true',
             ).refetch();
@@ -34,12 +48,12 @@ class SettingsView extends StatelessWidget {
               tag: '${Settings().id}false',
             ).refetch();
           } else {
-            if (changes.containsKey('splitCompletedAnime'))
+            if (_changes.containsKey('splitCompletedAnime'))
               Get.find<CollectionController>(
                 tag: '${Settings().id}true',
               ).refetch();
 
-            if (changes.containsKey('splitCompletedManga'))
+            if (_changes.containsKey('splitCompletedManga'))
               Get.find<CollectionController>(
                 tag: '${Settings().id}false',
               ).refetch();
@@ -49,17 +63,17 @@ class SettingsView extends StatelessWidget {
       builder: (ctrl) {
         if (_tabs == null)
           _tabs = [
-            const SettingsAppView(),
-            SettingsContentView(ctrl.siteSettings!, changes),
-            SettingsNotificationsView(ctrl.siteSettings!, changes),
-            const SettingsAboutView(),
+            SettingsAppView(_ctrl),
+            SettingsContentView(ctrl.siteSettings!, _changes, _ctrl),
+            SettingsNotificationsView(ctrl.siteSettings!, _changes, _ctrl),
+            SettingsAboutView(_ctrl),
           ];
 
         return NavLayout(
           navRow: NavIconRow(
-            index: ctrl.settingsTab,
-            onChanged: (i) => ctrl.settingsTab = i,
-            onSame: (_) => ctrl.scrollUpTo(0),
+            index: _tabIndex,
+            onChanged: (i) => setState(() => _tabIndex = i),
+            onSame: (_) => _ctrl.scrollUpTo(0),
             items: const {
               'App': Ionicons.color_palette_outline,
               'Content': Ionicons.tv_outline,
@@ -67,8 +81,8 @@ class SettingsView extends StatelessWidget {
               'About': Ionicons.information_outline,
             },
           ),
-          appBar: ShadowAppBar(title: _pageNames[ctrl.settingsTab]),
-          child: _tabs![ctrl.settingsTab],
+          appBar: ShadowAppBar(title: _pageNames[_tabIndex]),
+          child: _tabs![_tabIndex],
         );
       },
     );

@@ -3,6 +3,7 @@ import 'package:otraku/models/recommended_model.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -16,10 +17,10 @@ class MediaOtherView {
             items: const {'Relations': false, 'Recommendations': true},
             current: () => ctrl.otherTabToggled,
             onChanged: (bool val) {
-              ctrl.scrollUpTo(0);
+              ctrl.scrollCtrl.scrollUpTo(0);
               ctrl.otherTabToggled = val;
             },
-            onSame: () => ctrl.scrollUpTo(0),
+            onSame: () => ctrl.scrollCtrl.scrollUpTo(0),
           ),
         ]),
         SliverPadding(

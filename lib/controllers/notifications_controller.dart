@@ -55,7 +55,7 @@ class NotificationsController extends ScrollingController {
     if (val < 0 || val > _filters.length) return;
     _filter = val;
     _fetch();
-    scrollUpTo(0);
+    scrollCtrl.scrollUpTo(0);
   }
 
   List<NotificationModel> get entries => _entries.items;

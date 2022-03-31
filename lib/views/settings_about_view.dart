@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -9,12 +7,14 @@ import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsAboutView extends StatelessWidget {
-  const SettingsAboutView();
+  SettingsAboutView(this.scrollCtrl);
+
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      controller: Get.find<HomeController>().scrollCtrl,
+      controller: scrollCtrl,
       physics: Consts.PHYSICS,
       padding: Consts.PADDING,
       children: [

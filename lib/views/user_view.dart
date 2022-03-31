@@ -12,10 +12,10 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class UserView extends StatelessWidget {
+  const UserView(this.id, this.avatarUrl);
+
   final int id;
   final String? avatarUrl;
-
-  const UserView(this.id, this.avatarUrl);
 
   @override
   Widget build(BuildContext context) =>
@@ -23,10 +23,11 @@ class UserView extends StatelessWidget {
 }
 
 class HomeUserView extends StatelessWidget {
+  const HomeUserView(this.id, this.avatarUrl, [this.scrollCtrl]);
+
   final int id;
   final String? avatarUrl;
-
-  const HomeUserView(this.id, this.avatarUrl);
+  final ScrollController? scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +45,17 @@ class HomeUserView extends StatelessWidget {
     return GetBuilder<UserController>(
       init: UserController(id),
       tag: id.toString(),
-      builder: (user) => CustomScrollView(
+      builder: (ctrl) => CustomScrollView(
         physics: Consts.PHYSICS,
+        controller: scrollCtrl,
         slivers: [
           UserHeader(
             id: id,
-            user: user.model,
+            user: ctrl.model,
             isMe: id == Settings().id,
             avatarUrl: avatarUrl,
           ),
-          if (user.model != null)
+          if (ctrl.model != null)
             SliverPadding(
               padding: padding,
               sliver: SliverGrid.extent(
@@ -143,7 +145,7 @@ class HomeUserView extends StatelessWidget {
                 ],
               ),
             ),
-          if (!(user.model?.description.isEmpty ?? true))
+          if (!(ctrl.model?.description.isEmpty ?? true))
             SliverToBoxAdapter(
               child: Container(
                 margin: padding,
@@ -152,7 +154,7 @@ class HomeUserView extends StatelessWidget {
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: Consts.BORDER_RAD_MIN,
                 ),
-                child: HtmlContent(user.model!.description),
+                child: HtmlContent(ctrl.model!.description),
               ),
             ),
           SliverToBoxAdapter(

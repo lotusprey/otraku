@@ -6,6 +6,7 @@ import 'package:otraku/models/character_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/models/relation_model.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -114,9 +115,9 @@ class CharacterView extends StatelessWidget {
                           current: () => ctrl.onAnime,
                           onChanged: (bool val) {
                             ctrl.onAnime = val;
-                            ctrl.scrollUpTo(offset);
+                            ctrl.scrollCtrl.scrollUpTo(offset);
                           },
-                          onSame: () => ctrl.scrollUpTo(offset),
+                          onSame: () => ctrl.scrollCtrl.scrollUpTo(offset),
                         );
                       },
                     ),
@@ -181,7 +182,7 @@ class _ActionButton extends StatelessWidget {
                 context,
                 DynamicGradientDragSheet(
                   onTap: (i) {
-                    ctrl.scrollUpTo(0);
+                    ctrl.scrollCtrl.scrollUpTo(0);
                     ctrl.langIndex = i;
                   },
                   itemCount: ctrl.languages.length,
@@ -219,7 +220,7 @@ class _ActionButton extends StatelessWidget {
               showSheet(
                 context,
                 OpaqueSheet(
-                  height: 0.3,
+                  initialHeight: Consts.MATERIAL_TAP_TARGET_SIZE * 4,
                   builder: (context, scrollCtrl) => GridView(
                     controller: scrollCtrl,
                     physics: Consts.PHYSICS,

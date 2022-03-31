@@ -122,7 +122,7 @@ class FilterView extends StatelessWidget {
             names: copy.statuses,
             onEdit: (selected) => showSheet(
               context,
-              SelectionOpaqueSheet(
+              _SelectionSheet(
                 options: statusOptions,
                 values: statusValues,
                 selected: selected,
@@ -135,7 +135,7 @@ class FilterView extends StatelessWidget {
             names: copy.formats,
             onEdit: (selected) => showSheet(
               context,
-              SelectionOpaqueSheet(
+              _SelectionSheet(
                 options: formatOptions,
                 values: formatValues,
                 selected: selected,
@@ -252,6 +252,39 @@ class ListPresenceDropDown extends StatelessWidget {
       value: value,
       items: const {'Everything': null, 'On List': true, 'Not On List': false},
       onChanged: onChange,
+    );
+  }
+}
+
+class _SelectionSheet<T> extends StatelessWidget {
+  _SelectionSheet({
+    required this.options,
+    required this.values,
+    required this.selected,
+  });
+
+  final List<String> options;
+  final List<T> values;
+  final List<T> selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return OpaqueSheet(
+      initialHeight: options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20,
+      builder: (context, scrollCtrl) => ListView.builder(
+        controller: scrollCtrl,
+        physics: Consts.PHYSICS,
+        padding: Consts.PADDING,
+        itemCount: options.length,
+        itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+        itemBuilder: (_, index) => CheckBoxField(
+          title: options[index],
+          initial: selected.contains(values[index]),
+          onChanged: (val) => val
+              ? selected.add(values[index])
+              : selected.remove(values[index]),
+        ),
+      ),
     );
   }
 }

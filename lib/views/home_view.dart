@@ -103,6 +103,13 @@ class _HomeViewState extends State<HomeView> {
           ),
           child: tabs[homeCtrl.homeTab],
           floating: fabs[homeCtrl.homeTab],
+          trySubtab: (goRight) {
+            if (homeCtrl.homeTab != HomeView.INBOX ||
+                homeCtrl.onFeed == goRight) return false;
+
+            homeCtrl.onFeed = !homeCtrl.onFeed;
+            return true;
+          },
         ),
       ),
     );

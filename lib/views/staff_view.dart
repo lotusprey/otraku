@@ -14,7 +14,7 @@ import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/layouts/relation_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -103,21 +103,25 @@ class StaffView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SliverShadowAppBar([
-                  GetBuilder<StaffController>(
-                    id: StaffController.ID_MEDIA,
-                    tag: id.toString(),
-                    builder: (ctrl) {
-                      return BubbleTabs(
-                        items: const {'Characters': true, 'Staff Roles': false},
-                        current: () => ctrl.onCharacters,
-                        onChanged: (bool value) {
-                          ctrl.onCharacters = value;
-                          ctrl.scrollCtrl.scrollUpTo(offset);
-                        },
-                        onSame: () => ctrl.scrollCtrl.scrollUpTo(offset),
-                      );
-                    },
+                ShadowSliverAppBar([
+                  Expanded(
+                    child: GetBuilder<StaffController>(
+                      id: StaffController.ID_MEDIA,
+                      tag: id.toString(),
+                      builder: (ctrl) {
+                        return TabSegments(
+                          items: const {
+                            'Characters': true,
+                            'Staff Roles': false
+                          },
+                          current: () => ctrl.onCharacters,
+                          onChanged: (bool value) {
+                            ctrl.onCharacters = value;
+                            ctrl.scrollCtrl.scrollUpTo(offset);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ]),
                 SliverPadding(

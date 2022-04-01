@@ -10,22 +10,23 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 abstract class MediaSocialView {
   static List<Widget> children(BuildContext ctx, MediaController ctrl) {
     final model = ctrl.model!;
 
     return [
-      SliverShadowAppBar([
-        BubbleTabs(
-          items: const {'Reviews': false, 'Stats': true},
-          current: () => ctrl.socialTabToggled,
-          onChanged: (bool val) {
-            ctrl.scrollCtrl.scrollUpTo(0);
-            ctrl.socialTabToggled = val;
-          },
-          onSame: () => ctrl.scrollCtrl.scrollUpTo(0),
+      ShadowSliverAppBar([
+        Expanded(
+          child: TabSegments(
+            items: const {'Reviews': false, 'Stats': true},
+            current: () => ctrl.socialTabToggled,
+            onChanged: (bool val) {
+              ctrl.scrollCtrl.scrollUpTo(0);
+              ctrl.socialTabToggled = val;
+            },
+          ),
         ),
       ]),
       if (!ctrl.socialTabToggled)

@@ -33,30 +33,32 @@ class SliverCollectionAppBar extends StatelessWidget {
       tag: ctrlTag,
       builder: (ctrl) {
         if (ctrl.isLoading || ctrl.isEmpty)
-          return SliverTransparentAppBar([leading]);
+          return TranslucentSliverAppBar(children: [leading]);
 
-        return SliverTransparentAppBar([
-          leading,
-          _MediaSearchField(
-            value: ctrl.search,
-            title: ctrl.currentName,
-            onChanged: (val) => ctrl.search = val,
-          ),
-          AppBarIcon(
-            tooltip: 'Random',
-            icon: Ionicons.shuffle_outline,
-            onTap: () {
-              final entry = ctrl.random;
-              Navigator.pushNamed(
-                context,
-                RouteArg.media,
-                arguments: RouteArg(id: entry.mediaId, info: entry.cover),
-              );
-            },
-          ),
-          _ReleaseFilterIcon(ctrl),
-          _FilterIcon(ctrl.filters),
-        ]);
+        return TranslucentSliverAppBar(
+          children: [
+            leading,
+            _MediaSearchField(
+              value: ctrl.search,
+              title: ctrl.currentName,
+              onChanged: (val) => ctrl.search = val,
+            ),
+            AppBarIcon(
+              tooltip: 'Random',
+              icon: Ionicons.shuffle_outline,
+              onTap: () {
+                final entry = ctrl.random;
+                Navigator.pushNamed(
+                  context,
+                  RouteArg.media,
+                  arguments: RouteArg(id: entry.mediaId, info: entry.cover),
+                );
+              },
+            ),
+            _ReleaseFilterIcon(ctrl),
+            _FilterIcon(ctrl.filters),
+          ],
+        );
       },
     );
   }
@@ -71,8 +73,8 @@ class SliverExploreAppBar extends StatelessWidget {
       id: ExploreController.ID_HEAD,
       builder: (ctrl) {
         final type = ctrl.type;
-        return SliverTransparentAppBar(
-          [
+        return TranslucentSliverAppBar(
+          children: [
             const SizedBox(width: 10),
             _MediaSearchField(
               value: ctrl.search,

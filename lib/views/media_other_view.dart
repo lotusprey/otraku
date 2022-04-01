@@ -7,20 +7,21 @@ import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class MediaOtherView {
   static List<Widget> children(BuildContext ctx, MediaController ctrl) => [
-        SliverShadowAppBar([
-          BubbleTabs(
-            items: const {'Relations': false, 'Recommendations': true},
-            current: () => ctrl.otherTabToggled,
-            onChanged: (bool val) {
-              ctrl.scrollCtrl.scrollUpTo(0);
-              ctrl.otherTabToggled = val;
-            },
-            onSame: () => ctrl.scrollCtrl.scrollUpTo(0),
+        ShadowSliverAppBar([
+          Expanded(
+            child: TabSegments(
+              items: const {'Relations': false, 'Recommendations': true},
+              current: () => ctrl.otherTabToggled,
+              onChanged: (bool val) {
+                ctrl.scrollCtrl.scrollUpTo(0);
+                ctrl.otherTabToggled = val;
+              },
+            ),
           ),
         ]),
         SliverPadding(

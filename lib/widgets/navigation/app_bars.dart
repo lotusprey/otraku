@@ -37,20 +37,22 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => Size.fromHeight(Consts.MATERIAL_TAP_TARGET_SIZE);
 }
 
-class SliverShadowAppBar extends StatelessWidget {
+class ShadowSliverAppBar extends StatelessWidget {
+  const ShadowSliverAppBar(this.children);
+
   final List<Widget> children;
-  const SliverShadowAppBar(this.children);
 
   @override
   Widget build(BuildContext context) => SliverPersistentHeader(
-        delegate: _SliverShadowAppBarDelegate(children),
+        delegate: _ShadowSliverAppBarDelegate(children),
         pinned: true,
       );
 }
 
-class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
+class _ShadowSliverAppBarDelegate implements SliverPersistentHeaderDelegate {
+  _ShadowSliverAppBarDelegate(this.children);
+
   final List<Widget> children;
-  _SliverShadowAppBarDelegate(this.children);
 
   @override
   Widget build(
@@ -107,21 +109,27 @@ class _ShadowBody extends StatelessWidget {
   }
 }
 
-class SliverTransparentAppBar extends StatelessWidget {
+class TranslucentSliverAppBar extends StatelessWidget {
+  const TranslucentSliverAppBar({
+    required this.children,
+    this.constrained = false,
+  });
+
   final List<Widget> children;
-  const SliverTransparentAppBar(this.children);
+  final bool constrained;
 
   @override
   Widget build(BuildContext context) => SliverPersistentHeader(
-        delegate: _SliverTransparentAppBarDelegate(children),
+        delegate: _TranslucentAppBarDelegate(children, constrained),
         pinned: true,
       );
 }
 
-class _SliverTransparentAppBarDelegate
-    implements SliverPersistentHeaderDelegate {
+class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
+  _TranslucentAppBarDelegate(this.children, this.constrained);
+
   final List<Widget> children;
-  _SliverTransparentAppBarDelegate(this.children);
+  final bool constrained;
 
   @override
   Widget build(
@@ -132,10 +140,17 @@ class _SliverTransparentAppBarDelegate
       ClipRect(
         child: BackdropFilter(
           filter: Consts.filter,
-          child: Container(
-            height: Consts.MATERIAL_TAP_TARGET_SIZE,
-            color: Theme.of(context).cardColor,
-            child: Row(children: children),
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
+                  maxWidth: constrained ? Consts.OVERLAY_WIDE : double.infinity,
+                ),
+                child: Row(children: children),
+              ),
+            ),
           ),
         ),
       );

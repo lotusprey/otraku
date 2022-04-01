@@ -5,7 +5,7 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/constants/activity_type.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -91,11 +91,10 @@ class FeedFilter extends StatelessWidget {
                             )
                         ],
                       ),
-                      BubbleTabs(
+                      TabSegments(
                         items: const {'Following': true, 'Global': false},
                         current: () => onFollowing,
                         onChanged: (bool val) => onFollowing = val,
-                        onSame: () {},
                       ),
                     ],
                   )),

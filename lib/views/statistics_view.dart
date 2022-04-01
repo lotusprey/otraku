@@ -8,7 +8,7 @@ import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class StatisticsView extends StatelessWidget {
@@ -59,13 +59,12 @@ class StatisticsView extends StatelessWidget {
                   tag: id.toString(),
                   builder: (_) => _BarChart(
                     title: 'Score',
-                    tabs: BubbleTabs<int>(
+                    tabs: TabSegments<int>(
                       items: ctrl.onAnime
                           ? const {'Titles': 0, 'Hours': 1}
                           : const {'Titles': 0, 'Chapters': 1},
                       current: () => ctrl.scoreChartTab,
                       onChanged: (val) => ctrl.scoreChartTab = val,
-                      onSame: () {},
                     ),
                     stats: ctrl.model.scores,
                     onAnime: ctrl.onAnime,
@@ -80,13 +79,12 @@ class StatisticsView extends StatelessWidget {
                   tag: id.toString(),
                   builder: (_) => _BarChart(
                     title: ctrl.onAnime ? 'Episodes' : 'Chapters',
-                    tabs: BubbleTabs<int>(
+                    tabs: TabSegments<int>(
                       items: ctrl.onAnime
                           ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
                           : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
                       current: () => ctrl.lengthChartTab,
                       onChanged: (val) => ctrl.lengthChartTab = val,
-                      onSame: () {},
                     ),
                     stats: ctrl.model.lengths,
                     onAnime: ctrl.onAnime,
@@ -204,7 +202,7 @@ class _BarChart extends StatelessWidget {
 
   final List<NumberStatistics> stats;
   final String title;
-  final BubbleTabs tabs;
+  final TabSegments tabs;
   final bool onAnime;
   final int chartTab;
   final double barWidth;

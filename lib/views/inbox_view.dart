@@ -12,7 +12,7 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class InboxView extends StatelessWidget {
   InboxView({
@@ -90,17 +90,23 @@ class InboxView extends StatelessWidget {
           physics: Consts.PHYSICS,
           controller: scrollCtrl,
           slivers: [
-            SliverTransparentAppBar([
-              BubbleTabs(
-                items: const {'Feed': true, 'Progress': false},
-                current: () => ctrl.onFeed,
-                onChanged: (bool val) => ctrl.onFeed = val,
-                onSame: () {},
-              ),
-              const Spacer(),
-              if (ctrl.onFeed) FeedFilter(feedCtrl),
-              notificationWidget,
-            ]),
+            TranslucentSliverAppBar(
+              constrained: true,
+              children: [
+                Expanded(
+                  child: TabSegments(
+                    items: const {'Progress': false, 'Feed': true},
+                    current: () => ctrl.onFeed,
+                    onChanged: (bool val) => ctrl.onFeed = val,
+                  ),
+                ),
+                if (ctrl.onFeed)
+                  FeedFilter(feedCtrl)
+                else
+                  const SizedBox(width: 45),
+                notificationWidget,
+              ],
+            ),
             if (ctrl.onFeed) ...[
               SliverRefreshControl(
                 onRefresh: () => feedCtrl.fetchPage(clean: true),

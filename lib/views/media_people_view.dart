@@ -3,7 +3,7 @@ import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/relation_model.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/layouts/relation_grid.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class MediaPeopleView {
@@ -33,15 +33,16 @@ class MediaPeopleView {
     }
 
     return [
-      SliverShadowAppBar([
-        BubbleTabs(
-          items: const {'Characters': false, 'Staff': true},
-          current: () => ctrl.peopleTabToggled,
-          onChanged: (bool val) {
-            ctrl.scrollCtrl.scrollUpTo(0);
-            ctrl.peopleTabToggled = val;
-          },
-          onSame: () => ctrl.scrollCtrl.scrollUpTo(0),
+      ShadowSliverAppBar([
+        Expanded(
+          child: TabSegments(
+            items: const {'Characters': false, 'Staff': true},
+            current: () => ctrl.peopleTabToggled,
+            onChanged: (bool val) {
+              ctrl.scrollCtrl.scrollUpTo(0);
+              ctrl.peopleTabToggled = val;
+            },
+          ),
         ),
       ]),
       SliverPadding(

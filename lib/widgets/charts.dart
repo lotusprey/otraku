@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class BarChart extends StatelessWidget {
   BarChart({
@@ -16,7 +16,7 @@ class BarChart extends StatelessWidget {
   final String title;
   final List<dynamic> names;
   final List<num> values;
-  final BubbleTabs? tabs;
+  final TabSegments? tabs;
   final double barWidth;
 
   @override
@@ -42,13 +42,18 @@ class BarChart extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.only(left: 10),
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.headline3,
                 ),
               ),
-              tabs!,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: tabs!.items.length < 3 ? 300 : 350,
+                ),
+                child: tabs!,
+              ),
             ],
           ),
         SizedBox(

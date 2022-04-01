@@ -14,7 +14,7 @@ import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/layouts/relation_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
@@ -105,21 +105,22 @@ class CharacterView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SliverShadowAppBar([
-                    GetBuilder<CharacterController>(
-                      id: CharacterController.ID_MEDIA,
-                      tag: id.toString(),
-                      builder: (ctrl) {
-                        return BubbleTabs(
-                          items: const {'Anime': true, 'Manga': false},
-                          current: () => ctrl.onAnime,
-                          onChanged: (bool val) {
-                            ctrl.onAnime = val;
-                            ctrl.scrollCtrl.scrollUpTo(offset);
-                          },
-                          onSame: () => ctrl.scrollCtrl.scrollUpTo(offset),
-                        );
-                      },
+                  ShadowSliverAppBar([
+                    Expanded(
+                      child: GetBuilder<CharacterController>(
+                        id: CharacterController.ID_MEDIA,
+                        tag: id.toString(),
+                        builder: (ctrl) {
+                          return TabSegments(
+                            items: const {'Anime': true, 'Manga': false},
+                            current: () => ctrl.onAnime,
+                            onChanged: (bool val) {
+                              ctrl.onAnime = val;
+                              ctrl.scrollCtrl.scrollUpTo(offset);
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ]),
                   SliverPadding(

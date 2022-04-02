@@ -174,7 +174,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = itemCount * Consts.MATERIAL_TAP_TARGET_SIZE + 50;
+    final requiredHeight = itemCount * Consts.TAP_TARGET_SIZE + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -208,7 +208,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
               right: 10,
             ),
             itemCount: itemCount,
-            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+            itemExtent: Consts.TAP_TARGET_SIZE,
             itemBuilder: (context, i) => GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: itemBuilder(context, i),
@@ -261,8 +261,7 @@ class FixedGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight =
-        children.length * Consts.MATERIAL_TAP_TARGET_SIZE + 60;
+    final requiredHeight = children.length * Consts.TAP_TARGET_SIZE + 60;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -296,7 +295,7 @@ class FixedGradientDragSheet extends StatelessWidget {
               left: 10,
               right: 10,
             ),
-            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+            itemExtent: Consts.TAP_TARGET_SIZE,
             children: children,
           ),
         ),

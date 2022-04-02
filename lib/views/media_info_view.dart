@@ -85,7 +85,7 @@ class MediaInfoView {
         padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
         sliver: SliverGrid(
           gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-            height: Consts.MATERIAL_TAP_TARGET_SIZE,
+            height: Consts.TAP_TARGET_SIZE,
             minWidth: 130,
           ),
           delegate: SliverChildBuilderDelegate(
@@ -250,7 +250,7 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Consts.MATERIAL_TAP_TARGET_SIZE + 10,
+            height: Consts.TAP_TARGET_SIZE + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
@@ -425,7 +425,7 @@ class __TagsState extends State<_Tags> {
       padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.MATERIAL_TAP_TARGET_SIZE,
+          height: Consts.TAP_TARGET_SIZE,
           minWidth: 175,
         ),
         delegate: delegate,

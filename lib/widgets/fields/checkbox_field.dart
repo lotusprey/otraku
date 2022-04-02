@@ -30,7 +30,7 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Consts.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.TAP_TARGET_SIZE,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -108,7 +108,7 @@ class _CheckBoxTriFieldState extends State<CheckBoxTriField> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Consts.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.TAP_TARGET_SIZE,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {

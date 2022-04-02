@@ -221,7 +221,7 @@ class _ActionButton extends StatelessWidget {
               showSheet(
                 context,
                 OpaqueSheet(
-                  initialHeight: Consts.MATERIAL_TAP_TARGET_SIZE * 4,
+                  initialHeight: Consts.TAP_TARGET_SIZE * 4,
                   builder: (context, scrollCtrl) => GridView(
                     controller: scrollCtrl,
                     physics: Consts.PHYSICS,

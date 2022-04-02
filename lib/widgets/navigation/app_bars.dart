@@ -34,7 +34,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Consts.MATERIAL_TAP_TARGET_SIZE);
+  Size get preferredSize => Size.fromHeight(Consts.TAP_TARGET_SIZE);
 }
 
 class ShadowSliverAppBar extends StatelessWidget {
@@ -63,10 +63,10 @@ class _ShadowSliverAppBarDelegate implements SliverPersistentHeaderDelegate {
       _ShadowBody(children);
 
   @override
-  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -93,7 +93,7 @@ class _ShadowBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Consts.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.TAP_TARGET_SIZE,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -145,7 +145,7 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
             child: Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  maxHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
+                  maxHeight: Consts.TAP_TARGET_SIZE,
                   maxWidth: constrained ? Consts.OVERLAY_WIDE : double.infinity,
                 ),
                 child: Row(children: children),
@@ -156,10 +156,10 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
       );
 
   @override
-  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

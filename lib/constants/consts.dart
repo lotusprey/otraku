@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // Constants utilised throughout the whole app.
 abstract class Consts {
   // General.
-  static const MATERIAL_TAP_TARGET_SIZE = 48.0;
+  static const TAP_TARGET_SIZE = 48.0;
   static const PADDING = EdgeInsets.all(10);
   static const RADIUS_MIN = Radius.circular(10);
   static const RADIUS_MAX = Radius.circular(20);

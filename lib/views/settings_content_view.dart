@@ -26,7 +26,7 @@ class SettingsContentView extends StatelessWidget {
     const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
       minWidth: 220,
       mainAxisSpacing: 0,
-      height: Consts.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.TAP_TARGET_SIZE,
     );
 
     return Padding(

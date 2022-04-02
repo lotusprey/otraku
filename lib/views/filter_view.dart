@@ -270,13 +270,13 @@ class _SelectionSheet<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OpaqueSheet(
-      initialHeight: options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20,
+      initialHeight: options.length * Consts.TAP_TARGET_SIZE + 20,
       builder: (context, scrollCtrl) => ListView.builder(
         controller: scrollCtrl,
         physics: Consts.PHYSICS,
         padding: Consts.PADDING,
         itemCount: options.length,
-        itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+        itemExtent: Consts.TAP_TARGET_SIZE,
         itemBuilder: (_, index) => CheckBoxField(
           title: options[index],
           initial: selected.contains(values[index]),
@@ -349,7 +349,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
               top: 90,
             ),
             controller: widget.scrollCtrl,
-            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+            itemExtent: Consts.TAP_TARGET_SIZE,
             itemCount: _itemIndices.length,
             itemBuilder: (_, i) {
               final name = _tags.names[_itemIndices[i]];

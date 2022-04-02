@@ -69,7 +69,7 @@ class FeedFilter extends StatelessWidget {
       onTap: () {
         final typeIn = feedCtrl.typeIn;
         double initialHeight =
-            Consts.MATERIAL_TAP_TARGET_SIZE * ActivityType.values.length + 20;
+            Consts.TAP_TARGET_SIZE * ActivityType.values.length + 20;
 
         // If on the home feed - following/global selection.
         bool? onFollowing;
@@ -81,7 +81,7 @@ class FeedFilter extends StatelessWidget {
             current: () => onFollowing!,
             onChanged: (bool val) => onFollowing = val,
           );
-          initialHeight += Consts.MATERIAL_TAP_TARGET_SIZE;
+          initialHeight += Consts.TAP_TARGET_SIZE;
         }
 
         showSheet(

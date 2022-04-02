@@ -64,7 +64,7 @@ class _ChipGrid extends StatelessWidget {
         children.isNotEmpty
             ? Wrap(spacing: 5, children: children)
             : SizedBox(
-                height: Consts.MATERIAL_TAP_TARGET_SIZE,
+                height: Consts.TAP_TARGET_SIZE,
                 child: Center(
                   child: Text(
                     'No $placeholder',

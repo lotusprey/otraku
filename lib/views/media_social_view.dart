@@ -134,7 +134,7 @@ class _Ranks extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.MATERIAL_TAP_TARGET_SIZE,
+          height: Consts.TAP_TARGET_SIZE,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(

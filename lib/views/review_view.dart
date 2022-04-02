@@ -266,7 +266,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 150;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>

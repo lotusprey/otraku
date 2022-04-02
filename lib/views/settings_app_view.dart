@@ -109,7 +109,7 @@ class SettingsAppView extends StatelessWidget {
               minWidth: 200,
               mainAxisSpacing: 0,
               crossAxisSpacing: 20,
-              height: Consts.MATERIAL_TAP_TARGET_SIZE,
+              height: Consts.TAP_TARGET_SIZE,
             ),
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(

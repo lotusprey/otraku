@@ -21,8 +21,15 @@ class FeedController extends ScrollingController {
   List<ActivityModel> get activities => _activities.items;
   List<ActivityType> get typeIn => [..._typeIn];
 
-  void setFilters(bool onFollowingVal, List<ActivityType> typeInVal) {
-    bool changed = Settings().feedOnFollowing != onFollowingVal;
+  void setFilters(List<ActivityType> typeInVal, [bool? onFollowingVal]) {
+    bool changed = false;
+
+    if (onFollowingVal != null &&
+        Settings().feedOnFollowing != onFollowingVal) {
+      Settings().feedOnFollowing = onFollowingVal;
+      changed = true;
+    }
+
     if (!changed) {
       if (_typeIn.length != typeInVal.length)
         changed = true;
@@ -36,7 +43,6 @@ class FeedController extends ScrollingController {
       if (!changed) return;
     }
 
-    Settings().feedOnFollowing = onFollowingVal;
     _typeIn.clear();
     _typeIn.addAll(typeInVal);
     Settings().feedActivityFilters = _typeIn.map((e) => e.index).toList();

@@ -67,15 +67,30 @@ class FeedFilter extends StatelessWidget {
       tooltip: 'Filter',
       icon: Ionicons.funnel_outline,
       onTap: () {
-        bool onFollowing = feedCtrl.onFollowing;
         final typeIn = feedCtrl.typeIn;
+        double initialHeight =
+            Consts.MATERIAL_TAP_TARGET_SIZE * ActivityType.values.length + 20;
+
+        // If on the home feed - following/global selection.
+        bool? onFollowing;
+        Widget? onFollowingSelection;
+        if (feedCtrl.id == null) {
+          onFollowing = feedCtrl.onFollowing;
+          onFollowingSelection = TabSegments(
+            items: const {'Following': true, 'Global': false},
+            current: () => onFollowing!,
+            onChanged: (bool val) => onFollowing = val,
+          );
+          initialHeight += Consts.MATERIAL_TAP_TARGET_SIZE;
+        }
 
         showSheet(
           context,
           OpaqueSheet(
-              initialHeight: Consts.MATERIAL_TAP_TARGET_SIZE * 6,
-              builder: (context, _) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+              initialHeight: initialHeight,
+              builder: (context, scrollCtrl) => ListView(
+                    controller: scrollCtrl,
+                    physics: Consts.PHYSICS,
                     children: [
                       ListView(
                         shrinkWrap: true,
@@ -91,14 +106,10 @@ class FeedFilter extends StatelessWidget {
                             )
                         ],
                       ),
-                      TabSegments(
-                        items: const {'Following': true, 'Global': false},
-                        current: () => onFollowing,
-                        onChanged: (bool val) => onFollowing = val,
-                      ),
+                      if (onFollowingSelection != null) onFollowingSelection,
                     ],
                   )),
-        ).then((_) => feedCtrl.setFilters(onFollowing, typeIn));
+        ).then((_) => feedCtrl.setFilters(typeIn, onFollowing));
       },
     );
   }

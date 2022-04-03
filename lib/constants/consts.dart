@@ -20,8 +20,9 @@ abstract class Consts {
   static const COVER_HW_RATIO = 1.53;
 
   // Layout sizes.
-  static const OVERLAY_WIDE = 600.0;
-  static const OVERLAY_TIGHT = 400.0;
+  static const LAYOUT_BIG = 1000.0;
+  static const LAYOUT_MEDIUM = 600.0;
+  static const LAYOUT_SMALL = 400.0;
 
   // Font sizes.
   static const FONT_BIG = 20.0;

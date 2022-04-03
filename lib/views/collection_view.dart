@@ -56,10 +56,9 @@ class HomeCollectionView extends StatelessWidget {
     final tag = '$id$ofAnime';
     final isMe =
         tag == '${Settings().id}true' || tag == '${Settings().id}false';
-    final sidePadding = 10.0 +
-        (MediaQuery.of(context).size.width > 1000
-            ? (MediaQuery.of(context).size.width - 1000) / 2
-            : 0.0);
+    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
+        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+        : 10.0;
 
     return GetBuilder<CollectionController>(
       tag: tag,

@@ -146,7 +146,8 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: Consts.TAP_TARGET_SIZE,
-                  maxWidth: constrained ? Consts.OVERLAY_WIDE : double.infinity,
+                  maxWidth:
+                      constrained ? Consts.LAYOUT_MEDIUM : double.infinity,
                 ),
                 child: Row(children: children),
               ),

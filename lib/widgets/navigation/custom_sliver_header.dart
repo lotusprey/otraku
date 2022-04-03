@@ -16,7 +16,7 @@ class CustomSliverHeader extends StatelessWidget {
     required this.actions,
     required this.child,
     required this.heroId,
-    this.maxWidth = Consts.OVERLAY_WIDE,
+    this.maxWidth = Consts.LAYOUT_MEDIUM,
   });
 
   final String? title;

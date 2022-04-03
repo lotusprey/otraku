@@ -31,7 +31,7 @@ class TranslucentLayout extends StatelessWidget {
                       constraints: const BoxConstraints(
                         minHeight: Consts.TAP_TARGET_SIZE,
                         maxHeight: Consts.TAP_TARGET_SIZE,
-                        maxWidth: Consts.OVERLAY_WIDE,
+                        maxWidth: Consts.LAYOUT_BIG,
                       ),
                       child: Row(children: headerItems),
                     ),

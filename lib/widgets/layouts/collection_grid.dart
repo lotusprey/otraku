@@ -12,6 +12,8 @@ import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
+const _TILE_HEIGHT = 140.0;
+
 class CollectionGrid extends StatelessWidget {
   CollectionGrid({
     required this.items,
@@ -32,7 +34,7 @@ class CollectionGrid extends StatelessWidget {
       ),
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 350,
-        height: 150,
+        height: _TILE_HEIGHT,
       ),
     );
   }
@@ -64,7 +66,7 @@ class _Tile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: Consts.BORDER_RAD_MIN,
                 child: Container(
-                  width: 95,
+                  width: _TILE_HEIGHT / Consts.COVER_HW_RATIO,
                   color: Theme.of(context).colorScheme.surface,
                   child: FadeImage(model.cover),
                 ),

@@ -4,12 +4,12 @@ import 'package:otraku/constants/consts.dart';
 class TabSegments<T> extends StatefulWidget {
   TabSegments({
     required this.items,
-    required this.current,
+    required this.initial,
     required this.onChanged,
   });
 
   final Map<String, T> items;
-  final T Function() current;
+  final T initial;
   final void Function(T) onChanged;
 
   @override
@@ -22,13 +22,13 @@ class _TabSegmentsState<T> extends State<TabSegments<T>> {
   @override
   void initState() {
     super.initState();
-    _value = widget.current();
+    _value = widget.initial;
   }
 
   @override
   void didUpdateWidget(covariant TabSegments<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _value = widget.current();
+    _value = widget.initial;
   }
 
   @override

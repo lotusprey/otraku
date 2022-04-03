@@ -114,7 +114,7 @@ class StaffView extends StatelessWidget {
                             'Characters': true,
                             'Staff Roles': false
                           },
-                          current: () => ctrl.onCharacters,
+                          initial: ctrl.onCharacters,
                           onChanged: (bool value) {
                             ctrl.onCharacters = value;
                             ctrl.scrollCtrl.scrollUpTo(offset);

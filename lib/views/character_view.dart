@@ -113,7 +113,7 @@ class CharacterView extends StatelessWidget {
                         builder: (ctrl) {
                           return TabSegments(
                             items: const {'Anime': true, 'Manga': false},
-                            current: () => ctrl.onAnime,
+                            initial: ctrl.onAnime,
                             onChanged: (bool val) {
                               ctrl.onAnime = val;
                               ctrl.scrollCtrl.scrollUpTo(offset);

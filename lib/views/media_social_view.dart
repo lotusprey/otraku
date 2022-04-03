@@ -21,7 +21,7 @@ abstract class MediaSocialView {
         Expanded(
           child: TabSegments(
             items: const {'Reviews': false, 'Stats': true},
-            current: () => ctrl.socialTabToggled,
+            initial: ctrl.socialTabToggled,
             onChanged: (bool val) {
               ctrl.scrollCtrl.scrollUpTo(0);
               ctrl.socialTabToggled = val;

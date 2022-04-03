@@ -81,7 +81,7 @@ class FeedFilterIcon extends StatelessWidget {
           onFollowing = feedCtrl.onFollowing;
           onFollowingSelection = TabSegments(
             items: const {'Following': true, 'Global': false},
-            current: () => onFollowing!,
+            initial: onFollowing,
             onChanged: (bool val) => onFollowing = val,
           );
           initialHeight += Consts.TAP_TARGET_SIZE;

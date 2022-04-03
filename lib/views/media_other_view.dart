@@ -16,7 +16,7 @@ class MediaOtherView {
           Expanded(
             child: TabSegments(
               items: const {'Relations': false, 'Recommendations': true},
-              current: () => ctrl.otherTabToggled,
+              initial: ctrl.otherTabToggled,
               onChanged: (bool val) {
                 ctrl.scrollCtrl.scrollUpTo(0);
                 ctrl.otherTabToggled = val;

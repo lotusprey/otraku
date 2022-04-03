@@ -90,7 +90,7 @@ class InboxView extends StatelessWidget {
             Expanded(
               child: TabSegments(
                 items: const {'Progress': false, 'Feed': true},
-                current: () => ctrl.onFeed,
+                initial: ctrl.onFeed,
                 onChanged: (bool val) => ctrl.onFeed = val,
               ),
             ),

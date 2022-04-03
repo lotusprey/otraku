@@ -10,7 +10,6 @@ class TranslucentLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final paddingTop = MediaQuery.of(context).viewPadding.top;
-    print(paddingTop);
 
     return Stack(
       fit: StackFit.expand,

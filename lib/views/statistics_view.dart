@@ -63,7 +63,7 @@ class StatisticsView extends StatelessWidget {
                       items: ctrl.onAnime
                           ? const {'Titles': 0, 'Hours': 1}
                           : const {'Titles': 0, 'Chapters': 1},
-                      current: () => ctrl.scoreChartTab,
+                      initial: ctrl.scoreChartTab,
                       onChanged: (val) => ctrl.scoreChartTab = val,
                     ),
                     stats: ctrl.model.scores,
@@ -83,7 +83,7 @@ class StatisticsView extends StatelessWidget {
                       items: ctrl.onAnime
                           ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
                           : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
-                      current: () => ctrl.lengthChartTab,
+                      initial: ctrl.lengthChartTab,
                       onChanged: (val) => ctrl.lengthChartTab = val,
                     ),
                     stats: ctrl.model.lengths,

@@ -37,7 +37,7 @@ class MediaPeopleView {
         Expanded(
           child: TabSegments(
             items: const {'Characters': false, 'Staff': true},
-            current: () => ctrl.peopleTabToggled,
+            initial: ctrl.peopleTabToggled,
             onChanged: (bool val) {
               ctrl.scrollCtrl.scrollUpTo(0);
               ctrl.peopleTabToggled = val;

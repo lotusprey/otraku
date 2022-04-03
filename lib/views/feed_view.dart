@@ -22,7 +22,10 @@ class FeedView extends StatelessWidget {
       init: FeedController(id),
       tag: id.toString(),
       builder: (ctrl) => Scaffold(
-        appBar: ShadowAppBar(title: 'Activities', actions: [FeedFilter(ctrl)]),
+        appBar: ShadowAppBar(
+          title: 'Activities',
+          actions: [FeedFilterIcon(ctrl)],
+        ),
         body: SafeArea(
           child: GetBuilder<FeedController>(
             id: FeedController.ID_ACTIVITIES,
@@ -56,8 +59,8 @@ class FeedView extends StatelessWidget {
   }
 }
 
-class FeedFilter extends StatelessWidget {
-  FeedFilter(this.feedCtrl);
+class FeedFilterIcon extends StatelessWidget {
+  FeedFilterIcon(this.feedCtrl);
 
   final FeedController feedCtrl;
 

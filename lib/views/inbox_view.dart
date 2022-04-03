@@ -2,34 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/feed_view.dart';
 import 'package:otraku/widgets/activity_box.dart';
+import 'package:otraku/widgets/layouts/collection_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
+import 'package:otraku/widgets/navigation/translucent_layout.dart';
 
 class InboxView extends StatelessWidget {
-  InboxView({
-    required this.feedCtrl,
-    required this.animeCtrl,
-    required this.mangaCtrl,
-    required this.scrollCtrl,
-  });
+  InboxView(this.feedCtrl, this.scrollCtrl);
 
   final FeedController feedCtrl;
-  final CollectionController animeCtrl;
-  final CollectionController mangaCtrl;
   final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
-    final notificationWidget = GetBuilder<HomeController>(
+    final notificationIcon = GetBuilder<HomeController>(
       id: HomeController.ID_NOTIFICATIONS,
       builder: (homeCtrl) {
         if (homeCtrl.notificationCount < 1)
@@ -86,72 +85,195 @@ class InboxView extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: HomeController.ID_HOME,
       builder: (ctrl) {
-        return CustomScrollView(
-          physics: Consts.PHYSICS,
-          controller: scrollCtrl,
-          slivers: [
-            TranslucentSliverAppBar(
-              constrained: true,
-              children: [
-                Expanded(
-                  child: TabSegments(
-                    items: const {'Progress': false, 'Feed': true},
-                    current: () => ctrl.onFeed,
-                    onChanged: (bool val) => ctrl.onFeed = val,
-                  ),
-                ),
-                if (ctrl.onFeed)
-                  FeedFilter(feedCtrl)
-                else
-                  const SizedBox(width: 45),
-                notificationWidget,
-              ],
-            ),
-            if (ctrl.onFeed) ...[
-              SliverRefreshControl(
-                onRefresh: () => feedCtrl.fetchPage(clean: true),
-                canRefresh: () => !feedCtrl.isLoading,
+        return TranslucentLayout(
+          headerItems: [
+            Expanded(
+              child: TabSegments(
+                items: const {'Progress': false, 'Feed': true},
+                current: () => ctrl.onFeed,
+                onChanged: (bool val) => ctrl.onFeed = val,
               ),
-              SliverPadding(
-                padding: Consts.PADDING,
-                sliver: GetBuilder<FeedController>(
-                  id: FeedController.ID_ACTIVITIES,
-                  builder: (ctrl) {
-                    final activities = ctrl.activities;
-
-                    if (ctrl.isLoading)
-                      return const SliverFillRemaining(
-                        child: Center(child: Loader()),
-                      );
-
-                    if (activities.isEmpty)
-                      return SliverFillRemaining(
-                        child: Center(
-                          child: Text(
-                            'No Activities',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ),
-                      );
-
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (_, i) => ActivityBox(ctrl: ctrl, model: activities[i]),
-                        childCount: activities.length,
-                      ),
-                    );
-                  },
-                ),
-              )
-            ] else ...[
-              const SliverToBoxAdapter(),
-            ],
-            SliverToBoxAdapter(
-              child: SizedBox(height: NavLayout.offset(context)),
             ),
+            if (ctrl.onFeed)
+              FeedFilterIcon(feedCtrl)
+            else
+              const SizedBox(width: 45),
+            notificationIcon,
           ],
+          builder: (offsetTop) {
+            if (ctrl.onFeed)
+              return CustomScrollView(
+                physics: Consts.PHYSICS,
+                controller: scrollCtrl,
+                slivers: [
+                  SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
+                  ..._feedWidgets(context),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: NavLayout.offset(context)),
+                  ),
+                ],
+              );
+
+            return GetBuilder<CollectionController>(
+              id: CollectionController.ID_BODY,
+              tag: '${Settings().id}true',
+              builder: (animeCtrl) => GetBuilder<CollectionController>(
+                id: CollectionController.ID_BODY,
+                tag: '${Settings().id}false',
+                builder: (mangaCtrl) => CustomScrollView(
+                  physics: Consts.PHYSICS,
+                  controller: scrollCtrl,
+                  slivers: [
+                    SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
+                    ..._progressWidgets(context, animeCtrl, mangaCtrl),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: NavLayout.offset(context)),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
+  }
+
+  List<Widget> _feedWidgets(BuildContext context) => [
+        SliverRefreshControl(
+          onRefresh: () => feedCtrl.fetchPage(clean: true),
+          canRefresh: () => !feedCtrl.isLoading,
+        ),
+        SliverPadding(
+          padding: Consts.PADDING,
+          sliver: GetBuilder<FeedController>(
+            id: FeedController.ID_ACTIVITIES,
+            builder: (feedCtrl) {
+              if (feedCtrl.isLoading)
+                return const SliverFillRemaining(
+                  child: Center(child: Loader()),
+                );
+
+              final activities = feedCtrl.activities;
+              if (activities.isEmpty)
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      'No Activities',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ),
+                );
+
+              return SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (_, i) => ActivityBox(ctrl: feedCtrl, model: activities[i]),
+                  childCount: activities.length,
+                ),
+              );
+            },
+          ),
+        )
+      ];
+
+  List<Widget> _progressWidgets(
+    BuildContext context,
+    CollectionController animeCtrl,
+    CollectionController mangaCtrl,
+  ) {
+    final slivers = <Widget>[];
+
+    if (animeCtrl.isLoading)
+      slivers.add(const SliverToBoxAdapter(child: Loader()));
+    else {
+      final entries = animeCtrl.listWithStatus(ListStatus.CURRENT);
+      if (entries.isNotEmpty) {
+        final releasing = <ListEntryModel>[];
+        final other = <ListEntryModel>[];
+        for (final e in entries)
+          e.status == MediaStatus.RELEASING.name
+              ? releasing.add(e)
+              : other.add(e);
+
+        _addProgressSection(
+          title: 'Your current releasing anime',
+          items: releasing,
+          context: context,
+          slivers: slivers,
+          ctrl: animeCtrl,
+        );
+        _addProgressSection(
+          title: 'Your current other anime',
+          items: other,
+          context: context,
+          slivers: slivers,
+          ctrl: animeCtrl,
+        );
+      }
+    }
+
+    if (mangaCtrl.isLoading && slivers.length > 1)
+      slivers.add(const SliverToBoxAdapter(child: Loader()));
+    else {
+      final entries = mangaCtrl.listWithStatus(ListStatus.CURRENT);
+      if (entries.isNotEmpty) {
+        final releasing = <ListEntryModel>[];
+        final other = <ListEntryModel>[];
+        for (final e in entries)
+          e.status == MediaStatus.RELEASING.name
+              ? releasing.add(e)
+              : other.add(e);
+
+        _addProgressSection(
+          title: 'Your current releasing manga',
+          items: releasing,
+          context: context,
+          slivers: slivers,
+          ctrl: mangaCtrl,
+        );
+        _addProgressSection(
+          title: 'Your current other manga',
+          items: other,
+          context: context,
+          slivers: slivers,
+          ctrl: mangaCtrl,
+        );
+      }
+    }
+
+    if (slivers.isEmpty)
+      slivers.add(const SliverFillRemaining(
+        child: Center(
+          child: Text('You don\'t watch/read anything in the moment.'),
+        ),
+      ));
+
+    return slivers;
+  }
+
+  void _addProgressSection({
+    required BuildContext context,
+    required List<Widget> slivers,
+    required String title,
+    required List<ListEntryModel> items,
+    required CollectionController ctrl,
+  }) {
+    if (items.isEmpty) return;
+
+    slivers.add(SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Text(title, style: Theme.of(context).textTheme.headline1),
+      ),
+    ));
+
+    slivers.add(SliverPadding(
+      padding: Consts.PADDING,
+      sliver: CollectionGrid(
+        items: items,
+        scoreFormat: ctrl.scoreFormat!,
+        updateProgress: ctrl.updateProgress,
+      ),
+    ));
   }
 }

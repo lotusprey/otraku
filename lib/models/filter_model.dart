@@ -103,27 +103,6 @@ class CollectionFilterModel extends FilterModel<EntrySort> {
     }
     onChange?.call(mustSort);
   }
-
-  bool? get releaseMode {
-    if (statuses.length == 1) {
-      if (statuses.first == MediaStatus.RELEASING.name) return true;
-      if (statuses.first == MediaStatus.FINISHED.name) return false;
-    }
-    return null;
-  }
-
-  void toggleReleaseMode() {
-    if (statuses.isEmpty) {
-      statuses.add(MediaStatus.RELEASING.name);
-    } else if (statuses.length > 1) {
-      statuses.clear();
-    } else if (statuses.first == MediaStatus.RELEASING.name) {
-      statuses[0] = MediaStatus.FINISHED.name;
-    } else if (statuses.first == MediaStatus.FINISHED.name) {
-      statuses.clear();
-    }
-    onChange?.call(false);
-  }
 }
 
 class ExploreFilterModel extends FilterModel<MediaSort> {

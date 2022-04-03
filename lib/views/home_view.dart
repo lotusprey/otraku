@@ -166,12 +166,7 @@ class _HomeViewState extends State<HomeView> {
     );
 
     tabs = [
-      InboxView(
-        feedCtrl: feedCtrl,
-        animeCtrl: animeCtrl,
-        mangaCtrl: mangaCtrl,
-        scrollCtrl: _ctrl,
-      ),
+      InboxView(feedCtrl, _ctrl),
       HomeCollectionView(ofAnime: true, id: widget.id, key: UniqueKey()),
       HomeCollectionView(ofAnime: false, id: widget.id, key: UniqueKey()),
       const ExploreView(),

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
@@ -43,6 +44,11 @@ class CollectionController extends ScrollingController {
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
+
+  List<ListEntryModel> listWithStatus(ListStatus status) {
+    for (final l in _lists) if (l.status == status) return [...l.entries];
+    return const [];
+  }
 
   set search(String? val) {
     val = val?.trimLeft();

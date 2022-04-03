@@ -149,7 +149,7 @@ class _Ranks extends StatelessWidget {
                 Icon(
                   rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
                   size: Consts.ICON_BIG,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 5),
                 Expanded(

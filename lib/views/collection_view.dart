@@ -143,7 +143,7 @@ class CollectionActionButton extends StatelessWidget {
                     style: i != ctrl.listIndex
                         ? Theme.of(context).textTheme.headline1
                         : Theme.of(context).textTheme.headline1?.copyWith(
-                            color: Theme.of(context).colorScheme.secondary),
+                            color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
                 Text(

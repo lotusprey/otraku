@@ -244,7 +244,7 @@ class __RatingState extends State<_Rating> {
             Icons.thumb_up_outlined,
             size: Consts.ICON_SMALL,
             color: widget.model.userRating == true
-                ? Theme.of(context).colorScheme.secondary
+                ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onBackground,
           ),
         ),

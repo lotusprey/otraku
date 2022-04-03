@@ -82,11 +82,8 @@ class BarChart extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       stops: const [0, 1],
                       colors: [
-                        Theme.of(context).colorScheme.secondary,
-                        Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.1),
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       ],
                     ),
                   ),
@@ -151,11 +148,8 @@ class PieChart extends StatelessWidget {
                         center: const Alignment(-0.5, -0.5),
                         radius: 0.8,
                         colors: [
-                          Theme.of(context).colorScheme.secondary,
-                          Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withAlpha(100),
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.primary.withAlpha(100),
                         ],
                         stops: const [0.5, 1.0],
                       ),

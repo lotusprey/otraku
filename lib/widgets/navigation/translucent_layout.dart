@@ -10,6 +10,7 @@ class TranslucentLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final paddingTop = MediaQuery.of(context).viewPadding.top;
+    print(paddingTop);
 
     return Stack(
       fit: StackFit.expand,
@@ -28,6 +29,7 @@ class TranslucentLayout extends StatelessWidget {
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(
+                        minHeight: Consts.TAP_TARGET_SIZE,
                         maxHeight: Consts.TAP_TARGET_SIZE,
                         maxWidth: Consts.OVERLAY_WIDE,
                       ),

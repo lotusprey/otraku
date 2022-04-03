@@ -43,7 +43,7 @@ class _ChipGrid extends StatelessWidget {
                     margin: Consts.PADDING,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                     ),
                     child: Icon(
                       Icons.close,
@@ -56,7 +56,7 @@ class _ChipGrid extends StatelessWidget {
             AppBarIcon(
               tooltip: 'Edit',
               icon: Ionicons.add_circle_outline,
-              colour: Theme.of(context).colorScheme.primary,
+              colour: Theme.of(context).colorScheme.surfaceVariant,
               onTap: onEdit,
             ),
           ],

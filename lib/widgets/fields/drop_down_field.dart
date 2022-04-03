@@ -70,7 +70,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
             widget.hint,
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          iconEnabledColor: Theme.of(context).colorScheme.surfaceVariant,
           dropdownColor: Theme.of(context).colorScheme.surface,
           underline: const SizedBox(),
           isExpanded: true,

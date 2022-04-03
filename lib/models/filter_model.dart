@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/utils/settings.dart';
 

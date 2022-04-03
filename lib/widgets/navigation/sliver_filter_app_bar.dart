@@ -193,7 +193,7 @@ class _FilterIconState extends State<_FilterIcon> {
         onTap: () => showSheet(context, FilterView(widget.filters)).then((_) {
           if (_active != _isActive()) setState(() => _active = !_active);
         }),
-        colour: _active ? Theme.of(context).colorScheme.secondary : null,
+        colour: _active ? Theme.of(context).colorScheme.primary : null,
       );
 
   bool _isActive() {
@@ -234,7 +234,7 @@ class _BirthdayIconState extends State<_BirthdayIcon> {
   Widget build(BuildContext context) => AppBarIcon(
         icon: Icons.cake_outlined,
         tooltip: 'Birthday Filter',
-        colour: _active ? Theme.of(context).colorScheme.secondary : null,
+        colour: _active ? Theme.of(context).colorScheme.primary : null,
         onTap: () {
           if (widget.ctrl.isBirthday) {
             widget.ctrl.isBirthday = false;

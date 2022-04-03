@@ -168,7 +168,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
                 style: i != widget.ctrl.langIndex
                     ? Theme.of(context).textTheme.headline1
                     : Theme.of(context).textTheme.headline1?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
               ),
             ),

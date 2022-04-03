@@ -43,8 +43,8 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return IconButton(
       icon: icon,
       color: score == index
-          ? Theme.of(context).colorScheme.secondary
-          : Theme.of(context).colorScheme.primary,
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.surfaceVariant,
       onPressed: () => score == index
           ? setState(() => widget.model.score = 0)
           : setState(() => widget.model.score = index.toDouble()),
@@ -87,7 +87,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
       icon: score >= index
           ? const Icon(Icons.star)
           : const Icon(Icons.star_border),
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.primary,
       onPressed: () => score != index
           ? setState(() => widget.model.score = index.toDouble())
           : setState(() => widget.model.score = 0),

@@ -39,7 +39,7 @@ class NotificationsView extends StatelessWidget {
                       style: i != ctrl.filter
                           ? Theme.of(context).textTheme.headline1
                           : Theme.of(context).textTheme.headline1?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                     ),
                   ),
@@ -192,7 +192,7 @@ class _NotificationWidget extends StatelessWidget {
                 width: 10,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius:
                       BorderRadius.horizontal(right: Consts.RADIUS_MIN),
                 ),

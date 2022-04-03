@@ -47,11 +47,11 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _on ? Theme.of(context).colorScheme.secondary : null,
+                color: _on ? Theme.of(context).colorScheme.primary : null,
                 border: Border.all(
                   color: _on
                       ? Colors.transparent
-                      : Theme.of(context).colorScheme.primary,
+                      : Theme.of(context).colorScheme.surfaceVariant,
                   width: 2,
                 ),
               ),
@@ -128,12 +128,12 @@ class _CheckBoxTriFieldState extends State<CheckBoxTriField> {
                 color: _state == 0
                     ? null
                     : _state == 1
-                        ? Theme.of(context).colorScheme.secondary
+                        ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.error,
                 border: Border.all(
                   color: _state != 0
                       ? Colors.transparent
-                      : Theme.of(context).colorScheme.primary,
+                      : Theme.of(context).colorScheme.surfaceVariant,
                   width: 2,
                 ),
               ),

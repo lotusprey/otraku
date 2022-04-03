@@ -138,8 +138,8 @@ class __TileContentState extends State<_TileContent> {
             borderRadius: Consts.BORDER_RAD_MIN,
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.surfaceVariant,
+                Theme.of(context).colorScheme.surfaceVariant,
                 Theme.of(context).colorScheme.background,
                 Theme.of(context).colorScheme.background,
               ],
@@ -322,7 +322,7 @@ class __TileContentState extends State<_TileContent> {
             Icon(
               Ionicons.add_outline,
               size: Consts.ICON_SMALL,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.surfaceVariant,
             ),
           ],
         ),

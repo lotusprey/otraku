@@ -49,7 +49,7 @@ class _SearchFieldState extends State<SearchField> {
       scrollPhysics: Consts.PHYSICS,
       autofocus: widget.onHide != null,
       style: Theme.of(context).textTheme.bodyText2,
-      cursorColor: Theme.of(context).colorScheme.secondary,
+      cursorColor: Theme.of(context).colorScheme.primary,
       decoration: InputDecoration(
         isDense: false,
         hintText: widget.hint,

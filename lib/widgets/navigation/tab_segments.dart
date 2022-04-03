@@ -53,7 +53,7 @@ class _TabSegmentsState<T> extends State<TabSegments<T>> {
                   decoration: BoxDecoration(
                     color: _value != widget.items.values.elementAt(i)
                         ? null
-                        : Theme.of(context).colorScheme.secondary,
+                        : Theme.of(context).colorScheme.primary,
                     borderRadius: Consts.BORDER_RAD_MIN,
                   ),
                   child: Text(

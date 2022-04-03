@@ -142,7 +142,7 @@ class NavIconRow extends NavRow {
                     items.values.elementAt(i),
                     color: i != index
                         ? null
-                        : Theme.of(context).colorScheme.secondary,
+                        : Theme.of(context).colorScheme.primary,
                   ),
                   if (width > 50) ...[
                     const SizedBox(width: 5),

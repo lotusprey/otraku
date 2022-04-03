@@ -7,26 +7,25 @@ class ThemeModel {
   final Color onBackground;
   final Color surface;
   final Color onSurface;
+  final Color surfaceVariant;
   final Color primary;
-  final Color primaryVariant;
-  final Color secondary;
-  final Color secondaryVariant;
-  final Color onSecondary;
+  final Color onPrimary;
+  final Color primaryContainer;
   final Color error;
   final Color onError;
 
   Color get translucent => background.withAlpha(190);
 
-  Color get highlight => primary.withAlpha(100);
+  Color get highlight => surfaceVariant.withAlpha(100);
 
   ThemeData get themeData => ThemeData(
         fontFamily: 'Rubik',
         useMaterial3: true,
         scaffoldBackgroundColor: background,
         cardColor: translucent,
-        disabledColor: primary,
-        unselectedWidgetColor: primary,
-        toggleableActiveColor: secondary,
+        disabledColor: surfaceVariant,
+        unselectedWidgetColor: surfaceVariant,
+        toggleableActiveColor: primary,
         splashColor: highlight,
         highlightColor: Colors.transparent,
         colorScheme: ColorScheme(
@@ -35,12 +34,12 @@ class ThemeModel {
           onBackground: onBackground,
           surface: surface,
           onSurface: onSurface,
+          surfaceVariant: surfaceVariant,
           primary: primary,
-          primaryContainer: primaryVariant,
+          primaryContainer: primaryContainer,
           onPrimary: background,
-          secondary: secondary,
-          secondaryContainer: secondaryVariant,
-          onSecondary: onSecondary,
+          secondary: primary,
+          onSecondary: onPrimary,
           error: error,
           onError: onError,
         ),
@@ -51,9 +50,9 @@ class ThemeModel {
           },
         ),
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: secondary,
+          cursorColor: primary,
           selectionColor: highlight,
-          selectionHandleColor: secondary,
+          selectionHandleColor: primary,
         ),
         dialogTheme: DialogTheme(
           elevation: 10,
@@ -79,32 +78,18 @@ class ThemeModel {
             borderRadius: Consts.BORDER_RAD_MIN,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
-          textStyle: TextStyle(fontSize: Consts.FONT_MEDIUM, color: primary),
+          textStyle:
+              TextStyle(fontSize: Consts.FONT_MEDIUM, color: surfaceVariant),
         ),
         scrollbarTheme: ScrollbarThemeData(
           radius: Consts.RADIUS_MIN,
-          thumbColor: MaterialStateProperty.all(primary),
+          thumbColor: MaterialStateProperty.all(surfaceVariant),
         ),
         sliderTheme: SliderThemeData(
-          thumbColor: secondary,
+          thumbColor: primary,
           overlayColor: highlight,
-          activeTrackColor: secondary,
+          activeTrackColor: primary,
           inactiveTrackColor: surface,
-        ),
-        radioTheme: RadioThemeData(
-          fillColor: MaterialStateProperty.all(secondary),
-          overlayColor: MaterialStateProperty.all(highlight),
-        ),
-        switchTheme: SwitchThemeData(
-          trackColor: MaterialStateProperty.resolveWith(
-            (states) =>
-                states.contains(MaterialState.selected) ? secondary : primary,
-          ),
-          thumbColor: MaterialStateProperty.resolveWith(
-            (states) => states.contains(MaterialState.selected)
-                ? secondaryVariant
-                : primaryVariant,
-          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           isDense: true,
@@ -112,7 +97,7 @@ class ThemeModel {
           fillColor: surface,
           hintStyle: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
@@ -120,14 +105,14 @@ class ThemeModel {
             borderSide: BorderSide.none,
           ),
         ),
-        iconTheme: IconThemeData(color: primary, size: Consts.ICON_BIG),
+        iconTheme: IconThemeData(color: surfaceVariant, size: Consts.ICON_BIG),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
               fontSize: Consts.FONT_MEDIUM,
               fontWeight: FontWeight.w500,
             )),
-            backgroundColor: MaterialStateProperty.all(secondary),
+            backgroundColor: MaterialStateProperty.all(primary),
             foregroundColor: MaterialStateProperty.all(background),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
@@ -140,7 +125,7 @@ class ThemeModel {
             textStyle: MaterialStateProperty.all(const TextStyle(
               fontSize: Consts.FONT_MEDIUM,
             )),
-            foregroundColor: MaterialStateProperty.all(secondary),
+            foregroundColor: MaterialStateProperty.all(primary),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
               borderRadius: Consts.BORDER_RAD_MIN,
@@ -160,17 +145,17 @@ class ThemeModel {
           ),
           headline3: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.w500,
           ),
           headline4: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           bodyText1: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: secondary,
+            color: primary,
             fontWeight: FontWeight.normal,
           ),
           bodyText2: TextStyle(
@@ -180,12 +165,12 @@ class ThemeModel {
           ),
           subtitle1: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           subtitle2: TextStyle(
             fontSize: Consts.FONT_SMALL,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           button: TextStyle(
@@ -202,11 +187,10 @@ class ThemeModel {
     required this.onBackground,
     required this.surface,
     required this.onSurface,
+    required this.surfaceVariant,
     required this.primary,
-    required this.primaryVariant,
-    required this.secondary,
-    required this.secondaryVariant,
-    required this.onSecondary,
+    required this.onPrimary,
+    required this.primaryContainer,
     required this.error,
     required this.onError,
   });
@@ -217,20 +201,15 @@ class ThemeModel {
     required Color onBackground,
     required Color surface,
     required Color onSurface,
+    required Color surfaceVariant,
     required Color primary,
-    required Color secondary,
-    required Color onSecondary,
+    required Color onPrimary,
     required Color error,
     required Color onError,
   }) {
     HSLColor hsl = HSLColor.fromColor(primary);
-    final primaryVariant = hsl.lightness < 0.1
+    final primaryContainer = hsl.lightness < 0.1
         ? primary
-        : hsl.withLightness(hsl.lightness - 0.1).toColor();
-
-    hsl = HSLColor.fromColor(secondary);
-    final secondaryVariant = hsl.lightness < 0.1
-        ? secondary
         : hsl.withLightness(hsl.lightness - 0.1).toColor();
 
     return ThemeModel._(
@@ -239,11 +218,10 @@ class ThemeModel {
       onBackground: onBackground,
       surface: surface,
       onSurface: onSurface,
+      surfaceVariant: surfaceVariant,
       primary: primary,
-      primaryVariant: primaryVariant,
-      secondary: secondary,
-      secondaryVariant: secondaryVariant,
-      onSecondary: onSecondary,
+      onPrimary: onPrimary,
+      primaryContainer: primaryContainer,
       error: error,
       onError: onError,
     );

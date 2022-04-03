@@ -311,7 +311,7 @@ class _RateButtonsState extends State<_RateButtons> {
                     : Icons.thumb_up_outlined,
               ),
               color: widget.model.viewerRating == true
-                  ? Theme.of(context).colorScheme.secondary
+                  ? Theme.of(context).colorScheme.primary
                   : null,
               onPressed: () =>
                   _rate(widget.model.viewerRating != true ? true : null)

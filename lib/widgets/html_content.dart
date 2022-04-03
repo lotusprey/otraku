@@ -27,7 +27,7 @@ class HtmlContent extends StatelessWidget {
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
         icon: Icon(Icons.close),
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.primary,
         onPressed: () => showPopUp(
           context,
           ConfirmationDialog(
@@ -59,7 +59,7 @@ class HtmlContent extends StatelessWidget {
             width: double.infinity,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: Consts.BORDER_RAD_MIN,
             ),
           );

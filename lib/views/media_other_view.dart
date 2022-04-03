@@ -151,41 +151,51 @@ class _RecommendationsGrid extends StatelessWidget {
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
-        extraHeight: 80,
+        extraHeight: 85,
         rawHWRatio: Consts.COVER_HW_RATIO,
       ),
       delegate: SliverChildBuilderDelegate(
-        (_, i) => ExploreIndexer(
-          id: items[i].id,
-          explorable: items[i].type,
-          imageUrl: items[i].imageUrl,
-          child: Column(
-            children: [
-              Expanded(
-                child: Hero(
-                  tag: items[i].id,
-                  child: ClipRRect(
-                    borderRadius: Consts.BORDER_RAD_MIN,
-                    child: Container(
-                      color: Theme.of(context).colorScheme.surface,
-                      child: FadeImage(items[i].imageUrl!),
+        (_, i) => DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: Consts.BORDER_RAD_MIN,
+          ),
+          child: ExploreIndexer(
+            id: items[i].id,
+            explorable: items[i].type,
+            imageUrl: items[i].imageUrl,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: items[i].id,
+                    child: ClipRRect(
+                      borderRadius: Consts.BORDER_RAD_MIN,
+                      child: Container(
+                        color: Theme.of(context).colorScheme.surface,
+                        child: FadeImage(items[i].imageUrl!),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 5),
-              SizedBox(
-                height: 35,
-                child: Text(
-                  items[i].title,
-                  overflow: TextOverflow.fade,
-                  maxLines: 2,
-                  style: Theme.of(context).textTheme.bodyText2,
+                Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: SizedBox(
+                    height: 35,
+                    child: Text(
+                      items[i].title,
+                      overflow: TextOverflow.fade,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.bodyText2,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 5),
-              _Rating(items[i], rate),
-            ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                  child: _Rating(items[i], rate),
+                ),
+              ],
+            ),
           ),
         ),
         childCount: items.length,
@@ -208,7 +218,7 @@ class __RatingState extends State<_Rating> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
           onTap: () {
@@ -249,7 +259,7 @@ class __RatingState extends State<_Rating> {
           ),
         ),
         const SizedBox(width: 5),
-        Text(widget.model.rating.toString()),
+        Text(widget.model.rating.toString(), overflow: TextOverflow.fade),
         const SizedBox(width: 5),
         GestureDetector(
           onTap: () {

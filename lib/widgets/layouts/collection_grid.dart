@@ -1,78 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CollectionGrid extends StatelessWidget {
-  CollectionGrid(this.ctrlTag);
+  CollectionGrid({
+    required this.items,
+    required this.scoreFormat,
+    required this.updateProgress,
+  });
 
-  final String ctrlTag;
+  final List<ListEntryModel> items;
+  final ScoreFormat scoreFormat;
+  final void Function(ListEntryModel)? updateProgress;
 
   @override
   Widget build(BuildContext context) {
-    final isMe =
-        ctrlTag == '${Settings().id}true' || ctrlTag == '${Settings().id}false';
-
-    final sidePadding = 10.0 +
-        (MediaQuery.of(context).size.width > 1000
-            ? (MediaQuery.of(context).size.width - 1000) / 2
-            : 0.0);
-
-    return GetBuilder<CollectionController>(
-      id: CollectionController.ID_BODY,
-      tag: ctrlTag,
-      builder: (ctrl) {
-        if (ctrl.isLoading)
-          return const SliverFillRemaining(child: Center(child: Loader()));
-
-        if (ctrl.entries.isEmpty)
-          return SliverFillRemaining(
-            child: Center(
-              child: Text(
-                'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
-          );
-
-        return SliverPadding(
-          padding:
-              EdgeInsets.only(left: sidePadding, right: sidePadding, top: 15),
-          sliver: SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-              (_, i) => _Tile(ctrl, ctrl.entries[i], isMe),
-              childCount: ctrl.entries.length,
-            ),
-            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-              minWidth: 350,
-              height: 150,
-            ),
-          ),
-        );
-      },
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate(
+        (_, i) => _Tile(items[i], scoreFormat, updateProgress),
+        childCount: items.length,
+      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 350,
+        height: 150,
+      ),
     );
   }
 }
 
 class _Tile extends StatelessWidget {
-  _Tile(this.ctrl, this.model, this.isMe);
+  _Tile(this.model, this.scoreFormat, this.updateProgress);
 
-  final CollectionController ctrl;
   final ListEntryModel model;
-  final bool isMe;
+  final ScoreFormat scoreFormat;
+  final void Function(ListEntryModel)? updateProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +73,7 @@ class _Tile extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: Consts.PADDING,
-                child: _TileContent(ctrl, model, isMe),
+                child: _TileContent(model, scoreFormat, updateProgress),
               ),
             ),
           ],
@@ -112,12 +83,14 @@ class _Tile extends StatelessWidget {
   }
 }
 
+/// The content is a [StatefulWidget], as it
+/// needs to update when the progress increments.
 class _TileContent extends StatefulWidget {
-  _TileContent(this.ctrl, this.model, this.isMe);
+  _TileContent(this.model, this.scoreFormat, this.updateProgress);
 
-  final CollectionController ctrl;
   final ListEntryModel model;
-  final bool isMe;
+  final ScoreFormat scoreFormat;
+  final void Function(ListEntryModel)? updateProgress;
 
   @override
   State<_TileContent> createState() => __TileContentState();
@@ -257,7 +230,7 @@ class __TileContentState extends State<_TileContent> {
   Widget _buildScore(BuildContext context) {
     if (widget.model.score == 0) return const SizedBox();
 
-    switch (widget.ctrl.scoreFormat) {
+    switch (widget.scoreFormat) {
       case ScoreFormat.POINT_3:
         if (widget.model.score == 3)
           return const Icon(
@@ -322,7 +295,7 @@ class __TileContentState extends State<_TileContent> {
       style: Theme.of(context).textTheme.subtitle2,
     );
 
-    if (!widget.isMe || model.progress == model.progressMax)
+    if (widget.updateProgress == null || model.progress == model.progressMax)
       return Tooltip(message: 'Progress', child: text);
 
     return TextButton(
@@ -336,7 +309,7 @@ class __TileContentState extends State<_TileContent> {
         if (model.progressMax == null ||
             model.progress < model.progressMax! - 1) {
           setState(() => model.progress++);
-          widget.ctrl.updateProgress(model);
+          widget.updateProgress!(model);
         } else
           showSheet(context, EditView(model.mediaId, complete: true));
       },

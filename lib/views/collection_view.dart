@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
+import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/layouts/collection_grid.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
@@ -53,6 +54,13 @@ class HomeCollectionView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tag = '$id$ofAnime';
+    final isMe =
+        tag == '${Settings().id}true' || tag == '${Settings().id}false';
+    final sidePadding = 10.0 +
+        (MediaQuery.of(context).size.width > 1000
+            ? (MediaQuery.of(context).size.width - 1000) / 2
+            : 0.0);
+
     return GetBuilder<CollectionController>(
       tag: tag,
       builder: (ctrl) => CustomScrollView(
@@ -64,7 +72,39 @@ class HomeCollectionView extends StatelessWidget {
             onRefresh: ctrl.refetch,
             canRefresh: () => !ctrl.isLoading,
           ),
-          CollectionGrid(tag),
+          SliverPadding(
+            padding: EdgeInsets.only(
+              left: sidePadding,
+              right: sidePadding,
+              top: 10,
+            ),
+            sliver: GetBuilder<CollectionController>(
+              tag: tag,
+              id: CollectionController.ID_BODY,
+              builder: (ctrl) {
+                if (ctrl.isLoading)
+                  return const SliverFillRemaining(
+                    child: Center(child: Loader()),
+                  );
+
+                if (ctrl.entries.isEmpty)
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Text(
+                        'No ${ctrl.ofAnime ? 'Anime' : 'Manga'}',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
+
+                return CollectionGrid(
+                  items: ctrl.entries,
+                  scoreFormat: ctrl.scoreFormat!,
+                  updateProgress: isMe ? ctrl.updateProgress : null,
+                );
+              },
+            ),
+          ),
           SliverToBoxAdapter(
             child: SizedBox(height: NavLayout.offset(context)),
           ),

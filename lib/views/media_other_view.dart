@@ -151,7 +151,7 @@ class _RecommendationsGrid extends StatelessWidget {
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
-        extraHeight: 85,
+        extraHeight: 70,
         rawHWRatio: Consts.COVER_HW_RATIO,
       ),
       delegate: SliverChildBuilderDelegate(

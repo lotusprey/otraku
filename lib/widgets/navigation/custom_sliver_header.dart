@@ -38,9 +38,9 @@ class CustomSliverHeader extends StatelessWidget {
       sidePadding = (MediaQuery.of(context).size.width - maxWidth!) / 2;
 
     final imageWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.35
-        : 150.0;
-    final imageHeight = imageWidth * (squareImage ? 1 : 1.4);
+        ? MediaQuery.of(context).size.width * 0.30
+        : 100.0;
+    final imageHeight = imageWidth * (squareImage ? 1 : Consts.COVER_HW_RATIO);
     final bannerHeight = 200.0;
     final height = bannerHeight + imageHeight / 2;
 

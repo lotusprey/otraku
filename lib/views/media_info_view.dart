@@ -96,15 +96,15 @@ class MediaInfoView {
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     infoTitles[i],
                     style: Theme.of(context).textTheme.subtitle1,
+                    maxLines: 1,
                   ),
-                  const SizedBox(height: 2),
-                  Text(infoChildren[i].toString()),
+                  Text(infoChildren[i].toString(), maxLines: 1),
                 ],
               ),
             ),
@@ -181,7 +181,7 @@ class _Section extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+        child: Text(title),
       ),
     );
   }
@@ -208,7 +208,7 @@ class _ScrollCards extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+              child: Text(title),
             ),
             SizedBox(
               height: 40,

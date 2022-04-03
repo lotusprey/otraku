@@ -207,10 +207,10 @@ class ThemeModel {
     required Color error,
     required Color onError,
   }) {
-    HSLColor hsl = HSLColor.fromColor(primary);
-    final primaryContainer = hsl.lightness < 0.1
-        ? primary
-        : hsl.withLightness(hsl.lightness - 0.1).toColor();
+    final hsl = HSLColor.fromColor(primary);
+    final primaryContainer = hsl.lightness < 0.5
+        ? hsl.withLightness(hsl.lightness + 0.2).toColor()
+        : hsl.withLightness(hsl.lightness - 0.2).toColor();
 
     return ThemeModel._(
       brightness: brightness,

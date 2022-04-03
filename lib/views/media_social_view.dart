@@ -106,6 +106,7 @@ class _ReviewGrid extends StatelessWidget {
                     child: Text(
                       items[i].summary,
                       style: Theme.of(context).textTheme.subtitle1,
+                      overflow: TextOverflow.fade,
                     ),
                   ),
                 ),

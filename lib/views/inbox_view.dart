@@ -184,7 +184,7 @@ class InboxView extends StatelessWidget {
     final slivers = <Widget>[];
 
     if (animeCtrl.isLoading)
-      slivers.add(const SliverToBoxAdapter(child: Loader()));
+      slivers.add(const SliverFillRemaining(child: Center(child: Loader())));
     else {
       final entries = animeCtrl.listWithStatus(ListStatus.CURRENT);
       if (entries.isNotEmpty) {
@@ -213,7 +213,7 @@ class InboxView extends StatelessWidget {
     }
 
     if (mangaCtrl.isLoading && slivers.length > 1)
-      slivers.add(const SliverToBoxAdapter(child: Loader()));
+      slivers.add(const SliverFillRemaining(child: Center(child: Loader())));
     else {
       final entries = mangaCtrl.listWithStatus(ListStatus.CURRENT);
       if (entries.isNotEmpty) {

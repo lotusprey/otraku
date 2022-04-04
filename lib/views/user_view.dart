@@ -45,7 +45,6 @@ class HomeUserView extends StatelessWidget {
       init: UserController(id),
       tag: id.toString(),
       builder: (ctrl) => CustomScrollView(
-        physics: Consts.PHYSICS,
         controller: scrollCtrl,
         slivers: [
           UserHeader(

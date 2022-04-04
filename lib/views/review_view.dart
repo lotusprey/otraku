@@ -30,7 +30,6 @@ class ReviewView extends StatelessWidget {
             builder: (ctrl) {
               final model = ctrl.model;
               return CustomScrollView(
-                physics: Consts.PHYSICS,
                 slivers: [
                   SliverPersistentHeader(
                     pinned: true,

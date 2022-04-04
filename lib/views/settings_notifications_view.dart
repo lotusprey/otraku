@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/models/settings_model.dart';
-import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
@@ -45,7 +44,6 @@ class SettingsNotificationsView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
         slivers: [
           ...siteOptions,
           SliverToBoxAdapter(
@@ -82,7 +80,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.headline3),
+          child: Text(title, style: Theme.of(context).textTheme.headline2),
         ),
       );
 }

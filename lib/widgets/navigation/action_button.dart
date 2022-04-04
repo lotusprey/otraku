@@ -42,13 +42,13 @@ class ActionButton extends StatelessWidget {
             ],
           ),
           child: Material(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(30),
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(30),
               child: onSwipe == null
-                  ? Icon(icon, color: Theme.of(context).colorScheme.primary)
+                  ? Icon(icon, color: Theme.of(context).colorScheme.onPrimary)
                   : _DraggableIcon(icon: icon, onSwipe: onSwipe!),
             ),
           ),
@@ -146,7 +146,7 @@ class _DraggableIconState extends State<_DraggableIcon>
           opacity: _opacity,
           child: Icon(
             _icon,
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),

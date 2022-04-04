@@ -46,7 +46,6 @@ class _SearchFieldState extends State<SearchField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _ctrl,
-      scrollPhysics: Consts.PHYSICS,
       autofocus: widget.onHide != null,
       style: Theme.of(context).textTheme.bodyText2,
       cursorColor: Theme.of(context).colorScheme.primary,

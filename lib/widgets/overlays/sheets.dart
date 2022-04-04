@@ -72,13 +72,16 @@ class OpaqueSheetView extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget? sheet;
 
-    return DraggableScrollableSheet(
-      expand: false,
-      maxChildSize: 0.9,
-      builder: (context, scrollCtrl) {
-        if (sheet == null) sheet = _sheetBody(context, scrollCtrl);
-        return sheet!;
-      },
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: DraggableScrollableSheet(
+        expand: false,
+        maxChildSize: 0.9,
+        builder: (context, scrollCtrl) {
+          if (sheet == null) sheet = _sheetBody(context, scrollCtrl);
+          return sheet!;
+        },
+      ),
     );
   }
 
@@ -201,7 +204,6 @@ class DynamicGradientDragSheet extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
           child: ListView.builder(
             controller: scrollCtrl,
-            physics: Consts.PHYSICS,
             padding: const EdgeInsets.only(
               top: 50,
               left: 10,
@@ -288,7 +290,6 @@ class FixedGradientDragSheet extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
           child: ListView(
             controller: scrollCtrl,
-            physics: Consts.PHYSICS,
             padding: const EdgeInsets.only(
               top: 50,
               bottom: 10,

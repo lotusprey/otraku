@@ -23,7 +23,6 @@ class SettingsAppView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverGrid(

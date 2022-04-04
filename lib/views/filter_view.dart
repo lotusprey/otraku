@@ -73,9 +73,12 @@ class FilterView extends StatelessWidget {
       ],
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
-        padding:
-            const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 60),
+        padding: const EdgeInsets.only(
+          left: 10,
+          right: 10,
+          top: 20,
+          bottom: 60,
+        ),
         children: [
           GridView(
             shrinkWrap: true,
@@ -273,7 +276,6 @@ class _SelectionSheet<T> extends StatelessWidget {
       initialHeight: options.length * Consts.TAP_TARGET_SIZE + 20,
       builder: (context, scrollCtrl) => ListView.builder(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
         padding: Consts.PADDING,
         itemCount: options.length,
         itemExtent: Consts.TAP_TARGET_SIZE,
@@ -341,7 +343,6 @@ class _TagSheetBodyState extends State<TagSheetBody> {
       children: [
         if (_itemIndices.isNotEmpty)
           ListView.builder(
-            physics: Consts.PHYSICS,
             padding: const EdgeInsets.only(
               left: 20,
               right: 20,
@@ -436,7 +437,6 @@ class _TagSheetBodyState extends State<TagSheetBody> {
                   SizedBox(
                     height: 40,
                     child: ListView.builder(
-                      physics: Consts.PHYSICS,
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       scrollDirection: Axis.horizontal,
                       itemCount: _categoryIndices.length,

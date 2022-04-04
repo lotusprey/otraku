@@ -59,7 +59,6 @@ class BarChart extends StatelessWidget {
         SizedBox(
           height: 280,
           child: ListView.builder(
-            physics: Consts.PHYSICS,
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.all(10),
             itemCount: names.length,

@@ -106,7 +106,7 @@ class InboxView extends StatelessWidget {
                 physics: Consts.PHYSICS,
                 controller: scrollCtrl,
                 slivers: [
-                  SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
+                  SliverToBoxAdapter(child: SizedBox(height: offsetTop - 10)),
                   ..._feedWidgets(context),
                   SliverToBoxAdapter(
                     child: SizedBox(height: NavLayout.offset(context)),
@@ -263,7 +263,7 @@ class InboxView extends StatelessWidget {
     slivers.add(SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(left: 10),
-        child: Text(title, style: Theme.of(context).textTheme.headline1),
+        child: Text(title, style: Theme.of(context).textTheme.headline2),
       ),
     ));
 

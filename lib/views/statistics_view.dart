@@ -41,9 +41,10 @@ class StatisticsView extends StatelessWidget {
           child: ListView(
             controller: ctrl.scrollCtrl,
             key: ctrl.onAnime ? keyAnime : keyManga,
-            padding:
-                EdgeInsets.only(top: 10, bottom: NavLayout.offset(context)),
-            physics: Consts.PHYSICS,
+            padding: EdgeInsets.only(
+              top: 10,
+              bottom: NavLayout.offset(context),
+            ),
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 10),

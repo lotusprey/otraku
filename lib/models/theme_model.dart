@@ -78,8 +78,10 @@ class ThemeModel {
             borderRadius: Consts.BORDER_RAD_MIN,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
-          textStyle:
-              TextStyle(fontSize: Consts.FONT_MEDIUM, color: surfaceVariant),
+          textStyle: TextStyle(
+            fontSize: Consts.FONT_MEDIUM,
+            color: surfaceVariant,
+          ),
         ),
         scrollbarTheme: ScrollbarThemeData(
           radius: Consts.RADIUS_MIN,
@@ -209,8 +211,8 @@ class ThemeModel {
   }) {
     final hsl = HSLColor.fromColor(primary);
     final primaryContainer = hsl.lightness < 0.5
-        ? hsl.withLightness(hsl.lightness + 0.2).toColor()
-        : hsl.withLightness(hsl.lightness - 0.2).toColor();
+        ? hsl.withLightness(hsl.lightness + 0.1).toColor()
+        : hsl.withLightness(hsl.lightness - 0.1).toColor();
 
     return ThemeModel._(
       brightness: brightness,

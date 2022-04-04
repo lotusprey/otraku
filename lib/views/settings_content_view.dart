@@ -33,19 +33,9 @@ class SettingsContentView extends StatelessWidget {
       padding: const EdgeInsets.only(left: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'Media',
-                style: Theme.of(context).textTheme.headline3,
-              ),
-            ),
-          ),
           SliverPadding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: const EdgeInsets.only(top: 10, right: 10),
             sliver: SliverGrid(
               gridDelegate: dropDownGridDelegate,
               delegate: SliverChildListDelegate.fixed([
@@ -136,15 +126,6 @@ class SettingsContentView extends StatelessWidget {
                 },
               ),
             ]),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'Lists',
-                style: Theme.of(context).textTheme.headline3,
-              ),
-            ),
           ),
           SliverPadding(
             padding: const EdgeInsets.only(right: 10),

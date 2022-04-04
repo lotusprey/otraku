@@ -176,7 +176,6 @@ class _EditView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([

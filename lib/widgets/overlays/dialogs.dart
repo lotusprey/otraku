@@ -217,7 +217,6 @@ class _DialogColumn extends StatelessWidget {
               ),
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  physics: Consts.PHYSICS,
                   padding: Consts.PADDING,
                   child: child,
                 ),

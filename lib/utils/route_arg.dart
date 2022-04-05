@@ -36,6 +36,7 @@ class RouteArg {
 
     final arg = route.arguments as RouteArg?;
     switch (route.name) {
+      case '/':
       case auth:
         return MaterialPageRoute(builder: (_) => const AuthView());
       case home:

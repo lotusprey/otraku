@@ -22,7 +22,6 @@ class _AppState extends State<App> {
         title: 'Otraku',
         theme: Theming().theme,
         navigatorKey: RouteArg.navKey,
-        initialRoute: RouteArg.auth,
         onGenerateRoute: RouteArg.generateRoute,
 
         /// Configure default overscroll behaviour on Android. May be

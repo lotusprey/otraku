@@ -12,7 +12,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/feed_view.dart';
 import 'package:otraku/widgets/activity_box.dart';
-import 'package:otraku/widgets/layouts/collection_grid.dart';
+import 'package:otraku/widgets/layouts/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
@@ -196,14 +196,14 @@ class InboxView extends StatelessWidget {
               : other.add(e);
 
         _addProgressSection(
-          title: 'Your current releasing anime',
+          title: 'Releasing Anime',
           items: releasing,
           context: context,
           slivers: slivers,
           ctrl: animeCtrl,
         );
         _addProgressSection(
-          title: 'Your current other anime',
+          title: 'Other Anime',
           items: other,
           context: context,
           slivers: slivers,
@@ -225,14 +225,14 @@ class InboxView extends StatelessWidget {
               : other.add(e);
 
         _addProgressSection(
-          title: 'Your current releasing manga',
+          title: 'Releasing Manga',
           items: releasing,
           context: context,
           slivers: slivers,
           ctrl: mangaCtrl,
         );
         _addProgressSection(
-          title: 'Your current other manga',
+          title: 'Other Manga',
           items: other,
           context: context,
           slivers: slivers,
@@ -269,9 +269,8 @@ class InboxView extends StatelessWidget {
 
     slivers.add(SliverPadding(
       padding: Consts.PADDING,
-      sliver: CollectionGrid(
+      sliver: MinimalCollectionGrid(
         items: items,
-        scoreFormat: ctrl.scoreFormat!,
         updateProgress: ctrl.updateProgress,
       ),
     ));

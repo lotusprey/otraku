@@ -14,8 +14,8 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 
 const _TILE_HEIGHT = 140.0;
 
-class CollectionGrid extends StatelessWidget {
-  CollectionGrid({
+class LargeCollectionGrid extends StatelessWidget {
+  LargeCollectionGrid({
     required this.items,
     required this.scoreFormat,
     required this.updateProgress,

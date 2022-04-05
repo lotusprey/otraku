@@ -12,6 +12,7 @@ abstract class Consts {
   static const BORDER_RAD_MIN = BorderRadius.all(RADIUS_MIN);
   static const BORDER_RAD_MAX = BorderRadius.all(RADIUS_MAX);
   static const FADE_DURATION = Duration(milliseconds: 300);
+  static const TRANSITION_DURATION = Duration(milliseconds: 200);
   static const PHYSICS =
       AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics());
   static final filter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);

@@ -101,8 +101,10 @@ class InboxView extends StatelessWidget {
             notificationIcon,
           ],
           builder: (offsetTop) {
+            late final Widget child;
+
             if (ctrl.onFeed)
-              return CustomScrollView(
+              child = CustomScrollView(
                 physics: Consts.PHYSICS,
                 controller: scrollCtrl,
                 slivers: [
@@ -113,25 +115,30 @@ class InboxView extends StatelessWidget {
                   ),
                 ],
               );
-
-            return GetBuilder<CollectionController>(
-              id: CollectionController.ID_BODY,
-              tag: '${Settings().id}true',
-              builder: (animeCtrl) => GetBuilder<CollectionController>(
+            else
+              child = GetBuilder<CollectionController>(
                 id: CollectionController.ID_BODY,
-                tag: '${Settings().id}false',
-                builder: (mangaCtrl) => CustomScrollView(
-                  physics: Consts.PHYSICS,
-                  controller: scrollCtrl,
-                  slivers: [
-                    SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
-                    ..._progressWidgets(context, animeCtrl, mangaCtrl),
-                    SliverToBoxAdapter(
-                      child: SizedBox(height: NavLayout.offset(context)),
-                    ),
-                  ],
+                tag: '${Settings().id}true',
+                builder: (animeCtrl) => GetBuilder<CollectionController>(
+                  id: CollectionController.ID_BODY,
+                  tag: '${Settings().id}false',
+                  builder: (mangaCtrl) => CustomScrollView(
+                    physics: Consts.PHYSICS,
+                    controller: scrollCtrl,
+                    slivers: [
+                      SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
+                      ..._progressWidgets(context, animeCtrl, mangaCtrl),
+                      SliverToBoxAdapter(
+                        child: SizedBox(height: NavLayout.offset(context)),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              );
+
+            return AnimatedSwitcher(
+              duration: Consts.TRANSITION_DURATION,
+              child: child,
             );
           },
         );

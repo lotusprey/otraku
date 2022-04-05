@@ -38,7 +38,7 @@ class NavLayout extends StatelessWidget {
     if (navRow != null)
       body = DragDetector(
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
+          duration: Consts.TRANSITION_DURATION,
           child: child,
         ),
         onSwipe: (goRight) {

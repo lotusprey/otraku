@@ -30,8 +30,8 @@ class EditController extends GetxController {
     if (data == null) return;
 
     _oldModel = EditModel(data['Media']);
-    _completeEntry(_oldModel!);
     _newModel = EditModel.copy(_oldModel!);
+    _completeEntry(_newModel!);
     update([ID_MAIN]);
   }
 

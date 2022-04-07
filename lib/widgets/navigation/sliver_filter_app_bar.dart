@@ -55,7 +55,7 @@ class SliverCollectionAppBar extends StatelessWidget {
                 );
               },
             ),
-            _FilterIcon(ctrl.filters),
+            MediaFilterIcon(ctrl.filters),
           ],
         );
       },
@@ -82,9 +82,9 @@ class SliverExploreAppBar extends StatelessWidget {
                   type != Explorable.review ? (val) => ctrl.search = val : null,
             ),
             if (type == Explorable.anime || type == Explorable.manga)
-              _FilterIcon(ctrl.filters)
+              MediaFilterIcon(ctrl.filters)
             else if (type == Explorable.character || type == Explorable.staff)
-              _BirthdayIcon(ctrl)
+              BirthdayFilterIcon(ctrl)
             else
               const SizedBox(width: 10),
           ],
@@ -162,16 +162,16 @@ class _MediaSearchFieldState extends State<_MediaSearchField> {
   }
 }
 
-class _FilterIcon extends StatefulWidget {
-  _FilterIcon(this.filters);
+class MediaFilterIcon extends StatefulWidget {
+  MediaFilterIcon(this.filters);
 
   final FilterModel filters;
 
   @override
-  _FilterIconState createState() => _FilterIconState();
+  _MediaFilterIconState createState() => _MediaFilterIconState();
 }
 
-class _FilterIconState extends State<_FilterIcon> {
+class _MediaFilterIconState extends State<MediaFilterIcon> {
   late bool _active;
 
   @override
@@ -181,7 +181,7 @@ class _FilterIconState extends State<_FilterIcon> {
   }
 
   @override
-  void didUpdateWidget(covariant _FilterIcon oldWidget) {
+  void didUpdateWidget(covariant MediaFilterIcon oldWidget) {
     super.didUpdateWidget(oldWidget);
     _active = _isActive();
   }
@@ -212,16 +212,16 @@ class _FilterIconState extends State<_FilterIcon> {
   }
 }
 
-class _BirthdayIcon extends StatefulWidget {
-  _BirthdayIcon(this.ctrl);
+class BirthdayFilterIcon extends StatefulWidget {
+  BirthdayFilterIcon(this.ctrl);
 
   final ExploreController ctrl;
 
   @override
-  State<_BirthdayIcon> createState() => _BirthdayIconState();
+  State<BirthdayFilterIcon> createState() => _BirthdayFilterIconState();
 }
 
-class _BirthdayIconState extends State<_BirthdayIcon> {
+class _BirthdayFilterIconState extends State<BirthdayFilterIcon> {
   late bool _active;
 
   @override

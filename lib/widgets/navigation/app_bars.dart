@@ -110,26 +110,21 @@ class _ShadowBody extends StatelessWidget {
 }
 
 class TranslucentSliverAppBar extends StatelessWidget {
-  const TranslucentSliverAppBar({
-    required this.children,
-    this.constrained = false,
-  });
+  const TranslucentSliverAppBar({required this.children});
 
   final List<Widget> children;
-  final bool constrained;
 
   @override
   Widget build(BuildContext context) => SliverPersistentHeader(
-        delegate: _TranslucentAppBarDelegate(children, constrained),
+        delegate: _TranslucentAppBarDelegate(children),
         pinned: true,
       );
 }
 
 class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
-  _TranslucentAppBarDelegate(this.children, this.constrained);
+  _TranslucentAppBarDelegate(this.children);
 
   final List<Widget> children;
-  final bool constrained;
 
   @override
   Widget build(
@@ -144,10 +139,9 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
             decoration: BoxDecoration(color: Theme.of(context).cardColor),
             child: Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   maxHeight: Consts.TAP_TARGET_SIZE,
-                  maxWidth:
-                      constrained ? Consts.LAYOUT_MEDIUM : double.infinity,
+                  maxWidth: Consts.LAYOUT_BIG,
                 ),
                 child: Row(children: children),
               ),

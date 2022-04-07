@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/html_content.dart';
 
-Future<T?> showPopUp<T>(BuildContext ctx, Widget child) => showDialog<T>(
-      context: ctx,
-      builder: (ctx) => PopUpAnimation(child),
-      barrierColor: Theme.of(ctx).colorScheme.surface.withAlpha(150),
+Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
+      context: context,
+      builder: (context) => PopUpAnimation(child),
+      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
     );
 
 class PopUpAnimation extends StatefulWidget {
@@ -99,19 +99,19 @@ class DialogBox extends StatelessWidget {
 }
 
 class ConfirmationDialog extends StatelessWidget {
-  final String title;
-  final String? content;
-  final String mainAction;
-  final String? secondaryAction;
-  final void Function()? onConfirm;
-
-  ConfirmationDialog({
+  const ConfirmationDialog({
     required this.title,
     required this.mainAction,
     this.content,
     this.secondaryAction,
     this.onConfirm,
   });
+
+  final String title;
+  final String? content;
+  final String mainAction;
+  final String? secondaryAction;
+  final void Function()? onConfirm;
 
   @override
   Widget build(BuildContext context) {

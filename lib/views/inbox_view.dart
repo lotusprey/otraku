@@ -86,7 +86,7 @@ class InboxView extends StatelessWidget {
       id: HomeController.ID_HOME,
       builder: (ctrl) {
         return TranslucentLayout(
-          headerItems: [
+          topItems: [
             Expanded(
               child: TabSegments(
                 items: const {'Progress': false, 'Feed': true},

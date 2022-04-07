@@ -56,9 +56,9 @@ class ThemeModel {
         ),
         dialogTheme: DialogTheme(
           elevation: 10,
-          backgroundColor: surface,
+          backgroundColor: background,
           shape: const RoundedRectangleBorder(
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.BORDER_RAD_MAX,
           ),
           titleTextStyle: TextStyle(
             fontSize: Consts.FONT_MEDIUM,

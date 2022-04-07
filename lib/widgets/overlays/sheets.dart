@@ -9,10 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
     showModalBottomSheet<T>(
       context: context,
-      builder: (_) => sheet,
+      builder: (context) => sheet,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Theme.of(context).colorScheme.surface.withAlpha(150),
+      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
     );
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
@@ -191,7 +191,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            stops: const [0, 0.5, 0.8, 1],
+            stops: const [0, 0.6, 0.9, 1],
             colors: [
               Theme.of(context).colorScheme.background,
               Theme.of(context).colorScheme.background.withAlpha(200),
@@ -277,7 +277,7 @@ class FixedGradientDragSheet extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            stops: const [0, 0.5, 0.8, 1],
+            stops: const [0, 0.6, 0.9, 1],
             colors: [
               Theme.of(context).colorScheme.background,
               Theme.of(context).colorScheme.background.withAlpha(200),

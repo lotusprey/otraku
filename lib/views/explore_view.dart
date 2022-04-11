@@ -122,7 +122,7 @@ class ExploreActionButton extends StatelessWidget {
                     Explorable.values[i].icon,
                     color: i != ctrl.type.index
                         ? Theme.of(context).colorScheme.onBackground
-                        : Theme.of(context).colorScheme.secondary,
+                        : Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 5),
                   Text(
@@ -130,7 +130,7 @@ class ExploreActionButton extends StatelessWidget {
                     style: i != ctrl.type.index
                         ? Theme.of(context).textTheme.headline1
                         : Theme.of(context).textTheme.headline1?.copyWith(
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                   ),
                 ],

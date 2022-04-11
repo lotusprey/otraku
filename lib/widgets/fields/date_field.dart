@@ -37,7 +37,7 @@ class _DateFieldState extends State<DateField> {
       }),
       padding: const EdgeInsets.all(0),
       constraints: const BoxConstraints(
-        minHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
+        minHeight: Consts.TAP_TARGET_SIZE,
         maxWidth: 30,
       ),
     );
@@ -65,7 +65,7 @@ class _DateFieldState extends State<DateField> {
                     },
                     padding: const EdgeInsets.all(0),
                     constraints: const BoxConstraints(
-                      minHeight: Consts.MATERIAL_TAP_TARGET_SIZE,
+                      minHeight: Consts.TAP_TARGET_SIZE,
                       maxWidth: 30,
                     ),
                   ),

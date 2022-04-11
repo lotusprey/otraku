@@ -6,8 +6,9 @@ import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 
-class ScorePicker extends StatelessWidget {
-  ScorePicker(this.model);
+// Score picker.
+class ScoreField extends StatelessWidget {
+  ScoreField(this.model);
 
   final EditModel model;
 
@@ -42,8 +43,8 @@ class __SmileyScorePickerState extends State<_SmileyScorePicker> {
     return IconButton(
       icon: icon,
       color: score == index
-          ? Theme.of(context).colorScheme.secondary
-          : Theme.of(context).colorScheme.primary,
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.surfaceVariant,
       onPressed: () => score == index
           ? setState(() => widget.model.score = 0)
           : setState(() => widget.model.score = index.toDouble()),
@@ -86,7 +87,7 @@ class __StarScorePickerState extends State<_StarScorePicker> {
       icon: score >= index
           ? const Icon(Icons.star)
           : const Icon(Icons.star_border),
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.primary,
       onPressed: () => score != index
           ? setState(() => widget.model.score = index.toDouble())
           : setState(() => widget.model.score = 0),

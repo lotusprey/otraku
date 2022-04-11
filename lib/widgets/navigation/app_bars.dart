@@ -34,23 +34,25 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Consts.MATERIAL_TAP_TARGET_SIZE);
+  Size get preferredSize => Size.fromHeight(Consts.TAP_TARGET_SIZE);
 }
 
-class SliverShadowAppBar extends StatelessWidget {
+class ShadowSliverAppBar extends StatelessWidget {
+  const ShadowSliverAppBar(this.children);
+
   final List<Widget> children;
-  const SliverShadowAppBar(this.children);
 
   @override
   Widget build(BuildContext context) => SliverPersistentHeader(
-        delegate: _SliverShadowAppBarDelegate(children),
+        delegate: _ShadowSliverAppBarDelegate(children),
         pinned: true,
       );
 }
 
-class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
+class _ShadowSliverAppBarDelegate implements SliverPersistentHeaderDelegate {
+  _ShadowSliverAppBarDelegate(this.children);
+
   final List<Widget> children;
-  _SliverShadowAppBarDelegate(this.children);
 
   @override
   Widget build(
@@ -61,10 +63,10 @@ class _SliverShadowAppBarDelegate implements SliverPersistentHeaderDelegate {
       _ShadowBody(children);
 
   @override
-  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -91,7 +93,7 @@ class _ShadowBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Consts.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.TAP_TARGET_SIZE,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -107,21 +109,22 @@ class _ShadowBody extends StatelessWidget {
   }
 }
 
-class SliverTransparentAppBar extends StatelessWidget {
+class TranslucentSliverAppBar extends StatelessWidget {
+  const TranslucentSliverAppBar({required this.children});
+
   final List<Widget> children;
-  const SliverTransparentAppBar(this.children);
 
   @override
   Widget build(BuildContext context) => SliverPersistentHeader(
-        delegate: _SliverTransparentAppBarDelegate(children),
+        delegate: _TranslucentAppBarDelegate(children),
         pinned: true,
       );
 }
 
-class _SliverTransparentAppBarDelegate
-    implements SliverPersistentHeaderDelegate {
+class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
+  _TranslucentAppBarDelegate(this.children);
+
   final List<Widget> children;
-  _SliverTransparentAppBarDelegate(this.children);
 
   @override
   Widget build(
@@ -132,19 +135,26 @@ class _SliverTransparentAppBarDelegate
       ClipRect(
         child: BackdropFilter(
           filter: Consts.filter,
-          child: Container(
-            height: Consts.MATERIAL_TAP_TARGET_SIZE,
-            color: Theme.of(context).cardColor,
-            child: Row(children: children),
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: Theme.of(context).cardColor),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxHeight: Consts.TAP_TARGET_SIZE,
+                  maxWidth: Consts.LAYOUT_BIG,
+                ),
+                child: Row(children: children),
+              ),
+            ),
           ),
         ),
       );
 
   @override
-  double get maxExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get maxExtent => Consts.TAP_TARGET_SIZE;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

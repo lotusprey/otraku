@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -9,13 +7,14 @@ import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsAboutView extends StatelessWidget {
-  const SettingsAboutView();
+  SettingsAboutView(this.scrollCtrl);
+
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      controller: Get.find<HomeController>().scrollCtrl,
-      physics: Consts.PHYSICS,
+      controller: scrollCtrl,
       padding: Consts.PADDING,
       children: [
         Center(
@@ -32,16 +31,12 @@ class SettingsAboutView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v. 1.1.7+1',
+            'Otraku - v.1.1.8',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline2,
           ),
         ),
-        Text(
-          'An unofficial AniList app',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.subtitle1,
-        ),
+        const Text('An unofficial AniList app', textAlign: TextAlign.center),
         const SizedBox(height: 30),
         Align(
           alignment: Alignment.center,

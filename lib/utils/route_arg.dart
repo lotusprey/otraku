@@ -31,75 +31,76 @@ class RouteArg {
   static final navKey = GlobalKey<NavigatorState>();
 
   /// Used by [MaterialApp.onGenerateRoute].
-  static Route<dynamic>? generateRoute(RouteSettings route) {
-    if (route.arguments is! RouteArg?) return _unknown();
+  static Route<dynamic> generateRoute(RouteSettings route) {
+    if (route.arguments is! RouteArg?) return _unknown;
 
     final arg = route.arguments as RouteArg?;
     switch (route.name) {
+      case '/':
       case auth:
         return MaterialPageRoute(builder: (_) => const AuthView());
       case home:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => HomeView(arg!.id!));
       case settings:
         return MaterialPageRoute(builder: (_) => SettingsView());
       case notifications:
         return MaterialPageRoute(builder: (_) => NotificationsView());
       case collection:
-        if (arg?.id == null || arg?.variant == null) return _unknown();
+        if (arg?.id == null || arg?.variant == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => CollectionView(arg!.id!, arg.variant!),
         );
       case media:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => MediaView(arg!.id!, arg.info),
         );
       case character:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => CharacterView(arg!.id!, arg.info),
         );
       case staff:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => StaffView(arg!.id!, arg.info));
       case studio:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => StudioView(arg!.id!, arg.info),
         );
       case review:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => ReviewView(arg!.id!, arg.info),
         );
       case user:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => UserView(arg!.id!, arg.info));
       case feed:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => FeedView(arg!.id!));
       case favourites:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => FavouritesView(arg!.id!));
       case friends:
-        if (arg?.id == null || arg?.variant == null) return _unknown();
+        if (arg?.id == null || arg?.variant == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => FriendsView(arg!.id!, arg.variant!),
         );
       case statistics:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => StatisticsView(arg!.id!));
       case reviews:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => ReviewsView(arg!.id!));
       case activity:
-        if (arg?.id == null) return _unknown();
+        if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
           builder: (_) => ActivityView(arg!.id!, arg.info),
         );
       default:
-        return null;
+        return _unknown;
     }
   }
 
@@ -124,11 +125,11 @@ class RouteArg {
   static const thread = '/thread';
 
   // A placeholder for unknown routes.
-  static Route<dynamic> _unknown() => MaterialPageRoute(
-        builder: (ctx) => Scaffold(
-          body: Center(
-            child: Text('404', style: Theme.of(ctx).textTheme.headline1),
-          ),
-        ),
-      );
+  static final _unknown = MaterialPageRoute(
+    builder: (context) => Scaffold(
+      body: Center(
+        child: Text('404', style: Theme.of(context).textTheme.headline1),
+      ),
+    ),
+  );
 }

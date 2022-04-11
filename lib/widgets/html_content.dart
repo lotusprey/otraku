@@ -26,13 +26,13 @@ class HtmlContent extends StatelessWidget {
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
         icon: Icon(Icons.close),
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.error,
         onPressed: () => showPopUp(
           context,
           ConfirmationDialog(
             title: 'Couldn\'t load element ${element.localName}',
             content: err.toString(),
-            mainAction: ':(',
+            mainAction: 'Ok',
           ),
         ),
       ),
@@ -49,6 +49,12 @@ class HtmlContent extends StatelessWidget {
         if (element.localName == 'i' || element.localName == 'em')
           styles['font-style'] = 'italic';
 
+        if (element.localName == 'img') {
+          styles['border-radius'] = '5px';
+          styles['padding-top'] = '5px';
+          styles['padding-bottom'] = '5px';
+        }
+
         return styles;
       },
       customWidgetBuilder: (element) {
@@ -58,7 +64,7 @@ class HtmlContent extends StatelessWidget {
             width: double.infinity,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: Consts.BORDER_RAD_MIN,
             ),
           );

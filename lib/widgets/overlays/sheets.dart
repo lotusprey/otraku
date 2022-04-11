@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,83 +9,52 @@ import 'package:url_launcher/url_launcher.dart';
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
     showModalBottomSheet<T>(
       context: context,
-      builder: (_) => sheet,
+      builder: (context) => sheet,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Theme.of(context).colorScheme.surface.withAlpha(150),
+      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
     );
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class OpaqueSheet extends StatelessWidget {
-  OpaqueSheet({required this.builder, this.height = 0.5});
+  OpaqueSheet({required this.builder, this.initialHeight});
 
   final Widget Function(BuildContext, ScrollController) builder;
-  final double height;
+  final double? initialHeight;
 
   @override
   Widget build(BuildContext context) {
     Widget? sheet;
 
-    return DraggableScrollableSheet(
-      expand: false,
-      maxChildSize: 0.9,
-      initialChildSize: height,
-      minChildSize: height < 0.25 ? height : 0.25,
-      builder: (context, scrollCtrl) {
-        if (sheet == null)
-          sheet = Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
-                borderRadius:
-                    const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+    double initialSize = initialHeight != null
+        ? initialHeight! / MediaQuery.of(context).size.height
+        : 0.5;
+    if (initialSize > 0.9) initialSize = 0.9;
+
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: DraggableScrollableSheet(
+        expand: false,
+        maxChildSize: 0.9,
+        initialChildSize: initialSize,
+        minChildSize: initialSize < 0.25 ? initialSize : 0.25,
+        builder: (context, scrollCtrl) {
+          if (sheet == null)
+            sheet = Center(
+              child: Container(
+                constraints:
+                    const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.background,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+                ),
+                child: builder(context, scrollCtrl),
               ),
-              child: builder(context, scrollCtrl),
-            ),
-          );
+            );
 
-        return sheet!;
-      },
-    );
-  }
-}
-
-/// An implementation of [DraggableScrollableSheet]
-/// with opaque background and list selectable options.
-class SelectionOpaqueSheet<T> extends StatelessWidget {
-  SelectionOpaqueSheet({
-    required this.options,
-    required this.values,
-    required this.selected,
-  });
-
-  final List<String> options;
-  final List<T> values;
-  final List<T> selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final requiredHeight =
-        options.length * Consts.MATERIAL_TAP_TARGET_SIZE + 20;
-    double height = requiredHeight / MediaQuery.of(context).size.height;
-    if (height > 0.9) height = 0.9;
-
-    return OpaqueSheet(
-      height: height,
-      builder: (context, scrollCtrl) => ListView.builder(
-        controller: scrollCtrl,
-        physics: Consts.PHYSICS,
-        padding: Consts.PADDING,
-        itemCount: options.length,
-        itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
-        itemBuilder: (_, index) => CheckBoxField(
-          title: options[index],
-          initial: selected.contains(values[index]),
-          onChanged: (val) => val
-              ? selected.add(values[index])
-              : selected.remove(values[index]),
-        ),
+          return sheet!;
+        },
       ),
     );
   }
@@ -104,56 +72,57 @@ class OpaqueSheetView extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget? sheet;
 
-    return DraggableScrollableSheet(
-      expand: false,
-      maxChildSize: 0.9,
-      initialChildSize: 0.7,
-      builder: (context, scrollCtrl) {
-        if (sheet == null)
-          sheet = Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_WIDE),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
-                borderRadius:
-                    const BorderRadius.vertical(top: Consts.RADIUS_MAX),
-              ),
-              child: Stack(
-                children: [
-                  builder(context, scrollCtrl),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: Consts.filter,
-                        child: Container(
-                          height:
-                              MediaQuery.of(context).viewPadding.bottom + 50,
-                          padding: EdgeInsets.only(
-                            left: 10,
-                            right: 10,
-                            bottom: MediaQuery.of(context).viewPadding.bottom,
-                          ),
-                          color: Theme.of(context).cardColor,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: Settings().leftHanded
-                                ? buttons.reversed.toList()
-                                : buttons,
-                          ),
-                        ),
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: DraggableScrollableSheet(
+        expand: false,
+        maxChildSize: 0.9,
+        builder: (context, scrollCtrl) {
+          if (sheet == null) sheet = _sheetBody(context, scrollCtrl);
+          return sheet!;
+        },
+      ),
+    );
+  }
+
+  Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
+      Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_MEDIUM),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
+            borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+          ),
+          child: Stack(
+            children: [
+              builder(context, scrollCtrl),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: Consts.filter,
+                    child: Container(
+                      height: MediaQuery.of(context).viewPadding.bottom + 50,
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        bottom: MediaQuery.of(context).viewPadding.bottom,
+                      ),
+                      color: Theme.of(context).cardColor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: Settings().leftHanded
+                            ? buttons.reversed.toList()
+                            : buttons,
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          );
-
-        return sheet!;
-      },
-    );
-  }
+            ],
+          ),
+        ),
+      );
 }
 
 /// Buttons, typically used in [OpaqueSheetView]
@@ -208,7 +177,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = itemCount * Consts.MATERIAL_TAP_TARGET_SIZE + 50;
+    final requiredHeight = itemCount * Consts.TAP_TARGET_SIZE + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -222,7 +191,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            stops: const [0, 0.5, 0.8, 1],
+            stops: const [0, 0.6, 0.9, 1],
             colors: [
               Theme.of(context).colorScheme.background,
               Theme.of(context).colorScheme.background.withAlpha(200),
@@ -232,17 +201,16 @@ class DynamicGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
+          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
           child: ListView.builder(
             controller: scrollCtrl,
-            physics: Consts.PHYSICS,
             padding: const EdgeInsets.only(
               top: 50,
               left: 10,
               right: 10,
             ),
             itemCount: itemCount,
-            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+            itemExtent: Consts.TAP_TARGET_SIZE,
             itemBuilder: (context, i) => GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: itemBuilder(context, i),
@@ -295,8 +263,7 @@ class FixedGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight =
-        children.length * Consts.MATERIAL_TAP_TARGET_SIZE + 60;
+    final requiredHeight = children.length * Consts.TAP_TARGET_SIZE + 60;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -310,7 +277,7 @@ class FixedGradientDragSheet extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.bottomCenter,
             end: Alignment.topCenter,
-            stops: const [0, 0.5, 0.8, 1],
+            stops: const [0, 0.6, 0.9, 1],
             colors: [
               Theme.of(context).colorScheme.background,
               Theme.of(context).colorScheme.background.withAlpha(200),
@@ -320,17 +287,16 @@ class FixedGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.OVERLAY_TIGHT),
+          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
           child: ListView(
             controller: scrollCtrl,
-            physics: Consts.PHYSICS,
             padding: const EdgeInsets.only(
               top: 50,
               bottom: 10,
               left: 10,
               right: 10,
             ),
-            itemExtent: Consts.MATERIAL_TAP_TARGET_SIZE,
+            itemExtent: Consts.TAP_TARGET_SIZE,
             children: children,
           ),
         ),

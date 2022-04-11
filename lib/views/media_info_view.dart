@@ -8,18 +8,14 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaInfoView {
-  static List<Widget> children(BuildContext ctx, MediaController ctrl) {
+  static List<Widget> children(BuildContext context, MediaController ctrl) {
     final model = ctrl.model!.info;
 
-    final tileCount = (MediaQuery.of(ctx).size.width - 10) ~/ 150;
-    final tileAspectRatio =
-        (((MediaQuery.of(ctx).size.width - 10) / tileCount) - 10) / 51.0;
     final infoTitles = [
       'Format',
       'Status',
@@ -69,7 +65,7 @@ class MediaInfoView {
               child: Container(
                 padding: Consts.PADDING,
                 decoration: BoxDecoration(
-                  color: Theme.of(ctx).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: Consts.BORDER_RAD_MIN,
                 ),
                 child: Text(
@@ -79,32 +75,37 @@ class MediaInfoView {
                 ),
               ),
               onTap: () => showPopUp(
-                ctx,
+                context,
                 TextDialog(title: 'Description', text: model.description),
               ),
             ),
           ),
         ),
-      const _Section('Info'),
       SliverPadding(
         padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
         sliver: SliverGrid(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            crossAxisCount: tileCount,
-            childAspectRatio: tileAspectRatio,
+          gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+            height: Consts.TAP_TARGET_SIZE,
+            minWidth: 130,
           ),
           delegate: SliverChildBuilderDelegate(
             (_, i) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 borderRadius: Consts.BORDER_RAD_MIN,
-                color: Theme.of(ctx).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surface,
               ),
-              child: InputFieldStructure(
-                title: infoTitles[i],
-                child: Text(infoChildren[i].toString()),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    infoTitles[i],
+                    style: Theme.of(context).textTheme.subtitle1,
+                    maxLines: 1,
+                  ),
+                  Text(infoChildren[i].toString(), maxLines: 1),
+                ],
               ),
             ),
             childCount: infoChildren.length,
@@ -117,12 +118,12 @@ class MediaInfoView {
           items: model.genres,
           onTap: (index) {
             final explCtrl = Get.find<ExploreController>();
-            explCtrl.filters.clear();
+            explCtrl.filters.clear(false);
             explCtrl.filters.genreIn.add(model.genres[index]);
             explCtrl.type = model.type;
-            explCtrl.search = '';
+            explCtrl.search = null;
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-            Navigator.popUntil(ctx, (r) => r.isFirst);
+            Navigator.popUntil(context, (r) => r.isFirst);
           },
         ),
       if (model.studios.isNotEmpty)
@@ -130,7 +131,7 @@ class MediaInfoView {
           title: 'Studios',
           items: model.studios.keys.toList(),
           onTap: (index) => ExploreIndexer.openView(
-            ctx: ctx,
+            ctx: context,
             id: model.studios[model.studios.keys.elementAt(index)]!,
             imageUrl: model.studios.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -141,7 +142,7 @@ class MediaInfoView {
           title: 'Producers',
           items: model.producers.keys.toList(),
           onTap: (index) => ExploreIndexer.openView(
-            ctx: ctx,
+            ctx: context,
             id: model.producers[model.producers.keys.elementAt(index)]!,
             imageUrl: model.producers.keys.elementAt(index),
             explorable: Explorable.studio,
@@ -180,7 +181,7 @@ class _Section extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+        child: Text(title),
       ),
     );
   }
@@ -207,7 +208,7 @@ class _ScrollCards extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+              child: Text(title),
             ),
             SizedBox(
               height: 40,
@@ -249,7 +250,7 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Consts.MATERIAL_TAP_TARGET_SIZE + 10,
+            height: Consts.TAP_TARGET_SIZE + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
@@ -308,10 +309,10 @@ class __TagsState extends State<_Tags> {
           behavior: HitTestBehavior.opaque,
           onTap: () {
             final explCtrl = Get.find<ExploreController>();
-            explCtrl.filters.clear();
+            explCtrl.filters.clear(false);
             explCtrl.filters.tagIn.add(tags[i].name);
             explCtrl.type = ctrl.model!.info.type;
-            explCtrl.search = '';
+            explCtrl.search = null;
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
@@ -379,10 +380,10 @@ class __TagsState extends State<_Tags> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               final explCtrl = Get.find<ExploreController>();
-              explCtrl.filters.clear();
+              explCtrl.filters.clear(false);
               explCtrl.filters.tagIn.add(tags[i].name);
               explCtrl.type = ctrl.model!.info.type;
-              explCtrl.search = '';
+              explCtrl.search = null;
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigator.popUntil(context, (r) => r.isFirst);
             },
@@ -424,7 +425,7 @@ class __TagsState extends State<_Tags> {
       padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.MATERIAL_TAP_TARGET_SIZE,
+          height: Consts.TAP_TARGET_SIZE,
           minWidth: 175,
         ),
         delegate: delegate,

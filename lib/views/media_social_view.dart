@@ -4,33 +4,32 @@ import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 abstract class MediaSocialView {
   static List<Widget> children(BuildContext ctx, MediaController ctrl) {
     final model = ctrl.model!;
 
     return [
-      SliverShadowAppBar([
-        BubbleTabs(
-          items: const {
-            'Reviews': MediaController.REVIEWS,
-            'Stats': MediaController.STATS,
-          },
-          current: () => ctrl.socialTab,
-          onChanged: (int val) {
-            ctrl.scrollUpTo(0);
-            ctrl.socialTab = val;
-          },
-          onSame: () => ctrl.scrollUpTo(0),
+      ShadowSliverAppBar([
+        Expanded(
+          child: TabSegments(
+            items: const {'Reviews': false, 'Stats': true},
+            initial: ctrl.socialTabToggled,
+            onChanged: (bool val) {
+              ctrl.scrollCtrl.scrollUpTo(0);
+              ctrl.socialTabToggled = val;
+            },
+          ),
         ),
       ]),
-      if (ctrl.socialTab == MediaController.REVIEWS)
+      if (!ctrl.socialTabToggled)
         _ReviewGrid(model.reviews.items, model.info.banner)
       else ...[
         if (model.stats.rankTexts.isNotEmpty)
@@ -107,6 +106,7 @@ class _ReviewGrid extends StatelessWidget {
                     child: Text(
                       items[i].summary,
                       style: Theme.of(context).textTheme.subtitle1,
+                      overflow: TextOverflow.fade,
                     ),
                   ),
                 ),
@@ -135,7 +135,7 @@ class _Ranks extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.MATERIAL_TAP_TARGET_SIZE,
+          height: Consts.TAP_TARGET_SIZE,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
@@ -150,7 +150,7 @@ class _Ranks extends StatelessWidget {
                 Icon(
                   rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
                   size: Consts.ICON_BIG,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 5),
                 Expanded(

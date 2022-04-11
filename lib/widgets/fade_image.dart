@@ -4,36 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 
 class FadeImage extends StatelessWidget {
-  final String image;
-  final BoxFit fit;
-  final double width;
-  final double height;
-  final Alignment alignment;
-
   FadeImage(
-    this.image, {
+    this.imageUrl, {
     this.fit = BoxFit.cover,
     this.width = double.infinity,
     this.height = double.infinity,
     this.alignment = Alignment.center,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return FadeInImage.memoryNetwork(
-      fit: fit,
-      image: image,
-      width: width,
-      height: height,
-      alignment: alignment,
-      fadeInDuration: Consts.FADE_DURATION,
-      fadeOutDuration: Consts.FADE_DURATION,
-      placeholder: _transparentImage,
-      imageErrorBuilder: (_, err, stackTrace) => const SizedBox(),
-    );
-  }
+  final String imageUrl;
+  final BoxFit fit;
+  final double? width;
+  final double? height;
+  final Alignment alignment;
 
-  // A transparent image
+  @override
+  Widget build(BuildContext context) => FadeInImage.memoryNetwork(
+        fit: fit,
+        image: imageUrl,
+        width: width,
+        height: height,
+        alignment: alignment,
+        fadeInDuration: Consts.FADE_DURATION,
+        fadeOutDuration: Consts.FADE_DURATION,
+        placeholder: _transparentImage,
+        imageErrorBuilder: (_, err, stackTrace) =>
+            const SizedBox(height: 5, width: 5),
+      );
+
   static final Uint8List _transparentImage = Uint8List.fromList(<int>[
     0x89,
     0x50,

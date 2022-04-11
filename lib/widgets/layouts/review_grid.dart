@@ -15,16 +15,15 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = 10.0 +
-        (MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
-            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
-            : 0.0);
+    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
+        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+        : 10.0;
 
     final padding = EdgeInsets.only(
       left: sidePadding,
       right: sidePadding,
       bottom: scrollCtrl == null ? 0 : NavLayout.offset(context),
-      top: 15,
+      top: 10,
     );
 
     const gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(

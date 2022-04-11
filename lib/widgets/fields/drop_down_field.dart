@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/labeled_field.dart';
 
 class DropDownField<T> extends StatefulWidget {
-  final String title;
-  final T value;
-  final Map<String, T> items;
-  final void Function(T) onChanged;
-  final String hint;
-
   DropDownField({
     required this.title,
     required this.value,
@@ -17,12 +11,30 @@ class DropDownField<T> extends StatefulWidget {
     this.hint = 'Choose',
   });
 
+  final String title;
+  final T value;
+  final Map<String, T> items;
+  final void Function(T) onChanged;
+  final String hint;
+
   @override
   _DropDownFieldState<T> createState() => _DropDownFieldState<T>();
 }
 
 class _DropDownFieldState<T> extends State<DropDownField<T>> {
   late T _value;
+
+  @override
+  void initState() {
+    super.initState();
+    _value = widget.value;
+  }
+
+  @override
+  void didUpdateWidget(covariant DropDownField<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _value = widget.value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +50,8 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
         ),
       ));
 
-    return InputFieldStructure(
-      title: widget.title,
+    return LabeledField(
+      label: widget.title,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
@@ -58,24 +70,12 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
             widget.hint,
             style: Theme.of(context).textTheme.subtitle1,
           ),
-          iconEnabledColor: Theme.of(context).colorScheme.primary,
+          iconEnabledColor: Theme.of(context).colorScheme.surfaceVariant,
           dropdownColor: Theme.of(context).colorScheme.surface,
           underline: const SizedBox(),
           isExpanded: true,
         ),
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.value;
-  }
-
-  @override
-  void didUpdateWidget(covariant DropDownField<T> oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _value = widget.value;
   }
 }

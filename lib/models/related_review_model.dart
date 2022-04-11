@@ -1,11 +1,4 @@
 class RelatedReviewModel {
-  final int reviewId;
-  final int userId;
-  final String username;
-  final String avatar;
-  final String summary;
-  final String rating;
-
   RelatedReviewModel._({
     required this.reviewId,
     required this.userId,
@@ -27,4 +20,11 @@ class RelatedReviewModel {
       rating: '${map['rating']}/${map['ratingAmount']}',
     );
   }
+
+  final int reviewId;
+  final int userId;
+  final String username;
+  final String avatar;
+  final String summary;
+  final String rating;
 }

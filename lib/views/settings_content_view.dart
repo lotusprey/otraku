@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/entry_sort.dart';
@@ -13,10 +11,11 @@ import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsContentView extends StatelessWidget {
-  SettingsContentView(this.model, this.changes);
+  SettingsContentView(this.model, this.changes, this.scrollCtrl);
 
   final SettingsModel model;
   final Map<String, dynamic> changes;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +26,16 @@ class SettingsContentView extends StatelessWidget {
     const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
       minWidth: 220,
       mainAxisSpacing: 0,
-      height: Consts.MATERIAL_TAP_TARGET_SIZE,
+      height: Consts.TAP_TARGET_SIZE,
     );
 
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: CustomScrollView(
-        controller: Get.find<HomeController>().scrollCtrl,
-        physics: Consts.PHYSICS,
+        controller: scrollCtrl,
         slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'Media',
-                style: Theme.of(context).textTheme.headline3,
-              ),
-            ),
-          ),
           SliverPadding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: const EdgeInsets.only(top: 10, right: 10),
             sliver: SliverGrid(
               gridDelegate: dropDownGridDelegate,
               delegate: SliverChildListDelegate.fixed([
@@ -137,15 +126,6 @@ class SettingsContentView extends StatelessWidget {
                 },
               ),
             ]),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'Lists',
-                style: Theme.of(context).textTheme.headline3,
-              ),
-            ),
           ),
           SliverPadding(
             padding: const EdgeInsets.only(right: 10),

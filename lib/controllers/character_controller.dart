@@ -1,10 +1,10 @@
 import 'package:otraku/models/character_model.dart';
+import 'package:otraku/models/relation_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
-import 'package:otraku/models/connection_model.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
@@ -17,18 +17,19 @@ class CharacterController extends ScrollingController {
 
   final int id;
   CharacterModel? _model;
-  final _anime = PageModel<ConnectionModel>();
-  final _manga = PageModel<ConnectionModel>();
-  final _availableLanguages = <String>[];
+  final _anime = PageModel<RelationModel>();
+  final _manga = PageModel<RelationModel>();
+  final _voiceActors = <String, Map<int, List<RelationModel>>>{};
+  final _languages = <String>[];
   bool _onAnime = true;
-  int _language = 0;
+  int _langIndex = 0;
   MediaSort _sort = MediaSort.TRENDING_DESC;
   bool? _onList;
 
   CharacterModel? get model => _model;
-  List<ConnectionModel> get anime => _anime.items;
-  List<ConnectionModel> get manga => _manga.items;
-  List<String> get availableLanguages => [..._availableLanguages];
+  List<RelationModel> get anime => _anime.items;
+  List<RelationModel> get manga => _manga.items;
+  List<String> get languages => _languages;
 
   bool get onAnime => _onAnime;
   set onAnime(bool val) {
@@ -38,13 +39,17 @@ class CharacterController extends ScrollingController {
 
   MediaSort get sort => _sort;
   bool? get onList => _onList;
-  int get language => _language;
+  int get langIndex => _langIndex;
+  set langIndex(int val) {
+    _langIndex = val;
+    update([ID_MEDIA]);
+  }
 
-  void filter(int languageVal, MediaSort sortVal, bool? onListVal) {
+  void filter(int langIndexVal, MediaSort sortVal, bool? onListVal) {
     final mustRefetch = sortVal != _sort || onListVal != _onList;
 
-    if (languageVal != _language) {
-      _language = languageVal;
+    if (langIndexVal != _langIndex) {
+      _langIndex = langIndexVal;
       if (!mustRefetch) update([ID_MEDIA]);
     }
 
@@ -74,7 +79,7 @@ class CharacterController extends ScrollingController {
   }
 
   Future<void> refetch() async {
-    scrollUpTo(0);
+    scrollCtrl.scrollUpTo(0);
 
     final body = await Client.request(GqlQuery.character, {
       'id': id,
@@ -122,57 +127,92 @@ class CharacterController extends ScrollingController {
     return _model!.isFavourite;
   }
 
-  void _initAnime(Map<String, dynamic> data, bool clear) {
-    if (clear) {
-      _availableLanguages.clear();
-      _anime.clear();
+  void selectMediaAndVoiceActors(
+    List<RelationModel> mediaList,
+    List<RelationModel?> voiceActorList,
+  ) {
+    if (languages.isEmpty || _langIndex >= languages.length) return;
+
+    final byLanguage = _voiceActors[languages[_langIndex]];
+    if (byLanguage == null) {
+      mediaList.addAll(_anime.items);
+      return;
     }
 
-    final connections = <ConnectionModel>[];
-    for (final connection in data['anime']['edges']) {
-      final voiceActors = <ConnectionModel>[];
-
-      for (final va in connection['voiceActors']) {
-        final language = Convert.clarifyEnum(va['language']);
-        if (!_availableLanguages.contains(language))
-          _availableLanguages.add(language!);
-
-        voiceActors.add(ConnectionModel(
-          id: va['id'],
-          title: va['name']['userPreferred'],
-          imageUrl: va['image']['large'],
-          type: Explorable.staff,
-          subtitle: language,
-        ));
+    for (final a in _anime.items) {
+      final vas = byLanguage[a.id];
+      if (vas == null || vas.isEmpty) {
+        mediaList.add(a);
+        voiceActorList.add(null);
+        continue;
       }
 
-      connections.add(ConnectionModel(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['extraLarge'],
-        type: Explorable.anime,
-        subtitle: Convert.clarifyEnum(connection['characterRole']),
-        other: voiceActors,
-      ));
+      for (final va in vas) {
+        mediaList.add(a);
+        voiceActorList.add(va);
+      }
+    }
+  }
+
+  void _initAnime(Map<String, dynamic> data, bool clear) {
+    if (clear) {
+      _languages.clear();
+      _anime.clear();
+      _voiceActors.clear();
     }
 
-    _anime.append(connections, data['anime']['pageInfo']['hasNextPage']);
+    final items = <RelationModel>[];
+    for (final a in data['anime']['edges']) {
+      items.add(RelationModel(
+        id: a['node']['id'],
+        title: a['node']['title']['userPreferred'],
+        imageUrl: a['node']['coverImage']['extraLarge'],
+        subtitle: Convert.clarifyEnum(a['characterRole']),
+        type: Explorable.anime,
+      ));
+
+      if (a['voiceActors'] != null)
+        for (final va in a['voiceActors']) {
+          final l = Convert.clarifyEnum(va['language']);
+          if (l == null) continue;
+
+          if (!_languages.contains(l)) _languages.add(l);
+
+          final currentLanguage = _voiceActors.putIfAbsent(
+            l,
+            () => <int, List<RelationModel>>{},
+          );
+
+          final currentMedia =
+              currentLanguage.putIfAbsent(items.last.id, () => []);
+
+          currentMedia.add(RelationModel(
+            id: va['id'],
+            title: va['name']['userPreferred'],
+            imageUrl: va['image']['large'],
+            subtitle: l,
+            type: Explorable.staff,
+          ));
+        }
+    }
+
+    _anime.append(items, data['anime']['pageInfo']['hasNextPage']);
   }
 
   void _initManga(Map<String, dynamic> data, bool clear) {
     if (clear) _manga.clear();
 
-    final connections = <ConnectionModel>[];
-    for (final connection in data['manga']['edges'])
-      connections.add(ConnectionModel(
-        id: connection['node']['id'],
-        title: connection['node']['title']['userPreferred'],
-        imageUrl: connection['node']['coverImage']['extraLarge'],
+    final items = <RelationModel>[];
+    for (final m in data['manga']['edges'])
+      items.add(RelationModel(
+        id: m['node']['id'],
+        title: m['node']['title']['userPreferred'],
+        imageUrl: m['node']['coverImage']['extraLarge'],
+        subtitle: Convert.clarifyEnum(m['characterRole']),
         type: Explorable.manga,
-        subtitle: Convert.clarifyEnum(connection['characterRole']),
       ));
 
-    _manga.append(connections, data['manga']['pageInfo']['hasNextPage']);
+    _manga.append(items, data['manga']['pageInfo']['hasNextPage']);
   }
 
   @override

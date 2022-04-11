@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
@@ -20,19 +21,16 @@ class CollectionController extends ScrollingController {
   // DATA
   // ***************************************************************************
 
-  CollectionController(this.userId, this.ofAnime) {
-    filters = CollectionFilterModel(_onFilterChange, ofAnime);
-  }
+  CollectionController(this.userId, this.ofAnime);
 
   final int userId;
   final bool ofAnime;
-  late final CollectionFilterModel filters;
   final _lists = <ListModel>[];
   final _entries = <ListEntryModel>[];
+  late final filters = CollectionFilterModel(ofAnime, _onFilterChange);
   int _listIndex = 0;
   bool _isLoading = true;
-  bool _searchMode = false;
-  String _search = '';
+  String? _search;
   ScoreFormat? _scoreFormat;
 
   // ***************************************************************************
@@ -42,27 +40,28 @@ class CollectionController extends ScrollingController {
   int get listIndex => _listIndex;
   bool get isLoading => _isLoading;
   bool get isEmpty => _lists.isEmpty;
-  bool get searchMode => _searchMode;
-  String get search => _search;
+  String? get search => _search;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<ListEntryModel> get entries => _entries;
 
-  set search(String val) {
-    val = val.trimLeft();
-    if (_search == val) return;
-    _search = val;
-    _filter();
+  List<ListEntryModel> listWithStatus(ListStatus status) {
+    for (final l in _lists) if (l.status == status) return [...l.entries];
+    return const [];
   }
 
-  set searchMode(bool v) {
-    if (_searchMode == v) return;
-    _searchMode = v;
-    update([ID_HEAD]);
-    if (_search.isNotEmpty) {
-      _search = '';
+  set search(String? val) {
+    val = val?.trimLeft();
+    if (_search == val) return;
+    final oldVal = _search;
+    _search = val;
+
+    if ((oldVal == null) != (val == null)) {
+      update([ID_HEAD]);
+      if ((oldVal?.isNotEmpty ?? false) || (val?.isNotEmpty ?? false))
+        _filter();
+    } else
       _filter();
-    }
   }
 
   List<String> get listNames {
@@ -87,19 +86,19 @@ class CollectionController extends ScrollingController {
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
-    scrollUpTo(0);
+    scrollCtrl.scrollUpTo(0);
     _filter(true);
   }
 
   void _onFilterChange(bool withSort) {
     if (withSort) for (final list in _lists) list.sort(filters.sort);
-    _filter();
+    _filter(true);
   }
 
   void _filter([bool updateHead = false]) {
     if (_lists.isEmpty) return;
 
-    final searchLower = _search.toLowerCase();
+    final searchLower = _search?.toLowerCase() ?? '';
     final tagIdIn = filters.tagIdIn;
     final tagIdNotIn = filters.tagIdNotIn;
 
@@ -110,7 +109,7 @@ class CollectionController extends ScrollingController {
       if (searchLower.isNotEmpty) {
         bool contains = false;
         for (final title in entry.titles)
-          if (title.toLowerCase().contains(search)) {
+          if (title.toLowerCase().contains(searchLower)) {
             contains = true;
             break;
           }
@@ -216,7 +215,7 @@ class CollectionController extends ScrollingController {
     for (final l in data['lists'])
       _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
 
-    scrollUpTo(0);
+    scrollCtrl.scrollUpTo(0);
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
     _filter(true);
@@ -318,7 +317,7 @@ class CollectionController extends ScrollingController {
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex && _listIndex != 0) {
           _listIndex--;
-          scrollUpTo(0);
+          scrollCtrl.scrollUpTo(0);
         }
         _lists.removeAt(i--);
       }
@@ -423,7 +422,7 @@ class CollectionController extends ScrollingController {
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex && _listIndex != 0) {
           _listIndex--;
-          scrollUpTo(0);
+          scrollCtrl.scrollUpTo(0);
         }
         _lists.removeAt(i--);
       }

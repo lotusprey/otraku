@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:otraku/constants/consts.dart';
 
 class ThemeModel {
@@ -8,39 +7,25 @@ class ThemeModel {
   final Color onBackground;
   final Color surface;
   final Color onSurface;
+  final Color surfaceVariant;
   final Color primary;
-  final Color primaryVariant;
-  final Color secondary;
-  final Color secondaryVariant;
-  final Color onSecondary;
+  final Color onPrimary;
+  final Color primaryContainer;
   final Color error;
   final Color onError;
 
   Color get translucent => background.withAlpha(190);
 
-  Color get highlight => primary.withAlpha(100);
-
-  SystemUiOverlayStyle get overlayStyle {
-    final overlayBrightness =
-        brightness == Brightness.dark ? Brightness.light : Brightness.dark;
-
-    return SystemUiOverlayStyle(
-      statusBarColor: background,
-      statusBarBrightness: brightness,
-      statusBarIconBrightness: overlayBrightness,
-      systemNavigationBarColor: background,
-      systemNavigationBarIconBrightness: overlayBrightness,
-    );
-  }
+  Color get highlight => surfaceVariant.withAlpha(100);
 
   ThemeData get themeData => ThemeData(
         fontFamily: 'Rubik',
-        brightness: brightness,
+        useMaterial3: true,
         scaffoldBackgroundColor: background,
         cardColor: translucent,
-        disabledColor: primary,
-        unselectedWidgetColor: primary,
-        toggleableActiveColor: secondary,
+        disabledColor: surfaceVariant,
+        unselectedWidgetColor: surfaceVariant,
+        toggleableActiveColor: primary,
         splashColor: highlight,
         highlightColor: Colors.transparent,
         colorScheme: ColorScheme(
@@ -49,25 +34,32 @@ class ThemeModel {
           onBackground: onBackground,
           surface: surface,
           onSurface: onSurface,
+          surfaceVariant: surfaceVariant,
           primary: primary,
-          primaryContainer: primaryVariant,
+          primaryContainer: primaryContainer,
           onPrimary: background,
-          secondary: secondary,
-          secondaryContainer: secondaryVariant,
-          onSecondary: onSecondary,
+          secondary: primary,
+          onSecondary: onPrimary,
           error: error,
           onError: onError,
         ),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
         textSelectionTheme: TextSelectionThemeData(
-          cursorColor: secondary,
+          cursorColor: primary,
           selectionColor: highlight,
-          selectionHandleColor: secondary,
+          selectionHandleColor: primary,
         ),
         dialogTheme: DialogTheme(
           elevation: 10,
-          backgroundColor: surface,
-          shape:
-              const RoundedRectangleBorder(borderRadius: Consts.BORDER_RAD_MIN),
+          backgroundColor: background,
+          shape: const RoundedRectangleBorder(
+            borderRadius: Consts.BORDER_RAD_MAX,
+          ),
           titleTextStyle: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
             color: onBackground,
@@ -79,7 +71,6 @@ class ThemeModel {
             fontWeight: FontWeight.normal,
           ),
         ),
-        iconTheme: IconThemeData(color: primary, size: Consts.ICON_BIG),
         tooltipTheme: TooltipThemeData(
           padding: Consts.PADDING,
           decoration: BoxDecoration(
@@ -87,32 +78,20 @@ class ThemeModel {
             borderRadius: Consts.BORDER_RAD_MIN,
             boxShadow: [BoxShadow(color: background, blurRadius: 10)],
           ),
-          textStyle: TextStyle(fontSize: Consts.FONT_MEDIUM, color: primary),
+          textStyle: TextStyle(
+            fontSize: Consts.FONT_MEDIUM,
+            color: surfaceVariant,
+          ),
         ),
         scrollbarTheme: ScrollbarThemeData(
           radius: Consts.RADIUS_MIN,
-          thumbColor: MaterialStateProperty.all(primary),
+          thumbColor: MaterialStateProperty.all(surfaceVariant),
         ),
         sliderTheme: SliderThemeData(
-          thumbColor: secondary,
+          thumbColor: primary,
           overlayColor: highlight,
-          activeTrackColor: secondary,
+          activeTrackColor: primary,
           inactiveTrackColor: surface,
-        ),
-        radioTheme: RadioThemeData(
-          fillColor: MaterialStateProperty.all(secondary),
-          overlayColor: MaterialStateProperty.all(highlight),
-        ),
-        switchTheme: SwitchThemeData(
-          trackColor: MaterialStateProperty.resolveWith(
-            (states) =>
-                states.contains(MaterialState.selected) ? secondary : primary,
-          ),
-          thumbColor: MaterialStateProperty.resolveWith(
-            (states) => states.contains(MaterialState.selected)
-                ? secondaryVariant
-                : primaryVariant,
-          ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           isDense: true,
@@ -120,7 +99,7 @@ class ThemeModel {
           fillColor: surface,
           hintStyle: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
@@ -128,26 +107,27 @@ class ThemeModel {
             borderSide: BorderSide.none,
           ),
         ),
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Consts.FONT_MEDIUM,
-            )),
-            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.BORDER_RAD_MIN,
-            )),
-            foregroundColor: MaterialStateProperty.all(secondary),
-            overlayColor: MaterialStateProperty.all(highlight),
-          ),
-        ),
+        iconTheme: IconThemeData(color: surfaceVariant, size: Consts.ICON_BIG),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all(const TextStyle(
               fontSize: Consts.FONT_MEDIUM,
               fontWeight: FontWeight.w500,
             )),
-            backgroundColor: MaterialStateProperty.all(secondary),
+            backgroundColor: MaterialStateProperty.all(primary),
             foregroundColor: MaterialStateProperty.all(background),
+            overlayColor: MaterialStateProperty.all(highlight),
+            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
+              borderRadius: Consts.BORDER_RAD_MIN,
+            )),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            textStyle: MaterialStateProperty.all(const TextStyle(
+              fontSize: Consts.FONT_MEDIUM,
+            )),
+            foregroundColor: MaterialStateProperty.all(primary),
             overlayColor: MaterialStateProperty.all(highlight),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
               borderRadius: Consts.BORDER_RAD_MIN,
@@ -167,17 +147,17 @@ class ThemeModel {
           ),
           headline3: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.w500,
           ),
           headline4: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           bodyText1: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: secondary,
+            color: primary,
             fontWeight: FontWeight.normal,
           ),
           bodyText2: TextStyle(
@@ -187,12 +167,12 @@ class ThemeModel {
           ),
           subtitle1: TextStyle(
             fontSize: Consts.FONT_MEDIUM,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           subtitle2: TextStyle(
             fontSize: Consts.FONT_SMALL,
-            color: primary,
+            color: surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           button: TextStyle(
@@ -209,11 +189,10 @@ class ThemeModel {
     required this.onBackground,
     required this.surface,
     required this.onSurface,
+    required this.surfaceVariant,
     required this.primary,
-    required this.primaryVariant,
-    required this.secondary,
-    required this.secondaryVariant,
-    required this.onSecondary,
+    required this.onPrimary,
+    required this.primaryContainer,
     required this.error,
     required this.onError,
   });
@@ -224,20 +203,15 @@ class ThemeModel {
     required Color onBackground,
     required Color surface,
     required Color onSurface,
+    required Color surfaceVariant,
     required Color primary,
-    required Color secondary,
-    required Color onSecondary,
+    required Color onPrimary,
     required Color error,
     required Color onError,
   }) {
-    HSLColor hsl = HSLColor.fromColor(primary);
-    final primaryVariant = hsl.lightness < 0.1
-        ? primary
-        : hsl.withLightness(hsl.lightness - 0.1).toColor();
-
-    hsl = HSLColor.fromColor(secondary);
-    final secondaryVariant = hsl.lightness < 0.1
-        ? secondary
+    final hsl = HSLColor.fromColor(primary);
+    final primaryContainer = hsl.lightness < 0.5
+        ? hsl.withLightness(hsl.lightness + 0.1).toColor()
         : hsl.withLightness(hsl.lightness - 0.1).toColor();
 
     return ThemeModel._(
@@ -246,30 +220,12 @@ class ThemeModel {
       onBackground: onBackground,
       surface: surface,
       onSurface: onSurface,
+      surfaceVariant: surfaceVariant,
       primary: primary,
-      primaryVariant: primaryVariant,
-      secondary: secondary,
-      secondaryVariant: secondaryVariant,
-      onSecondary: onSecondary,
+      onPrimary: onPrimary,
+      primaryContainer: primaryContainer,
       error: error,
       onError: onError,
     );
   }
-
-  // factory ThemeModel.read(String key) {
-  //   final Map<String, dynamic> map = Config.storage.read(key) ?? {};
-
-  //   return ThemeModel(
-  //     brightness: map['brightness'] ?? Brightness.dark,
-  //     background: map['background'] ?? Color(0xFF0F171E),
-  //     onBackground: map['onBackground'] ?? Color(0xFFCAD5E2),
-  //     surface: map['surface'] ?? Color(0xFF1D2835),
-  //     onSurface: map['onSurface'] ?? Color(0xFFCAD5E2),
-  //     primary: map['primary'] ?? Color(0xFF56789F),
-  //     secondary: map['secondary'] ?? Color(0xFF45A0F2),
-  //     onSecondary: map['onSecondary'] ?? Color(0xFF0F171E),
-  //     error: map['error'] ?? Color(0xFFD74761),
-  //     onError: map['onError'] ?? Color(0xFF0F171E),
-  //   );
-  // }
 }

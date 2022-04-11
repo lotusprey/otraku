@@ -8,10 +8,11 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
 import 'package:otraku/views/collection_view.dart';
-import 'package:otraku/views/feed_view.dart';
+import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/views/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -22,7 +23,7 @@ class HomeView extends StatefulWidget {
 
   final int id;
 
-  static const FEED = 0;
+  static const INBOX = 0;
   static const ANIME_LIST = 1;
   static const MANGA_LIST = 2;
   static const EXPLORE = 3;
@@ -33,6 +34,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final _ctrl = ScrollController();
+
   late final HomeController homeCtrl;
   late final ExploreController exploreCtrl;
   late final FeedController feedCtrl;
@@ -53,41 +56,59 @@ class _HomeViewState extends State<HomeView> {
       builder: (homeCtrl) => WillPopScope(
         onWillPop: () => _onWillPop(context),
         child: NavLayout(
-          index: homeCtrl.homeTab,
+          navRow: NavIconRow(
+            index: homeCtrl.homeTab,
+            onChanged: (i) => homeCtrl.homeTab = i,
+            items: const {
+              'Feed': Ionicons.file_tray_outline,
+              'Anime': Ionicons.film_outline,
+              'Manga': Ionicons.bookmark_outline,
+              'Explore': Ionicons.compass_outline,
+              'Profile': Ionicons.person_outline,
+            },
+            onSame: (i) {
+              switch (i) {
+                case HomeView.INBOX:
+                  _ctrl.scrollUpTo(0);
+                  return;
+                case HomeView.ANIME_LIST:
+                  if (animeCtrl.scrollCtrl.pos.pixels > 0)
+                    animeCtrl.scrollCtrl.scrollUpTo(0);
+                  else
+                    animeCtrl.search == null
+                        ? animeCtrl.search = ''
+                        : animeCtrl.search = null;
+                  return;
+                case HomeView.MANGA_LIST:
+                  if (mangaCtrl.scrollCtrl.pos.pixels > 0)
+                    mangaCtrl.scrollCtrl.scrollUpTo(0);
+                  else
+                    mangaCtrl.search == null
+                        ? mangaCtrl.search = ''
+                        : mangaCtrl.search = null;
+                  return;
+                case HomeView.EXPLORE:
+                  if (exploreCtrl.scrollCtrl.pos.pixels > 0)
+                    exploreCtrl.scrollCtrl.scrollUpTo(0);
+                  else
+                    exploreCtrl.search == null
+                        ? exploreCtrl.search = ''
+                        : exploreCtrl.search = null;
+                  return;
+                case HomeView.USER:
+                  _ctrl.scrollUpTo(0);
+                  return;
+              }
+            },
+          ),
           child: tabs[homeCtrl.homeTab],
           floating: fabs[homeCtrl.homeTab],
-          onChanged: (i) => homeCtrl.homeTab = i,
-          onSame: (i) {
-            switch (i) {
-              case HomeView.FEED:
-                feedCtrl.scrollUpTo(0);
-                return;
-              case HomeView.ANIME_LIST:
-                animeCtrl.scrollCtrl.pos.pixels > 0
-                    ? animeCtrl.scrollUpTo(0)
-                    : animeCtrl.searchMode = !animeCtrl.searchMode;
-                return;
-              case HomeView.MANGA_LIST:
-                mangaCtrl.scrollCtrl.pos.pixels > 0
-                    ? mangaCtrl.scrollUpTo(0)
-                    : mangaCtrl.searchMode = !mangaCtrl.searchMode;
-                return;
-              case HomeView.EXPLORE:
-                exploreCtrl.scrollCtrl.pos.pixels > 0
-                    ? exploreCtrl.scrollUpTo(0)
-                    : exploreCtrl.searchMode = !exploreCtrl.searchMode;
-                return;
-              case HomeView.USER:
-                userCtrl.scrollUpTo(0);
-                return;
-            }
-          },
-          items: const {
-            'Feed': Ionicons.file_tray_outline,
-            'Anime': Ionicons.film_outline,
-            'Manga': Ionicons.bookmark_outline,
-            'Explore': Ionicons.compass_outline,
-            'Profile': Ionicons.person_outline,
+          trySubtab: (goRight) {
+            if (homeCtrl.homeTab != HomeView.INBOX ||
+                homeCtrl.onFeed == goRight) return false;
+
+            homeCtrl.onFeed = !homeCtrl.onFeed;
+            return true;
           },
         ),
       ),
@@ -95,16 +116,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
-    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.searchMode) {
-      exploreCtrl.searchMode = false;
+    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.search != null) {
+      exploreCtrl.search = null;
       return SynchronousFuture(false);
     }
-    if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.searchMode) {
-      animeCtrl.searchMode = false;
+    if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.search != null) {
+      animeCtrl.search = null;
       return SynchronousFuture(false);
     }
-    if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.searchMode) {
-      mangaCtrl.searchMode = false;
+    if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.search != null) {
+      mangaCtrl.search = null;
       return SynchronousFuture(false);
     }
 
@@ -145,11 +166,11 @@ class _HomeViewState extends State<HomeView> {
     );
 
     tabs = [
-      const HomeFeedView(),
+      InboxView(feedCtrl, _ctrl),
       HomeCollectionView(ofAnime: true, id: widget.id, key: UniqueKey()),
       HomeCollectionView(ofAnime: false, id: widget.id, key: UniqueKey()),
       const ExploreView(),
-      HomeUserView(widget.id, null),
+      HomeUserView(widget.id, null, _ctrl),
     ];
 
     fabs = [
@@ -163,6 +184,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void dispose() {
+    _ctrl.dispose();
     Get.delete<HomeController>();
     Get.delete<ExploreController>();
     Get.delete<FeedController>();

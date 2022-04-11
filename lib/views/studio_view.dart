@@ -23,10 +23,9 @@ class StudioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = 10.0 +
-        (MediaQuery.of(context).size.width > Consts.OVERLAY_WIDE
-            ? (MediaQuery.of(context).size.width - Consts.OVERLAY_WIDE) / 2
-            : 0.0);
+    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
+        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+        : 10.0;
 
     return GetBuilder<StudioController>(
       init: StudioController(id),
@@ -147,7 +146,7 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                height: 0.3,
+                initialHeight: Consts.TAP_TARGET_SIZE * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
                   physics: Consts.PHYSICS,

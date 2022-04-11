@@ -13,12 +13,12 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/fields/expandable_field.dart';
+import 'package:otraku/widgets/fields/growable_text_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
-import 'package:otraku/widgets/fields/score_picker.dart';
+import 'package:otraku/widgets/fields/score_field.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -143,8 +143,8 @@ class _EditView extends StatelessWidget {
 
       final fields = <Widget>[];
       for (final s in model.advancedScores.entries)
-        fields.add(InputFieldStructure(
-          title: s.key,
+        fields.add(LabeledField(
+          label: s.key,
           child: NumberField(
             value: s.value,
             maxValue: 100,
@@ -176,7 +176,6 @@ class _EditView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
         slivers: [
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           _FieldGrid([
@@ -222,8 +221,8 @@ class _EditView extends StatelessWidget {
                 },
               ),
             ),
-            InputFieldStructure(
-              title: 'Progress',
+            LabeledField(
+              label: 'Progress',
               child: GetBuilder<EditController>(
                 id: EditController.ID_PROGRESS,
                 tag: model.mediaId.toString(),
@@ -283,16 +282,16 @@ class _EditView extends StatelessWidget {
                 ),
               ),
             ),
-            InputFieldStructure(
-              title: 'Repeat',
+            LabeledField(
+              label: 'Repeat',
               child: NumberField(
                 value: model.repeat,
                 update: (repeat) => model.repeat = repeat.toInt(),
               ),
             ),
             if (model.type != 'ANIME')
-              InputFieldStructure(
-                title: 'Progress Volumes',
+              LabeledField(
+                label: 'Progress Volumes',
                 child: NumberField(
                   value: model.progressVolumes,
                   maxValue: model.progressVolumesMax ?? 100000,
@@ -303,20 +302,20 @@ class _EditView extends StatelessWidget {
           ], minWidth: 140),
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverToBoxAdapter(
-            child: InputFieldStructure(
-              title: 'Score',
+            child: LabeledField(
+              label: 'Score',
               child: GetBuilder<EditController>(
                 id: EditController.ID_SCORE,
                 tag: model.mediaId.toString(),
-                builder: (_) => ScorePicker(model),
+                builder: (_) => ScoreField(model),
               ),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverToBoxAdapter(
-            child: InputFieldStructure(
-              title: 'Notes',
-              child: ExpandableField(
+            child: LabeledField(
+              label: 'Notes',
+              child: GrowableTextField(
                 text: model.notes,
                 onChanged: (notes) => model.notes = notes,
               ),
@@ -324,8 +323,8 @@ class _EditView extends StatelessWidget {
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
           _FieldGrid([
-            InputFieldStructure(
-              title: 'Started',
+            LabeledField(
+              label: 'Started',
               child: GetBuilder<EditController>(
                 id: EditController.ID_START_DATE,
                 tag: model.mediaId.toString(),
@@ -345,8 +344,8 @@ class _EditView extends StatelessWidget {
                 ),
               ),
             ),
-            InputFieldStructure(
-              title: 'Completed',
+            LabeledField(
+              label: 'Completed',
               child: GetBuilder<EditController>(
                 id: EditController.ID_COMPLETE_DATE,
                 tag: model.mediaId.toString(),
@@ -458,7 +457,7 @@ class _CheckBoxGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 180,
         mainAxisSpacing: 0,
-        height: Consts.MATERIAL_TAP_TARGET_SIZE,
+        height: Consts.TAP_TARGET_SIZE,
       ),
     );
   }

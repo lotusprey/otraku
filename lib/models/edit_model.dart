@@ -14,7 +14,7 @@ class EditModel {
   final int? progressVolumesMax;
   double score;
   int repeat;
-  String? notes;
+  String notes;
   DateTime? startedAt;
   DateTime? completedAt;
   bool private;
@@ -33,7 +33,7 @@ class EditModel {
     this.progressVolumesMax,
     this.score = 0,
     this.repeat = 0,
-    this.notes,
+    this.notes = '',
     this.startedAt,
     this.completedAt,
     this.private = false,
@@ -84,7 +84,7 @@ class EditModel {
       progressVolumesMax: map['volumes'],
       score: map['mediaListEntry']['score'].toDouble(),
       repeat: map['mediaListEntry']['repeat'],
-      notes: map['mediaListEntry']['notes'],
+      notes: map['mediaListEntry']['notes'] ?? '',
       startedAt: Convert.mapToDateTime(map['mediaListEntry']['startedAt']),
       completedAt: Convert.mapToDateTime(map['mediaListEntry']['completedAt']),
       private: map['mediaListEntry']['private'],

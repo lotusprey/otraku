@@ -14,16 +14,15 @@ class ExploreController extends ScrollingController {
   static const ID_BODY = 1;
   static const ID_BUTTON = 2;
 
-  late final filters = ExploreFilterModel(fetch);
   final _results = PageModel<ExplorableModel>();
   late final _debounce = Debounce(fetch);
+  late final filters = ExploreFilterModel(_type == Explorable.anime, fetch);
   int _page = 1;
   Explorable _type = Settings().defaultExplorable;
-  String _search = '';
+  String? _search;
   bool _isBirthday = false;
   bool _isLoading = true;
   int _concurrentFetches = 0;
-  bool _searchMode = false;
 
   // ***************************************************************************
   // GETTERS & SETTERS
@@ -37,33 +36,27 @@ class ExploreController extends ScrollingController {
 
   Explorable get type => _type;
 
-  String get search => _search;
+  String? get search => _search;
 
   set type(Explorable val) {
     if (_type == val) return;
     _type = val;
-    filters.formats.clear();
+    filters.ofAnime = val == Explorable.anime;
     update([ID_HEAD, ID_BUTTON]);
     fetch();
   }
 
-  set search(String val) {
-    val = val.trimLeft();
+  set search(String? val) {
+    val = val?.trimLeft();
     if (_search == val) return;
+    final oldVal = _search;
     _search = val;
-    _search.isEmpty ? fetch() : _debounce.run();
-  }
 
-  bool get searchMode => _searchMode;
-
-  set searchMode(bool val) {
-    if (searchMode == val) return;
-    _searchMode = val;
-    update([ID_HEAD]);
-    if (_search.isNotEmpty) {
-      _search = '';
-      fetch();
-    }
+    if ((oldVal == null) != (val == null)) {
+      update([ID_HEAD]);
+      if ((oldVal?.isNotEmpty ?? false) || (val?.isNotEmpty ?? false)) fetch();
+    } else
+      (val?.isEmpty ?? true) ? fetch() : _debounce.run();
   }
 
   bool get isBirthday => _isBirthday;
@@ -84,7 +77,7 @@ class ExploreController extends ScrollingController {
     if (clean) {
       _isLoading = true;
       _page = 1;
-      scrollUpTo(0);
+      scrollCtrl.scrollUpTo(0);
       update([ID_BODY]);
     }
 
@@ -104,7 +97,7 @@ class ExploreController extends ScrollingController {
 
     final variables = filters.toMap();
     variables['page'] = _page;
-    if (_search.isNotEmpty) variables['search'] = _search;
+    if (_search?.isNotEmpty ?? false) variables['search'] = _search;
 
     if (type == Explorable.anime)
       variables['type'] = 'ANIME';

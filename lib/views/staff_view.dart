@@ -6,14 +6,15 @@ import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/staff_controller.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/fields/input_field_structure.dart';
+import 'package:otraku/widgets/fields/labeled_field.dart';
+import 'package:otraku/widgets/layouts/relation_grid.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
-import 'package:otraku/widgets/layouts/connections_grid.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -102,51 +103,48 @@ class StaffView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SliverShadowAppBar([
-                  GetBuilder<StaffController>(
-                    id: StaffController.ID_MEDIA,
-                    tag: id.toString(),
-                    builder: (ctrl) {
-                      return BubbleTabs(
-                        items: const {'Characters': true, 'Staff Roles': false},
-                        current: () => ctrl.onCharacters,
-                        onChanged: (bool value) {
-                          ctrl.onCharacters = value;
-                          ctrl.scrollUpTo(offset);
-                        },
-                        onSame: () => ctrl.scrollUpTo(offset),
-                      );
-                    },
+                ShadowSliverAppBar([
+                  Expanded(
+                    child: GetBuilder<StaffController>(
+                      id: StaffController.ID_MEDIA,
+                      tag: id.toString(),
+                      builder: (ctrl) {
+                        return TabSegments(
+                          items: const {
+                            'Characters': true,
+                            'Staff Roles': false
+                          },
+                          initial: ctrl.onCharacters,
+                          onChanged: (bool value) {
+                            ctrl.onCharacters = value;
+                            ctrl.scrollCtrl.scrollUpTo(offset);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ]),
-                GetBuilder<StaffController>(
-                  id: StaffController.ID_MEDIA,
-                  tag: id.toString(),
-                  builder: (ctrl) {
-                    final connections =
-                        ctrl.onCharacters ? ctrl.characters : ctrl.roles;
-
-                    if (connections.isEmpty)
-                      return SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: Center(
-                          child: Text(
-                            'No resuts',
-                            style: Theme.of(context).textTheme.subtitle1,
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    left: 10,
+                    right: 10,
+                    bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+                  ),
+                  sliver: GetBuilder<StaffController>(
+                    id: StaffController.ID_MEDIA,
+                    tag: id.toString(),
+                    builder: (ctrl) => ctrl.onCharacters
+                        ? RelationGrid(
+                            items: ctrl.characters,
+                            connections: ctrl.media,
+                            placeholder: 'No characters',
+                          )
+                        : RelationGrid(
+                            items: ctrl.roles,
+                            placeholder: 'No Roles',
                           ),
-                        ),
-                      );
-
-                    return SliverPadding(
-                      padding: EdgeInsets.only(
-                        top: 10,
-                        left: 10,
-                        right: 10,
-                        bottom: MediaQuery.of(context).viewPadding.bottom + 10,
-                      ),
-                      sliver: ConnectionsGrid(connections: connections),
-                    );
-                  },
+                  ),
                 ),
               ],
             ),
@@ -184,7 +182,7 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                height: 0.3,
+                initialHeight: Consts.TAP_TARGET_SIZE * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
                   physics: Consts.PHYSICS,
@@ -269,8 +267,8 @@ class _Details extends StatelessWidget {
           const SizedBox(height: 10),
           if (model.description.isNotEmpty)
             Expanded(
-              child: InputFieldStructure(
-                title: 'Description',
+              child: LabeledField(
+                label: 'Description',
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(

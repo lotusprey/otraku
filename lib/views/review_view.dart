@@ -30,7 +30,6 @@ class ReviewView extends StatelessWidget {
             builder: (ctrl) {
               final model = ctrl.model;
               return CustomScrollView(
-                physics: Consts.PHYSICS,
                 slivers: [
                   SliverPersistentHeader(
                     pinned: true,
@@ -266,7 +265,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 150;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
@@ -311,7 +310,7 @@ class _RateButtonsState extends State<_RateButtons> {
                     : Icons.thumb_up_outlined,
               ),
               color: widget.model.viewerRating == true
-                  ? Theme.of(context).colorScheme.secondary
+                  ? Theme.of(context).colorScheme.primary
                   : null,
               onPressed: () =>
                   _rate(widget.model.viewerRating != true ? true : null)

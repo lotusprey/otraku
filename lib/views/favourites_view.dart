@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/favourites_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/user_model.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/widgets/layouts/tile_grid.dart';
 import 'package:otraku/widgets/layouts/title_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
@@ -29,16 +30,18 @@ class FavouritesView extends StatelessWidget {
       init: FavouritesController(id),
       tag: id.toString(),
       builder: (ctrl) => NavLayout(
-        index: ctrl.pageIndex,
-        onChanged: (index) => ctrl.pageIndex = index,
-        onSame: (_) => ctrl.scrollUpTo(0),
-        items: {
-          'Anime': Explorable.anime.icon,
-          'Manga': Explorable.manga.icon,
-          'Characters': Explorable.character.icon,
-          'Staff': Explorable.staff.icon,
-          'Studios': Explorable.studio.icon,
-        },
+        navRow: NavIconRow(
+          index: ctrl.pageIndex,
+          onChanged: (index) => ctrl.pageIndex = index,
+          onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
+          items: {
+            'Anime': Explorable.anime.icon,
+            'Manga': Explorable.manga.icon,
+            'Characters': Explorable.character.icon,
+            'Staff': Explorable.staff.icon,
+            'Studios': Explorable.studio.icon,
+          },
+        ),
         appBar: ShadowAppBar(title: 'Favourite ${names[ctrl.pageIndex]}'),
         child: ctrl.favourites.isNotEmpty
             ? ctrl.pageIndex == UserModel.STUDIO_FAV

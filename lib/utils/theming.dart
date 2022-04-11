@@ -15,7 +15,7 @@ class Theming with ChangeNotifier {
 
   late ThemeModel _theme;
 
-  ThemeModel get theme => _theme;
+  ThemeData get theme => _theme.themeData;
 
   void _setTheme() {
     final mode = Settings().themeMode;
@@ -28,7 +28,17 @@ class Theming with ChangeNotifier {
         : mode == ThemeMode.dark;
 
     _theme = _themes.values.elementAt(isDark ? dark : light);
-    SystemChrome.setSystemUIOverlayStyle(_theme.overlayStyle);
+
+    final overlayBrightness = _theme.brightness == Brightness.dark
+        ? Brightness.light
+        : Brightness.dark;
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: _theme.background,
+      statusBarBrightness: _theme.brightness,
+      statusBarIconBrightness: overlayBrightness,
+      systemNavigationBarColor: _theme.background,
+      systemNavigationBarIconBrightness: overlayBrightness,
+    ));
   }
 
   void refresh() {
@@ -49,9 +59,9 @@ class Theming with ChangeNotifier {
       onBackground: Color(0xFFCAD5E2),
       surface: Color(0xFF1D2835),
       onSurface: Color(0xFFCAD5E2),
-      primary: Color(0xFF56789F),
-      secondary: Color(0xFF45A0F2),
-      onSecondary: Color(0xFF0F171E),
+      surfaceVariant: Color(0xFF56789F),
+      primary: Color(0xFF45A0F2),
+      onPrimary: Color(0xFF0F171E),
       error: Color(0xFFD74761),
       onError: Color(0xFF0F171E),
     ),
@@ -61,9 +71,9 @@ class Theming with ChangeNotifier {
       onBackground: Color(0xFFFFFEFF),
       surface: Color(0xFF1A6157),
       onSurface: Color(0xFFFFFEFF),
-      primary: Color(0xFF85D6C2),
-      secondary: Color(0xFF00E4A3),
-      onSecondary: Color(0xFF163B3B),
+      surfaceVariant: Color(0xFF85D6C2),
+      primary: Color(0xFF00E4A3),
+      onPrimary: Color(0xFF163B3B),
       error: Color(0xFFD87CAC),
       onError: Color(0xFF163B3B),
     ),
@@ -73,9 +83,9 @@ class Theming with ChangeNotifier {
       onBackground: Color(0xFFEBFFFA),
       surface: Color(0xFF1E2964),
       onSurface: Color(0xFFEBFFFA),
-      primary: Color(0xFF6B80DB),
-      secondary: Color(0xFF41C0AA),
-      onSecondary: Color(0xFF08123A),
+      surfaceVariant: Color(0xFF6B80DB),
+      primary: Color(0xFF41C0AA),
+      onPrimary: Color(0xFF08123A),
       error: Color(0xFFF445AF),
       onError: Color(0xFF08123A),
     ),
@@ -85,9 +95,9 @@ class Theming with ChangeNotifier {
       onBackground: Color(0xFFE8D9FC),
       surface: Color(0xFF2D2B55),
       onSurface: Color(0xFFE8D9FC),
-      primary: Color(0xFFA7A0F8),
-      secondary: Color(0xFFDFCD01),
-      onSecondary: Color(0xFF1E1E3F),
+      surfaceVariant: Color(0xFFA7A0F8),
+      primary: Color(0xFFDFCD01),
+      onPrimary: Color(0xFF1E1E3F),
       error: Color(0xFFF94E7E),
       onError: Color(0xFF1E1E3F),
     ),
@@ -97,9 +107,9 @@ class Theming with ChangeNotifier {
       onBackground: Color(0xFFFFFFD6),
       surface: Color(0xFF141414),
       onSurface: Color(0xFFFFFFD6),
-      primary: Color(0xFF999999),
-      secondary: Color(0xFFFFDB00),
-      onSecondary: Color(0xFF000000),
+      surfaceVariant: Color(0xFF999999),
+      primary: Color(0xFFFFDB00),
+      onPrimary: Color(0xFF000000),
       error: Color(0xFFFF1F39),
       onError: Color(0xFF000000),
     ),
@@ -109,13 +119,11 @@ class Theming with ChangeNotifier {
       onBackground: Color(0xFF1B2937),
       surface: Color(0xFFFAFDFF),
       onSurface: Color(0xFF1B2937),
-      primary: Color(0xFF4A7196),
-      secondary: Color(0xFF1D99ED),
-      onSecondary: Color(0xFFE0EBF5),
+      surfaceVariant: Color(0xFF4A7196),
+      primary: Color(0xFF1D99ED),
+      onPrimary: Color(0xFFE0EBF5),
       error: Color(0xFFE32749),
       onError: Color(0xFFE0EBF5),
     ),
-    // 'Custom #1': ThemeModel.read(_CUSTOM_1),
-    // 'Custom #2': ThemeModel.read(_CUSTOM_2),
   };
 }

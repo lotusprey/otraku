@@ -20,10 +20,29 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Otraku',
-        theme: Theming().theme.themeData,
+        theme: Theming().theme,
         navigatorKey: RouteArg.navKey,
-        initialRoute: RouteArg.auth,
         onGenerateRoute: RouteArg.generateRoute,
+
+        /// Configure default overscroll behaviour on Android. May become
+        /// unnecessary in the future.
+        ///
+        /// Override the [textScaleFactor] as to not break the app visually.
+        /// [child] shouldn't be null, because [onGenerateRoute] is provided.
+        builder: (context, child) {
+          final mediaQuery = MediaQuery.of(context);
+          final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+          return ScrollConfiguration(
+            behavior: const ScrollBehavior(
+              androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
+            ),
+            child: MediaQuery(
+              data: mediaQuery.copyWith(textScaleFactor: scale),
+              child: child!,
+            ),
+          );
+        },
       );
 
   @override

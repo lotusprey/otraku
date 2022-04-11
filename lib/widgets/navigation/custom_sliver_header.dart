@@ -16,7 +16,7 @@ class CustomSliverHeader extends StatelessWidget {
     required this.actions,
     required this.child,
     required this.heroId,
-    this.maxWidth = Consts.OVERLAY_WIDE,
+    this.maxWidth = Consts.LAYOUT_BIG,
   });
 
   final String? title;
@@ -38,9 +38,9 @@ class CustomSliverHeader extends StatelessWidget {
       sidePadding = (MediaQuery.of(context).size.width - maxWidth!) / 2;
 
     final imageWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.35
-        : 150.0;
-    final imageHeight = imageWidth * (squareImage ? 1 : 1.4);
+        ? MediaQuery.of(context).size.width * 0.30
+        : 100.0;
+    final imageHeight = imageWidth * (squareImage ? 1 : Consts.COVER_HW_RATIO);
     final bannerHeight = 200.0;
     final height = bannerHeight + imageHeight / 2;
 
@@ -266,7 +266,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   double get maxExtent => height;
 
   @override
-  double get minExtent => Consts.MATERIAL_TAP_TARGET_SIZE;
+  double get minExtent => Consts.TAP_TARGET_SIZE;
 
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>

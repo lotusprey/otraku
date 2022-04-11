@@ -12,7 +12,7 @@ class ChipField extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Chip(
         label: Text(name, style: Theme.of(context).textTheme.button),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         deleteIconColor: Theme.of(context).colorScheme.onSecondary,
         onDeleted: onRemoved,
       );
@@ -55,7 +55,7 @@ class _ChipToggleFieldState extends State<ChipToggleField> {
         child: Chip(
           label: Text(widget.name, style: Theme.of(context).textTheme.button),
           backgroundColor: _on
-              ? Theme.of(context).colorScheme.secondary
+              ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.error,
           deleteIconColor: _on
               ? Theme.of(context).colorScheme.onSecondary
@@ -86,10 +86,10 @@ class ChipOptionField extends StatelessWidget {
             ? Theme.of(context).textTheme.button
             : Theme.of(context).textTheme.bodyText2,
         backgroundColor: selected
-            ? Theme.of(context).colorScheme.secondary
+            ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.onSecondary,
         side: selected
-            ? BorderSide(color: Theme.of(context).colorScheme.secondary)
+            ? BorderSide(color: Theme.of(context).colorScheme.primary)
             : BorderSide(color: Theme.of(context).colorScheme.onBackground),
       ),
     );
@@ -121,7 +121,7 @@ class ChipNamingField extends StatelessWidget {
         ),
         child: Chip(
           label: Text(name, style: Theme.of(context).textTheme.button),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           deleteIconColor: Theme.of(context).colorScheme.onSecondary,
           onDeleted: onRemoved,
         ),

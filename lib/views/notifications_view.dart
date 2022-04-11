@@ -14,7 +14,6 @@ import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
-import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends StatelessWidget {
   @override
@@ -39,7 +38,7 @@ class NotificationsView extends StatelessWidget {
                       style: i != ctrl.filter
                           ? Theme.of(context).textTheme.headline1
                           : Theme.of(context).textTheme.headline1?.copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                     ),
                   ),
@@ -54,7 +53,6 @@ class NotificationsView extends StatelessWidget {
             final entries = ctrl.entries;
             return ListView.builder(
               padding: Consts.PADDING,
-              physics: Consts.PHYSICS,
               controller: ctrl.scrollCtrl,
               itemBuilder: (_, index) => _NotificationWidget(
                 entries[index],
@@ -71,10 +69,10 @@ class NotificationsView extends StatelessWidget {
 }
 
 class _NotificationWidget extends StatelessWidget {
+  _NotificationWidget(this.notification, this.unread);
+
   final NotificationModel notification;
   final bool unread;
-
-  _NotificationWidget(this.notification, this.unread);
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +101,9 @@ class _NotificationWidget extends StatelessWidget {
                 },
                 child: ClipRRect(
                   child: FadeImage(notification.imageUrl!, width: 70),
-                  borderRadius:
-                      BorderRadius.horizontal(left: Consts.RADIUS_MIN),
+                  borderRadius: BorderRadius.horizontal(
+                    left: Consts.RADIUS_MIN,
+                  ),
                 ),
               ),
             Flexible(
@@ -147,7 +146,13 @@ class _NotificationWidget extends StatelessWidget {
                       showPopUp(context, _NotificationDialog(notification));
                       return;
                     default:
-                      Toast.show(context, 'Forum is not supported yet');
+                      showPopUp(
+                        context,
+                        const ConfirmationDialog(
+                          title: 'Forum is not yet supported',
+                          mainAction: 'Ok',
+                        ),
+                      );
                       return;
                   }
                 },
@@ -192,7 +197,7 @@ class _NotificationWidget extends StatelessWidget {
                 width: 10,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                   borderRadius:
                       BorderRadius.horizontal(right: Consts.RADIUS_MIN),
                 ),
@@ -205,8 +210,9 @@ class _NotificationWidget extends StatelessWidget {
 }
 
 class _NotificationDialog extends StatelessWidget {
+  _NotificationDialog(this.model);
+
   final NotificationModel model;
-  const _NotificationDialog(this.model);
 
   @override
   Widget build(BuildContext context) {
@@ -226,40 +232,37 @@ class _NotificationDialog extends StatelessWidget {
     );
 
     final coverWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.35
-        : 150.0;
-    final coverHeight = coverWidth / 0.7;
+        ? MediaQuery.of(context).size.width * 0.30
+        : 100.0;
 
     return DialogBox(
       Padding(
         padding: Consts.PADDING,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
-            if (model.imageUrl == null)
-              title
-            else
-              Flexible(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
-                      child: FadeImage(
-                        model.imageUrl!,
-                        width: coverWidth,
-                        height: coverHeight,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Flexible(child: title),
-                  ],
+            if (model.imageUrl != null) ...[
+              ClipRRect(
+                borderRadius: Consts.BORDER_RAD_MIN,
+                child: FadeImage(
+                  model.imageUrl!,
+                  width: coverWidth,
+                  height: coverWidth * Consts.COVER_HW_RATIO,
                 ),
               ),
-            if (model.details != null) ...[
-              const SizedBox(height: 10),
-              HtmlContent(model.details!),
+              const SizedBox(width: 10),
             ],
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  title,
+                  if (model.details != null) ...[
+                    const SizedBox(height: 10),
+                    HtmlContent(model.details!),
+                  ],
+                ],
+              ),
+            ),
           ],
         ),
       ),

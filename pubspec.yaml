@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.1.7+33
+version: 1.1.8+35
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -14,13 +14,15 @@ dependencies:
 
   http: ^0.13.4
   get: ^4.6.1
-  hive: ^2.0.6
-  hive_flutter: ^1.1.0
+  hive: ^2.1.0
+  path_provider: ^2.0.9
+  path_provider_android: ^2.0.6 # Remove after Flutter 2.11.
+  path_provider_ios: ^2.0.6 # Remove after Flutter 2.11.
   flutter_secure_storage: ^5.0.2
   url_launcher: ^6.0.20
   app_links: ^3.0.1 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
   workmanager: ^0.4.1
-  flutter_local_notifications: ^9.3.2
+  flutter_local_notifications: ^9.4.0
   flutter_widget_from_html_core: ^0.8.5+1
   ionicons: ^0.1.2
 

@@ -110,7 +110,7 @@ class UserHeader extends StatelessWidget {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: Theme.of(context).colorScheme.primary,
                         borderRadius: Consts.BORDER_RAD_MIN,
                       ),
                       child: Text(

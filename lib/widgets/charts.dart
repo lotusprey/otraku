@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/navigation/bubble_tabs.dart';
+import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class BarChart extends StatelessWidget {
   BarChart({
@@ -16,12 +16,12 @@ class BarChart extends StatelessWidget {
   final String title;
   final List<dynamic> names;
   final List<num> values;
-  final BubbleTabs? tabs;
+  final TabSegments? tabs;
   final double barWidth;
 
   @override
   Widget build(BuildContext context) {
-    double maxHeight = 200.0;
+    double maxHeight = 190.0;
     num maxValue = 0;
     for (final v in values) if (maxValue < v) maxValue = v;
     maxHeight /= maxValue;
@@ -42,19 +42,23 @@ class BarChart extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.only(left: 10),
                 child: Text(
                   title,
                   style: Theme.of(context).textTheme.headline3,
                 ),
               ),
-              tabs!,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: tabs!.items.length < 3 ? 300 : 350,
+                ),
+                child: tabs!,
+              ),
             ],
           ),
         SizedBox(
           height: 280,
           child: ListView.builder(
-            physics: Consts.PHYSICS,
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.all(10),
             itemCount: names.length,
@@ -68,20 +72,17 @@ class BarChart extends StatelessWidget {
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  height: values[i] * maxHeight,
+                  height: values[i] * maxHeight + 10,
                   margin: const EdgeInsets.all(5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: const [0.5, 1],
+                      stops: const [0, 1],
                       colors: [
-                        Theme.of(context).colorScheme.secondary,
-                        Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.2),
+                        Theme.of(context).colorScheme.primary,
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                       ],
                     ),
                   ),
@@ -100,7 +101,8 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  PieChart({required this.title, required this.names, required this.values});
+  PieChart({required this.title, required this.names, required this.values})
+      : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
@@ -122,9 +124,9 @@ class PieChart extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              stops: const [0.5, 1],
+              stops: const [0, 1],
               colors: [
-                Theme.of(context).colorScheme.surface.withOpacity(0.4),
+                Theme.of(context).colorScheme.surface.withOpacity(0.3),
                 Theme.of(context).colorScheme.surface,
               ],
             ),
@@ -145,11 +147,8 @@ class PieChart extends StatelessWidget {
                         center: const Alignment(-0.5, -0.5),
                         radius: 0.8,
                         colors: [
-                          Theme.of(context).colorScheme.secondary,
-                          Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withAlpha(100),
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.primary.withAlpha(100),
                         ],
                         stops: const [0.5, 1.0],
                       ),
@@ -195,6 +194,7 @@ class PieChart extends StatelessWidget {
 /// make the [categories] distinguishable.
 class _PieLines extends CustomPainter {
   _PieLines(this.colour, this.categories);
+
   final Color colour;
   final List<int> categories;
 
@@ -212,10 +212,11 @@ class _PieLines extends CustomPainter {
 
     final radius = math.min(size.width, size.height) / 2;
     final center = Offset(radius, radius);
+    final offset = math.pi * 2 - categories.length * 0.05;
     double angle = math.pi;
 
     for (int i = 0; i < categories.length; i++) {
-      angle -= categories[i] / total * math.pi * 2;
+      angle -= 0.05 + (categories[i] / total) * offset;
 
       final point = Offset(
         center.dx + radius * math.sin(angle),

@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
+import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -25,7 +27,7 @@ class MediaView extends StatelessWidget {
     final footer =
         SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
 
-    const keys = [ValueKey(0), ValueKey(1), ValueKey(2)];
+    const keys = [ValueKey(0), ValueKey(1), ValueKey(2), ValueKey(3)];
 
     return GetBuilder<MediaController>(
       init: MediaController(id),
@@ -50,32 +52,53 @@ class MediaView extends StatelessWidget {
           id: MediaController.ID_OUTER,
           tag: id.toString(),
           builder: (_) => NavLayout(
-            index: ctrl.tab,
-            onChanged: (page) => ctrl.tab = page,
-            onSame: (_) => ctrl.scrollUpTo(0),
+            navRow: NavIconRow(
+              index: ctrl.tab,
+              onChanged: (page) => ctrl.tab = page,
+              onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
+              items: const {
+                'Info': Ionicons.book_outline,
+                'Other': Ionicons.layers_outline,
+                'People': Icons.emoji_people_outlined,
+                'Social': Ionicons.stats_chart_outline,
+              },
+            ),
             trySubtab: (goRight) {
               if (ctrl.tab == MediaController.OTHER) {
-                if (goRight && ctrl.otherTab < 2) {
-                  ctrl.scrollUpTo(0);
-                  ctrl.otherTab++;
+                if (goRight && !ctrl.otherTabToggled) {
+                  ctrl.scrollCtrl.scrollUpTo(0);
+                  ctrl.otherTabToggled = true;
                   return true;
                 }
-                if (!goRight && ctrl.otherTab > 0) {
-                  ctrl.scrollUpTo(0);
-                  ctrl.otherTab--;
+                if (!goRight && ctrl.otherTabToggled) {
+                  ctrl.scrollCtrl.scrollUpTo(0);
+                  ctrl.otherTabToggled = false;
+                  return true;
+                }
+              }
+
+              if (ctrl.tab == MediaController.PEOPLE) {
+                if (goRight && !ctrl.peopleTabToggled) {
+                  ctrl.scrollCtrl.scrollUpTo(0);
+                  ctrl.peopleTabToggled = true;
+                  return true;
+                }
+                if (!goRight && ctrl.peopleTabToggled) {
+                  ctrl.scrollCtrl.scrollUpTo(0);
+                  ctrl.peopleTabToggled = false;
                   return true;
                 }
               }
 
               if (ctrl.tab == MediaController.SOCIAL) {
-                if (goRight && ctrl.socialTab < 1) {
-                  ctrl.scrollUpTo(0);
-                  ctrl.socialTab++;
+                if (goRight && !ctrl.socialTabToggled) {
+                  ctrl.scrollCtrl.scrollUpTo(0);
+                  ctrl.socialTabToggled = true;
                   return true;
                 }
-                if (!goRight && ctrl.socialTab > 0) {
-                  ctrl.scrollUpTo(0);
-                  ctrl.socialTab--;
+                if (!goRight && ctrl.socialTabToggled) {
+                  ctrl.scrollCtrl.scrollUpTo(0);
+                  ctrl.socialTabToggled = false;
                   return true;
                 }
               }
@@ -83,11 +106,6 @@ class MediaView extends StatelessWidget {
               return false;
             },
             floating: _ActionButtons(ctrl),
-            items: const {
-              'Info': Ionicons.book_outline,
-              'Other': Icons.emoji_people_outlined,
-              'Social': Icons.rate_review_outlined,
-            },
             child: GetBuilder<MediaController>(
               key: keys[ctrl.tab],
               id: MediaController.ID_INNER,
@@ -101,6 +119,8 @@ class MediaView extends StatelessWidget {
                     ...MediaInfoView.children(context, ctrl)
                   else if (ctrl.tab == MediaController.OTHER)
                     ...MediaOtherView.children(context, ctrl)
+                  else if (ctrl.tab == MediaController.PEOPLE)
+                    ...MediaPeopleView.children(context, ctrl)
                   else
                     ...MediaSocialView.children(context, ctrl),
                   footer,
@@ -129,24 +149,26 @@ class __ActionButtonsState extends State<_ActionButtons> {
     final model = widget.ctrl.model!;
 
     List<Widget> children = [
-      if (widget.ctrl.tab == MediaController.OTHER &&
-          widget.ctrl.otherTab == MediaController.CHARACTERS &&
-          model.characters.items.isNotEmpty &&
-          widget.ctrl.availableLanguages.length > 1) ...[
+      if (widget.ctrl.tab == MediaController.PEOPLE &&
+          !widget.ctrl.peopleTabToggled &&
+          widget.ctrl.languages.length > 1) ...[
         ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
           onTap: () => showSheet(
             context,
             DynamicGradientDragSheet(
-              onTap: (i) => widget.ctrl.language = i,
-              itemCount: widget.ctrl.availableLanguages.length,
+              onTap: (i) {
+                widget.ctrl.scrollCtrl.scrollUpTo(0);
+                widget.ctrl.langIndex = i;
+              },
+              itemCount: widget.ctrl.languages.length,
               itemBuilder: (_, i) => Text(
-                widget.ctrl.availableLanguages[i],
-                style: i != widget.ctrl.language
+                widget.ctrl.languages[i],
+                style: i != widget.ctrl.langIndex
                     ? Theme.of(context).textTheme.headline1
                     : Theme.of(context).textTheme.headline1?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
               ),
             ),

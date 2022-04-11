@@ -18,13 +18,15 @@ abstract class GqlQuery {
 
   static const media = r'''
     query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
-        $withCharacters: Boolean = false, $withStaff: Boolean = false,
-        $withReviews: Boolean = false, $characterPage: Int = 1,
+        $withRecommendations: Boolean = false, $withCharacters: Boolean = false,
+        $withStaff: Boolean = false, $withReviews: Boolean = false,
+        $recommendationPage: Int = 1, $characterPage: Int = 1,
         $staffPage: Int = 1, $reviewPage: Int = 1) {
       Media(id: $id) {
         ...main @include(if: $withMain)
         mediaListEntry @include(if: $withMain) {...entry}
         ...details @include(if: $withDetails)
+        ...recommendations @include (if: $withRecommendations)
         ...reviews @include(if: $withReviews)
         ...characters @include(if: $withCharacters)
         ...staff @include(if: $withStaff)
@@ -58,6 +60,21 @@ abstract class GqlQuery {
             format
             title {userPreferred} 
             status(version: 2)
+            coverImage {extraLarge}
+          }
+        }
+      }
+    }
+    fragment recommendations on Media {
+      recommendations(page: $recommendationPage, sort: [RATING_DESC]) {
+        pageInfo {hasNextPage}
+        nodes {
+          rating
+          userRating
+          mediaRecommendation {
+            id
+            type
+            title {userPreferred}
             coverImage {extraLarge}
           }
         }
@@ -605,6 +622,12 @@ abstract class GqlMutation {
         ratingAmount
         userRating
       }
+    }
+  ''';
+
+  static const rateRecommendation = r'''
+    mutation RateRecommendation($id: Int, $recommendedId: Int, $rating: RecommendationRating) {
+      SaveRecommendation(mediaId: $id, mediaRecommendationId: $recommendedId, rating: $rating) {id}
     }
   ''';
 

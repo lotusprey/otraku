@@ -108,7 +108,13 @@ class InboxView extends StatelessWidget {
                 physics: Consts.PHYSICS,
                 controller: scrollCtrl,
                 slivers: [
-                  SliverToBoxAdapter(child: SizedBox(height: offsetTop - 10)),
+                  SliverPadding(
+                    padding: EdgeInsets.only(top: offsetTop - 10),
+                    sliver: SliverRefreshControl(
+                      onRefresh: () => feedCtrl.fetchPage(clean: true),
+                      canRefresh: () => !feedCtrl.isLoading,
+                    ),
+                  ),
                   ..._feedWidgets(context),
                   SliverToBoxAdapter(
                     child: SizedBox(height: NavLayout.offset(context)),
@@ -123,7 +129,6 @@ class InboxView extends StatelessWidget {
                   id: CollectionController.ID_BODY,
                   tag: '${Settings().id}false',
                   builder: (mangaCtrl) => CustomScrollView(
-                    physics: Consts.PHYSICS,
                     controller: scrollCtrl,
                     slivers: [
                       SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
@@ -147,10 +152,6 @@ class InboxView extends StatelessWidget {
   }
 
   List<Widget> _feedWidgets(BuildContext context) => [
-        SliverRefreshControl(
-          onRefresh: () => feedCtrl.fetchPage(clean: true),
-          canRefresh: () => !feedCtrl.isLoading,
-        ),
         SliverPadding(
           padding: Consts.PADDING,
           sliver: GetBuilder<FeedController>(

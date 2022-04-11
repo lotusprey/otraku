@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -27,13 +26,13 @@ class HtmlContent extends StatelessWidget {
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
         icon: Icon(Icons.close),
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.error,
         onPressed: () => showPopUp(
           context,
           ConfirmationDialog(
             title: 'Couldn\'t load element ${element.localName}',
             content: err.toString(),
-            mainAction: ':(',
+            mainAction: 'Ok',
           ),
         ),
       ),
@@ -50,6 +49,12 @@ class HtmlContent extends StatelessWidget {
         if (element.localName == 'i' || element.localName == 'em')
           styles['font-style'] = 'italic';
 
+        if (element.localName == 'img') {
+          styles['border-radius'] = '5px';
+          styles['padding-top'] = '5px';
+          styles['padding-bottom'] = '5px';
+        }
+
         return styles;
       },
       customWidgetBuilder: (element) {
@@ -61,19 +66,6 @@ class HtmlContent extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: Consts.BORDER_RAD_MIN,
-            ),
-          );
-
-        if (element.localName == 'img')
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: ClipRRect(
-              borderRadius: Consts.BORDER_RAD_MIN,
-              child: FadeImage(
-                element.attributes['src'] ?? '',
-                width: null,
-                height: null,
-              ),
             ),
           );
 

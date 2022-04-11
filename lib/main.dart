@@ -24,20 +24,25 @@ class _AppState extends State<App> {
         navigatorKey: RouteArg.navKey,
         onGenerateRoute: RouteArg.generateRoute,
 
-        /// Configure default overscroll behaviour on Android. May be
-        /// needless in the future.
+        /// Configure default overscroll behaviour on Android. May become
+        /// unnecessary in the future.
         ///
         /// Override the [textScaleFactor] as to not break the app visually.
         /// [child] shouldn't be null, because [onGenerateRoute] is provided.
-        builder: (context, child) => ScrollConfiguration(
-          behavior: const ScrollBehavior(
-            androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
-          ),
-          child: MediaQuery(
-            data: MediaQuery.of(context).copyWith(textScaleFactor: 1),
-            child: child!,
-          ),
-        ),
+        builder: (context, child) {
+          final mediaQuery = MediaQuery.of(context);
+          final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+          return ScrollConfiguration(
+            behavior: const ScrollBehavior(
+              androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
+            ),
+            child: MediaQuery(
+              data: mediaQuery.copyWith(textScaleFactor: scale),
+              child: child!,
+            ),
+          );
+        },
       );
 
   @override

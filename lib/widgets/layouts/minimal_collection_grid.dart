@@ -84,25 +84,32 @@ class _IncrementButtonState extends State<_IncrementButton> {
   @override
   Widget build(BuildContext context) {
     final model = widget.model;
-    final text = Text(
-      model.progress == model.progressMax
-          ? model.progress.toString()
-          : '${model.progress}/${model.progressMax ?? "?"}',
-      style: Theme.of(context).textTheme.subtitle2,
-    );
 
     if (model.progress == model.progressMax)
       return Tooltip(
         message: 'Progress',
-        child: SizedBox(height: 30, child: Center(child: text)),
+        child: SizedBox(
+          height: 30,
+          child: Center(
+            child: Text(
+              model.progress.toString(),
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+        ),
       );
+
+    Color? colour;
+    if (model.nextEpisode != null && model.progress + 1 < model.nextEpisode!)
+      colour = Theme.of(context).colorScheme.error;
 
     return TextButton(
       style: ButtonStyle(
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         minimumSize: MaterialStateProperty.all(const Size(0, 30)),
-        maximumSize: MaterialStateProperty.all(const Size.fromHeight(30)),
-        padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 5),
+        ),
       ),
       onPressed: () {
         if (model.progressMax == null ||
@@ -117,13 +124,12 @@ class _IncrementButtonState extends State<_IncrementButton> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            text,
-            const SizedBox(width: 3),
-            Icon(
-              Ionicons.add_outline,
-              size: Consts.ICON_SMALL,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+            Text(
+              '${model.progress}/${model.progressMax ?? "?"}',
+              style: TextStyle(fontSize: Consts.FONT_SMALL, color: colour),
             ),
+            const SizedBox(width: 3),
+            Icon(Ionicons.add_outline, size: Consts.ICON_SMALL, color: colour),
           ],
         ),
       ),

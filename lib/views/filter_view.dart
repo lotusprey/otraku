@@ -331,12 +331,12 @@ class _TagSheetBodyState extends State<TagSheetBody> {
   Widget build(BuildContext context) {
     late final List<String> inclusive;
     late final List<String> exclusive;
-    if (_index > 0) {
-      inclusive = widget.inclusiveTags;
-      exclusive = widget.exclusiveTags;
-    } else {
+    if (_categoryIndices.isNotEmpty && _categoryIndices[_index] == 0) {
       inclusive = widget.inclusiveGenres;
       exclusive = widget.exclusiveGenres;
+    } else {
+      inclusive = widget.inclusiveTags;
+      exclusive = widget.exclusiveTags;
     }
 
     return Stack(

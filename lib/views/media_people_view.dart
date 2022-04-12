@@ -11,20 +11,27 @@ class MediaPeopleView {
     late final RelationGrid grid;
 
     if (!ctrl.peopleTabToggled) {
-      final characters = <RelationModel>[];
-      final voiceActors = <RelationModel?>[];
+      if (ctrl.languages.isEmpty) {
+        grid = RelationGrid(
+          items: const [],
+          placeholder: 'No Characters',
+        );
+      } else {
+        final characters = <RelationModel>[];
+        final voiceActors = <RelationModel?>[];
 
-      ctrl.model!.selectCharactersAndVoiceActors(
-        ctrl.languages[ctrl.langIndex],
-        characters,
-        voiceActors,
-      );
+        ctrl.model!.selectCharactersAndVoiceActors(
+          ctrl.languages[ctrl.langIndex],
+          characters,
+          voiceActors,
+        );
 
-      grid = RelationGrid(
-        items: characters,
-        connections: voiceActors,
-        placeholder: 'No Characters',
-      );
+        grid = RelationGrid(
+          items: characters,
+          connections: voiceActors,
+          placeholder: 'No Characters',
+        );
+      }
     } else {
       grid = RelationGrid(
         items: ctrl.model!.staff.items,

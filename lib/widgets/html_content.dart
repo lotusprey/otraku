@@ -49,12 +49,6 @@ class HtmlContent extends StatelessWidget {
         if (element.localName == 'i' || element.localName == 'em')
           styles['font-style'] = 'italic';
 
-        if (element.localName == 'img') {
-          styles['border-radius'] = '5px';
-          styles['padding-top'] = '5px';
-          styles['padding-bottom'] = '5px';
-        }
-
         return styles;
       },
       customWidgetBuilder: (element) {

@@ -13,7 +13,7 @@ class MediaPeopleView {
     if (!ctrl.peopleTabToggled) {
       if (ctrl.languages.isEmpty) {
         grid = RelationGrid(
-          items: const [],
+          items: ctrl.model!.characters.items,
           placeholder: 'No Characters',
         );
       } else {

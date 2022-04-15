@@ -68,6 +68,7 @@ class UserModel {
         donatorBadge: map['donatorBadge'] ?? '',
         modRoles: List<String>.from(
           map['moderatorRoles']?.map((r) => Convert.clarifyEnum(r)) ?? [],
+          growable: false,
         ),
         animeStats: StatisticsModel(map['statistics']['anime']),
         mangaStats: StatisticsModel(map['statistics']['manga']),

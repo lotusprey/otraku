@@ -85,7 +85,7 @@ abstract class GqlQuery {
         pageInfo {hasNextPage}
         edges {
           role
-          voiceActors {id name {userPreferred} language image {large}}
+          voiceActors {id name {userPreferred} languageV2 image {large}}
           node {id name {userPreferred} image {large}}
         }
       }
@@ -156,7 +156,7 @@ abstract class GqlQuery {
       pageInfo {hasNextPage}
       edges {
         characterRole
-        voiceActors(sort: [LANGUAGE]) {id name {userPreferred} image {large} language}
+        voiceActors(sort: [LANGUAGE]) {id name {userPreferred} image {large} languageV2}
         node {id type title {userPreferred} coverImage {extraLarge}}
       }
     }

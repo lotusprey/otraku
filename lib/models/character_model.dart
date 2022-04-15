@@ -26,14 +26,14 @@ class CharacterModel {
   });
 
   factory CharacterModel(Map<String, dynamic> map) {
-    final alts = map['name']['alternative'] != null
-        ? (map['name']['alternative'] as List<dynamic>).cast<String>()
-        : <String>[];
-    final altsSpoilers = map['name']['alternativeSpoiler'] != null
-        ? (map['name']['alternativeSpoiler'] as List<dynamic>).cast<String>()
-        : <String>[];
+    final alts = List<String>.from(map['name']['alternative'] ?? []);
     if (map['name']['native'] != null)
       alts.insert(0, map['name']['native'].toString());
+
+    final altsSpoilers = List<String>.from(
+      map['name']['alternativeSpoiler'] ?? [],
+      growable: false,
+    );
 
     return CharacterModel._(
       id: map['id'],

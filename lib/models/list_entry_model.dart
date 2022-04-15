@@ -90,7 +90,7 @@ class ListEntryModel {
       notes: map['notes'],
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
-      genres: List.from(map['media']['genres']),
+      genres: List.from(map['media']['genres'] ?? [], growable: false),
       tags: tags,
       country: map['media']['countryOfOrigin'],
     );

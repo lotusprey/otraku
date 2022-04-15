@@ -28,7 +28,7 @@ class NotificationModel {
   })  : assert((headId == null) == (imageUrl == null)),
         assert(details == null || bodyId == null);
 
-  factory NotificationModel(final Map<String, dynamic> map) {
+  factory NotificationModel(Map<String, dynamic> map) {
     switch (map['type']) {
       case 'FOLLOWING':
         return NotificationModel._(
@@ -233,7 +233,10 @@ class NotificationModel {
               : Explorable.manga,
         );
       case 'MEDIA_MERGE':
-        final List<String> titles = map['deletedMediaTitles'] ?? [];
+        final titles = List<String>.from(
+          map['deletedMediaTitles'] ?? [],
+          growable: false,
+        );
         if (titles.isEmpty) throw ArgumentError('No titles in media merge');
 
         return NotificationModel._(

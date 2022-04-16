@@ -152,7 +152,6 @@ abstract class Client {
           title: ioErr is SocketException
               ? 'Internet connection problem'
               : 'Device request failed',
-          mainAction: 'Ok',
         ),
       );
 
@@ -171,7 +170,6 @@ abstract class Client {
       ConfirmationDialog(
         content: apiErr?.join('\n'),
         title: 'Faulty query',
-        mainAction: 'Ok',
       ),
     );
   }

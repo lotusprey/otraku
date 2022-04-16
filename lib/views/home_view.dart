@@ -137,7 +137,7 @@ class _HomeViewState extends State<HomeView> {
       ConfirmationDialog(
         title: 'Exit?',
         mainAction: 'Yes',
-        secondaryAction: 'Never',
+        secondaryAction: 'No',
         onConfirm: () => ok = true,
       ),
     );

@@ -150,7 +150,6 @@ class _NotificationWidget extends StatelessWidget {
                         context,
                         const ConfirmationDialog(
                           title: 'Forum is not yet supported',
-                          mainAction: 'Ok',
                         ),
                       );
                       return;

@@ -32,7 +32,6 @@ class HtmlContent extends StatelessWidget {
           ConfirmationDialog(
             title: 'Couldn\'t load element ${element.localName}',
             content: err.toString(),
-            mainAction: 'Ok',
           ),
         ),
       ),

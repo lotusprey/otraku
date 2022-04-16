@@ -72,10 +72,7 @@ class BackgroundHandler {
     if (uri.pathSegments[0] == RouteArg.thread) {
       showPopUp(
         context,
-        ConfirmationDialog(
-          title: 'Sorry! Forum is not yet supported!',
-          mainAction: 'Ok',
-        ),
+        ConfirmationDialog(title: 'Sorry! Forum is not yet supported!'),
       );
       return;
     }

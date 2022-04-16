@@ -58,7 +58,6 @@ class _AuthViewState extends State<AuthView> {
           ConfirmationDialog(
             content: 'Needed data is missing',
             title: 'Faulty response',
-            mainAction: 'Ok',
           ),
         );
         return;
@@ -74,7 +73,6 @@ class _AuthViewState extends State<AuthView> {
           ConfirmationDialog(
             content: 'Could not parse data',
             title: 'Faulty response',
-            mainAction: 'Ok',
           ),
         );
         return;
@@ -96,7 +94,6 @@ class _AuthViewState extends State<AuthView> {
         ConfirmationDialog(
           title: 'Could not open AniList',
           content: err.toString(),
-          mainAction: 'Ok',
         ),
       );
       setState(() => _loading = false);

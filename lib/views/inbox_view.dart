@@ -104,23 +104,7 @@ class InboxView extends StatelessWidget {
             late final Widget child;
 
             if (ctrl.onFeed)
-              child = CustomScrollView(
-                physics: Consts.PHYSICS,
-                controller: scrollCtrl,
-                slivers: [
-                  SliverPadding(
-                    padding: EdgeInsets.only(top: offsetTop - 10),
-                    sliver: SliverRefreshControl(
-                      onRefresh: () => feedCtrl.fetchPage(clean: true),
-                      canRefresh: () => !feedCtrl.isLoading,
-                    ),
-                  ),
-                  ..._feedWidgets(context),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: NavLayout.offset(context)),
-                  ),
-                ],
-              );
+              child = _Feed(feedCtrl, scrollCtrl, offsetTop);
             else
               child = GetBuilder<CollectionController>(
                 id: CollectionController.ID_BODY,
@@ -150,39 +134,6 @@ class InboxView extends StatelessWidget {
       },
     );
   }
-
-  List<Widget> _feedWidgets(BuildContext context) => [
-        SliverPadding(
-          padding: Consts.PADDING,
-          sliver: GetBuilder<FeedController>(
-            id: FeedController.ID_ACTIVITIES,
-            builder: (feedCtrl) {
-              if (feedCtrl.isLoading)
-                return const SliverFillRemaining(
-                  child: Center(child: Loader()),
-                );
-
-              final activities = feedCtrl.activities;
-              if (activities.isEmpty)
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'No Activities',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                  ),
-                );
-
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (_, i) => ActivityBox(ctrl: feedCtrl, model: activities[i]),
-                  childCount: activities.length,
-                ),
-              );
-            },
-          ),
-        )
-      ];
 
   List<Widget> _progressWidgets(
     BuildContext context,
@@ -282,5 +233,98 @@ class InboxView extends StatelessWidget {
         updateProgress: ctrl.updateProgress,
       ),
     ));
+  }
+}
+
+class _Feed extends StatefulWidget {
+  _Feed(this.ctrl, this.scrollCtrl, this.offsetTop);
+
+  final FeedController ctrl;
+  final ScrollController scrollCtrl;
+  final double offsetTop;
+
+  @override
+  State<_Feed> createState() => __FeedState();
+}
+
+class __FeedState extends State<_Feed> {
+  Future<void> _listener() async {
+    if (widget.ctrl.isLoading ||
+        widget.scrollCtrl.position.pixels <
+            widget.scrollCtrl.position.maxScrollExtent - 100)
+      return Future.value();
+
+    await widget.ctrl.fetchPage();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.scrollCtrl.addListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollCtrl.removeListener(_listener);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<FeedController>(
+      id: FeedController.ID_ACTIVITIES,
+      builder: (feedCtrl) {
+        late Widget content;
+        if (feedCtrl.isLoading)
+          content = const SliverFillRemaining(child: Center(child: Loader()));
+        else {
+          final activities = feedCtrl.activities;
+          if (activities.isEmpty)
+            content = SliverFillRemaining(
+              child: Center(
+                child: Text(
+                  'No Activities',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
+            );
+          else
+            content = SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (_, i) => ActivityBox(ctrl: feedCtrl, model: activities[i]),
+                childCount: activities.length,
+              ),
+            );
+        }
+
+        return CustomScrollView(
+          physics: Consts.PHYSICS,
+          controller: widget.scrollCtrl,
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.only(top: widget.offsetTop - 10),
+              sliver: SliverRefreshControl(
+                onRefresh: () => widget.ctrl.fetchPage(clean: true),
+                canRefresh: () => !widget.ctrl.isLoading,
+              ),
+            ),
+            SliverPadding(padding: Consts.PADDING, sliver: content),
+            SliverPadding(
+              padding: EdgeInsets.only(
+                top: 10,
+                bottom: NavLayout.offset(context) + 10,
+              ),
+              sliver: SliverToBoxAdapter(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child:
+                      feedCtrl.hasNextPage ? const Loader() : const SizedBox(),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -18,7 +18,7 @@ import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
-import 'package:otraku/widgets/navigation/translucent_layout.dart';
+import 'package:otraku/widgets/navigation/header_layout.dart';
 
 class InboxView extends StatelessWidget {
   InboxView(this.feedCtrl, this.scrollCtrl);
@@ -85,7 +85,7 @@ class InboxView extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: HomeController.ID_HOME,
       builder: (ctrl) {
-        return TranslucentLayout(
+        return HeaderLayout(
           topItems: [
             Expanded(
               child: TabSegments(
@@ -100,7 +100,7 @@ class InboxView extends StatelessWidget {
               const SizedBox(width: 45),
             notificationIcon,
           ],
-          builder: (offsetTop) {
+          builder: (context, offsetTop) {
             late final Widget child;
 
             if (ctrl.onFeed)

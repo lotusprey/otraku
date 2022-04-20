@@ -301,12 +301,10 @@ class __FeedState extends State<_Feed> {
           physics: Consts.PHYSICS,
           controller: widget.scrollCtrl,
           slivers: [
-            SliverPadding(
-              padding: EdgeInsets.only(top: widget.offsetTop - 10),
-              sliver: SliverRefreshControl(
-                onRefresh: () => widget.ctrl.fetchPage(clean: true),
-                canRefresh: () => !widget.ctrl.isLoading,
-              ),
+            SliverRefreshControl(
+              onRefresh: () => widget.ctrl.fetchPage(clean: true),
+              canRefresh: () => !widget.ctrl.isLoading,
+              offsetTop: widget.offsetTop - 10,
             ),
             SliverPadding(padding: Consts.PADDING, sliver: content),
             SliverPadding(

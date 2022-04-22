@@ -38,7 +38,6 @@ class StudioView extends StatelessWidget {
         body: SafeArea(
           bottom: false,
           child: CustomScrollView(
-            physics: Consts.PHYSICS,
             controller: ctrl.scrollCtrl,
             semanticChildCount: ctrl.media.mediaCount,
             slivers: [

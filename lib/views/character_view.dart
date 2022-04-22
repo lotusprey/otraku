@@ -61,7 +61,6 @@ class CharacterView extends StatelessWidget {
                 }
               },
               child: CustomScrollView(
-                physics: Consts.PHYSICS,
                 controller: ctrl.scrollCtrl,
                 slivers: [
                   TopSliverHeader(

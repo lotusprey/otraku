@@ -35,7 +35,6 @@ class ReviewView extends StatelessWidget {
                     pinned: true,
                     delegate: _HeaderDelegate(id, bannerUrl, model?.mediaTitle),
                   ),
-                  // _Header(id, bannerUrl),
                   if (model != null)
                     SliverPadding(
                       padding: EdgeInsets.only(

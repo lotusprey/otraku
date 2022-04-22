@@ -112,7 +112,6 @@ class MediaView extends StatelessWidget {
               tag: id.toString(),
               builder: (_) => CustomScrollView(
                 controller: ctrl.scrollCtrl,
-                physics: Consts.PHYSICS,
                 slivers: [
                   header,
                   if (ctrl.tab == MediaController.INFO)

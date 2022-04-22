@@ -4,7 +4,6 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HtmlContent extends StatelessWidget {
   final String text;
@@ -15,14 +14,7 @@ class HtmlContent extends StatelessWidget {
     return HtmlWidget(
       text,
       textStyle: Theme.of(context).textTheme.bodyText2,
-      onTapUrl: (url) async {
-        try {
-          await launch(url);
-        } catch (err) {
-          Toast.show(context, 'Couldn\'t open link: $err');
-        }
-        return true;
-      },
+      onTapUrl: (url) => Toast.launch(context, url),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
         icon: Icon(Icons.close),
@@ -32,7 +24,6 @@ class HtmlContent extends StatelessWidget {
           ConfirmationDialog(
             title: 'Couldn\'t load element ${element.localName}',
             content: err.toString(),
-            mainAction: 'Ok',
           ),
         ),
       ),

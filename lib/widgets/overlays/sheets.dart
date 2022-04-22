@@ -3,7 +3,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
@@ -248,13 +247,7 @@ class FixedGradientDragSheet extends StatelessWidget {
           GradientDragSheetTile(
             text: 'Open in Browser',
             icon: Ionicons.link_outline,
-            onTap: () {
-              try {
-                launch(link);
-              } catch (err) {
-                Toast.show(context, 'Couldn\'t open link: $err');
-              }
-            },
+            onTap: () => Toast.launch(context, link),
           ),
         ],
       );

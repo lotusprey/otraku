@@ -18,6 +18,7 @@ class FeedController extends ScrollingController {
   bool _isLoading = false;
 
   bool get onFollowing => Settings().feedOnFollowing;
+  bool get hasNextPage => _activities.hasNextPage;
   List<ActivityModel> get activities => _activities.items;
   List<ActivityType> get typeIn => [..._typeIn];
 

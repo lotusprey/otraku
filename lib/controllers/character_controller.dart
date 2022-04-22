@@ -173,7 +173,7 @@ class CharacterController extends ScrollingController {
 
       if (a['voiceActors'] != null)
         for (final va in a['voiceActors']) {
-          final l = Convert.clarifyEnum(va['language']);
+          final l = Convert.clarifyEnum(va['languageV2']);
           if (l == null) continue;
 
           if (!_languages.contains(l)) _languages.add(l);
@@ -183,8 +183,10 @@ class CharacterController extends ScrollingController {
             () => <int, List<RelationModel>>{},
           );
 
-          final currentMedia =
-              currentLanguage.putIfAbsent(items.last.id, () => []);
+          final currentMedia = currentLanguage.putIfAbsent(
+            items.last.id,
+            () => [],
+          );
 
           currentMedia.add(RelationModel(
             id: va['id'],

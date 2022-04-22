@@ -34,15 +34,19 @@ class StaffModel {
   });
 
   factory StaffModel(Map<String, dynamic> map) {
-    final yearsActive = (map['yearsActive'] as List<dynamic>).cast<int>();
-    final alts = map['name']['alternative'] != null
-        ? (map['name']['alternative'] as List<dynamic>).cast<String>()
-        : <String>[];
+    final yearsActive = List<int>.from(
+      map['yearsActive'] ?? [],
+      growable: false,
+    );
+
+    final alts = List<String>.from(map['name']['alternative'] ?? []);
     if (map['name']['native'] != null)
       alts.insert(0, map['name']['native'].toString());
-    final occupations = map['primaryOccupations'] != null
-        ? (map['primaryOccupations'] as List<dynamic>).cast<String>()
-        : <String>[];
+
+    final occupations = List<String>.from(
+      map['primaryOccupations'] ?? [],
+      growable: false,
+    );
 
     return StaffModel._(
       id: map['id'],

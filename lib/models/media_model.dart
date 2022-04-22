@@ -90,7 +90,7 @@ class MediaModel {
 
       if (c['voiceActors'] != null)
         for (final va in c['voiceActors']) {
-          final l = Convert.clarifyEnum(va['language']);
+          final l = Convert.clarifyEnum(va['languageV2']);
           if (l == null) continue;
 
           if (!languages.contains(l)) languages.add(l);
@@ -100,8 +100,10 @@ class MediaModel {
             () => <int, List<RelationModel>>{},
           );
 
-          final currentCharacter =
-              currentLanguage.putIfAbsent(items.last.id, () => []);
+          final currentCharacter = currentLanguage.putIfAbsent(
+            items.last.id,
+            () => [],
+          );
 
           currentCharacter.add(RelationModel(
             id: va['id'],

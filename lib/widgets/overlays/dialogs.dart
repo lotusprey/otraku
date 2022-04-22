@@ -101,7 +101,7 @@ class DialogBox extends StatelessWidget {
 class ConfirmationDialog extends StatelessWidget {
   const ConfirmationDialog({
     required this.title,
-    required this.mainAction,
+    this.mainAction = 'Ok',
     this.content,
     this.secondaryAction,
     this.onConfirm,

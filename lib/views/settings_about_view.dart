@@ -4,7 +4,6 @@ import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SettingsAboutView extends StatelessWidget {
   SettingsAboutView(this.scrollCtrl);
@@ -31,7 +30,7 @@ class SettingsAboutView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            'Otraku - v.1.1.8+2',
+            'Otraku - v.1.1.8+3',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headline2,
           ),
@@ -45,13 +44,8 @@ class SettingsAboutView extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.logo_discord),
               label: Text('Discord'),
-              onPressed: () {
-                try {
-                  launch('https://discord.gg/YN2QWVbFef');
-                } catch (err) {
-                  Toast.show(context, 'Couldn\'t open link: $err');
-                }
-              },
+              onPressed: () =>
+                  Toast.launch(context, 'https://discord.gg/YN2QWVbFef'),
             ),
           ),
         ),
@@ -62,13 +56,8 @@ class SettingsAboutView extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.logo_github),
               label: Text('Source Code'),
-              onPressed: () {
-                try {
-                  launch('https://github.com/lotusgate/otraku');
-                } catch (err) {
-                  Toast.show(context, 'Couldn\'t open link: $err');
-                }
-              },
+              onPressed: () =>
+                  Toast.launch(context, 'https://github.com/lotusgate/otraku'),
             ),
           ),
         ),
@@ -79,13 +68,8 @@ class SettingsAboutView extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.cash_outline),
               label: Text('Donate'),
-              onPressed: () {
-                try {
-                  launch('https://ko-fi.com/lotusgate');
-                } catch (err) {
-                  Toast.show(context, 'Couldn\'t open link: $err');
-                }
-              },
+              onPressed: () =>
+                  Toast.launch(context, 'https://ko-fi.com/lotusgate'),
             ),
           ),
         ),
@@ -96,13 +80,10 @@ class SettingsAboutView extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.finger_print),
               label: Text('Privacy Policy'),
-              onPressed: () {
-                try {
-                  launch('https://sites.google.com/view/otraku/privacy-policy');
-                } catch (err) {
-                  Toast.show(context, 'Couldn\'t open link: $err');
-                }
-              },
+              onPressed: () => Toast.launch(
+                context,
+                'https://sites.google.com/view/otraku/privacy-policy',
+              ),
             ),
           ),
         ),

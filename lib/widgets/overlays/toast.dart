@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Toast {
   Toast._();
@@ -8,7 +9,8 @@ class Toast {
   static OverlayEntry? _entry;
   static bool _busy = false;
 
-  static void show(final BuildContext context, final String text) {
+  // Present a toast message.
+  static void show(BuildContext context, String text) {
     _busy = true;
     _entry?.remove();
 
@@ -49,7 +51,19 @@ class Toast {
     _busy = false;
   }
 
-  static void copy(final BuildContext context, final String text) =>
+  // Copy text to clipboard and notify with a toast.
+  static void copy(BuildContext context, String text) =>
       Clipboard.setData(ClipboardData(text: text))
           .then((_) => show(context, 'Copied'));
+
+  // Launch something in the browser or show a toast if unsuccessful.
+  static Future<bool> launch(BuildContext context, String link) async {
+    try {
+      await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
+    } catch (err) {
+      show(context, 'Could not open link: $err');
+      return false;
+    }
+    return true;
+  }
 }

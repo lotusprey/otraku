@@ -10,7 +10,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView();
@@ -83,22 +83,12 @@ class _AuthViewState extends State<AuthView> {
     });
 
     // Redirect to the browser for authentication.
-    try {
-      await launch(
-        'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
-        forceSafariVC: false,
-      );
-    } catch (err) {
-      showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Could not open AniList',
-          content: err.toString(),
-        ),
-      );
-      setState(() => _loading = false);
-      return;
-    }
+    final ok = await Toast.launch(
+      context,
+      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
+    );
+
+    if (!ok) setState(() => _loading = false);
   }
 
   @override

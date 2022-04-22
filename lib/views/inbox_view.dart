@@ -275,11 +275,12 @@ class __FeedState extends State<_Feed> {
       id: FeedController.ID_ACTIVITIES,
       builder: (feedCtrl) {
         late Widget content;
-        if (feedCtrl.isLoading)
-          content = const SliverFillRemaining(child: Center(child: Loader()));
-        else {
-          final activities = feedCtrl.activities;
-          if (activities.isEmpty)
+
+        final activities = feedCtrl.activities;
+        if (activities.isEmpty) {
+          if (feedCtrl.isLoading) {
+            content = const SliverFillRemaining(child: Center(child: Loader()));
+          } else {
             content = SliverFillRemaining(
               child: Center(
                 child: Text(
@@ -288,13 +289,14 @@ class __FeedState extends State<_Feed> {
                 ),
               ),
             );
-          else
-            content = SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (_, i) => ActivityBox(ctrl: feedCtrl, model: activities[i]),
-                childCount: activities.length,
-              ),
-            );
+          }
+        } else {
+          content = SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, i) => ActivityBox(ctrl: feedCtrl, model: activities[i]),
+              childCount: activities.length,
+            ),
+          );
         }
 
         return CustomScrollView(

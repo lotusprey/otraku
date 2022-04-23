@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
@@ -8,6 +9,7 @@ import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
+import 'package:otraku/providers/user_settings.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
@@ -51,67 +53,73 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     BackgroundHandler.checkIfLaunchedByNotification();
 
-    return GetBuilder<HomeController>(
-      id: HomeController.ID_HOME,
-      builder: (homeCtrl) => WillPopScope(
-        onWillPop: () => _onWillPop(context),
-        child: NavLayout(
-          navRow: NavIconRow(
-            index: homeCtrl.homeTab,
-            onChanged: (i) => homeCtrl.homeTab = i,
-            items: const {
-              'Feed': Ionicons.file_tray_outline,
-              'Anime': Ionicons.film_outline,
-              'Manga': Ionicons.bookmark_outline,
-              'Explore': Ionicons.compass_outline,
-              'Profile': Ionicons.person_outline,
-            },
-            onSame: (i) {
-              switch (i) {
-                case HomeView.INBOX:
-                  _ctrl.scrollUpTo(0);
-                  return;
-                case HomeView.ANIME_LIST:
-                  if (animeCtrl.scrollCtrl.pos.pixels > 0)
-                    animeCtrl.scrollCtrl.scrollUpTo(0);
-                  else
-                    animeCtrl.search == null
-                        ? animeCtrl.search = ''
-                        : animeCtrl.search = null;
-                  return;
-                case HomeView.MANGA_LIST:
-                  if (mangaCtrl.scrollCtrl.pos.pixels > 0)
-                    mangaCtrl.scrollCtrl.scrollUpTo(0);
-                  else
-                    mangaCtrl.search == null
-                        ? mangaCtrl.search = ''
-                        : mangaCtrl.search = null;
-                  return;
-                case HomeView.EXPLORE:
-                  if (exploreCtrl.scrollCtrl.pos.pixels > 0)
-                    exploreCtrl.scrollCtrl.scrollUpTo(0);
-                  else
-                    exploreCtrl.search == null
-                        ? exploreCtrl.search = ''
-                        : exploreCtrl.search = null;
-                  return;
-                case HomeView.USER:
-                  _ctrl.scrollUpTo(0);
-                  return;
-              }
-            },
-          ),
-          child: tabs[homeCtrl.homeTab],
-          floating: fabs[homeCtrl.homeTab],
-          trySubtab: (goRight) {
-            if (homeCtrl.homeTab != HomeView.INBOX ||
-                homeCtrl.onFeed == goRight) return false;
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.watch(userSettingsProvider.notifier);
 
-            homeCtrl.onFeed = !homeCtrl.onFeed;
-            return true;
-          },
-        ),
-      ),
+        return GetBuilder<HomeController>(
+          id: HomeController.ID_HOME,
+          builder: (homeCtrl) => WillPopScope(
+            onWillPop: () => _onWillPop(context),
+            child: NavLayout(
+              navRow: NavIconRow(
+                index: homeCtrl.homeTab,
+                onChanged: (i) => homeCtrl.homeTab = i,
+                items: const {
+                  'Feed': Ionicons.file_tray_outline,
+                  'Anime': Ionicons.film_outline,
+                  'Manga': Ionicons.bookmark_outline,
+                  'Explore': Ionicons.compass_outline,
+                  'Profile': Ionicons.person_outline,
+                },
+                onSame: (i) {
+                  switch (i) {
+                    case HomeView.INBOX:
+                      _ctrl.scrollUpTo(0);
+                      return;
+                    case HomeView.ANIME_LIST:
+                      if (animeCtrl.scrollCtrl.pos.pixels > 0)
+                        animeCtrl.scrollCtrl.scrollUpTo(0);
+                      else
+                        animeCtrl.search == null
+                            ? animeCtrl.search = ''
+                            : animeCtrl.search = null;
+                      return;
+                    case HomeView.MANGA_LIST:
+                      if (mangaCtrl.scrollCtrl.pos.pixels > 0)
+                        mangaCtrl.scrollCtrl.scrollUpTo(0);
+                      else
+                        mangaCtrl.search == null
+                            ? mangaCtrl.search = ''
+                            : mangaCtrl.search = null;
+                      return;
+                    case HomeView.EXPLORE:
+                      if (exploreCtrl.scrollCtrl.pos.pixels > 0)
+                        exploreCtrl.scrollCtrl.scrollUpTo(0);
+                      else
+                        exploreCtrl.search == null
+                            ? exploreCtrl.search = ''
+                            : exploreCtrl.search = null;
+                      return;
+                    case HomeView.USER:
+                      _ctrl.scrollUpTo(0);
+                      return;
+                  }
+                },
+              ),
+              child: tabs[homeCtrl.homeTab],
+              floating: fabs[homeCtrl.homeTab],
+              trySubtab: (goRight) {
+                if (homeCtrl.homeTab != HomeView.INBOX ||
+                    homeCtrl.onFeed == goRight) return false;
+
+                homeCtrl.onFeed = !homeCtrl.onFeed;
+                return true;
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

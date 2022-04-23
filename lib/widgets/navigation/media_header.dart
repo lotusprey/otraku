@@ -23,7 +23,7 @@ class MediaHeader extends StatelessWidget {
       if (info.format != null)
         details.add(TextSpan(text: Convert.clarifyEnum(info.format)));
 
-      final status = ctrl.model?.entry.status;
+      final status = ctrl.model?.edit.status;
       if (status != null)
         details.add(TextSpan(
           text: '${details.isEmpty ? "" : ' • '}'
@@ -38,7 +38,7 @@ class MediaHeader extends StatelessWidget {
         ));
 
       if (status != null) {
-        final progress = ctrl.model?.entry.progress ?? 0;
+        final progress = ctrl.model?.edit.progress ?? 0;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
           details.add(TextSpan(
             text: '${details.isEmpty ? "" : ' • '}'

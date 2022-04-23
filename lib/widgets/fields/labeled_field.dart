@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 
 // A wrapper that puts a label on top of a widget.
 class LabeledField extends StatelessWidget {
-  LabeledField({
-    required this.label,
-    required this.child,
-  });
+  const LabeledField({required this.label, required this.child});
 
   final String label;
   final Widget child;

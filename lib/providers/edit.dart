@@ -1,30 +1,49 @@
-import 'package:get/get.dart';
-import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/utils/convert.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/graphql.dart';
 
-class EditModel {
+final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(
+  (ref, id) async {
+    final data = await Client.request(GqlQuery.media, {
+      'id': id,
+      'withMain': true,
+    });
+
+    if (data == null) throw StateError('No received data.');
+
+    return Edit(data['Media'], ref.watch(userSettingsProvider));
+  },
+);
+
+final editProvider = StateProvider.autoDispose<Edit>(
+  (ref) => Edit._(mediaId: -1),
+);
+
+class Edit {
   final int mediaId;
-  int? entryId;
   final String? type;
-  ListStatus? status;
-  int progress;
+  final ListStatus? status;
+  final int progress;
   final int? progressMax;
-  int progressVolumes;
+  final int progressVolumes;
   final int? progressVolumesMax;
-  double score;
-  int repeat;
+  final double score;
+  final int repeat;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
+  final bool private;
+  final bool hiddenFromStatusLists;
+  final Map<String, double> advancedScores;
+  final Map<String, bool> customLists;
+  int? entryId;
   String notes;
-  DateTime? startedAt;
-  DateTime? completedAt;
-  bool private;
-  bool hiddenFromStatusLists;
-  Map<String, double> advancedScores;
-  Map<String, bool> customLists;
 
-  EditModel._({
+  Edit._({
     required this.mediaId,
-    required this.type,
+    this.type,
     this.entryId,
     this.status,
     this.progress = 0,
@@ -42,23 +61,20 @@ class EditModel {
     this.customLists = const {},
   });
 
-  factory EditModel(Map<String, dynamic> map) {
+  factory Edit(Map<String, dynamic> map, UserSettings settings) {
     final customLists = <String, bool>{};
     if (map['mediaListEntry']?['customLists'] != null) {
       for (final e in map['mediaListEntry']['customLists'].entries)
         customLists[e.key] = e.value;
     } else {
-      final settings = Get.find<HomeController>().siteSettings;
-      if (settings != null) {
-        if (map['type'] == 'ANIME')
-          for (final c in settings.animeCustomLists) customLists[c] = false;
-        else
-          for (final c in settings.mangaCustomLists) customLists[c] = false;
-      }
+      if (map['type'] == 'ANIME')
+        for (final c in settings.animeCustomLists) customLists[c] = false;
+      else
+        for (final c in settings.mangaCustomLists) customLists[c] = false;
     }
 
     if (map['mediaListEntry'] == null)
-      return EditModel._(
+      return Edit._(
         type: map['type'],
         mediaId: map['id'],
         progressMax: map['episodes'] ?? map['chapters'],
@@ -71,7 +87,7 @@ class EditModel {
       for (final e in map['mediaListEntry']['advancedScores'].entries)
         advancedScores[e.key] = e.value.toDouble();
 
-    return EditModel._(
+    return Edit._(
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
@@ -94,39 +110,46 @@ class EditModel {
     );
   }
 
-  factory EditModel.copy(final EditModel copy) => EditModel._(
-        type: copy.type,
-        mediaId: copy.mediaId,
-        entryId: copy.entryId,
-        status: copy.status,
-        progress: copy.progress,
-        progressMax: copy.progressMax,
-        progressVolumes: copy.progressVolumes,
-        progressVolumesMax: copy.progressVolumesMax,
-        score: copy.score,
-        repeat: copy.repeat,
-        notes: copy.notes,
-        startedAt: copy.startedAt != null
-            ? DateTime.fromMillisecondsSinceEpoch(
-                copy.startedAt!.millisecondsSinceEpoch,
-              )
-            : null,
-        completedAt: copy.completedAt != null
-            ? DateTime.fromMillisecondsSinceEpoch(
-                copy.completedAt!.millisecondsSinceEpoch,
-              )
-            : null,
-        private: copy.private,
-        hiddenFromStatusLists: copy.hiddenFromStatusLists,
-        advancedScores: {...copy.advancedScores},
-        customLists: {...copy.customLists},
+  Edit copyWith({
+    ListStatus? status,
+    int? progress,
+    int? progressVolumes,
+    double? score,
+    int? repeat,
+    String? notes,
+    DateTime? Function()? startedAt,
+    DateTime? Function()? completedAt,
+    bool? private,
+    bool? hiddenFromStatusLists,
+    Map<String, double>? advancedScores,
+    Map<String, bool>? customLists,
+  }) =>
+      Edit._(
+        type: type,
+        mediaId: mediaId,
+        entryId: entryId,
+        status: status ?? this.status,
+        progress: progress ?? this.progress,
+        progressMax: progressMax,
+        progressVolumes: progressVolumes ?? this.progressVolumes,
+        progressVolumesMax: progressVolumesMax,
+        score: score ?? this.score,
+        repeat: repeat ?? this.repeat,
+        notes: notes ?? this.notes,
+        startedAt: startedAt?.call() ?? this.startedAt,
+        completedAt: completedAt?.call() ?? this.completedAt,
+        private: private ?? this.private,
+        hiddenFromStatusLists:
+            hiddenFromStatusLists ?? this.hiddenFromStatusLists,
+        advancedScores: advancedScores ?? {...this.advancedScores},
+        customLists: customLists ?? {...this.customLists},
       );
 
-  factory EditModel.emptyCopy(final EditModel copy) => EditModel._(
-        type: copy.type,
-        mediaId: copy.mediaId,
-        progressMax: copy.progressMax,
-        progressVolumesMax: copy.progressVolumesMax,
+  Edit emptyCopy() => Edit._(
+        type: type,
+        mediaId: mediaId,
+        progressMax: progressMax,
+        progressVolumesMax: progressVolumesMax,
       );
 
   Map<String, dynamic> toMap() => {

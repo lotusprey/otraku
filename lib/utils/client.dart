@@ -93,6 +93,31 @@ abstract class Client {
 
   static bool loggedIn() => _accessToken != null;
 
+  // Send a request.
+  static Future<Map<String, dynamic>> get(
+    String query, [
+    Map<String, dynamic> variables = const {},
+  ]) async {
+    final response = await post(
+      _url,
+      body: json.encode({'query': query, 'variables': variables}),
+      headers: {
+        'Accept': 'application/json',
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer $_accessToken',
+      },
+    );
+
+    final Map<String, dynamic> body = json.decode(response.body);
+
+    if (body.containsKey('errors'))
+      throw StateError(
+        (body['errors'] as List).map((e) => e['message'].toString()).join(),
+      );
+
+    return body['data'];
+  }
+
   // Send a request to the site.
   static Future<Map<String, dynamic>?> request(
     String query, [

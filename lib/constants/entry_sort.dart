@@ -26,27 +26,47 @@ enum EntrySort {
 
 // AniList supports only 4 default sort types.
 extension EntrySortHelper on EntrySort {
-  static const _enumsToStrings = {
-    EntrySort.TITLE: 'title',
-    EntrySort.SCORE_DESC: 'score',
-    EntrySort.UPDATED_AT_DESC: 'updatedAt',
-    EntrySort.CREATED_AT_DESC: 'id',
-  };
+  String get getString {
+    switch (this) {
+      case EntrySort.SCORE_DESC:
+        return 'score';
+      case EntrySort.UPDATED_AT_DESC:
+        return 'updatedAt';
+      case EntrySort.CREATED_AT_DESC:
+        return 'id';
+      case EntrySort.TITLE:
+        return 'title';
+      default:
+        return 'title';
+    }
+  }
 
-  static const _stringsToEnums = {
-    'title': EntrySort.TITLE,
-    'score': EntrySort.SCORE_DESC,
-    'updatedAt': EntrySort.UPDATED_AT_DESC,
-    'id': EntrySort.CREATED_AT_DESC,
-    null: EntrySort.TITLE,
-  };
+  static EntrySort getEnum(String key) {
+    switch (key) {
+      case 'score':
+        return EntrySort.SCORE_DESC;
+      case 'updatedAt':
+        return EntrySort.UPDATED_AT_DESC;
+      case 'id':
+        return EntrySort.CREATED_AT_DESC;
+      case 'title':
+        return EntrySort.TITLE;
+      default:
+        return EntrySort.TITLE;
+    }
+  }
 
-  String get string => _enumsToStrings[this]!;
+  static const defaultEnums = [
+    EntrySort.TITLE,
+    EntrySort.SCORE_DESC,
+    EntrySort.UPDATED_AT_DESC,
+    EntrySort.CREATED_AT_DESC,
+  ];
 
-  static EntrySort getEnum(String key) => _stringsToEnums[key]!;
-
-  static List<EntrySort> get defaultEnums => [..._enumsToStrings.keys];
-
-  static List<String> get defaultStrings =>
-      const ['Title', 'Score', 'Last Updated', 'Last Added'];
+  static const defaultStrings = [
+    'Title',
+    'Score',
+    'Last Updated',
+    'Last Added',
+  ];
 }

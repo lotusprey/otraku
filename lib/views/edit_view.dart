@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/edit_controller.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/providers/edit.dart';
+import 'package:otraku/providers/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
@@ -27,70 +27,129 @@ import 'package:otraku/widgets/overlays/toast.dart';
 class EditView extends StatelessWidget {
   EditView(
     this.mediaId, {
-    this.model,
+    this.edit,
     this.callback,
     this.complete = false,
   });
 
   final int mediaId;
-  final EditModel? model;
-  final void Function(EditModel)? callback;
+  final Edit? edit;
+  final void Function(Edit)? callback;
   final bool complete;
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<EditController>(
-      id: EditController.ID_MAIN,
-      tag: mediaId.toString(),
-      init: EditController(mediaId, model, complete),
-      builder: (ctrl) {
-        final buttons = <Widget>[];
-        if (ctrl.model != null) {
-          if (ctrl.oldModel?.status != null)
-            buttons.add(OpaqueSheetViewButton(
-              text: 'Remove',
-              icon: Ionicons.trash_bin_outline,
-              warning: true,
-              onTap: () => showPopUp(
+    if (edit != null) {
+      return Consumer(
+        builder: (context, ref, _) {
+          final notifier = ref.watch(editProvider.notifier);
+
+          if (notifier.state.mediaId < 0)
+            notifier.update((_) => _resolveData(edit!));
+
+          return _build(edit!);
+        },
+      );
+    }
+
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.listen<AsyncValue<Edit>>(
+          currentEditProvider(mediaId),
+          (_, state) => state.whenOrNull(
+            data: (data) {
+              final notifier = ref.watch(editProvider.notifier);
+
+              if (notifier.state.mediaId < 0)
+                notifier.update((_) => _resolveData(data));
+            },
+            error: (err, _) {
+              Navigator.pop(context);
+              showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Remove entry?',
-                  mainAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: () {
-                    Get.find<CollectionController>(
-                      tag: ctrl.model!.type == 'ANIME'
-                          ? '${Settings().id}true'
-                          : '${Settings().id}false',
-                    ).removeEntry(ctrl.oldModel!);
-                    callback?.call(EditModel.emptyCopy(ctrl.model!));
-                    Navigator.pop(context);
-                  },
+                  title: 'Could not load edit sheet',
+                  content: err.toString(),
                 ),
-              ),
-            ));
-          else
-            buttons.add(const Spacer());
-
-          buttons.add(_SaveButton(ctrl, callback));
-        }
-
-        return OpaqueSheetView(
-          buttons: buttons,
-          builder: (context, scrollCtrl) => ctrl.model != null
-              ? _EditView(ctrl, scrollCtrl)
-              : const Center(child: Loader()),
+              );
+            },
+          ),
         );
+
+        return ref.watch(currentEditProvider(mediaId)).maybeWhen(
+              data: (oldEdit) => _build(oldEdit),
+              orElse: () => OpaqueSheetView(
+                builder: (context, scrollCtrl) => const Center(child: Loader()),
+              ),
+            );
       },
+    );
+  }
+
+  Edit _resolveData(Edit data) {
+    if (!complete) return data;
+
+    return data.copyWith(
+      status: ListStatus.COMPLETED,
+      completedAt: DateTime.now,
+      progress: data.progressMax,
+      progressVolumes: data.progressVolumesMax,
+    );
+  }
+
+  Widget _build(Edit oldEdit) {
+    return OpaqueSheetView(
+      buttons: [
+        if (oldEdit.status != null)
+          _RemoveButton(oldEdit, callback)
+        else
+          const Spacer(),
+        _SaveButton(mediaId, oldEdit, callback),
+      ],
+      builder: (context, scrollCtrl) => _EditView(scrollCtrl, oldEdit),
+    );
+  }
+}
+
+class _RemoveButton extends StatelessWidget {
+  _RemoveButton(this.oldEdit, this.callback);
+
+  final Edit oldEdit;
+  final void Function(Edit)? callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return OpaqueSheetViewButton(
+      text: 'Remove',
+      icon: Ionicons.trash_bin_outline,
+      warning: true,
+      onTap: () => showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Remove entry?',
+          mainAction: 'Yes',
+          secondaryAction: 'No',
+          onConfirm: () {
+            Get.find<CollectionController>(
+              tag: oldEdit.type == 'ANIME'
+                  ? '${Settings().id}true'
+                  : '${Settings().id}false',
+            ).removeEntry(oldEdit);
+            callback?.call(oldEdit.emptyCopy());
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 }
 
 class _SaveButton extends StatefulWidget {
-  _SaveButton(this.ctrl, this.callback);
+  _SaveButton(this.mediaId, this.oldEdit, this.callback);
 
-  final EditController ctrl;
-  final void Function(EditModel)? callback;
+  final int mediaId;
+  final Edit oldEdit;
+  final void Function(Edit)? callback;
 
   @override
   __SaveButtonState createState() => __SaveButtonState();
@@ -103,302 +162,367 @@ class __SaveButtonState extends State<_SaveButton> {
   Widget build(BuildContext context) {
     if (_loading) return const Expanded(child: Center(child: Loader()));
 
-    return OpaqueSheetViewButton(
-      text: 'Save',
-      icon: Ionicons.save_outline,
-      onTap: () {
-        setState(() => _loading = true);
-        Get.find<CollectionController>(
-          tag: widget.ctrl.model!.type == 'ANIME'
-              ? '${Settings().id}true'
-              : '${Settings().id}false',
-        ).updateEntry(widget.ctrl.oldModel!, widget.ctrl.model!).then((_) {
-          widget.callback?.call(widget.ctrl.model!);
-          Navigator.pop(context);
-        });
-      },
+    return Consumer(
+      builder: (__, ref, _) => OpaqueSheetViewButton(
+        text: 'Save',
+        icon: Ionicons.save_outline,
+        onTap: () {
+          final newEdit = ref.read(editProvider);
+          setState(() => _loading = true);
+
+          Get.find<CollectionController>(
+            tag: widget.oldEdit.type == 'ANIME'
+                ? '${Settings().id}true'
+                : '${Settings().id}false',
+          ).updateEntry(widget.oldEdit, newEdit).then((_) {
+            widget.callback?.call(newEdit);
+            Navigator.pop(context);
+          });
+        },
+      ),
     );
   }
 }
 
 class _EditView extends StatelessWidget {
-  _EditView(this.ctrl, this.scrollCtrl);
+  _EditView(this.scrollCtrl, this.oldEdit);
 
-  final EditController ctrl;
   final ScrollController scrollCtrl;
+  final Edit oldEdit;
 
   @override
   Widget build(BuildContext context) {
-    final settings = Get.find<HomeController>().siteSettings!;
-    final old = ctrl.oldModel!;
-    final model = ctrl.model!;
+    final tracking = _FieldGrid(
+      minWidth: 140,
+      children: [
+        Consumer(
+          builder: (context, ref, _) {
+            final status = ref.watch(editProvider.select((s) => s.status));
 
-    final advancedScoring = <Widget>[];
-    if (settings.advancedScoringEnabled &&
-        (settings.scoreFormat == ScoreFormat.POINT_100 ||
-            settings.scoreFormat == ScoreFormat.POINT_10_DECIMAL)) {
-      advancedScoring.add(
-        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-      );
+            return DropDownField<ListStatus?>(
+              hint: 'Add',
+              title: 'Status',
+              value: status,
+              items: Map.fromIterable(
+                ListStatus.values,
+                key: (v) => Convert.adaptListStatus(v, oldEdit.type == 'ANIME'),
+              ),
+              onChanged: (status) => ref.read(editProvider.notifier).update(
+                (s) {
+                  var startedAt = s.startedAt;
+                  var completedAt = s.completedAt;
+                  var progress = s.progress;
 
-      final fields = <Widget>[];
-      for (final s in model.advancedScores.entries)
-        fields.add(LabeledField(
-          label: s.key,
-          child: NumberField(
-            value: s.value,
-            maxValue: 100,
-            update: (score) {
-              model.advancedScores[s.key] = score.toDouble();
-
-              int count = 0;
-              double avg = 0;
-              for (final v in model.advancedScores.values)
-                if (v > 0) {
-                  avg += v;
-                  count++;
-                }
-
-              if (count > 0) avg /= count;
-
-              if (model.score != avg) {
-                model.score = avg;
-                ctrl.update([EditController.ID_SCORE]);
-              }
-            },
-          ),
-        ));
-
-      advancedScoring.add(_FieldGrid(fields, minWidth: 140));
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: CustomScrollView(
-        controller: scrollCtrl,
-        slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 20)),
-          _FieldGrid([
-            GetBuilder<EditController>(
-              id: EditController.ID_STATUS,
-              tag: model.mediaId.toString(),
-              builder: (_) => DropDownField<ListStatus?>(
-                hint: 'Add',
-                title: 'Status',
-                value: model.status,
-                items: Map.fromIterable(
-                  ListStatus.values,
-                  key: (v) => Convert.adaptListStatus(v, model.type == 'ANIME'),
-                ),
-                onChanged: (status) {
-                  model.status = status;
-
-                  if (old.status == null &&
-                      model.status == ListStatus.CURRENT &&
-                      model.startedAt == null) {
-                    model.startedAt = DateTime.now();
-                    ctrl.update([EditController.ID_START_DATE]);
+                  if (oldEdit.status == null &&
+                      status == ListStatus.CURRENT &&
+                      startedAt == null) {
+                    startedAt = DateTime.now();
                     Toast.show(context, 'Start date changed');
-                    return;
-                  }
+                  } else if (oldEdit.status != status &&
+                      status == ListStatus.COMPLETED &&
+                      completedAt == null) {
+                    completedAt = DateTime.now();
+                    var text = 'Completed date changed';
 
-                  if (old.status != model.status &&
-                      model.status == ListStatus.COMPLETED &&
-                      model.completedAt == null) {
-                    model.completedAt = DateTime.now();
-                    ctrl.update([EditController.ID_COMPLETE_DATE]);
-                    String text = 'Completed date changed';
-
-                    if (model.progressMax != null &&
-                        model.progress < model.progressMax!) {
-                      model.progress = model.progressMax!;
-                      ctrl.update([EditController.ID_PROGRESS]);
+                    if (s.progressMax != null && progress < s.progressMax!) {
+                      progress = s.progressMax!;
                       text = 'Completed date & progress changed';
                     }
 
                     Toast.show(context, text);
                   }
+
+                  return s.copyWith(
+                    status: status,
+                    progress: progress,
+                    startedAt: () => startedAt,
+                    completedAt: () => completedAt,
+                  );
                 },
               ),
-            ),
-            LabeledField(
-              label: 'Progress',
-              child: GetBuilder<EditController>(
-                id: EditController.ID_PROGRESS,
-                tag: model.mediaId.toString(),
-                builder: (_) => NumberField(
-                  value: model.progress,
-                  maxValue: model.progressMax ?? 100000,
-                  update: (progress) {
-                    model.progress = progress.toInt();
+            );
+          },
+        ),
+        LabeledField(
+          label: 'Progress',
+          child: Consumer(
+            builder: (context, ref, _) {
+              final progress = ref.watch(
+                editProvider.select((s) => s.progress),
+              );
 
-                    if (model.progressMax != null &&
-                        model.progress == model.progressMax &&
-                        old.progress != model.progress) {
-                      String? text;
+              return NumberField(
+                value: progress,
+                maxValue: oldEdit.progressMax ?? 100000,
+                update: (progress) {
+                  ref.read(editProvider.notifier).update((s) {
+                    var status = s.status;
+                    var startedAt = s.startedAt;
+                    var completedAt = s.completedAt;
 
-                      if (old.status == model.status &&
-                          old.status != ListStatus.COMPLETED) {
-                        model.status = ListStatus.COMPLETED;
-                        ctrl.update([EditController.ID_STATUS]);
+                    String? text;
+                    if (progress == s.progressMax &&
+                        oldEdit.progress != progress) {
+                      if (oldEdit.status == status &&
+                          status != ListStatus.COMPLETED) {
+                        status = ListStatus.COMPLETED;
                         text = 'Status changed';
                       }
 
-                      if (old.completedAt == model.completedAt &&
-                          old.completedAt == null) {
-                        model.completedAt = DateTime.now();
-                        ctrl.update([EditController.ID_COMPLETE_DATE]);
+                      if (oldEdit.completedAt == completedAt &&
+                          completedAt == null) {
+                        completedAt = DateTime.now();
                         text = text == null
                             ? 'Completed date changed'
                             : 'Status & Completed date changed';
                       }
 
                       if (text != null) Toast.show(context, text);
-                      return;
-                    }
-
-                    if (old.progress == 0 && old.progress != model.progress) {
-                      String? text;
-
-                      if (old.status == model.status &&
-                          (old.status == null ||
-                              old.status == ListStatus.PLANNING)) {
-                        model.status = ListStatus.CURRENT;
-                        ctrl.update([EditController.ID_STATUS]);
+                    } else if (oldEdit.progress == 0 &&
+                        oldEdit.progress != progress) {
+                      if (oldEdit.status == status &&
+                          (status == null || status == ListStatus.PLANNING)) {
+                        status = ListStatus.CURRENT;
                         text = 'Status changed';
                       }
 
-                      if (old.startedAt == null && model.startedAt == null) {
-                        model.startedAt = DateTime.now();
-                        ctrl.update([EditController.ID_START_DATE]);
+                      if (oldEdit.startedAt == null && startedAt == null) {
+                        startedAt = DateTime.now();
                         text = text == null
                             ? 'Start date changed'
                             : 'Status & start date changed';
                       }
-
-                      if (text != null) Toast.show(context, text);
                     }
-                  },
-                ),
-              ),
+                    if (text != null) Toast.show(context, text);
+
+                    return s.copyWith(
+                      progress: progress.toInt(),
+                      status: status,
+                      startedAt: () => startedAt,
+                      completedAt: () => completedAt,
+                    );
+                  });
+                },
+              );
+            },
+          ),
+        ),
+        LabeledField(
+          label: 'Repeat',
+          child: Consumer(
+            builder: (context, ref, _) => NumberField(
+              value: ref.read(editProvider).repeat,
+              update: (repeat) => ref
+                  .read(editProvider.notifier)
+                  .update((s) => s.copyWith(repeat: repeat.toInt())),
             ),
-            LabeledField(
-              label: 'Repeat',
-              child: NumberField(
-                value: model.repeat,
-                update: (repeat) => model.repeat = repeat.toInt(),
-              ),
-            ),
-            if (model.type != 'ANIME')
-              LabeledField(
-                label: 'Progress Volumes',
-                child: NumberField(
-                  value: model.progressVolumes,
-                  maxValue: model.progressVolumesMax ?? 100000,
-                  update: (progressVolumes) =>
-                      model.progressVolumes = progressVolumes.toInt(),
-                ),
-              ),
-          ], minWidth: 140),
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverToBoxAdapter(
-            child: LabeledField(
-              label: 'Score',
-              child: GetBuilder<EditController>(
-                id: EditController.ID_SCORE,
-                tag: model.mediaId.toString(),
-                builder: (_) => ScoreField(model),
+          ),
+        ),
+        if (oldEdit.type != 'ANIME')
+          LabeledField(
+            label: 'Progress Volumes',
+            child: Consumer(
+              builder: (context, ref, _) => NumberField(
+                value: ref.read(editProvider).progressVolumes,
+                maxValue: oldEdit.progressVolumesMax ?? 100000,
+                update: (progressVolumes) =>
+                    ref.read(editProvider.notifier).update(
+                          (s) => s.copyWith(
+                            progressVolumes: progressVolumes.toInt(),
+                          ),
+                        ),
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverToBoxAdapter(
-            child: LabeledField(
-              label: 'Notes',
-              child: GrowableTextField(
-                text: model.notes,
-                onChanged: (notes) => model.notes = notes,
-              ),
-            ),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          _FieldGrid([
-            LabeledField(
-              label: 'Started',
-              child: GetBuilder<EditController>(
-                id: EditController.ID_START_DATE,
-                tag: model.mediaId.toString(),
-                builder: (_) => DateField(
-                  date: model.startedAt,
-                  onChanged: (startDate) {
-                    model.startedAt = startDate;
+      ],
+    );
 
-                    if (startDate == null) return;
+    final dates = _FieldGrid(
+      minWidth: 165,
+      children: [
+        LabeledField(
+          label: 'Started',
+          child: Consumer(
+            builder: (context, ref, _) {
+              final startedAt = ref.watch(
+                editProvider.select((s) => s.startedAt),
+              );
 
-                    if (old.status == null && model.status == null) {
-                      model.status = ListStatus.CURRENT;
-                      ctrl.update([EditController.ID_STATUS]);
+              return DateField(
+                date: startedAt,
+                onChanged: (startedAt) {
+                  ref.read(editProvider.notifier).update((s) {
+                    var status = s.status;
+
+                    if (startedAt != null &&
+                        oldEdit.status == null &&
+                        status == null) {
+                      status = ListStatus.CURRENT;
                       Toast.show(context, 'Status changed');
                     }
-                  },
-                ),
-              ),
-            ),
-            LabeledField(
-              label: 'Completed',
-              child: GetBuilder<EditController>(
-                id: EditController.ID_COMPLETE_DATE,
-                tag: model.mediaId.toString(),
-                builder: (_) => DateField(
-                  date: model.completedAt,
-                  onChanged: (endDate) {
-                    model.completedAt = endDate;
 
-                    if (endDate == null) return;
+                    return s.copyWith(
+                      status: status,
+                      startedAt: () => startedAt,
+                    );
+                  });
+                },
+              );
+            },
+          ),
+        ),
+        LabeledField(
+          label: 'Completed',
+          child: Consumer(
+            builder: (context, ref, _) {
+              final completedAt = ref.watch(
+                editProvider.select((s) => s.completedAt),
+              );
 
-                    if (old.status != ListStatus.COMPLETED &&
-                        old.status != ListStatus.REPEATING &&
-                        old.status == model.status) {
-                      model.status = ListStatus.COMPLETED;
-                      ctrl.update([EditController.ID_STATUS]);
+              return DateField(
+                date: completedAt,
+                onChanged: (completedAt) {
+                  ref.read(editProvider.notifier).update((s) {
+                    var status = s.status;
+                    var progress = s.progress;
+
+                    if (completedAt != null &&
+                        oldEdit.status != ListStatus.COMPLETED &&
+                        oldEdit.status != ListStatus.REPEATING &&
+                        oldEdit.status == status) {
+                      status = ListStatus.COMPLETED;
                       String text = 'Status changed';
 
-                      if (model.progressMax != null &&
-                          model.progress < model.progressMax!) {
-                        model.progress = model.progressMax!;
-                        ctrl.update([EditController.ID_PROGRESS]);
+                      if (s.progressMax != null &&
+                          s.progress < s.progressMax!) {
+                        progress = s.progressMax!;
                         text = 'Status & progress changed';
                       }
 
                       Toast.show(context, text);
                     }
+
+                    return s.copyWith(
+                      status: status,
+                      progress: progress,
+                      completedAt: () => completedAt,
+                    );
+                  });
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
+
+    final advancedScoring = Consumer(
+      builder: (context, ref, _) {
+        final settings = ref.watch(userSettingsProvider);
+
+        if (!settings.advancedScoringEnabled ||
+            settings.scoreFormat != ScoreFormat.POINT_100 &&
+                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL)
+          return const SizedBox();
+
+        final scores = ref.watch(editProvider.notifier).state.advancedScores;
+
+        return _FieldGrid(
+          minWidth: 140,
+          children: [
+            for (final s in scores.entries)
+              LabeledField(
+                label: s.key,
+                child: NumberField(
+                  value: s.value,
+                  maxValue: 100,
+                  update: (score) {
+                    scores[s.key] = score.toDouble();
+
+                    int count = 0;
+                    double avg = 0;
+                    for (final v in scores.values)
+                      if (v > 0) {
+                        avg += v;
+                        count++;
+                      }
+
+                    if (count > 0) avg /= count;
+
+                    final notifier = ref.read(editProvider.notifier);
+                    if (notifier.state.score != avg)
+                      notifier.update((s) => s.copyWith(score: avg));
                   },
                 ),
               ),
-            ),
-          ], minWidth: 165),
-          ...advancedScoring,
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          const _Label('Additional Settings'),
-          _CheckBoxGrid(
-            {
-              'Private': model.private,
-              'Hidden From Status Lists': model.hiddenFromStatusLists,
-            },
-            (key, val) => key == 'Private'
-                ? model.private = val
-                : model.hiddenFromStatusLists = val,
-          ),
-          if (model.customLists.isNotEmpty) ...[
-            const SliverToBoxAdapter(child: SizedBox(height: 10)),
-            const _Label('Custom Lists'),
-            _CheckBoxGrid(
-              model.customLists,
-              (key, val) => model.customLists[key] = val,
-            ),
           ],
-          const SliverToBoxAdapter(child: SizedBox(height: 60)),
-        ],
+        );
+      },
+    );
+
+    final advancedSettings = Consumer(
+      builder: (context, ref, _) {
+        final notifier = ref.watch(editProvider.notifier);
+
+        return _CheckBoxGrid(
+          {
+            'Private': notifier.state.private,
+            'Hidden From Status Lists': notifier.state.hiddenFromStatusLists,
+          },
+          (key, val) => key == 'Private'
+              ? notifier.update((s) => s.copyWith(private: val))
+              : notifier.update((s) => s.copyWith(hiddenFromStatusLists: val)),
+        );
+      },
+    );
+
+    const space = SliverToBoxAdapter(child: SizedBox(height: 10));
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Consumer(
+        builder: (context, ref, _) {
+          final notifier = ref.watch(editProvider.notifier);
+
+          return CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              space,
+              space,
+              tracking,
+              space,
+              const SliverToBoxAdapter(
+                child: LabeledField(label: 'Score', child: ScoreField()),
+              ),
+              space,
+              SliverToBoxAdapter(
+                child: LabeledField(
+                  label: 'Notes',
+                  child: GrowableTextField(
+                    text: notifier.state.notes,
+                    onChanged: (notes) => notifier.state.notes = notes,
+                  ),
+                ),
+              ),
+              space,
+              dates,
+              space,
+              advancedScoring,
+              space,
+              const _Label('Additional Settings'),
+              advancedSettings,
+              if (notifier.state.customLists.isNotEmpty) ...[
+                space,
+                const _Label('Custom Lists'),
+                _CheckBoxGrid(
+                  notifier.state.customLists,
+                  (key, val) => notifier.state.customLists[key] = val,
+                ),
+              ],
+              const SliverToBoxAdapter(child: SizedBox(height: 60)),
+            ],
+          );
+        },
       ),
     );
   }
@@ -418,15 +542,15 @@ class _Label extends StatelessWidget {
 }
 
 class _FieldGrid extends StatelessWidget {
-  _FieldGrid(this.list, {required this.minWidth});
+  _FieldGrid({required this.minWidth, required this.children});
 
-  final List<Widget> list;
+  final List<Widget> children;
   final double minWidth;
 
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
-      delegate: SliverChildListDelegate.fixed(list),
+      delegate: SliverChildListDelegate.fixed(children),
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: minWidth,
         height: 71,

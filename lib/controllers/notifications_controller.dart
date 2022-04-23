@@ -1,5 +1,3 @@
-import 'package:get/get.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/notification_model.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/client.dart';
@@ -80,7 +78,6 @@ class NotificationsController extends ScrollingController {
       } catch (e) {}
 
     _entries.replace(nl, data['Page']['pageInfo']['hasNextPage']);
-    Get.find<HomeController>().nullifyUnread();
     update([ID_LIST]);
   }
 

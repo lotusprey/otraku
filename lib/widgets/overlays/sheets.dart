@@ -62,7 +62,7 @@ class OpaqueSheet extends StatelessWidget {
 /// A wide implementation of [DraggableScrollableSheet]
 /// with a lane of buttons at the bottom.
 class OpaqueSheetView extends StatelessWidget {
-  OpaqueSheetView({required this.builder, required this.buttons});
+  OpaqueSheetView({required this.builder, this.buttons = const []});
 
   final Widget Function(BuildContext, ScrollController) builder;
   final List<Widget> buttons;

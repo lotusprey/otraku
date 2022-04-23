@@ -5,8 +5,8 @@ import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
-import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
+import 'package:otraku/providers/edit.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
@@ -227,20 +227,20 @@ class CollectionController extends ScrollingController {
     await _fetch();
   }
 
-  Future<void> updateEntry(EditModel oldEntry, EditModel newEntry) async {
+  Future<void> updateEntry(Edit oldEdit, Edit newEdit) async {
     // Update database item. Due to AL API bug, the tags cannot be obtained
     // from the [SaveMediaListEntry] mutation, so only half of the data is
     // obtained from the first request. The other half comes from a second
     // request.
     final data = await Client.request(
       GqlMutation.updateEntry,
-      newEntry.toMap(),
+      newEdit.toMap(),
     );
     if (data == null) return;
 
     final mediaData = await Client.request(
       GqlQuery.media,
-      {'id': newEntry.mediaId, 'withMain': true},
+      {'id': newEdit.mediaId, 'withMain': true},
     );
     if (mediaData == null) return;
     data['SaveMediaListEntry']['media'] = mediaData['Media'];
@@ -248,22 +248,22 @@ class CollectionController extends ScrollingController {
     final entry = ListEntryModel(data['SaveMediaListEntry']);
 
     // Update the entry model (necessary for the updateEntry() caller).
-    newEntry.entryId = data['SaveMediaListEntry']['id'];
+    newEdit.entryId = data['SaveMediaListEntry']['id'];
 
     // Find from which custom lists to remove the item and in which to add it.
-    final oldCustomLists = oldEntry.customLists.entries
+    final oldCustomLists = oldEdit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
-    final newCustomLists = newEntry.customLists.entries
+    final newCustomLists = newEdit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
 
     // Remove from old status list.
-    if (oldEntry.status != null && !oldEntry.hiddenFromStatusLists)
+    if (oldEdit.status != null && !oldEdit.hiddenFromStatusLists)
       for (final list in _lists)
-        if (oldEntry.status == list.status &&
+        if (oldEdit.status == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.removeByMediaId(entry.mediaId);
@@ -281,7 +281,7 @@ class CollectionController extends ScrollingController {
           }
 
     // Add to new status list.
-    if (!newEntry.hiddenFromStatusLists) {
+    if (!newEdit.hiddenFromStatusLists) {
       bool added = false;
       for (final list in _lists)
         if (entry.listStatus == list.status &&
@@ -386,33 +386,33 @@ class CollectionController extends ScrollingController {
           }
   }
 
-  Future<void> removeEntry(EditModel entry) async {
+  Future<void> removeEntry(Edit edit) async {
     // Update database item.
     final data = await Client.request(
       GqlMutation.removeEntry,
-      {'entryId': entry.entryId},
+      {'entryId': edit.entryId},
     );
 
     if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
       return;
 
-    final customLists = entry.customLists.entries
+    final customLists = edit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
 
     // Remove from status list.
-    if (!entry.hiddenFromStatusLists)
+    if (!edit.hiddenFromStatusLists)
       for (final list in _lists)
-        if (!list.isCustomList && list.status == entry.status)
-          list.removeByMediaId(entry.mediaId);
+        if (!list.isCustomList && list.status == edit.status)
+          list.removeByMediaId(edit.mediaId);
 
     // Remove from custom lists.
     if (customLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < customLists.length; i++)
           if (customLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(entry.mediaId);
+            list.removeByMediaId(edit.mediaId);
             customLists.removeAt(i);
             break;
           }

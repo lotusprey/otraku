@@ -1,4 +1,5 @@
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/providers/user_settings.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/models/media_model.dart';
@@ -16,9 +17,10 @@ class MediaController extends ScrollingController {
   static const ID_OUTER = 1;
   static const ID_INNER = 2;
 
-  MediaController(this.id);
+  MediaController(this.id, this.settings);
 
   final int id;
+  final UserSettings settings;
   MediaModel? _model;
   int _tab = INFO;
   bool _otherTabToggled = false;
@@ -78,7 +80,7 @@ class MediaController extends ScrollingController {
     });
     if (result == null) return;
 
-    _model = MediaModel(result['Media']);
+    _model = MediaModel(result['Media'], settings);
     _model!.addRecommendations(result['Media']);
     _model!.addCharacters(result['Media'], languages);
     _model!.addStaff(result['Media']);

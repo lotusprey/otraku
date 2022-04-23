@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
@@ -8,6 +9,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/models/list_entry_model.dart';
+import 'package:otraku/providers/user_settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/feed_view.dart';
@@ -28,14 +30,22 @@ class InboxView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notificationIcon = GetBuilder<HomeController>(
-      id: HomeController.ID_NOTIFICATIONS,
-      builder: (homeCtrl) {
-        if (homeCtrl.notificationCount < 1)
+    final notificationIcon = Consumer(
+      builder: (context, ref, child) {
+        final count = ref.watch(
+          userSettingsProvider.select((s) => s.notificationCount),
+        );
+
+        final openNotifications = () {
+          ref.read(userSettingsProvider.notifier).nullifyUnread();
+          Navigator.pushNamed(context, RouteArg.notifications);
+        };
+
+        if (count < 1)
           return AppBarIcon(
             tooltip: 'Notifications',
             icon: Ionicons.notifications_outline,
-            onTap: () => Navigator.pushNamed(context, RouteArg.notifications),
+            onTap: openNotifications,
           );
 
         return Padding(
@@ -43,7 +53,7 @@ class InboxView extends StatelessWidget {
           child: Tooltip(
             message: 'Notifications',
             child: GestureDetector(
-              onTap: () => Navigator.pushNamed(context, RouteArg.notifications),
+              onTap: openNotifications,
               child: Stack(
                 children: [
                   Positioned(
@@ -67,7 +77,7 @@ class InboxView extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        homeCtrl.notificationCount.toString(),
+                        count.toString(),
                         style: Theme.of(context).textTheme.subtitle2!.copyWith(
                               color: Theme.of(context).colorScheme.background,
                             ),

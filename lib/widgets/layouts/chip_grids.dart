@@ -120,13 +120,11 @@ class ChipNamingGrid extends StatefulWidget {
   final String title;
   final String placeholder;
   final List<String> names;
-  final void Function() onChanged;
 
   ChipNamingGrid({
     required this.title,
     required this.placeholder,
     required this.names,
-    required this.onChanged,
   });
 
   @override
@@ -141,14 +139,8 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
       children.add(ChipNamingField(
         key: UniqueKey(),
         name: widget.names[i],
-        onChanged: (n) {
-          setState(() => widget.names[i] = n);
-          widget.onChanged();
-        },
-        onRemoved: () {
-          setState(() => widget.names.removeAt(i));
-          widget.onChanged();
-        },
+        onChanged: (n) => setState(() => widget.names[i] = n),
+        onRemoved: () => setState(() => widget.names.removeAt(i)),
       ));
 
     return _ChipGrid(
@@ -161,9 +153,8 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
           context,
           InputDialog(initial: name, onChanged: (n) => name = n),
         ).then((_) {
-          if (name.isEmpty || widget.names.contains(name)) return;
-          setState(() => widget.names.add(name));
-          widget.onChanged();
+          if (name.isNotEmpty && !widget.names.contains(name))
+            setState(() => widget.names.add(name));
         });
       },
     );

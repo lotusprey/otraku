@@ -1,68 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/notifications_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/models/notification_model.dart';
+import 'package:otraku/providers/notifications.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class NotificationsView extends StatelessWidget {
+class NotificationsView extends StatefulWidget {
+  const NotificationsView();
+
+  @override
+  State<NotificationsView> createState() => _NotificationsViewState();
+}
+
+class _NotificationsViewState extends State<NotificationsView> {
+  final _ctrl = ScrollController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<NotificationsController>(
-      init: NotificationsController(),
-      builder: (ctrl) => Scaffold(
-        appBar: ShadowAppBar(
-          title: 'Notifications',
-          actions: [
-            AppBarIcon(
-              tooltip: 'Filter',
-              icon: Ionicons.funnel_outline,
-              onTap: () {
-                showSheet(
-                  context,
-                  DynamicGradientDragSheet(
-                    itemCount: 6,
-                    onTap: (i) => ctrl.filter = i,
-                    itemBuilder: (_, i) => Text(
-                      NotificationsController.FILTERS[i],
-                      style: i != ctrl.filter
-                          ? Theme.of(context).textTheme.headline1
-                          : Theme.of(context).textTheme.headline1?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        body: GetBuilder<NotificationsController>(
-          id: NotificationsController.ID_LIST,
-          builder: (ctrl) {
-            final entries = ctrl.entries;
-            return ListView.builder(
-              padding: Consts.PADDING,
-              controller: ctrl.scrollCtrl,
-              itemBuilder: (_, index) => _NotificationWidget(
-                entries[index],
-                index < ctrl.unreadCount,
+    return Scaffold(
+      appBar: ShadowAppBar(
+        title: 'Notifications',
+        actions: [
+          AppBarIcon(
+            tooltip: 'Filter',
+            icon: Ionicons.funnel_outline,
+            onTap: () {
+              showSheet(
+                context,
+                Consumer(
+                  builder: (context, ref, _) {
+                    final notifier = ref.read(
+                      notificationFilterProvider.notifier,
+                    );
+
+                    return DynamicGradientDragSheet(
+                      itemCount: 6,
+                      onTap: (i) => notifier.state =
+                          NotificationFilterType.values.elementAt(i),
+                      itemBuilder: (_, i) => Text(
+                        NotificationsController.FILTERS[i],
+                        style: i != notifier.state.index
+                            ? Theme.of(context).textTheme.headline1
+                            : Theme.of(context).textTheme.headline1?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Consumer(
+        builder: (context, ref, _) {
+          final notifier = ref.watch(notificationsProvider.notifier);
+
+          final content = CustomScrollView(
+            controller: _ctrl,
+            slivers: [
+              SliverRefreshControl(
+                onRefresh: onRefresh,
+                canRefresh: canRefresh,
               ),
-              itemCount: entries.length,
-              itemExtent: 100,
-            );
-          },
-        ),
+            ],
+          );
+
+          final list = ListView.builder(
+            padding: Consts.PADDING,
+            controller: _ctrl,
+            itemBuilder: (_, index) => _NotificationWidget(
+              notifier.notifications[index],
+              index < notifier.unreadCount,
+            ),
+            itemCount: notifier.notifications.length,
+            itemExtent: 100,
+          );
+
+          return ref
+              .watch(notificationsProvider.select((s) => s.dataState))
+              .maybeWhen(
+                data: (_) {
+                  final notifier = ref.watch(notificationsProvider.notifier);
+                },
+                orElse: () {},
+              );
+        },
       ),
     );
   }

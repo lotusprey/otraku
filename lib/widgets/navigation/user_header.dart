@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
@@ -67,19 +66,12 @@ class UserHeader extends StatelessWidget {
             ),
           )),
         if (isMe)
-          GetBuilder<HomeController>(
-            id: HomeController.ID_SETTINGS,
-            builder: (ctrl) {
-              if (ctrl.siteSettings == null) return const SizedBox();
-
-              return IconShade(
-                AppBarIcon(
-                  tooltip: 'Settings',
-                  icon: Ionicons.cog_outline,
-                  onTap: () => Navigator.pushNamed(context, RouteArg.settings),
-                ),
-              );
-            },
+          IconShade(
+            AppBarIcon(
+              tooltip: 'Settings',
+              icon: Ionicons.cog_outline,
+              onTap: () => Navigator.pushNamed(context, RouteArg.settings),
+            ),
           ),
       ],
       child: Column(

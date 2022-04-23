@@ -1,51 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/settings_model.dart';
 import 'package:otraku/constants/notification_type.dart';
+import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class SettingsNotificationsView extends StatelessWidget {
-  SettingsNotificationsView(this.model, this.changes, this.scrollCtrl);
+  SettingsNotificationsView(this.scrollCtrl, this.settings, this.shouldUpdate);
 
-  final SettingsModel model;
-  final Map<String, dynamic> changes;
   final ScrollController scrollCtrl;
+  final UserSettings settings;
+  final void Function() shouldUpdate;
 
   @override
   Widget build(BuildContext context) {
-    final options = model.notificationOptions;
-
-    final siteValues = <bool>[];
-    for (int i = 0; i < NotificationType.values.length - 1; i++)
-      siteValues.add(
-        options[NotificationType.values[i].name] ?? false,
-      );
-
-    final siteOptions = <Widget>[];
-    siteOptions.add(_Title('Users'));
-    siteOptions.add(
-      _Grid(from: 0, to: 1, values: siteValues, onChanged: changeSiteOption),
-    );
-    siteOptions.add(_Title('Activities'));
-    siteOptions.add(
-      _Grid(from: 1, to: 7, values: siteValues, onChanged: changeSiteOption),
-    );
-    siteOptions.add(_Title('Forum'));
-    siteOptions.add(
-      _Grid(from: 7, to: 12, values: siteValues, onChanged: changeSiteOption),
-    );
-    siteOptions.add(_Title('Media'));
-    siteOptions.add(
-      _Grid(from: 12, to: 16, values: siteValues, onChanged: changeSiteOption),
-    );
+    final widgets = <Widget>[];
+    widgets.add(_Title('Users'));
+    widgets.add(_Grid(
+      from: 0,
+      to: 1,
+      options: settings.notificationOptions,
+      onChanged: shouldUpdate,
+    ));
+    widgets.add(_Title('Activities'));
+    widgets.add(_Grid(
+      from: 1,
+      to: 7,
+      options: settings.notificationOptions,
+      onChanged: shouldUpdate,
+    ));
+    widgets.add(_Title('Forum'));
+    widgets.add(_Grid(
+      from: 7,
+      to: 12,
+      options: settings.notificationOptions,
+      onChanged: shouldUpdate,
+    ));
+    widgets.add(_Title('Media'));
+    widgets.add(_Grid(
+      from: 12,
+      to: 16,
+      options: settings.notificationOptions,
+      onChanged: shouldUpdate,
+    ));
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
-          ...siteOptions,
+          ...widgets,
           SliverToBoxAdapter(
             child: SizedBox(height: NavLayout.offset(context)),
           ),
@@ -53,28 +58,12 @@ class SettingsNotificationsView extends StatelessWidget {
       ),
     );
   }
-
-  void changeSiteOption(List<bool> values) {
-    const key = 'notificationOptions';
-
-    if (changes.containsKey(key))
-      for (int i = 0; i < values.length; i++)
-        changes[key][i]['enabled'] = values[i];
-    else {
-      final newOptions = [];
-      for (int i = 0; i < values.length; i++)
-        newOptions.add({
-          'type': NotificationType.values[i].name,
-          'enabled': values[i],
-        });
-      changes[key] = newOptions;
-    }
-  }
 }
 
 class _Title extends StatelessWidget {
-  final String title;
   const _Title(this.title);
+
+  final String title;
 
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
@@ -86,16 +75,17 @@ class _Title extends StatelessWidget {
 }
 
 class _Grid extends StatelessWidget {
-  final int from;
-  final int to;
-  final List<bool> values;
-  final Function(List<bool>) onChanged;
   _Grid({
     required this.from,
     required this.to,
-    required this.values,
+    required this.options,
     required this.onChanged,
   });
+
+  final int from;
+  final int to;
+  final Map<NotificationType, bool> options;
+  final void Function() onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +99,13 @@ class _Grid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (_, i) {
           i += from;
+          final e = options.entries.elementAt(i);
           return CheckBoxField(
-            title: NotificationType.values[i].text,
-            initial: values[i],
+            title: Convert.clarifyEnum(e.key.name)!,
+            initial: e.value,
             onChanged: (val) {
-              values[i] = val;
-              onChanged(values);
+              options[e.key] = val;
+              onChanged();
             },
           );
         },

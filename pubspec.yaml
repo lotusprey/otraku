@@ -20,9 +20,9 @@ dependencies:
   path_provider_ios: ^2.0.6 # Remove after Flutter 2.11.
   flutter_secure_storage: ^5.0.2
   url_launcher: ^6.1.0
-  app_links: ^3.0.1 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
+  app_links: ^3.0.2 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
   workmanager: ^0.4.1
-  flutter_local_notifications: ^9.4.0
+  flutter_local_notifications: ^9.4.1
   flutter_widget_from_html_core: ^0.8.5+1
   ionicons: ^0.1.2
 

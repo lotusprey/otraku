@@ -263,7 +263,7 @@ abstract class GqlQuery {
     query Studios($page: Int, $search: String) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        studios(search: $search) {id name}
+        studios(search: $search, sort: FAVOURITES_DESC) {id name}
       }
     }
   ''';

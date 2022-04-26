@@ -12,8 +12,9 @@ import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class StatisticsView extends StatelessWidget {
-  final int id;
   StatisticsView(this.id);
+
+  final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +47,6 @@ class StatisticsView extends StatelessWidget {
               bottom: NavLayout.offset(context),
             ),
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  'Details',
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ),
               _Details(ctrl),
               if (ctrl.model.scores.isNotEmpty) ...[
                 GetBuilder<StatisticsController>(
@@ -119,11 +113,6 @@ class StatisticsView extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
-  final StatisticsController stats;
-  final icons = <IconData>[];
-  final titles = <String>[];
-  final subtitles = <num>[];
-
   _Details(this.stats) {
     if (stats.onAnime) {
       icons.add(Ionicons.tv_outline);
@@ -155,11 +144,16 @@ class _Details extends StatelessWidget {
     subtitles.add(stats.model.standardDeviation);
   }
 
+  final StatisticsController stats;
+  final icons = <IconData>[];
+  final titles = <String>[];
+  final subtitles = <num>[];
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
-      padding: Consts.PADDING,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       itemBuilder: (_, i) => Container(
@@ -170,7 +164,7 @@ class _Details extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icons[i]),
+            Icon(icons[i], color: Theme.of(context).colorScheme.onSurface),
             const SizedBox(width: 10),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

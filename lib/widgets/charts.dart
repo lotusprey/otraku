@@ -30,32 +30,11 @@ class BarChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (tabs == null)
-          Padding(
-            padding: const EdgeInsets.only(left: 10, top: 10),
-            child: Text(title, style: Theme.of(context).textTheme.headline3),
-          )
-        else
-          Wrap(
-            runSpacing: 10,
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: tabs!.items.length < 3 ? 300 : 350,
-                ),
-                child: tabs!,
-              ),
-            ],
-          ),
+        Padding(
+          padding: Consts.PADDING,
+          child: Text(title, style: Theme.of(context).textTheme.headline3),
+        ),
+        if (tabs != null) tabs!,
         SizedBox(
           height: 280,
           child: ListView.builder(

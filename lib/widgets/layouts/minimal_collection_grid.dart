@@ -99,9 +99,8 @@ class _IncrementButtonState extends State<_IncrementButton> {
         ),
       );
 
-    Color? colour;
-    if (model.nextEpisode != null && model.progress + 1 < model.nextEpisode!)
-      colour = Theme.of(context).colorScheme.error;
+    final warning =
+        model.nextEpisode != null && model.progress + 1 < model.nextEpisode!;
 
     return TextButton(
       style: ButtonStyle(
@@ -110,6 +109,16 @@ class _IncrementButtonState extends State<_IncrementButton> {
         padding: MaterialStateProperty.all(
           const EdgeInsets.symmetric(horizontal: 5),
         ),
+        foregroundColor: warning
+            ? MaterialStateProperty.all(
+                Theme.of(context).colorScheme.error,
+              )
+            : null,
+        overlayColor: warning
+            ? MaterialStateProperty.all(
+                Theme.of(context).colorScheme.error.withAlpha(50),
+              )
+            : null,
       ),
       onPressed: () {
         if (model.progressMax == null ||
@@ -126,10 +135,10 @@ class _IncrementButtonState extends State<_IncrementButton> {
           children: [
             Text(
               '${model.progress}/${model.progressMax ?? "?"}',
-              style: TextStyle(fontSize: Consts.FONT_SMALL, color: colour),
+              style: TextStyle(fontSize: Consts.FONT_SMALL),
             ),
             const SizedBox(width: 3),
-            Icon(Ionicons.add_outline, size: Consts.ICON_SMALL, color: colour),
+            const Icon(Ionicons.add_outline, size: Consts.ICON_SMALL),
           ],
         ),
       ),

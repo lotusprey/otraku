@@ -186,14 +186,14 @@ class Settings {
   }
 
   set lightTheme(int v) {
-    if (v < 0 || v >= Theming.themeCount || v == _lightTheme) return;
+    if (v < 0 || v >= Theming.schemes.length || v == _lightTheme) return;
     _lightTheme = v;
     Theming().refresh();
     _box.put(_LIGHT_THEME, v);
   }
 
   set darkTheme(int v) {
-    if (v < 0 || v >= Theming.themeCount || v == _darkTheme) return;
+    if (v < 0 || v >= Theming.schemes.length || v == _darkTheme) return;
     _darkTheme = v;
     Theming().refresh();
     _box.put(_DARK_THEME, v);

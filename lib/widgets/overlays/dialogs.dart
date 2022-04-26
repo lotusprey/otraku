@@ -121,11 +121,15 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         if (secondaryAction != null)
           TextButton(
-            child: Text(
-              secondaryAction!,
-              style:
-                  TextStyle(color: Theme.of(context).colorScheme.onBackground),
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(
+                Theme.of(context).colorScheme.error,
+              ),
+              overlayColor: MaterialStateProperty.all(
+                Theme.of(context).colorScheme.error.withAlpha(50),
+              ),
             ),
+            child: Text(secondaryAction!),
             onPressed: () => Navigator.pop(context),
           ),
         TextButton(

@@ -19,6 +19,10 @@ class SettingsAppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorSchemeMap = <String, int>{};
+    for (int i = 0; i < Theming.schemes.length; i++)
+      colorSchemeMap[Theming.schemes.keys.elementAt(i)] = i;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
@@ -34,13 +38,13 @@ class SettingsAppView extends StatelessWidget {
               DropDownField<int>(
                 title: 'Light Theme',
                 value: Settings().lightTheme,
-                items: Theming.themes,
+                items: colorSchemeMap,
                 onChanged: (val) => Settings().lightTheme = val,
               ),
               DropDownField<int>(
                 title: 'Dark Theme',
                 value: Settings().darkTheme,
-                items: Theming.themes,
+                items: colorSchemeMap,
                 onChanged: (val) => Settings().darkTheme = val,
               ),
               DropDownField<ThemeMode>(

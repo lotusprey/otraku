@@ -20,7 +20,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Otraku',
-        theme: Theming().theme,
+        theme: Theming().data,
         navigatorKey: RouteArg.navKey,
         onGenerateRoute: RouteArg.generateRoute,
 

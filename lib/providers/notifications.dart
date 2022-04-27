@@ -305,7 +305,7 @@ class Notification {
           type: NotificationType.RELATED_MEDIA_ADDITION,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
-          imageUrl: Settings().getCover(map['media']['coverImage']),
+          imageUrl: map['media']['coverImage'][Settings().imageQuality],
           texts: [
             map['media']['title']['userPreferred'],
             ' was added to the site',
@@ -321,7 +321,7 @@ class Notification {
           id: map['id'],
           type: NotificationType.MEDIA_DATA_CHANGE,
           headId: map['media']['id'],
-          imageUrl: Settings().getCover(map['media']['coverImage']),
+          imageUrl: map['media']['coverImage'][Settings().imageQuality],
           details: map['reason'],
           texts: [
             map['media']['title']['userPreferred'],
@@ -344,7 +344,7 @@ class Notification {
           id: map['id'],
           type: NotificationType.MEDIA_MERGE,
           headId: map['media']['id'],
-          imageUrl: Settings().getCover(map['media']['coverImage']),
+          imageUrl: map['media']['coverImage'][Settings().imageQuality],
           details: map['reason'],
           texts: [
             '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',
@@ -374,7 +374,7 @@ class Notification {
           type: NotificationType.AIRING,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
-          imageUrl: Settings().getCover(map['media']['coverImage']),
+          imageUrl: map['media']['coverImage'],
           texts: [
             'Episode ',
             map['episode'].toString(),

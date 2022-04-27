@@ -167,7 +167,7 @@ class CharacterController extends ScrollingController {
       items.add(RelationModel(
         id: a['node']['id'],
         title: a['node']['title']['userPreferred'],
-        imageUrl: Settings().getCover(a['node']['coverImage']),
+        imageUrl: a['node']['coverImage'][Settings().imageQuality],
         subtitle: Convert.clarifyEnum(a['characterRole']),
         type: Explorable.anime,
       ));
@@ -210,7 +210,7 @@ class CharacterController extends ScrollingController {
       items.add(RelationModel(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: Settings().getCover(m['node']['coverImage']),
+        imageUrl: m['node']['coverImage'][Settings().imageQuality],
         subtitle: Convert.clarifyEnum(m['characterRole']),
         type: Explorable.manga,
       ));

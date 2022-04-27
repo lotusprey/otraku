@@ -46,7 +46,7 @@ class ReviewModel {
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: Settings().getCover(map['media']['coverImage']),
+        mediaCover: map['media']['coverImage'][Settings().imageQuality],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',

@@ -22,7 +22,8 @@ class RecommendedModel {
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
       type: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
-      imageUrl: Settings().getCover(map['mediaRecommendation']['coverImage']),
+      imageUrl: map['mediaRecommendation']['coverImage']
+          [Settings().imageQuality],
     );
   }
 

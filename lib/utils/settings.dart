@@ -45,7 +45,7 @@ class Settings {
       EntrySort.values[_box.get(_DEFAULT_MANGA_SORT) ?? 0],
       MediaSort.values[
           _box.get(_DEFAULT_EXPLORE_SORT) ?? MediaSort.TRENDING_DESC.index],
-      _box.get(_IMAGE_QUALITY) ?? 0,
+      _box.get(_IMAGE_QUALITY) ?? 'large',
       _box.get(_CONFIRM_EXIT) ?? false,
       _box.get(_LEFT_HANDED) ?? false,
       _box.get(_ANALOGUE_CLOCK) ?? false,
@@ -115,7 +115,7 @@ class Settings {
   EntrySort _defaultAnimeSort;
   EntrySort _defaultMangaSort;
   MediaSort _defaultExploreSort;
-  int _imageQuality;
+  String _imageQuality;
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
@@ -138,7 +138,7 @@ class Settings {
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
   EntrySort get defaultMangaSort => _defaultMangaSort;
   MediaSort get defaultExploreSort => _defaultExploreSort;
-  int get imageQuality => _imageQuality;
+  String get imageQuality => _imageQuality;
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
@@ -230,8 +230,8 @@ class Settings {
     _box.put(_DEFAULT_EXPLORE_SORT, v.index);
   }
 
-  set imageQuality(int v) {
-    if (v < -1 || v > 1) return;
+  set imageQuality(String v) {
+    if (v != 'extraLarge' && v != 'large' && v != 'medium') return;
     _imageQuality = v;
     _box.put(_IMAGE_QUALITY, v);
   }
@@ -287,18 +287,5 @@ class Settings {
     v != null
         ? _box.put(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1, v)
         : _box.delete(a == 0 ? _EXPIRATION_0 : _EXPIRATION_1);
-  }
-
-  // Get the media cover image corresponding
-  // to the current image quality setting.
-  String getCover(Map<String, dynamic> map) {
-    switch (_imageQuality) {
-      case 1:
-        return map['extraLarge'];
-      case 0:
-        return map['large'];
-      default:
-        return map['medium'];
-    }
   }
 }

@@ -22,7 +22,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: Settings().getCover(map['coverImage']),
+        imageUrl: map['coverImage'][Settings().imageQuality],
         explorable:
             map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       );
@@ -31,7 +31,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: Settings().getCover(map['coverImage']),
+        imageUrl: map['coverImage'][Settings().imageQuality],
         explorable: Explorable.anime,
       );
 
@@ -39,7 +39,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: Settings().getCover(map['coverImage']),
+        imageUrl: map['coverImage'],
         explorable: Explorable.manga,
       );
 

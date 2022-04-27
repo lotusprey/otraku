@@ -70,7 +70,7 @@ class ListEntryModel {
     return ListEntryModel._(
       mediaId: map['media']['id'],
       titles: titles,
-      cover: Settings().getCover(map['media']['coverImage']),
+      cover: map['media']['coverImage'][Settings().imageQuality],
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: map['media']['nextAiringEpisode']?['airingAt'],
       format: map['media']['format'],

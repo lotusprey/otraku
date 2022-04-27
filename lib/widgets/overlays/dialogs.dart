@@ -121,11 +121,15 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         if (secondaryAction != null)
           TextButton(
-            child: Text(
-              secondaryAction!,
-              style:
-                  TextStyle(color: Theme.of(context).colorScheme.onBackground),
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all(
+                Theme.of(context).colorScheme.error,
+              ),
+              overlayColor: MaterialStateProperty.all(
+                Theme.of(context).colorScheme.error.withAlpha(50),
+              ),
             ),
+            child: Text(secondaryAction!),
             onPressed: () => Navigator.pop(context),
           ),
         TextButton(
@@ -154,7 +158,12 @@ class ImageDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       child: ClipRRect(
         borderRadius: Consts.BORDER_RAD_MIN,
-        child: Image.network(url, fit: fit),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          child: Image.network(url, fit: fit),
+        ),
       ),
     );
   }

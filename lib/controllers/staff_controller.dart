@@ -7,6 +7,7 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/settings.dart';
 
 class StaffController extends ScrollingController {
   // GetBuilder ids.
@@ -126,7 +127,7 @@ class StaffController extends ScrollingController {
         _media.add(RelationModel(
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
-          imageUrl: m['node']['coverImage']['extraLarge'],
+          imageUrl: Settings().getCover(m['node']['coverImage']),
           subtitle: Convert.clarifyEnum(m['node']['format']),
           type: m['node']['type'] == 'ANIME'
               ? Explorable.anime
@@ -156,7 +157,7 @@ class StaffController extends ScrollingController {
       items.add(RelationModel(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
-        imageUrl: s['node']['coverImage']['extraLarge'],
+        imageUrl: Settings().getCover(s['node']['coverImage']),
         subtitle: s['staffRole'],
         type:
             s['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,

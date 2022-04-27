@@ -98,6 +98,12 @@ class SettingsAboutView extends StatelessWidget {
                 backgroundColor: MaterialStateProperty.all(
                   Theme.of(context).colorScheme.error,
                 ),
+                foregroundColor: MaterialStateProperty.all(
+                  Theme.of(context).colorScheme.onError,
+                ),
+                overlayColor: MaterialStateProperty.all(
+                  Theme.of(context).colorScheme.errorContainer.withAlpha(100),
+                ),
               ),
               onPressed: Client.logOut,
             ),

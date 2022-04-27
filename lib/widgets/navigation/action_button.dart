@@ -36,17 +36,20 @@ class ActionButton extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 blurRadius: 5,
-                color:
-                    Theme.of(context).colorScheme.surfaceVariant.withAlpha(100),
+                color: Theme.of(context)
+                    .colorScheme
+                    .primaryContainer
+                    .withAlpha(100),
               ),
             ],
           ),
           child: Material(
             color: Theme.of(context).colorScheme.primary,
-            borderRadius: BorderRadius.circular(30),
+            shape: const CircleBorder(),
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(30),
+              splashColor: Theme.of(context).colorScheme.primaryContainer,
               child: onSwipe == null
                   ? Icon(icon, color: Theme.of(context).colorScheme.onPrimary)
                   : _DraggableIcon(icon: icon, onSwipe: onSwipe!),

@@ -306,6 +306,12 @@ class __TileContentState extends State<_TileContent> {
         minimumSize: MaterialStateProperty.all(const Size(0, 30)),
         maximumSize: MaterialStateProperty.all(const Size.fromHeight(30)),
         padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
+        foregroundColor: MaterialStateProperty.all(
+          Theme.of(context).colorScheme.surfaceVariant,
+        ),
+        overlayColor: MaterialStateProperty.all(
+          Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
+        ),
       ),
       onPressed: () {
         if (model.progressMax == null ||
@@ -321,11 +327,7 @@ class __TileContentState extends State<_TileContent> {
           children: [
             text,
             const SizedBox(width: 3),
-            Icon(
-              Ionicons.add_outline,
-              size: Consts.ICON_SMALL,
-              color: Theme.of(context).colorScheme.surfaceVariant,
-            ),
+            const Icon(Ionicons.add_outline, size: Consts.ICON_SMALL),
           ],
         ),
       ),

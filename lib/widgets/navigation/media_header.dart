@@ -9,10 +9,10 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaHeader extends StatelessWidget {
+  MediaHeader({required this.ctrl, required this.imageUrl});
+
   final MediaController ctrl;
   final String? imageUrl;
-
-  MediaHeader({required this.ctrl, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +51,7 @@ class MediaHeader extends StatelessWidget {
     return CustomSliverHeader(
       title: info?.preferredTitle,
       image: info?.cover ?? imageUrl,
+      extraLargeImage: info?.extraLargeCover,
       banner: info?.banner,
       squareImage: false,
       implyLeading: true,

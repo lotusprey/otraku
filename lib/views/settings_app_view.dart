@@ -19,6 +19,10 @@ class SettingsAppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorSchemeMap = <String, int>{};
+    for (int i = 0; i < Theming.schemes.length; i++)
+      colorSchemeMap[Theming.schemes.keys.elementAt(i)] = i;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
@@ -34,13 +38,13 @@ class SettingsAppView extends StatelessWidget {
               DropDownField<int>(
                 title: 'Light Theme',
                 value: Settings().lightTheme,
-                items: Theming.themes,
+                items: colorSchemeMap,
                 onChanged: (val) => Settings().lightTheme = val,
               ),
               DropDownField<int>(
                 title: 'Dark Theme',
                 value: Settings().darkTheme,
-                items: Theming.themes,
+                items: colorSchemeMap,
                 onChanged: (val) => Settings().darkTheme = val,
               ),
               DropDownField<ThemeMode>(
@@ -56,7 +60,7 @@ class SettingsAppView extends StatelessWidget {
               DropDownField<int>(
                 title: 'Startup Page',
                 value: Settings().defaultHomeTab,
-                items: {
+                items: const {
                   'Inbox': HomeView.INBOX,
                   'Anime List': HomeView.ANIME_LIST,
                   'Manga List': HomeView.MANGA_LIST,
@@ -100,6 +104,12 @@ class SettingsAppView extends StatelessWidget {
                   key: (v) => Convert.clarifyEnum((v as Explorable).name)!,
                 ),
                 onChanged: (val) => Settings().defaultExplorable = val,
+              ),
+              DropDownField<int>(
+                title: 'Image Quality',
+                value: Settings().imageQuality,
+                items: const {'Very High': 1, 'High': 0, 'Medium': -1},
+                onChanged: (val) => Settings().imageQuality = val,
               ),
             ]),
           ),

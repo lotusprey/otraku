@@ -1,4 +1,5 @@
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/settings.dart';
 
 class ExplorableModel {
   final int id;
@@ -21,7 +22,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage']['extraLarge'],
+        imageUrl: Settings().getCover(map['coverImage']),
         explorable:
             map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
       );
@@ -30,7 +31,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage']['extraLarge'],
+        imageUrl: Settings().getCover(map['coverImage']),
         explorable: Explorable.anime,
       );
 
@@ -38,7 +39,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage']['extraLarge'],
+        imageUrl: Settings().getCover(map['coverImage']),
         explorable: Explorable.manga,
       );
 

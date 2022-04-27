@@ -7,6 +7,7 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/settings.dart';
 
 class CharacterController extends ScrollingController {
   // GetBuilder ids.
@@ -166,7 +167,7 @@ class CharacterController extends ScrollingController {
       items.add(RelationModel(
         id: a['node']['id'],
         title: a['node']['title']['userPreferred'],
-        imageUrl: a['node']['coverImage']['extraLarge'],
+        imageUrl: Settings().getCover(a['node']['coverImage']),
         subtitle: Convert.clarifyEnum(a['characterRole']),
         type: Explorable.anime,
       ));
@@ -209,7 +210,7 @@ class CharacterController extends ScrollingController {
       items.add(RelationModel(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage']['extraLarge'],
+        imageUrl: Settings().getCover(m['node']['coverImage']),
         subtitle: Convert.clarifyEnum(m['characterRole']),
         type: Explorable.manga,
       ));

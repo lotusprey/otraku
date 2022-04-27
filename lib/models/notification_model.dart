@@ -1,6 +1,7 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
 
 class NotificationModel {
   final int id;
@@ -204,7 +205,7 @@ class NotificationModel {
           type: NotificationType.RELATED_MEDIA_ADDITION,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
-          imageUrl: map['media']['coverImage']['extraLarge'],
+          imageUrl: Settings().getCover(map['media']['coverImage']),
           texts: [
             map['media']['title']['userPreferred'],
             ' was added to the site',
@@ -220,7 +221,7 @@ class NotificationModel {
           id: map['id'],
           type: NotificationType.MEDIA_DATA_CHANGE,
           headId: map['media']['id'],
-          imageUrl: map['media']['coverImage']['extraLarge'],
+          imageUrl: Settings().getCover(map['media']['coverImage']),
           details: map['reason'],
           texts: [
             map['media']['title']['userPreferred'],
@@ -243,7 +244,7 @@ class NotificationModel {
           id: map['id'],
           type: NotificationType.MEDIA_MERGE,
           headId: map['media']['id'],
-          imageUrl: map['media']['coverImage']['extraLarge'],
+          imageUrl: Settings().getCover(map['media']['coverImage']),
           details: map['reason'],
           texts: [
             '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',
@@ -273,7 +274,7 @@ class NotificationModel {
           type: NotificationType.AIRING,
           headId: map['media']['id'],
           bodyId: map['media']['id'],
-          imageUrl: map['media']['coverImage']['extraLarge'],
+          imageUrl: Settings().getCover(map['media']['coverImage']),
           texts: [
             'Episode ',
             map['episode'].toString(),

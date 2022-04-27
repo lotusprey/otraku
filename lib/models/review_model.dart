@@ -1,5 +1,6 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
 
 class ReviewModel {
   final int id;
@@ -45,7 +46,7 @@ class ReviewModel {
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage']['extraLarge'],
+        mediaCover: Settings().getCover(map['media']['coverImage']),
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',

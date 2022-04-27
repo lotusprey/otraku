@@ -16,12 +16,14 @@ class CustomSliverHeader extends StatelessWidget {
     required this.actions,
     required this.child,
     required this.heroId,
+    this.extraLargeImage,
     this.maxWidth = Consts.LAYOUT_BIG,
   });
 
   final String? title;
   final String? image;
   final String? banner;
+  final String? extraLargeImage;
   final bool squareImage;
   final bool implyLeading;
   final List<Widget> actions;
@@ -49,6 +51,7 @@ class CustomSliverHeader extends StatelessWidget {
       delegate: _Delegate(
         title: title ?? '',
         image: image,
+        extraLargeImage: extraLargeImage,
         banner: banner,
         height: height,
         bannerHeight: bannerHeight,
@@ -68,6 +71,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   _Delegate({
     required this.title,
     required this.image,
+    required this.extraLargeImage,
     required this.banner,
     required this.height,
     required this.bannerHeight,
@@ -82,6 +86,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
   final String title;
   final String? image;
+  final String? extraLargeImage;
   final String? banner;
   final double height;
   final double bannerHeight;
@@ -183,8 +188,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                               : null,
                           child: image != null
                               ? GestureDetector(
-                                  onTap: () =>
-                                      showPopUp(context, ImageDialog(image!)),
+                                  onTap: () => showPopUp(
+                                    context,
+                                    ImageDialog(extraLargeImage ?? image!),
+                                  ),
                                   child: FadeImage(
                                     image!,
                                     fit: complexImage

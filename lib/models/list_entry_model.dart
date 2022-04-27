@@ -1,5 +1,6 @@
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
 
 class ListEntryModel {
   final int mediaId;
@@ -69,7 +70,7 @@ class ListEntryModel {
     return ListEntryModel._(
       mediaId: map['media']['id'],
       titles: titles,
-      cover: map['media']['coverImage']['extraLarge'],
+      cover: Settings().getCover(map['media']['coverImage']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: map['media']['nextAiringEpisode']?['airingAt'],
       format: map['media']['format'],

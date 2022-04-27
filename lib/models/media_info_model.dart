@@ -1,6 +1,7 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
 
 class MediaInfoModel {
   final int id;
@@ -12,7 +13,8 @@ class MediaInfoModel {
   final String? englishTitle;
   final String? nativeTitle;
   final List<String> synonyms;
-  final String? cover;
+  final String cover;
+  final String extraLargeCover;
   final String? banner;
   final String description;
   final String? format;
@@ -49,6 +51,7 @@ class MediaInfoModel {
     required this.nativeTitle,
     required this.synonyms,
     required this.cover,
+    required this.extraLargeCover,
     required this.banner,
     required this.description,
     required this.format,
@@ -98,7 +101,8 @@ class MediaInfoModel {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      cover: map['coverImage']['extraLarge'] ?? map['coverImage']['extraLarge'],
+      cover: Settings().getCover(map['coverImage']),
+      extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       description: Convert.clearHtml(map['description']),
       format: Convert.clarifyEnum(map['format']),

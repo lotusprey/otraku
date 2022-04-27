@@ -158,7 +158,12 @@ class ImageDialog extends StatelessWidget {
       backgroundColor: Colors.transparent,
       child: ClipRRect(
         borderRadius: Consts.BORDER_RAD_MIN,
-        child: Image.network(url, fit: fit),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          child: Image.network(url, fit: fit),
+        ),
       ),
     );
   }

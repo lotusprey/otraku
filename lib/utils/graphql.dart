@@ -60,7 +60,7 @@ abstract class GqlQuery {
             format
             title {userPreferred} 
             status(version: 2)
-            coverImage {extraLarge}
+            coverImage {extraLarge large medium}
           }
         }
       }
@@ -75,7 +75,7 @@ abstract class GqlQuery {
             id
             type
             title {userPreferred}
-            coverImage {extraLarge}
+            coverImage {extraLarge large medium}
           }
         }
       }
@@ -123,7 +123,7 @@ abstract class GqlQuery {
         genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
         onList: $onList, startDate_greater: $startDate_greater, startDate_lesser: $startDate_lesser,
         countryOfOrigin: $countryOfOrigin, source: $source, season: $season, sort: $sort) {
-          id type title {userPreferred} coverImage {extraLarge}
+          id type title {userPreferred} coverImage {extraLarge large medium}
         }
       }
     }
@@ -157,7 +157,7 @@ abstract class GqlQuery {
       edges {
         characterRole
         voiceActors(sort: [LANGUAGE]) {id name {userPreferred} image {large} languageV2}
-        node {id type title {userPreferred} coverImage {extraLarge}}
+        node {id type title {userPreferred} coverImage {extraLarge large medium}}
       }
     }
   ''';
@@ -186,7 +186,7 @@ abstract class GqlQuery {
               id
               type
               title {userPreferred}
-              coverImage {extraLarge}
+              coverImage {extraLarge large medium}
               format
             }
             characters {
@@ -204,7 +204,7 @@ abstract class GqlQuery {
               id
               type
               title {userPreferred}
-              coverImage {extraLarge}
+              coverImage {extraLarge large medium}
             }
           }
         }
@@ -249,7 +249,7 @@ abstract class GqlQuery {
           nodes {
             id
             title {userPreferred}
-            coverImage {extraLarge}
+            coverImage {extraLarge large medium}
             startDate {year}
             status(version: 2)
           }
@@ -279,7 +279,7 @@ abstract class GqlQuery {
         ratingAmount
         userRating
         createdAt
-        media {id type title {userPreferred} coverImage {extraLarge} bannerImage}
+        media {id type title {userPreferred} coverImage {extraLarge large medium} bannerImage}
         user {id name avatar {large}}
       }
     }
@@ -355,7 +355,7 @@ abstract class GqlQuery {
         statuses {count meanScore minutesWatched chaptersRead status}
         countries {count meanScore minutesWatched chaptersRead country}
       }
-      fragment media on MediaConnection {pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {extraLarge}}}
+      fragment media on MediaConnection {pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {extraLarge large medium}}}
       fragment character on CharacterConnection {pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}}
       fragment staff on StaffConnection {pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}}
       fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
@@ -518,14 +518,14 @@ abstract class GqlQuery {
           ... on RelatedMediaAdditionNotification {
             id
             type
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaDataChangeNotification {
             id
             type
             reason
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaMergeNotification {
@@ -533,7 +533,7 @@ abstract class GqlQuery {
             type
             reason
             deletedMediaTitles
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaDeletionNotification {
@@ -547,7 +547,7 @@ abstract class GqlQuery {
             id
             type
             episode
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
         }
@@ -670,7 +670,7 @@ abstract class _GqlFragment {
       status(version: 2)
       startDate {year month day}
       endDate {year month day}
-      coverImage {extraLarge}
+      coverImage {extraLarge large medium}
       nextAiringEpisode {episode airingAt}
       countryOfOrigin
       genres
@@ -743,7 +743,7 @@ abstract class _GqlFragment {
       createdAt
       siteUrl
       user {id name avatar {large}}
-      media {id type title {userPreferred} coverImage {extraLarge} format}
+      media {id type title {userPreferred} coverImage {extraLarge large medium} format}
       progress
       status
     }

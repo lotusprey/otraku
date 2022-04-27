@@ -60,7 +60,7 @@ class SettingsAppView extends StatelessWidget {
               DropDownField<int>(
                 title: 'Startup Page',
                 value: Settings().defaultHomeTab,
-                items: {
+                items: const {
                   'Inbox': HomeView.INBOX,
                   'Anime List': HomeView.ANIME_LIST,
                   'Manga List': HomeView.MANGA_LIST,
@@ -104,6 +104,12 @@ class SettingsAppView extends StatelessWidget {
                   key: (v) => Convert.clarifyEnum((v as Explorable).name)!,
                 ),
                 onChanged: (val) => Settings().defaultExplorable = val,
+              ),
+              DropDownField<int>(
+                title: 'Image Quality',
+                value: Settings().imageQuality,
+                items: const {'Very High': 1, 'High': 0, 'Medium': -1},
+                onChanged: (val) => Settings().imageQuality = val,
               ),
             ]),
           ),

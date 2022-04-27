@@ -101,7 +101,7 @@ class MediaInfoModel {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      cover: Settings().getCover(map['coverImage']),
+      cover: map['coverImage'][Settings().imageQuality],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       description: Convert.clearHtml(map['description']),

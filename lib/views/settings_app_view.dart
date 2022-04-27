@@ -105,10 +105,14 @@ class SettingsAppView extends StatelessWidget {
                 ),
                 onChanged: (val) => Settings().defaultExplorable = val,
               ),
-              DropDownField<int>(
+              DropDownField<String>(
                 title: 'Image Quality',
                 value: Settings().imageQuality,
-                items: const {'Very High': 1, 'High': 0, 'Medium': -1},
+                items: const {
+                  'Very High': 'extraLarge',
+                  'High': 'large',
+                  'Medium': 'medium',
+                },
                 onChanged: (val) => Settings().imageQuality = val,
               ),
             ]),

@@ -127,7 +127,7 @@ class StaffController extends ScrollingController {
         _media.add(RelationModel(
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
-          imageUrl: Settings().getCover(m['node']['coverImage']),
+          imageUrl: m['node']['coverImage'][Settings().imageQuality],
           subtitle: Convert.clarifyEnum(m['node']['format']),
           type: m['node']['type'] == 'ANIME'
               ? Explorable.anime
@@ -157,7 +157,7 @@ class StaffController extends ScrollingController {
       items.add(RelationModel(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
-        imageUrl: Settings().getCover(s['node']['coverImage']),
+        imageUrl: s['node']['coverImage'][Settings().imageQuality],
         subtitle: s['staffRole'],
         type:
             s['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,

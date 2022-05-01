@@ -6,6 +6,7 @@ import 'package:otraku/controllers/edit_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
@@ -63,6 +64,10 @@ class EditView extends StatelessWidget {
                           ? '${Settings().id}true'
                           : '${Settings().id}false',
                     ).removeEntry(ctrl.oldModel!);
+                    if (ctrl.model!.status == ListStatus.CURRENT)
+                      Get.find<ProgressController>()
+                          .remove(ctrl.model!.mediaId);
+
                     callback?.call(EditModel.emptyCopy(ctrl.model!));
                     Navigator.pop(context);
                   },

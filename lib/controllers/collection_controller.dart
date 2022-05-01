@@ -328,16 +328,16 @@ class CollectionController extends ScrollingController {
   /// When the progress of an entry is changed, this should be called
   /// to reflect it into the database. When reaching the last episode,
   /// [updateEntry] should be called instead.
-  Future<void> updateProgress(ListEntryModel model) async {
-    if (model.progressMax != null && model.progress > model.progressMax! - 1)
-      return;
-
-    final progress = model.progress;
-
+  Future<void> updateProgress(
+    int id,
+    int progress,
+    ListStatus? listStatus,
+    String? format,
+  ) async {
     // Update database item.
     final data = await Client.request(
       GqlMutation.updateProgress,
-      {'mediaId': model.mediaId, 'progress': progress},
+      {'mediaId': id, 'progress': progress},
     );
     if (data == null) return;
 
@@ -350,12 +350,12 @@ class CollectionController extends ScrollingController {
     // Update status list.
     for (final list in _lists) {
       if (list.isCustomList ||
-          list.status != model.listStatus ||
+          list.status != listStatus ||
           (list.splitCompletedListFormat != null &&
-              list.splitCompletedListFormat != model.format)) continue;
+              list.splitCompletedListFormat != format)) continue;
 
       for (final entry in list.entries)
-        if (entry.mediaId == model.mediaId) {
+        if (entry.mediaId == id) {
           entry.progress = progress;
           break;
         }
@@ -375,7 +375,7 @@ class CollectionController extends ScrollingController {
         for (int i = 0; i < customLists.length; i++)
           if (list.isCustomList && customLists[i] == list.name.toLowerCase()) {
             for (final entry in list.entries)
-              if (entry.mediaId == model.mediaId) {
+              if (entry.mediaId == id) {
                 entry.progress = progress;
                 break;
               }

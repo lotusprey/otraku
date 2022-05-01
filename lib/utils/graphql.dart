@@ -16,6 +16,28 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
+  static const currentMedia = r'''
+    query CurrentMedia($userId: Int, $page: Int = 1) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        mediaList(userId: $userId, status: CURRENT) {
+          mediaId
+          progress
+          media {
+            type
+            episodes
+            chapters
+            format
+            status(version: 2)
+            nextAiringEpisode {episode}
+            title {userPreferred}
+            coverImage {extraLarge large medium}
+          }
+        }
+      }
+    }
+  ''';
+
   static const media = r'''
     query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
         $withRecommendations: Boolean = false, $withCharacters: Boolean = false,

@@ -6,6 +6,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
@@ -37,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
   final _ctrl = ScrollController();
 
   late final HomeController homeCtrl;
+  late final ProgressController progressCtrl;
   late final ExploreController exploreCtrl;
   late final FeedController feedCtrl;
   late final TagGroupController tagCtrl;
@@ -68,9 +70,6 @@ class _HomeViewState extends State<HomeView> {
             },
             onSame: (i) {
               switch (i) {
-                case HomeView.INBOX:
-                  _ctrl.scrollUpTo(0);
-                  return;
                 case HomeView.ANIME_LIST:
                   if (animeCtrl.scrollCtrl.pos.pixels > 0)
                     animeCtrl.scrollCtrl.scrollUpTo(0);
@@ -95,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
                         ? exploreCtrl.search = ''
                         : exploreCtrl.search = null;
                   return;
-                case HomeView.USER:
+                default:
                   _ctrl.scrollUpTo(0);
                   return;
               }
@@ -149,6 +148,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     homeCtrl = Get.put(HomeController());
+    progressCtrl = Get.put(ProgressController());
     exploreCtrl = Get.put(ExploreController());
     feedCtrl = Get.put(FeedController(null));
     tagCtrl = Get.put(TagGroupController());
@@ -186,6 +186,7 @@ class _HomeViewState extends State<HomeView> {
   void dispose() {
     _ctrl.dispose();
     Get.delete<HomeController>();
+    Get.delete<ProgressController>();
     Get.delete<ExploreController>();
     Get.delete<FeedController>();
     Get.delete<TagGroupController>();

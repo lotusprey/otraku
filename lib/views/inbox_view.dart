@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/list_status.dart';
-import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/models/list_entry_model.dart';
+import 'package:otraku/controllers/progress_controller.dart';
+import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/feed_view.dart';
@@ -100,154 +100,124 @@ class InboxView extends StatelessWidget {
               const SizedBox(width: 45),
             notificationIcon,
           ],
-          builder: (context, offsetTop) {
-            late final Widget child;
-
-            if (ctrl.onFeed)
-              child = _Feed(feedCtrl, scrollCtrl, offsetTop);
-            else
-              child = GetBuilder<CollectionController>(
-                id: CollectionController.ID_BODY,
-                tag: '${Settings().id}true',
-                builder: (animeCtrl) => GetBuilder<CollectionController>(
-                  id: CollectionController.ID_BODY,
-                  tag: '${Settings().id}false',
-                  builder: (mangaCtrl) => CustomScrollView(
-                    controller: scrollCtrl,
-                    slivers: [
-                      SliverToBoxAdapter(child: SizedBox(height: offsetTop)),
-                      ..._progressWidgets(context, animeCtrl, mangaCtrl),
-                      SliverToBoxAdapter(
-                        child: SizedBox(height: NavLayout.offset(context)),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-
-            return AnimatedSwitcher(
-              duration: Consts.TRANSITION_DURATION,
-              child: child,
-            );
-          },
+          builder: (context, offsetTop) => AnimatedSwitcher(
+            duration: Consts.TRANSITION_DURATION,
+            child: ctrl.onFeed
+                ? _FeedView(feedCtrl, scrollCtrl, offsetTop)
+                : _ProgressView(scrollCtrl, offsetTop),
+          ),
         );
       },
     );
   }
+}
 
-  List<Widget> _progressWidgets(
-    BuildContext context,
-    CollectionController animeCtrl,
-    CollectionController mangaCtrl,
-  ) {
-    final slivers = <Widget>[];
+class _ProgressView extends StatelessWidget {
+  _ProgressView(this.scrollCtrl, this.offsetTop);
 
-    if (animeCtrl.isLoading)
-      slivers.add(const SliverFillRemaining(child: Center(child: Loader())));
-    else {
-      final entries = animeCtrl.listWithStatus(ListStatus.CURRENT);
-      if (entries.isNotEmpty) {
-        final releasing = <ListEntryModel>[];
-        final other = <ListEntryModel>[];
-        for (final e in entries)
-          e.status == MediaStatus.RELEASING.name
-              ? releasing.add(e)
-              : other.add(e);
+  final ScrollController scrollCtrl;
+  final double offsetTop;
 
-        _addProgressSection(
-          title: 'Releasing Anime',
-          items: releasing,
-          context: context,
-          slivers: slivers,
-          ctrl: animeCtrl,
-        );
-        _addProgressSection(
-          title: 'Other Anime',
-          items: other,
-          context: context,
-          slivers: slivers,
-          ctrl: animeCtrl,
-        );
-      }
-    }
+  @override
+  Widget build(BuildContext context) {
+    const titlePadding = EdgeInsets.symmetric(vertical: 10);
+    final titleStyle = Theme.of(context).textTheme.headline2;
 
-    if (mangaCtrl.isLoading && slivers.length > 1)
-      slivers.add(const SliverFillRemaining(child: Center(child: Loader())));
-    else {
-      final entries = mangaCtrl.listWithStatus(ListStatus.CURRENT);
-      if (entries.isNotEmpty) {
-        final releasing = <ListEntryModel>[];
-        final other = <ListEntryModel>[];
-        for (final e in entries)
-          e.status == MediaStatus.RELEASING.name
-              ? releasing.add(e)
-              : other.add(e);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: GetBuilder<ProgressController>(
+        builder: (ctrl) {
+          if (ctrl.releasingAnime.isEmpty &&
+              ctrl.otherAnime.isEmpty &&
+              ctrl.releasingManga.isEmpty &&
+              ctrl.otherManga.isEmpty) {
+            if (ctrl.isLoading) return const Center(child: Loader());
 
-        _addProgressSection(
-          title: 'Releasing Manga',
-          items: releasing,
-          context: context,
-          slivers: slivers,
-          ctrl: mangaCtrl,
-        );
-        _addProgressSection(
-          title: 'Other Manga',
-          items: other,
-          context: context,
-          slivers: slivers,
-          ctrl: mangaCtrl,
-        );
-      }
-    }
+            return const Text('You are not watching/reading anything');
+          }
 
-    if (slivers.isEmpty)
-      slivers.add(const SliverFillRemaining(
-        child: Center(
-          child: Text('You don\'t watch/read anything in the moment.'),
-        ),
-      ));
-
-    return slivers;
+          return CustomScrollView(
+            physics: Consts.PHYSICS,
+            controller: scrollCtrl,
+            slivers: [
+              SliverRefreshControl(
+                onRefresh: () => ctrl.fetch(),
+                canRefresh: () => !ctrl.isLoading,
+                offsetTop: offsetTop - 10,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: titlePadding,
+                  child: Text('Releasing Anime', style: titleStyle),
+                ),
+              ),
+              MinimalCollectionGrid(
+                items: ctrl.releasingAnime,
+                updateProgress: _updateAnimeProgress,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: titlePadding,
+                  child: Text('Other Anime', style: titleStyle),
+                ),
+              ),
+              MinimalCollectionGrid(
+                items: ctrl.otherAnime,
+                updateProgress: _updateAnimeProgress,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: titlePadding,
+                  child: Text('Releasing Manga', style: titleStyle),
+                ),
+              ),
+              MinimalCollectionGrid(
+                items: ctrl.releasingManga,
+                updateProgress: _updateMangaProgress,
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: titlePadding,
+                  child: Text('Other Manga', style: titleStyle),
+                ),
+              ),
+              MinimalCollectionGrid(
+                items: ctrl.otherManga,
+                updateProgress: _updateMangaProgress,
+              ),
+              SliverToBoxAdapter(
+                child: SizedBox(height: NavLayout.offset(context)),
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 
-  void _addProgressSection({
-    required BuildContext context,
-    required List<Widget> slivers,
-    required String title,
-    required List<ListEntryModel> items,
-    required CollectionController ctrl,
-  }) {
-    if (items.isEmpty) return;
+  Future<void> _updateAnimeProgress(ProgressEntryModel e) async {
+    await Get.find<CollectionController>(tag: '${Settings().id}true')
+        .updateProgress(e.mediaId, e.progress, ListStatus.CURRENT, e.format);
+  }
 
-    slivers.add(SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10),
-        child: Text(title, style: Theme.of(context).textTheme.headline2),
-      ),
-    ));
-
-    slivers.add(SliverPadding(
-      padding: Consts.PADDING,
-      sliver: MinimalCollectionGrid(
-        items: items,
-        updateProgress: ctrl.updateProgress,
-      ),
-    ));
+  Future<void> _updateMangaProgress(ProgressEntryModel e) async {
+    await Get.find<CollectionController>(tag: '${Settings().id}false')
+        .updateProgress(e.mediaId, e.progress, ListStatus.CURRENT, e.format);
   }
 }
 
-class _Feed extends StatefulWidget {
-  _Feed(this.ctrl, this.scrollCtrl, this.offsetTop);
+class _FeedView extends StatefulWidget {
+  _FeedView(this.ctrl, this.scrollCtrl, this.offsetTop);
 
   final FeedController ctrl;
   final ScrollController scrollCtrl;
   final double offsetTop;
 
   @override
-  State<_Feed> createState() => __FeedState();
+  State<_FeedView> createState() => _FeedViewState();
 }
 
-class __FeedState extends State<_Feed> {
+class _FeedViewState extends State<_FeedView> {
   Future<void> _listener() async {
     if (widget.ctrl.isLoading ||
         widget.scrollCtrl.position.pixels <

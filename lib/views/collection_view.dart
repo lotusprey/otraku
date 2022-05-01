@@ -99,7 +99,14 @@ class HomeCollectionView extends StatelessWidget {
                 return LargeCollectionGrid(
                   items: ctrl.entries,
                   scoreFormat: ctrl.scoreFormat!,
-                  updateProgress: isMe ? ctrl.updateProgress : null,
+                  updateProgress: isMe
+                      ? (e) => ctrl.updateProgress(
+                            e.mediaId,
+                            e.progress,
+                            e.listStatus,
+                            e.format,
+                          )
+                      : null,
                 );
               },
             ),

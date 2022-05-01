@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/list_entry_model.dart';
+import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -12,8 +12,8 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class MinimalCollectionGrid extends StatelessWidget {
   MinimalCollectionGrid({required this.items, required this.updateProgress});
 
-  final List<ListEntryModel> items;
-  final void Function(ListEntryModel) updateProgress;
+  final List<ProgressEntryModel> items;
+  final void Function(ProgressEntryModel) updateProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class MinimalCollectionGrid extends StatelessWidget {
           child: ExploreIndexer(
             id: items[i].mediaId,
             explorable: Explorable.anime,
-            imageUrl: items[i].cover,
+            imageUrl: items[i].imageUrl,
             child: Column(
               children: [
                 Expanded(
@@ -42,7 +42,7 @@ class MinimalCollectionGrid extends StatelessWidget {
                       borderRadius: Consts.BORDER_RAD_MIN,
                       child: Container(
                         color: Theme.of(context).colorScheme.surface,
-                        child: FadeImage(items[i].cover),
+                        child: FadeImage(items[i].imageUrl),
                       ),
                     ),
                   ),
@@ -52,7 +52,7 @@ class MinimalCollectionGrid extends StatelessWidget {
                   child: SizedBox(
                     height: 35,
                     child: Text(
-                      items[i].titles[0],
+                      items[i].title,
                       overflow: TextOverflow.fade,
                       maxLines: 2,
                       style: Theme.of(context).textTheme.bodyText2,
@@ -73,8 +73,8 @@ class MinimalCollectionGrid extends StatelessWidget {
 class _IncrementButton extends StatefulWidget {
   _IncrementButton(this.model, this.updateProgress);
 
-  final ListEntryModel model;
-  final void Function(ListEntryModel) updateProgress;
+  final ProgressEntryModel model;
+  final void Function(ProgressEntryModel) updateProgress;
 
   @override
   State<_IncrementButton> createState() => _IncrementButtonState();

@@ -7,18 +7,25 @@ packages:
       name: app_links
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.1.0"
   app_links_platform_interface:
     dependency: transitive
     description:
       name: app_links_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.2"
   app_links_web:
     dependency: transitive
     description:
       name: app_links_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  app_links_windows:
+    dependency: transitive
+    description:
+      name: app_links_windows
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
@@ -323,7 +330,7 @@ packages:
       name: path_provider_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.12"
+    version: "2.0.13"
   path_provider_ios:
     dependency: "direct main"
     description:

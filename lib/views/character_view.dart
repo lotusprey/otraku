@@ -284,7 +284,7 @@ class _ActionButton extends StatelessWidget {
 
         if (Settings().leftHanded) children = children.reversed.toList();
 
-        return FloatingListener(
+        return FloatingActionListener(
           scrollCtrl: ctrl.scrollCtrl,
           child: Row(mainAxisSize: MainAxisSize.min, children: children),
         );

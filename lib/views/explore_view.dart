@@ -105,7 +105,7 @@ class ExploreActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ExploreController>(
       id: ExploreController.ID_BUTTON,
-      builder: (ctrl) => FloatingListener(
+      builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
         child: ActionButton(
           tooltip: 'Types',

@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class HeaderLayout extends StatelessWidget {
-  const HeaderLayout({required this.topItems, required this.builder});
+  const HeaderLayout({
+    required this.topItems,
+    required this.builder,
+    this.canPop = false,
+  });
 
   final List<Widget> topItems;
   final Widget Function(BuildContext, double) builder;
+  final bool canPop;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +39,17 @@ class HeaderLayout extends StatelessWidget {
                       padding: EdgeInsets.only(top: paddingTop),
                       child: SizedBox(
                         height: Consts.TAP_TARGET_SIZE,
-                        child: Row(children: topItems),
+                        child: Row(
+                          children: [
+                            if (canPop)
+                              AppBarIcon(
+                                tooltip: 'Close',
+                                icon: Ionicons.chevron_back_outline,
+                                onTap: () => Navigator.pop(context),
+                              ),
+                            ...topItems,
+                          ],
+                        ),
                       ),
                     ),
                   ),

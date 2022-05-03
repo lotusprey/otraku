@@ -157,11 +157,11 @@ class _DraggableIconState extends State<_DraggableIcon>
   }
 }
 
-/// Hides [child] on scroll-down and reveals it on scroll-up.
+// Hides [child] on scroll-down and reveals it on scroll-up.
 class FloatingListener extends StatefulWidget {
   FloatingListener({required this.scrollCtrl, required this.child});
 
-  final MultiScrollController scrollCtrl;
+  final ScrollController scrollCtrl;
   final Widget child;
 
   @override
@@ -169,6 +169,72 @@ class FloatingListener extends StatefulWidget {
 }
 
 class _FloatingListenerState extends State<FloatingListener>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationCtrl;
+  late Animation<double> _animation;
+
+  bool _visible = true;
+  double _lastOffset = 0;
+
+  void _visibility() {
+    final pos = widget.scrollCtrl.position;
+    final dif = pos.pixels - _lastOffset;
+
+    // If the position has moved enough from the last
+    // spot or is out of bounds, update visibility.
+    if (dif > 10 || pos.pixels > pos.maxScrollExtent) {
+      _lastOffset = widget.scrollCtrl.position.pixels;
+      _animationCtrl.forward().then((_) => setState(() => _visible = false));
+    } else if (dif < -10 || pos.pixels < pos.minScrollExtent) {
+      _lastOffset = widget.scrollCtrl.position.pixels;
+      setState(() => _visible = true);
+      _animationCtrl.reverse();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _animationCtrl = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _animation = Tween(begin: 1.0, end: 0.5).animate(_animationCtrl);
+
+    widget.scrollCtrl.addListener(_visibility);
+  }
+
+  @override
+  void dispose() {
+    widget.scrollCtrl.removeListener(_visibility);
+    _animationCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_visible) return const SizedBox();
+
+    return ScaleTransition(
+      scale: _animation,
+      child: FadeTransition(opacity: _animation, child: widget.child),
+    );
+  }
+}
+
+/// To be deprecated.
+/// Hides [child] on scroll-down and reveals it on scroll-up.
+class FloatingActionListener extends StatefulWidget {
+  FloatingActionListener({required this.scrollCtrl, required this.child});
+
+  final MultiScrollController scrollCtrl;
+  final Widget child;
+
+  @override
+  _FloatingActionListenerState createState() => _FloatingActionListenerState();
+}
+
+class _FloatingActionListenerState extends State<FloatingActionListener>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationCtrl;
   late Animation<double> _animation;

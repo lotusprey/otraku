@@ -5,7 +5,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/providers/edit.dart';
 import 'package:otraku/providers/user_settings.dart';
@@ -136,7 +135,7 @@ class _RemoveButton extends StatelessWidget {
                   ? '${Settings().id}true'
                   : '${Settings().id}false',
             ).removeEntry(oldEdit);
-            // TODO
+            // TODO remove item
             // if (ctrl.model!.status == ListStatus.CURRENT)
             //           Get.find<ProgressController>()
             //               .remove(ctrl.model!.mediaId);

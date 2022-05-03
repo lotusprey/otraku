@@ -127,7 +127,7 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<StudioController>(
       tag: id.toString(),
-      builder: (ctrl) => FloatingListener(
+      builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
         child: ActionButton(
           icon: Ionicons.funnel_outline,

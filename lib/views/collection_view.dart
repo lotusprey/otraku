@@ -129,7 +129,7 @@ class CollectionActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = Get.find<CollectionController>(tag: ctrlTag);
 
-    return FloatingListener(
+    return FloatingActionListener(
       scrollCtrl: ctrl.scrollCtrl,
       child: ActionButton(
         tooltip: 'Lists',

@@ -201,7 +201,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
 
     if (Settings().leftHanded) children = children.reversed.toList();
 
-    return FloatingListener(
+    return FloatingActionListener(
       scrollCtrl: widget.ctrl.scrollCtrl,
       child: Row(mainAxisSize: MainAxisSize.min, children: children),
     );

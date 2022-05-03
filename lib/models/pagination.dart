@@ -3,6 +3,13 @@ class Pages<T> {
 
   factory Pages() => Pages._(items: [], hasNext: true, next: 1);
 
+  factory Pages.from({
+    required List<T> items,
+    required bool hasNext,
+    int next = 2,
+  }) =>
+      Pages._(items: items, hasNext: hasNext, next: next);
+
   final List<T> items;
   final bool hasNext;
   final int next;

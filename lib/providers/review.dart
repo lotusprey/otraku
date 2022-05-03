@@ -22,9 +22,11 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
     });
   }
 
+  /// Rate a review: [true] for "agree", [false]
+  /// for "disagree" and null for "unvote".
   Future<void> rate(bool? rating) async {
-    if (state is! AsyncData) return;
-    final value = (state as AsyncData<Review>).value;
+    if (!state.hasValue || state.isLoading) return;
+    final value = state.value!;
 
     state = await AsyncValue.guard(() async {
       final data = await Client.get(GqlMutation.rateReview, {

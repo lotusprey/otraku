@@ -4,6 +4,7 @@ import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class FavouritesController extends ScrollingController {

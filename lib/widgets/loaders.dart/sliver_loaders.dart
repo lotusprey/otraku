@@ -1,25 +1,26 @@
 import 'package:flutter/cupertino.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 
 class SliverRefreshControl extends StatelessWidget {
   const SliverRefreshControl({
     required this.onRefresh,
-    required this.canRefresh,
-    this.offsetTop = 0,
+    this.canRefresh,
+    this.topOffset = 0,
   });
 
   final Future<void> Function() onRefresh;
-  final bool Function() canRefresh;
-  final double offsetTop;
+  final bool Function()? canRefresh;
+  final double topOffset;
 
   @override
   Widget build(BuildContext context) => SliverPadding(
-        padding: EdgeInsets.only(top: offsetTop),
+        padding: EdgeInsets.only(top: topOffset),
         sliver: CupertinoSliverRefreshControl(
           refreshIndicatorExtent: 15,
           refreshTriggerPullDistance: 160,
           onRefresh: () async {
-            if (canRefresh()) await onRefresh();
+            if (canRefresh?.call() ?? true) await onRefresh();
           },
           builder: (
             _,
@@ -51,4 +52,23 @@ class SliverRefreshControl extends StatelessWidget {
           },
         ),
       );
+}
+
+class SliverFooterLoader extends StatelessWidget {
+  const SliverFooterLoader();
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: PageOffset.of(context).bottom + 10,
+          ),
+          child: const Loader(),
+        ),
+      ),
+    );
+  }
 }

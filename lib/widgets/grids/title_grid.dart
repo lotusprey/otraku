@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class TitleGrid extends StatelessWidget {

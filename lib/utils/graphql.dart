@@ -301,6 +301,7 @@ abstract class GqlQuery {
         ratingAmount
         userRating
         createdAt
+        siteUrl
         media {id type title {userPreferred} coverImage {extraLarge large medium} bannerImage}
         user {id name avatar {large}}
       }
@@ -308,10 +309,10 @@ abstract class GqlQuery {
   ''';
 
   static const reviews = r'''
-    query Reviews($userId: Int, $page: Int = 1) {
+    query Reviews($userId: Int, $page: Int = 1, $sort: [ReviewSort] = [CREATED_AT_DESC]) {
       Page(page: $page) {
-        pageInfo {hasNextPage}
-        reviews(userId: $userId, sort: CREATED_AT_DESC) {
+        pageInfo {hasNextPage total}
+        reviews(userId: $userId, sort: $sort) {
           id
           summary 
           body(asHtml: true)

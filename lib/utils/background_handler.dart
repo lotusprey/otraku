@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/constants/notification_type.dart';
-import 'package:otraku/models/notification_model.dart';
+import 'package:otraku/providers/notifications.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -118,122 +118,118 @@ void _fetch() => Workmanager().executeTask((_, __) async {
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {
-        late NotificationModel model;
-        try {
-          model = NotificationModel(ns[i]);
-        } catch (_) {
-          continue;
-        }
+        final notification = NotificationItem.maybe(ns[i]);
+        if (notification == null) continue;
 
-        switch (model.type) {
+        switch (notification.type) {
           case NotificationType.FOLLOWING:
             _show(
-              model,
+              notification,
               'New Follow',
-              '${RouteArg.user}/${model.bodyId}',
+              '${RouteArg.user}/${notification.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_MESSAGE:
             _show(
-              model,
+              notification,
               'New Message',
-              '${RouteArg.activity}/${model.bodyId}',
+              '${RouteArg.activity}/${notification.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY:
           case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
             _show(
-              model,
+              notification,
               'New Reply',
-              '${RouteArg.activity}/${model.bodyId}',
+              '${RouteArg.activity}/${notification.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_MENTION:
             _show(
-              model,
+              notification,
               'New Mention',
-              '${RouteArg.activity}/${model.bodyId}',
+              '${RouteArg.activity}/${notification.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_LIKE:
             _show(
-              model,
+              notification,
               'New Activity Like',
-              '${RouteArg.activity}/${model.bodyId}',
+              '${RouteArg.activity}/${notification.bodyId}',
             );
             break;
           case NotificationType.ACTIVITY_REPLY_LIKE:
             _show(
-              model,
+              notification,
               'New Reply Like',
-              '${RouteArg.activity}/${model.bodyId}',
+              '${RouteArg.activity}/${notification.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_REPLY:
             _show(
-              model,
+              notification,
               'New Forum Reply',
-              '${RouteArg.thread}/${model.bodyId}',
+              '${RouteArg.thread}/${notification.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_MENTION:
             _show(
-              model,
+              notification,
               'New Forum Mention',
-              '${RouteArg.thread}/${model.bodyId}',
+              '${RouteArg.thread}/${notification.bodyId}',
             );
             break;
           case NotificationType.THREAD_SUBSCRIBED:
             _show(
-              model,
+              notification,
               'New Forum Comment',
-              '${RouteArg.thread}/${model.bodyId}',
+              '${RouteArg.thread}/${notification.bodyId}',
             );
             break;
           case NotificationType.THREAD_LIKE:
             _show(
-              model,
+              notification,
               'New Forum Like',
-              '${RouteArg.thread}/${model.bodyId}',
+              '${RouteArg.thread}/${notification.bodyId}',
             );
             break;
           case NotificationType.THREAD_COMMENT_LIKE:
             _show(
-              model,
+              notification,
               'New Forum Comment Like',
-              '${RouteArg.thread}/${model.bodyId}',
+              '${RouteArg.thread}/${notification.bodyId}',
             );
             break;
           case NotificationType.AIRING:
             _show(
-              model,
+              notification,
               'New Episode',
-              '${RouteArg.media}/${model.bodyId}',
+              '${RouteArg.media}/${notification.bodyId}',
             );
             break;
           case NotificationType.RELATED_MEDIA_ADDITION:
             _show(
-              model,
+              notification,
               'New Addition',
-              '${RouteArg.media}/${model.bodyId}',
+              '${RouteArg.media}/${notification.bodyId}',
             );
             break;
           case NotificationType.MEDIA_DATA_CHANGE:
             _show(
-              model,
+              notification,
               'Modified Media',
-              '${RouteArg.media}/${model.bodyId}',
+              '${RouteArg.media}/${notification.bodyId}',
             );
             break;
           case NotificationType.MEDIA_MERGE:
             _show(
-              model,
+              notification,
               'Merged Media',
-              '${RouteArg.media}/${model.bodyId}',
+              '${RouteArg.media}/${notification.bodyId}',
             );
             break;
           case NotificationType.MEDIA_DELETION:
-            _show(model, 'Deleted Media', '');
+            _show(notification, 'Deleted Media', '');
             break;
           default:
             break;
@@ -243,14 +239,14 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       return true;
     });
 
-void _show(NotificationModel model, String title, String payload) {
-  final id = model.type.name;
+void _show(NotificationItem notification, String title, String payload) {
+  final id = notification.type.name;
   final name = Convert.clarifyEnum(id)!;
 
   _notificationPlugin.show(
-    model.id,
+    notification.id,
     title,
-    model.texts.join(),
+    notification.texts.join(),
     NotificationDetails(
       android: AndroidNotificationDetails(
         id,

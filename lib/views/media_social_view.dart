@@ -4,11 +4,11 @@ import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
 

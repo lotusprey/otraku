@@ -4,14 +4,14 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/layouts/review_grid.dart';
-import 'package:otraku/widgets/layouts/title_grid.dart';
+import 'package:otraku/widgets/grids/review_grid.dart';
+import 'package:otraku/widgets/grids/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/grids/tile_grid.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filter_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreView extends StatelessWidget {
@@ -67,7 +67,7 @@ class _ExploreGrid extends StatelessWidget {
           return TileGrid(models: results, full: false);
 
         if (results[0].explorable == Explorable.review)
-          return ReviewGrid(results);
+          return ReviewGrid(items: results);
 
         return TileGrid(models: results);
       },
@@ -114,27 +114,28 @@ class ExploreActionButton extends StatelessWidget {
             context,
             DynamicGradientDragSheet(
               onTap: (i) => ctrl.type = Explorable.values[i],
-              itemCount: Explorable.values.length,
-              itemBuilder: (_, i) => Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Explorable.values[i].icon,
-                    color: i != ctrl.type.index
-                        ? Theme.of(context).colorScheme.onBackground
-                        : Theme.of(context).colorScheme.primary,
+              children: [
+                for (int i = 0; i < Explorable.values.length; i++)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Explorable.values[i].icon,
+                        color: i != ctrl.type.index
+                            ? Theme.of(context).colorScheme.onBackground
+                            : Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        Convert.clarifyEnum(Explorable.values[i].name)!,
+                        style: i != ctrl.type.index
+                            ? Theme.of(context).textTheme.headline1
+                            : Theme.of(context).textTheme.headline1?.copyWith(
+                                color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 5),
-                  Text(
-                    Convert.clarifyEnum(Explorable.values[i].name)!,
-                    style: i != ctrl.type.index
-                        ? Theme.of(context).textTheme.headline1
-                        : Theme.of(context).textTheme.headline1?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                  ),
-                ],
-              ),
+              ],
             ),
           ),
           onSwipe: (goRight) {

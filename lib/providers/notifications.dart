@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/notification_type.dart';
-import 'package:otraku/models/pagination.dart';
+import 'package:otraku/utils/pagination.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -23,108 +23,43 @@ class NotificationsNotifier extends ChangeNotifier {
 
   final NotificationFilterType filter;
 
-  var _pages = const AsyncValue<Pages<NotificationItem>>.loading();
   int _unreadCount = 0;
+  var _notifications = const AsyncValue<Pagination<NotificationItem>>.loading();
 
-  AsyncValue<Pages<NotificationItem>> get pages => _pages;
   int get unreadCount => _unreadCount;
+  AsyncValue<Pagination<NotificationItem>> get notifications => _notifications;
 
   Future<void> fetch() async {
-    _pages = const AsyncValue.loading();
-    notifyListeners();
+    _notifications = await AsyncValue.guard(() async {
+      final value = _notifications.value ?? Pagination();
 
-    _pages = await AsyncValue.guard(() async {
       final data = await Client.get(GqlQuery.notifications, {
-        'page': 1,
-        if (filter.index < 1) ...{
+        'page': value.next,
+        if (filter == NotificationFilterType.all) ...{
           'withCount': true,
           'resetCount': true,
         } else
-          'filter': _filterTypeItems[filter.index],
+          'filter': filter.vars,
       });
 
       _unreadCount = 0;
       if (filter.index < 1)
         _unreadCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
 
-      if (data['Page']?['notifications'] == null) return Pages();
-
-      final bool hasNext = data['Page']['pageInfo']?['hasNextPage'] ?? false;
       final items = <NotificationItem>[];
       for (final n in data['Page']['notifications']) {
         final item = NotificationItem.maybe(n);
         if (item != null) items.add(item);
       }
 
-      return Pages.from(items: items, hasNext: hasNext);
+      return value.copyWith(
+        items,
+        data['Page']['pageInfo']?['hasNextPage'] ?? false,
+      );
     });
-
-    notifyListeners();
-  }
-
-  Future<void> fetchNext() async {
-    final value = _pages.value;
-    if (value == null) return;
-    _pages = _pages.copyWithPrevious(const AsyncValue.loading());
-    notifyListeners();
-
-    _pages = await AsyncValue.guard(() async {
-      final data = await Client.get(GqlQuery.notifications, {
-        'page': value.next,
-        if (filter.index > 0) 'filter': _filterTypeItems[filter.index],
-      });
-
-      if (data['Page']?['notifications'] == null) return value;
-
-      final bool hasNext = data['Page']['pageInfo']?['hasNextPage'] ?? false;
-      final items = <NotificationItem>[];
-      for (final n in data['Page']['notifications']) {
-        final item = NotificationItem.maybe(n);
-        if (item != null) items.add(item);
-      }
-
-      return value.remakeWith(items, hasNext);
-    });
-
     notifyListeners();
   }
 }
-
-const _filterTypeItems = [
-  null,
-  ['AIRING'],
-  [
-    'ACTIVITY_MESSAGE',
-    'ACTIVITY_REPLY',
-    'ACTIVITY_REPLY_SUBSCRIBED',
-    'ACTIVITY_MENTION',
-    'ACTIVITY_LIKE',
-    'ACTIVITY_REPLY_LIKE',
-  ],
-  [
-    'THREAD_COMMENT_REPLY',
-    'THREAD_COMMENT_MENTION',
-    'THREAD_SUBSCRIBED',
-    'THREAD_LIKE',
-    'THREAD_COMMENT_LIKE',
-  ],
-  ['FOLLOWING'],
-  [
-    'RELATED_MEDIA_ADDITION',
-    'MEDIA_DATA_CHANGE',
-    'MEDIA_MERGE',
-    'MEDIA_DELETION',
-  ],
-];
-
-const notificationFilterNames = [
-  'All',
-  'Airing',
-  'Activity',
-  'Forum',
-  'Follows',
-  'Media',
-];
 
 enum NotificationFilterType {
   all,
@@ -133,6 +68,60 @@ enum NotificationFilterType {
   forum,
   follows,
   media,
+}
+
+extension NotificationFilterTypeExtension on NotificationFilterType {
+  String get text {
+    switch (this) {
+      case NotificationFilterType.all:
+        return 'All';
+      case NotificationFilterType.airing:
+        return 'Airing';
+      case NotificationFilterType.activity:
+        return 'Activity';
+      case NotificationFilterType.forum:
+        return 'Forum';
+      case NotificationFilterType.follows:
+        return 'Follows';
+      case NotificationFilterType.media:
+        return 'Media';
+    }
+  }
+
+  List<String>? get vars {
+    switch (this) {
+      case NotificationFilterType.all:
+        return null;
+      case NotificationFilterType.airing:
+        return const ['AIRING'];
+      case NotificationFilterType.activity:
+        return const [
+          'ACTIVITY_MESSAGE',
+          'ACTIVITY_REPLY',
+          'ACTIVITY_REPLY_SUBSCRIBED',
+          'ACTIVITY_MENTION',
+          'ACTIVITY_LIKE',
+          'ACTIVITY_REPLY_LIKE',
+        ];
+      case NotificationFilterType.forum:
+        return const [
+          'THREAD_COMMENT_REPLY',
+          'THREAD_COMMENT_MENTION',
+          'THREAD_SUBSCRIBED',
+          'THREAD_LIKE',
+          'THREAD_COMMENT_LIKE',
+        ];
+      case NotificationFilterType.follows:
+        return const ['FOLLOWING'];
+      case NotificationFilterType.media:
+        return const [
+          'RELATED_MEDIA_ADDITION',
+          'MEDIA_DATA_CHANGE',
+          'MEDIA_MERGE',
+          'MEDIA_DELETION',
+        ];
+    }
+  }
 }
 
 class NotificationItem {

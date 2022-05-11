@@ -7,15 +7,13 @@ import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/providers/notifications.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
-import 'package:otraku/widgets/navigation/header_layout.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -33,8 +31,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   void initState() {
     super.initState();
     _ctrl = PaginationController(
-      reload: ref.read(notificationsProvider).fetch,
-      loadMore: ref.read(notificationsProvider).fetchNext,
+      loadMore: () => ref.read(notificationsProvider).fetch(),
     );
   }
 
@@ -46,85 +43,23 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<NotificationsNotifier>(
-      notificationsProvider,
-      (_, notifier) {
-        if (notifier.pages.hasError)
-          showPopUp(
-            context,
-            ConfirmationDialog(
-              title: 'An error occured',
-              content: notifier.pages.error.toString(),
-            ),
-          );
-      },
-    );
-
-    final loader = const SliverToBoxAdapter(
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Loader(),
-        ),
-      ),
-    );
-
-    return Scaffold(
-      body: HeaderLayout(
-        canPop: true,
-        topItems: [
+    return PageLayout(
+      topBar: TopBar(
+        items: [
           Expanded(
-            child: Text(''),
+            child: Consumer(
+              builder: (context, ref, _) => Text(
+                '${ref.watch(notificationFilterProvider).text} Notifications',
+                style: Theme.of(context).textTheme.headline1,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
           ),
         ],
-        builder: (context, offsetTop) {
-          final refreshIndicator = SliverRefreshControl(
-            offsetTop: offsetTop,
-            canRefresh: () => true,
-            onRefresh: _ctrl.refresh,
-          );
-
-          return Consumer(
-            builder: (context, ref, _) {
-              final notifier = ref.watch(notificationsProvider);
-
-              if (notifier.pages.value?.items.isEmpty ?? true) {
-                if (notifier.pages.isLoading)
-                  return const Center(child: Loader());
-
-                return const Center(child: Text('No notifications'));
-              }
-              final data = notifier.pages.value!;
-
-              return CustomScrollView(
-                physics: Consts.PHYSICS,
-                controller: _ctrl.scrollCtrl,
-                slivers: [
-                  refreshIndicator,
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => _NotificationWidget(
-                          data.items[i],
-                          i < notifier.unreadCount,
-                        ),
-                        childCount: data.items.length,
-                      ),
-                    ),
-                  ),
-                  if (data.hasNext) loader,
-                ],
-              );
-            },
-          );
-        },
       ),
-      floatingActionButtonLocation: Settings().leftHanded
-          ? FloatingActionButtonLocation.startFloat
-          : FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingListener(
-        scrollCtrl: _ctrl.scrollCtrl,
+      floatingBar: FloatingBar(
+        scrollCtrl: _ctrl,
         child: ActionButton(
           tooltip: 'Filter',
           icon: Ionicons.funnel_outline,
@@ -137,24 +72,83 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     notificationFilterProvider.notifier,
                   );
 
-                  return DynamicGradientDragSheet(
-                    itemCount: 6,
-                    onTap: (i) => notifier.state =
-                        NotificationFilterType.values.elementAt(i),
-                    itemBuilder: (_, i) => Text(
-                      notificationFilterNames[i],
+                  final tiles = <Widget>[];
+                  for (int i = 0; i < NotificationFilterType.values.length; i++)
+                    tiles.add(Text(
+                      NotificationFilterType.values.elementAt(i).text,
                       style: i != notifier.state.index
                           ? Theme.of(context).textTheme.headline1
                           : Theme.of(context).textTheme.headline1?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                    ),
+                    ));
+
+                  return DynamicGradientDragSheet(
+                    children: tiles,
+                    onTap: (i) => notifier.state =
+                        NotificationFilterType.values.elementAt(i),
                   );
                 },
               ),
             );
           },
         ),
+      ),
+      builder: (context, topOffset, bottomOffset) => Consumer(
+        child: SliverRefreshControl(
+          onRefresh: () => Future.value(ref.refresh(notificationsProvider)),
+          topOffset: topOffset,
+        ),
+        builder: (context, ref, refreshIndicator) {
+          ref.listen<NotificationsNotifier>(
+            notificationsProvider,
+            (_, s) => s.notifications.whenOrNull(
+              error: (error, _) => showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Could not load notifications',
+                  content: error.toString(),
+                ),
+              ),
+            ),
+          );
+
+          const empty = Center(child: Text('No notifications'));
+
+          final notifier = ref.watch(notificationsProvider);
+          return notifier.notifications.maybeWhen(
+            orElse: () => empty,
+            loading: () => const Center(child: Loader()),
+            data: (data) {
+              if (data.items.isEmpty) return empty;
+
+              return CustomScrollView(
+                physics: Consts.PHYSICS,
+                controller: _ctrl,
+                slivers: [
+                  refreshIndicator!,
+                  SliverPadding(
+                    padding: const EdgeInsets.only(
+                      left: 10,
+                      right: 10,
+                      top: 10,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, i) => _NotificationWidget(
+                          data.items[i],
+                          i < notifier.unreadCount,
+                        ),
+                        childCount: data.items.length,
+                      ),
+                    ),
+                  ),
+                  if (data.hasNext) const SliverFooterLoader(),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }

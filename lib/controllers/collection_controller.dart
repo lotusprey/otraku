@@ -9,6 +9,7 @@ import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/providers/edit.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class CollectionController extends ScrollingController {

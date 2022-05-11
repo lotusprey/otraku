@@ -7,7 +7,7 @@ import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -102,11 +102,13 @@ class __TileContentState extends State<_TileContent> {
   @override
   Widget build(BuildContext context) {
     final model = widget.model;
-    double progressPercent = 1;
+
+    double progressPercent = 0;
     if (model.progressMax != null)
       progressPercent = model.progress / model.progressMax!;
     else if (model.nextEpisode != null)
       progressPercent = model.progress / (model.nextEpisode! - 1);
+    else if (model.progress > 0) progressPercent = 1;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,

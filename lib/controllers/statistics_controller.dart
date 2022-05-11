@@ -22,7 +22,8 @@ class StatisticsController extends ScrollingController {
   int _scoreChartTab = BY_COUNT;
   int _lengthChartTab = BY_COUNT;
 
-  StatisticsModel get model => _onAnime ? _model.animeStats : _model.mangaStats;
+  StatisticsModel get animeStats => _model.animeStats;
+  StatisticsModel get mangaStats => _model.mangaStats;
 
   int get scoreChartTab => _scoreChartTab;
   set scoreChartTab(int val) {

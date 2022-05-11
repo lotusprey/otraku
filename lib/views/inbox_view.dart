@@ -14,13 +14,13 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/feed_view.dart';
 import 'package:otraku/widgets/activity_box.dart';
-import 'package:otraku/widgets/layouts/minimal_collection_grid.dart';
+import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
-import 'package:otraku/widgets/navigation/header_layout.dart';
 
 class InboxView extends StatelessWidget {
   InboxView(this.feedCtrl, this.scrollCtrl);
@@ -95,26 +95,29 @@ class InboxView extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: HomeController.ID_HOME,
       builder: (ctrl) {
-        return HeaderLayout(
-          topItems: [
-            Expanded(
-              child: TabSegments(
-                items: const {'Progress': false, 'Feed': true},
-                initial: ctrl.onFeed,
-                onChanged: (bool val) => ctrl.onFeed = val,
+        return PageLayout(
+          topBar: TopBar(
+            canPop: false,
+            items: [
+              Expanded(
+                child: TabSegments(
+                  items: const {'Progress': false, 'Feed': true},
+                  initial: ctrl.onFeed,
+                  onChanged: (bool val) => ctrl.onFeed = val,
+                ),
               ),
-            ),
-            if (ctrl.onFeed)
-              FeedFilterIcon(feedCtrl)
-            else
-              const SizedBox(width: 45),
-            notificationIcon,
-          ],
-          builder: (context, offsetTop) => AnimatedSwitcher(
+              if (ctrl.onFeed)
+                FeedFilterIcon(feedCtrl)
+              else
+                const SizedBox(width: 45),
+              notificationIcon,
+            ],
+          ),
+          builder: (context, topOffset, _) => AnimatedSwitcher(
             duration: Consts.TRANSITION_DURATION,
             child: ctrl.onFeed
-                ? _FeedView(feedCtrl, scrollCtrl, offsetTop)
-                : _ProgressView(scrollCtrl, offsetTop),
+                ? _FeedView(feedCtrl, scrollCtrl, topOffset)
+                : _ProgressView(scrollCtrl, topOffset),
           ),
         );
       },
@@ -134,7 +137,7 @@ class _ProgressView extends StatelessWidget {
     final titleStyle = Theme.of(context).textTheme.headline2;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
       child: GetBuilder<ProgressController>(
         builder: (ctrl) {
           if (ctrl.releasingAnime.isEmpty &&
@@ -143,7 +146,7 @@ class _ProgressView extends StatelessWidget {
               ctrl.otherManga.isEmpty) {
             if (ctrl.isLoading) return const Center(child: Loader());
 
-            return const Text('You are not watching/reading anything');
+            return const Text('You aren\'t watching/reading anything');
           }
 
           return CustomScrollView(
@@ -153,7 +156,7 @@ class _ProgressView extends StatelessWidget {
               SliverRefreshControl(
                 onRefresh: () => ctrl.fetch(),
                 canRefresh: () => !ctrl.isLoading,
-                offsetTop: offsetTop - 10,
+                topOffset: offsetTop - 10,
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -286,7 +289,7 @@ class _FeedViewState extends State<_FeedView> {
             SliverRefreshControl(
               onRefresh: () => widget.ctrl.fetchPage(clean: true),
               canRefresh: () => !widget.ctrl.isLoading,
-              offsetTop: widget.offsetTop - 10,
+              topOffset: widget.offsetTop,
             ),
             SliverPadding(padding: Consts.PADDING, sliver: content),
             SliverPadding(

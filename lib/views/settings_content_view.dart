@@ -6,9 +6,9 @@ import 'package:otraku/providers/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/layouts/chip_grids.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/grids/chip_grids.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 
 class SettingsContentView extends StatelessWidget {
   SettingsContentView(this.scrollCtrl, this.settings, this.shouldUpdate);
@@ -29,13 +29,15 @@ class SettingsContentView extends StatelessWidget {
       height: Consts.TAP_TARGET_SIZE,
     );
 
+    final offset = PageOffset.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.only(top: 10, right: 10),
+            padding: EdgeInsets.only(top: offset.top + 10, right: 10),
             sliver: SliverGrid(
               gridDelegate: dropDownGridDelegate,
               delegate: SliverChildListDelegate.fixed([
@@ -180,9 +182,7 @@ class SettingsContentView extends StatelessWidget {
               names: settings.advancedScores,
             ),
           ),
-          SliverToBoxAdapter(
-            child: SizedBox(height: NavLayout.offset(context)),
-          ),
+          SliverToBoxAdapter(child: SizedBox(height: offset.bottom)),
         ],
       ),
     );

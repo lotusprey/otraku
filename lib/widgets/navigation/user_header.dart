@@ -5,7 +5,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -57,7 +57,7 @@ class UserHeader extends StatelessWidget {
             ),
           ),
         if (user?.siteUrl != null)
-          IconShade(AppBarIcon(
+          IconShade(TopBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
@@ -67,7 +67,7 @@ class UserHeader extends StatelessWidget {
           )),
         if (isMe)
           IconShade(
-            AppBarIcon(
+            TopBarIcon(
               tooltip: 'Settings',
               icon: Ionicons.cog_outline,
               onTap: () => Navigator.pushNamed(context, RouteArg.settings),

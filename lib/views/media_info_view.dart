@@ -8,7 +8,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 

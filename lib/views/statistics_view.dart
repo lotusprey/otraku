@@ -4,12 +4,12 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/statistics_controller.dart';
 import 'package:otraku/models/statistics_model.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/charts.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
 
 class StatisticsView extends StatelessWidget {
   StatisticsView(this.id);
@@ -18,16 +18,13 @@ class StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final keyAnime = UniqueKey();
-    final keyManga = UniqueKey();
-
     return GetBuilder<StatisticsController>(
       init: StatisticsController(id),
       id: StatisticsController.ID_MAIN,
       tag: id.toString(),
       builder: (ctrl) {
-        return NavLayout(
-          navRow: NavIconRow(
+        return PageLayout(
+          bottomBar: BottomBarIconTabs(
             index: ctrl.onAnime ? 0 : 1,
             onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
             onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
@@ -36,75 +33,13 @@ class StatisticsView extends StatelessWidget {
               'Manga': Ionicons.bookmark_outline,
             },
           ),
-          appBar: ShadowAppBar(
+          topBar: TopBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
-          child: ListView(
-            controller: ctrl.scrollCtrl,
-            key: ctrl.onAnime ? keyAnime : keyManga,
-            padding: EdgeInsets.only(
-              top: 10,
-              bottom: NavLayout.offset(context),
-            ),
-            children: [
-              _Details(ctrl),
-              if (ctrl.model.scores.isNotEmpty) ...[
-                GetBuilder<StatisticsController>(
-                  id: StatisticsController.ID_SCORE,
-                  tag: id.toString(),
-                  builder: (_) => _BarChart(
-                    title: 'Score',
-                    tabs: TabSegments<int>(
-                      items: ctrl.onAnime
-                          ? const {'Titles': 0, 'Hours': 1}
-                          : const {'Titles': 0, 'Chapters': 1},
-                      initial: ctrl.scoreChartTab,
-                      onChanged: (val) => ctrl.scoreChartTab = val,
-                    ),
-                    stats: ctrl.model.scores,
-                    onAnime: ctrl.onAnime,
-                    chartTab: ctrl.scoreChartTab,
-                    barWidth: 40,
-                  ),
-                ),
-              ],
-              if (ctrl.model.lengths.isNotEmpty) ...[
-                GetBuilder<StatisticsController>(
-                  id: StatisticsController.ID_LENGTH,
-                  tag: id.toString(),
-                  builder: (_) => _BarChart(
-                    title: ctrl.onAnime ? 'Episodes' : 'Chapters',
-                    tabs: TabSegments<int>(
-                      items: ctrl.onAnime
-                          ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
-                          : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
-                      initial: ctrl.lengthChartTab,
-                      onChanged: (val) => ctrl.lengthChartTab = val,
-                    ),
-                    stats: ctrl.model.lengths,
-                    onAnime: ctrl.onAnime,
-                    chartTab: ctrl.lengthChartTab,
-                    barWidth: 50,
-                  ),
-                ),
-              ],
-              if (ctrl.model.count > 0)
-                GridView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _PieChart('Format Distribution', ctrl.model.formats),
-                    _PieChart('Status Distribution', ctrl.model.statuses),
-                    _PieChart('Country Distribution', ctrl.model.countries),
-                  ],
-                  gridDelegate:
-                      const SliverGridDelegateWithMinWidthAndFixedHeight(
-                    minWidth: 340,
-                    height: 250,
-                  ),
-                ),
-            ],
+          builder: (context, topOffset, bottomOffset) => TabSwitcher(
+            index: ctrl.onAnime ? 0 : 1,
+            onChanged: (i) => ctrl.onAnime = i > 0 ? false : true,
+            tabs: [_StatisticsView(ctrl, true), _StatisticsView(ctrl, false)],
           ),
         );
       },
@@ -112,18 +47,97 @@ class StatisticsView extends StatelessWidget {
   }
 }
 
+class _StatisticsView extends StatelessWidget {
+  _StatisticsView(this.ctrl, this.ofAnime);
+
+  final bool ofAnime;
+  final StatisticsController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final offset = PageOffset.of(context);
+    final model = ofAnime ? ctrl.animeStats : ctrl.mangaStats;
+
+    return ListView(
+      controller: ctrl.scrollCtrl,
+      padding: EdgeInsets.only(
+        top: offset.top + 10,
+        bottom: offset.bottom,
+      ),
+      children: [
+        _Details(ctrl, ofAnime),
+        if (model.scores.isNotEmpty) ...[
+          GetBuilder<StatisticsController>(
+            id: StatisticsController.ID_SCORE,
+            tag: ctrl.id.toString(),
+            builder: (_) => _BarChart(
+              title: 'Score',
+              tabs: TabSegments<int>(
+                items: ctrl.onAnime
+                    ? const {'Titles': 0, 'Hours': 1}
+                    : const {'Titles': 0, 'Chapters': 1},
+                initial: ctrl.scoreChartTab,
+                onChanged: (val) => ctrl.scoreChartTab = val,
+              ),
+              stats: model.scores,
+              onAnime: ctrl.onAnime,
+              chartTab: ctrl.scoreChartTab,
+              barWidth: 40,
+            ),
+          ),
+        ],
+        if (model.lengths.isNotEmpty) ...[
+          GetBuilder<StatisticsController>(
+            id: StatisticsController.ID_LENGTH,
+            tag: ctrl.id.toString(),
+            builder: (_) => _BarChart(
+              title: ctrl.onAnime ? 'Episodes' : 'Chapters',
+              tabs: TabSegments<int>(
+                items: ctrl.onAnime
+                    ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
+                    : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
+                initial: ctrl.lengthChartTab,
+                onChanged: (val) => ctrl.lengthChartTab = val,
+              ),
+              stats: model.lengths,
+              onAnime: ctrl.onAnime,
+              chartTab: ctrl.lengthChartTab,
+              barWidth: 50,
+            ),
+          ),
+        ],
+        if (model.count > 0)
+          GridView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _PieChart('Format Distribution', model.formats),
+              _PieChart('Status Distribution', model.statuses),
+              _PieChart('Country Distribution', model.countries),
+            ],
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              minWidth: 340,
+              height: 250,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 class _Details extends StatelessWidget {
-  _Details(this.stats) {
-    if (stats.onAnime) {
+  _Details(StatisticsController ctrl, bool ofAnime) {
+    if (ofAnime) {
       icons.add(Ionicons.tv_outline);
       icons.add(Ionicons.play_outline);
       icons.add(Ionicons.calendar_clear_outline);
       titles.add('Total Anime');
       titles.add('Episodes Watched');
       titles.add('Days Watched');
-      subtitles.add(stats.model.count);
-      subtitles.add(stats.model.episodesWatched);
-      subtitles.add((stats.model.minutesWatched / 1440).toPrecision(1));
+      subtitles.add(ctrl.animeStats.count);
+      subtitles.add(ctrl.animeStats.episodesWatched);
+      subtitles.add((ctrl.animeStats.minutesWatched / 1440).toPrecision(1));
     } else {
       icons.add(Ionicons.bookmarks_outline);
       icons.add(Ionicons.reader_outline);
@@ -131,20 +145,25 @@ class _Details extends StatelessWidget {
       titles.add('Total Manga');
       titles.add('Chapters Read');
       titles.add('Volumes Read');
-      subtitles.add(stats.model.count);
-      subtitles.add(stats.model.chaptersRead);
-      subtitles.add(stats.model.volumesRead);
+      subtitles.add(ctrl.mangaStats.count);
+      subtitles.add(ctrl.mangaStats.chaptersRead);
+      subtitles.add(ctrl.mangaStats.volumesRead);
     }
 
     icons.add(Ionicons.star_half_outline);
     icons.add(Ionicons.calculator_outline);
     titles.add('Mean Score');
     titles.add('Standard Deviation');
-    subtitles.add(stats.model.meanScore);
-    subtitles.add(stats.model.standardDeviation);
+
+    if (ofAnime) {
+      subtitles.add(ctrl.animeStats.meanScore);
+      subtitles.add(ctrl.animeStats.standardDeviation);
+    } else {
+      subtitles.add(ctrl.mangaStats.meanScore);
+      subtitles.add(ctrl.mangaStats.standardDeviation);
+    }
   }
 
-  final StatisticsController stats;
   final icons = <IconData>[];
   final titles = <String>[];
   final subtitles = <num>[];

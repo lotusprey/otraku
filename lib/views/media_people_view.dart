@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/relation_model.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
-import 'package:otraku/widgets/layouts/relation_grid.dart';
+import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 

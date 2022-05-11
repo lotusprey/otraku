@@ -5,6 +5,7 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/group_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class StudioController extends ScrollingController {

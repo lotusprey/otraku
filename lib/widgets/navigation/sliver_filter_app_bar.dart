@@ -132,7 +132,7 @@ class _MediaSearchFieldState extends State<_MediaSearchField> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (_value == null) ...[
+          if (_value == null || widget.onChanged == null) ...[
             Expanded(
               child: Text(
                 widget.title,

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/providers/user_settings.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/views/media_info_view.dart';
@@ -13,7 +13,7 @@ import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -32,7 +32,6 @@ class MediaView extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) => GetBuilder<MediaController>(
-        // TODO fix this mess
         init: MediaController(id, ref.read(userSettingsProvider)),
         id: MediaController.ID_BASE,
         tag: id.toString(),
@@ -165,15 +164,16 @@ class __ActionButtonsState extends State<_ActionButtons> {
                 widget.ctrl.scrollCtrl.scrollUpTo(0);
                 widget.ctrl.langIndex = i;
               },
-              itemCount: widget.ctrl.languages.length,
-              itemBuilder: (_, i) => Text(
-                widget.ctrl.languages[i],
-                style: i != widget.ctrl.langIndex
-                    ? Theme.of(context).textTheme.headline1
-                    : Theme.of(context).textTheme.headline1?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-              ),
+              children: [
+                for (int i = 0; i < widget.ctrl.languages.length; i++)
+                  Text(
+                    widget.ctrl.languages[i],
+                    style: i != widget.ctrl.langIndex
+                        ? Theme.of(context).textTheme.headline1
+                        : Theme.of(context).textTheme.headline1?.copyWith(
+                            color: Theme.of(context).colorScheme.primary),
+                  ),
+              ],
             ),
           ),
         ),

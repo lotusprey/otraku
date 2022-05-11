@@ -7,8 +7,8 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -154,7 +154,7 @@ class _AuthViewState extends State<AuthView> {
                     ),
                     const Spacer(),
                     if (available0)
-                      AppBarIcon(
+                      TopBarIcon(
                         icon: Ionicons.close_circle_outline,
                         tooltip: 'Remove Account',
                         onTap: () => showPopUp(
@@ -168,7 +168,7 @@ class _AuthViewState extends State<AuthView> {
                           ),
                         ),
                       ),
-                    AppBarIcon(
+                    TopBarIcon(
                       icon: Ionicons.enter_outline,
                       tooltip: available0 ? 'Log In' : 'Connect',
                       onTap: () =>
@@ -205,7 +205,7 @@ class _AuthViewState extends State<AuthView> {
                     ),
                     const Spacer(),
                     if (available1)
-                      AppBarIcon(
+                      TopBarIcon(
                         icon: Ionicons.close_circle_outline,
                         tooltip: 'Remove Account',
                         onTap: () => showPopUp(
@@ -219,7 +219,7 @@ class _AuthViewState extends State<AuthView> {
                           ),
                         ),
                       ),
-                    AppBarIcon(
+                    TopBarIcon(
                       icon: Ionicons.enter_outline,
                       tooltip: available1 ? 'Log In' : 'Connect',
                       onTap: () =>

@@ -3,6 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutView extends StatelessWidget {
@@ -12,9 +13,16 @@ class SettingsAboutView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final offset = PageOffset.of(context);
+
     return ListView(
       controller: scrollCtrl,
-      padding: Consts.PADDING,
+      padding: EdgeInsets.only(
+        left: 10,
+        right: 10,
+        top: offset.top + 10,
+        bottom: offset.bottom + 10,
+      ),
       children: [
         Center(
           child: ClipRRect(

@@ -11,7 +11,7 @@ import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/providers/user_settings.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
 import 'package:otraku/views/collection_view.dart';

@@ -28,12 +28,14 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
       final data = await Client.get(GqlMutation.updateSettings, other.toMap());
       if (data.isEmpty) return;
       state = UserSettings(data['UpdateUser']);
-    } catch (e) {}
+    } catch (_) {}
   }
 
   void nullifyUnread() => state = state.copy();
 }
 
+/// Some fields are modifiable to allow for quick and simple edits.
+/// But to apply those edits, the [UserSettingsNotifier] should be used.
 class UserSettings {
   UserSettings._({
     this.notificationCount = 0,

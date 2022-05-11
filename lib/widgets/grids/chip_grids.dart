@@ -4,7 +4,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -53,7 +53,7 @@ class _ChipGrid extends StatelessWidget {
                   ),
                 ),
               ),
-            AppBarIcon(
+            TopBarIcon(
               tooltip: 'Edit',
               icon: Ionicons.add_circle_outline,
               colour: Theme.of(context).colorScheme.surfaceVariant,

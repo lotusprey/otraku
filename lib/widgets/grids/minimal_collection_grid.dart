@@ -6,7 +6,7 @@ import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/views/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MinimalCollectionGrid extends StatelessWidget {

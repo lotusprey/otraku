@@ -14,7 +14,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/growable_text_field.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
@@ -135,10 +135,6 @@ class _RemoveButton extends StatelessWidget {
                   ? '${Settings().id}true'
                   : '${Settings().id}false',
             ).removeEntry(oldEdit);
-            // TODO remove item
-            // if (ctrl.model!.status == ListStatus.CURRENT)
-            //           Get.find<ProgressController>()
-            //               .remove(ctrl.model!.mediaId);
 
             callback?.call(oldEdit.emptyCopy());
             Navigator.pop(context);

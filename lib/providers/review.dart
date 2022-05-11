@@ -56,6 +56,7 @@ class Review {
     required this.summary,
     required this.text,
     required this.createdAt,
+    required this.siteUrl,
     required this.score,
     required this.rating,
     required this.totalRating,
@@ -74,6 +75,7 @@ class Review {
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',
         createdAt: Convert.millisToStr(map['createdAt']),
+        siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,
         totalRating: map['ratingAmount'] ?? 0,
@@ -95,6 +97,7 @@ class Review {
   final String summary;
   final String text;
   final String createdAt;
+  final String siteUrl;
   final int score;
   final int rating;
   final int totalRating;
@@ -112,6 +115,7 @@ class Review {
         summary: summary,
         text: text,
         createdAt: createdAt,
+        siteUrl: siteUrl,
         score: score,
         rating: map['rating'] ?? rating,
         totalRating: map['ratingAmount'] ?? totalRating,

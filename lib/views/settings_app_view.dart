@@ -9,8 +9,8 @@ import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 
 class SettingsAppView extends StatelessWidget {
   SettingsAppView(this.scrollCtrl);
@@ -23,12 +23,14 @@ class SettingsAppView extends StatelessWidget {
     for (int i = 0; i < Theming.schemes.length; i++)
       colorSchemeMap[Theming.schemes.keys.elementAt(i)] = i;
 
+    final offset = PageOffset.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          SliverToBoxAdapter(child: SizedBox(height: offset.top + 10)),
           SliverGrid(
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 160,
@@ -142,8 +144,7 @@ class SettingsAppView extends StatelessWidget {
               ),
             ]),
           ),
-          SliverToBoxAdapter(
-              child: SizedBox(height: NavLayout.offset(context))),
+          SliverToBoxAdapter(child: SizedBox(height: offset.bottom)),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 
 class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -18,7 +19,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: _ShadowBody([
-        AppBarIcon(
+        TopBarIcon(
           icon: Ionicons.chevron_back_outline,
           tooltip: 'Close',
           onTap: () => Navigator.pop(context),

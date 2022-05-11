@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/providers/user_settings.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/settings_app_view.dart';
 import 'package:otraku/views/settings_content_view.dart';
 import 'package:otraku/views/settings_notifications_view.dart';
 import 'package:otraku/views/settings_about_view.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
 
 class SettingsView extends StatefulWidget {
   @override
@@ -32,7 +32,6 @@ class _SettingsViewState extends State<SettingsView> {
   Widget build(BuildContext context) {
     const pageNames = ['App', 'Content', 'Notifications', 'About'];
 
-    // TODO test
     return Consumer(
       builder: (context, ref, _) {
         final settings = ref.watch(userSettingsProvider);
@@ -57,17 +56,29 @@ class _SettingsViewState extends State<SettingsView> {
           }
         });
 
+        final tabs = [
+          SettingsAppView(_ctrl),
+          SettingsContentView(_ctrl, settings, () => _shouldUpdate = true),
+          SettingsNotificationsView(
+            _ctrl,
+            settings,
+            () => _shouldUpdate = true,
+          ),
+          SettingsAboutView(_ctrl),
+        ];
+
         return WillPopScope(
           onWillPop: () {
             if (_shouldUpdate)
               ref.read(userSettingsProvider.notifier).update(settings);
             return Future.value(true);
           },
-          child: NavLayout(
-            navRow: NavIconRow(
+          child: PageLayout(
+            topBar: TopBar(title: pageNames[_tabIndex]),
+            bottomBar: BottomBarIconTabs(
               index: _tabIndex,
-              onChanged: (i) => setState(() => _tabIndex = i),
               onSame: (_) => _ctrl.scrollUpTo(0),
+              onChanged: (i) => setState(() => _tabIndex = i),
               items: const {
                 'App': Ionicons.color_palette_outline,
                 'Content': Ionicons.tv_outline,
@@ -75,32 +86,14 @@ class _SettingsViewState extends State<SettingsView> {
                 'About': Ionicons.information_outline,
               },
             ),
-            appBar: ShadowAppBar(title: pageNames[_tabIndex]),
-            child: _buildTab(settings),
+            builder: (context, _, __) => TabSwitcher(
+              tabs: tabs,
+              index: _tabIndex,
+              onChanged: (i) => setState(() => _tabIndex = i),
+            ),
           ),
         );
       },
     );
-  }
-
-  Widget _buildTab(UserSettings settings) {
-    switch (_tabIndex) {
-      case 0:
-        return SettingsAppView(_ctrl);
-      case 1:
-        return SettingsContentView(
-          _ctrl,
-          settings,
-          () => _shouldUpdate = true,
-        );
-      case 2:
-        return SettingsNotificationsView(
-          _ctrl,
-          settings,
-          () => _shouldUpdate = true,
-        );
-      default:
-        return SettingsAboutView(_ctrl);
-    }
   }
 }

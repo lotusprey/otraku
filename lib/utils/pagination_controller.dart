@@ -1,35 +1,51 @@
 import 'package:flutter/widgets.dart';
 
-class PaginationController {
-  PaginationController._(this._reload, this._loadMore) {
-    scrollCtrl.addListener(_listener);
+/// A [ScrollController] that can perform and action when
+/// the bottom of the page is reached. Used for pagination.
+class PaginationController extends ScrollController {
+  PaginationController({required this.loadMore}) {
+    addListener(_listener);
   }
 
-  factory PaginationController({
-    required Future<void> Function() reload,
-    required Future<void> Function() loadMore,
-  }) =>
-      PaginationController._(reload, loadMore);
+  /// The callback to call, when the end of the page is reached.
+  final Future<void> Function() loadMore;
 
+  /// Keeps track of the last [position.maxScrollExtent].
+  /// Used to ensure that when the end of the page is reached,
+  /// only one call to [loadMore] is performed, at least until
+  /// the bottom of the newly expanded page is reached.
   double _lastMaxExtent = 0;
-  final Future<void> Function() _reload;
-  final Future<void> Function() _loadMore;
-  final scrollCtrl = ScrollController();
 
+  /// When the user reached the bottom, try loading more data.
   Future<void> _listener() async {
-    if (scrollCtrl.position.pixels < scrollCtrl.position.maxScrollExtent - 100)
-      return;
+    if (position.pixels < position.maxScrollExtent - 100) return;
+    if (_lastMaxExtent == position.maxScrollExtent) return;
 
-    if (_lastMaxExtent == scrollCtrl.position.maxScrollExtent) return;
-
-    _lastMaxExtent = scrollCtrl.position.maxScrollExtent;
-    await _loadMore();
+    _lastMaxExtent = position.maxScrollExtent;
+    await loadMore();
   }
 
-  Future<void> refresh() async {
+  /// When a scrollable is detached, [_lastMaxExtent] needs to be reset, so
+  /// that it would work properly, if the scrollable gets attached again.
+  @override
+  void detach(ScrollPosition position) {
     _lastMaxExtent = 0;
-    await _reload();
+    super.detach(position);
   }
+}
 
-  void dispose() => scrollCtrl.dispose();
+// Scroll up to a certain offset with an animation.
+extension ScrollCommand on ScrollController {
+  Future<void> scrollUpTo(double offset) async {
+    if (!hasClients || positions.last.pixels <= offset) return;
+
+    if (positions.last.pixels > offset + 100)
+      positions.last.jumpTo(offset + 100);
+
+    await positions.last.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.decelerate,
+    );
+  }
 }

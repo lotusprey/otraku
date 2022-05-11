@@ -4,14 +4,12 @@ import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
-  final List<ExplorableModel> data;
-  final ScrollController? scrollCtrl;
+  ReviewGrid({required this.items});
 
-  ReviewGrid(this.data, {this.scrollCtrl});
+  final List<ExplorableModel> items;
 
   @override
   Widget build(BuildContext context) {
@@ -19,35 +17,16 @@ class ReviewGrid extends StatelessWidget {
         ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
         : 10.0;
 
-    final padding = EdgeInsets.only(
-      left: sidePadding,
-      right: sidePadding,
-      bottom: scrollCtrl == null ? 0 : NavLayout.offset(context),
-      top: 10,
-    );
-
-    const gridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-      minWidth: 270,
-      height: 200,
-    );
-
-    if (scrollCtrl != null)
-      return GridView.builder(
-        padding: padding,
-        controller: scrollCtrl,
-        physics: Consts.PHYSICS,
-        itemCount: data.length,
-        gridDelegate: gridDelegate,
-        itemBuilder: (_, i) => _Tile(data[i]),
-      );
-
     return SliverPadding(
-      padding: padding,
+      padding: EdgeInsets.only(left: sidePadding, right: sidePadding, top: 10),
       sliver: SliverGrid(
-        gridDelegate: gridDelegate,
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 270,
+          height: 200,
+        ),
         delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(data[i]),
-          childCount: data.length,
+          (_, i) => _Tile(items[i]),
+          childCount: items.length,
         ),
       ),
     );

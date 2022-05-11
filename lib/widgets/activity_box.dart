@@ -192,7 +192,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
           onPressed: () {
             final children = <Widget>[];
             if (model.deletable)
-              children.add(GradientDragSheetTile(
+              children.add(FixedGradientSheetTile(
                 text: 'Delete',
                 icon: Ionicons.trash_outline,
                 onTap: () => showPopUp(
@@ -213,7 +213,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 ),
               ));
 
-            children.add(GradientDragSheetTile(
+            children.add(FixedGradientSheetTile(
               text: !model.isSubscribed ? 'Subscribe' : 'Unsubscribe',
               icon: !model.isSubscribed
                   ? Ionicons.notifications_outline

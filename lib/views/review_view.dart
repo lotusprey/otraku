@@ -11,6 +11,7 @@ import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReviewView extends StatelessWidget {
   ReviewView(this.id, this.bannerUrl);
@@ -24,14 +25,45 @@ class ReviewView extends StatelessWidget {
       body: SafeArea(
         bottom: false,
         child: Consumer(builder: (context, ref, _) {
-          final data =
-              ref.watch(reviewProvider(id).select((s) => s.asData))?.value;
+          final data = ref.watch(reviewProvider(id).select((s) => s.value));
+
+          // HeaderLayout(
+          //   topItems: data != null
+          //       ? [
+          //           Expanded(
+          //             child: Text(
+          //               data.mediaTitle,
+          //               style: Theme.of(context).textTheme.headline2,
+          //               overflow: TextOverflow.ellipsis,
+          //             ),
+          //           ),
+          //           AppBarIcon(
+          //             tooltip: 'More',
+          //             icon: Ionicons.ellipsis_horizontal,
+          //             onTap: () => showSheet(
+          //               context,
+          //               FixedGradientDragSheet.link(context, data.siteUrl),
+          //             ),
+          //           ),
+          //         ]
+          //       : const [],
+          //   builder: (context, offsetTop) {
+          //     return CustomScrollView(
+          //       slivers: [],
+          //     );
+          //   },
+          // );
 
           return CustomScrollView(
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
-                delegate: _HeaderDelegate(id, bannerUrl, data?.mediaTitle),
+                delegate: _HeaderDelegate(
+                  id,
+                  bannerUrl,
+                  data?.mediaTitle,
+                  data?.siteUrl,
+                ),
               ),
               if (data != null)
                 SliverPadding(
@@ -122,11 +154,12 @@ class ReviewView extends StatelessWidget {
 }
 
 class _HeaderDelegate extends SliverPersistentHeaderDelegate {
-  _HeaderDelegate(this.id, this.bannerUrl, this.title);
+  _HeaderDelegate(this.id, this.bannerUrl, this.title, this.siteUrl);
 
   final int id;
   final String? bannerUrl;
   final String? title;
+  final String? siteUrl;
 
   @override
   Widget build(
@@ -153,22 +186,34 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
             FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
               background: bannerUrl != null
-                  ? GestureDetector(
-                      child: Hero(tag: id, child: FadeImage(bannerUrl!)),
-                      onTap: () => showPopUp(context, ImageDialog(bannerUrl!)),
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            child: Hero(tag: id, child: FadeImage(bannerUrl!)),
+                            onTap: () =>
+                                showPopUp(context, ImageDialog(bannerUrl!)),
+                          ),
+                        ),
+
+                        /// An annoying workaround for a bug in the
+                        /// anti-aliasing of the overlaying [DecoratedBox].
+                        Container(
+                          color: Theme.of(context).colorScheme.background,
+                          height: 1,
+                        ),
+                      ],
                     )
                   : null,
             ),
-            // TODO fix weird gap
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  stops: const [0, 0.2, 0.3],
                   colors: [
                     Theme.of(context).colorScheme.background,
-                    Theme.of(context).colorScheme.background.withAlpha(150),
                     Theme.of(context).colorScheme.background.withAlpha(0),
                   ],
                 ),
@@ -204,6 +249,17 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
                           title!,
                           style: Theme.of(context).textTheme.headline2,
                           overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                  if (siteUrl != null)
+                    IconShade(
+                      AppBarIcon(
+                        tooltip: 'More',
+                        icon: Ionicons.ellipsis_horizontal,
+                        onTap: () => showSheet(
+                          context,
+                          FixedGradientDragSheet.link(context, siteUrl!),
                         ),
                       ),
                     ),

@@ -171,7 +171,8 @@ class FloatingListener extends StatefulWidget {
 class _FloatingListenerState extends State<FloatingListener>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationCtrl;
-  late Animation<double> _animation;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _fadeAnimation;
 
   bool _visible = true;
   double _lastOffset = 0;
@@ -182,10 +183,10 @@ class _FloatingListenerState extends State<FloatingListener>
 
     // If the position has moved enough from the last
     // spot or is out of bounds, update visibility.
-    if (dif > 10 || pos.pixels > pos.maxScrollExtent) {
+    if (dif > 15 || pos.pixels > pos.maxScrollExtent) {
       _lastOffset = widget.scrollCtrl.position.pixels;
       _animationCtrl.forward().then((_) => setState(() => _visible = false));
-    } else if (dif < -10 || pos.pixels < pos.minScrollExtent) {
+    } else if (dif < -15 || pos.pixels < pos.minScrollExtent) {
       _lastOffset = widget.scrollCtrl.position.pixels;
       setState(() => _visible = true);
       _animationCtrl.reverse();
@@ -199,7 +200,9 @@ class _FloatingListenerState extends State<FloatingListener>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _animation = Tween(begin: 1.0, end: 0.5).animate(_animationCtrl);
+    _slideAnimation = Tween(begin: Offset.zero, end: const Offset(0, 0.2))
+        .animate(_animationCtrl);
+    _fadeAnimation = Tween(begin: 1.0, end: 0.3).animate(_animationCtrl);
 
     widget.scrollCtrl.addListener(_visibility);
   }
@@ -215,9 +218,9 @@ class _FloatingListenerState extends State<FloatingListener>
   Widget build(BuildContext context) {
     if (!_visible) return const SizedBox();
 
-    return ScaleTransition(
-      scale: _animation,
-      child: FadeTransition(opacity: _animation, child: widget.child),
+    return SlideTransition(
+      position: _slideAnimation,
+      child: FadeTransition(opacity: _fadeAnimation, child: widget.child),
     );
   }
 }

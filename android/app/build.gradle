@@ -67,7 +67,8 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    
+
+    flavorDimensions "default"
     productFlavors {
         dev {
             applicationIdSuffix ".dev"

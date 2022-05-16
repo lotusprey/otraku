@@ -35,7 +35,7 @@ class ActivityBox extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                       child: FadeImage(model.agentImage, height: 50, width: 50),
                     ),
                     const SizedBox(width: 10),
@@ -65,7 +65,7 @@ class ActivityBox extends StatelessWidget {
                 imageUrl: model.recieverImage,
                 explorable: Explorable.user,
                 child: ClipRRect(
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                   child: FadeImage(model.recieverImage!, height: 50, width: 50),
                 ),
               ),
@@ -112,10 +112,10 @@ class ActivityBoxBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: Consts.PADDING,
+      padding: Consts.padding,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
       ),
       child: Column(
         children: [
@@ -182,12 +182,12 @@ class _InteractionButtonsState extends State<InteractionButtons> {
       children: [
         IconButton(
           padding: const EdgeInsets.symmetric(horizontal: 10),
-          constraints: const BoxConstraints(maxHeight: Consts.ICON_SMALL),
+          constraints: const BoxConstraints(maxHeight: Consts.iconSmall),
           splashColor: Colors.transparent,
           tooltip: 'More',
           icon: const Icon(
             Ionicons.ellipsis_horizontal,
-            size: Consts.ICON_SMALL,
+            size: Consts.iconSmall,
           ),
           onPressed: () {
             final children = <Widget>[];
@@ -242,7 +242,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 const SizedBox(width: 5),
-                const Icon(Ionicons.chatbox, size: Consts.ICON_SMALL),
+                const Icon(Ionicons.chatbox, size: Consts.iconSmall),
               ],
             ),
           ),
@@ -270,7 +270,7 @@ class _InteractionButtonsState extends State<InteractionButtons> {
                 const SizedBox(width: 5),
                 Icon(
                   Icons.favorite,
-                  size: Consts.ICON_SMALL,
+                  size: Consts.iconSmall,
                   color: widget.model.isLiked
                       ? Theme.of(context).colorScheme.error
                       : null,
@@ -299,12 +299,12 @@ class ActivityBoxBodyMedia extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
               child: FadeImage(activity.mediaImage!, width: 70),
             ),
             Expanded(
               child: Padding(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,

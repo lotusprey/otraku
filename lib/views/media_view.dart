@@ -154,7 +154,7 @@ class __ActionButtonsState extends State<_ActionButtons> {
       if (widget.ctrl.tab == MediaController.PEOPLE &&
           !widget.ctrl.peopleTabToggled &&
           widget.ctrl.languages.length > 1) ...[
-        ActionButton(
+        ActionButtonOld(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
           onTap: () => showSheet(
@@ -179,13 +179,13 @@ class __ActionButtonsState extends State<_ActionButtons> {
         ),
         const SizedBox(width: 10),
       ],
-      ActionButton(
+      ActionButtonOld(
         icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
         tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
         onTap: () => widget.ctrl.toggleFavourite().then((_) => setState(() {})),
       ),
       const SizedBox(width: 10),
-      ActionButton(
+      ActionButtonOld(
         icon: model.edit.status == null ? Icons.add : Icons.edit,
         tooltip: model.edit.status == null ? 'Add' : 'Edit',
         onTap: () => showSheet(

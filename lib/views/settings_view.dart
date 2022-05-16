@@ -14,6 +14,8 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 
 class SettingsView extends StatefulWidget {
+  const SettingsView();
+
   @override
   State<SettingsView> createState() => _SettingsViewState();
 }
@@ -34,7 +36,7 @@ class _SettingsViewState extends State<SettingsView> {
 
     return Consumer(
       builder: (context, ref, _) {
-        final settings = ref.watch(userSettingsProvider);
+        final settings = ref.watch(userSettingsProvider).copy();
 
         ref.listen<UserSettings>(userSettingsProvider, (prev, next) {
           if (prev?.scoreFormat != next.scoreFormat ||

@@ -78,7 +78,7 @@ class _RelationsGrid extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -86,19 +86,19 @@ class _RelationsGrid extends StatelessWidget {
                   Hero(
                     tag: items[i].id,
                     child: ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                       child: Container(
                         color: Theme.of(context).colorScheme.surface,
                         child: FadeImage(
                           items[i].imageUrl,
-                          width: 100 / Consts.COVER_HW_RATIO,
+                          width: 100 / Consts.coverHtoWRatio,
                         ),
                       ),
                     ),
                   ),
                   Expanded(
                     child: Padding(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -152,13 +152,13 @@ class _RecommendationsGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 70,
-        rawHWRatio: Consts.COVER_HW_RATIO,
+        rawHWRatio: Consts.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         (_, i) => DecoratedBox(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
           ),
           child: ExploreIndexer(
             id: items[i].id,
@@ -170,7 +170,7 @@ class _RecommendationsGrid extends StatelessWidget {
                   child: Hero(
                     tag: items[i].id,
                     child: ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                       child: Container(
                         color: Theme.of(context).colorScheme.surface,
                         child: FadeImage(items[i].imageUrl!),
@@ -252,7 +252,7 @@ class __RatingState extends State<_Rating> {
           },
           child: Icon(
             Icons.thumb_up_outlined,
-            size: Consts.ICON_SMALL,
+            size: Consts.iconSmall,
             color: widget.model.userRating == true
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onBackground,
@@ -293,7 +293,7 @@ class __RatingState extends State<_Rating> {
           },
           child: Icon(
             Icons.thumb_down_outlined,
-            size: Consts.ICON_SMALL,
+            size: Consts.iconSmall,
             color: widget.model.userRating == false
                 ? Theme.of(context).colorScheme.error
                 : Theme.of(context).colorScheme.onBackground,

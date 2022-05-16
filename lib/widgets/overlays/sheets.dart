@@ -41,12 +41,11 @@ class OpaqueSheet extends StatelessWidget {
           if (sheet == null)
             sheet = Center(
               child: Container(
-                constraints:
-                    const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+                constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.background,
                   borderRadius:
-                      const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+                      const BorderRadius.vertical(top: Consts.radiusMax),
                 ),
                 child: builder(context, scrollCtrl),
               ),
@@ -87,10 +86,10 @@ class OpaqueSheetView extends StatelessWidget {
   Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
       Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_MEDIUM),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.background,
-            borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+            borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
           ),
           child: Stack(
             children: [
@@ -174,7 +173,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = children.length * Consts.TAP_TARGET_SIZE + 50;
+    final requiredHeight = children.length * Consts.tapTargetSize + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -198,7 +197,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
           child: ListView.builder(
             controller: scrollCtrl,
             padding: const EdgeInsets.only(
@@ -207,7 +206,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
               right: 10,
             ),
             itemCount: children.length,
-            itemExtent: Consts.TAP_TARGET_SIZE,
+            itemExtent: Consts.tapTargetSize,
             itemBuilder: (context, i) => GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: children[i],
@@ -254,7 +253,7 @@ class FixedGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = children.length * Consts.TAP_TARGET_SIZE + 60;
+    final requiredHeight = children.length * Consts.tapTargetSize + 60;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -278,7 +277,7 @@ class FixedGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
           child: ListView(
             controller: scrollCtrl,
             padding: const EdgeInsets.only(
@@ -287,7 +286,7 @@ class FixedGradientDragSheet extends StatelessWidget {
               left: 10,
               right: 10,
             ),
-            itemExtent: Consts.TAP_TARGET_SIZE,
+            itemExtent: Consts.tapTargetSize,
             children: children,
           ),
         ),

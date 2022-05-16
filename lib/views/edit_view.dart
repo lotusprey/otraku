@@ -135,6 +135,10 @@ class _RemoveButton extends StatelessWidget {
                   ? '${Settings().id}true'
                   : '${Settings().id}false',
             ).removeEntry(oldEdit);
+            // TODO remove item
+            // if (ctrl.model!.status == ListStatus.CURRENT)
+            //           Get.find<ProgressController>()
+            //               .remove(ctrl.model!.mediaId);
 
             callback?.call(oldEdit.emptyCopy());
             Navigator.pop(context);
@@ -582,7 +586,7 @@ class _CheckBoxGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 180,
         mainAxisSpacing: 0,
-        height: Consts.TAP_TARGET_SIZE,
+        height: Consts.tapTargetSize,
       ),
     );
   }

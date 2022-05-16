@@ -26,9 +26,16 @@ class Pagination<T> {
   /// back and use a new [hasNext]. Note that instead of creating a new list,
   /// [newItems] are appended to the old [items]. This is because [this] is
   /// expected to get discarded.
-  Pagination<T> copyWith(List<T> newItems, bool newHasNext) => Pagination._(
+  Pagination<T> append(List<T> newItems, bool newHasNext) => Pagination._(
         items: items..addAll(newItems),
         hasNext: newHasNext,
         next: next + 1,
+      );
+
+  /// Recreate [this] with other [items].
+  Pagination<T> copyWith(List<T> otherItems) => Pagination._(
+        items: otherItems,
+        hasNext: hasNext,
+        next: next,
       );
 }

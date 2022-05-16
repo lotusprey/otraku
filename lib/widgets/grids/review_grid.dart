@@ -13,8 +13,8 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     return SliverPadding(
@@ -46,7 +46,7 @@ class _Tile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.BORDER_RAD_MIN,
+          borderRadius: Consts.borderRadiusMin,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -55,7 +55,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Consts.RADIUS_MIN),
+                  borderRadius: BorderRadius.vertical(top: Consts.radiusMin),
                   child: Hero(
                     tag: model.id,
                     child: FadeImage(model.imageUrl!),
@@ -65,7 +65,7 @@ class _Tile extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -101,7 +101,7 @@ class _Tile extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.thumbs_up_down_outlined,
-                                  size: Consts.ICON_SMALL,
+                                  size: Consts.iconSmall,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(

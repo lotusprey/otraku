@@ -23,10 +23,10 @@ class Toast {
                 MediaQuery.of(context).viewPadding.bottom +
                 MediaQuery.of(context).viewInsets.bottom,
           ),
-          padding: Consts.PADDING,
+          padding: Consts.padding,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).colorScheme.background,

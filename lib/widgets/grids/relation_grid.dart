@@ -136,7 +136,7 @@ class _RelationTile extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
         color: Theme.of(context).colorScheme.surface,
       ),
       child: Row(
@@ -147,11 +147,11 @@ class _RelationTile extends StatelessWidget {
             imageUrl: item.imageUrl,
             child: ClipRRect(
               child: FadeImage(item.imageUrl, width: 80),
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
             ),
           ),
           Expanded(
-            child: Padding(padding: Consts.PADDING, child: centerContent),
+            child: Padding(padding: Consts.padding, child: centerContent),
           ),
           if (connection != null)
             ExploreIndexer(
@@ -160,7 +160,7 @@ class _RelationTile extends StatelessWidget {
               imageUrl: connection!.imageUrl,
               child: ClipRRect(
                 child: FadeImage(connection!.imageUrl, width: 80),
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
               ),
             ),
         ],

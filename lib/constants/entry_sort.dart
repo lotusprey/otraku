@@ -21,11 +21,8 @@ enum EntrySort {
   STARTED_WATCHING,
   STARTED_WATCHING_DESC,
   ENDED_WATCHING,
-  ENDED_WATCHING_DESC,
-}
+  ENDED_WATCHING_DESC;
 
-// AniList supports only 4 default sort types.
-extension EntrySortHelper on EntrySort {
   String get getString {
     switch (this) {
       case EntrySort.SCORE_DESC:

@@ -178,7 +178,7 @@ class _Details extends StatelessWidget {
       itemBuilder: (_, i) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-          borderRadius: Consts.BORDER_RAD_MIN,
+          borderRadius: Consts.borderRadiusMin,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(

@@ -58,7 +58,7 @@ class _SmileyScorePicker extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -94,7 +94,7 @@ class _StarScorePicker extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

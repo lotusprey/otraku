@@ -38,7 +38,7 @@ class CharacterView extends StatelessWidget {
     final coverHeight = coverWidth / 0.7;
 
     final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Consts.PADDING.top * 2;
+        Consts.padding.top * 2;
 
     return GetBuilder<CharacterController>(
       id: CharacterController.ID_MAIN,
@@ -70,7 +70,7 @@ class CharacterView extends StatelessWidget {
                     text: ctrl.model?.name,
                   ),
                   SliverPadding(
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     sliver: SliverToBoxAdapter(
                       child: SizedBox(
                         height: axis == Axis.horizontal
@@ -85,7 +85,7 @@ class CharacterView extends StatelessWidget {
                                 child: Hero(
                                   tag: ctrl.id,
                                   child: ClipRRect(
-                                    borderRadius: Consts.BORDER_RAD_MIN,
+                                    borderRadius: Consts.borderRadiusMin,
                                     child: Image.network(
                                       imageUrl!,
                                       fit: BoxFit.cover,
@@ -175,7 +175,7 @@ class _ActionButton extends StatelessWidget {
       builder: (ctrl) {
         List<Widget> children = [
           if (ctrl.onAnime && ctrl.languages.length > 1) ...[
-            ActionButton(
+            ActionButtonOld(
               tooltip: 'Language',
               icon: Ionicons.globe_outline,
               onTap: () => showSheet(
@@ -201,7 +201,7 @@ class _ActionButton extends StatelessWidget {
             ),
             const SizedBox(width: 10),
           ],
-          ActionButton(
+          ActionButtonOld(
             icon: Ionicons.funnel_outline,
             tooltip: 'Filter',
             onTap: () {
@@ -222,10 +222,10 @@ class _ActionButton extends StatelessWidget {
               showSheet(
                 context,
                 OpaqueSheet(
-                  initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                  initialHeight: Consts.tapTargetSize * 4,
                   builder: (context, scrollCtrl) => GridView(
                     controller: scrollCtrl,
-                    physics: Consts.PHYSICS,
+                    physics: Consts.physics,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 20,
@@ -326,10 +326,10 @@ class _Details extends StatelessWidget {
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Text(
                         Convert.clearHtml(model.description),

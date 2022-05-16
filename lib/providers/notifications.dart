@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/utils/pagination.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
@@ -52,9 +51,9 @@ class NotificationsNotifier extends ChangeNotifier {
         if (item != null) items.add(item);
       }
 
-      return value.copyWith(
+      return value.append(
         items,
-        data['Page']['pageInfo']?['hasNextPage'] ?? false,
+        data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
     });
     notifyListeners();
@@ -67,10 +66,8 @@ enum NotificationFilterType {
   activity,
   forum,
   follows,
-  media,
-}
+  media;
 
-extension NotificationFilterTypeExtension on NotificationFilterType {
   String get text {
     switch (this) {
       case NotificationFilterType.all:
@@ -413,4 +410,24 @@ class NotificationItem {
         return null;
     }
   }
+}
+
+enum NotificationType {
+  FOLLOWING,
+  ACTIVITY_MESSAGE,
+  ACTIVITY_REPLY,
+  ACTIVITY_REPLY_SUBSCRIBED,
+  ACTIVITY_MENTION,
+  ACTIVITY_LIKE,
+  ACTIVITY_REPLY_LIKE,
+  THREAD_COMMENT_REPLY,
+  THREAD_COMMENT_MENTION,
+  THREAD_SUBSCRIBED,
+  THREAD_LIKE,
+  THREAD_COMMENT_LIKE,
+  RELATED_MEDIA_ADDITION,
+  MEDIA_DATA_CHANGE,
+  MEDIA_MERGE,
+  MEDIA_DELETION,
+  AIRING,
 }

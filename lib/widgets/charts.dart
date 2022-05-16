@@ -31,7 +31,7 @@ class BarChart extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: Consts.PADDING,
+          padding: Consts.padding,
           child: Text(title, style: Theme.of(context).textTheme.headline3),
         ),
         if (tabs != null) tabs!,
@@ -97,9 +97,9 @@ class PieChart extends StatelessWidget {
         const SizedBox(height: 5),
         Container(
           height: 225,
-          padding: Consts.PADDING,
+          padding: Consts.padding,
           decoration: BoxDecoration(
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,

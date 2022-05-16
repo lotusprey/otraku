@@ -26,7 +26,7 @@ class SettingsContentView extends StatelessWidget {
     const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
       minWidth: 220,
       mainAxisSpacing: 0,
-      height: Consts.TAP_TARGET_SIZE,
+      height: Consts.tapTargetSize,
     );
 
     final offset = PageOffset.of(context);
@@ -135,8 +135,8 @@ class SettingsContentView extends StatelessWidget {
                   title: 'Default Site List Sort',
                   value: settings.defaultSort,
                   items: Map.fromIterables(
-                    EntrySortHelper.defaultStrings,
-                    EntrySortHelper.defaultEnums,
+                    EntrySort.defaultStrings,
+                    EntrySort.defaultEnums,
                   ),
                   onChanged: (val) {
                     settings.defaultSort = val;

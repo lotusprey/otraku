@@ -37,7 +37,7 @@ class StaffView extends StatelessWidget {
     final coverHeight = coverWidth / 0.7;
 
     final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Consts.PADDING.top * 2;
+        Consts.padding.top * 2;
 
     return GetBuilder<StaffController>(
       id: StaffController.ID_MAIN,
@@ -68,7 +68,7 @@ class StaffView extends StatelessWidget {
                   text: ctrl.model?.name,
                 ),
                 SliverPadding(
-                  padding: Consts.PADDING,
+                  padding: Consts.padding,
                   sliver: SliverToBoxAdapter(
                     child: SizedBox(
                       height: axis == Axis.horizontal
@@ -83,7 +83,7 @@ class StaffView extends StatelessWidget {
                               child: Hero(
                                 tag: ctrl.id,
                                 child: ClipRRect(
-                                  borderRadius: Consts.BORDER_RAD_MIN,
+                                  borderRadius: Consts.borderRadiusMin,
                                   child: Image.network(
                                     imageUrl!,
                                     fit: BoxFit.cover,
@@ -165,7 +165,7 @@ class _ActionButton extends StatelessWidget {
       tag: id.toString(),
       builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
-        child: ActionButton(
+        child: ActionButtonOld(
           icon: Ionicons.funnel_outline,
           tooltip: 'Filter',
           onTap: () {
@@ -181,10 +181,10 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                initialHeight: Consts.tapTargetSize * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,
@@ -271,10 +271,10 @@ class _Details extends StatelessWidget {
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Text(
                         Convert.clearHtml(model.description),

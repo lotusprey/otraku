@@ -57,7 +57,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     if (shrinkPercentage > 1) shrinkPercentage = 1;
 
     return Container(
-      height: Consts.TAP_TARGET_SIZE,
+      height: Consts.tapTargetSize,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -102,10 +102,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => Consts.TAP_TARGET_SIZE;
+  double get maxExtent => Consts.tapTargetSize;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

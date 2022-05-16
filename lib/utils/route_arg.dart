@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/views/activities_view.dart';
 import 'package:otraku/views/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/favourites_view.dart';
-import 'package:otraku/views/feed_view.dart';
 import 'package:otraku/views/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
@@ -43,7 +43,7 @@ class RouteArg {
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => HomeView(arg!.id!));
       case settings:
-        return MaterialPageRoute(builder: (_) => SettingsView());
+        return MaterialPageRoute(builder: (_) => const SettingsView());
       case notifications:
         return MaterialPageRoute(builder: (_) => NotificationsView());
       case collection:
@@ -77,9 +77,9 @@ class RouteArg {
       case user:
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => UserView(arg!.id!, arg.info));
-      case feed:
+      case activities:
         if (arg?.id == null) return _unknown;
-        return MaterialPageRoute(builder: (_) => FeedView(arg!.id!));
+        return MaterialPageRoute(builder: (_) => ActivitiesView(arg!.id!));
       case favourites:
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => FavouritesView(arg!.id!));
@@ -116,7 +116,7 @@ class RouteArg {
   static const studio = '/studio';
   static const review = '/review';
   static const user = '/user';
-  static const feed = '/feed';
+  static const activities = '/activities';
   static const favourites = '/favourites';
   static const friends = '/friends';
   static const statistics = '/statistics';

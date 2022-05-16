@@ -25,8 +25,8 @@ class PageOffset {
     }
 
     final pageLayout = context.findAncestorWidgetOfExactType<PageLayout>();
-    if (pageLayout?.topBar != null) topOffset += Consts.TAP_TARGET_SIZE;
-    if (pageLayout?.bottomBar != null) bottomOffset += Consts.TAP_TARGET_SIZE;
+    if (pageLayout?.topBar != null) topOffset += Consts.tapTargetSize;
+    if (pageLayout?.bottomBar != null) bottomOffset += Consts.tapTargetSize;
 
     return PageOffset(topOffset, bottomOffset);
   }
@@ -50,9 +50,9 @@ class PageLayout extends StatelessWidget {
     final content = builder(
       context,
       MediaQuery.of(context).viewPadding.top +
-          (topBar == null ? 0 : Consts.TAP_TARGET_SIZE),
+          (topBar == null ? 0 : Consts.tapTargetSize),
       MediaQuery.of(context).viewPadding.bottom +
-          (bottomBar == null ? 0 : Consts.TAP_TARGET_SIZE),
+          (bottomBar == null ? 0 : Consts.tapTargetSize),
     );
 
     return Scaffold(
@@ -80,7 +80,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> items;
 
   @override
-  Size get preferredSize => const Size.fromHeight(Consts.TAP_TARGET_SIZE);
+  Size get preferredSize => const Size.fromHeight(Consts.tapTargetSize);
 
   @override
   Widget build(BuildContext context) {
@@ -97,14 +97,14 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             child: Center(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_BIG),
+                constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
                 child: Row(
                   children: [
                     if (canPop)
                       TopBarIcon(
                         tooltip: 'Close',
                         icon: Ionicons.chevron_back_outline,
-                        onTap: () => Navigator.pop(context),
+                        onTap: () => Navigator.maybePop(context),
                       ),
                     if (title != null)
                       Expanded(
@@ -145,11 +145,11 @@ class TopBarIcon extends StatelessWidget {
       icon: Icon(icon),
       tooltip: tooltip,
       onPressed: onTap,
-      iconSize: Consts.ICON_BIG,
+      iconSize: Consts.iconBig,
       splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
-      padding: Consts.PADDING,
+      padding: Consts.padding,
     );
   }
 }
@@ -393,7 +393,7 @@ class _BottomBar extends StatelessWidget {
       child: BackdropFilter(
         filter: Consts.filter,
         child: Container(
-          height: paddingBottom + Consts.TAP_TARGET_SIZE,
+          height: paddingBottom + Consts.tapTargetSize,
           padding: EdgeInsets.only(bottom: paddingBottom),
           color: Theme.of(context).cardColor,
           child: child,

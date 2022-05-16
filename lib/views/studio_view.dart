@@ -23,8 +23,8 @@ class StudioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     return GetBuilder<StudioController>(
@@ -50,7 +50,7 @@ class StudioView extends StatelessWidget {
               if (name != null)
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     child: GestureDetector(
                       onTap: () => Toast.copy(context, name!),
                       child: Hero(
@@ -129,7 +129,7 @@ class _ActionButton extends StatelessWidget {
       tag: id.toString(),
       builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
-        child: ActionButton(
+        child: ActionButtonOld(
           icon: Ionicons.funnel_outline,
           tooltip: 'Filter',
           onTap: () {
@@ -145,10 +145,10 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                initialHeight: Consts.tapTargetSize * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,

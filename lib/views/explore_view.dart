@@ -21,7 +21,7 @@ class ExploreView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ExploreController>(
       builder: (ctrl) => CustomScrollView(
-        physics: Consts.PHYSICS,
+        physics: Consts.physics,
         controller: ctrl.scrollCtrl,
         slivers: [
           const SliverExploreAppBar(),
@@ -107,7 +107,7 @@ class ExploreActionButton extends StatelessWidget {
       id: ExploreController.ID_BUTTON,
       builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
-        child: ActionButton(
+        child: ActionButtonOld(
           tooltip: 'Types',
           icon: ctrl.type.icon,
           onTap: () => showSheet(

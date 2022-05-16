@@ -38,7 +38,7 @@ class NavLayout extends StatelessWidget {
     if (navRow != null)
       body = DragDetector(
         child: AnimatedSwitcher(
-          duration: Consts.TRANSITION_DURATION,
+          duration: const Duration(milliseconds: 200),
           child: child,
         ),
         onSwipe: (goRight) {
@@ -80,7 +80,7 @@ class NavLayout extends StatelessWidget {
 /// The [NavLayout] should be able to switch the tab
 /// by swiping. In that case, it will call [switchTab].
 abstract class NavRow extends StatelessWidget {
-  NavRow(this.onChanged, this.index);
+  NavRow({required this.onChanged, required this.index});
 
   final void Function(int) onChanged;
   final int index;
@@ -103,9 +103,9 @@ class NavIconRow extends NavRow {
   NavIconRow({
     required this.items,
     required this.onSame,
-    required int index,
-    required void Function(int) onChanged,
-  }) : super(onChanged, index);
+    required super.index,
+    required super.onChanged,
+  });
 
   final Map<String, IconData> items;
 

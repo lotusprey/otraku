@@ -8,7 +8,7 @@ import 'package:otraku/providers/review.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -27,32 +27,7 @@ class ReviewView extends StatelessWidget {
         child: Consumer(builder: (context, ref, _) {
           final data = ref.watch(reviewProvider(id).select((s) => s.value));
 
-          // HeaderLayout(
-          //   topItems: data != null
-          //       ? [
-          //           Expanded(
-          //             child: Text(
-          //               data.mediaTitle,
-          //               style: Theme.of(context).textTheme.headline2,
-          //               overflow: TextOverflow.ellipsis,
-          //             ),
-          //           ),
-          //           AppBarIcon(
-          //             tooltip: 'More',
-          //             icon: Ionicons.ellipsis_horizontal,
-          //             onTap: () => showSheet(
-          //               context,
-          //               FixedGradientDragSheet.link(context, data.siteUrl),
-          //             ),
-          //           ),
-          //         ]
-          //       : const [],
-          //   builder: (context, offsetTop) {
-          //     return CustomScrollView(
-          //       slivers: [],
-          //     );
-          //   },
-          // );
+          // TODO finish review view design...
 
           return CustomScrollView(
             slivers: [
@@ -127,7 +102,7 @@ class ReviewView extends StatelessWidget {
                           child: Text('${data.score}/100'),
                           style: ElevatedButton.styleFrom(
                             textStyle: TextStyle(
-                              fontSize: Consts.FONT_BIG,
+                              fontSize: Consts.fontBig,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -235,7 +210,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
               child: Row(
                 children: [
                   IconShade(
-                    AppBarIcon(
+                    TopBarIcon(
                       tooltip: 'Close',
                       icon: Ionicons.chevron_back_outline,
                       onTap: Navigator.of(context).pop,
@@ -254,7 +229,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   if (siteUrl != null)
                     IconShade(
-                      AppBarIcon(
+                      TopBarIcon(
                         tooltip: 'More',
                         icon: Ionicons.ellipsis_horizontal,
                         onTap: () => showSheet(
@@ -276,7 +251,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 150;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>

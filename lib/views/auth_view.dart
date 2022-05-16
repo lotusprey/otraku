@@ -115,9 +115,9 @@ class _AuthViewState extends State<AuthView> {
     return Scaffold(
       body: Container(
         alignment: Alignment.bottomCenter,
-        padding: Consts.PADDING,
+        padding: Consts.padding,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_MEDIUM),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,10 +128,10 @@ class _AuthViewState extends State<AuthView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Row(
                   children: [
@@ -179,10 +179,10 @@ class _AuthViewState extends State<AuthView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Row(
                   children: [

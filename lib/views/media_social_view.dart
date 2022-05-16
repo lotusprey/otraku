@@ -77,7 +77,7 @@ class _ReviewGrid extends StatelessWidget {
                     Hero(
                       tag: items[i].userId,
                       child: ClipRRect(
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                         child: FadeImage(
                           items[i].avatar,
                           height: 50,
@@ -98,10 +98,10 @@ class _ReviewGrid extends StatelessWidget {
                   explorable: Explorable.review,
                   child: Container(
                     width: double.infinity,
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                     ),
                     child: Text(
                       items[i].summary,
@@ -135,7 +135,7 @@ class _Ranks extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.TAP_TARGET_SIZE,
+          height: Consts.tapTargetSize,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
@@ -143,13 +143,13 @@ class _Ranks extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
             ),
             child: Row(
               children: [
                 Icon(
                   rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
-                  size: Consts.ICON_BIG,
+                  size: Consts.iconBig,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 5),

@@ -38,9 +38,9 @@ class _ChipGrid extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onClear,
                   child: Container(
-                    height: Consts.ICON_SMALL,
-                    width: Consts.ICON_SMALL,
-                    margin: Consts.PADDING,
+                    height: Consts.iconSmall,
+                    width: Consts.iconSmall,
+                    margin: Consts.padding,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Theme.of(context).colorScheme.surfaceVariant,
@@ -48,7 +48,7 @@ class _ChipGrid extends StatelessWidget {
                     child: Icon(
                       Icons.close,
                       color: Theme.of(context).colorScheme.background,
-                      size: Consts.ICON_SMALL,
+                      size: Consts.iconSmall,
                     ),
                   ),
                 ),
@@ -64,7 +64,7 @@ class _ChipGrid extends StatelessWidget {
         children.isNotEmpty
             ? Wrap(spacing: 5, children: children)
             : SizedBox(
-                height: Consts.TAP_TARGET_SIZE,
+                height: Consts.tapTargetSize,
                 child: Center(
                   child: Text(
                     'No $placeholder',

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/providers/notifications.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -96,7 +95,10 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       ),
       builder: (context, topOffset, bottomOffset) => Consumer(
         child: SliverRefreshControl(
-          onRefresh: () => Future.value(ref.refresh(notificationsProvider)),
+          onRefresh: () {
+            ref.invalidate(notificationsProvider);
+            return Future.value();
+          },
           topOffset: topOffset,
         ),
         builder: (context, ref, refreshIndicator) {
@@ -123,7 +125,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               if (data.items.isEmpty) return empty;
 
               return CustomScrollView(
-                physics: Consts.PHYSICS,
+                physics: Consts.physics,
                 controller: _ctrl,
                 slivers: [
                   refreshIndicator!,
@@ -169,7 +171,7 @@ class _NotificationWidget extends StatelessWidget {
         child: Container(
           height: 90,
           decoration: BoxDecoration(
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
             color: Theme.of(context).colorScheme.surface,
           ),
           child: Row(
@@ -190,7 +192,7 @@ class _NotificationWidget extends StatelessWidget {
                   child: ClipRRect(
                     child: FadeImage(notification.imageUrl!, width: 70),
                     borderRadius: BorderRadius.horizontal(
-                      left: Consts.RADIUS_MIN,
+                      left: Consts.radiusMin,
                     ),
                   ),
                 ),
@@ -249,7 +251,7 @@ class _NotificationWidget extends StatelessWidget {
                       showSheet(context, EditView(notification.headId!));
                   },
                   child: Padding(
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -288,7 +290,7 @@ class _NotificationWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primary,
                     borderRadius: const BorderRadius.horizontal(
-                      right: Consts.RADIUS_MIN,
+                      right: Consts.radiusMin,
                     ),
                   ),
                 ),
@@ -328,16 +330,16 @@ class _NotificationDialog extends StatelessWidget {
 
     return DialogBox(
       Padding(
-        padding: Consts.PADDING,
+        padding: Consts.padding,
         child: Row(
           children: [
             if (item.imageUrl != null) ...[
               ClipRRect(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 child: FadeImage(
                   item.imageUrl!,
                   width: imageWidth,
-                  height: imageWidth * Consts.COVER_HW_RATIO,
+                  height: imageWidth * Consts.coverHtoWRatio,
                 ),
               ),
               const SizedBox(width: 10),

@@ -273,12 +273,12 @@ class _SelectionSheet<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OpaqueSheet(
-      initialHeight: options.length * Consts.TAP_TARGET_SIZE + 20,
+      initialHeight: options.length * Consts.tapTargetSize + 20,
       builder: (context, scrollCtrl) => ListView.builder(
         controller: scrollCtrl,
-        padding: Consts.PADDING,
+        padding: Consts.padding,
         itemCount: options.length,
-        itemExtent: Consts.TAP_TARGET_SIZE,
+        itemExtent: Consts.tapTargetSize,
         itemBuilder: (_, index) => CheckBoxField(
           title: options[index],
           initial: selected.contains(values[index]),
@@ -350,7 +350,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
               top: 90,
             ),
             controller: widget.scrollCtrl,
-            itemExtent: Consts.TAP_TARGET_SIZE,
+            itemExtent: Consts.tapTargetSize,
             itemCount: _itemIndices.length,
             itemBuilder: (_, i) {
               final name = _tags.names[_itemIndices[i]];
@@ -383,7 +383,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
             ),
           ),
         ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+          borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
           child: BackdropFilter(
             filter: Consts.filter,
             child: Container(

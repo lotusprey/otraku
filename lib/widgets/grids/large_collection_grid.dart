@@ -52,7 +52,7 @@ class _Tile extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
       ),
       child: ExploreIndexer(
         id: model.mediaId,
@@ -64,9 +64,9 @@ class _Tile extends StatelessWidget {
             Hero(
               tag: model.mediaId,
               child: ClipRRect(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 child: Container(
-                  width: _TILE_HEIGHT / Consts.COVER_HW_RATIO,
+                  width: _TILE_HEIGHT / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surface,
                   child: FadeImage(model.cover),
                 ),
@@ -74,7 +74,7 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 child: _TileContent(model, scoreFormat, updateProgress),
               ),
             ),
@@ -139,7 +139,7 @@ class __TileContentState extends State<_TileContent> {
           height: 5,
           margin: const EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).colorScheme.surfaceVariant,
@@ -164,7 +164,7 @@ class __TileContentState extends State<_TileContent> {
                     const SizedBox(width: 5),
                     const Icon(
                       Ionicons.repeat,
-                      size: Consts.ICON_SMALL,
+                      size: Consts.iconSmall,
                     ),
                     const SizedBox(width: 3),
                     Text(
@@ -180,12 +180,12 @@ class __TileContentState extends State<_TileContent> {
               IconButton(
                 tooltip: 'Comment',
                 constraints: const BoxConstraints(
-                  maxHeight: Consts.ICON_SMALL + 10,
+                  maxHeight: Consts.iconSmall + 10,
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 icon: const Icon(
                   Ionicons.chatbox,
-                  size: Consts.ICON_SMALL,
+                  size: Consts.iconSmall,
                 ),
                 onPressed: () => showPopUp(
                   context,
@@ -225,7 +225,7 @@ class __TileContentState extends State<_TileContent> {
         style: Theme.of(context)
             .textTheme
             .bodyText1
-            ?.copyWith(fontSize: Consts.FONT_SMALL),
+            ?.copyWith(fontSize: Consts.fontSmall),
       ));
 
     return ts;
@@ -239,21 +239,21 @@ class __TileContentState extends State<_TileContent> {
         if (widget.model.score == 3)
           return const Icon(
             Icons.sentiment_very_satisfied,
-            size: Consts.ICON_SMALL,
+            size: Consts.iconSmall,
           );
 
         if (widget.model.score == 2)
-          return const Icon(Icons.sentiment_neutral, size: Consts.ICON_SMALL);
+          return const Icon(Icons.sentiment_neutral, size: Consts.iconSmall);
 
         return const Icon(
           Icons.sentiment_very_dissatisfied,
-          size: Consts.ICON_SMALL,
+          size: Consts.iconSmall,
         );
       case ScoreFormat.POINT_5:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, size: Consts.ICON_SMALL),
+            const Icon(Icons.star_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
               widget.model.score.toStringAsFixed(0),
@@ -265,7 +265,7 @@ class __TileContentState extends State<_TileContent> {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
               widget.model.score.toStringAsFixed(
@@ -279,7 +279,7 @@ class __TileContentState extends State<_TileContent> {
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Consts.ICON_SMALL),
+            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
               widget.model.score.toStringAsFixed(0),
@@ -329,7 +329,7 @@ class __TileContentState extends State<_TileContent> {
           children: [
             text,
             const SizedBox(width: 3),
-            const Icon(Ionicons.add_outline, size: Consts.ICON_SMALL),
+            const Icon(Ionicons.add_outline, size: Consts.iconSmall),
           ],
         ),
       ),

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
@@ -124,18 +123,18 @@ class _HomeViewState extends State<HomeView> {
   Future<bool> _onWillPop(BuildContext ctx) async {
     if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.search != null) {
       exploreCtrl.search = null;
-      return SynchronousFuture(false);
+      return Future.value(false);
     }
     if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.search != null) {
       animeCtrl.search = null;
-      return SynchronousFuture(false);
+      return Future.value(false);
     }
     if (homeCtrl.homeTab == HomeView.MANGA_LIST && mangaCtrl.search != null) {
       mangaCtrl.search = null;
-      return SynchronousFuture(false);
+      return Future.value(false);
     }
 
-    if (!Settings().confirmExit) return SynchronousFuture(true);
+    if (!Settings().confirmExit) return Future.value(true);
 
     bool ok = false;
     await showPopUp(

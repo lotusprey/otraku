@@ -15,13 +15,13 @@ class TileGrid extends StatelessWidget {
     required this.models,
     this.full = true,
     this.scrollCtrl,
-    UniqueKey? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     final padding = EdgeInsets.only(
@@ -34,14 +34,14 @@ class TileGrid extends StatelessWidget {
     final gridDelegate = SliverGridDelegateWithMinWidthAndExtraHeight(
       minWidth: 100,
       extraHeight: 40,
-      rawHWRatio: full ? Consts.COVER_HW_RATIO : 1.0,
+      rawHWRatio: full ? Consts.coverHtoWRatio : 1.0,
     );
 
     if (scrollCtrl != null)
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
+        physics: Consts.physics,
         itemCount: models.length,
         gridDelegate: gridDelegate,
         itemBuilder: (_, i) => _Tile(models[i], full),
@@ -78,7 +78,7 @@ class _Tile extends StatelessWidget {
             child: Hero(
               tag: data.id,
               child: ClipRRect(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 child: Container(
                   color: full ? Theme.of(context).colorScheme.surface : null,
                   child: FadeImage(

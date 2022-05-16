@@ -9,12 +9,12 @@ class TitleGrid extends StatelessWidget {
   final List<ExplorableModel> results;
   final ScrollController? scrollCtrl;
 
-  TitleGrid(this.results, {this.scrollCtrl, UniqueKey? key}) : super(key: key);
+  TitleGrid(this.results, {this.scrollCtrl, super.key});
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     final padding = EdgeInsets.only(
@@ -33,7 +33,7 @@ class TitleGrid extends StatelessWidget {
       return GridView.builder(
         padding: padding,
         controller: scrollCtrl,
-        physics: Consts.PHYSICS,
+        physics: Consts.physics,
         itemCount: results.length,
         gridDelegate: gridDelegate,
         itemBuilder: (_, i) => _Tile(results[i]),

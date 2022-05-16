@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class CustomSliverHeader extends StatelessWidget {
@@ -17,7 +17,7 @@ class CustomSliverHeader extends StatelessWidget {
     required this.child,
     required this.heroId,
     this.extraLargeImage,
-    this.maxWidth = Consts.LAYOUT_BIG,
+    this.maxWidth = Consts.layoutBig,
   });
 
   final String? title;
@@ -42,7 +42,7 @@ class CustomSliverHeader extends StatelessWidget {
     final imageWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.30
         : 100.0;
-    final imageHeight = imageWidth * (squareImage ? 1 : Consts.COVER_HW_RATIO);
+    final imageHeight = imageWidth * (squareImage ? 1 : Consts.coverHtoWRatio);
     final bannerHeight = 200.0;
     final height = bannerHeight + imageHeight / 2;
 
@@ -179,7 +179,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: heroId,
                       child: ClipRRect(
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                         child: Container(
                           height: imageHeight,
                           width: imageWidth,
@@ -242,7 +242,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 children: [
                   implyLeading
                       ? IconShade(
-                          AppBarIcon(
+                          TopBarIcon(
                             tooltip: 'Close',
                             icon: Ionicons.chevron_back_outline,
                             onTap: Navigator.of(context).pop,
@@ -273,7 +273,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   double get maxExtent => height;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>

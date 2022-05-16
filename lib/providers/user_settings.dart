@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/notification_type.dart';
 import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/providers/notifications.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 
@@ -60,7 +60,7 @@ class UserSettings {
         scoreFormat: ScoreFormat.values.byName(
           map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
         ),
-        defaultSort: EntrySortHelper.getEnum(
+        defaultSort: EntrySort.getEnum(
           map['mediaListOptions']['rowOrder'],
         ),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',

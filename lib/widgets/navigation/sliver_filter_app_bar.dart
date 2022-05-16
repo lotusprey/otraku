@@ -9,6 +9,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/views/filter_view.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -21,7 +22,7 @@ class SliverCollectionAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final leading = canPop
-        ? AppBarIcon(
+        ? TopBarIcon(
             tooltip: 'Close',
             icon: Ionicons.chevron_back_outline,
             onTap: () => Navigator.pop(context),
@@ -43,7 +44,7 @@ class SliverCollectionAppBar extends StatelessWidget {
               title: ctrl.currentName,
               onChanged: (val) => ctrl.search = val,
             ),
-            AppBarIcon(
+            TopBarIcon(
               tooltip: 'Random',
               icon: Ionicons.shuffle_outline,
               onTap: () {
@@ -142,7 +143,7 @@ class _MediaSearchFieldState extends State<_MediaSearchField> {
               ),
             ),
             if (widget.onChanged != null)
-              AppBarIcon(
+              TopBarIcon(
                 tooltip: 'Search',
                 icon: Ionicons.search_outline,
                 onTap: () => widget.onChanged?.call(''),
@@ -187,7 +188,7 @@ class _MediaFilterIconState extends State<MediaFilterIcon> {
   }
 
   @override
-  Widget build(BuildContext context) => AppBarIcon(
+  Widget build(BuildContext context) => TopBarIcon(
         tooltip: 'Filter',
         icon: Ionicons.funnel_outline,
         onTap: () => showSheet(context, FilterView(widget.filters)).then((_) {
@@ -231,7 +232,7 @@ class _BirthdayFilterIconState extends State<BirthdayFilterIcon> {
   }
 
   @override
-  Widget build(BuildContext context) => AppBarIcon(
+  Widget build(BuildContext context) => TopBarIcon(
         icon: Icons.cake_outlined,
         tooltip: 'Birthday Filter',
         colour: _active ? Theme.of(context).colorScheme.primary : null,

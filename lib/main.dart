@@ -24,24 +24,16 @@ class _AppState extends State<App> {
         theme: Theming().data,
         navigatorKey: RouteArg.navKey,
         onGenerateRoute: RouteArg.generateRoute,
-
-        /// Configure default overscroll behaviour on Android. May become
-        /// unnecessary in the future.
-        ///
-        /// Override the [textScaleFactor] as to not break the app visually.
-        /// [child] shouldn't be null, because [onGenerateRoute] is provided.
         builder: (context, child) {
+          /// Override the [textScaleFactor], because some devices apply
+          /// too high of a factor and it breaks the app visually.
+          /// [child] can't be null, because [onGenerateRoute] is provided.
           final mediaQuery = MediaQuery.of(context);
           final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
 
-          return ScrollConfiguration(
-            behavior: const ScrollBehavior(
-              androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
-            ),
-            child: MediaQuery(
-              data: mediaQuery.copyWith(textScaleFactor: scale),
-              child: child!,
-            ),
+          return MediaQuery(
+            data: mediaQuery.copyWith(textScaleFactor: scale),
+            child: child!,
           );
         },
       );
@@ -50,7 +42,7 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     Theming().addListener(() => setState(() {}));
-    WidgetsBinding.instance?.window.onPlatformBrightnessChanged =
+    WidgetsBinding.instance.window.onPlatformBrightnessChanged =
         Theming().refresh;
   }
 

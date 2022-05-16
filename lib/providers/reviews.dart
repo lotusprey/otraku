@@ -45,9 +45,9 @@ class ReviewsNotifier extends ChangeNotifier {
       for (final r in data['Page']['reviews'])
         items.add(ExplorableModel.review(r));
 
-      return value.copyWith(
+      return value.append(
         items,
-        data['Page']['pageInfo']?['hasNextPage'] ?? false,
+        data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
     });
     notifyListeners();
@@ -58,10 +58,8 @@ enum ReviewSort {
   CREATED_AT_DESC,
   CREATED_AT,
   RATING_DESC,
-  RATING,
-}
+  RATING;
 
-extension ReviewSortExtension on ReviewSort {
   String get text {
     switch (this) {
       case ReviewSort.CREATED_AT:

@@ -110,13 +110,14 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
                   if (data.items.isEmpty) return empty;
 
                   return CustomScrollView(
-                    physics: Consts.PHYSICS,
+                    physics: Consts.physics,
                     controller: _ctrl,
                     slivers: [
                       SliverRefreshControl(
-                        onRefresh: () => Future.value(
-                          ref.refresh(reviewsProvider(widget.id)),
-                        ),
+                        onRefresh: () {
+                          ref.invalidate(reviewsProvider(widget.id));
+                          return Future.value();
+                        },
                         topOffset: PageOffset.of(context).top,
                       ),
                       ReviewGrid(items: data.items),

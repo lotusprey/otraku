@@ -5,7 +5,7 @@ import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/utils/settings.dart';
 
 abstract class FilterModel<T extends Enum> {
-  FilterModel(this._ofAnime, this.sort);
+  FilterModel({required bool ofAnime, required this.sort}) : _ofAnime = ofAnime;
 
   final List<String> statuses = [];
   final List<String> formats = [];
@@ -50,8 +50,10 @@ abstract class FilterModel<T extends Enum> {
 class CollectionFilterModel extends FilterModel<EntrySort> {
   CollectionFilterModel(bool ofAnime, this.onChange)
       : super(
-          ofAnime,
-          ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort,
+          ofAnime: ofAnime,
+          sort: ofAnime
+              ? Settings().defaultAnimeSort
+              : Settings().defaultMangaSort,
         );
 
   final List<int> tagIdIn = [];
@@ -106,7 +108,7 @@ class CollectionFilterModel extends FilterModel<EntrySort> {
 
 class ExploreFilterModel extends FilterModel<MediaSort> {
   ExploreFilterModel(bool ofAnime, this.onChange)
-      : super(ofAnime, Settings().defaultExploreSort);
+      : super(ofAnime: ofAnime, sort: Settings().defaultExploreSort);
 
   bool? onList;
   final void Function()? onChange;

@@ -5,8 +5,8 @@ import 'package:otraku/widgets/drag_detector.dart';
 const _ACTION_BUTTON_SIZE = 56.0;
 
 /// An alternative implementation of [FloatingActionButton].
-class ActionButton extends StatelessWidget {
-  ActionButton({
+class ActionButtonOld extends StatelessWidget {
+  ActionButtonOld({
     required this.icon,
     required this.tooltip,
     required this.onTap,

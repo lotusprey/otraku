@@ -21,13 +21,13 @@ class MinimalCollectionGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 70,
-        rawHWRatio: Consts.COVER_HW_RATIO,
+        rawHWRatio: Consts.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         (_, i) => DecoratedBox(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
           ),
           child: ExploreIndexer(
             id: items[i].mediaId,
@@ -39,7 +39,7 @@ class MinimalCollectionGrid extends StatelessWidget {
                   child: Hero(
                     tag: items[i].mediaId,
                     child: ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                       child: Container(
                         color: Theme.of(context).colorScheme.surface,
                         child: FadeImage(items[i].imageUrl),
@@ -135,10 +135,10 @@ class _IncrementButtonState extends State<_IncrementButton> {
           children: [
             Text(
               '${model.progress}/${model.progressMax ?? "?"}',
-              style: TextStyle(fontSize: Consts.FONT_SMALL),
+              style: TextStyle(fontSize: Consts.fontSmall),
             ),
             const SizedBox(width: 3),
-            const Icon(Ionicons.add_outline, size: Consts.ICON_SMALL),
+            const Icon(Ionicons.add_outline, size: Consts.iconSmall),
           ],
         ),
       ),

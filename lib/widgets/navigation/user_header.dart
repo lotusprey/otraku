@@ -41,7 +41,7 @@ class UserHeader extends StatelessWidget {
                 user!.isFollowing
                     ? Ionicons.person_remove_outline
                     : Ionicons.person_add_outline,
-                size: Consts.ICON_SMALL,
+                size: Consts.iconSmall,
               ),
               label: Text(
                 user!.isFollowing
@@ -103,7 +103,7 @@ class UserHeader extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Text(
                         user!.modRoles[0],
@@ -201,7 +201,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: _animation.value,
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
       ),
       child: Text(
         widget.text!,

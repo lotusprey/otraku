@@ -12,14 +12,12 @@ import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/views/feed_view.dart';
 import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class InboxView extends StatelessWidget {
@@ -42,7 +40,7 @@ class InboxView extends StatelessWidget {
         };
 
         if (count < 1)
-          return AppBarIcon(
+          return TopBarIcon(
             tooltip: 'Notifications',
             icon: Ionicons.notifications_outline,
             onTap: openNotifications,
@@ -114,7 +112,7 @@ class InboxView extends StatelessWidget {
             ],
           ),
           builder: (context, topOffset, _) => AnimatedSwitcher(
-            duration: Consts.TRANSITION_DURATION,
+            duration: const Duration(milliseconds: 200),
             child: ctrl.onFeed
                 ? _FeedView(feedCtrl, scrollCtrl, topOffset)
                 : _ProgressView(scrollCtrl, topOffset),
@@ -150,7 +148,7 @@ class _ProgressView extends StatelessWidget {
           }
 
           return CustomScrollView(
-            physics: Consts.PHYSICS,
+            physics: Consts.physics,
             controller: scrollCtrl,
             slivers: [
               SliverRefreshControl(
@@ -283,7 +281,7 @@ class _FeedViewState extends State<_FeedView> {
         }
 
         return CustomScrollView(
-          physics: Consts.PHYSICS,
+          physics: Consts.physics,
           controller: widget.scrollCtrl,
           slivers: [
             SliverRefreshControl(
@@ -291,7 +289,7 @@ class _FeedViewState extends State<_FeedView> {
               canRefresh: () => !widget.ctrl.isLoading,
               topOffset: widget.offsetTop,
             ),
-            SliverPadding(padding: Consts.PADDING, sliver: content),
+            SliverPadding(padding: Consts.padding, sliver: content),
             SliverPadding(
               padding: EdgeInsets.only(
                 top: 10,
@@ -307,6 +305,65 @@ class _FeedViewState extends State<_FeedView> {
             ),
           ],
         );
+      },
+    );
+  }
+}
+
+class FeedFilterIcon extends StatelessWidget {
+  FeedFilterIcon(this.feedCtrl);
+
+  final FeedController feedCtrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return TopBarIcon(
+      tooltip: 'Filter',
+      icon: Ionicons.funnel_outline,
+      onTap: () {
+        //   final typeIn = feedCtrl.typeIn;
+        //   double initialHeight =
+        //       Consts.tapTargetSize * ActivityType.values.length + 20;
+
+        //   // If on the home feed - following/global selection.
+        //   bool? onFollowing;
+        //   Widget? onFollowingSelection;
+        //   if (feedCtrl.id == null) {
+        //     onFollowing = feedCtrl.onFollowing;
+        //     onFollowingSelection = TabSegments(
+        //       items: const {'Following': true, 'Global': false},
+        //       initial: onFollowing,
+        //       onChanged: (bool val) => onFollowing = val,
+        //     );
+        //     initialHeight += Consts.tapTargetSize;
+        //   }
+
+        //   showSheet(
+        //     context,
+        //     OpaqueSheet(
+        //         initialHeight: initialHeight,
+        //         builder: (context, scrollCtrl) => ListView(
+        //               controller: scrollCtrl,
+        //               physics: Consts.physics,
+        //               children: [
+        //                 ListView(
+        //                   shrinkWrap: true,
+        //                   padding: Consts.padding,
+        //                   physics: const NeverScrollableScrollPhysics(),
+        //                   children: [
+        //                     for (final a in ActivityType.values)
+        //                       CheckBoxField(
+        //                         title: a.text,
+        //                         initial: typeIn.contains(a),
+        //                         onChanged: (val) =>
+        //                             val ? typeIn.add(a) : typeIn.remove(a),
+        //                       )
+        //                   ],
+        //                 ),
+        //                 if (onFollowingSelection != null) onFollowingSelection,
+        //               ],
+        //             )),
+        //   ).then((_) => feedCtrl.setFilters(typeIn, onFollowing));
       },
     );
   }

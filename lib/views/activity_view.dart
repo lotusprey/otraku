@@ -41,7 +41,7 @@ class ActivityView extends StatelessWidget {
                                 Hero(
                                   tag: model.agentId,
                                   child: ClipRRect(
-                                    borderRadius: Consts.BORDER_RAD_MIN,
+                                    borderRadius: Consts.borderRadiusMin,
                                     child: FadeImage(
                                       model.agentImage,
                                       height: 40,
@@ -76,7 +76,7 @@ class ActivityView extends StatelessWidget {
                             imageUrl: model.recieverImage,
                             explorable: Explorable.user,
                             child: ClipRRect(
-                              borderRadius: Consts.BORDER_RAD_MIN,
+                              borderRadius: Consts.borderRadiusMin,
                               child: FadeImage(
                                 model.recieverImage!,
                                 height: 40,
@@ -92,13 +92,13 @@ class ActivityView extends StatelessWidget {
             body: SafeArea(
               bottom: false,
               child: CustomScrollView(
-                physics: Consts.PHYSICS,
+                physics: Consts.physics,
                 controller: ctrl.scrollCtrl,
                 slivers: [
                   if (model != null) ...[
                     SliverToBoxAdapter(
                         child: Padding(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       child: ActivityBoxBody(
                         model,
                         InteractionButtons(
@@ -119,7 +119,7 @@ class ActivityView extends StatelessWidget {
                       ),
                     )),
                     SliverPadding(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => _UserReply(model.replies.items[i]),
@@ -166,7 +166,7 @@ class _UserReply extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 child: FadeImage(
                   reply.userImage,
                   height: 50,
@@ -181,10 +181,10 @@ class _UserReply extends StatelessWidget {
         const SizedBox(height: 5),
         Container(
           margin: const EdgeInsets.only(bottom: 10),
-          padding: Consts.PADDING,
+          padding: Consts.padding,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
           ),
           child: Column(
             children: [
@@ -247,7 +247,7 @@ class _ReplyLikeIconState extends State<_ReplyLikeIcon> {
             const SizedBox(width: 5),
             Icon(
               Icons.favorite,
-              size: Consts.ICON_SMALL,
+              size: Consts.iconSmall,
               color: widget.reply.isLiked
                   ? Theme.of(context).colorScheme.error
                   : null,

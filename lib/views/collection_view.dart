@@ -42,11 +42,7 @@ class CollectionView extends StatelessWidget {
 }
 
 class HomeCollectionView extends StatelessWidget {
-  HomeCollectionView({
-    required this.id,
-    required this.ofAnime,
-    key,
-  }) : super(key: key);
+  HomeCollectionView({required this.id, required this.ofAnime, super.key});
 
   final int id;
   final bool ofAnime;
@@ -56,14 +52,14 @@ class HomeCollectionView extends StatelessWidget {
     final tag = '$id$ofAnime';
     final isMe =
         tag == '${Settings().id}true' || tag == '${Settings().id}false';
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     return GetBuilder<CollectionController>(
       tag: tag,
       builder: (ctrl) => CustomScrollView(
-        physics: Consts.PHYSICS,
+        physics: Consts.physics,
         controller: ctrl.scrollCtrl,
         slivers: [
           SliverCollectionAppBar(tag, id != Settings().id),
@@ -121,7 +117,7 @@ class HomeCollectionView extends StatelessWidget {
 }
 
 class CollectionActionButton extends StatelessWidget {
-  const CollectionActionButton(this.ctrlTag, {Key? key}) : super(key: key);
+  const CollectionActionButton(this.ctrlTag, {super.key});
 
   final String ctrlTag;
 
@@ -131,7 +127,7 @@ class CollectionActionButton extends StatelessWidget {
 
     return FloatingActionListener(
       scrollCtrl: ctrl.scrollCtrl,
-      child: ActionButton(
+      child: ActionButtonOld(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
         onTap: () => showSheet(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/providers/reviews.dart';
+import 'package:otraku/reviews/reviews.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/review_grid.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -118,7 +118,6 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
                           ref.invalidate(reviewsProvider(widget.id));
                           return Future.value();
                         },
-                        topOffset: PageOffset.of(context).top,
                       ),
                       ReviewGrid(items: data.items),
                       if (data.hasNext) const SliverFooterLoader(),

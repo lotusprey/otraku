@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/providers/notifications.dart';
+import 'package:otraku/notifications/notifications.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 

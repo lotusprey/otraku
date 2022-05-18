@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/views/activities_view.dart';
-import 'package:otraku/views/activity_view.dart';
+import 'package:otraku/activities/activities_view.dart';
+import 'package:otraku/activities/activity_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
@@ -8,23 +8,24 @@ import 'package:otraku/views/favourites_view.dart';
 import 'package:otraku/views/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
-import 'package:otraku/views/notifications_view.dart';
-import 'package:otraku/views/review_view.dart';
-import 'package:otraku/views/settings_view.dart';
+import 'package:otraku/notifications/notifications_view.dart';
+import 'package:otraku/reviews/review_view.dart';
+import 'package:otraku/settings/settings_view.dart';
 import 'package:otraku/views/staff_view.dart';
 import 'package:otraku/views/statistics_view.dart';
 import 'package:otraku/views/studio_view.dart';
-import 'package:otraku/views/reviews_view.dart';
+import 'package:otraku/reviews/reviews_view.dart';
 import 'package:otraku/views/user_view.dart';
 
 /// A routing helper. When passing arguments to named routes, they should always
 /// be an instance of [RouteArg] or [null].
 class RouteArg {
-  const RouteArg({this.id, this.info, this.variant});
+  const RouteArg({this.id, this.info, this.variant, this.callback});
 
   final int? id;
   final String? info;
   final bool? variant;
+  final void Function(dynamic)? callback;
 
   /// Used to provide context when it's unavailable
   /// through [RouteArg.navKey.currentContext].
@@ -97,7 +98,7 @@ class RouteArg {
       case activity:
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
-          builder: (_) => ActivityView(arg!.id!, arg.info),
+          builder: (_) => ActivityView(arg!.id!, arg.callback),
         );
       default:
         return _unknown;

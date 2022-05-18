@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/providers/notifications.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/notifications/notifications.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 
-class SettingsNotificationsView extends StatelessWidget {
-  SettingsNotificationsView(this.scrollCtrl, this.settings, this.shouldUpdate);
+class SettingsNotificationsTab extends StatelessWidget {
+  SettingsNotificationsTab(this.scrollCtrl, this.settings, this.shouldUpdate);
 
   final ScrollController scrollCtrl;
   final UserSettings settings;

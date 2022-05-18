@@ -3,19 +3,14 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 
 class SliverRefreshControl extends StatelessWidget {
-  const SliverRefreshControl({
-    required this.onRefresh,
-    this.canRefresh,
-    this.topOffset = 0,
-  });
+  const SliverRefreshControl({required this.onRefresh, this.canRefresh});
 
   final Future<void> Function() onRefresh;
   final bool Function()? canRefresh;
-  final double topOffset;
 
   @override
   Widget build(BuildContext context) => SliverPadding(
-        padding: EdgeInsets.only(top: topOffset),
+        padding: EdgeInsets.only(top: PageOffset.of(context).top),
         sliver: CupertinoSliverRefreshControl(
           refreshIndicatorExtent: 15,
           refreshTriggerPullDistance: 160,

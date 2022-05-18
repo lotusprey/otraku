@@ -1,5 +1,5 @@
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/models/media_model.dart';

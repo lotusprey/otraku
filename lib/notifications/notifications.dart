@@ -23,10 +23,10 @@ class NotificationsNotifier extends ChangeNotifier {
   final NotificationFilterType filter;
 
   int _unreadCount = 0;
-  var _notifications = const AsyncValue<Pagination<NotificationItem>>.loading();
+  var _notifications = const AsyncValue<Pagination<SiteNotification>>.loading();
 
   int get unreadCount => _unreadCount;
-  AsyncValue<Pagination<NotificationItem>> get notifications => _notifications;
+  AsyncValue<Pagination<SiteNotification>> get notifications => _notifications;
 
   Future<void> fetch() async {
     _notifications = await AsyncValue.guard(() async {
@@ -45,9 +45,9 @@ class NotificationsNotifier extends ChangeNotifier {
       if (filter.index < 1)
         _unreadCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
 
-      final items = <NotificationItem>[];
+      final items = <SiteNotification>[];
       for (final n in data['Page']['notifications']) {
-        final item = NotificationItem.maybe(n);
+        final item = SiteNotification.maybe(n);
         if (item != null) items.add(item);
       }
 
@@ -121,8 +121,8 @@ enum NotificationFilterType {
   }
 }
 
-class NotificationItem {
-  NotificationItem._({
+class SiteNotification {
+  SiteNotification._({
     required this.id,
     required this.type,
     required this.texts,
@@ -147,10 +147,10 @@ class NotificationItem {
   final String? imageUrl;
   final Explorable? explorable;
 
-  static NotificationItem? maybe(Map<String, dynamic> map) {
+  static SiteNotification? maybe(Map<String, dynamic> map) {
     switch (map['type']) {
       case 'FOLLOWING':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.FOLLOWING,
           headId: map['user']['id'],
@@ -162,7 +162,7 @@ class NotificationItem {
           explorable: Explorable.user,
         );
       case 'ACTIVITY_MESSAGE':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.ACTIVITY_MESSAGE,
           headId: map['user']['id'],
@@ -173,7 +173,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'ACTIVITY_REPLY':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.ACTIVITY_REPLY,
           headId: map['user']['id'],
@@ -184,7 +184,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_SUBSCRIBED':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.ACTIVITY_REPLY_SUBSCRIBED,
           headId: map['user']['id'],
@@ -198,7 +198,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'THREAD_COMMENT_REPLY':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.THREAD_COMMENT_REPLY,
           headId: map['user']['id'],
@@ -216,7 +216,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'ACTIVITY_MENTION':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.ACTIVITY_MENTION,
           headId: map['user']['id'],
@@ -227,7 +227,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'THREAD_COMMENT_MENTION':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.THREAD_COMMENT_MENTION,
           headId: map['user']['id'],
@@ -245,7 +245,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'THREAD_SUBSCRIBED':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.THREAD_SUBSCRIBED,
           headId: map['user']['id'],
@@ -263,7 +263,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'ACTIVITY_LIKE':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.ACTIVITY_LIKE,
           headId: map['user']['id'],
@@ -274,7 +274,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'ACTIVITY_REPLY_LIKE':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.ACTIVITY_REPLY_LIKE,
           headId: map['user']['id'],
@@ -285,7 +285,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'THREAD_LIKE':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.THREAD_LIKE,
           headId: map['user']['id'],
@@ -300,7 +300,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'THREAD_COMMENT_LIKE':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.THREAD_COMMENT_LIKE,
           headId: map['user']['id'],
@@ -318,7 +318,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'RELATED_MEDIA_ADDITION':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.RELATED_MEDIA_ADDITION,
           headId: map['media']['id'],
@@ -335,7 +335,7 @@ class NotificationItem {
               : Explorable.manga,
         );
       case 'MEDIA_DATA_CHANGE':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.MEDIA_DATA_CHANGE,
           headId: map['media']['id'],
@@ -358,7 +358,7 @@ class NotificationItem {
         );
         if (titles.isEmpty) return null;
 
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.MEDIA_MERGE,
           headId: map['media']['id'],
@@ -375,7 +375,7 @@ class NotificationItem {
               : Explorable.manga,
         );
       case 'MEDIA_DELETION':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.MEDIA_DELETION,
           details: map['reason'],
@@ -387,7 +387,7 @@ class NotificationItem {
           timestamp: Convert.millisToStr(map['createdAt']),
         );
       case 'AIRING':
-        return NotificationItem._(
+        return SiteNotification._(
           id: map['id'],
           type: NotificationType.AIRING,
           headId: map['media']['id'],

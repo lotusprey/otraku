@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/activities/activities.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
 import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
@@ -20,7 +20,7 @@ import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends ConsumerStatefulWidget {
   const HomeView(this.id);
 
   final int id;
@@ -32,16 +32,15 @@ class HomeView extends StatefulWidget {
   static const USER = 4;
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
-  final _ctrl = ScrollController();
+class _HomeViewState extends ConsumerState<HomeView> {
+  late final _ctrl = PaginationController(loadMore: _scrollListener);
 
   late final HomeController homeCtrl;
   late final ProgressController progressCtrl;
   late final ExploreController exploreCtrl;
-  late final FeedController feedCtrl;
   late final TagGroupController tagCtrl;
   late final UserController userCtrl;
   late final CollectionController animeCtrl;
@@ -120,6 +119,12 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  void _scrollListener() {
+    if (homeCtrl.homeTab != HomeView.INBOX || !homeCtrl.onFeed) return;
+
+    ref.read(activitiesProvider(null).notifier).fetch();
+  }
+
   Future<bool> _onWillPop(BuildContext ctx) async {
     if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.search != null) {
       exploreCtrl.search = null;
@@ -153,10 +158,11 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    ref.read(activitiesProvider(null));
+
     homeCtrl = Get.put(HomeController());
     progressCtrl = Get.put(ProgressController());
     exploreCtrl = Get.put(ExploreController());
-    feedCtrl = Get.put(FeedController(null));
     tagCtrl = Get.put(TagGroupController());
     userCtrl = Get.put(
       UserController(widget.id),
@@ -172,7 +178,7 @@ class _HomeViewState extends State<HomeView> {
     );
 
     tabs = [
-      InboxView(feedCtrl, _ctrl),
+      InboxView(_ctrl),
       HomeCollectionView(ofAnime: true, id: widget.id, key: UniqueKey()),
       HomeCollectionView(ofAnime: false, id: widget.id, key: UniqueKey()),
       const ExploreView(),
@@ -194,7 +200,6 @@ class _HomeViewState extends State<HomeView> {
     Get.delete<HomeController>();
     Get.delete<ProgressController>();
     Get.delete<ExploreController>();
-    Get.delete<FeedController>();
     Get.delete<TagGroupController>();
     Get.delete<UserController>(tag: widget.id.toString());
     Get.delete<CollectionController>(tag: '${widget.id}true');

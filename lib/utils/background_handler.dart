@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:otraku/providers/notifications.dart';
+import 'package:otraku/notifications/notifications.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -110,7 +110,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {
-        final notification = NotificationItem.maybe(ns[i]);
+        final notification = SiteNotification.maybe(ns[i]);
         if (notification == null) continue;
 
         switch (notification.type) {
@@ -231,7 +231,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       return true;
     });
 
-void _show(NotificationItem notification, String title, String payload) {
+void _show(SiteNotification notification, String title, String payload) {
   final id = notification.type.name;
   final name = Convert.clarifyEnum(id)!;
 

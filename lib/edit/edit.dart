@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/list_status.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';

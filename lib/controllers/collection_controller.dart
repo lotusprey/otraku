@@ -6,7 +6,7 @@ import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
-import 'package:otraku/providers/edit.dart';
+import 'package:otraku/edit/edit.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination_controller.dart';
@@ -369,7 +369,7 @@ class CollectionController extends ScrollingController {
     final customLists = <String>[];
     if (data['SaveMediaListEntry']?['customLists'] != null)
       for (final e in data['SaveMediaListEntry']['customLists'].entries)
-        if (e.value) customLists.add(e.key.toString().toLowerCase());
+        if (e.userId) customLists.add(e.key.toString().toLowerCase());
 
     if (customLists.isNotEmpty)
       for (final list in _lists)

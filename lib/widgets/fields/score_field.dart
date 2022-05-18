@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/providers/edit.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/edit/edit.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
 
 // Score picker.
@@ -168,8 +168,8 @@ class _HundredScorePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => NumberField(
-        value: score.floor(),
+        initial: score.floor(),
         maxValue: 100,
-        update: (v) => onChanged(v.toDouble()),
+        onChanged: (v) => onChanged(v.toDouble()),
       );
 }

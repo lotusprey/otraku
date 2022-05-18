@@ -1,185 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/activities/activity.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/providers/activities.dart';
-import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/html_content.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class ActivitiesView extends ConsumerStatefulWidget {
-  const ActivitiesView(this.id);
-
-  final int id;
-
-  @override
-  ConsumerState<ActivitiesView> createState() => _ActivitiesViewState();
-}
-
-class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
-  late final PaginationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PaginationController(
-      loadMore: () => ref.read(activitiesProvider(widget.id).notifier).fetch(),
-    );
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PageLayout(
-      topBar: const TopBar(title: 'Activities'),
-      floatingBar: FloatingBar(
-        scrollCtrl: _ctrl,
-        child: ActionButton(
-          tooltip: 'Filter',
-          icon: Ionicons.funnel_outline,
-          onTap: () {
-            final typeIn = [...ref.read(activityFilterProvider(widget.id))];
-            bool changed = false;
-
-            final initialHeight =
-                Consts.tapTargetSize * ActivityType.values.length + 20;
-
-            showSheet(
-              context,
-              OpaqueSheet(
-                initialHeight: initialHeight,
-                builder: (context, scrollCtrl) => ListView(
-                  controller: scrollCtrl,
-                  physics: Consts.physics,
-                  children: [
-                    ListView(
-                      shrinkWrap: true,
-                      padding: Consts.padding,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        for (final a in ActivityType.values)
-                          CheckBoxField(
-                            title: a.text,
-                            initial: typeIn.contains(a),
-                            onChanged: (val) {
-                              val ? typeIn.add(a) : typeIn.remove(a);
-                              changed = true;
-                            },
-                          )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ).then((_) {
-              if (!changed) return;
-              ref
-                  .read(activityFilterProvider(widget.id).notifier)
-                  .update((_) => typeIn);
-            });
-          },
-        ),
-      ),
-      builder: (context, topOffset, bottomOffset) => Consumer(
-        child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(activitiesProvider(widget.id));
-            return Future.value();
-          },
-          topOffset: topOffset,
-        ),
-        builder: (context, ref, refreshIndicator) {
-          ref.listen<AsyncValue>(
-            activitiesProvider(widget.id),
-            (_, s) => s.whenOrNull(
-              error: (error, _) => showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Could not load activities',
-                  content: error.toString(),
-                ),
-              ),
-            ),
-          );
-
-          const empty = Center(child: Text('No Activities'));
-
-          return ref
-              .watch(activitiesProvider(widget.id))
-              .unwrapPrevious()
-              .maybeWhen(
-                loading: () => const Center(child: Loader()),
-                orElse: () => empty,
-                data: (data) {
-                  if (data.items.isEmpty) return empty;
-
-                  final delete = (id) => ref
-                      .read(activitiesProvider(widget.id).notifier)
-                      .delete(id);
-
-                  final toggleLike = (id) => ref
-                      .read(activitiesProvider(widget.id).notifier)
-                      .toggleLike(id);
-
-                  final toggleSubscription = (id, subscribe) => ref
-                      .read(activitiesProvider(widget.id).notifier)
-                      .toggleSubscription(id, subscribe);
-
-                  return Padding(
-                    padding: Consts.padding,
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshIndicator!,
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            childCount: data.items.length,
-                            (context, i) => _Activity(
-                              data.items[i],
-                              _Buttons(
-                                activity: data.items[i],
-                                delete: delete,
-                                toggleLike: toggleLike,
-                                toggleSubscription: toggleSubscription,
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (data.hasNext) const SliverFooterLoader(),
-                      ],
-                    ),
-                  );
-                },
-              );
-        },
-      ),
-    );
-  }
-}
-
-class _Activity extends StatelessWidget {
-  const _Activity(this.activity, this.buttons);
+class ActivityCard extends StatelessWidget {
+  const ActivityCard({
+    required this.activity,
+    required this.footer,
+    required this.withHeader,
+  });
 
   final Activity activity;
-  final Widget buttons;
+  final ActivityFooter footer;
+  final bool withHeader;
 
   @override
   Widget build(BuildContext context) {
+    final body = Container(
+      padding: Consts.padding,
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: Consts.borderRadiusMin,
+      ),
+      child: Column(
+        children: [
+          if (activity.media != null)
+            _ActivityMediaBox(activity.media!, activity.text)
+          else
+            UnconstrainedBox(
+              constrainedAxis: Axis.horizontal,
+              alignment: Alignment.topLeft,
+              child: HtmlContent(activity.text),
+            ),
+          const SizedBox(height: 5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  activity.createdAt,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+              ),
+              footer,
+            ],
+          ),
+        ],
+      ),
+    );
+
+    if (!withHeader) return body;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -240,40 +120,7 @@ class _Activity extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 5),
-        Container(
-          margin: const EdgeInsets.only(bottom: 10),
-          padding: Consts.padding,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.borderRadiusMin,
-          ),
-          child: Column(
-            children: [
-              if (activity.media != null)
-                _ActivityMediaBox(activity.media!, activity.text)
-              else
-                UnconstrainedBox(
-                  constrainedAxis: Axis.horizontal,
-                  alignment: Alignment.topLeft,
-                  child: HtmlContent(activity.text),
-                ),
-              const SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      activity.createdAt,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ),
-                  buttons,
-                ],
-              ),
-            ],
-          ),
-        ),
+        body,
       ],
     );
   }
@@ -341,31 +188,22 @@ class _ActivityMediaBox extends StatelessWidget {
   }
 }
 
-class _Buttons extends StatefulWidget {
-  const _Buttons({
+class ActivityFooter extends StatefulWidget {
+  const ActivityFooter({
     required this.activity,
-    required this.delete,
-    required this.toggleLike,
-    required this.toggleSubscription,
+    required this.onChanged,
+    required this.canPush,
   });
 
   final Activity activity;
-
-  /// Deletes the activity by its id.
-  final Future<void> Function(int) delete;
-
-  /// Toggles a like by the activity's id. Returns true if successful.
-  final Future<bool> Function(int) toggleLike;
-
-  /// Toggles a subscription by the activity's id and
-  /// its subscription state. Returns true if successful.
-  final Future<bool> Function(int, bool) toggleSubscription;
+  final void Function(Activity?) onChanged;
+  final bool canPush;
 
   @override
-  State<_Buttons> createState() => __ButtonsState();
+  State<ActivityFooter> createState() => _ActivityFooterState();
 }
 
-class __ButtonsState extends State<_Buttons> {
+class _ActivityFooterState extends State<ActivityFooter> {
   @override
   Widget build(BuildContext context) {
     final activity = widget.activity;
@@ -387,11 +225,28 @@ class __ButtonsState extends State<_Buttons> {
           message: 'Replies',
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => Navigator.pushNamed(
-              context,
-              RouteArg.activity,
-              arguments: RouteArg(id: activity.id),
-            ),
+            onTap: () {
+              if (widget.canPush)
+                Navigator.pushNamed(
+                  context,
+                  RouteArg.activity,
+                  arguments: RouteArg(
+                    id: activity.id,
+                    callback: (updatedActivity) {
+                      updatedActivity = updatedActivity as Activity?;
+                      if (updatedActivity == null) {
+                        widget.onChanged(null);
+                      } else {
+                        setState(() {
+                          activity.isLiked = updatedActivity.isLiked;
+                          activity.likeCount = updatedActivity.likeCount;
+                          activity.isSubscribed = updatedActivity.isSubscribed;
+                        });
+                      }
+                    },
+                  ),
+                );
+            },
             child: Row(
               children: [
                 Text(
@@ -448,13 +303,14 @@ class __ButtonsState extends State<_Buttons> {
       activity.likeCount += isLiked ? -1 : 1;
     });
 
-    widget.toggleLike(activity.id).then((ok) {
-      if (ok) return;
-      setState(() {
-        activity.isLiked = isLiked;
-        activity.likeCount += isLiked ? 1 : -1;
-      });
-    });
+    toggleActivityLike(activity).then(
+      (ok) => ok
+          ? widget.onChanged(activity)
+          : setState(() {
+              activity.isLiked = isLiked;
+              activity.likeCount += isLiked ? 1 : -1;
+            }),
+    );
   }
 
   /// Show a sheet with additional options.
@@ -473,7 +329,7 @@ class __ButtonsState extends State<_Buttons> {
             title: 'Delete?',
             mainAction: 'Yes',
             secondaryAction: 'No',
-            onConfirm: () => widget.delete(activity.id),
+            onConfirm: () => widget.onChanged(null),
           ),
         ),
       ));
@@ -489,8 +345,10 @@ class __ButtonsState extends State<_Buttons> {
         final isSubscribed = activity.isSubscribed;
         activity.isSubscribed = !isSubscribed;
 
-        widget.toggleSubscription(activity.id, !isSubscribed).then((ok) {
-          if (!ok) activity.isSubscribed = isSubscribed;
+        toggleActivitySubscription(activity).then((ok) {
+          ok
+              ? widget.onChanged(activity)
+              : activity.isSubscribed = isSubscribed;
         });
       },
     ));

@@ -12,8 +12,8 @@ import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 
-class SettingsAppView extends StatelessWidget {
-  SettingsAppView(this.scrollCtrl);
+class SettingsAppTab extends StatelessWidget {
+  SettingsAppTab(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 

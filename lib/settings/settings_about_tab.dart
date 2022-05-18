@@ -6,8 +6,8 @@ import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class SettingsAboutView extends StatelessWidget {
-  SettingsAboutView(this.scrollCtrl);
+class SettingsAboutTab extends StatelessWidget {
+  SettingsAboutTab(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 

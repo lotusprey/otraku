@@ -8,7 +8,7 @@ class PaginationController extends ScrollController {
   }
 
   /// The callback to call, when the end of the page is reached.
-  final Future<void> Function() loadMore;
+  final void Function() loadMore;
 
   /// Keeps track of the last [position.maxScrollExtent].
   /// Used to ensure that when the end of the page is reached,
@@ -17,12 +17,12 @@ class PaginationController extends ScrollController {
   double _lastMaxExtent = 0;
 
   /// When the user reached the bottom, try loading more data.
-  Future<void> _listener() async {
+  void _listener() {
     if (position.pixels < position.maxScrollExtent - 100) return;
     if (_lastMaxExtent == position.maxScrollExtent) return;
 
     _lastMaxExtent = position.maxScrollExtent;
-    await loadMore();
+    loadMore();
   }
 
   /// When a scrollable is detached, [_lastMaxExtent] needs to be reset, so

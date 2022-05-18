@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/activities/activities_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/feed_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/activity_box.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -21,9 +20,8 @@ import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class InboxView extends StatelessWidget {
-  InboxView(this.feedCtrl, this.scrollCtrl);
+  InboxView(this.scrollCtrl);
 
-  final FeedController feedCtrl;
   final ScrollController scrollCtrl;
 
   @override
@@ -105,7 +103,13 @@ class InboxView extends StatelessWidget {
                 ),
               ),
               if (ctrl.onFeed)
-                FeedFilterIcon(feedCtrl)
+                Consumer(
+                  builder: (context, ref, _) => TopBarIcon(
+                    tooltip: 'Filter',
+                    icon: Ionicons.funnel_outline,
+                    onTap: () => showActivityFilterSheet(context, ref, null),
+                  ),
+                )
               else
                 const SizedBox(width: 45),
               notificationIcon,
@@ -114,7 +118,7 @@ class InboxView extends StatelessWidget {
           builder: (context, topOffset, _) => AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: ctrl.onFeed
-                ? _FeedView(feedCtrl, scrollCtrl, topOffset)
+                ? ActivitiesSubView(null, scrollCtrl)
                 : _ProgressView(scrollCtrl, topOffset),
           ),
         );
@@ -154,7 +158,6 @@ class _ProgressView extends StatelessWidget {
               SliverRefreshControl(
                 onRefresh: () => ctrl.fetch(),
                 canRefresh: () => !ctrl.isLoading,
-                topOffset: offsetTop - 10,
               ),
               SliverToBoxAdapter(
                 child: Padding(
@@ -214,157 +217,5 @@ class _ProgressView extends StatelessWidget {
   Future<void> _updateMangaProgress(ProgressEntryModel e) async {
     await Get.find<CollectionController>(tag: '${Settings().id}false')
         .updateProgress(e.mediaId, e.progress, ListStatus.CURRENT, e.format);
-  }
-}
-
-class _FeedView extends StatefulWidget {
-  _FeedView(this.ctrl, this.scrollCtrl, this.offsetTop);
-
-  final FeedController ctrl;
-  final ScrollController scrollCtrl;
-  final double offsetTop;
-
-  @override
-  State<_FeedView> createState() => _FeedViewState();
-}
-
-class _FeedViewState extends State<_FeedView> {
-  Future<void> _listener() async {
-    if (widget.ctrl.isLoading ||
-        widget.scrollCtrl.position.pixels <
-            widget.scrollCtrl.position.maxScrollExtent - 100)
-      return Future.value();
-
-    await widget.ctrl.fetchPage();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.scrollCtrl.addListener(_listener);
-  }
-
-  @override
-  void dispose() {
-    widget.scrollCtrl.removeListener(_listener);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GetBuilder<FeedController>(
-      id: FeedController.ID_ACTIVITIES,
-      builder: (feedCtrl) {
-        late Widget content;
-
-        final activities = feedCtrl.activities;
-        if (activities.isEmpty) {
-          if (feedCtrl.isLoading) {
-            content = const SliverFillRemaining(child: Center(child: Loader()));
-          } else {
-            content = SliverFillRemaining(
-              child: Center(
-                child: Text(
-                  'No Activities',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ),
-            );
-          }
-        } else {
-          content = SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (_, i) => ActivityBox(ctrl: feedCtrl, model: activities[i]),
-              childCount: activities.length,
-            ),
-          );
-        }
-
-        return CustomScrollView(
-          physics: Consts.physics,
-          controller: widget.scrollCtrl,
-          slivers: [
-            SliverRefreshControl(
-              onRefresh: () => widget.ctrl.fetchPage(clean: true),
-              canRefresh: () => !widget.ctrl.isLoading,
-              topOffset: widget.offsetTop,
-            ),
-            SliverPadding(padding: Consts.padding, sliver: content),
-            SliverPadding(
-              padding: EdgeInsets.only(
-                top: 10,
-                bottom: NavLayout.offset(context) + 10,
-              ),
-              sliver: SliverToBoxAdapter(
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child:
-                      feedCtrl.hasNextPage ? const Loader() : const SizedBox(),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class FeedFilterIcon extends StatelessWidget {
-  FeedFilterIcon(this.feedCtrl);
-
-  final FeedController feedCtrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return TopBarIcon(
-      tooltip: 'Filter',
-      icon: Ionicons.funnel_outline,
-      onTap: () {
-        //   final typeIn = feedCtrl.typeIn;
-        //   double initialHeight =
-        //       Consts.tapTargetSize * ActivityType.values.length + 20;
-
-        //   // If on the home feed - following/global selection.
-        //   bool? onFollowing;
-        //   Widget? onFollowingSelection;
-        //   if (feedCtrl.id == null) {
-        //     onFollowing = feedCtrl.onFollowing;
-        //     onFollowingSelection = TabSegments(
-        //       items: const {'Following': true, 'Global': false},
-        //       initial: onFollowing,
-        //       onChanged: (bool val) => onFollowing = val,
-        //     );
-        //     initialHeight += Consts.tapTargetSize;
-        //   }
-
-        //   showSheet(
-        //     context,
-        //     OpaqueSheet(
-        //         initialHeight: initialHeight,
-        //         builder: (context, scrollCtrl) => ListView(
-        //               controller: scrollCtrl,
-        //               physics: Consts.physics,
-        //               children: [
-        //                 ListView(
-        //                   shrinkWrap: true,
-        //                   padding: Consts.padding,
-        //                   physics: const NeverScrollableScrollPhysics(),
-        //                   children: [
-        //                     for (final a in ActivityType.values)
-        //                       CheckBoxField(
-        //                         title: a.text,
-        //                         initial: typeIn.contains(a),
-        //                         onChanged: (val) =>
-        //                             val ? typeIn.add(a) : typeIn.remove(a),
-        //                       )
-        //                   ],
-        //                 ),
-        //                 if (onFollowingSelection != null) onFollowingSelection,
-        //               ],
-        //             )),
-        //   ).then((_) => feedCtrl.setFilters(typeIn, onFollowing));
-      },
-    );
   }
 }

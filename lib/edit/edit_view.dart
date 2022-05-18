@@ -6,8 +6,8 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/providers/edit.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/edit/edit.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
@@ -135,10 +135,6 @@ class _RemoveButton extends StatelessWidget {
                   ? '${Settings().id}true'
                   : '${Settings().id}false',
             ).removeEntry(oldEdit);
-            // TODO remove item
-            // if (ctrl.model!.status == ListStatus.CURRENT)
-            //           Get.find<ProgressController>()
-            //               .remove(ctrl.model!.mediaId);
 
             callback?.call(oldEdit.emptyCopy());
             Navigator.pop(context);
@@ -257,9 +253,9 @@ class _EditView extends StatelessWidget {
               );
 
               return NumberField(
-                value: progress,
+                initial: progress,
                 maxValue: oldEdit.progressMax ?? 100000,
-                update: (progress) {
+                onChanged: (progress) {
                   ref.read(editProvider.notifier).update((s) {
                     var status = s.status;
                     var startedAt = s.startedAt;
@@ -316,8 +312,8 @@ class _EditView extends StatelessWidget {
           label: 'Repeat',
           child: Consumer(
             builder: (context, ref, _) => NumberField(
-              value: ref.read(editProvider).repeat,
-              update: (repeat) => ref
+              initial: ref.read(editProvider).repeat,
+              onChanged: (repeat) => ref
                   .read(editProvider.notifier)
                   .update((s) => s.copyWith(repeat: repeat.toInt())),
             ),
@@ -328,9 +324,9 @@ class _EditView extends StatelessWidget {
             label: 'Progress Volumes',
             child: Consumer(
               builder: (context, ref, _) => NumberField(
-                value: ref.read(editProvider).progressVolumes,
+                initial: ref.read(editProvider).progressVolumes,
                 maxValue: oldEdit.progressVolumesMax ?? 100000,
-                update: (progressVolumes) =>
+                onChanged: (progressVolumes) =>
                     ref.read(editProvider.notifier).update(
                           (s) => s.copyWith(
                             progressVolumes: progressVolumes.toInt(),
@@ -439,9 +435,9 @@ class _EditView extends StatelessWidget {
               LabeledField(
                 label: s.key,
                 child: NumberField(
-                  value: s.value,
+                  initial: s.value,
                   maxValue: 100,
-                  update: (score) {
+                  onChanged: (score) {
                     scores[s.key] = score.toDouble();
 
                     int count = 0;

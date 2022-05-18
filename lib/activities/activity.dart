@@ -5,101 +5,126 @@ import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 import 'package:otraku/utils/settings.dart';
 
-final activityFilterProvider =
-    StateProvider.autoDispose.family<List<ActivityType>, int?>(
-  (ref, userId) => userId != null
-      ? ActivityType.values
-      : Settings()
-          .feedActivityFilters
-          .map((e) => ActivityType.values.elementAt(e))
-          .toList(),
+/// Toggles an activity like and returns [true] if successful.
+Future<bool> toggleActivityLike(Activity activity) async {
+  try {
+    await Client.get(GqlMutation.toggleLike, {
+      'id': activity.id,
+      'type': 'ACTIVITY',
+    });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+/// Toggles an activity subscription and returns [true] if successful.
+Future<bool> toggleActivitySubscription(Activity activity) async {
+  try {
+    await Client.get(GqlMutation.toggleActivitySubscription, {
+      'id': activity.id,
+      'subscribe': activity.isSubscribed,
+    });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+/// Toggles a reply like and returns [true] if successful.
+Future<bool> toggleReplyLike(ActivityReply reply) async {
+  try {
+    await Client.get(GqlMutation.toggleLike, {
+      'id': reply.id,
+      'type': 'ACTIVITY_REPLY',
+    });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+final activityProvider = StateNotifierProvider.autoDispose
+    .family<ActivityNotifier, AsyncValue<ActivityState>, int>(
+  (ref, userId) => ActivityNotifier(userId, Settings().id!),
 );
 
-final activitiesProvider = StateNotifierProvider.autoDispose
-    .family<ActivitiesNotifier, AsyncValue<Pagination<Activity>>, int>(
-  (ref, userId) => ActivitiesNotifier(
-    userId: userId,
-    viewerId: Settings().id!,
-    typeIn: ref.watch(activityFilterProvider(userId)),
-  ),
-);
-
-class ActivitiesNotifier
-    extends StateNotifier<AsyncValue<Pagination<Activity>>> {
-  ActivitiesNotifier({
-    required this.userId,
-    required this.viewerId,
-    required this.typeIn,
-  }) : super(const AsyncValue.loading()) {
+class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
+  ActivityNotifier(this.userId, this.viewerId)
+      : super(const AsyncValue.loading()) {
     fetch();
   }
 
   final int userId;
   final int viewerId;
-  final List<ActivityType> typeIn;
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.value ?? Pagination();
+      final replies = state.value?.replies ?? Pagination();
 
-      final data = await Client.get(GqlQuery.activities, {
-        'userId': userId,
-        'page': value.next,
-        'typeIn': typeIn.map((t) => t.name).toList(),
+      final data = await Client.get(GqlQuery.activity, {
+        'id': userId,
+        'page': replies.next,
+        if (replies.next == 1) 'withActivity': true,
       });
 
-      final items = <Activity>[];
-      for (final a in data['Page']['activities']) {
-        final item = Activity.maybe(a, viewerId);
+      final items = <ActivityReply>[];
+      for (final r in data['Page']['activityReplies']) {
+        final item = ActivityReply.maybe(r);
         if (item != null) items.add(item);
       }
 
-      return value.append(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
+      final activity =
+          state.value?.activity ?? Activity.maybe(data['Activity'], viewerId);
+      if (activity == null) throw StateError('Could not parse activity');
+
+      return ActivityState(
+        activity,
+        replies.append(
+          items,
+          data['Page']['pageInfo']['hasNextPage'] ?? false,
+        ),
       );
     });
   }
+}
 
-  /// Toggles an activity like and returns [true] if successful.
-  Future<bool> toggleLike(int activityId) async {
-    try {
-      await Client.get(GqlMutation.toggleLike, {
-        'id': activityId,
-        'type': 'ACTIVITY',
-      });
-      return true;
-    } catch (_) {
-      return false;
-    }
+class ActivityState {
+  ActivityState(this.activity, this.replies);
+
+  final Activity activity;
+  final Pagination<ActivityReply> replies;
+}
+
+class ActivityReply {
+  ActivityReply._({
+    required this.id,
+    required this.user,
+    required this.text,
+    required this.createdAt,
+    this.likeCount = 0,
+    this.isLiked = false,
+  });
+
+  static ActivityReply? maybe(Map<String, dynamic> map) {
+    if (map['id'] == null || map['user']?['id'] == null) return null;
+
+    return ActivityReply._(
+      id: map['id'],
+      likeCount: map['likeCount'] ?? 0,
+      isLiked: map['isLiked'] ?? false,
+      user: ActivityUser(map['user']),
+      text: map['text'] ?? '',
+      createdAt: Convert.millisToStr(map['createdAt']),
+    );
   }
 
-  /// Toggles an activity subscription and returns [true] if successful.
-  Future<bool> toggleSubscription(int activityId, bool subscribe) async {
-    try {
-      await Client.get(GqlMutation.toggleActivitySubscription, {
-        'id': activityId,
-        'subscribe': subscribe,
-      });
-      return true;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// Deletes an activity.
-  Future<void> delete(int activityId) async {
-    Client.get(GqlMutation.deleteActivity, {'id': activityId}).then((_) {
-      if (!state.hasValue) return;
-      final value = state.value!;
-
-      for (int i = 0; i < value.items.length; i++)
-        if (value.items[i].id == activityId) {
-          state = AsyncData(value.copyWith([...value.items..removeAt(i)]));
-          return;
-        }
-    }).catchError((_) {});
-  }
+  final int id;
+  final ActivityUser user;
+  final String text;
+  final String createdAt;
+  int likeCount;
+  bool isLiked;
 }
 
 class Activity {

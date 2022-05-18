@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/providers/notifications.dart';
+import 'package:otraku/notifications/notifications.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/views/edit_view.dart';
+import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -99,7 +99,6 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             ref.invalidate(notificationsProvider);
             return Future.value();
           },
-          topOffset: topOffset,
         ),
         builder: (context, ref, refreshIndicator) {
           ref.listen<NotificationsNotifier>(
@@ -159,7 +158,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 class _NotificationWidget extends StatelessWidget {
   _NotificationWidget(this.notification, this.unread);
 
-  final NotificationItem notification;
+  final SiteNotification notification;
   final bool unread;
 
   @override
@@ -305,7 +304,7 @@ class _NotificationWidget extends StatelessWidget {
 class _NotificationDialog extends StatelessWidget {
   _NotificationDialog(this.item);
 
-  final NotificationItem item;
+  final SiteNotification item;
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/providers/review.dart';
+import 'package:otraku/reviews/review.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -26,8 +26,6 @@ class ReviewView extends StatelessWidget {
         bottom: false,
         child: Consumer(builder: (context, ref, _) {
           final data = ref.watch(reviewProvider(id).select((s) => s.value));
-
-          // TODO finish review view design...
 
           return CustomScrollView(
             slivers: [

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/providers/user_settings.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -10,8 +10,8 @@ import 'package:otraku/widgets/grids/chip_grids.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 
-class SettingsContentView extends StatelessWidget {
-  SettingsContentView(this.scrollCtrl, this.settings, this.shouldUpdate);
+class SettingsContentTab extends StatelessWidget {
+  SettingsContentTab(this.scrollCtrl, this.settings, this.shouldUpdate);
 
   final ScrollController scrollCtrl;
   final UserSettings settings;

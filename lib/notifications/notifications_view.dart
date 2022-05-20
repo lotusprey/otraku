@@ -100,7 +100,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             return Future.value();
           },
         ),
-        builder: (context, ref, refreshIndicator) {
+        builder: (context, ref, refreshControl) {
           ref.listen<NotificationsNotifier>(
             notificationsProvider,
             (_, s) => s.notifications.whenOrNull(
@@ -127,7 +127,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                 physics: Consts.physics,
                 controller: _ctrl,
                 slivers: [
-                  refreshIndicator!,
+                  refreshControl!,
                   SliverPadding(
                     padding: const EdgeInsets.only(
                       left: 10,
@@ -144,7 +144,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                       ),
                     ),
                   ),
-                  if (data.hasNext) const SliverFooterLoader(),
+                  SliverFooter(loading: data.hasNext),
                 ],
               );
             },

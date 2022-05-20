@@ -27,6 +27,8 @@ class ReviewView extends StatelessWidget {
         child: Consumer(builder: (context, ref, _) {
           final data = ref.watch(reviewProvider(id).select((s) => s.value));
 
+          // TODO finish review view design...
+
           return CustomScrollView(
             slivers: [
               SliverPersistentHeader(

@@ -5,7 +5,7 @@ import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/favourites_view.dart';
-import 'package:otraku/views/friends_view.dart';
+import 'package:otraku/users/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
 import 'package:otraku/notifications/notifications_view.dart';

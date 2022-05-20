@@ -4,7 +4,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/grids/review_grid.dart';
+import 'package:otraku/reviews/review_grid.dart';
 import 'package:otraku/widgets/grids/title_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/grids/tile_grid.dart';
@@ -67,7 +67,7 @@ class _ExploreGrid extends StatelessWidget {
           return TileGrid(models: results, full: false);
 
         if (results[0].explorable == Explorable.review)
-          return ReviewGrid(items: results);
+          return ReviewGridOld(items: results);
 
         return TileGrid(models: results);
       },

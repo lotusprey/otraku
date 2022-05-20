@@ -52,7 +52,7 @@ class _SearchFieldState extends State<SearchField> {
       decoration: InputDecoration(
         isDense: false,
         hintText: widget.hint,
-        contentPadding: const EdgeInsets.only(left: 10),
+        contentPadding: const EdgeInsets.only(left: 15),
         constraints: const BoxConstraints(minHeight: 35, maxHeight: 35),
         suffixIcon: !_empty
             ? IconButton(

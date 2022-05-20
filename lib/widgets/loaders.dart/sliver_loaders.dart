@@ -49,8 +49,10 @@ class SliverRefreshControl extends StatelessWidget {
       );
 }
 
-class SliverFooterLoader extends StatelessWidget {
-  const SliverFooterLoader();
+class SliverFooter extends StatelessWidget {
+  const SliverFooter({this.loading = false});
+
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +63,7 @@ class SliverFooterLoader extends StatelessWidget {
             top: 10,
             bottom: PageOffset.of(context).bottom + 10,
           ),
-          child: const Loader(),
+          child: loading ? const Loader() : null,
         ),
       ),
     );

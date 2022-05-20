@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/client.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
@@ -24,10 +23,10 @@ class ReviewsNotifier extends ChangeNotifier {
   final ReviewSort sort;
 
   int _count = 0;
-  var _reviews = const AsyncValue<Pagination<ExplorableModel>>.loading();
+  var _reviews = const AsyncValue<Pagination<ReviewItem>>.loading();
 
   int get reviewCount => _count;
-  AsyncValue<Pagination<ExplorableModel>> get reviews => _reviews;
+  AsyncValue<Pagination<ReviewItem>> get reviews => _reviews;
 
   Future<void> fetch() async {
     _reviews = await AsyncValue.guard(() async {
@@ -41,9 +40,8 @@ class ReviewsNotifier extends ChangeNotifier {
 
       _count = data['Page']['pageInfo']?['total'] ?? 0;
 
-      final items = <ExplorableModel>[];
-      for (final r in data['Page']['reviews'])
-        items.add(ExplorableModel.review(r));
+      final items = <ReviewItem>[];
+      for (final r in data['Page']['reviews']) items.add(ReviewItem(r));
 
       return value.append(
         items,
@@ -72,4 +70,31 @@ enum ReviewSort {
         return 'Highest Rated';
     }
   }
+}
+
+class ReviewItem {
+  ReviewItem._({
+    required this.id,
+    required this.mediaTitle,
+    required this.userName,
+    required this.summary,
+    required this.rating,
+    required this.bannerUrl,
+  });
+
+  factory ReviewItem(Map<String, dynamic> map) => ReviewItem._(
+        id: map['id'],
+        mediaTitle: map['media']['title']['userPreferred'],
+        userName: map['user']['name'],
+        summary: map['summary'],
+        rating: '${map['rating']}/${map['ratingAmount']}',
+        bannerUrl: map['media']['bannerImage'],
+      );
+
+  final int id;
+  final String mediaTitle;
+  final String userName;
+  final String summary;
+  final String rating;
+  final String? bannerUrl;
 }

@@ -120,7 +120,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
             return Future.value();
           },
         ),
-        builder: (context, ref, refreshIndicator) {
+        builder: (context, ref, refreshControl) {
           ref.listen<AsyncValue>(
             activityProvider(widget.id),
             (_, s) => s.whenOrNull(
@@ -147,7 +147,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                       physics: Consts.physics,
                       controller: _ctrl,
                       slivers: [
-                        refreshIndicator!,
+                        refreshControl!,
                         SliverToBoxAdapter(
                           child: ActivityCard(
                             withHeader: false,
@@ -168,7 +168,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                             (context, i) => ReplyCard(data.replies.items[i]),
                           ),
                         ),
-                        if (data.replies.hasNext) const SliverFooterLoader(),
+                        SliverFooter(loading: data.replies.hasNext),
                       ],
                     ),
                   );

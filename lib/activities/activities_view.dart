@@ -171,7 +171,7 @@ class ActivitiesSubView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (data.hasNext) const SliverFooterLoader(),
+                      SliverFooter(loading: data.hasNext),
                     ],
                   ),
                 );

@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/reviews/reviews.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/widgets/grids/review_grid.dart';
+import 'package:otraku/reviews/review_grid.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
@@ -87,7 +87,13 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
         ),
       ),
       builder: (_, __, ___) => Consumer(
-        builder: (context, ref, _) {
+        child: SliverRefreshControl(
+          onRefresh: () {
+            ref.invalidate(reviewsProvider(widget.id));
+            return Future.value();
+          },
+        ),
+        builder: (context, ref, refreshControl) {
           ref.listen<ReviewsNotifier>(
             reviewsProvider(widget.id),
             (_, s) => s.reviews.whenOrNull(
@@ -109,19 +115,20 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
                 data: (data) {
                   if (data.items.isEmpty) return empty;
 
-                  return CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      SliverRefreshControl(
-                        onRefresh: () {
-                          ref.invalidate(reviewsProvider(widget.id));
-                          return Future.value();
-                        },
+                  return Center(
+                    child: ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(maxWidth: Consts.layoutBig),
+                      child: CustomScrollView(
+                        physics: Consts.physics,
+                        controller: _ctrl,
+                        slivers: [
+                          refreshControl!,
+                          ReviewGrid(data.items),
+                          SliverFooter(loading: data.hasNext),
+                        ],
                       ),
-                      ReviewGrid(items: data.items),
-                      if (data.hasNext) const SliverFooterLoader(),
-                    ],
+                    ),
                   );
                 },
               );

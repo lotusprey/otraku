@@ -385,14 +385,14 @@ abstract class GqlQuery {
     ''';
 
   static const friends = r'''
-    query Friends($id: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
+    query Friends($userId: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
       following: Page(page: $page) @include(if: $withFollowing) {
-        pageInfo {hasNextPage}
-        following(userId: $id, sort: USERNAME) {id name avatar {large}}
+        pageInfo {hasNextPage total}
+        following(userId: $userId, sort: USERNAME) {id name avatar {large}}
       }
       followers: Page(page: $page) @include(if: $withFollowers) {
-        pageInfo {hasNextPage}
-        followers(userId: $id, sort: USERNAME) {id name avatar {large}}
+        pageInfo {hasNextPage total}
+        followers(userId: $userId, sort: USERNAME) {id name avatar {large}}
       }
     }
   ''';

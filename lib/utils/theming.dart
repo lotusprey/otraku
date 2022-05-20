@@ -200,7 +200,7 @@ class Theming with ChangeNotifier {
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
-            borderRadius: Consts.borderRadiusMin,
+            borderRadius: Consts.borderRadiusMax,
             borderSide: BorderSide.none,
           ),
         ),

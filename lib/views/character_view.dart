@@ -6,14 +6,14 @@ import 'package:otraku/models/character_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/models/relation_model.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
-import 'package:otraku/widgets/layouts/relation_grid.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/grids/relation_grid.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/controllers/character_controller.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
@@ -38,7 +38,7 @@ class CharacterView extends StatelessWidget {
     final coverHeight = coverWidth / 0.7;
 
     final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Consts.PADDING.top * 2;
+        Consts.padding.top * 2;
 
     return GetBuilder<CharacterController>(
       id: CharacterController.ID_MAIN,
@@ -70,7 +70,7 @@ class CharacterView extends StatelessWidget {
                     text: ctrl.model?.name,
                   ),
                   SliverPadding(
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     sliver: SliverToBoxAdapter(
                       child: SizedBox(
                         height: axis == Axis.horizontal
@@ -85,7 +85,7 @@ class CharacterView extends StatelessWidget {
                                 child: Hero(
                                   tag: ctrl.id,
                                   child: ClipRRect(
-                                    borderRadius: Consts.BORDER_RAD_MIN,
+                                    borderRadius: Consts.borderRadiusMin,
                                     child: Image.network(
                                       imageUrl!,
                                       fit: BoxFit.cover,
@@ -175,7 +175,7 @@ class _ActionButton extends StatelessWidget {
       builder: (ctrl) {
         List<Widget> children = [
           if (ctrl.onAnime && ctrl.languages.length > 1) ...[
-            ActionButton(
+            ActionButtonOld(
               tooltip: 'Language',
               icon: Ionicons.globe_outline,
               onTap: () => showSheet(
@@ -185,21 +185,23 @@ class _ActionButton extends StatelessWidget {
                     ctrl.scrollCtrl.scrollUpTo(0);
                     ctrl.langIndex = i;
                   },
-                  itemCount: ctrl.languages.length,
-                  itemBuilder: (_, i) => Text(
-                    ctrl.languages[i],
-                    style: i != ctrl.langIndex
-                        ? Theme.of(context).textTheme.headline1
-                        : Theme.of(context).textTheme.headline1?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                  ),
+                  children: [
+                    for (int i = 0; i < ctrl.languages.length; i++)
+                      Text(
+                        ctrl.languages[i],
+                        style: i != ctrl.langIndex
+                            ? Theme.of(context).textTheme.headline1
+                            : Theme.of(context).textTheme.headline1?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                      ),
+                  ],
                 ),
               ),
             ),
             const SizedBox(width: 10),
           ],
-          ActionButton(
+          ActionButtonOld(
             icon: Ionicons.funnel_outline,
             tooltip: 'Filter',
             onTap: () {
@@ -220,10 +222,10 @@ class _ActionButton extends StatelessWidget {
               showSheet(
                 context,
                 OpaqueSheet(
-                  initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                  initialHeight: Consts.tapTargetSize * 4,
                   builder: (context, scrollCtrl) => GridView(
                     controller: scrollCtrl,
-                    physics: Consts.PHYSICS,
+                    physics: Consts.physics,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 20,
@@ -284,7 +286,7 @@ class _ActionButton extends StatelessWidget {
 
         if (Settings().leftHanded) children = children.reversed.toList();
 
-        return FloatingListener(
+        return FloatingActionListener(
           scrollCtrl: ctrl.scrollCtrl,
           child: Row(mainAxisSize: MainAxisSize.min, children: children),
         );
@@ -324,10 +326,10 @@ class _Details extends StatelessWidget {
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Text(
                         Convert.clearHtml(model.description),

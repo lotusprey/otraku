@@ -31,8 +31,8 @@ class HomeUserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     final padding = EdgeInsets.only(
@@ -106,10 +106,10 @@ class HomeUserView extends StatelessWidget {
                   ),
                   _Button(
                     Ionicons.chatbox,
-                    'User Feed',
+                    'Activities',
                     () => Navigator.pushNamed(
                       context,
-                      RouteArg.feed,
+                      RouteArg.activities,
                       arguments: RouteArg(id: id),
                     ),
                   ),
@@ -147,10 +147,10 @@ class HomeUserView extends StatelessWidget {
             SliverToBoxAdapter(
               child: Container(
                 margin: padding,
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                 ),
                 child: HtmlContent(ctrl.model!.description),
               ),
@@ -173,7 +173,7 @@ class _Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: Consts.BORDER_RAD_MIN,
+      borderRadius: Consts.borderRadiusMin,
       onTap: onTap,
       child: Row(
         children: [

@@ -8,7 +8,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -60,13 +60,13 @@ class MediaInfoView {
       if (model.description.isNotEmpty)
         SliverToBoxAdapter(
           child: Padding(
-            padding: Consts.PADDING,
+            padding: Consts.padding,
             child: GestureDetector(
               child: Container(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Text(
                   model.description,
@@ -85,14 +85,14 @@ class MediaInfoView {
         padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
         sliver: SliverGrid(
           gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-            height: Consts.TAP_TARGET_SIZE,
+            height: Consts.tapTargetSize,
             minWidth: 130,
           ),
           delegate: SliverChildBuilderDelegate(
             (_, i) => Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Column(
@@ -214,16 +214,16 @@ class _ScrollCards extends StatelessWidget {
               height: 40,
               child: ListView.builder(
                 padding: const EdgeInsets.only(left: 10),
-                physics: Consts.PHYSICS,
+                physics: Consts.physics,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, index) => GestureDetector(
                   onTap: () => onTap(index),
                   onLongPress: () => Toast.copy(context, items[index]),
                   child: Container(
                     margin: const EdgeInsets.only(right: 10),
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     decoration: BoxDecoration(
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                       color: Theme.of(context).colorScheme.surface,
                     ),
                     child: Text(items[index]),
@@ -250,19 +250,19 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Consts.TAP_TARGET_SIZE + 10,
+            height: Consts.tapTargetSize + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                   color: Theme.of(context).colorScheme.surface,
                 ),
                 child: SingleChildScrollView(
-                  padding: Consts.PADDING,
+                  padding: Consts.padding,
                   scrollDirection: Axis.horizontal,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   child: Center(child: Text(titles[i])),
                 ),
               ),
@@ -323,7 +323,7 @@ class __TagsState extends State<_Tags> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
               color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
@@ -394,7 +394,7 @@ class __TagsState extends State<_Tags> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Row(
@@ -425,7 +425,7 @@ class __TagsState extends State<_Tags> {
       padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.TAP_TARGET_SIZE,
+          height: Consts.tapTargetSize,
           minWidth: 175,
         ),
         delegate: delegate,

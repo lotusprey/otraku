@@ -7,10 +7,10 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/grids/tile_grid.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -23,8 +23,8 @@ class StudioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     return GetBuilder<StudioController>(
@@ -50,7 +50,7 @@ class StudioView extends StatelessWidget {
               if (name != null)
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     child: GestureDetector(
                       onTap: () => Toast.copy(context, name!),
                       child: Hero(
@@ -127,9 +127,9 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<StudioController>(
       tag: id.toString(),
-      builder: (ctrl) => FloatingListener(
+      builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
-        child: ActionButton(
+        child: ActionButtonOld(
           icon: Ionicons.funnel_outline,
           tooltip: 'Filter',
           onTap: () {
@@ -145,10 +145,10 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                initialHeight: Consts.tapTargetSize * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,

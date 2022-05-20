@@ -24,7 +24,7 @@ class Theming with ChangeNotifier {
     final light = Settings().lightTheme;
     final dark = Settings().darkTheme;
 
-    final platform = SchedulerBinding.instance?.window.platformBrightness;
+    final platform = SchedulerBinding.instance.window.platformBrightness;
     final isDark = mode == ThemeMode.system
         ? platform == Brightness.dark
         : mode == ThemeMode.dark;
@@ -66,7 +66,7 @@ class Theming with ChangeNotifier {
         ),
         iconTheme: IconThemeData(
           color: scheme.surfaceVariant,
-          size: Consts.ICON_BIG,
+          size: Consts.iconBig,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
@@ -76,11 +76,11 @@ class Theming with ChangeNotifier {
               scheme.primaryContainer.withAlpha(100),
             ),
             textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Consts.FONT_MEDIUM,
+              fontSize: Consts.fontMedium,
               fontWeight: FontWeight.w500,
             )),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
             )),
           ),
         ),
@@ -90,56 +90,58 @@ class Theming with ChangeNotifier {
             overlayColor:
                 MaterialStateProperty.all(scheme.primary.withAlpha(50)),
             textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Consts.FONT_MEDIUM,
+              fontSize: Consts.fontMedium,
             )),
             shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
             )),
           ),
         ),
+        typography: Typography.material2014(),
         textTheme: TextTheme(
           headline1: TextStyle(
-            fontSize: Consts.FONT_BIG,
+            fontSize: Consts.fontBig,
             color: scheme.onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline2: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.onBackground,
             fontWeight: FontWeight.w500,
           ),
           headline3: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.surfaceVariant,
             fontWeight: FontWeight.w500,
           ),
           headline4: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           bodyText1: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.primary,
             fontWeight: FontWeight.normal,
           ),
           bodyText2: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.onBackground,
             fontWeight: FontWeight.normal,
+            height: null,
           ),
           subtitle1: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           subtitle2: TextStyle(
-            fontSize: Consts.FONT_SMALL,
+            fontSize: Consts.fontSmall,
             color: scheme.surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           button: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.background,
             fontWeight: FontWeight.normal,
           ),
@@ -153,33 +155,33 @@ class Theming with ChangeNotifier {
           elevation: 10,
           backgroundColor: scheme.background,
           shape: const RoundedRectangleBorder(
-            borderRadius: Consts.BORDER_RAD_MAX,
+            borderRadius: Consts.borderRadiusMax,
           ),
           titleTextStyle: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.onBackground,
             fontWeight: FontWeight.w500,
           ),
           contentTextStyle: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.onBackground,
             fontWeight: FontWeight.normal,
           ),
         ),
         tooltipTheme: TooltipThemeData(
-          padding: Consts.PADDING,
+          padding: Consts.padding,
           decoration: BoxDecoration(
             color: scheme.surface,
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMin,
             boxShadow: [BoxShadow(color: scheme.background, blurRadius: 10)],
           ),
           textStyle: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.onSurface,
           ),
         ),
         scrollbarTheme: ScrollbarThemeData(
-          radius: Consts.RADIUS_MIN,
+          radius: Consts.radiusMin,
           thumbColor: MaterialStateProperty.all(scheme.surfaceVariant),
         ),
         sliderTheme: SliderThemeData(
@@ -193,12 +195,12 @@ class Theming with ChangeNotifier {
           filled: true,
           fillColor: scheme.surface,
           hintStyle: TextStyle(
-            fontSize: Consts.FONT_MEDIUM,
+            fontSize: Consts.fontMedium,
             color: scheme.surfaceVariant,
             fontWeight: FontWeight.normal,
           ),
           border: const OutlineInputBorder(
-            borderRadius: Consts.BORDER_RAD_MIN,
+            borderRadius: Consts.borderRadiusMax,
             borderSide: BorderSide.none,
           ),
         ),

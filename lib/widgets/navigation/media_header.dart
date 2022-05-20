@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -23,7 +23,7 @@ class MediaHeader extends StatelessWidget {
       if (info.format != null)
         details.add(TextSpan(text: Convert.clarifyEnum(info.format)));
 
-      final status = ctrl.model?.entry.status;
+      final status = ctrl.model?.edit.status;
       if (status != null)
         details.add(TextSpan(
           text: '${details.isEmpty ? "" : ' • '}'
@@ -38,7 +38,7 @@ class MediaHeader extends StatelessWidget {
         ));
 
       if (status != null) {
-        final progress = ctrl.model?.entry.progress ?? 0;
+        final progress = ctrl.model?.edit.progress ?? 0;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
           details.add(TextSpan(
             text: '${details.isEmpty ? "" : ' • '}'
@@ -59,7 +59,7 @@ class MediaHeader extends StatelessWidget {
       maxWidth: null,
       actions: [
         if (info?.siteUrl != null)
-          IconShade(AppBarIcon(
+          IconShade(TopBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(

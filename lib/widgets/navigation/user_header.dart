@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -42,7 +41,7 @@ class UserHeader extends StatelessWidget {
                 user!.isFollowing
                     ? Ionicons.person_remove_outline
                     : Ionicons.person_add_outline,
-                size: Consts.ICON_SMALL,
+                size: Consts.iconSmall,
               ),
               label: Text(
                 user!.isFollowing
@@ -58,7 +57,7 @@ class UserHeader extends StatelessWidget {
             ),
           ),
         if (user?.siteUrl != null)
-          IconShade(AppBarIcon(
+          IconShade(TopBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
@@ -67,19 +66,12 @@ class UserHeader extends StatelessWidget {
             ),
           )),
         if (isMe)
-          GetBuilder<HomeController>(
-            id: HomeController.ID_SETTINGS,
-            builder: (ctrl) {
-              if (ctrl.siteSettings == null) return const SizedBox();
-
-              return IconShade(
-                AppBarIcon(
-                  tooltip: 'Settings',
-                  icon: Ionicons.cog_outline,
-                  onTap: () => Navigator.pushNamed(context, RouteArg.settings),
-                ),
-              );
-            },
+          IconShade(
+            TopBarIcon(
+              tooltip: 'Settings',
+              icon: Ionicons.cog_outline,
+              onTap: () => Navigator.pushNamed(context, RouteArg.settings),
+            ),
           ),
       ],
       child: Column(
@@ -111,7 +103,7 @@ class UserHeader extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primary,
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Text(
                         user!.modRoles[0],
@@ -209,7 +201,7 @@ class __AnimatedBadgeState extends State<_AnimatedBadge>
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: _animation.value,
-        borderRadius: Consts.BORDER_RAD_MIN,
+        borderRadius: Consts.borderRadiusMin,
       ),
       child: Text(
         widget.text!,

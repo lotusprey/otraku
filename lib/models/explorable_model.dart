@@ -39,7 +39,7 @@ class ExplorableModel {
       ExplorableModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
-        imageUrl: map['coverImage'],
+        imageUrl: map['coverImage'][Settings().imageQuality],
         explorable: Explorable.manga,
       );
 

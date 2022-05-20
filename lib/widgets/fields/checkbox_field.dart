@@ -30,7 +30,7 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Consts.TAP_TARGET_SIZE,
+      height: Consts.tapTargetSize,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -42,8 +42,8 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: Consts.ICON_BIG,
-              height: Consts.ICON_BIG,
+              width: Consts.iconBig,
+              height: Consts.iconBig,
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -59,7 +59,7 @@ class _CheckBoxFieldState extends State<CheckBoxField> {
                   ? Icon(
                       Ionicons.checkmark_outline,
                       color: Theme.of(context).colorScheme.background,
-                      size: Consts.ICON_SMALL,
+                      size: Consts.iconSmall,
                     )
                   : null,
             ),
@@ -108,7 +108,7 @@ class _CheckBoxTriFieldState extends State<CheckBoxTriField> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: Consts.TAP_TARGET_SIZE,
+      height: Consts.tapTargetSize,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -120,8 +120,8 @@ class _CheckBoxTriFieldState extends State<CheckBoxTriField> {
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: Consts.ICON_BIG,
-              height: Consts.ICON_BIG,
+              width: Consts.iconBig,
+              height: Consts.iconBig,
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -141,7 +141,7 @@ class _CheckBoxTriFieldState extends State<CheckBoxTriField> {
                   ? Icon(
                       _state == 1 ? Icons.add_rounded : Icons.remove_rounded,
                       color: Theme.of(context).colorScheme.background,
-                      size: Consts.ICON_SMALL,
+                      size: Consts.iconSmall,
                     )
                   : null,
             ),

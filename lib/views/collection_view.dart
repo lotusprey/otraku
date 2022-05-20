@@ -5,9 +5,9 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_refresh_control.dart';
-import 'package:otraku/widgets/layouts/large_collection_grid.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
+import 'package:otraku/widgets/grids/large_collection_grid.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/sliver_filter_app_bar.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -42,11 +42,7 @@ class CollectionView extends StatelessWidget {
 }
 
 class HomeCollectionView extends StatelessWidget {
-  HomeCollectionView({
-    required this.id,
-    required this.ofAnime,
-    key,
-  }) : super(key: key);
+  HomeCollectionView({required this.id, required this.ofAnime, super.key});
 
   final int id;
   final bool ofAnime;
@@ -56,14 +52,14 @@ class HomeCollectionView extends StatelessWidget {
     final tag = '$id$ofAnime';
     final isMe =
         tag == '${Settings().id}true' || tag == '${Settings().id}false';
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     return GetBuilder<CollectionController>(
       tag: tag,
       builder: (ctrl) => CustomScrollView(
-        physics: Consts.PHYSICS,
+        physics: Consts.physics,
         controller: ctrl.scrollCtrl,
         slivers: [
           SliverCollectionAppBar(tag, id != Settings().id),
@@ -121,7 +117,7 @@ class HomeCollectionView extends StatelessWidget {
 }
 
 class CollectionActionButton extends StatelessWidget {
-  const CollectionActionButton(this.ctrlTag, {Key? key}) : super(key: key);
+  const CollectionActionButton(this.ctrlTag, {super.key});
 
   final String ctrlTag;
 
@@ -129,35 +125,37 @@ class CollectionActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final ctrl = Get.find<CollectionController>(tag: ctrlTag);
 
-    return FloatingListener(
+    return FloatingActionListener(
       scrollCtrl: ctrl.scrollCtrl,
-      child: ActionButton(
+      child: ActionButtonOld(
         tooltip: 'Lists',
         icon: Ionicons.menu_outline,
         onTap: () => showSheet(
           context,
           DynamicGradientDragSheet(
-            itemCount: ctrl.listNames.length,
             onTap: (i) => ctrl.listIndex = i,
-            itemBuilder: (_, i) => Row(
-              children: [
-                Flexible(
-                  child: Text(
-                    ctrl.listNames[i],
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: i != ctrl.listIndex
-                        ? Theme.of(context).textTheme.headline1
-                        : Theme.of(context).textTheme.headline1?.copyWith(
-                            color: Theme.of(context).colorScheme.primary),
-                  ),
+            children: [
+              for (int i = 0; i < ctrl.listNames.length; i++)
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(
+                        ctrl.listNames[i],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: i != ctrl.listIndex
+                            ? Theme.of(context).textTheme.headline1
+                            : Theme.of(context).textTheme.headline1?.copyWith(
+                                color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ),
+                    Text(
+                      ' ${ctrl.listCounts[i]}',
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                  ],
                 ),
-                Text(
-                  ' ${ctrl.listCounts[i]}',
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ],
-            ),
+            ],
           ),
         ),
         onSwipe: (goRight) {

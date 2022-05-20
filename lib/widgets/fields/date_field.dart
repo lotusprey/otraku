@@ -37,7 +37,7 @@ class _DateFieldState extends State<DateField> {
       }),
       padding: const EdgeInsets.all(0),
       constraints: const BoxConstraints(
-        minHeight: Consts.TAP_TARGET_SIZE,
+        minHeight: Consts.tapTargetSize,
         maxWidth: 30,
       ),
     );
@@ -47,7 +47,7 @@ class _DateFieldState extends State<DateField> {
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.BORDER_RAD_MIN,
+          borderRadius: Consts.borderRadiusMin,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: _date != null
@@ -65,7 +65,7 @@ class _DateFieldState extends State<DateField> {
                     },
                     padding: const EdgeInsets.all(0),
                     constraints: const BoxConstraints(
-                      minHeight: Consts.TAP_TARGET_SIZE,
+                      minHeight: Consts.tapTargetSize,
                       maxWidth: 30,
                     ),
                   ),

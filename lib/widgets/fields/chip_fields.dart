@@ -3,8 +3,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 
 // A static chip.
 class ChipField extends StatelessWidget {
-  ChipField({required this.name, required this.onRemoved, Key? key})
-      : super(key: key);
+  ChipField({required this.name, required this.onRemoved, super.key});
 
   final String name;
   final void Function() onRemoved;
@@ -25,8 +24,8 @@ class ChipToggleField extends StatefulWidget {
     required this.onRemoved,
     required this.onChanged,
     required this.initial,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String name;
   final void Function() onRemoved;
@@ -103,8 +102,8 @@ class ChipNamingField extends StatelessWidget {
     required this.name,
     required this.onRemoved,
     required this.onChanged,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final String name;
   final void Function() onRemoved;

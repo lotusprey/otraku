@@ -54,7 +54,7 @@ class _TabSegmentsState<T> extends State<TabSegments<T>> {
                     color: _value != widget.items.values.elementAt(i)
                         ? null
                         : Theme.of(context).colorScheme.primary,
-                    borderRadius: Consts.BORDER_RAD_MIN,
+                    borderRadius: Consts.borderRadiusMin,
                   ),
                   child: Text(
                     widget.items.keys.elementAt(i),

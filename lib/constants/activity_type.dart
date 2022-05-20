@@ -2,10 +2,8 @@ enum ActivityType {
   TEXT,
   ANIME_LIST,
   MANGA_LIST,
-  MESSAGE,
-}
+  MESSAGE;
 
-extension ActivityTypeExtension on ActivityType {
   String get text {
     switch (this) {
       case ActivityType.TEXT:

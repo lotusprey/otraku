@@ -3,9 +3,9 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:otraku/controllers/favourites_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/user_model.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
-import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/layouts/title_grid.dart';
+import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/grids/tile_grid.dart';
+import 'package:otraku/widgets/grids/title_grid.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 

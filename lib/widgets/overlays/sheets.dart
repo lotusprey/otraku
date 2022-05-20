@@ -41,12 +41,11 @@ class OpaqueSheet extends StatelessWidget {
           if (sheet == null)
             sheet = Center(
               child: Container(
-                constraints:
-                    const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+                constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.background,
                   borderRadius:
-                      const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+                      const BorderRadius.vertical(top: Consts.radiusMax),
                 ),
                 child: builder(context, scrollCtrl),
               ),
@@ -62,7 +61,7 @@ class OpaqueSheet extends StatelessWidget {
 /// A wide implementation of [DraggableScrollableSheet]
 /// with a lane of buttons at the bottom.
 class OpaqueSheetView extends StatelessWidget {
-  OpaqueSheetView({required this.builder, required this.buttons});
+  OpaqueSheetView({required this.builder, this.buttons = const []});
 
   final Widget Function(BuildContext, ScrollController) builder;
   final List<Widget> buttons;
@@ -87,10 +86,10 @@ class OpaqueSheetView extends StatelessWidget {
   Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
       Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_MEDIUM),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.background,
-            borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MAX),
+            borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
           ),
           child: Stack(
             children: [
@@ -165,21 +164,16 @@ class OpaqueSheetViewButton extends StatelessWidget {
 }
 
 /// An implementation of [DraggableScrollableSheet] with
-/// gradient background that builds its children cynamically.
+/// gradient background that builds its children dynamically.
 class DynamicGradientDragSheet extends StatelessWidget {
-  DynamicGradientDragSheet({
-    required this.onTap,
-    required this.itemBuilder,
-    required this.itemCount,
-  });
+  DynamicGradientDragSheet({required this.children, required this.onTap});
 
+  final List<Widget> children;
   final void Function(int) onTap;
-  final Widget Function(BuildContext, int) itemBuilder;
-  final int itemCount;
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = itemCount * Consts.TAP_TARGET_SIZE + 50;
+    final requiredHeight = children.length * Consts.tapTargetSize + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -203,7 +197,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
           child: ListView.builder(
             controller: scrollCtrl,
             padding: const EdgeInsets.only(
@@ -211,11 +205,11 @@ class DynamicGradientDragSheet extends StatelessWidget {
               left: 10,
               right: 10,
             ),
-            itemCount: itemCount,
-            itemExtent: Consts.TAP_TARGET_SIZE,
+            itemCount: children.length,
+            itemExtent: Consts.tapTargetSize,
             itemBuilder: (context, i) => GestureDetector(
               behavior: HitTestBehavior.opaque,
-              child: itemBuilder(context, i),
+              child: children[i],
               onTap: () {
                 onTap(i);
                 Navigator.pop(context);
@@ -242,12 +236,12 @@ class FixedGradientDragSheet extends StatelessWidget {
       FixedGradientDragSheet(
         children: [
           ...children,
-          GradientDragSheetTile(
+          FixedGradientSheetTile(
             text: 'Copy Link',
             icon: Ionicons.clipboard_outline,
             onTap: () => Toast.copy(context, link),
           ),
-          GradientDragSheetTile(
+          FixedGradientSheetTile(
             text: 'Open in Browser',
             icon: Ionicons.link_outline,
             onTap: () => Toast.launch(context, link),
@@ -259,7 +253,7 @@ class FixedGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = children.length * Consts.TAP_TARGET_SIZE + 60;
+    final requiredHeight = children.length * Consts.tapTargetSize + 60;
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.9) height = 0.9;
 
@@ -283,7 +277,7 @@ class FixedGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_SMALL),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
           child: ListView(
             controller: scrollCtrl,
             padding: const EdgeInsets.only(
@@ -292,7 +286,7 @@ class FixedGradientDragSheet extends StatelessWidget {
               left: 10,
               right: 10,
             ),
-            itemExtent: Consts.TAP_TARGET_SIZE,
+            itemExtent: Consts.tapTargetSize,
             children: children,
           ),
         ),
@@ -302,8 +296,8 @@ class FixedGradientDragSheet extends StatelessWidget {
 }
 
 /// Sometimes used by [FixedGradientDragSheet].
-class GradientDragSheetTile extends StatelessWidget {
-  GradientDragSheetTile({
+class FixedGradientSheetTile extends StatelessWidget {
+  FixedGradientSheetTile({
     required this.text,
     required this.onTap,
     required this.icon,

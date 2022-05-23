@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/activities/activities_view.dart';
 import 'package:otraku/activities/activity_view.dart';
+import 'package:otraku/favorites/favorites_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/views/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
-import 'package:otraku/views/favourites_view.dart';
 import 'package:otraku/users/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
@@ -83,7 +83,7 @@ class RouteArg {
         return MaterialPageRoute(builder: (_) => ActivitiesView(arg!.id!));
       case favourites:
         if (arg?.id == null) return _unknown;
-        return MaterialPageRoute(builder: (_) => FavouritesView(arg!.id!));
+        return MaterialPageRoute(builder: (_) => FavoritesView(arg!.id!));
       case friends:
         if (arg?.id == null || arg?.variant == null) return _unknown;
         return MaterialPageRoute(

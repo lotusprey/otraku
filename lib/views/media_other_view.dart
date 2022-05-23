@@ -73,7 +73,7 @@ class _RelationsGrid extends StatelessWidget {
 
           return ExploreIndexer(
             id: items[i].id,
-            imageUrl: items[i].imageUrl,
+            text: items[i].imageUrl,
             explorable: items[i].type,
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -163,7 +163,7 @@ class _RecommendationsGrid extends StatelessWidget {
           child: ExploreIndexer(
             id: items[i].id,
             explorable: items[i].type,
-            imageUrl: items[i].imageUrl,
+            text: items[i].imageUrl,
             child: Column(
               children: [
                 Expanded(

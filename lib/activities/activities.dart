@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/activities/activity.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 import 'package:otraku/utils/settings.dart';
@@ -52,9 +52,9 @@ class ActivitiesNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.value ?? Pagination();
+      final value = state.valueOrNull ?? Pagination();
 
-      final data = await Client.get(GqlQuery.activities, {
+      final data = await Api.get(GqlQuery.activities, {
         'page': value.next,
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
         if (userId != null) ...{
@@ -80,7 +80,7 @@ class ActivitiesNotifier
 
   /// Deletes an activity.
   Future<void> delete(int activityId) async {
-    Client.get(GqlMutation.deleteActivity, {'id': activityId}).then((_) {
+    Api.get(GqlMutation.deleteActivity, {'id': activityId}).then((_) {
       if (!state.hasValue) return;
       final value = state.value!;
 

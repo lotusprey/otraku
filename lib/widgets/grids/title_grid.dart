@@ -61,7 +61,7 @@ class _Tile extends StatelessWidget {
     return ExploreIndexer(
       explorable: data.explorable,
       id: data.id,
-      imageUrl: data.text1,
+      text: data.text1,
       child: Hero(
         tag: data.id,
         child: Text(

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/models/progress_entry_model.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
 
@@ -25,7 +25,7 @@ class ProgressController extends GetxController {
       _isLoading = true;
       update();
 
-      final data = await Client.request(GqlQuery.currentMedia, {
+      final data = await Api.request(GqlQuery.currentMedia, {
         'userId': Settings().id,
         'page': 1,
       });

@@ -119,6 +119,7 @@ class TabSwitcherState extends State<TabSwitcher>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       child: SlideTransition(
         position: _slideAnimation,
         child: FadeTransition(

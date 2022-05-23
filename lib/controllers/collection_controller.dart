@@ -7,7 +7,7 @@ import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/list_model.dart';
 import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/edit/edit.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
@@ -178,7 +178,7 @@ class CollectionController extends ScrollingController {
   // ***************************************************************************
 
   Future<void> _fetch() async {
-    Map<String, dynamic>? data = await Client.request(
+    Map<String, dynamic>? data = await Api.request(
       GqlQuery.collection,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
@@ -233,13 +233,13 @@ class CollectionController extends ScrollingController {
     // from the [SaveMediaListEntry] mutation, so only half of the data is
     // obtained from the first request. The other half comes from a second
     // request.
-    final data = await Client.request(
+    final data = await Api.request(
       GqlMutation.updateEntry,
       newEdit.toMap(),
     );
     if (data == null) return;
 
-    final mediaData = await Client.request(
+    final mediaData = await Api.request(
       GqlQuery.media,
       {'id': newEdit.mediaId, 'withMain': true},
     );
@@ -336,7 +336,7 @@ class CollectionController extends ScrollingController {
     String? format,
   ) async {
     // Update database item.
-    final data = await Client.request(
+    final data = await Api.request(
       GqlMutation.updateProgress,
       {'mediaId': id, 'progress': progress},
     );
@@ -389,7 +389,7 @@ class CollectionController extends ScrollingController {
 
   Future<void> removeEntry(Edit edit) async {
     // Update database item.
-    final data = await Client.request(
+    final data = await Api.request(
       GqlMutation.removeEntry,
       {'entryId': edit.entryId},
     );

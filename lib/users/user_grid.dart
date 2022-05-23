@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/users/friends.dart';
+import 'package:otraku/users/user_item.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
@@ -38,7 +38,7 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExploreIndexer(
       id: item.id,
-      imageUrl: item.imageUrl,
+      text: item.imageUrl,
       explorable: Explorable.user,
       child: Column(
         children: [

@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/settings/user_settings.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 
 final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(
   (ref, id) async {
-    final data = await Client.request(GqlQuery.media, {
+    final data = await Api.request(GqlQuery.media, {
       'id': id,
       'withMain': true,
     });

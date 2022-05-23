@@ -18,7 +18,7 @@ class ReplyCard extends StatelessWidget {
       children: [
         ExploreIndexer(
           id: reply.user.id,
-          imageUrl: reply.user.imageUrl,
+          text: reply.user.imageUrl,
           explorable: Explorable.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,

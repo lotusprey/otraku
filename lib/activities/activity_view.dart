@@ -56,7 +56,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                   Flexible(
                     child: ExploreIndexer(
                       id: activity.agent.id,
-                      imageUrl: activity.agent.imageUrl,
+                      text: activity.agent.imageUrl,
                       explorable: Explorable.user,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -96,7 +96,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                     ),
                     ExploreIndexer(
                       id: activity.reciever!.id,
-                      imageUrl: activity.reciever!.imageUrl,
+                      text: activity.reciever!.imageUrl,
                       explorable: Explorable.user,
                       child: ClipRRect(
                         borderRadius: Consts.borderRadiusMin,

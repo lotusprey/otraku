@@ -39,18 +39,12 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
     super.dispose();
   }
 
+  // TODO tab switching
   @override
   Widget build(BuildContext context) {
-    late final int count;
-    if (_onFollowing) {
-      count = ref.watch(
-        friendsProvider(widget.id).select((s) => s.followingCount),
-      );
-    } else {
-      count = ref.watch(
-        friendsProvider(widget.id).select((s) => s.followersCount),
-      );
-    }
+    final count = ref.watch(
+      friendsProvider(widget.id).select((s) => s.getCount(_onFollowing)),
+    );
 
     return PageLayout(
       topBar: TopBar(
@@ -104,8 +98,8 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
 
           const empty = Center(child: Text('No Users'));
 
-          final provider = ref.watch(friendsProvider(widget.id));
-          final users = _onFollowing ? provider.following : provider.followers;
+          final notifier = ref.watch(friendsProvider(widget.id));
+          final users = _onFollowing ? notifier.following : notifier.followers;
           return users.maybeWhen(
               loading: () => const Center(child: Loader()),
               orElse: () => empty,

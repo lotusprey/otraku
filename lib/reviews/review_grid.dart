@@ -39,7 +39,7 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExploreIndexer(
       id: item.id,
-      imageUrl: item.bannerUrl,
+      text: item.bannerUrl,
       explorable: Explorable.review,
       child: Container(
         decoration: BoxDecoration(
@@ -158,7 +158,7 @@ class _TileOld extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExploreIndexer(
       id: model.id,
-      imageUrl: model.imageUrl,
+      text: model.imageUrl,
       explorable: Explorable.review,
       child: Container(
         decoration: BoxDecoration(

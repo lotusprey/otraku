@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
@@ -26,7 +26,7 @@ class _AuthViewState extends State<AuthView> {
   void _verify(int account) {
     if (!_loading) setState(() => _loading = true);
 
-    Client.logIn(account).then((loggedIn) {
+    Api.logIn(account).then((loggedIn) {
       if (!loggedIn) {
         setState(() => _loading = false);
         return;
@@ -78,7 +78,7 @@ class _AuthViewState extends State<AuthView> {
         return;
       }
 
-      await Client.register(account, token, expiration);
+      await Api.register(account, token, expiration);
       _verify(account);
     });
 
@@ -163,7 +163,7 @@ class _AuthViewState extends State<AuthView> {
                             title: 'Remove Account?',
                             mainAction: 'Yes',
                             secondaryAction: 'No',
-                            onConfirm: () => Client.removeAccount(0)
+                            onConfirm: () => Api.removeAccount(0)
                                 .then((_) => setState(() {})),
                           ),
                         ),
@@ -214,7 +214,7 @@ class _AuthViewState extends State<AuthView> {
                             title: 'Remove Account?',
                             mainAction: 'Yes',
                             secondaryAction: 'No',
-                            onConfirm: () => Client.removeAccount(1)
+                            onConfirm: () => Api.removeAccount(1)
                                 .then((_) => setState(() {})),
                           ),
                         ),

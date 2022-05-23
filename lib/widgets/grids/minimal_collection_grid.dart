@@ -32,7 +32,7 @@ class MinimalCollectionGrid extends StatelessWidget {
           child: ExploreIndexer(
             id: items[i].mediaId,
             explorable: Explorable.anime,
-            imageUrl: items[i].imageUrl,
+            text: items[i].imageUrl,
             child: Column(
               children: [
                 Expanded(

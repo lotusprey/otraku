@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
@@ -8,7 +8,7 @@ import 'package:otraku/utils/settings.dart';
 /// Toggles an activity like and returns [true] if successful.
 Future<bool> toggleActivityLike(Activity activity) async {
   try {
-    await Client.get(GqlMutation.toggleLike, {
+    await Api.get(GqlMutation.toggleLike, {
       'id': activity.id,
       'type': 'ACTIVITY',
     });
@@ -21,7 +21,7 @@ Future<bool> toggleActivityLike(Activity activity) async {
 /// Toggles an activity subscription and returns [true] if successful.
 Future<bool> toggleActivitySubscription(Activity activity) async {
   try {
-    await Client.get(GqlMutation.toggleActivitySubscription, {
+    await Api.get(GqlMutation.toggleActivitySubscription, {
       'id': activity.id,
       'subscribe': activity.isSubscribed,
     });
@@ -34,7 +34,7 @@ Future<bool> toggleActivitySubscription(Activity activity) async {
 /// Toggles a reply like and returns [true] if successful.
 Future<bool> toggleReplyLike(ActivityReply reply) async {
   try {
-    await Client.get(GqlMutation.toggleLike, {
+    await Api.get(GqlMutation.toggleLike, {
       'id': reply.id,
       'type': 'ACTIVITY_REPLY',
     });
@@ -62,7 +62,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     state = await AsyncValue.guard(() async {
       final replies = state.value?.replies ?? Pagination();
 
-      final data = await Client.get(GqlQuery.activity, {
+      final data = await Api.get(GqlQuery.activity, {
         'id': userId,
         'page': replies.next,
         if (replies.next == 1) 'withActivity': true,

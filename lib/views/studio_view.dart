@@ -30,33 +30,35 @@ class StudioView extends StatelessWidget {
     return GetBuilder<StudioController>(
       init: StudioController(id),
       tag: id.toString(),
-      builder: (ctrl) => Scaffold(
-        floatingActionButton: ctrl.model != null ? _ActionButton(id) : null,
-        floatingActionButtonLocation: Settings().leftHanded
-            ? FloatingActionButtonLocation.startFloat
-            : FloatingActionButtonLocation.endFloat,
-        body: SafeArea(
-          bottom: false,
-          child: CustomScrollView(
-            controller: ctrl.scrollCtrl,
-            semanticChildCount: ctrl.media.mediaCount,
-            slivers: [
-              TopSliverHeader(
-                toggleFavourite: ctrl.toggleFavourite,
-                isFavourite: ctrl.model?.isFavourite,
-                favourites: ctrl.model?.favourites,
-                text: ctrl.model?.name,
-              ),
-              if (name != null)
+      builder: (ctrl) {
+        final text = ctrl.model?.name ?? name ?? '';
+
+        return Scaffold(
+          floatingActionButton: ctrl.model != null ? _ActionButton(id) : null,
+          floatingActionButtonLocation: Settings().leftHanded
+              ? FloatingActionButtonLocation.startFloat
+              : FloatingActionButtonLocation.endFloat,
+          body: SafeArea(
+            bottom: false,
+            child: CustomScrollView(
+              controller: ctrl.scrollCtrl,
+              semanticChildCount: ctrl.media.mediaCount,
+              slivers: [
+                TopSliverHeader(
+                  toggleFavourite: ctrl.toggleFavourite,
+                  isFavourite: ctrl.model?.isFavourite,
+                  favourites: ctrl.model?.favourites,
+                  text: text,
+                ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: Consts.padding,
                     child: GestureDetector(
-                      onTap: () => Toast.copy(context, name!),
+                      onTap: () => Toast.copy(context, text),
                       child: Hero(
                         tag: id,
                         child: Text(
-                          name!,
+                          text,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headline1,
                         ),
@@ -64,56 +66,57 @@ class StudioView extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (ctrl.model != null) ...[
-                if (ctrl.media.names.isEmpty)
-                  SliverFillRemaining(
-                    child: Center(
-                      child: Text(
-                        'No results',
-                        style: Theme.of(context).textTheme.subtitle1,
+                if (ctrl.model != null) ...[
+                  if (ctrl.media.names.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          'No results',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
                       ),
                     ),
-                  ),
-                if (ctrl.sort == MediaSort.START_DATE ||
-                    ctrl.sort == MediaSort.START_DATE_DESC ||
-                    ctrl.sort == MediaSort.END_DATE ||
-                    ctrl.sort == MediaSort.END_DATE_DESC) ...[
-                  for (int i = 0; i < ctrl.media.names.length; i++) ...[
+                  if (ctrl.sort == MediaSort.START_DATE ||
+                      ctrl.sort == MediaSort.START_DATE_DESC ||
+                      ctrl.sort == MediaSort.END_DATE ||
+                      ctrl.sort == MediaSort.END_DATE_DESC) ...[
+                    for (int i = 0; i < ctrl.media.names.length; i++) ...[
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: sidePadding,
+                            vertical: 10,
+                          ),
+                          child: Text(
+                            ctrl.media.names[i],
+                            style: Theme.of(context).textTheme.headline1,
+                          ),
+                        ),
+                      ),
+                      TileGrid(models: ctrl.media.groups[i]),
+                    ],
+                  ] else
+                    TileGrid(models: ctrl.media.joined),
+                  if (ctrl.media.hasNextPage)
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: sidePadding,
-                          vertical: 10,
-                        ),
-                        child: Text(
-                          ctrl.media.names[i],
-                          style: Theme.of(context).textTheme.headline1,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: const Loader(),
                         ),
                       ),
                     ),
-                    TileGrid(models: ctrl.media.groups[i]),
-                  ],
-                ] else
-                  TileGrid(models: ctrl.media.joined),
-                if (ctrl.media.hasNextPage)
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Center(
-                        child: const Loader(),
-                      ),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).viewPadding.bottom,
                     ),
                   ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).viewPadding.bottom,
-                  ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

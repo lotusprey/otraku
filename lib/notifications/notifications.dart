@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/pagination.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
@@ -30,9 +30,9 @@ class NotificationsNotifier extends ChangeNotifier {
 
   Future<void> fetch() async {
     _notifications = await AsyncValue.guard(() async {
-      final value = _notifications.value ?? Pagination();
+      final value = _notifications.valueOrNull ?? Pagination();
 
-      final data = await Client.get(GqlQuery.notifications, {
+      final data = await Api.get(GqlQuery.notifications, {
         'page': value.next,
         if (filter == NotificationFilterType.all) ...{
           'withCount': true,

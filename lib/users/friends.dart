@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/users/user_item.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 
@@ -20,8 +21,8 @@ class FriendsNotifier extends ChangeNotifier {
   var _following = AsyncValue.data(Pagination<UserItem>());
   var _followers = AsyncValue.data(Pagination<UserItem>());
 
-  int get followingCount => _followingCount;
-  int get followersCount => _followersCount;
+  int getCount(bool onFollowing) =>
+      onFollowing ? _followingCount : _followersCount;
 
   AsyncValue<Pagination<UserItem>> get following {
     _onFollowing = true;
@@ -50,9 +51,9 @@ class FriendsNotifier extends ChangeNotifier {
     var users = onFollowing ? _following : _followers;
 
     users = await AsyncValue.guard(() async {
-      final value = users.value ?? Pagination();
+      final value = users.valueOrNull ?? Pagination();
 
-      final data = await Client.get(GqlQuery.friends, {
+      final data = await Api.get(GqlQuery.friends, {
         'userId': userId,
         'page': value.next,
         'withFollowing': onFollowing,
@@ -75,18 +76,4 @@ class FriendsNotifier extends ChangeNotifier {
     onFollowing ? _following = users : _followers = users;
     notifyListeners();
   }
-}
-
-class UserItem {
-  UserItem._({required this.id, required this.name, required this.imageUrl});
-
-  factory UserItem(Map<String, dynamic> map) => UserItem._(
-        id: map['id'],
-        name: map['name'],
-        imageUrl: map['avatar']['large'],
-      );
-
-  final int id;
-  final String name;
-  final String imageUrl;
 }

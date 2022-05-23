@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 
@@ -30,9 +30,9 @@ class ReviewsNotifier extends ChangeNotifier {
 
   Future<void> fetch() async {
     _reviews = await AsyncValue.guard(() async {
-      final value = _reviews.value ?? Pagination();
+      final value = _reviews.valueOrNull ?? Pagination();
 
-      final data = await Client.get(GqlQuery.reviews, {
+      final data = await Api.get(GqlQuery.reviews, {
         'userId': userId,
         'page': value.next,
         'sort': sort.name,

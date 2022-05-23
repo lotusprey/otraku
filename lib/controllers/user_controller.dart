@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/models/user_model.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
@@ -13,7 +13,7 @@ class UserController extends GetxController {
   UserModel? get model => _model;
 
   Future<void> _fetch() async {
-    final data = await Client.request(
+    final data = await Api.request(
       GqlQuery.user,
       {
         'id': id,
@@ -34,7 +34,7 @@ class UserController extends GetxController {
   }
 
   Future<void> toggleFollow() async {
-    final data = await Client.request(GqlMutation.toggleFollow, {'userId': id});
+    final data = await Api.request(GqlMutation.toggleFollow, {'userId': id});
     if (data == null) return;
     _model!.toggleFollow(data['ToggleFollow']);
     update();

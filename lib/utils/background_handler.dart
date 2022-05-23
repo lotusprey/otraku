@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/notifications/notifications.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
@@ -91,14 +91,14 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       if (Settings().selectedAccount == null) return true;
 
       // Log in.
-      if (!Client.loggedIn()) {
-        final ok = await Client.logIn(Settings().selectedAccount!);
+      if (!Api.loggedIn()) {
+        final ok = await Api.logIn(Settings().selectedAccount!);
         if (!ok) return true;
       }
 
       // Get new notifications.
       final data =
-          await Client.request(GqlQuery.notifications, {'withCount': true});
+          await Api.request(GqlQuery.notifications, {'withCount': true});
 
       int count = data?['Viewer']?['unreadNotificationCount'] ?? 0;
       final ns = data?['Page']?['notifications'] ?? [];

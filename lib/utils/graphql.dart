@@ -384,6 +384,26 @@ abstract class GqlQuery {
       fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
     ''';
 
+  static const favorites = r'''
+    query Favorites($userId: Int, $page: Int = 1, $withAnime: Boolean = false,
+      $withManga: Boolean = false, $withCharacters: Boolean = false,
+      $withStaff: Boolean = false, $withStudios: Boolean = false) {
+      User(id: $userId) {
+        favourites {
+          anime(page: $page) @include(if: $withAnime) {...media}
+          manga(page: $page) @include(if: $withManga) {...media}
+          characters(page: $page) @include(if: $withCharacters) {...character}
+          staff(page: $page) @include(if: $withStaff) {...staff}
+          studios(page: $page) @include(if: $withStudios) {...studio}
+        }
+      }
+    }
+    fragment media on MediaConnection {pageInfo {hasNextPage total} nodes {id title {userPreferred} coverImage {extraLarge large medium}}}
+    fragment character on CharacterConnection {pageInfo {hasNextPage total} nodes {id name {userPreferred} image {large}}}
+    fragment staff on StaffConnection {pageInfo {hasNextPage total} nodes {id name {userPreferred} image {large}}}
+    fragment studio on StudioConnection {pageInfo {hasNextPage total} nodes {id name}}
+  ''';
+
   static const friends = r'''
     query Friends($userId: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
       following: Page(page: $page) @include(if: $withFollowing) {
@@ -623,8 +643,8 @@ abstract class GqlMutation {
   '''
       '${_GqlFragment.userSettings}';
 
-  static const toggleFavourite = r'''
-    mutation ToggleFavourite($anime: Int, $manga: Int, $character: Int, $staff: Int, $studio: Int) {
+  static const toggleFavorite = r'''
+    mutation ToggleFavorite($anime: Int, $manga: Int, $character: Int, $staff: Int, $studio: Int) {
       ToggleFavourite(animeId: $anime, mangaId: $manga, characterId: $character, staffId: $staff, studioId: $studio) {
         anime(page: 1, perPage: 1) {nodes{isFavourite}}
         manga(page: 1, perPage: 1) {nodes{isFavourite}}

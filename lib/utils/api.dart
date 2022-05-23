@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,7 +10,7 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-abstract class Client {
+abstract class Api {
   static final _url = Uri.parse('https://graphql.anilist.co');
 
   static const _TOKEN_0 = 'token0';
@@ -106,7 +107,7 @@ abstract class Client {
         'Content-type': 'application/json',
         'Authorization': 'Bearer $_accessToken',
       },
-    );
+    ).timeout(const Duration(seconds: 10));
 
     final Map<String, dynamic> body = json.decode(response.body);
 

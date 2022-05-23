@@ -1,6 +1,6 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/settings/user_settings.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/models/media_model.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
@@ -69,7 +69,7 @@ class MediaController extends ScrollingController {
   Future<void> fetch() async {
     if (_model != null) return;
 
-    final result = await Client.request(GqlQuery.media, {
+    final result = await Api.request(GqlQuery.media, {
       'id': id,
       'withMain': true,
       'withDetails': true,
@@ -96,7 +96,7 @@ class MediaController extends ScrollingController {
       case OTHER:
         if (!_otherTabToggled || !_model!.recommendations.hasNextPage) return;
 
-        final result = await Client.request(GqlQuery.media, {
+        final result = await Api.request(GqlQuery.media, {
           'id': id,
           'withRecommendations': true,
           'recommendationPage': _model!.recommendations.nextPage,
@@ -111,7 +111,7 @@ class MediaController extends ScrollingController {
         if (!_peopleTabToggled) {
           if (!_model!.characters.hasNextPage) return;
 
-          final result = await Client.request(GqlQuery.media, {
+          final result = await Api.request(GqlQuery.media, {
             'id': id,
             'withCharacters': true,
             'characterPage': _model!.characters.nextPage,
@@ -122,7 +122,7 @@ class MediaController extends ScrollingController {
         } else {
           if (!_model!.staff.hasNextPage) return;
 
-          final result = await Client.request(GqlQuery.media, {
+          final result = await Api.request(GqlQuery.media, {
             'id': id,
             'withStaff': true,
             'staffPage': _model!.staff.nextPage,
@@ -136,7 +136,7 @@ class MediaController extends ScrollingController {
       case SOCIAL:
         if (_socialTabToggled || !_model!.reviews.hasNextPage) return;
 
-        final result = await Client.request(GqlQuery.media, {
+        final result = await Api.request(GqlQuery.media, {
           'id': id,
           'withReviews': true,
           'reviewPage': _model!.reviews.nextPage,
@@ -153,8 +153,8 @@ class MediaController extends ScrollingController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(
-      GqlMutation.toggleFavourite,
+    final data = await Api.request(
+      GqlMutation.toggleFavorite,
       {(_model!.info.type == Explorable.anime ? 'anime' : 'manga'): id},
     );
     if (data != null) _model!.info.isFavourite = !_model!.info.isFavourite;
@@ -162,7 +162,7 @@ class MediaController extends ScrollingController {
   }
 
   Future<bool> rateRecommendation(int recommendationId, bool? rating) async {
-    final data = await Client.request(GqlMutation.rateRecommendation, {
+    final data = await Api.request(GqlMutation.rateRecommendation, {
       'id': id,
       'recommendedId': recommendationId,
       'rating': rating == null

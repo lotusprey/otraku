@@ -57,7 +57,7 @@ class _Tile extends StatelessWidget {
       child: ExploreIndexer(
         id: model.mediaId,
         explorable: Explorable.anime,
-        imageUrl: model.cover,
+        text: model.cover,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

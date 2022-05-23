@@ -68,7 +68,7 @@ class ActivityCard extends StatelessWidget {
             Flexible(
               child: ExploreIndexer(
                 id: activity.agent.id,
-                imageUrl: activity.agent.imageUrl,
+                text: activity.agent.imageUrl,
                 explorable: Explorable.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -105,7 +105,7 @@ class ActivityCard extends StatelessWidget {
               ),
               ExploreIndexer(
                 id: activity.reciever!.id,
-                imageUrl: activity.reciever!.imageUrl,
+                text: activity.reciever!.imageUrl,
                 explorable: Explorable.user,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
@@ -136,7 +136,7 @@ class _ActivityMediaBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExploreIndexer(
       id: activityMedia.id,
-      imageUrl: activityMedia.imageUrl,
+      text: activityMedia.imageUrl,
       explorable: activityMedia.isAnime ? Explorable.anime : Explorable.manga,
       child: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: 108),

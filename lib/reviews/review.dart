@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
@@ -16,7 +16,7 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
 
   Future<void> _fetch(int id) async {
     state = await AsyncValue.guard(() async {
-      final data = await Client.get(GqlQuery.review, {'id': id});
+      final data = await Api.get(GqlQuery.review, {'id': id});
       if (data['Review'] == null) throw StateError('Review data is empty.');
       return Review(data['Review']);
     });
@@ -29,7 +29,7 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
     final value = state.value!;
 
     state = await AsyncValue.guard(() async {
-      final data = await Client.get(GqlMutation.rateReview, {
+      final data = await Api.get(GqlMutation.rateReview, {
         'id': value.id,
         'rating': rating == null
             ? 'NO_VOTE'

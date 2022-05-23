@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/notifications/notifications.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
 final userSettingsProvider =
@@ -17,7 +17,7 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
 
   Future<void> _init() async {
     try {
-      final data = await Client.get(GqlQuery.settings);
+      final data = await Api.get(GqlQuery.settings);
       if (data.isEmpty) return;
       state = UserSettings(data['Viewer']);
     } catch (e) {}
@@ -25,7 +25,7 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
 
   Future<void> update(UserSettings other) async {
     try {
-      final data = await Client.get(GqlMutation.updateSettings, other.toMap());
+      final data = await Api.get(GqlMutation.updateSettings, other.toMap());
       if (data.isEmpty) return;
       state = UserSettings(data['UpdateUser']);
     } catch (_) {}

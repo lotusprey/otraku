@@ -70,7 +70,7 @@ class _ReviewGrid extends StatelessWidget {
             children: [
               ExploreIndexer(
                 id: items[i].userId,
-                imageUrl: items[i].avatar,
+                text: items[i].avatar,
                 explorable: Explorable.user,
                 child: Row(
                   children: [
@@ -94,7 +94,7 @@ class _ReviewGrid extends StatelessWidget {
               Expanded(
                 child: ExploreIndexer(
                   id: items[i].reviewId,
-                  imageUrl: bannerUrl,
+                  text: bannerUrl,
                   explorable: Explorable.review,
                   child: Container(
                     width: double.infinity,

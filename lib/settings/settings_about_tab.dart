@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -113,7 +113,7 @@ class SettingsAboutTab extends StatelessWidget {
                   Theme.of(context).colorScheme.errorContainer.withAlpha(100),
                 ),
               ),
-              onPressed: Client.logOut,
+              onPressed: Api.logOut,
             ),
           ),
         ),

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/models/tag_group_model.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 
 class TagGroupController extends GetxController {
   TagGroupModel? _model;
@@ -15,7 +15,7 @@ class TagGroupController extends GetxController {
         }
       ''';
 
-    final data = await Client.request(query);
+    final data = await Api.request(query);
     if (data == null) return;
     _model = TagGroupModel(data);
     update();

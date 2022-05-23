@@ -1,6 +1,6 @@
 import 'package:otraku/models/character_model.dart';
 import 'package:otraku/models/relation_model.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/media_sort.dart';
@@ -63,7 +63,7 @@ class CharacterController extends ScrollingController {
   }
 
   Future<void> _fetch() async {
-    final data = await Client.request(GqlQuery.character, {
+    final data = await Api.request(GqlQuery.character, {
       'id': id,
       'withMain': true,
       'withAnime': true,
@@ -83,7 +83,7 @@ class CharacterController extends ScrollingController {
   Future<void> refetch() async {
     scrollCtrl.scrollUpTo(0);
 
-    final body = await Client.request(GqlQuery.character, {
+    final body = await Api.request(GqlQuery.character, {
       'id': id,
       'withAnime': true,
       'withManga': true,
@@ -103,7 +103,7 @@ class CharacterController extends ScrollingController {
     if (_onAnime && !_anime.hasNextPage) return;
     if (!_onAnime && !_manga.hasNextPage) return;
 
-    final data = await Client.request(GqlQuery.character, {
+    final data = await Api.request(GqlQuery.character, {
       'id': id,
       'withAnime': _onAnime,
       'withManga': !_onAnime,
@@ -124,7 +124,7 @@ class CharacterController extends ScrollingController {
 
   Future<bool> toggleFavourite() async {
     final data =
-        await Client.request(GqlMutation.toggleFavourite, {'character': id});
+        await Api.request(GqlMutation.toggleFavorite, {'character': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }

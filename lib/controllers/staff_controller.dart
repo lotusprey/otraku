@@ -1,6 +1,6 @@
 import 'package:otraku/models/relation_model.dart';
 import 'package:otraku/models/staff_model.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/media_sort.dart';
@@ -48,7 +48,7 @@ class StaffController extends ScrollingController {
   }
 
   Future<void> _fetch() async {
-    final data = await Client.request(GqlQuery.staff, {
+    final data = await Api.request(GqlQuery.staff, {
       'id': id,
       'withMain': true,
       'withCharacters': true,
@@ -68,7 +68,7 @@ class StaffController extends ScrollingController {
   Future<void> refetch() async {
     scrollCtrl.scrollUpTo(0);
 
-    final data = await Client.request(GqlQuery.staff, {
+    final data = await Api.request(GqlQuery.staff, {
       'id': id,
       'withCharacters': true,
       'withStaff': true,
@@ -88,7 +88,7 @@ class StaffController extends ScrollingController {
     if (_onCharacters && !_characters.hasNextPage) return;
     if (!_onCharacters && !_roles.hasNextPage) return;
 
-    final data = await Client.request(GqlQuery.staff, {
+    final data = await Api.request(GqlQuery.staff, {
       'id': id,
       'withCharacters': _onCharacters,
       'withStaff': !_onCharacters,
@@ -108,8 +108,7 @@ class StaffController extends ScrollingController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data =
-        await Client.request(GqlMutation.toggleFavourite, {'staff': id});
+    final data = await Api.request(GqlMutation.toggleFavorite, {'staff': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }

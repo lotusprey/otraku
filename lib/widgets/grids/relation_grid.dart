@@ -61,7 +61,7 @@ class _RelationTile extends StatelessWidget {
             child: ExploreIndexer(
               id: item.id,
               explorable: item.type,
-              imageUrl: item.imageUrl,
+              text: item.imageUrl,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +88,7 @@ class _RelationTile extends StatelessWidget {
           ExploreIndexer(
             id: connection!.id,
             explorable: connection!.type,
-            imageUrl: connection!.imageUrl,
+            text: connection!.imageUrl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -117,7 +117,7 @@ class _RelationTile extends StatelessWidget {
       centerContent = ExploreIndexer(
         id: item.id,
         explorable: item.type,
-        imageUrl: item.imageUrl,
+        text: item.imageUrl,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +144,7 @@ class _RelationTile extends StatelessWidget {
           ExploreIndexer(
             id: item.id,
             explorable: item.type,
-            imageUrl: item.imageUrl,
+            text: item.imageUrl,
             child: ClipRRect(
               child: FadeImage(item.imageUrl, width: 80),
               borderRadius: Consts.borderRadiusMin,
@@ -157,7 +157,7 @@ class _RelationTile extends StatelessWidget {
             ExploreIndexer(
               id: connection!.id,
               explorable: connection!.type,
-              imageUrl: connection!.imageUrl,
+              text: connection!.imageUrl,
               child: ClipRRect(
                 child: FadeImage(connection!.imageUrl, width: 80),
                 borderRadius: Consts.borderRadiusMin,

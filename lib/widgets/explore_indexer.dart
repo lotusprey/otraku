@@ -11,13 +11,13 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class ExploreIndexer extends StatelessWidget {
   final Explorable explorable;
   final int id;
-  final String? imageUrl;
+  final String? text;
   final Widget child;
 
   ExploreIndexer({
-    required this.explorable,
     required this.id,
-    required this.imageUrl,
+    required this.text,
+    required this.explorable,
     required this.child,
   });
 
@@ -86,7 +86,7 @@ class ExploreIndexer extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => openView(
-          ctx: context, id: id, imageUrl: imageUrl, explorable: explorable),
+          ctx: context, id: id, imageUrl: text, explorable: explorable),
       onLongPress: () {
         if (explorable == Explorable.anime || explorable == Explorable.manga)
           showSheet(context, EditView(id));

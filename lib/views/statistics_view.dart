@@ -37,7 +37,7 @@ class StatisticsView extends StatelessWidget {
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
           builder: (context, topOffset, bottomOffset) => TabSwitcher(
-            index: ctrl.onAnime ? 0 : 1,
+            current: ctrl.onAnime ? 0 : 1,
             onChanged: (i) => ctrl.onAnime = i > 0 ? false : true,
             tabs: [_StatisticsView(ctrl, true), _StatisticsView(ctrl, false)],
           ),

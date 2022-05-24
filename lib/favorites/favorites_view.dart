@@ -79,7 +79,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
         );
 
         return TabSwitcher(
-          index: _tab.index,
+          current: _tab.index,
           onChanged: (page) =>
               setState(() => _tab = FavoriteType.values.elementAt(page)),
           tabs: [

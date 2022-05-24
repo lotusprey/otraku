@@ -6,6 +6,7 @@ import 'package:otraku/users/friends.dart';
 import 'package:otraku/users/user_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -39,11 +40,17 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
     super.dispose();
   }
 
-  // TODO tab switching
   @override
   Widget build(BuildContext context) {
     final count = ref.watch(
       friendsProvider(widget.id).select((s) => s.getCount(_onFollowing)),
+    );
+
+    final refreshControl = SliverRefreshControl(
+      onRefresh: () {
+        ref.invalidate(friendsProvider(widget.id));
+        return Future.value();
+      },
     );
 
     return PageLayout(
@@ -64,7 +71,6 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
         index: _onFollowing ? 0 : 1,
         onChanged: (page) {
           setState(() => _onFollowing = page == 0 ? true : false);
-          _ctrl.scrollUpTo(0);
         },
         onSame: (_) => _ctrl.scrollUpTo(0),
         items: const {
@@ -72,58 +78,89 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
           'Followers': Ionicons.person_circle,
         },
       ),
-      builder: (context, topOffset, bottomOffset) => Consumer(
-        child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(friendsProvider(widget.id));
-            return Future.value();
+      builder: (context, topOffset, bottomOffset) => TabSwitcher(
+        current: _onFollowing ? 0 : 1,
+        onChanged: (page) {
+          setState(() => _onFollowing = page == 0 ? true : false);
+        },
+        tabs: [
+          _FriendTab(
+            id: widget.id,
+            onFollowing: true,
+            refreshControl: refreshControl,
+            paginationController: _ctrl,
+          ),
+          _FriendTab(
+            id: widget.id,
+            onFollowing: false,
+            refreshControl: refreshControl,
+            paginationController: _ctrl,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FriendTab extends StatelessWidget {
+  const _FriendTab({
+    required this.id,
+    required this.onFollowing,
+    required this.refreshControl,
+    required this.paginationController,
+  });
+
+  final int id;
+  final bool onFollowing;
+  final Widget refreshControl;
+  final PaginationController paginationController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.listen<FriendsNotifier>(
+          friendsProvider(id),
+          (_, s) {
+            final users = onFollowing ? s.following : s.followers;
+            users.whenOrNull(
+              error: (error, _) => showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Could not load users',
+                  content: error.toString(),
+                ),
+              ),
+            );
           },
-        ),
-        builder: (context, ref, refreshControl) {
-          ref.listen<FriendsNotifier>(
-            friendsProvider(widget.id),
-            (_, s) {
-              final users = _onFollowing ? s.following : s.followers;
-              users.whenOrNull(
-                error: (error, _) => showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Could not load users',
-                    content: error.toString(),
+        );
+
+        const empty = Center(child: Text('No Users'));
+
+        final notifier = ref.watch(friendsProvider(id));
+        final users = onFollowing ? notifier.following : notifier.followers;
+        return users.maybeWhen(
+            loading: () => const Center(child: Loader()),
+            orElse: () => empty,
+            data: (data) {
+              if (data.items.isEmpty) return empty;
+
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
+                  child: CustomScrollView(
+                    physics: Consts.physics,
+                    controller: paginationController,
+                    slivers: [
+                      refreshControl,
+                      UserGrid(data.items),
+                      SliverFooter(loading: data.hasNext),
+                    ],
                   ),
                 ),
               );
-            },
-          );
-
-          const empty = Center(child: Text('No Users'));
-
-          final notifier = ref.watch(friendsProvider(widget.id));
-          final users = _onFollowing ? notifier.following : notifier.followers;
-          return users.maybeWhen(
-              loading: () => const Center(child: Loader()),
-              orElse: () => empty,
-              data: (data) {
-                if (data.items.isEmpty) return empty;
-
-                return Center(
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: Consts.layoutBig),
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl!,
-                        UserGrid(data.items),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  ),
-                );
-              });
-        },
-      ),
+            });
+      },
     );
   }
 }

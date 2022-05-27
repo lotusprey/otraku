@@ -73,17 +73,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
               floating = const ExploreActionButton();
             }
 
-            FloatingBar? floatingBar;
-            if (floating != null)
-              floatingBar = FloatingBar(
-                children: [floating],
-                scrollCtrl: _ctrl,
-              );
-
             return WillPopScope(
               onWillPop: () => _onWillPop(context),
               child: PageLayout(
-                floatingBar: floatingBar,
+                floatingBar: FloatingBar(
+                  scrollCtrl: _ctrl,
+                  children: [floating ?? const SizedBox()],
+                ),
                 bottomBar: BottomBarIconTabs(
                   current: homeCtrl.homeTab,
                   onChanged: (i) => homeCtrl.homeTab = i,

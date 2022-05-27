@@ -63,7 +63,6 @@ class _CollectionSubViewState extends State<CollectionSubView> {
 
   void _scrollListener() {
     if (_scrollCtrl.positions.length != 1) return;
-    print('done');
     _scrollCtrl.scrollUpTo(0);
   }
 

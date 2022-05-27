@@ -79,8 +79,31 @@ class PageLayoutState extends State<PageLayout> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonAnimator: const _FloatingButtonNoAnimation(),
     );
   }
+}
+
+/// Prevents the [Scaffold] from forcing unappropriate
+/// animations when a floating action button appears/disappears.
+class _FloatingButtonNoAnimation extends FloatingActionButtonAnimator {
+  const _FloatingButtonNoAnimation();
+
+  @override
+  Offset getOffset({
+    required Offset begin,
+    required Offset end,
+    required double progress,
+  }) =>
+      end;
+
+  @override
+  Animation<double> getRotationAnimation({required Animation<double> parent}) =>
+      Tween<double>(begin: 1.0, end: 1.0).animate(parent);
+
+  @override
+  Animation<double> getScaleAnimation({required Animation<double> parent}) =>
+      Tween<double>(begin: 1.0, end: 1.0).animate(parent);
 }
 
 /// A top app bar implementation that uses a blurred, translucent background.

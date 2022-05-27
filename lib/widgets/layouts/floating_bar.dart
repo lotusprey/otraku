@@ -6,7 +6,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
 class FloatingBar extends StatefulWidget {
-  FloatingBar({required this.children, required this.scrollCtrl});
+  FloatingBar({required this.scrollCtrl, required this.children});
 
   final List<Widget> children;
   final ScrollController scrollCtrl;

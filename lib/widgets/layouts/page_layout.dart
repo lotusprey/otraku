@@ -1,70 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/drag_detector.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 
-/// Represents the top and bottom padding of a page.
-class PageOffset {
-  const PageOffset(this.top, this.bottom);
-
-  final double top;
-  final double bottom;
-
-  /// Calculates the offsets needed to avoid the top/bottom bar
-  /// overlays using the nearest [Scaffold] and [PageLayout].
-  static PageOffset of(BuildContext context) {
-    double topOffset = 0;
-    double bottomOffset = 0;
-
-    final scaffold = context.findAncestorStateOfType<ScaffoldState>();
-    if (scaffold != null) {
-      final padding = MediaQuery.of(scaffold.context).viewPadding;
-      topOffset = padding.top;
-      bottomOffset = padding.bottom;
-    }
-
-    final pageLayout = context.findAncestorWidgetOfExactType<PageLayout>();
-    if (pageLayout?.topBar != null) topOffset += Consts.tapTargetSize;
-    if (pageLayout?.bottomBar != null) bottomOffset += Consts.tapTargetSize;
-
-    return PageOffset(topOffset, bottomOffset);
-  }
-}
-
-class PageLayout extends StatelessWidget {
+class PageLayout extends StatefulWidget {
   const PageLayout({
-    required this.builder,
+    required this.child,
     this.topBar,
     this.floatingBar,
     this.bottomBar,
   });
 
-  final Widget Function(BuildContext, double, double) builder;
+  final Widget child;
   final TopBar? topBar;
   final FloatingBar? floatingBar;
   final Widget? bottomBar;
 
+  static PageLayoutState of(BuildContext context) {
+    final PageLayoutState? result =
+        context.findAncestorStateOfType<PageLayoutState>();
+    if (result != null) return result;
+    throw FlutterError.fromParts(<DiagnosticsNode>[
+      ErrorSummary(
+        'PageLayout.of() called with a context that does not contain a PageLayout.',
+      ),
+      context.describeElement('The context used was'),
+    ]);
+  }
+
+  @override
+  State<PageLayout> createState() => PageLayoutState();
+}
+
+class PageLayoutState extends State<PageLayout> {
+  double _topOffset = 0;
+  double _bottomOffset = 0;
+  bool _didCalculateOffsets = false;
+
+  /// The offset from the top that this widget's children should avoid.
+  /// It takes into consideration [viewPadding.top] of [MediaQueryData],
+  /// the space taken by [widget.topBar] and the [topOffset] of the
+  /// ancestral [PageLayoutState].
+  double get topOffset => _topOffset;
+
+  /// The offset from the bottom that this widget's children should avoid.
+  /// It takes into consideration [viewPadding.bottom] of [MediaQueryData],
+  /// the space taken by [widget.bottomBar] and the [bottomOffset] of the
+  /// ancestral [PageLayoutState].
+  double get bottomOffset => _bottomOffset;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didCalculateOffsets) return;
+    _didCalculateOffsets = true;
+
+    if (widget.topBar != null) _topOffset += Consts.tapTargetSize;
+    if (widget.bottomBar != null) _bottomOffset += Consts.tapTargetSize;
+
+    final pageLayout = context.findAncestorStateOfType<PageLayoutState>();
+    if (pageLayout != null) {
+      _topOffset += pageLayout._topOffset;
+      _bottomOffset += pageLayout._bottomOffset;
+    } else {
+      _topOffset += MediaQuery.of(context).viewPadding.top;
+      _bottomOffset += MediaQuery.of(context).viewPadding.bottom;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final content = builder(
-      context,
-      MediaQuery.of(context).viewPadding.top +
-          (topBar == null ? 0 : Consts.tapTargetSize),
-      MediaQuery.of(context).viewPadding.bottom +
-          (bottomBar == null ? 0 : Consts.tapTargetSize),
-    );
-
     return Scaffold(
-      body: content,
-      appBar: topBar,
-      floatingActionButton: floatingBar,
-      bottomNavigationBar: bottomBar != null ? _BottomBar(bottomBar!) : null,
+      body: widget.child,
+      appBar: widget.topBar,
+      floatingActionButton: widget.floatingBar,
+      bottomNavigationBar:
+          widget.bottomBar != null ? _BottomBar(widget.bottomBar!) : null,
       extendBody: true,
       extendBodyBehindAppBar: true,
-      floatingActionButtonLocation: Settings().leftHanded
-          ? FloatingActionButtonLocation.startFloat
-          : FloatingActionButtonLocation.endFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
@@ -154,231 +168,6 @@ class TopBarIcon extends StatelessWidget {
   }
 }
 
-/// Hides the [child] on scroll-down and reveals it on scroll-up.
-class FloatingBar extends StatefulWidget {
-  FloatingBar({required this.child, required this.scrollCtrl});
-
-  final Widget child;
-  final ScrollController scrollCtrl;
-
-  @override
-  _FloatingBarState createState() => _FloatingBarState();
-}
-
-class _FloatingBarState extends State<FloatingBar>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _animationCtrl;
-  late final Animation<Offset> _slideAnimation;
-  late final Animation<double> _fadeAnimation;
-
-  bool _visible = true;
-  double _lastOffset = 0;
-
-  void _visibility() {
-    final pos = widget.scrollCtrl.position;
-    final dif = pos.pixels - _lastOffset;
-
-    // If the position has moved enough from the last
-    // spot or is out of bounds, update visibility.
-    if (dif > 15 || pos.pixels > pos.maxScrollExtent) {
-      _lastOffset = widget.scrollCtrl.position.pixels;
-      _animationCtrl.forward().then((_) => setState(() => _visible = false));
-    } else if (dif < -15 || pos.pixels < pos.minScrollExtent) {
-      _lastOffset = widget.scrollCtrl.position.pixels;
-      setState(() => _visible = true);
-      _animationCtrl.reverse();
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _animationCtrl = AnimationController(
-      duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-    _slideAnimation = Tween(
-      begin: Offset.zero,
-      end: const Offset(0, 0.2),
-    ).animate(_animationCtrl);
-    _fadeAnimation = Tween(begin: 1.0, end: 0.3).animate(_animationCtrl);
-
-    widget.scrollCtrl.addListener(_visibility);
-  }
-
-  @override
-  void dispose() {
-    widget.scrollCtrl.removeListener(_visibility);
-    _animationCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_visible) return const SizedBox();
-
-    return SlideTransition(
-      position: _slideAnimation,
-      child: FadeTransition(opacity: _fadeAnimation, child: widget.child),
-    );
-  }
-}
-
-const _actionButtonSize = 56.0;
-
-/// An [FloatingActionButton] implementation.
-class ActionButton extends StatelessWidget {
-  ActionButton({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-    this.onSwipe,
-  });
-
-  final IconData icon;
-  final String tooltip;
-  final void Function() onTap;
-
-  /// If not null, it will signal when the user swipes on the action button.
-  /// Passing [true] means 'go right', while [false] means 'go left'. If the
-  /// return value is not [null] the new [IconData] will replace the old one
-  /// through an animation.
-  final IconData? Function(bool)? onSwipe;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: _actionButtonSize,
-      height: _actionButtonSize,
-      child: Tooltip(
-        message: tooltip,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 5,
-                color: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withAlpha(100),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Theme.of(context).colorScheme.primary,
-            shape: const CircleBorder(),
-            child: InkWell(
-              onTap: onTap,
-              borderRadius: BorderRadius.circular(30),
-              splashColor: Theme.of(context).colorScheme.primaryContainer,
-              child: onSwipe == null
-                  ? Icon(icon, color: Theme.of(context).colorScheme.onPrimary)
-                  : _DraggableIcon(icon: icon, onSwipe: onSwipe!),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Detects swiping and animates the icon switching.
-class _DraggableIcon extends StatefulWidget {
-  _DraggableIcon({
-    required this.icon,
-    required this.onSwipe,
-  });
-
-  final IconData icon;
-  final IconData? Function(bool) onSwipe;
-
-  @override
-  State<_DraggableIcon> createState() => _DraggableIconState();
-}
-
-class _DraggableIconState extends State<_DraggableIcon>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late IconData _icon;
-
-  // The icon fades out on exit and fades in on entrance.
-  late Animation<double> _opacity;
-
-  // For when the icon exits/enters from the left.
-  late Animation<Offset> _left;
-
-  // For when the icon exits/enters from the right.
-  late Animation<Offset> _right;
-
-  bool _onRight = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _icon = widget.icon;
-    _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-
-    _opacity = Tween(begin: 1.0, end: 0.0).animate(_ctrl);
-
-    _left = Tween(
-      begin: Offset.zero,
-      end: const Offset(-0.25, 0),
-    ).animate(_ctrl);
-
-    _right = Tween(
-      begin: Offset.zero,
-      end: const Offset(0.25, 0),
-    ).animate(_ctrl);
-  }
-
-  @override
-  void didUpdateWidget(covariant _DraggableIcon oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _icon = widget.icon;
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DragDetector(
-      triggerOffset: 10,
-      onSwipe: (goRight) {
-        // The previous transition must have finished.
-        if (_ctrl.isAnimating) return;
-
-        if (_onRight == goRight) setState(() => _onRight = !goRight);
-
-        _ctrl.forward().then((_) {
-          setState(() {
-            _icon = widget.onSwipe(goRight) ?? _icon;
-            _onRight = goRight;
-          });
-          _ctrl.reverse();
-        });
-      },
-      child: SlideTransition(
-        position: _onRight ? _right : _left,
-        child: FadeTransition(
-          opacity: _opacity,
-          child: Icon(
-            _icon,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// A bottom app bar implementation that uses a blurred, translucent background.
 class _BottomBar extends StatelessWidget {
   const _BottomBar(this.child);
@@ -407,13 +196,13 @@ class _BottomBar extends StatelessWidget {
 /// wide enough, next to the icon will be the name of the tab.
 class BottomBarIconTabs extends StatelessWidget {
   const BottomBarIconTabs({
-    required this.index,
+    required this.current,
     required this.items,
     required this.onChanged,
     required this.onSame,
   });
 
-  final int index;
+  final int current;
   final Map<String, IconData> items;
 
   /// Called when a new tab is selected.
@@ -434,7 +223,7 @@ class BottomBarIconTabs extends StatelessWidget {
         for (int i = 0; i < items.length; i++)
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => i != index ? onChanged(i) : onSame(i),
+            onTap: () => i != current ? onChanged(i) : onSame(i),
             child: SizedBox(
               height: double.infinity,
               width: width,
@@ -443,7 +232,7 @@ class BottomBarIconTabs extends StatelessWidget {
                 children: [
                   Icon(
                     items.values.elementAt(i),
-                    color: i != index
+                    color: i != current
                         ? Theme.of(context).colorScheme.surfaceVariant
                         : Theme.of(context).colorScheme.primary,
                   ),
@@ -451,7 +240,7 @@ class BottomBarIconTabs extends StatelessWidget {
                     const SizedBox(width: 5),
                     Text(
                       items.keys.elementAt(i),
-                      style: i != index
+                      style: i != current
                           ? Theme.of(context).textTheme.subtitle1
                           : Theme.of(context).textTheme.bodyText1,
                     ),

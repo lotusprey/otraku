@@ -113,7 +113,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
             ),
         ],
       ),
-      builder: (context, _, __) => Consumer(
+      child: Consumer(
         child: SliverRefreshControl(
           onRefresh: () {
             ref.invalidate(activityProvider(widget.id));

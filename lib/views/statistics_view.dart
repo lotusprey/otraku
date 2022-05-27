@@ -25,7 +25,7 @@ class StatisticsView extends StatelessWidget {
       builder: (ctrl) {
         return PageLayout(
           bottomBar: BottomBarIconTabs(
-            index: ctrl.onAnime ? 0 : 1,
+            current: ctrl.onAnime ? 0 : 1,
             onChanged: (page) => ctrl.onAnime = page == 0 ? true : false,
             onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
             items: const {
@@ -36,7 +36,7 @@ class StatisticsView extends StatelessWidget {
           topBar: TopBar(
             title: ctrl.onAnime ? 'Anime Statistics' : 'Manga Statistics',
           ),
-          builder: (context, topOffset, bottomOffset) => TabSwitcher(
+          child: TabSwitcher(
             current: ctrl.onAnime ? 0 : 1,
             onChanged: (i) => ctrl.onAnime = i > 0 ? false : true,
             tabs: [_StatisticsView(ctrl, true), _StatisticsView(ctrl, false)],
@@ -55,14 +55,14 @@ class _StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final offset = PageOffset.of(context);
+    final pageLayout = PageLayout.of(context);
     final model = ofAnime ? ctrl.animeStats : ctrl.mangaStats;
 
     return ListView(
       controller: ctrl.scrollCtrl,
       padding: EdgeInsets.only(
-        top: offset.top + 10,
-        bottom: offset.bottom,
+        top: pageLayout.topOffset + 10,
+        bottom: pageLayout.bottomOffset,
       ),
       children: [
         _Details(ctrl, ofAnime),
@@ -73,14 +73,14 @@ class _StatisticsView extends StatelessWidget {
             builder: (_) => _BarChart(
               title: 'Score',
               tabs: TabSegments<int>(
-                items: ctrl.onAnime
+                items: ofAnime
                     ? const {'Titles': 0, 'Hours': 1}
                     : const {'Titles': 0, 'Chapters': 1},
                 initial: ctrl.scoreChartTab,
                 onChanged: (val) => ctrl.scoreChartTab = val,
               ),
               stats: model.scores,
-              onAnime: ctrl.onAnime,
+              onAnime: ofAnime,
               chartTab: ctrl.scoreChartTab,
               barWidth: 40,
             ),
@@ -91,16 +91,16 @@ class _StatisticsView extends StatelessWidget {
             id: StatisticsController.ID_LENGTH,
             tag: ctrl.id.toString(),
             builder: (_) => _BarChart(
-              title: ctrl.onAnime ? 'Episodes' : 'Chapters',
+              title: ofAnime ? 'Episodes' : 'Chapters',
               tabs: TabSegments<int>(
-                items: ctrl.onAnime
+                items: ofAnime
                     ? const {'Titles': 0, 'Hours': 1, 'Mean Score': 2}
                     : const {'Titles': 0, 'Chapters': 1, 'Mean Score': 2},
                 initial: ctrl.lengthChartTab,
                 onChanged: (val) => ctrl.lengthChartTab = val,
               ),
               stats: model.lengths,
-              onAnime: ctrl.onAnime,
+              onAnime: ofAnime,
               chartTab: ctrl.lengthChartTab,
               barWidth: 50,
             ),

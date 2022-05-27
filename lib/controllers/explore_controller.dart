@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/filter_model.dart';
 import 'package:otraku/models/page_model.dart';
@@ -5,12 +6,10 @@ import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
 import 'package:otraku/utils/settings.dart';
 
 // Searches and filters items from the Explorable enum
-class ExploreController extends ScrollingController {
+class ExploreController extends GetxController {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
   static const ID_BUTTON = 2;
@@ -78,7 +77,6 @@ class ExploreController extends ScrollingController {
     if (clean) {
       _isLoading = true;
       _page = 1;
-      scrollCtrl.scrollUpTo(0);
       update([ID_BODY]);
     }
 
@@ -138,7 +136,6 @@ class ExploreController extends ScrollingController {
     update([ID_BODY]);
   }
 
-  @override
   Future<void> fetchPage() async {
     if (!_results.hasNextPage) return;
     _page++;

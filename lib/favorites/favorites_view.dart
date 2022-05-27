@@ -41,6 +41,13 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
       favoritesProvider(widget.id).select((s) => s.getCount(_tab)),
     );
 
+    final refreshControl = SliverRefreshControl(
+      onRefresh: () {
+        ref.invalidate(favoritesProvider(widget.id));
+        return Future.value();
+      },
+    );
+
     return PageLayout(
       topBar: TopBar(
         title: _tab.text,
@@ -56,7 +63,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
         ],
       ),
       bottomBar: BottomBarIconTabs(
-        index: _tab.index,
+        current: _tab.index,
         onChanged: (page) {
           setState(() => _tab = FavoriteType.values.elementAt(page));
           _ctrl.scrollUpTo(0);
@@ -70,27 +77,18 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
           'Studios': Ionicons.business_outline,
         },
       ),
-      builder: (context, _, __) {
-        final refreshControl = SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(favoritesProvider(widget.id));
-            return Future.value();
-          },
-        );
-
-        return TabSwitcher(
-          current: _tab.index,
-          onChanged: (page) =>
-              setState(() => _tab = FavoriteType.values.elementAt(page)),
-          tabs: [
-            _AnimeTab(widget.id, _ctrl, refreshControl),
-            _MangaTab(widget.id, _ctrl, refreshControl),
-            _CharactersTab(widget.id, _ctrl, refreshControl),
-            _StaffTab(widget.id, _ctrl, refreshControl),
-            _StudiosTab(widget.id, _ctrl, refreshControl),
-          ],
-        );
-      },
+      child: TabSwitcher(
+        current: _tab.index,
+        onChanged: (page) =>
+            setState(() => _tab = FavoriteType.values.elementAt(page)),
+        tabs: [
+          _AnimeTab(widget.id, _ctrl, refreshControl),
+          _MangaTab(widget.id, _ctrl, refreshControl),
+          _CharactersTab(widget.id, _ctrl, refreshControl),
+          _StaffTab(widget.id, _ctrl, refreshControl),
+          _StudiosTab(widget.id, _ctrl, refreshControl),
+        ],
+      ),
     );
   }
 }

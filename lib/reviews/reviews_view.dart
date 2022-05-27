@@ -5,6 +5,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/reviews/reviews.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/reviews/review_grid.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
@@ -59,34 +60,36 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
       ),
       floatingBar: FloatingBar(
         scrollCtrl: _ctrl,
-        child: ActionButton(
-          tooltip: 'Sort',
-          icon: Ionicons.funnel_outline,
-          onTap: () {
-            final notifier = ref.read(reviewSortProvider(widget.id).notifier);
+        children: [
+          ActionButton(
+            tooltip: 'Sort',
+            icon: Ionicons.funnel_outline,
+            onTap: () {
+              final notifier = ref.read(reviewSortProvider(widget.id).notifier);
 
-            showSheet(
-              context,
-              DynamicGradientDragSheet(
-                onTap: (i) => notifier.state = ReviewSort.values.elementAt(i),
-                children: [
-                  for (int i = 0; i < ReviewSort.values.length; i++)
-                    Text(
-                      ReviewSort.values.elementAt(i).text,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: i != notifier.state.index
-                          ? Theme.of(context).textTheme.headline1
-                          : Theme.of(context).textTheme.headline1?.copyWith(
-                              color: Theme.of(context).colorScheme.primary),
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
+              showSheet(
+                context,
+                DynamicGradientDragSheet(
+                  onTap: (i) => notifier.state = ReviewSort.values.elementAt(i),
+                  children: [
+                    for (int i = 0; i < ReviewSort.values.length; i++)
+                      Text(
+                        ReviewSort.values.elementAt(i).text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: i != notifier.state.index
+                            ? Theme.of(context).textTheme.headline1
+                            : Theme.of(context).textTheme.headline1?.copyWith(
+                                color: Theme.of(context).colorScheme.primary),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      builder: (_, __, ___) => Consumer(
+      child: Consumer(
         child: SliverRefreshControl(
           onRefresh: () {
             ref.invalidate(reviewsProvider(widget.id));

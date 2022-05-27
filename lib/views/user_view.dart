@@ -41,123 +41,125 @@ class HomeUserView extends StatelessWidget {
       top: 10,
     );
 
-    return GetBuilder<UserController>(
-      init: UserController(id),
-      tag: id.toString(),
-      builder: (ctrl) => CustomScrollView(
-        controller: scrollCtrl,
-        slivers: [
-          UserHeader(
-            id: id,
-            user: ctrl.model,
-            isMe: id == Settings().id,
-            avatarUrl: avatarUrl,
-          ),
-          if (ctrl.model != null)
-            SliverPadding(
-              padding: padding,
-              sliver: SliverGrid.extent(
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 5,
-                children: [
-                  _Button(
-                    Ionicons.film,
-                    'Anime',
-                    () => id == Settings().id
-                        ? Get.find<HomeController>().homeTab =
-                            HomeView.ANIME_LIST
-                        : Navigator.pushNamed(
-                            context,
-                            RouteArg.collection,
-                            arguments: RouteArg(id: id, variant: true),
-                          ),
-                  ),
-                  _Button(
-                    Ionicons.bookmark,
-                    'Manga',
-                    () => id == Settings().id
-                        ? Get.find<HomeController>().homeTab =
-                            HomeView.MANGA_LIST
-                        : Navigator.pushNamed(
-                            context,
-                            RouteArg.collection,
-                            arguments: RouteArg(id: id, variant: false),
-                          ),
-                  ),
-                  _Button(
-                    Ionicons.people_circle,
-                    'Following',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.friends,
-                      arguments: RouteArg(id: id, variant: true),
-                    ),
-                  ),
-                  _Button(
-                    Ionicons.person_circle,
-                    'Followers',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.friends,
-                      arguments: RouteArg(id: id, variant: false),
-                    ),
-                  ),
-                  _Button(
-                    Ionicons.chatbox,
-                    'Activities',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.activities,
-                      arguments: RouteArg(id: id),
-                    ),
-                  ),
-                  _Button(
-                    Icons.favorite,
-                    'Favourites',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.favourites,
-                      arguments: RouteArg(id: id),
-                    ),
-                  ),
-                  _Button(
-                    Ionicons.stats_chart,
-                    'Statistics',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.statistics,
-                      arguments: RouteArg(id: id),
-                    ),
-                  ),
-                  _Button(
-                    Icons.rate_review,
-                    'Reviews',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.reviews,
-                      arguments: RouteArg(id: id),
-                    ),
-                  ),
-                ],
-              ),
+    return SafeArea(
+      child: GetBuilder<UserController>(
+        init: UserController(id),
+        tag: id.toString(),
+        builder: (ctrl) => CustomScrollView(
+          controller: scrollCtrl,
+          slivers: [
+            UserHeader(
+              id: id,
+              user: ctrl.model,
+              isMe: id == Settings().id,
+              avatarUrl: avatarUrl,
             ),
-          if (!(ctrl.model?.description.isEmpty ?? true))
-            SliverToBoxAdapter(
-              child: Container(
-                margin: padding,
-                padding: Consts.padding,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.borderRadiusMin,
+            if (ctrl.model != null)
+              SliverPadding(
+                padding: padding,
+                sliver: SliverGrid.extent(
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  maxCrossAxisExtent: 200,
+                  childAspectRatio: 5,
+                  children: [
+                    _Button(
+                      Ionicons.film,
+                      'Anime',
+                      () => id == Settings().id
+                          ? Get.find<HomeController>().homeTab =
+                              HomeView.ANIME_LIST
+                          : Navigator.pushNamed(
+                              context,
+                              RouteArg.collection,
+                              arguments: RouteArg(id: id, variant: true),
+                            ),
+                    ),
+                    _Button(
+                      Ionicons.bookmark,
+                      'Manga',
+                      () => id == Settings().id
+                          ? Get.find<HomeController>().homeTab =
+                              HomeView.MANGA_LIST
+                          : Navigator.pushNamed(
+                              context,
+                              RouteArg.collection,
+                              arguments: RouteArg(id: id, variant: false),
+                            ),
+                    ),
+                    _Button(
+                      Ionicons.people_circle,
+                      'Following',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.friends,
+                        arguments: RouteArg(id: id, variant: true),
+                      ),
+                    ),
+                    _Button(
+                      Ionicons.person_circle,
+                      'Followers',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.friends,
+                        arguments: RouteArg(id: id, variant: false),
+                      ),
+                    ),
+                    _Button(
+                      Ionicons.chatbox,
+                      'Activities',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.activities,
+                        arguments: RouteArg(id: id),
+                      ),
+                    ),
+                    _Button(
+                      Icons.favorite,
+                      'Favourites',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.favourites,
+                        arguments: RouteArg(id: id),
+                      ),
+                    ),
+                    _Button(
+                      Ionicons.stats_chart,
+                      'Statistics',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.statistics,
+                        arguments: RouteArg(id: id),
+                      ),
+                    ),
+                    _Button(
+                      Icons.rate_review,
+                      'Reviews',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.reviews,
+                        arguments: RouteArg(id: id),
+                      ),
+                    ),
+                  ],
                 ),
-                child: HtmlContent(ctrl.model!.description),
               ),
-            ),
-          SliverToBoxAdapter(
-              child: SizedBox(height: NavLayout.offset(context))),
-        ],
+            if (!(ctrl.model?.description.isEmpty ?? true))
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: padding,
+                  padding: Consts.padding,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: Consts.borderRadiusMin,
+                  ),
+                  child: HtmlContent(ctrl.model!.description),
+                ),
+              ),
+            SliverToBoxAdapter(
+                child: SizedBox(height: NavLayout.offset(context))),
+          ],
+        ),
       ),
     );
   }

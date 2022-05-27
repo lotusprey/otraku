@@ -5,6 +5,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 
 class SettingsNotificationsTab extends StatelessWidget {
   SettingsNotificationsTab(this.scrollCtrl, this.settings, this.shouldUpdate);
@@ -45,16 +46,16 @@ class SettingsNotificationsTab extends StatelessWidget {
       onChanged: shouldUpdate,
     ));
 
-    final offset = PageOffset.of(context);
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
-          SliverToBoxAdapter(child: SizedBox(height: offset.top)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: PageLayout.of(context).topOffset),
+          ),
           ...widgets,
-          SliverToBoxAdapter(child: SizedBox(height: offset.bottom)),
+          const SliverFooter(),
         ],
       ),
     );

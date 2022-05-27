@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
@@ -13,15 +13,15 @@ class SettingsAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final offset = PageOffset.of(context);
+    final pageLayout = PageLayout.of(context);
 
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
         left: 10,
         right: 10,
-        top: offset.top + 10,
-        bottom: offset.bottom + 10,
+        top: pageLayout.topOffset + 10,
+        bottom: pageLayout.bottomOffset + 10,
       ),
       children: [
         Center(
@@ -117,7 +117,7 @@ class SettingsAboutTab extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: NavLayout.offset(context)),
+        const SliverFooter(),
       ],
     );
   }

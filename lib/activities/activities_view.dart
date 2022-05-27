@@ -7,6 +7,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/activities/activities.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
@@ -97,14 +98,15 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
       topBar: const TopBar(title: 'Activities'),
       floatingBar: FloatingBar(
         scrollCtrl: _ctrl,
-        child: ActionButton(
-          tooltip: 'Filter',
-          icon: Ionicons.funnel_outline,
-          onTap: () => showActivityFilterSheet(context, ref, widget.id),
-        ),
+        children: [
+          ActionButton(
+            tooltip: 'Filter',
+            icon: Ionicons.funnel_outline,
+            onTap: () => showActivityFilterSheet(context, ref, widget.id),
+          ),
+        ],
       ),
-      builder: (context, topOffset, bottomOffset) =>
-          ActivitiesSubView(widget.id, _ctrl),
+      child: ActivitiesSubView(widget.id, _ctrl),
     );
   }
 }

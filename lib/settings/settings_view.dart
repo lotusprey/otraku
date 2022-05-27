@@ -78,7 +78,7 @@ class _SettingsViewState extends State<SettingsView> {
           child: PageLayout(
             topBar: TopBar(title: pageNames[_tabIndex]),
             bottomBar: BottomBarIconTabs(
-              index: _tabIndex,
+              current: _tabIndex,
               onSame: (_) => _ctrl.scrollUpTo(0),
               onChanged: (i) => setState(() => _tabIndex = i),
               items: const {
@@ -88,7 +88,7 @@ class _SettingsViewState extends State<SettingsView> {
                 'About': Ionicons.information_outline,
               },
             ),
-            builder: (context, _, __) => TabSwitcher(
+            child: TabSwitcher(
               tabs: tabs,
               current: _tabIndex,
               onChanged: (i) => setState(() => _tabIndex = i),

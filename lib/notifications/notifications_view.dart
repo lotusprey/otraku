@@ -10,6 +10,7 @@ import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
@@ -59,41 +60,45 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       ),
       floatingBar: FloatingBar(
         scrollCtrl: _ctrl,
-        child: ActionButton(
-          tooltip: 'Filter',
-          icon: Ionicons.funnel_outline,
-          onTap: () {
-            showSheet(
-              context,
-              Consumer(
-                builder: (context, ref, _) {
-                  final notifier = ref.read(
-                    notificationFilterProvider.notifier,
-                  );
+        children: [
+          ActionButton(
+            tooltip: 'Filter',
+            icon: Ionicons.funnel_outline,
+            onTap: () {
+              showSheet(
+                context,
+                Consumer(
+                  builder: (context, ref, _) {
+                    final notifier = ref.read(
+                      notificationFilterProvider.notifier,
+                    );
 
-                  final tiles = <Widget>[];
-                  for (int i = 0; i < NotificationFilterType.values.length; i++)
-                    tiles.add(Text(
-                      NotificationFilterType.values.elementAt(i).text,
-                      style: i != notifier.state.index
-                          ? Theme.of(context).textTheme.headline1
-                          : Theme.of(context).textTheme.headline1?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                    ));
+                    final tiles = <Widget>[];
+                    for (int i = 0;
+                        i < NotificationFilterType.values.length;
+                        i++)
+                      tiles.add(Text(
+                        NotificationFilterType.values.elementAt(i).text,
+                        style: i != notifier.state.index
+                            ? Theme.of(context).textTheme.headline1
+                            : Theme.of(context).textTheme.headline1?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                      ));
 
-                  return DynamicGradientDragSheet(
-                    children: tiles,
-                    onTap: (i) => notifier.state =
-                        NotificationFilterType.values.elementAt(i),
-                  );
-                },
-              ),
-            );
-          },
-        ),
+                    return DynamicGradientDragSheet(
+                      children: tiles,
+                      onTap: (i) => notifier.state =
+                          NotificationFilterType.values.elementAt(i),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      builder: (context, topOffset, bottomOffset) => Consumer(
+      child: Consumer(
         child: SliverRefreshControl(
           onRefresh: () {
             ref.invalidate(notificationsProvider);

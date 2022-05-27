@@ -13,7 +13,6 @@ import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loader.dart';
 import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
@@ -115,11 +114,11 @@ class InboxView extends StatelessWidget {
               notificationIcon,
             ],
           ),
-          builder: (context, topOffset, _) => AnimatedSwitcher(
+          child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: ctrl.onFeed
                 ? ActivitiesSubView(null, scrollCtrl)
-                : _ProgressView(scrollCtrl, topOffset),
+                : _ProgressView(scrollCtrl),
           ),
         );
       },
@@ -128,10 +127,9 @@ class InboxView extends StatelessWidget {
 }
 
 class _ProgressView extends StatelessWidget {
-  _ProgressView(this.scrollCtrl, this.offsetTop);
+  _ProgressView(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
-  final double offsetTop;
 
   @override
   Widget build(BuildContext context) {
@@ -199,9 +197,7 @@ class _ProgressView extends StatelessWidget {
                 items: ctrl.otherManga,
                 updateProgress: _updateMangaProgress,
               ),
-              SliverToBoxAdapter(
-                child: SizedBox(height: NavLayout.offset(context)),
-              ),
+              const SliverFooter(),
             ],
           );
         },

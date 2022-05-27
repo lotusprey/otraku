@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/list_status.dart';
 import 'package:otraku/constants/score_format.dart';
@@ -9,12 +10,11 @@ import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/edit/edit.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
 
-class CollectionController extends ScrollingController {
+class CollectionController extends GetxController {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
+  static const ID_SCROLLVIEW = 2;
 
   static final _random = Random();
 
@@ -87,7 +87,7 @@ class CollectionController extends ScrollingController {
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
-    scrollCtrl.scrollUpTo(0);
+    update([ID_SCROLLVIEW]);
     _filter(true);
   }
 
@@ -170,7 +170,7 @@ class CollectionController extends ScrollingController {
 
     _entries.clear();
     _entries.addAll(e);
-    update([ID_BODY, if (updateHead) ID_HEAD]);
+    update([ID_BODY, ID_SCROLLVIEW, if (updateHead) ID_HEAD]);
   }
 
   // ***************************************************************************
@@ -216,7 +216,7 @@ class CollectionController extends ScrollingController {
     for (final l in data['lists'])
       _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
 
-    scrollCtrl.scrollUpTo(0);
+    update([ID_SCROLLVIEW]);
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
     _filter(true);
@@ -318,7 +318,7 @@ class CollectionController extends ScrollingController {
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex && _listIndex != 0) {
           _listIndex--;
-          scrollCtrl.scrollUpTo(0);
+          update([ID_SCROLLVIEW]);
         }
         _lists.removeAt(i--);
       }
@@ -423,7 +423,7 @@ class CollectionController extends ScrollingController {
       if (_lists[i].entries.isEmpty) {
         if (i <= _listIndex && _listIndex != 0) {
           _listIndex--;
-          scrollCtrl.scrollUpTo(0);
+          update([ID_SCROLLVIEW]);
         }
         _lists.removeAt(i--);
       }

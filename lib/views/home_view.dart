@@ -17,7 +17,9 @@ import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/views/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -46,9 +48,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   late final CollectionController animeCtrl;
   late final CollectionController mangaCtrl;
 
-  late final List<Widget> tabs;
-  late final List<Widget?> fabs;
-
   @override
   Widget build(BuildContext context) {
     BackgroundHandler.checkIfLaunchedByNotification();
@@ -58,71 +57,108 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ref.watch(userSettingsProvider.notifier);
         return GetBuilder<HomeController>(
           id: HomeController.ID_HOME,
-          builder: (homeCtrl) => WillPopScope(
-            onWillPop: () => _onWillPop(context),
-            child: NavLayout(
-              navRow: NavIconRow(
-                index: homeCtrl.homeTab,
-                onChanged: (i) => homeCtrl.homeTab = i,
-                items: const {
-                  'Feed': Ionicons.file_tray_outline,
-                  'Anime': Ionicons.film_outline,
-                  'Manga': Ionicons.bookmark_outline,
-                  'Explore': Ionicons.compass_outline,
-                  'Profile': Ionicons.person_outline,
-                },
-                onSame: (i) {
-                  switch (i) {
-                    case HomeView.ANIME_LIST:
-                      if (animeCtrl.scrollCtrl.pos.pixels > 0)
-                        animeCtrl.scrollCtrl.scrollUpTo(0);
-                      else
-                        animeCtrl.search == null
-                            ? animeCtrl.search = ''
-                            : animeCtrl.search = null;
-                      return;
-                    case HomeView.MANGA_LIST:
-                      if (mangaCtrl.scrollCtrl.pos.pixels > 0)
-                        mangaCtrl.scrollCtrl.scrollUpTo(0);
-                      else
-                        mangaCtrl.search == null
-                            ? mangaCtrl.search = ''
-                            : mangaCtrl.search = null;
-                      return;
-                    case HomeView.EXPLORE:
-                      if (exploreCtrl.scrollCtrl.pos.pixels > 0)
-                        exploreCtrl.scrollCtrl.scrollUpTo(0);
-                      else
-                        exploreCtrl.search == null
-                            ? exploreCtrl.search = ''
-                            : exploreCtrl.search = null;
-                      return;
-                    default:
-                      _ctrl.scrollUpTo(0);
-                      return;
-                  }
-                },
-              ),
-              child: tabs[homeCtrl.homeTab],
-              floating: fabs[homeCtrl.homeTab],
-              trySubtab: (goRight) {
-                if (homeCtrl.homeTab != HomeView.INBOX ||
-                    homeCtrl.onFeed == goRight) return false;
+          builder: (homeCtrl) {
+            Widget? floating;
+            if (homeCtrl.homeTab == HomeView.ANIME_LIST) {
+              floating = CollectionActionButton(
+                '${widget.id}true',
+                key: Key(true.toString()),
+              );
+            } else if (homeCtrl.homeTab == HomeView.MANGA_LIST) {
+              floating = CollectionActionButton(
+                '${widget.id}false',
+                key: Key(false.toString()),
+              );
+            } else if (homeCtrl.homeTab == HomeView.EXPLORE) {
+              floating = const ExploreActionButton();
+            }
 
-                homeCtrl.onFeed = !homeCtrl.onFeed;
-                return true;
-              },
-            ),
-          ),
+            FloatingBar? floatingBar;
+            if (floating != null)
+              floatingBar = FloatingBar(
+                children: [floating],
+                scrollCtrl: _ctrl,
+              );
+
+            return WillPopScope(
+              onWillPop: () => _onWillPop(context),
+              child: PageLayout(
+                floatingBar: floatingBar,
+                bottomBar: BottomBarIconTabs(
+                  current: homeCtrl.homeTab,
+                  onChanged: (i) => homeCtrl.homeTab = i,
+                  items: const {
+                    'Feed': Ionicons.file_tray_outline,
+                    'Anime': Ionicons.film_outline,
+                    'Manga': Ionicons.bookmark_outline,
+                    'Explore': Ionicons.compass_outline,
+                    'Profile': Ionicons.person_outline,
+                  },
+                  onSame: (i) {
+                    switch (i) {
+                      case HomeView.ANIME_LIST:
+                        if (_ctrl.position.pixels > 0)
+                          _ctrl.scrollUpTo(0);
+                        else
+                          animeCtrl.search == null
+                              ? animeCtrl.search = ''
+                              : animeCtrl.search = null;
+                        return;
+                      case HomeView.MANGA_LIST:
+                        if (_ctrl.position.pixels > 0)
+                          _ctrl.scrollUpTo(0);
+                        else
+                          mangaCtrl.search == null
+                              ? mangaCtrl.search = ''
+                              : mangaCtrl.search = null;
+                        return;
+                      case HomeView.EXPLORE:
+                        if (_ctrl.position.pixels > 0)
+                          _ctrl.scrollUpTo(0);
+                        else
+                          exploreCtrl.search == null
+                              ? exploreCtrl.search = ''
+                              : exploreCtrl.search = null;
+                        return;
+                      default:
+                        _ctrl.scrollUpTo(0);
+                        return;
+                    }
+                  },
+                ),
+                child: TabSwitcher(
+                  current: homeCtrl.homeTab,
+                  onChanged: (i) => homeCtrl.homeTab = i,
+                  tabs: [
+                    InboxView(_ctrl),
+                    CollectionSubView(
+                      scrollCtrl: _ctrl,
+                      ctrlTag: '${widget.id}true',
+                      key: Key(true.toString()),
+                    ),
+                    CollectionSubView(
+                      scrollCtrl: _ctrl,
+                      ctrlTag: '${widget.id}false',
+                      key: Key(false.toString()),
+                    ),
+                    ExploreView(_ctrl),
+                    HomeUserView(widget.id, null, _ctrl),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
   }
 
   void _scrollListener() {
-    if (homeCtrl.homeTab != HomeView.INBOX || !homeCtrl.onFeed) return;
-
-    ref.read(activitiesProvider(null).notifier).fetch();
+    if (homeCtrl.homeTab == HomeView.INBOX && homeCtrl.onFeed)
+      ref.read(activitiesProvider(null).notifier).fetch();
+    else if (homeCtrl.homeTab == HomeView.EXPLORE) {
+      exploreCtrl.fetchPage();
+    }
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
@@ -176,22 +212,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
       CollectionController(widget.id, false),
       tag: '${widget.id}false',
     );
-
-    tabs = [
-      InboxView(_ctrl),
-      HomeCollectionView(ofAnime: true, id: widget.id, key: UniqueKey()),
-      HomeCollectionView(ofAnime: false, id: widget.id, key: UniqueKey()),
-      const ExploreView(),
-      HomeUserView(widget.id, null, _ctrl),
-    ];
-
-    fabs = [
-      null,
-      CollectionActionButton('${widget.id}true', key: UniqueKey()),
-      CollectionActionButton('${widget.id}false', key: UniqueKey()),
-      const ExploreActionButton(),
-      null,
-    ];
   }
 
   @override

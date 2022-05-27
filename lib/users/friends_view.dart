@@ -68,7 +68,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
         ],
       ),
       bottomBar: BottomBarIconTabs(
-        index: _onFollowing ? 0 : 1,
+        current: _onFollowing ? 0 : 1,
         onChanged: (page) {
           setState(() => _onFollowing = page == 0 ? true : false);
         },
@@ -78,7 +78,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
           'Followers': Ionicons.person_circle,
         },
       ),
-      builder: (context, topOffset, bottomOffset) => TabSwitcher(
+      child: TabSwitcher(
         current: _onFollowing ? 0 : 1,
         onChanged: (page) {
           setState(() => _onFollowing = page == 0 ? true : false);

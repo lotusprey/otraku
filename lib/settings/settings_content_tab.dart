@@ -9,6 +9,7 @@ import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/chip_grids.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
 
 class SettingsContentTab extends StatelessWidget {
   SettingsContentTab(this.scrollCtrl, this.settings, this.shouldUpdate);
@@ -29,15 +30,16 @@ class SettingsContentTab extends StatelessWidget {
       height: Consts.tapTargetSize,
     );
 
-    final offset = PageOffset.of(context);
-
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
           SliverPadding(
-            padding: EdgeInsets.only(top: offset.top + 10, right: 10),
+            padding: EdgeInsets.only(
+              right: 10,
+              top: PageLayout.of(context).topOffset + 10,
+            ),
             sliver: SliverGrid(
               gridDelegate: dropDownGridDelegate,
               delegate: SliverChildListDelegate.fixed([
@@ -182,7 +184,7 @@ class SettingsContentTab extends StatelessWidget {
               names: settings.advancedScores,
             ),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: offset.bottom)),
+          const SliverFooter(),
         ],
       ),
     );

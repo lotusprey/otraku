@@ -359,10 +359,12 @@ class __TagsState extends State<_Tags> {
       delegate = SliverChildBuilderDelegate(
         (_, i) {
           if (i == tags.length)
-            return TextButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.surface,
+            return ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                primary: Theme.of(context).colorScheme.surface,
+                onPrimary: Theme.of(context).colorScheme.primary,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Consts.borderRadiusMin,
                 ),
               ),
               onPressed: () => setState(

@@ -13,9 +13,9 @@ import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class InboxView extends StatelessWidget {
   InboxView(this.scrollCtrl);
@@ -88,19 +88,26 @@ class InboxView extends StatelessWidget {
 
     return GetBuilder<HomeController>(
       id: HomeController.ID_HOME,
-      builder: (ctrl) {
+      builder: (homeCtrl) {
         return PageLayout(
+          floatingBar: FloatingBar(
+            scrollCtrl: scrollCtrl,
+            children: [
+              ActionMenu(
+                current: homeCtrl.onFeed ? 1 : 0,
+                onChanged: (page) => homeCtrl.onFeed = page == 1,
+                items: const {
+                  'Progress': Ionicons.tv_outline,
+                  'Feed': Ionicons.chatbubble_outline,
+                },
+              ),
+            ],
+          ),
           topBar: TopBar(
             canPop: false,
+            title: homeCtrl.onFeed ? 'Feed' : 'Progress',
             items: [
-              Expanded(
-                child: TabSegments(
-                  items: const {'Progress': false, 'Feed': true},
-                  initial: ctrl.onFeed,
-                  onChanged: (bool val) => ctrl.onFeed = val,
-                ),
-              ),
-              if (ctrl.onFeed)
+              if (homeCtrl.onFeed)
                 Consumer(
                   builder: (context, ref, _) => TopBarIcon(
                     tooltip: 'Filter',
@@ -113,14 +120,58 @@ class InboxView extends StatelessWidget {
               notificationIcon,
             ],
           ),
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            child: ctrl.onFeed
-                ? ActivitiesSubView(null, scrollCtrl)
-                : _ProgressView(scrollCtrl),
-          ),
+          child: _InboxTabView(homeCtrl, scrollCtrl),
         );
       },
+    );
+  }
+}
+
+class _InboxTabView extends StatefulWidget {
+  const _InboxTabView(this.homeCtrl, this.scrollCtrl);
+
+  final HomeController homeCtrl;
+  final ScrollController scrollCtrl;
+
+  @override
+  State<_InboxTabView> createState() => __InboxTabViewState();
+}
+
+class __InboxTabViewState extends State<_InboxTabView> {
+  late final PageController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = PageController(initialPage: widget.homeCtrl.onFeed ? 1 : 0);
+  }
+
+  @override
+  void didUpdateWidget(covariant _InboxTabView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _ctrl.animateToPage(
+      widget.homeCtrl.onFeed ? 1 : 0,
+      curve: Curves.easeOutExpo,
+      duration: const Duration(milliseconds: 200),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+      controller: _ctrl,
+      physics: const NeverScrollableScrollPhysics(),
+      onPageChanged: (page) => widget.homeCtrl.onFeed = page == 1,
+      children: [
+        _ProgressView(widget.scrollCtrl),
+        ActivitiesSubView(null, widget.scrollCtrl),
+      ],
     );
   }
 }

@@ -22,6 +22,10 @@ class ExploreView extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<ExploreController>(
       builder: (ctrl) => PageLayout(
+        floatingBar: FloatingBar(
+          scrollCtrl: scrollCtrl,
+          children: const [ExploreActionButton()],
+        ),
         topBar: TopBar(
           canPop: false,
           items: [

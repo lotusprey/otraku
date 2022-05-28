@@ -13,31 +13,38 @@ import 'package:otraku/widgets/grids/large_collection_grid.dart';
 import 'package:otraku/widgets/navigation/filter_tools.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class CollectionView extends StatelessWidget {
+class CollectionView extends StatefulWidget {
   CollectionView(this.id, this.ofAnime);
 
   final int id;
   final bool ofAnime;
 
   @override
+  State<CollectionView> createState() => _CollectionViewState();
+}
+
+class _CollectionViewState extends State<CollectionView> {
+  late final _tag = '${widget.id}${widget.ofAnime}';
+  final _ctrl = ScrollController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final tag = '$id$ofAnime';
     return GetBuilder<CollectionController>(
-      init: CollectionController(id, ofAnime),
-      tag: tag,
-      builder: (ctrl) => WillPopScope(
+      init: CollectionController(widget.id, widget.ofAnime),
+      tag: _tag,
+      builder: (collectionCtrl) => WillPopScope(
         onWillPop: () {
-          if (ctrl.search == null) return Future.value(true);
-          ctrl.search = null;
+          if (collectionCtrl.search == null) return Future.value(true);
+          collectionCtrl.search = null;
           return Future.value(false);
         },
-        child: Scaffold(
-          floatingActionButton: CollectionActionButton(tag),
-          body: CollectionSubView(
-            ctrlTag: '$id$ofAnime',
-            key: null,
-          ),
-        ),
+        child: CollectionSubView(scrollCtrl: _ctrl, ctrlTag: _tag),
       ),
     );
   }
@@ -46,30 +53,26 @@ class CollectionView extends StatelessWidget {
 class CollectionSubView extends StatefulWidget {
   CollectionSubView({
     required this.ctrlTag,
-    this.scrollCtrl,
+    required this.scrollCtrl,
     super.key,
   });
 
   final String ctrlTag;
-  final ScrollController? scrollCtrl;
+  final ScrollController scrollCtrl;
 
   @override
   State<CollectionSubView> createState() => _CollectionSubViewState();
 }
 
 class _CollectionSubViewState extends State<CollectionSubView> {
-  late final ScrollController _scrollCtrl;
-
   void _scrollListener() {
-    if (_scrollCtrl.positions.length != 1) return;
-    _scrollCtrl.scrollUpTo(0);
+    if (widget.scrollCtrl.positions.length != 1) return;
+    widget.scrollCtrl.scrollUpTo(0);
   }
 
   @override
   void initState() {
     super.initState();
-    _scrollCtrl = widget.scrollCtrl ?? ScrollController();
-
     Get.find<CollectionController>(tag: widget.ctrlTag)
         .addListenerId(CollectionController.ID_SCROLLVIEW, _scrollListener);
   }
@@ -78,7 +81,6 @@ class _CollectionSubViewState extends State<CollectionSubView> {
   void dispose() {
     Get.find<CollectionController>(tag: widget.ctrlTag)
         .removeListenerId(CollectionController.ID_SCROLLVIEW, _scrollListener);
-    if (widget.scrollCtrl == null) _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -93,32 +95,39 @@ class _CollectionSubViewState extends State<CollectionSubView> {
     return GetBuilder<CollectionController>(
       tag: widget.ctrlTag,
       builder: (ctrl) => PageLayout(
+        floatingBar: FloatingBar(
+          scrollCtrl: widget.scrollCtrl,
+          children: [CollectionActionButton(widget.ctrlTag)],
+        ),
         topBar: TopBar(
           canPop: !isMe,
-          items: [
-            GetBuilder<CollectionController>(
-              id: CollectionController.ID_HEAD,
-              tag: widget.ctrlTag,
-              builder: (ctrl) => SearchToolField(
-                value: ctrl.search,
-                title: ctrl.currentName,
-                onChanged: (val) => ctrl.search = val,
-              ),
-            ),
-            TopBarIcon(
-              tooltip: 'Random',
-              icon: Ionicons.shuffle_outline,
-              onTap: () {
-                final entry = ctrl.random;
-                Navigator.pushNamed(
-                  context,
-                  RouteArg.media,
-                  arguments: RouteArg(id: entry.mediaId, info: entry.cover),
-                );
-              },
-            ),
-            FilterMediaToolButton(ctrl.filters),
-          ],
+          items: !ctrl.isEmpty
+              ? [
+                  GetBuilder<CollectionController>(
+                    id: CollectionController.ID_HEAD,
+                    tag: widget.ctrlTag,
+                    builder: (ctrl) => SearchToolField(
+                      value: ctrl.search,
+                      title: ctrl.currentName,
+                      onChanged: (val) => ctrl.search = val,
+                    ),
+                  ),
+                  TopBarIcon(
+                    tooltip: 'Random',
+                    icon: Ionicons.shuffle_outline,
+                    onTap: () {
+                      final entry = ctrl.random;
+                      Navigator.pushNamed(
+                        context,
+                        RouteArg.media,
+                        arguments:
+                            RouteArg(id: entry.mediaId, info: entry.cover),
+                      );
+                    },
+                  ),
+                  FilterMediaToolButton(ctrl.filters),
+                ]
+              : const [],
         ),
         child: CustomScrollView(
           physics: Consts.physics,

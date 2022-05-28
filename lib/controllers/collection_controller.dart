@@ -217,6 +217,7 @@ class CollectionController extends GetxController {
       _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
 
     update([ID_SCROLLVIEW]);
+    update();
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
     _filter(true);

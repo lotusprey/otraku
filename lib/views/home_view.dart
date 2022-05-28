@@ -17,7 +17,6 @@ import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/views/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -58,28 +57,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
         return GetBuilder<HomeController>(
           id: HomeController.ID_HOME,
           builder: (homeCtrl) {
-            Widget? floating;
-            if (homeCtrl.homeTab == HomeView.ANIME_LIST) {
-              floating = CollectionActionButton(
-                '${widget.id}true',
-                key: Key(true.toString()),
-              );
-            } else if (homeCtrl.homeTab == HomeView.MANGA_LIST) {
-              floating = CollectionActionButton(
-                '${widget.id}false',
-                key: Key(false.toString()),
-              );
-            } else if (homeCtrl.homeTab == HomeView.EXPLORE) {
-              floating = const ExploreActionButton();
-            }
-
             return WillPopScope(
               onWillPop: () => _onWillPop(context),
               child: PageLayout(
-                floatingBar: FloatingBar(
-                  scrollCtrl: _ctrl,
-                  children: [floating ?? const SizedBox()],
-                ),
                 bottomBar: BottomBarIconTabs(
                   current: homeCtrl.homeTab,
                   onChanged: (i) => homeCtrl.homeTab = i,

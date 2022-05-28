@@ -8,7 +8,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/tile_grid.dart';
 import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
@@ -106,11 +106,6 @@ class StudioView extends StatelessWidget {
                         ),
                       ),
                     ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: MediaQuery.of(context).viewPadding.bottom,
-                    ),
-                  ),
                 ],
               ],
             ),

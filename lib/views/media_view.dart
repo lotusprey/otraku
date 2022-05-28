@@ -12,7 +12,7 @@ import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';

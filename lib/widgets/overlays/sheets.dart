@@ -141,23 +141,14 @@ class OpaqueSheetViewButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var style = Theme.of(context).textButtonTheme.style!;
-    if (warning)
-      style = style.copyWith(
-        foregroundColor: MaterialStateProperty.all(
-          Theme.of(context).colorScheme.error,
-        ),
-        overlayColor: MaterialStateProperty.all(
-          Theme.of(context).colorScheme.error.withAlpha(50),
-        ),
-      );
-
     return Expanded(
       child: TextButton.icon(
         label: Text(text),
         icon: Icon(icon),
         onPressed: onTap,
-        style: style,
+        style: TextButton.styleFrom(
+          primary: warning ? Theme.of(context).colorScheme.error : null,
+        ),
       ),
     );
   }

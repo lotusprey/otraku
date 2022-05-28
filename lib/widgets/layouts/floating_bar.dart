@@ -140,7 +140,7 @@ class ActionButton extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               borderRadius: BorderRadius.circular(30),
-              splashColor: Theme.of(context).colorScheme.primaryContainer,
+              highlightColor: Theme.of(context).colorScheme.primaryContainer,
               child: onSwipe == null
                   ? Icon(icon, color: Theme.of(context).colorScheme.onPrimary)
                   : _DraggableIcon(icon: icon, onSwipe: onSwipe!),

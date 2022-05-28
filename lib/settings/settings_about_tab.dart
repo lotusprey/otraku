@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
@@ -102,22 +102,15 @@ class SettingsAboutTab extends StatelessWidget {
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.log_out_outline),
               label: Text('Accounts'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.error,
-                ),
-                foregroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.onError,
-                ),
-                overlayColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.errorContainer.withAlpha(100),
-                ),
-              ),
               onPressed: Api.logOut,
+              style: ElevatedButton.styleFrom(
+                primary: Theme.of(context).colorScheme.error,
+                onPrimary: Theme.of(context).colorScheme.onError,
+              ),
             ),
           ),
         ),
-        const SliverFooter(),
+        const Footer(),
       ],
     );
   }

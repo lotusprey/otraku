@@ -7,8 +7,7 @@ import 'package:otraku/users/user_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/loaders.dart/sliver_loaders.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class FriendsView extends ConsumerStatefulWidget {

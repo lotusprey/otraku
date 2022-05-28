@@ -94,17 +94,25 @@ class ReviewView extends StatelessWidget {
                         ),
                       ),
                       HtmlContent(data.text),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        alignment: Alignment.center,
-                        child: ElevatedButton(
-                          onPressed: null,
-                          child: Text('${data.score}/100'),
-                          style: ElevatedButton.styleFrom(
-                            textStyle: TextStyle(
-                              fontSize: Consts.fontBig,
-                              fontWeight: FontWeight.w500,
-                            ),
+                      Center(
+                        child: Container(
+                          margin: Consts.padding,
+                          padding: Consts.padding,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: Consts.borderRadiusMax,
+                          ),
+                          child: Text(
+                            '${data.score}/100',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2
+                                ?.copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onPrimary,
+                                  fontSize: Consts.fontBig,
+                                  fontWeight: FontWeight.w500,
+                                ),
                           ),
                         ),
                       ),

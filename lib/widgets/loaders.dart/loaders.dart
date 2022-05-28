@@ -1,6 +1,24 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
+import 'package:otraku/widgets/loaders.dart/shimmer.dart';
+
+class Loader extends StatelessWidget {
+  const Loader();
+
+  @override
+  Widget build(BuildContext context) => Shimmer(ShimmerItem(
+        Container(
+          width: 60,
+          height: 15,
+          decoration: BoxDecoration(
+            borderRadius: Consts.borderRadiusMin,
+            color: Theme.of(context).colorScheme.surface,
+          ),
+        ),
+      ));
+}
 
 class SliverRefreshControl extends StatelessWidget {
   const SliverRefreshControl({required this.onRefresh, this.canRefresh});
@@ -57,16 +75,24 @@ class SliverFooter extends StatelessWidget {
   final bool loading;
 
   @override
+  Widget build(BuildContext context) =>
+      SliverToBoxAdapter(child: Footer(loading: loading));
+}
+
+class Footer extends StatelessWidget {
+  const Footer({this.loading = false});
+
+  final bool loading;
+
+  @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.only(
-            top: 10,
-            bottom: PageLayout.of(context).bottomOffset + 10,
-          ),
-          child: loading ? const Loader() : null,
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 10,
+          bottom: PageLayout.of(context).bottomOffset + 10,
         ),
+        child: loading ? const Loader() : null,
       ),
     );
   }

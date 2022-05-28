@@ -103,22 +103,11 @@ class _IncrementButtonState extends State<_IncrementButton> {
         model.nextEpisode != null && model.progress + 1 < model.nextEpisode!;
 
     return TextButton(
-      style: ButtonStyle(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(0, 30),
+        padding: EdgeInsets.symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        minimumSize: MaterialStateProperty.all(const Size(0, 30)),
-        padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 5),
-        ),
-        foregroundColor: warning
-            ? MaterialStateProperty.all(
-                Theme.of(context).colorScheme.error,
-              )
-            : null,
-        overlayColor: warning
-            ? MaterialStateProperty.all(
-                Theme.of(context).colorScheme.error.withAlpha(50),
-              )
-            : null,
+        primary: warning ? Theme.of(context).colorScheme.error : null,
       ),
       onPressed: () {
         if (model.progressMax == null ||

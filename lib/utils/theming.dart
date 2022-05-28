@@ -69,32 +69,10 @@ class Theming with ChangeNotifier {
           size: Consts.iconBig,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(scheme.primary),
-            foregroundColor: MaterialStateProperty.all(scheme.onPrimary),
-            overlayColor: MaterialStateProperty.all(
-              scheme.primaryContainer.withAlpha(100),
-            ),
-            textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Consts.fontMedium,
-              fontWeight: FontWeight.w500,
-            )),
-            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.borderRadiusMin,
-            )),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: ButtonStyle(
-            foregroundColor: MaterialStateProperty.all(scheme.primary),
-            overlayColor:
-                MaterialStateProperty.all(scheme.primary.withAlpha(50)),
-            textStyle: MaterialStateProperty.all(const TextStyle(
-              fontSize: Consts.fontMedium,
-            )),
-            shape: MaterialStateProperty.all(const RoundedRectangleBorder(
-              borderRadius: Consts.borderRadiusMin,
-            )),
+          style: ElevatedButton.styleFrom(
+            primary: scheme.primary,
+            onPrimary: scheme.onPrimary,
+            textStyle: TextStyle(fontWeight: FontWeight.w500),
           ),
         ),
         typography: Typography.material2014(),

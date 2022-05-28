@@ -303,17 +303,11 @@ class __TileContentState extends State<_TileContent> {
       return Tooltip(message: 'Progress', child: text);
 
     return TextButton(
-      style: ButtonStyle(
+      style: TextButton.styleFrom(
+        minimumSize: const Size(0, 30),
+        padding: const EdgeInsets.only(left: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        minimumSize: MaterialStateProperty.all(const Size(0, 30)),
-        maximumSize: MaterialStateProperty.all(const Size.fromHeight(30)),
-        padding: MaterialStateProperty.all(const EdgeInsets.only(left: 5)),
-        foregroundColor: MaterialStateProperty.all(
-          Theme.of(context).colorScheme.surfaceVariant,
-        ),
-        overlayColor: MaterialStateProperty.all(
-          Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
-        ),
+        primary: Theme.of(context).colorScheme.surfaceVariant,
       ),
       onPressed: () {
         if (model.progressMax == null ||

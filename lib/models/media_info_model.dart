@@ -124,7 +124,7 @@ class MediaInfoModel {
       source: Convert.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
       siteUrl: map['siteUrl'],
-      countryOfOrigin: Convert.COUNTRY_CODES[map['countryOfOrigin']],
+      countryOfOrigin: Convert.countryCodes[map['countryOfOrigin']],
     );
 
     if (map['studios'] != null) {

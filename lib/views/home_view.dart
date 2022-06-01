@@ -8,14 +8,14 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/controllers/tag_group_controller.dart';
-import 'package:otraku/controllers/user_controller.dart';
 import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/users/user.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/views/explore_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
-import 'package:otraku/views/user_view.dart';
+import 'package:otraku/users/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
@@ -43,7 +43,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   late final ProgressController progressCtrl;
   late final ExploreController exploreCtrl;
   late final TagGroupController tagCtrl;
-  late final UserController userCtrl;
   late final CollectionController animeCtrl;
   late final CollectionController mangaCtrl;
 
@@ -54,6 +53,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return Consumer(
       builder: (context, ref, _) {
         ref.watch(userSettingsProvider.notifier);
+
         return GetBuilder<HomeController>(
           id: HomeController.ID_HOME,
           builder: (homeCtrl) {
@@ -105,7 +105,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 child: TabSwitcher(
                   current: homeCtrl.homeTab,
                   onChanged: (i) => homeCtrl.homeTab = i,
-                  tabs: [
+                  children: [
                     InboxView(_ctrl),
                     CollectionSubView(
                       scrollCtrl: _ctrl,
@@ -118,7 +118,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       key: Key(false.toString()),
                     ),
                     ExploreView(_ctrl),
-                    HomeUserView(widget.id, null, _ctrl),
+                    UserSubView(widget.id, null, _ctrl),
                   ],
                 ),
               ),
@@ -171,15 +171,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void initState() {
     super.initState();
     ref.read(activitiesProvider(null));
+    ref.read(userProvider(widget.id));
 
     homeCtrl = Get.put(HomeController());
     progressCtrl = Get.put(ProgressController());
     exploreCtrl = Get.put(ExploreController());
     tagCtrl = Get.put(TagGroupController());
-    userCtrl = Get.put(
-      UserController(widget.id),
-      tag: widget.id.toString(),
-    );
     animeCtrl = Get.put(
       CollectionController(widget.id, true),
       tag: '${widget.id}true',
@@ -197,7 +194,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
     Get.delete<ProgressController>();
     Get.delete<ExploreController>();
     Get.delete<TagGroupController>();
-    Get.delete<UserController>(tag: widget.id.toString());
     Get.delete<CollectionController>(tag: '${widget.id}true');
     Get.delete<CollectionController>(tag: '${widget.id}false');
     super.dispose();

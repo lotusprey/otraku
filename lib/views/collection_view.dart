@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/controllers/progress_controller.dart';
+import 'package:otraku/edit/edit.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
@@ -65,10 +67,7 @@ class CollectionSubView extends StatefulWidget {
 }
 
 class _CollectionSubViewState extends State<CollectionSubView> {
-  void _scrollListener() {
-    if (widget.scrollCtrl.positions.length != 1) return;
-    widget.scrollCtrl.scrollUpTo(0);
-  }
+  void _scrollListener() => widget.scrollCtrl.scrollUpTo(0);
 
   @override
   void initState() {
@@ -121,7 +120,7 @@ class _CollectionSubViewState extends State<CollectionSubView> {
                         context,
                         RouteArg.media,
                         arguments:
-                            RouteArg(id: entry.mediaId, info: entry.cover),
+                            RouteArg(id: entry.mediaId, info: entry.imageUrl),
                       );
                     },
                   ),
@@ -166,12 +165,25 @@ class _CollectionSubViewState extends State<CollectionSubView> {
                     items: ctrl.entries,
                     scoreFormat: ctrl.scoreFormat!,
                     updateProgress: isMe
-                        ? (e) => ctrl.updateProgress(
+                        ? (e) async {
+                            final customLists =
+                                await updateProgress(e.mediaId, e.progress);
+
+                            if (customLists == null) return;
+
+                            ctrl.updateProgress(
                               e.mediaId,
                               e.progress,
-                              e.listStatus,
+                              customLists,
+                              e.entryStatus,
                               e.format,
-                            )
+                            );
+
+                            Get.find<ProgressController>().incrementProgress(
+                              e.mediaId,
+                              e.progress,
+                            );
+                          }
                         : null,
                   );
                 },

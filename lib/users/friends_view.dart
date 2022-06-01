@@ -82,7 +82,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
         onChanged: (page) {
           setState(() => _onFollowing = page == 0 ? true : false);
         },
-        tabs: [
+        children: [
           _FriendTab(
             id: widget.id,
             onFollowing: true,

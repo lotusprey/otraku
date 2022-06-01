@@ -27,12 +27,45 @@ abstract class GqlQuery {
             type
             episodes
             chapters
-            format
             status(version: 2)
             nextAiringEpisode {episode}
             title {userPreferred}
             coverImage {extraLarge large medium}
           }
+        }
+      }
+    }
+  ''';
+
+  static const entry = r'''
+    query Entry($userId: Int, $mediaId: Int) {
+      MediaList(userId: $userId, mediaId: $mediaId) {
+        status
+        progress
+        progressVolumes
+        score
+        repeat
+        notes
+        startedAt {year month day}
+        completedAt {year month day}
+        updatedAt
+        createdAt
+        media {
+          id
+          type
+          episodes
+          chapters
+          volumes
+          title {userPreferred english romaji native}
+          format
+          status(version: 2)
+          startDate {year month day}
+          endDate {year month day}
+          coverImage {extraLarge large medium}
+          nextAiringEpisode {episode airingAt}
+          countryOfOrigin
+          genres
+          tags {id}
         }
       }
     }
@@ -335,34 +368,22 @@ abstract class GqlQuery {
   ''';
 
   static const user = r'''
-      query User($id: Int, $page: Int = 1, $withMain: Boolean = false, $withStats: Boolean = false,
-        $withAnime: Boolean = false, $withManga: Boolean = false, $withCharacters: Boolean = false,
-        $withStaff: Boolean = false, $withStudios: Boolean = false) {
-        User(id: $id) {
-          ...main @include(if: $withMain)
-          statistics @include(if: $withStats) {anime {...stats} manga {...stats}}
-          favourites {
-            anime(page: $page) @include(if: $withAnime) {...media}
-            manga(page: $page) @include(if: $withManga) {...media}
-            characters(page: $page) @include(if: $withCharacters) {...character}
-            staff(page: $page) @include(if: $withStaff) {...staff}
-            studios(page: $page) @include(if: $withStudios) {...studio}
-          }
+      query User($userId: Int) {
+        User(id: $userId) {
+          id
+          name
+          about(asHtml: true)
+          avatar {large}
+          bannerImage
+          isFollowing
+          isFollower
+          isBlocked
+          siteUrl
+          donatorTier
+          donatorBadge
+          moderatorRoles
+          statistics {anime {...stats} manga {...stats}}
         }
-      }
-      fragment main on User {
-        id
-        name
-        about(asHtml: true)
-        avatar {large}
-        bannerImage
-        isFollowing
-        isFollower
-        isBlocked
-        siteUrl
-        donatorTier
-        donatorBadge
-        moderatorRoles
       }
       fragment stats on UserStatistics {
         count
@@ -378,10 +399,6 @@ abstract class GqlQuery {
         statuses {count meanScore minutesWatched chaptersRead status}
         countries {count meanScore minutesWatched chaptersRead country}
       }
-      fragment media on MediaConnection {pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {extraLarge large medium}}}
-      fragment character on CharacterConnection {pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}}
-      fragment staff on StaffConnection {pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}}
-      fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
     ''';
 
   static const favorites = r'''
@@ -439,6 +456,7 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
+  // TODO pinned
   static const activities = r'''
     query Activities($userId: Int, $page: Int = 1, $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
       Page(page: $page) {

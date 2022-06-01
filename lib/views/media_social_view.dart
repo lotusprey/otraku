@@ -5,7 +5,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/widgets/charts.dart';
+import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
@@ -179,7 +179,7 @@ class _Scores extends StatelessWidget {
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: BarChart(
           title: 'Score Distribution',
-          names: scoreNames,
+          names: scoreNames.map((n) => n.toString()).toList(),
           values: scoreValues,
         ),
       );

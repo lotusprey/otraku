@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/collections/entry_item.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -12,8 +12,8 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 class MinimalCollectionGrid extends StatelessWidget {
   MinimalCollectionGrid({required this.items, required this.updateProgress});
 
-  final List<ProgressEntryModel> items;
-  final void Function(ProgressEntryModel) updateProgress;
+  final List<EntryItem> items;
+  final void Function(EntryItem) updateProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +71,10 @@ class MinimalCollectionGrid extends StatelessWidget {
 }
 
 class _IncrementButton extends StatefulWidget {
-  _IncrementButton(this.model, this.updateProgress);
+  _IncrementButton(this.item, this.updateProgress);
 
-  final ProgressEntryModel model;
-  final void Function(ProgressEntryModel) updateProgress;
+  final EntryItem item;
+  final void Function(EntryItem) updateProgress;
 
   @override
   State<_IncrementButton> createState() => _IncrementButtonState();
@@ -83,7 +83,7 @@ class _IncrementButton extends StatefulWidget {
 class _IncrementButtonState extends State<_IncrementButton> {
   @override
   Widget build(BuildContext context) {
-    final model = widget.model;
+    final model = widget.item;
 
     if (model.progress == model.progressMax)
       return Tooltip(

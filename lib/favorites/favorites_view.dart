@@ -80,7 +80,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
         current: _tab.index,
         onChanged: (page) =>
             setState(() => _tab = FavoriteType.values.elementAt(page)),
-        tabs: [
+        children: [
           _AnimeTab(widget.id, _ctrl, refreshControl),
           _MangaTab(widget.id, _ctrl, refreshControl),
           _CharactersTab(widget.id, _ctrl, refreshControl),

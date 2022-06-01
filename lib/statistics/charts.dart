@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
 
 class BarChart extends StatelessWidget {
   BarChart({
@@ -10,13 +9,13 @@ class BarChart extends StatelessWidget {
     required this.names,
     required this.values,
     this.barWidth = 60,
-    this.tabs,
+    this.trailing,
   }) : assert(names.length == values.length);
 
   final String title;
-  final List<dynamic> names;
+  final List<String> names;
   final List<num> values;
-  final TabSegments? tabs;
+  final Widget? trailing;
   final double barWidth;
 
   @override
@@ -34,7 +33,7 @@ class BarChart extends StatelessWidget {
           padding: Consts.padding,
           child: Text(title, style: Theme.of(context).textTheme.headline3),
         ),
-        if (tabs != null) tabs!,
+        if (trailing != null) trailing!,
         SizedBox(
           height: 280,
           child: ListView.builder(
@@ -66,10 +65,7 @@ class BarChart extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  names[i].toString(),
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+                Text(names[i], style: Theme.of(context).textTheme.subtitle1),
               ],
             ),
           ),

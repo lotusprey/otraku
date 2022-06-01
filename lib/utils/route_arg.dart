@@ -12,10 +12,10 @@ import 'package:otraku/notifications/notifications_view.dart';
 import 'package:otraku/reviews/review_view.dart';
 import 'package:otraku/settings/settings_view.dart';
 import 'package:otraku/views/staff_view.dart';
-import 'package:otraku/views/statistics_view.dart';
+import 'package:otraku/statistics/statistics_view.dart';
 import 'package:otraku/views/studio_view.dart';
 import 'package:otraku/reviews/reviews_view.dart';
-import 'package:otraku/views/user_view.dart';
+import 'package:otraku/users/user_view.dart';
 
 /// A routing helper. When passing arguments to named routes, they should always
 /// be an instance of [RouteArg] or [null].

@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/edit/edit.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
@@ -87,10 +88,10 @@ class EditView extends StatelessWidget {
   }
 
   Edit _resolveData(Edit data) {
-    if (!complete) return data;
+    if (!complete) return data.copyWith();
 
     return data.copyWith(
-      status: ListStatus.COMPLETED,
+      status: EntryStatus.COMPLETED,
       completedAt: DateTime.now,
       progress: data.progressMax,
       progressVolumes: data.progressVolumesMax,
@@ -100,7 +101,7 @@ class EditView extends StatelessWidget {
   Widget _build(Edit oldEdit) {
     return OpaqueSheetView(
       buttons: [
-        if (oldEdit.status != null)
+        if (oldEdit.entryId != null)
           _RemoveButton(oldEdit, callback)
         else
           const Spacer(),
@@ -130,15 +131,16 @@ class _RemoveButton extends StatelessWidget {
           mainAction: 'Yes',
           secondaryAction: 'No',
           onConfirm: () {
+            removeEntry(oldEdit.entryId!);
+
             Get.find<CollectionController>(
               tag: oldEdit.type == 'ANIME'
                   ? '${Settings().id}true'
                   : '${Settings().id}false',
             ).removeEntry(oldEdit);
-            // TODO remove item
-            // if (ctrl.model!.status == ListStatus.CURRENT)
-            //           Get.find<ProgressController>()
-            //               .remove(ctrl.model!.mediaId);
+
+            if (oldEdit.status == EntryStatus.CURRENT)
+              Get.find<ProgressController>().remove(oldEdit.mediaId);
 
             callback?.call(oldEdit.emptyCopy());
             Navigator.pop(context);
@@ -171,18 +173,26 @@ class __SaveButtonState extends State<_SaveButton> {
       builder: (__, ref, _) => OpaqueSheetViewButton(
         text: 'Save',
         icon: Ionicons.save_outline,
-        onTap: () {
+        onTap: () async {
           final newEdit = ref.read(editProvider);
           setState(() => _loading = true);
 
-          Get.find<CollectionController>(
-            tag: widget.oldEdit.type == 'ANIME'
-                ? '${Settings().id}true'
-                : '${Settings().id}false',
-          ).updateEntry(widget.oldEdit, newEdit).then((_) {
-            widget.callback?.call(newEdit);
-            Navigator.pop(context);
-          });
+          newEdit.entryId = await updateEntry(widget.oldEdit, newEdit);
+          Navigator.pop(context);
+          if (newEdit.entryId == null) return;
+          widget.callback?.call(newEdit);
+
+          final isAnime = widget.oldEdit.type == 'ANIME';
+
+          final entry = await Get.find<CollectionController>(
+            tag: isAnime ? '${Settings().id}true' : '${Settings().id}false',
+          ).updateEntry(widget.oldEdit, newEdit);
+          if (entry == null) return;
+
+          if (widget.oldEdit.status == null)
+            Get.find<ProgressController>().add(entry, isAnime);
+          else
+            Get.find<ProgressController>().updateEntry(entry, isAnime);
         },
       ),
     );
@@ -204,12 +214,12 @@ class _EditView extends StatelessWidget {
           builder: (context, ref, _) {
             final status = ref.watch(editProvider.select((s) => s.status));
 
-            return DropDownField<ListStatus?>(
+            return DropDownField<EntryStatus?>(
               hint: 'Add',
               title: 'Status',
               value: status,
               items: Map.fromIterable(
-                ListStatus.values,
+                EntryStatus.values,
                 key: (v) => Convert.adaptListStatus(v, oldEdit.type == 'ANIME'),
               ),
               onChanged: (status) => ref.read(editProvider.notifier).update(
@@ -219,12 +229,12 @@ class _EditView extends StatelessWidget {
                   var progress = s.progress;
 
                   if (oldEdit.status == null &&
-                      status == ListStatus.CURRENT &&
+                      status == EntryStatus.CURRENT &&
                       startedAt == null) {
                     startedAt = DateTime.now();
                     Toast.show(context, 'Start date changed');
                   } else if (oldEdit.status != status &&
-                      status == ListStatus.COMPLETED &&
+                      status == EntryStatus.COMPLETED &&
                       completedAt == null) {
                     completedAt = DateTime.now();
                     var text = 'Completed date changed';
@@ -269,8 +279,8 @@ class _EditView extends StatelessWidget {
                     if (progress == s.progressMax &&
                         oldEdit.progress != progress) {
                       if (oldEdit.status == status &&
-                          status != ListStatus.COMPLETED) {
-                        status = ListStatus.COMPLETED;
+                          status != EntryStatus.COMPLETED) {
+                        status = EntryStatus.COMPLETED;
                         text = 'Status changed';
                       }
 
@@ -286,8 +296,8 @@ class _EditView extends StatelessWidget {
                     } else if (oldEdit.progress == 0 &&
                         oldEdit.progress != progress) {
                       if (oldEdit.status == status &&
-                          (status == null || status == ListStatus.PLANNING)) {
-                        status = ListStatus.CURRENT;
+                          (status == null || status == EntryStatus.PLANNING)) {
+                        status = EntryStatus.CURRENT;
                         text = 'Status changed';
                       }
 
@@ -362,7 +372,7 @@ class _EditView extends StatelessWidget {
                     if (startedAt != null &&
                         oldEdit.status == null &&
                         status == null) {
-                      status = ListStatus.CURRENT;
+                      status = EntryStatus.CURRENT;
                       Toast.show(context, 'Status changed');
                     }
 
@@ -392,10 +402,10 @@ class _EditView extends StatelessWidget {
                     var progress = s.progress;
 
                     if (completedAt != null &&
-                        oldEdit.status != ListStatus.COMPLETED &&
-                        oldEdit.status != ListStatus.REPEATING &&
+                        oldEdit.status != EntryStatus.COMPLETED &&
+                        oldEdit.status != EntryStatus.REPEATING &&
                         oldEdit.status == status) {
-                      status = ListStatus.COMPLETED;
+                      status = EntryStatus.COMPLETED;
                       String text = 'Status changed';
 
                       if (s.progressMax != null &&

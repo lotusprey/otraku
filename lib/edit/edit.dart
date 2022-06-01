@@ -1,19 +1,49 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 
+/// Update an entry and return the entry id. This may be useful, if
+/// the entry didn't exist up until now, i.e. there wasn't an id.
+Future<int?> updateEntry(Edit oldEdit, Edit newEdit) async {
+  try {
+    final data = await Api.get(GqlMutation.updateEntry, newEdit.toMap());
+    return data['SaveMediaListEntry']['id'];
+  } catch (e) {
+    return null;
+  }
+}
+
+/// Increment entry progress. The entry's custom lists are returned,
+/// so that all of them can easily be updated locally.
+Future<List<String>?> updateProgress(int mediaId, int progress) async {
+  try {
+    final data = await Api.get(
+      GqlMutation.updateProgress,
+      {'mediaId': mediaId, 'progress': progress},
+    );
+
+    final customLists = <String>[];
+    for (final e in data['SaveMediaListEntry']['customLists'].entries)
+      if (e.value) customLists.add(e.key.toString().toLowerCase());
+    return customLists;
+  } catch (e) {
+    return null;
+  }
+}
+
+/// Remove an entry.
+Future<void> removeEntry(int entryId) async {
+  try {
+    await Api.get(GqlMutation.removeEntry, {'entryId': entryId});
+  } catch (e) {}
+}
+
 final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(
   (ref, id) async {
-    final data = await Api.request(GqlQuery.media, {
-      'id': id,
-      'withMain': true,
-    });
-
-    if (data == null) throw StateError('No received data.');
-
+    final data = await Api.get(GqlQuery.media, {'id': id, 'withMain': true});
     return Edit(data['Media'], ref.watch(userSettingsProvider));
   },
 );
@@ -25,7 +55,7 @@ final editProvider = StateProvider.autoDispose<Edit>(
 class Edit {
   final int mediaId;
   final String? type;
-  final ListStatus? status;
+  final EntryStatus? status;
   final int progress;
   final int? progressMax;
   final int progressVolumes;
@@ -92,7 +122,7 @@ class Edit {
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
       status: map['mediaListEntry']['status'] != null
-          ? ListStatus.values.byName(map['mediaListEntry']['status'])
+          ? EntryStatus.values.byName(map['mediaListEntry']['status'])
           : null,
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],
@@ -111,7 +141,7 @@ class Edit {
   }
 
   Edit copyWith({
-    ListStatus? status,
+    EntryStatus? status,
     int? progress,
     int? progressVolumes,
     double? score,
@@ -154,7 +184,7 @@ class Edit {
 
   Map<String, dynamic> toMap() => {
         'mediaId': mediaId,
-        'status': (status ?? ListStatus.CURRENT).name,
+        'status': (status ?? EntryStatus.CURRENT).name,
         'progress': progress,
         'progressVolumes': progressVolumes,
         'score': score,

@@ -1,8 +1,0 @@
-enum ListStatus {
-  CURRENT,
-  PLANNING,
-  COMPLETED,
-  DROPPED,
-  PAUSED,
-  REPEATING,
-}

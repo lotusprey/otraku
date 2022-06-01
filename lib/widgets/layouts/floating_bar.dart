@@ -25,18 +25,16 @@ class _FloatingBarState extends State<FloatingBar>
   double _lastOffset = 0;
 
   void _visibility() {
-    if (widget.scrollCtrl.positions.length != 1) return;
-
-    final pos = widget.scrollCtrl.position;
+    final pos = widget.scrollCtrl.positions.last;
     final dif = pos.pixels - _lastOffset;
 
     // If the position has moved enough from the last
     // spot or is out of bounds, update visibility.
     if (dif > 15 || pos.pixels > pos.maxScrollExtent) {
-      _lastOffset = widget.scrollCtrl.position.pixels;
+      _lastOffset = pos.pixels;
       _animationCtrl.forward().then((_) => setState(() => _visible = false));
     } else if (dif < -15 || pos.pixels < pos.minScrollExtent) {
-      _lastOffset = widget.scrollCtrl.position.pixels;
+      _lastOffset = pos.pixels;
       setState(() => _visible = true);
       _animationCtrl.reverse();
     }

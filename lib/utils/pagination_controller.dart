@@ -18,11 +18,11 @@ class PaginationController extends ScrollController {
 
   /// When the user reaches the bottom, try loading more data.
   void _listener() {
-    if (positions.length > 1) return;
-    if (position.pixels < position.maxScrollExtent - 100) return;
-    if (_lastMaxExtent == position.maxScrollExtent) return;
+    final pos = positions.last;
+    if (pos.pixels < pos.maxScrollExtent - 100) return;
+    if (_lastMaxExtent == pos.maxScrollExtent) return;
 
-    _lastMaxExtent = position.maxScrollExtent;
+    _lastMaxExtent = pos.maxScrollExtent;
     loadMore();
   }
 

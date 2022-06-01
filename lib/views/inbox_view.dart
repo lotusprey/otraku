@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activities/activities_view.dart';
+import 'package:otraku/collections/entry_item.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/edit/edit.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/controllers/progress_controller.dart';
-import 'package:otraku/models/progress_entry_model.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
@@ -255,13 +256,29 @@ class _ProgressView extends StatelessWidget {
     );
   }
 
-  Future<void> _updateAnimeProgress(ProgressEntryModel e) async {
-    await Get.find<CollectionController>(tag: '${Settings().id}true')
-        .updateProgress(e.mediaId, e.progress, ListStatus.CURRENT, e.format);
+  Future<void> _updateAnimeProgress(EntryItem e) async {
+    final customLists = await updateProgress(e.mediaId, e.progress);
+    if (customLists == null) return;
+
+    Get.find<CollectionController>(tag: '${Settings().id}true').updateProgress(
+      e.mediaId,
+      e.progress,
+      customLists,
+      EntryStatus.CURRENT,
+      null,
+    );
   }
 
-  Future<void> _updateMangaProgress(ProgressEntryModel e) async {
-    await Get.find<CollectionController>(tag: '${Settings().id}false')
-        .updateProgress(e.mediaId, e.progress, ListStatus.CURRENT, e.format);
+  Future<void> _updateMangaProgress(EntryItem e) async {
+    final customLists = await updateProgress(e.mediaId, e.progress);
+    if (customLists == null) return;
+
+    Get.find<CollectionController>(tag: '${Settings().id}false').updateProgress(
+      e.mediaId,
+      e.progress,
+      customLists,
+      EntryStatus.CURRENT,
+      null,
+    );
   }
 }

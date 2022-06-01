@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 /// tabs when animating through multiple of them.
 class TabSwitcher extends StatefulWidget {
   const TabSwitcher({
-    required this.tabs,
+    required this.children,
     required this.current,
     required this.onChanged,
   });
 
   final void Function(int) onChanged;
-  final List<Widget> tabs;
+  final List<Widget> children;
   final int current;
 
   @override
@@ -55,8 +55,8 @@ class _TabSwitcherState extends State<TabSwitcher> {
         duration: const Duration(milliseconds: 200),
       );
     } else if (widget.current > page) {
-      final temp = widget.tabs[page + 1];
-      widget.tabs[page + 1] = widget.tabs[widget.current];
+      final temp = widget.children[page + 1];
+      widget.children[page + 1] = widget.children[widget.current];
 
       await _ctrl.animateToPage(
         page + 1,
@@ -65,12 +65,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
       );
 
       setState(() {
-        widget.tabs[page + 1] = temp;
+        widget.children[page + 1] = temp;
         _ctrl.jumpToPage(widget.current);
       });
     } else if (widget.current < page) {
-      final temp = widget.tabs[page - 1];
-      widget.tabs[page - 1] = widget.tabs[widget.current];
+      final temp = widget.children[page - 1];
+      widget.children[page - 1] = widget.children[widget.current];
 
       await _ctrl.animateToPage(
         page - 1,
@@ -79,7 +79,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
       );
 
       setState(() {
-        widget.tabs[page - 1] = temp;
+        widget.children[page - 1] = temp;
         _ctrl.jumpToPage(widget.current);
       });
     }
@@ -97,7 +97,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   Widget build(BuildContext context) {
     return PageView(
       controller: _ctrl,
-      children: widget.tabs,
+      children: widget.children,
       onPageChanged: (int i) {
         if (_busy) return;
         widget.onChanged(i);

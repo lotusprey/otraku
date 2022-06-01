@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/models/list_entry_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -21,9 +21,9 @@ class LargeCollectionGrid extends StatelessWidget {
     required this.updateProgress,
   });
 
-  final List<ListEntryModel> items;
+  final List<Entry> items;
   final ScoreFormat scoreFormat;
-  final void Function(ListEntryModel)? updateProgress;
+  final void Function(Entry)? updateProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +43,9 @@ class LargeCollectionGrid extends StatelessWidget {
 class _Tile extends StatelessWidget {
   _Tile(this.model, this.scoreFormat, this.updateProgress);
 
-  final ListEntryModel model;
+  final Entry model;
   final ScoreFormat scoreFormat;
-  final void Function(ListEntryModel)? updateProgress;
+  final void Function(Entry)? updateProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class _Tile extends StatelessWidget {
       child: ExploreIndexer(
         id: model.mediaId,
         explorable: Explorable.anime,
-        text: model.cover,
+        text: model.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -68,7 +68,7 @@ class _Tile extends StatelessWidget {
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surface,
-                  child: FadeImage(model.cover),
+                  child: FadeImage(model.imageUrl),
                 ),
               ),
             ),
@@ -90,9 +90,9 @@ class _Tile extends StatelessWidget {
 class _TileContent extends StatefulWidget {
   _TileContent(this.model, this.scoreFormat, this.updateProgress);
 
-  final ListEntryModel model;
+  final Entry model;
   final ScoreFormat scoreFormat;
-  final void Function(ListEntryModel)? updateProgress;
+  final void Function(Entry)? updateProgress;
 
   @override
   State<_TileContent> createState() => __TileContentState();

@@ -2,11 +2,10 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/filter_model.dart';
-import 'package:otraku/models/list_model.dart';
-import 'package:otraku/models/list_entry_model.dart';
+import 'package:otraku/collections/entry_list.dart';
 import 'package:otraku/edit/edit.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -26,8 +25,8 @@ class CollectionController extends GetxController {
 
   final int userId;
   final bool ofAnime;
-  final _lists = <ListModel>[];
-  final _entries = <ListEntryModel>[];
+  final _lists = <EntryList>[];
+  final _entries = <Entry>[];
   late final filters = CollectionFilterModel(ofAnime, _onFilterChange);
   int _listIndex = 0;
   bool _isLoading = true;
@@ -44,9 +43,9 @@ class CollectionController extends GetxController {
   String? get search => _search;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
-  List<ListEntryModel> get entries => _entries;
+  List<Entry> get entries => _entries;
 
-  List<ListEntryModel> listWithStatus(ListStatus status) {
+  List<Entry> listWithStatus(EntryStatus status) {
     for (final l in _lists) if (l.status == status) return [...l.entries];
     return const [];
   }
@@ -78,7 +77,7 @@ class CollectionController extends GetxController {
   }
 
   /// Returns a random entry from [_entries].
-  ListEntryModel get random => _entries[_random.nextInt(_entries.length)];
+  Entry get random => _entries[_random.nextInt(_entries.length)];
 
   // Getters for the current list.
   String get currentName => _lists[_listIndex].name;
@@ -104,7 +103,7 @@ class CollectionController extends GetxController {
     final tagIdNotIn = filters.tagIdNotIn;
 
     final list = _lists[_listIndex];
-    final e = <ListEntryModel>[];
+    final e = <Entry>[];
 
     for (final entry in list.entries) {
       if (searchLower.isNotEmpty) {
@@ -170,7 +169,10 @@ class CollectionController extends GetxController {
 
     _entries.clear();
     _entries.addAll(e);
-    update([ID_BODY, ID_SCROLLVIEW, if (updateHead) ID_HEAD]);
+    update([
+      ID_BODY,
+      if (updateHead) ...[ID_HEAD, ID_SCROLLVIEW]
+    ]);
   }
 
   // ***************************************************************************
@@ -210,11 +212,11 @@ class CollectionController extends GetxController {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(filters.sort));
     }
 
     for (final l in data['lists'])
-      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(filters.sort));
 
     update([ID_SCROLLVIEW]);
     update();
@@ -229,28 +231,19 @@ class CollectionController extends GetxController {
     await _fetch();
   }
 
-  Future<void> updateEntry(Edit oldEdit, Edit newEdit) async {
-    // Update database item. Due to AL API bug, the tags cannot be obtained
-    // from the [SaveMediaListEntry] mutation, so only half of the data is
-    // obtained from the first request. The other half comes from a second
-    // request.
-    final data = await Api.request(
-      GqlMutation.updateEntry,
-      newEdit.toMap(),
-    );
-    if (data == null) return;
-
-    final mediaData = await Api.request(
-      GqlQuery.media,
-      {'id': newEdit.mediaId, 'withMain': true},
-    );
-    if (mediaData == null) return;
-    data['SaveMediaListEntry']['media'] = mediaData['Media'];
-
-    final entry = ListEntryModel(data['SaveMediaListEntry']);
-
-    // Update the entry model (necessary for the updateEntry() caller).
-    newEdit.entryId = data['SaveMediaListEntry']['id'];
+  /// Fetch the new version of the [entry], replace
+  /// the old version in the lists and return [entry].
+  Future<Entry?> updateEntry(Edit oldEdit, Edit newEdit) async {
+    late final Entry entry;
+    try {
+      final data = await Api.get(
+        GqlQuery.entry,
+        {'userId': userId, 'mediaId': newEdit.mediaId},
+      );
+      entry = Entry(data['MediaList']);
+    } catch (e) {
+      return null;
+    }
 
     // Find from which custom lists to remove the item and in which to add it.
     final oldCustomLists = oldEdit.customLists.entries
@@ -286,7 +279,7 @@ class CollectionController extends GetxController {
     if (!newEdit.hiddenFromStatusLists) {
       bool added = false;
       for (final list in _lists)
-        if (entry.listStatus == list.status &&
+        if (entry.entryStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.insertSorted(entry, filters.sort);
@@ -295,7 +288,7 @@ class CollectionController extends GetxController {
         }
       if (!added) {
         _fetch();
-        return;
+        return entry;
       }
     }
 
@@ -310,39 +303,31 @@ class CollectionController extends GetxController {
           }
       if (newCustomLists.isNotEmpty) {
         _fetch();
-        return;
+        return entry;
       }
     }
 
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) {
-          _listIndex--;
-          update([ID_SCROLLVIEW]);
-        }
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i--);
       }
 
     _filter();
+    return entry;
   }
 
   /// When the progress of an entry is changed, this should be called
   /// to reflect it into the database. When reaching the last episode,
   /// [updateEntry] should be called instead.
   Future<void> updateProgress(
-    int id,
+    int mediaId,
     int progress,
-    ListStatus? listStatus,
+    List<String> customLists,
+    EntryStatus? listStatus,
     String? format,
   ) async {
-    // Update database item.
-    final data = await Api.request(
-      GqlMutation.updateProgress,
-      {'mediaId': id, 'progress': progress},
-    );
-    if (data == null) return;
-
     final sorting = filters.sort;
     final needsSort = sorting == EntrySort.PROGRESS ||
         sorting == EntrySort.PROGRESS_DESC ||
@@ -357,7 +342,7 @@ class CollectionController extends GetxController {
               list.splitCompletedListFormat != format)) continue;
 
       for (final entry in list.entries)
-        if (entry.mediaId == id) {
+        if (entry.mediaId == mediaId) {
           entry.progress = progress;
           break;
         }
@@ -367,17 +352,12 @@ class CollectionController extends GetxController {
     }
 
     // Update custom lists.
-    final customLists = <String>[];
-    if (data['SaveMediaListEntry']?['customLists'] != null)
-      for (final e in data['SaveMediaListEntry']['customLists'].entries)
-        if (e.userId) customLists.add(e.key.toString().toLowerCase());
-
     if (customLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < customLists.length; i++)
           if (list.isCustomList && customLists[i] == list.name.toLowerCase()) {
             for (final entry in list.entries)
-              if (entry.mediaId == id) {
+              if (entry.mediaId == mediaId) {
                 entry.progress = progress;
                 break;
               }
@@ -389,15 +369,6 @@ class CollectionController extends GetxController {
   }
 
   Future<void> removeEntry(Edit edit) async {
-    // Update database item.
-    final data = await Api.request(
-      GqlMutation.removeEntry,
-      {'entryId': edit.entryId},
-    );
-
-    if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
-      return;
-
     final customLists = edit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
@@ -422,10 +393,7 @@ class CollectionController extends GetxController {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) {
-          _listIndex--;
-          update([ID_SCROLLVIEW]);
-        }
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i--);
       }
 

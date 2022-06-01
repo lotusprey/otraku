@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/user_controller.dart';
-import 'package:otraku/models/user_model.dart';
+import 'package:otraku/users/user.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
@@ -11,51 +9,29 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class UserHeader extends StatelessWidget {
-  final int id;
-  final UserModel? user;
-  final bool isMe;
-  final String? avatarUrl;
-
   UserHeader({
     required this.id,
     required this.user,
     required this.isMe,
-    required this.avatarUrl,
+    required this.imageUrl,
   });
+
+  final int id;
+  final User? user;
+  final bool isMe;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     return CustomSliverHeader(
       title: user?.name,
-      image: user?.avatar ?? avatarUrl,
-      banner: user?.banner,
+      image: user?.imageUrl ?? imageUrl,
+      banner: user?.bannerUrl,
       squareImage: true,
       implyLeading: !isMe,
       heroId: id,
       actions: [
-        if (!isMe && user != null)
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: ElevatedButton.icon(
-              icon: Icon(
-                user!.isFollowing
-                    ? Ionicons.person_remove_outline
-                    : Ionicons.person_add_outline,
-                size: Consts.iconSmall,
-              ),
-              label: Text(
-                user!.isFollowing
-                    ? user!.isFollower
-                        ? 'Mutual'
-                        : 'Following'
-                    : user!.isFollower
-                        ? 'Follower'
-                        : 'Follow',
-              ),
-              onPressed:
-                  Get.find<UserController>(tag: id.toString()).toggleFollow,
-            ),
-          ),
+        if (!isMe && user != null) _FollowButton(user!),
         if (user?.siteUrl != null)
           IconShade(TopBarIcon(
             tooltip: 'More',
@@ -126,9 +102,52 @@ class UserHeader extends StatelessWidget {
   }
 }
 
+class _FollowButton extends StatefulWidget {
+  _FollowButton(this.user);
+
+  final User user;
+
+  @override
+  State<_FollowButton> createState() => __FollowButtonState();
+}
+
+class __FollowButtonState extends State<_FollowButton> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: ElevatedButton.icon(
+        icon: Icon(
+          widget.user.isFollowed
+              ? Ionicons.person_remove_outline
+              : Ionicons.person_add_outline,
+          size: Consts.iconSmall,
+        ),
+        label: Text(
+          widget.user.isFollowed
+              ? widget.user.isFollower
+                  ? 'Mutual'
+                  : 'Following'
+              : widget.user.isFollower
+                  ? 'Follower'
+                  : 'Follow',
+        ),
+        onPressed: () {
+          final isFollowed = widget.user.isFollowed;
+          setState(() => widget.user.isFollowed = !isFollowed);
+          toggleFollow(widget.user.id).then((ok) {
+            if (!ok) setState(() => widget.user.isFollowed = isFollowed);
+          });
+        },
+      ),
+    );
+  }
+}
+
 class _AnimatedBadge extends StatefulWidget {
-  final String? text;
   _AnimatedBadge(this.text);
+
+  final String? text;
 
   @override
   __AnimatedBadgeState createState() => __AnimatedBadgeState();

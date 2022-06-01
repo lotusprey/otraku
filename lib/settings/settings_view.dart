@@ -89,7 +89,7 @@ class _SettingsViewState extends State<SettingsView> {
               },
             ),
             child: TabSwitcher(
-              tabs: tabs,
+              children: tabs,
               current: _tabIndex,
               onChanged: (i) => setState(() => _tabIndex = i),
             ),

@@ -1,4 +1,4 @@
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/utils/settings.dart';
 
 abstract class Convert {
@@ -13,11 +13,11 @@ abstract class Convert {
     );
   }
 
-  /// Converts a [ListStatus] to [String], taking into account the media type.
-  static String adaptListStatus(ListStatus status, bool isAnime) {
-    if (status == ListStatus.CURRENT) return isAnime ? 'Watching' : 'Reading';
+  /// Converts a [EntryStatus] to [String], taking into account the media type.
+  static String adaptListStatus(EntryStatus status, bool isAnime) {
+    if (status == EntryStatus.CURRENT) return isAnime ? 'Watching' : 'Reading';
 
-    if (status == ListStatus.REPEATING)
+    if (status == EntryStatus.REPEATING)
       return isAnime ? 'Rewatching' : 'Rereading';
 
     final str = status.name;
@@ -34,7 +34,7 @@ abstract class Convert {
   static String? mapToDateStr(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
 
-    final month = _MONTHS[map!['month']] ?? '';
+    final month = _months[map!['month']] ?? '';
 
     if (month == '') return '${map['year']}';
 
@@ -72,15 +72,15 @@ abstract class Convert {
 
     if (Settings().analogueClock) {
       final overflows = date.hour > 12;
-      return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} '
-          '${_MONTHS[date.month]} ${date.year}, '
+      return '${_weekDays[date.weekday - 1]}, ${date.day} '
+          '${_months[date.month]} ${date.year}, '
           '${(date.hour <= 9 || overflows && date.hour - 12 <= 9) ? 0 : ""}'
           '${overflows ? date.hour - 12 : date.hour}:'
           '${date.minute <= 9 ? 0 : ""}${date.minute} '
           '${overflows ? "PM" : "AM"}';
     }
 
-    return '${_WEEK_DAYS[date.weekday - 1]}, ${date.day} ${_MONTHS[date.month]} '
+    return '${_weekDays[date.weekday - 1]}, ${date.day} ${_months[date.month]} '
         '${date.year}, ${date.hour <= 9 ? 0 : ""}${date.hour}:'
         '${date.minute <= 9 ? 0 : ""}${date.minute}';
   }
@@ -100,16 +100,16 @@ abstract class Convert {
         '${minutes < 1 ? "" : "${minutes}m"}';
   }
 
-  static const COUNTRY_CODES = {
+  static const countryCodes = {
     'JP': 'Japan',
     'CN': 'China',
     'KR': 'South Korea',
     'TW': 'Taiwan',
   };
 
-  static const _WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  static const _MONTHS = {
+  static const _months = {
     1: 'Jan',
     2: 'Feb',
     3: 'Mar',

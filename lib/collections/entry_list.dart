@@ -1,40 +1,37 @@
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/list_status.dart';
-import 'package:otraku/models/list_entry_model.dart';
+import 'package:otraku/collections/entry.dart';
 
-class ListModel {
-  final String name;
-  final ListStatus? status;
-  final bool isCustomList;
-  final String? splitCompletedListFormat;
-  final List<ListEntryModel> entries;
-
-  ListModel._({
+class EntryList {
+  EntryList._({
     required this.name,
     required this.isCustomList,
     required this.entries,
-    this.status,
-    this.splitCompletedListFormat,
+    required this.status,
+    required this.splitCompletedListFormat,
   });
 
-  factory ListModel(Map<String, dynamic> map, bool splitCompleted) =>
-      ListModel._(
-        name: map['name'],
-        isCustomList: map['isCustomList'] ?? false,
-        status: !map['isCustomList'] && map['status'] != null
-            ? ListStatus.values.byName(map['status'])
-            : null,
-        splitCompletedListFormat: splitCompleted &&
-                !map['isCustomList'] &&
-                map['status'] == 'COMPLETED'
-            ? map['entries'][0]['media']['format']
-            : null,
-        entries: (map['entries'] as List<dynamic>)
-            .map((e) => ListEntryModel(e))
-            .toList(),
-      );
+  factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
+    return EntryList._(
+      name: map['name'],
+      isCustomList: map['isCustomList'] ?? false,
+      status: !map['isCustomList'] && map['status'] != null
+          ? EntryStatus.values.byName(map['status'])
+          : null,
+      splitCompletedListFormat:
+          splitCompleted && !map['isCustomList'] && map['status'] == 'COMPLETED'
+              ? map['entries'][0]['media']['format']
+              : null,
+      entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
+    );
+  }
 
-  void removeByMediaId(final int? id) {
+  final String name;
+  final EntryStatus? status;
+  final bool isCustomList;
+  final String? splitCompletedListFormat;
+  final List<Entry> entries;
+
+  void removeByMediaId(int id) {
     for (int i = 0; i < entries.length; i++)
       if (id == entries[i].mediaId) {
         entries.removeAt(i);
@@ -42,7 +39,7 @@ class ListModel {
       }
   }
 
-  void insertSorted(final ListEntryModel item, final EntrySort? s) {
+  void insertSorted(Entry item, EntrySort? s) {
     final compare = _compareFn(s);
     for (int i = 0; i < entries.length; i++)
       if (compare(item, entries[i]) <= 0) {
@@ -54,7 +51,7 @@ class ListModel {
 
   void sort(final EntrySort? s) => entries.sort(_compareFn(s));
 
-  int Function(ListEntryModel, ListEntryModel) _compareFn(final EntrySort? s) {
+  int Function(Entry, Entry) _compareFn(final EntrySort? s) {
     switch (s) {
       case EntrySort.TITLE:
         return (a, b) => a.titles[0].compareTo(b.titles[0]);

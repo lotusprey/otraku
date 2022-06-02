@@ -456,12 +456,11 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
-  // TODO pinned
   static const activities = r'''
     query Activities($userId: Int, $page: Int = 1, $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(userId: $userId, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: ID_DESC) {
+        activities(userId: $userId, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: [PINNED, ID_DESC]) {
           ... on TextActivity {...textActivity}
           ... on ListActivity {...listActivity}
           ... on MessageActivity {...messageActivity}
@@ -786,6 +785,7 @@ abstract class _GqlFragment {
       likeCount
       isLiked
       isSubscribed
+      isPinned
       createdAt
       siteUrl
       user {id name avatar {large}}
@@ -801,6 +801,7 @@ abstract class _GqlFragment {
       likeCount
       isLiked
       isSubscribed
+      isPinned
       createdAt
       siteUrl
       user {id name avatar {large}}

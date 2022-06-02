@@ -135,6 +135,7 @@ class Activity {
     required this.createdAt,
     required this.siteUrl,
     required this.isDeletable,
+    required this.isPinned,
     this.media,
     this.reciever,
     this.text = '',
@@ -157,6 +158,7 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: map['text'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
+          isPinned: map['isPinned'] ?? false,
           isDeletable: map['user']['id'] == viewerId,
           replyCount: map['replyCount'] ?? 0,
           likeCount: map['likeCount'] ?? 0,
@@ -183,6 +185,7 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: '$status $progress',
           createdAt: Convert.millisToStr(map['createdAt']),
+          isPinned: map['isPinned'] ?? false,
           isDeletable: map['user']['id'] == viewerId,
           replyCount: map['replyCount'] ?? 0,
           likeCount: map['likeCount'] ?? 0,
@@ -200,6 +203,7 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: map['message'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
+          isPinned: false,
           isDeletable: map['messenger']['id'] == viewerId ||
               map['recipient']['id'] == viewerId,
           isPrivate: map['isPrivate'] ?? false,
@@ -222,6 +226,7 @@ class Activity {
   final String text;
   final bool isDeletable;
   final bool isPrivate;
+  final bool isPinned;
   final String createdAt;
   int likeCount;
   int replyCount;

@@ -116,7 +116,11 @@ class ActivityCard extends StatelessWidget {
                   ),
                 ),
               ),
-            ],
+            ] else if (activity.isPinned)
+              const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(Icons.push_pin_outlined),
+              ),
           ],
         ),
         const SizedBox(height: 5),

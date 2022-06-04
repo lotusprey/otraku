@@ -647,12 +647,13 @@ abstract class GqlMutation {
         $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
         $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
         $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $restrictMessagesToFollowing: Boolean,
-        $advancedScoringEnabled: Boolean, $advancedScoring: [String]) {
+        $advancedScoringEnabled: Boolean, $advancedScoring: [String], $disabledListActivity: [ListActivityOptionInput]) {
       UpdateUser(titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
           activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
           airingNotifications: $airingNotifications, restrictMessagesToFollowing: $restrictMessagesToFollowing,
           scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, 
+          disabledListActivity: $disabledListActivity,
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime,
           advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
           mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
         ...userSettings
@@ -778,6 +779,7 @@ abstract class _GqlFragment {
         airingNotifications
         notificationOptions {type enabled}
         restrictMessagesToFollowing
+        disabledListActivity {type disabled}
       }
       mediaListOptions {
         scoreFormat

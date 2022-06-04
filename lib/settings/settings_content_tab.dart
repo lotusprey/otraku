@@ -29,6 +29,11 @@ class SettingsContentTab extends StatelessWidget {
       mainAxisSpacing: 0,
       height: Consts.tapTargetSize,
     );
+    const smallGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
+      minWidth: 140,
+      mainAxisSpacing: 0,
+      height: Consts.tapTargetSize,
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -187,6 +192,24 @@ class SettingsContentTab extends StatelessWidget {
               placeholder: 'advanced scores',
               names: settings.advancedScores,
             ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          SliverToBoxAdapter(
+            child: Text('Disable List Activity Creation of:'),
+          ),
+          SliverGrid(
+            gridDelegate: smallGridDelegate,
+            delegate: SliverChildListDelegate.fixed([
+              for (final e in settings.disabledListActivity.entries)
+                CheckBoxField(
+                  title: Convert.clarifyEnum(e.key.name)!,
+                  initial: e.value,
+                  onChanged: (val) {
+                    settings.disabledListActivity[e.key] = val;
+                    shouldUpdate();
+                  },
+                ),
+            ]),
           ),
           const SliverFooter(),
         ],

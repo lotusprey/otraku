@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/notifications/notifications.dart';
@@ -20,7 +21,7 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
       final data = await Api.get(GqlQuery.settings);
       if (data.isEmpty) return;
       state = UserSettings(data['Viewer']);
-    } catch (e) {}
+    } catch (_) {}
   }
 
   Future<void> update(UserSettings other) async {
@@ -28,7 +29,9 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());
       if (data.isEmpty) return;
       state = UserSettings(data['UpdateUser']);
-    } catch (_) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   void nullifyUnread() => state = state.copy();
@@ -46,13 +49,14 @@ class UserSettings {
     this.activityMergeTime = 720,
     this.splitCompletedAnime = false,
     this.splitCompletedManga = false,
-    this.airingNotifications = true,
     this.displayAdultContent = false,
+    this.airingNotifications = true,
     this.advancedScoringEnabled = false,
     this.restrictMessagesToFollowing = false,
     this.advancedScores = const [],
     this.animeCustomLists = const [],
     this.mangaCustomLists = const [],
+    this.disabledListActivity = const {},
     this.notificationOptions = const {},
   });
 
@@ -62,7 +66,7 @@ class UserSettings {
           map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
         ),
         defaultSort: EntrySort.getEnum(
-          map['mediaListOptions']['rowOrder'],
+          map['mediaListOptions']['rowOrder'] ?? 'TITLE',
         ),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
         staffNameLanguage:
@@ -79,8 +83,8 @@ class UserSettings {
         advancedScoringEnabled: map['mediaListOptions']['animeList']
                 ['advancedScoringEnabled'] ??
             false,
-        restrictMessagesToFollowing: map['options']
-            ['restrictMessagesToFollowing'],
+        restrictMessagesToFollowing:
+            map['options']['restrictMessagesToFollowing'] ?? false,
         advancedScores: List<String>.from(
           map['mediaListOptions']['animeList']['advancedScoring'] ?? [],
         ),
@@ -89,6 +93,11 @@ class UserSettings {
         ),
         mangaCustomLists: List<String>.from(
           map['mediaListOptions']['mangaList']['customLists'] ?? [],
+        ),
+        disabledListActivity: Map.fromIterable(
+          map['options']['disabledListActivity'],
+          key: (n) => EntryStatus.values.byName(n['type']),
+          value: (n) => n['disabled'],
         ),
         notificationOptions: Map.fromIterable(
           map['options']['notificationOptions'],
@@ -112,6 +121,7 @@ class UserSettings {
   final List<String> advancedScores;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
+  final Map<EntryStatus, bool> disabledListActivity;
   final Map<NotificationType, bool> notificationOptions;
 
   UserSettings copy({int notificationCount = 0}) => UserSettings._(
@@ -130,6 +140,7 @@ class UserSettings {
         advancedScores: [...advancedScores],
         animeCustomLists: [...animeCustomLists],
         mangaCustomLists: [...mangaCustomLists],
+        disabledListActivity: {...disabledListActivity},
         notificationOptions: {...notificationOptions},
       );
 
@@ -146,6 +157,9 @@ class UserSettings {
         'splitCompletedManga': splitCompletedManga,
         'restrictMessagesToFollowing': restrictMessagesToFollowing,
         'airingNotifications': airingNotifications,
+        'disabledListActivity': disabledListActivity.entries
+            .map((e) => {'type': e.key.name, 'disabled': e.value})
+            .toList(),
         'notificationOptions': notificationOptions.entries
             .map((e) => {'type': e.key.name, 'enabled': e.value})
             .toList(),

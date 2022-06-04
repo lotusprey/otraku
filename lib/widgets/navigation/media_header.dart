@@ -18,33 +18,26 @@ class MediaHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final info = ctrl.model?.info;
 
-    final details = <TextSpan>[];
+    final textRailItems = <String, bool>{};
     if (info != null) {
       if (info.format != null)
-        details.add(TextSpan(text: Convert.clarifyEnum(info.format)));
+        textRailItems[Convert.clarifyEnum(info.format)!] = false;
 
       final status = ctrl.model?.edit.status;
       if (status != null)
-        details.add(TextSpan(
-          text: '${details.isEmpty ? "" : ' • '}'
-              '${Convert.adaptListStatus(status, info.type == Explorable.anime)}',
-        ));
+        textRailItems[Convert.adaptListStatus(
+          status,
+          info.type == Explorable.anime,
+        )] = false;
 
       if (info.airingAt != null)
-        details.add(TextSpan(
-          text: '${details.isEmpty ? "" : ' • '}'
-              'Ep ${info.nextEpisode} in '
-              '${Convert.timeUntilTimestamp(info.airingAt)}',
-        ));
+        textRailItems['Ep ${info.nextEpisode} in '
+            '${Convert.timeUntilTimestamp(info.airingAt)}'] = true;
 
       if (status != null) {
         final progress = ctrl.model?.edit.progress ?? 0;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
-          details.add(TextSpan(
-            text: '${details.isEmpty ? "" : ' • '}'
-                '${info.nextEpisode! - 1 - progress} ep behind',
-            style: Theme.of(context).textTheme.bodyText1,
-          ));
+          textRailItems['${info.nextEpisode! - 1 - progress} ep behind'] = true;
       }
     }
 
@@ -90,15 +83,7 @@ class MediaHeader extends StatelessWidget {
                     overflow: TextOverflow.fade,
                   ),
                 ),
-                if (details.isNotEmpty) ...[
-                  const SizedBox(height: 5),
-                  RichText(
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.subtitle1,
-                      children: details,
-                    ),
-                  ),
-                ],
+                if (textRailItems.isNotEmpty) TextRail(textRailItems),
               ]
             : [],
       ),

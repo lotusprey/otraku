@@ -23,6 +23,12 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textRailItems = <String, bool>{};
+    if (user != null) {
+      if (user!.modRoles.isNotEmpty) textRailItems[user!.modRoles[0]] = false;
+      if (user!.donatorTier > 0) textRailItems[user!.donatorBadge] = true;
+    }
+
     return CustomSliverHeader(
       title: user?.name,
       image: user?.imageUrl ?? imageUrl,
@@ -67,33 +73,20 @@ class UserHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (user!.donatorTier > 0) _AnimatedBadge(user!.donatorBadge),
-                if (user!.modRoles.isNotEmpty)
+                if (textRailItems.isNotEmpty)
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 5),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: Consts.borderRadiusMin,
-                      ),
-                      child: Text(
-                        user!.modRoles[0],
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                    ),
-                    onTap: () => showPopUp(
-                      context,
-                      TextDialog(
-                        title: 'Roles',
-                        text: user!.modRoles.join(', '),
-                      ),
-                    ),
+                    onTap: () {
+                      if (user!.modRoles.isNotEmpty)
+                        showPopUp(
+                          context,
+                          TextDialog(
+                            title: 'Roles',
+                            text: user!.modRoles.join(', '),
+                          ),
+                        );
+                    },
+                    child: TextRail(textRailItems),
                   ),
               ]
             : [],

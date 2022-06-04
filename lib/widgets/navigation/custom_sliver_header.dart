@@ -315,3 +315,37 @@ class IconShade extends StatelessWidget {
     );
   }
 }
+
+class TextRail extends StatelessWidget {
+  const TextRail(this.items);
+
+  final Map<String, bool> items;
+
+  @override
+  Widget build(BuildContext context) {
+    const spacing = TextSpan(text: ' • ');
+
+    return RichText(
+      text: TextSpan(
+        style: Theme.of(context).textTheme.subtitle1,
+        children: [
+          for (int i = 0; i < items.length - 1; i++) ...[
+            TextSpan(
+              text: items.keys.elementAt(i),
+              style: items.values.elementAt(i)
+                  ? Theme.of(context).textTheme.bodyText1
+                  : null,
+            ),
+            spacing,
+          ],
+          TextSpan(
+            text: items.keys.last,
+            style: items.values.last
+                ? Theme.of(context).textTheme.bodyText1
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+}

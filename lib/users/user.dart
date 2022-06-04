@@ -55,7 +55,8 @@ class User {
         donatorTier: map['donatorTier'] ?? 0,
         donatorBadge: map['donatorBadge'] ?? '',
         modRoles: List<String>.from(
-          map['moderatorRoles']?.map((r) => Convert.clarifyEnum(r)) ?? [],
+          map['moderatorRoles']?.map((r) => '${Convert.clarifyEnum(r)!} Mod') ??
+              [],
           growable: false,
         ),
         animeStats: UserStatistics(map['statistics']['anime'], true),

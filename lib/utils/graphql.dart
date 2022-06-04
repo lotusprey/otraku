@@ -712,6 +712,15 @@ abstract class GqlMutation {
     }
   ''';
 
+  static const toggleActivityPin = r'''
+    mutation ToggleActivityPin($id: Int, $pinned: Boolean) {
+      ToggleActivityPin(id: $id, pinned: $pinned) {
+        ... on ListActivity {isPinned}
+        ... on TextActivity {isPinned}
+      }
+    }
+  ''';
+
   static const deleteActivity = r'''
     mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
   ''';

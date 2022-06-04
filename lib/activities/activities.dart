@@ -78,18 +78,46 @@ class ActivitiesNotifier
     });
   }
 
-  /// Deletes an activity.
-  Future<void> delete(int activityId) async {
-    Api.get(GqlMutation.deleteActivity, {'id': activityId}).then((_) {
-      if (!state.hasValue) return;
-      final value = state.value!;
+  /// Replace an existing activity with another one.
+  void replaceActivity(Activity activity) {
+    if (!state.hasValue) return;
+    final value = state.value!;
 
-      for (int i = 0; i < value.items.length; i++)
-        if (value.items[i].id == activityId) {
-          state = AsyncData(value.copyWith([...value.items..removeAt(i)]));
-          return;
-        }
-    }).catchError((_) {});
+    for (int i = 0; i < value.items.length; i++)
+      if (value.items[i].id == activity.id) {
+        value.items[i] = activity;
+        state = AsyncData(value.copyWith([...value.items]));
+        return;
+      }
+  }
+
+  /// Removes an already deleted activity.
+  void delete(int activityId) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    for (int i = 0; i < value.items.length; i++)
+      if (value.items[i].id == activityId) {
+        state = AsyncData(value.copyWith([...value.items..removeAt(i)]));
+        return;
+      }
+  }
+
+  /// Updates an already pinned/unpinned activity.
+  void togglePin(int activityId) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    for (int i = 0; i < value.items.length; i++)
+      if (value.items[i].id == activityId) {
+        // If the activity was pinned, and there had already
+        // been a pinned activity, unpin the old one.
+        if (value.items[i].isPinned && value.items[0].isPinned && i > 0)
+          value.items[0].isPinned = false;
+
+        state = AsyncData(value.copyWith([...value.items]));
+        return;
+      }
   }
 }
 

@@ -6,6 +6,8 @@ import 'package:otraku/activities/activity_card.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/activities/activities.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -161,13 +163,35 @@ class ActivitiesSubView extends StatelessWidget {
                             activity: data.items[i],
                             footer: ActivityFooter(
                               activity: data.items[i],
-                              canPush: true,
-                              onChanged: (activity) {
-                                if (activity != null) return;
-                                ref
-                                    .read(activitiesProvider(id).notifier)
-                                    .delete(data.items[i].id);
-                              },
+                              onDeleted: () => ref
+                                  .read(activitiesProvider(id).notifier)
+                                  .delete(data.items[i].id),
+                              onChanged: null,
+                              onPinned: id == Settings().id
+                                  ? () => ref
+                                      .read(activitiesProvider(id).notifier)
+                                      .togglePin(data.items[i].id)
+                                  : null,
+                              onOpenReplies: () => Navigator.pushNamed(
+                                context,
+                                RouteArg.activity,
+                                arguments: RouteArg(
+                                  id: data.items[i].id,
+                                  callback: (arg) {
+                                    final updatedActivity = arg as Activity?;
+                                    if (updatedActivity == null) {
+                                      ref
+                                          .read(activitiesProvider(id).notifier)
+                                          .delete(data.items[i].id);
+                                      return;
+                                    }
+
+                                    ref
+                                        .read(activitiesProvider(id).notifier)
+                                        .replaceActivity(updatedActivity);
+                                  },
+                                ),
+                              ),
                             ),
                           ),
                         ),

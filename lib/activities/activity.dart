@@ -31,6 +31,19 @@ Future<bool> toggleActivitySubscription(Activity activity) async {
   }
 }
 
+/// Pins/Unpins an activity and returns the error if successful.
+Future<Object?> toggleActivityPin(Activity activity) async {
+  try {
+    await Api.get(GqlMutation.toggleActivityPin, {
+      'id': activity.id,
+      'pinned': activity.isPinned,
+    });
+    return null;
+  } catch (e) {
+    return e;
+  }
+}
+
 /// Toggles a reply like and returns [true] if successful.
 Future<bool> toggleReplyLike(ActivityReply reply) async {
   try {
@@ -38,6 +51,16 @@ Future<bool> toggleReplyLike(ActivityReply reply) async {
       'id': reply.id,
       'type': 'ACTIVITY_REPLY',
     });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+/// Deletes an activity.
+Future<bool> deleteActivity(int activityId) async {
+  try {
+    await Api.get(GqlMutation.deleteActivity, {'id': activityId});
     return true;
   } catch (_) {
     return false;
@@ -158,12 +181,12 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: map['text'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
-          isPinned: map['isPinned'] ?? false,
           isDeletable: map['user']['id'] == viewerId,
           replyCount: map['replyCount'] ?? 0,
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
+          isPinned: map['isPinned'] ?? false,
         );
       case 'ANIME_LIST':
       case 'MANGA_LIST':
@@ -185,12 +208,12 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: '$status $progress',
           createdAt: Convert.millisToStr(map['createdAt']),
-          isPinned: map['isPinned'] ?? false,
           isDeletable: map['user']['id'] == viewerId,
           replyCount: map['replyCount'] ?? 0,
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
+          isPinned: map['isPinned'] ?? false,
         );
       case 'MESSAGE':
         if (map['messenger'] == null || map['recipient'] == null) return null;
@@ -203,7 +226,6 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: map['message'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
-          isPinned: false,
           isDeletable: map['messenger']['id'] == viewerId ||
               map['recipient']['id'] == viewerId,
           isPrivate: map['isPrivate'] ?? false,
@@ -211,6 +233,7 @@ class Activity {
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
           isSubscribed: map['isSubscribed'] ?? false,
+          isPinned: false,
         );
       default:
         return null;
@@ -226,12 +249,12 @@ class Activity {
   final String text;
   final bool isDeletable;
   final bool isPrivate;
-  final bool isPinned;
   final String createdAt;
   int likeCount;
   int replyCount;
   bool isLiked;
   bool isSubscribed;
+  bool isPinned;
 }
 
 class ActivityUser {

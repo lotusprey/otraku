@@ -106,7 +106,11 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                         ),
                       ),
                     ),
-                  ],
+                  ] else if (activity.isPinned)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(Icons.push_pin_outlined),
+                    ),
                 ],
               ),
             ),
@@ -138,7 +142,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
               .unwrapPrevious()
               .maybeWhen(
                 loading: () => const Center(child: Loader()),
-                orElse: () => Center(child: Text('No Replies')),
+                orElse: () => Center(child: Text('No Activity')),
                 data: (data) {
                   return Padding(
                     padding: Consts.padding,
@@ -153,11 +157,14 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                             activity: data.activity,
                             footer: ActivityFooter(
                               activity: data.activity,
-                              canPush: false,
-                              onChanged: (activity) {
-                                widget.onChanged?.call(activity);
-                                if (activity == null) Navigator.pop(context);
+                              onChanged: () =>
+                                  widget.onChanged?.call(data.activity),
+                              onDeleted: () {
+                                widget.onChanged?.call(null);
+                                Navigator.pop(context);
                               },
+                              onPinned: () => setState(() {}),
+                              onOpenReplies: null,
                             ),
                           ),
                         ),

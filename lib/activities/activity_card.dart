@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activities/activity.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -195,13 +195,17 @@ class _ActivityMediaBox extends StatelessWidget {
 class ActivityFooter extends StatefulWidget {
   const ActivityFooter({
     required this.activity,
+    required this.onDeleted,
+    required this.onPinned,
     required this.onChanged,
-    required this.canPush,
+    required this.onOpenReplies,
   });
 
   final Activity activity;
-  final void Function(Activity?) onChanged;
-  final bool canPush;
+  final void Function() onDeleted;
+  final void Function()? onPinned;
+  final void Function()? onChanged;
+  final void Function()? onOpenReplies;
 
   @override
   State<ActivityFooter> createState() => _ActivityFooterState();
@@ -229,28 +233,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           message: 'Replies',
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () {
-              if (widget.canPush)
-                Navigator.pushNamed(
-                  context,
-                  RouteArg.activity,
-                  arguments: RouteArg(
-                    id: activity.id,
-                    callback: (updatedActivity) {
-                      updatedActivity = updatedActivity as Activity?;
-                      if (updatedActivity == null) {
-                        widget.onChanged(null);
-                      } else {
-                        setState(() {
-                          activity.isLiked = updatedActivity.isLiked;
-                          activity.likeCount = updatedActivity.likeCount;
-                          activity.isSubscribed = updatedActivity.isSubscribed;
-                        });
-                      }
-                    },
-                  ),
-                );
-            },
+            onTap: widget.onOpenReplies,
             child: Row(
               children: [
                 Text(
@@ -296,8 +279,6 @@ class _ActivityFooterState extends State<ActivityFooter> {
     );
   }
 
-  /// Toggle a like and revert the change,
-  /// if the reqest was unsuccessful.
   void _toggleLike() {
     final activity = widget.activity;
     final isLiked = activity.isLiked;
@@ -309,7 +290,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
     toggleActivityLike(activity).then(
       (ok) => ok
-          ? widget.onChanged(activity)
+          ? widget.onChanged?.call()
           : setState(() {
               activity.isLiked = isLiked;
               activity.likeCount += isLiked ? 1 : -1;
@@ -320,46 +301,73 @@ class _ActivityFooterState extends State<ActivityFooter> {
   /// Show a sheet with additional options.
   void _showMoreSheet() {
     final activity = widget.activity;
-    final children = <Widget>[];
-
-    /// Delete the activity.
-    if (activity.isDeletable)
-      children.add(FixedGradientSheetTile(
-        text: 'Delete',
-        icon: Ionicons.trash_outline,
-        onTap: () => showPopUp(
-          context,
-          ConfirmationDialog(
-            title: 'Delete?',
-            mainAction: 'Yes',
-            secondaryAction: 'No',
-            onConfirm: () => widget.onChanged(null),
-          ),
-        ),
-      ));
-
-    /// Toggle a subscription and revert the change,
-    /// if the reqest was unsuccessful.
-    children.add(FixedGradientSheetTile(
-      text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-      icon: !activity.isSubscribed
-          ? Ionicons.notifications_outline
-          : Ionicons.notifications_off_outline,
-      onTap: () {
-        final isSubscribed = activity.isSubscribed;
-        activity.isSubscribed = !isSubscribed;
-
-        toggleActivitySubscription(activity).then((ok) {
-          ok
-              ? widget.onChanged(activity)
-              : activity.isSubscribed = isSubscribed;
-        });
-      },
-    ));
 
     showSheet(
       context,
-      FixedGradientDragSheet.link(context, activity.siteUrl!, children),
+      Consumer(
+        builder: (_, ref, __) =>
+            FixedGradientDragSheet.link(context, activity.siteUrl!, [
+          if (activity.isDeletable)
+            FixedGradientSheetTile(
+              text: 'Delete',
+              icon: Ionicons.trash_outline,
+              onTap: () => showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Delete?',
+                  mainAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: () =>
+                      deleteActivity(widget.activity.id).then((ok) {
+                    if (ok) widget.onDeleted();
+                  }),
+                ),
+              ),
+            ),
+          if (widget.onPinned != null && activity.type != ActivityType.MESSAGE)
+            FixedGradientSheetTile(
+              text: activity.isPinned ? 'Unpin' : 'Pin',
+              icon:
+                  activity.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+              onTap: () {
+                final isPinned = activity.isPinned;
+                activity.isPinned = !isPinned;
+
+                toggleActivityPin(activity).then((error) {
+                  if (error == null) {
+                    widget.onPinned!();
+                    return;
+                  }
+
+                  activity.isPinned = isPinned;
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Could not toggle pin',
+                      content: error.toString(),
+                    ),
+                  );
+                });
+              },
+            ),
+          FixedGradientSheetTile(
+            text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+            icon: !activity.isSubscribed
+                ? Ionicons.notifications_outline
+                : Ionicons.notifications_off_outline,
+            onTap: () {
+              final isSubscribed = activity.isSubscribed;
+              activity.isSubscribed = !isSubscribed;
+
+              toggleActivitySubscription(activity).then((ok) {
+                ok
+                    ? widget.onChanged?.call()
+                    : activity.isSubscribed = isSubscribed;
+              });
+            },
+          ),
+        ]),
+      ),
     );
   }
 }

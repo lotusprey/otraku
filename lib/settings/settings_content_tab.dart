@@ -31,69 +31,76 @@ class SettingsContentTab extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(left: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
           SliverPadding(
-            padding: EdgeInsets.only(
-              right: 10,
-              top: PageLayout.of(context).topOffset + 10,
+            padding: EdgeInsets.only(top: PageLayout.of(context).topOffset),
+            sliver: SliverToBoxAdapter(
+              child: CheckBoxField(
+                title: 'Restirct Messages to Following',
+                initial: settings.restrictMessagesToFollowing,
+                onChanged: (val) {
+                  settings.restrictMessagesToFollowing = val;
+                  shouldUpdate();
+                },
+              ),
             ),
-            sliver: SliverGrid(
-              gridDelegate: dropDownGridDelegate,
-              delegate: SliverChildListDelegate.fixed([
-                DropDownField(
-                  title: 'Title Language',
-                  value: settings.titleLanguage,
-                  items: const {
-                    'Romaji': 'ROMAJI',
-                    'English': 'ENGLISH',
-                    'Native': 'NATIVE',
-                  },
-                  onChanged: (String val) {
-                    settings.titleLanguage = val;
-                    shouldUpdate();
-                  },
-                ),
-                DropDownField(
-                  title: 'Character & Staff Name',
-                  value: settings.staffNameLanguage,
-                  items: const {
-                    'Romaji, Western Order': 'ROMAJI_WESTERN',
-                    'Romaji': 'ROMAJI',
-                    'Native': 'NATIVE',
-                  },
-                  onChanged: (String val) {
-                    settings.staffNameLanguage = val;
-                    shouldUpdate();
-                  },
-                ),
-                DropDownField(
-                  title: 'Activity Merge Time',
-                  value: settings.activityMergeTime,
-                  items: const {
-                    'Never': 0,
-                    '30 Minutes': 30,
-                    '1 Hour': 60,
-                    '2 Hours': 120,
-                    '3 Hours': 180,
-                    '6 Hours': 360,
-                    '12 Hours': 720,
-                    '1 Day': 1440,
-                    '2 Days': 2880,
-                    '3 Days': 4320,
-                    '1 Week': 10080,
-                    '2 Weeks': 20160,
-                    'Always': 29160,
-                  },
-                  onChanged: (int val) {
-                    settings.activityMergeTime = val;
-                    shouldUpdate();
-                  },
-                ),
-              ]),
-            ),
+          ),
+          SliverGrid(
+            gridDelegate: dropDownGridDelegate,
+            delegate: SliverChildListDelegate.fixed([
+              DropDownField(
+                title: 'Title Language',
+                value: settings.titleLanguage,
+                items: const {
+                  'Romaji': 'ROMAJI',
+                  'English': 'ENGLISH',
+                  'Native': 'NATIVE',
+                },
+                onChanged: (String val) {
+                  settings.titleLanguage = val;
+                  shouldUpdate();
+                },
+              ),
+              DropDownField(
+                title: 'Character & Staff Name',
+                value: settings.staffNameLanguage,
+                items: const {
+                  'Romaji, Western Order': 'ROMAJI_WESTERN',
+                  'Romaji': 'ROMAJI',
+                  'Native': 'NATIVE',
+                },
+                onChanged: (String val) {
+                  settings.staffNameLanguage = val;
+                  shouldUpdate();
+                },
+              ),
+              DropDownField(
+                title: 'Activity Merge Time',
+                value: settings.activityMergeTime,
+                items: const {
+                  'Never': 0,
+                  '30 Minutes': 30,
+                  '1 Hour': 60,
+                  '2 Hours': 120,
+                  '3 Hours': 180,
+                  '6 Hours': 360,
+                  '12 Hours': 720,
+                  '1 Day': 1440,
+                  '2 Days': 2880,
+                  '3 Days': 4320,
+                  '1 Week': 10080,
+                  '2 Weeks': 20160,
+                  'Always': 29160,
+                },
+                onChanged: (int val) {
+                  settings.activityMergeTime = val;
+                  shouldUpdate();
+                },
+              ),
+            ]),
           ),
           SliverGrid(
             gridDelegate: checkBoxGridDelegate,
@@ -116,37 +123,34 @@ class SettingsContentTab extends StatelessWidget {
               ),
             ]),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.only(right: 10),
-            sliver: SliverGrid(
-              gridDelegate: dropDownGridDelegate,
-              delegate: SliverChildListDelegate.fixed([
-                DropDownField<ScoreFormat>(
-                  title: 'Scoring System',
-                  value: settings.scoreFormat,
-                  items: Map.fromIterable(
-                    ScoreFormat.values,
-                    key: (v) => Convert.clarifyEnum((v as ScoreFormat).name)!,
-                  ),
-                  onChanged: (val) {
-                    settings.scoreFormat = val;
-                    shouldUpdate();
-                  },
+          SliverGrid(
+            gridDelegate: dropDownGridDelegate,
+            delegate: SliverChildListDelegate.fixed([
+              DropDownField<ScoreFormat>(
+                title: 'Scoring System',
+                value: settings.scoreFormat,
+                items: Map.fromIterable(
+                  ScoreFormat.values,
+                  key: (v) => Convert.clarifyEnum((v as ScoreFormat).name)!,
                 ),
-                DropDownField<EntrySort>(
-                  title: 'Default Site List Sort',
-                  value: settings.defaultSort,
-                  items: Map.fromIterables(
-                    EntrySort.defaultStrings,
-                    EntrySort.defaultEnums,
-                  ),
-                  onChanged: (val) {
-                    settings.defaultSort = val;
-                    shouldUpdate();
-                  },
+                onChanged: (val) {
+                  settings.scoreFormat = val;
+                  shouldUpdate();
+                },
+              ),
+              DropDownField<EntrySort>(
+                title: 'Default Site List Sort',
+                value: settings.defaultSort,
+                items: Map.fromIterables(
+                  EntrySort.defaultStrings,
+                  EntrySort.defaultEnums,
                 ),
-              ]),
-            ),
+                onChanged: (val) {
+                  settings.defaultSort = val;
+                  shouldUpdate();
+                },
+              ),
+            ]),
           ),
           SliverGrid(
             gridDelegate: checkBoxGridDelegate,

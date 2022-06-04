@@ -49,6 +49,7 @@ class UserSettings {
     this.airingNotifications = true,
     this.displayAdultContent = false,
     this.advancedScoringEnabled = false,
+    this.restrictMessagesToFollowing = false,
     this.advancedScores = const [],
     this.animeCustomLists = const [],
     this.mangaCustomLists = const [],
@@ -78,6 +79,8 @@ class UserSettings {
         advancedScoringEnabled: map['mediaListOptions']['animeList']
                 ['advancedScoringEnabled'] ??
             false,
+        restrictMessagesToFollowing: map['options']
+            ['restrictMessagesToFollowing'],
         advancedScores: List<String>.from(
           map['mediaListOptions']['animeList']['advancedScoring'] ?? [],
         ),
@@ -104,6 +107,7 @@ class UserSettings {
   bool displayAdultContent;
   bool airingNotifications;
   bool advancedScoringEnabled;
+  bool restrictMessagesToFollowing;
   final int notificationCount;
   final List<String> advancedScores;
   final List<String> animeCustomLists;
@@ -122,6 +126,7 @@ class UserSettings {
         displayAdultContent: displayAdultContent,
         airingNotifications: airingNotifications,
         advancedScoringEnabled: advancedScoringEnabled,
+        restrictMessagesToFollowing: restrictMessagesToFollowing,
         advancedScores: [...advancedScores],
         animeCustomLists: [...animeCustomLists],
         mangaCustomLists: [...mangaCustomLists],
@@ -139,6 +144,7 @@ class UserSettings {
         'advancedScoringEnabled': advancedScoringEnabled,
         'splitCompletedAnime': splitCompletedAnime,
         'splitCompletedManga': splitCompletedManga,
+        'restrictMessagesToFollowing': restrictMessagesToFollowing,
         'airingNotifications': airingNotifications,
         'notificationOptions': notificationOptions.entries
             .map((e) => {'type': e.key.name, 'enabled': e.value})

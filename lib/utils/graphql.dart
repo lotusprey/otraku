@@ -646,11 +646,12 @@ abstract class GqlMutation {
     mutation UpdateSettings($titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
         $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
         $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
-        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean, $advancedScoring: [String]) {
+        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $restrictMessagesToFollowing: Boolean,
+        $advancedScoringEnabled: Boolean, $advancedScoring: [String]) {
       UpdateUser(titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
           activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
-          airingNotifications: $airingNotifications, scoreFormat: $scoreFormat,
-          rowOrder: $rowOrder, notificationOptions: $notificationOptions,
+          airingNotifications: $airingNotifications, restrictMessagesToFollowing: $restrictMessagesToFollowing,
+          scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
           animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, 
           advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
           mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
@@ -776,6 +777,7 @@ abstract class _GqlFragment {
         displayAdultContent
         airingNotifications
         notificationOptions {type enabled}
+        restrictMessagesToFollowing
       }
       mediaListOptions {
         scoreFormat

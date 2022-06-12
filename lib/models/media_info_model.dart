@@ -39,6 +39,7 @@ class MediaInfoModel {
   final String? hashtag;
   final String? siteUrl;
   final String? countryOfOrigin;
+  final bool isAdult;
 
   MediaInfoModel._({
     required this.id,
@@ -73,6 +74,7 @@ class MediaInfoModel {
     required this.hashtag,
     required this.siteUrl,
     required this.countryOfOrigin,
+    required this.isAdult,
   });
 
   factory MediaInfoModel(Map<String, dynamic> map) {
@@ -125,6 +127,7 @@ class MediaInfoModel {
       hashtag: map['hashtag'],
       siteUrl: map['siteUrl'],
       countryOfOrigin: Convert.countryCodes[map['countryOfOrigin']],
+      isAdult: map['isAdult'] ?? false,
     );
 
     if (map['studios'] != null) {

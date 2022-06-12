@@ -41,7 +41,7 @@ class MediaInfoView extends StatelessWidget {
       'Popularity',
       'Favourites',
       'Source',
-      'Origin'
+      'Origin',
     ];
 
     final infoData = [
@@ -179,6 +179,10 @@ class MediaInfoView extends StatelessWidget {
                 explorable: Explorable.studio,
               ),
             ),
+          if (info.hashtag != null) ...[
+            const _Section('Hashtag'),
+            _Titles([info.hashtag!]),
+          ],
           if (info.romajiTitle != null) ...[
             const _Section('Romaji'),
             _Titles([info.romajiTitle!]),

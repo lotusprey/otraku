@@ -744,6 +744,8 @@ abstract class _GqlFragment {
       coverImage {extraLarge large medium}
       nextAiringEpisode {episode airingAt}
       countryOfOrigin
+      isAdult
+      hashtag
       genres
       tags {id}
     }

@@ -20,6 +20,8 @@ class MediaHeader extends StatelessWidget {
 
     final textRailItems = <String, bool>{};
     if (info != null) {
+      if (info.isAdult) textRailItems['Adult'] = true;
+
       if (info.format != null)
         textRailItems[Convert.clarifyEnum(info.format)!] = false;
 

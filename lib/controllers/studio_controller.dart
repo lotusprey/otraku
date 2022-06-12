@@ -43,7 +43,7 @@ class StudioController extends ScrollingController {
   }
 
   Future<void> refetch() async {
-    scrollCtrl.scrollUpTo(0);
+    scrollCtrl.scrollToTop();
 
     final data = await Api.request(
       GqlQuery.studio,

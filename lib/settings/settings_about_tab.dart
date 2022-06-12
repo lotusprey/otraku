@@ -3,7 +3,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
@@ -110,7 +109,6 @@ class SettingsAboutTab extends StatelessWidget {
             ),
           ),
         ),
-        const Footer(),
       ],
     );
   }

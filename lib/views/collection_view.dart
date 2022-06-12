@@ -67,7 +67,7 @@ class CollectionSubView extends StatefulWidget {
 }
 
 class _CollectionSubViewState extends State<CollectionSubView> {
-  void _scrollListener() => widget.scrollCtrl.scrollUpTo(0);
+  void _scrollListener() => widget.scrollCtrl.scrollToTop();
 
   @override
   void initState() {

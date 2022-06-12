@@ -37,9 +37,6 @@ class CharacterView extends StatelessWidget {
     if (coverWidth > 200) coverWidth = 200;
     final coverHeight = coverWidth / 0.7;
 
-    final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Consts.padding.top * 2;
-
     return GetBuilder<CharacterController>(
       id: CharacterController.ID_MAIN,
       init: CharacterController(id),
@@ -115,7 +112,7 @@ class CharacterView extends StatelessWidget {
                             initial: ctrl.onAnime,
                             onChanged: (bool val) {
                               ctrl.onAnime = val;
-                              ctrl.scrollCtrl.scrollUpTo(offset);
+                              ctrl.scrollCtrl.scrollToTop();
                             },
                           );
                         },
@@ -182,7 +179,7 @@ class _ActionButton extends StatelessWidget {
                 context,
                 DynamicGradientDragSheet(
                   onTap: (i) {
-                    ctrl.scrollCtrl.scrollUpTo(0);
+                    ctrl.scrollCtrl.scrollToTop();
                     ctrl.langIndex = i;
                   },
                   children: [

@@ -65,9 +65,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
         current: _tab.index,
         onChanged: (page) {
           setState(() => _tab = FavoriteType.values.elementAt(page));
-          _ctrl.scrollUpTo(0);
+          _ctrl.scrollToTop();
         },
-        onSame: (_) => _ctrl.scrollUpTo(0),
+        onSame: (_) => _ctrl.scrollToTop(),
         items: const {
           'Anime': Ionicons.film_outline,
           'Manga': Ionicons.bookmark_outline,

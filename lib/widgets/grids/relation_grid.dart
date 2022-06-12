@@ -19,25 +19,18 @@ class RelationGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty)
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            placeholder,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ),
-      );
+      return SliverFillRemaining(child: Center(child: Text(placeholder)));
 
     return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        connections.isNotEmpty
-            ? (_, i) => _RelationTile(items[i], connections[i])
-            : (_, i) => _RelationTile(items[i], null),
-        childCount: items.length,
-      ),
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: connections.isEmpty ? 240 : 300,
         height: 115,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        connections.isNotEmpty
+            ? (context, i) => _RelationTile(items[i], connections[i])
+            : (context, i) => _RelationTile(items[i], null),
       ),
     );
   }

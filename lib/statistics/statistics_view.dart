@@ -91,7 +91,7 @@ class _StatisticsViewState extends State<StatisticsView> {
         current: _onAnime ? 0 : 1,
         onChanged: (page) =>
             setState(() => _onAnime = page == 0 ? true : false),
-        onSame: (_) => _ctrl.scrollUpTo(0),
+        onSame: (_) => _ctrl.scrollToTop(),
         items: const {
           'Anime': Ionicons.film_outline,
           'Manga': Ionicons.bookmark_outline,

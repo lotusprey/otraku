@@ -43,7 +43,7 @@ class CustomSliverHeader extends StatelessWidget {
         ? MediaQuery.of(context).size.width * 0.30
         : 100.0;
     final imageHeight = imageWidth * (squareImage ? 1 : Consts.coverHtoWRatio);
-    final bannerHeight = 200.0;
+    const bannerHeight = 200.0;
     final height = bannerHeight + imageHeight / 2;
 
     return SliverPersistentHeader(

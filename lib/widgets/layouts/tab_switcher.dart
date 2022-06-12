@@ -9,9 +9,12 @@ class TabSwitcher extends StatefulWidget {
     required this.onChanged,
   });
 
-  final void Function(int) onChanged;
   final List<Widget> children;
   final int current;
+
+  /// If [null] the tabs can't be swiped, but they will
+  /// still animate, when [current] is changed externally.
+  final void Function(int)? onChanged;
 
   @override
   State<TabSwitcher> createState() => _TabSwitcherState();
@@ -98,9 +101,12 @@ class _TabSwitcherState extends State<TabSwitcher> {
     return PageView(
       controller: _ctrl,
       children: widget.children,
+      physics: widget.onChanged == null
+          ? const NeverScrollableScrollPhysics()
+          : null,
       onPageChanged: (int i) {
         if (_busy) return;
-        widget.onChanged(i);
+        widget.onChanged?.call(i);
       },
     );
   }

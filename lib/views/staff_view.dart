@@ -36,9 +36,6 @@ class StaffView extends StatelessWidget {
     if (coverWidth > 200) coverWidth = 200;
     final coverHeight = coverWidth / 0.7;
 
-    final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Consts.padding.top * 2;
-
     return GetBuilder<StaffController>(
       id: StaffController.ID_MAIN,
       init: StaffController(id),
@@ -116,7 +113,7 @@ class StaffView extends StatelessWidget {
                           initial: ctrl.onCharacters,
                           onChanged: (bool value) {
                             ctrl.onCharacters = value;
-                            ctrl.scrollCtrl.scrollUpTo(offset);
+                            ctrl.scrollCtrl.scrollToTop();
                           },
                         );
                       },

@@ -79,7 +79,7 @@ class _SettingsViewState extends State<SettingsView> {
             topBar: TopBar(title: pageNames[_tabIndex]),
             bottomBar: BottomBarIconTabs(
               current: _tabIndex,
-              onSame: (_) => _ctrl.scrollUpTo(0),
+              onSame: (_) => _ctrl.scrollToTop(),
               onChanged: (i) => setState(() => _tabIndex = i),
               items: const {
                 'App': Ionicons.color_palette_outline,

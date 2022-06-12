@@ -81,7 +81,7 @@ class CharacterController extends ScrollingController {
   }
 
   Future<void> refetch() async {
-    scrollCtrl.scrollUpTo(0);
+    scrollCtrl.scrollToTop();
 
     final body = await Api.request(GqlQuery.character, {
       'id': id,

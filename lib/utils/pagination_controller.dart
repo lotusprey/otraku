@@ -35,16 +35,15 @@ class PaginationController extends ScrollController {
   }
 }
 
-// Scroll up to a certain offset with an animation.
+// Scroll up to the top with an animation.
 extension ScrollCommand on ScrollController {
-  Future<void> scrollUpTo(double offset) async {
-    if (!hasClients || positions.last.pixels <= offset) return;
+  Future<void> scrollToTop() async {
+    if (!hasClients || positions.last.pixels <= 0) return;
 
-    if (positions.last.pixels > offset + 100)
-      positions.last.jumpTo(offset + 100);
+    if (positions.last.pixels > 100) positions.last.jumpTo(100);
 
     await positions.last.animateTo(
-      offset,
+      0,
       duration: const Duration(milliseconds: 200),
       curve: Curves.decelerate,
     );

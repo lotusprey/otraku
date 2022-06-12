@@ -66,7 +66,7 @@ class StaffController extends ScrollingController {
   }
 
   Future<void> refetch() async {
-    scrollCtrl.scrollUpTo(0);
+    scrollCtrl.scrollToTop();
 
     final data = await Api.request(GqlQuery.staff, {
       'id': id,

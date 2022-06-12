@@ -71,7 +71,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
         onChanged: (page) {
           setState(() => _onFollowing = page == 0 ? true : false);
         },
-        onSame: (_) => _ctrl.scrollUpTo(0),
+        onSame: (_) => _ctrl.scrollToTop(),
         items: const {
           'Following': Ionicons.people_circle,
           'Followers': Ionicons.person_circle,

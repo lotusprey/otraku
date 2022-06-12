@@ -67,6 +67,10 @@ class _FloatingBarState extends State<FloatingBar>
   Widget build(BuildContext context) {
     if (!_visible) return const SizedBox();
 
+    final children = Settings().leftHanded
+        ? widget.children
+        : widget.children.reversed.toList();
+
     return Padding(
       padding: EdgeInsets.only(
         left: 15,
@@ -81,9 +85,12 @@ class _FloatingBarState extends State<FloatingBar>
             mainAxisAlignment: Settings().leftHanded
                 ? MainAxisAlignment.start
                 : MainAxisAlignment.end,
-            children: Settings().leftHanded
-                ? widget.children.reversed.toList()
-                : widget.children,
+            children: [
+              for (int i = 0; i < children.length; i++) ...[
+                const SizedBox(width: 10),
+                children[i],
+              ]
+            ],
           ),
         ),
       ),
@@ -91,7 +98,7 @@ class _FloatingBarState extends State<FloatingBar>
   }
 }
 
-const _actionButtonSize = 56.0;
+const actionButtonSize = 56.0;
 
 /// An [FloatingActionButton] implementation.
 class ActionButton extends StatelessWidget {
@@ -115,8 +122,8 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: _actionButtonSize,
-      height: _actionButtonSize,
+      width: actionButtonSize,
+      height: actionButtonSize,
       child: Tooltip(
         message: tooltip,
         child: DecoratedBox(
@@ -254,7 +261,7 @@ class ActionMenu extends StatefulWidget {
   });
 
   final void Function(int) onChanged;
-  final Map<String, IconData> items;
+  final List<String> items;
   final int current;
 
   @override
@@ -278,79 +285,81 @@ class _ActionMenuState extends State<ActionMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final full = constraints.maxWidth > widget.items.length * 150;
-        final itemWidth = full ? 150.0 : 60.0;
-
-        return Container(
-          height: Consts.tapTargetSize,
-          width: itemWidth * widget.items.length,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
-            borderRadius: Consts.borderRadiusMax,
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 5,
-                color:
-                    Theme.of(context).colorScheme.surfaceVariant.withAlpha(100),
+    final itemRow = Row(
+      children: [
+        for (int i = 0; i < widget.items.length; i++)
+          Flexible(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              child: Center(
+                child: Text(
+                  widget.items[i],
+                  overflow: TextOverflow.ellipsis,
+                  style: i != _index
+                      ? Theme.of(context).textTheme.headline2
+                      : Theme.of(context).textTheme.headline2?.copyWith(
+                            color: Theme.of(context).colorScheme.background,
+                          ),
+                ),
               ),
-            ],
+              onTap: () {
+                if (_index == i) return;
+                setState(() => _index = i);
+                widget.onChanged(i);
+              },
+            ),
           ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              AnimatedPositioned(
-                left: itemWidth * _index,
-                curve: Curves.easeOutCubic,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  width: itemWidth,
-                  height: Consts.tapTargetSize,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: Consts.borderRadiusMax,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.background,
-                      width: 5,
+      ],
+    );
+
+    return Flexible(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double itemWidth = (constraints.maxWidth - 20) / widget.items.length;
+          if (itemWidth > 150) itemWidth = 150;
+
+          return Container(
+            height: Consts.tapTargetSize,
+            width: itemWidth * widget.items.length,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: Consts.borderRadiusMax,
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 5,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceVariant
+                      .withAlpha(100),
+                ),
+              ],
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                AnimatedPositioned(
+                  left: itemWidth * _index,
+                  curve: Curves.easeOutCubic,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    width: itemWidth,
+                    height: Consts.tapTargetSize,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: Consts.borderRadiusMax,
+                      border: Border.all(
+                        width: 5,
+                        color: Theme.of(context).colorScheme.background,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  for (int i = 0; i < widget.items.length; i++)
-                    Flexible(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          if (_index == i) return;
-                          setState(() => _index = i);
-                          widget.onChanged(i);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              widget.items.values.elementAt(i),
-                              color: i != _index
-                                  ? Theme.of(context).colorScheme.onBackground
-                                  : Theme.of(context).colorScheme.onSurface,
-                            ),
-                            if (full) ...[
-                              const SizedBox(width: 5),
-                              Text(widget.items.keys.elementAt(i)),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+                itemRow,
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

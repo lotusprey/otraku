@@ -74,7 +74,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     switch (i) {
                       case HomeView.ANIME_LIST:
                         if (_ctrl.position.pixels > 0)
-                          _ctrl.scrollUpTo(0);
+                          _ctrl.scrollToTop();
                         else
                           animeCtrl.search == null
                               ? animeCtrl.search = ''
@@ -82,7 +82,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         return;
                       case HomeView.MANGA_LIST:
                         if (_ctrl.position.pixels > 0)
-                          _ctrl.scrollUpTo(0);
+                          _ctrl.scrollToTop();
                         else
                           mangaCtrl.search == null
                               ? mangaCtrl.search = ''
@@ -90,14 +90,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
                         return;
                       case HomeView.EXPLORE:
                         if (_ctrl.position.pixels > 0)
-                          _ctrl.scrollUpTo(0);
+                          _ctrl.scrollToTop();
                         else
                           exploreCtrl.search == null
                               ? exploreCtrl.search = ''
                               : exploreCtrl.search = null;
                         return;
                       default:
-                        _ctrl.scrollUpTo(0);
+                        _ctrl.scrollToTop();
                         return;
                     }
                   },

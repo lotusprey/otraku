@@ -9,37 +9,72 @@ import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
-abstract class MediaSocialView {
-  static List<Widget> children(BuildContext ctx, MediaController ctrl) {
+class MediaSocialView extends StatelessWidget {
+  MediaSocialView(this.ctrl);
+
+  final MediaController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
     final model = ctrl.model!;
 
-    return [
-      ShadowSliverAppBar([
-        Expanded(
-          child: TabSegments(
-            items: const {'Reviews': false, 'Stats': true},
-            initial: ctrl.socialTabToggled,
-            onChanged: (bool val) {
-              ctrl.scrollCtrl.scrollUpTo(0);
-              ctrl.socialTabToggled = val;
+    final scrollCtrl = context
+        .findAncestorStateOfType<NestedScrollViewState>()!
+        .innerController;
+
+    return PageLayout(
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [
+          ActionMenu(
+            items: const ['Reviews', 'Stats'],
+            current: ctrl.socialTabToggled ? 1 : 0,
+            onChanged: (i) {
+              scrollCtrl.scrollToTop();
+              ctrl.socialTabToggled = i == 1;
             },
           ),
-        ),
-      ]),
-      if (!ctrl.socialTabToggled)
-        _ReviewGrid(model.reviews.items, model.info.banner)
-      else ...[
-        if (model.stats.rankTexts.isNotEmpty)
-          _Ranks(model.stats.rankTexts, model.stats.rankTypes),
-        if (model.stats.scoreNames.isNotEmpty)
-          _Scores(model.stats.scoreNames, model.stats.scoreValues),
-        if (model.stats.statusNames.isNotEmpty)
-          _Statuses(model.stats.statusNames, model.stats.statusValues),
-      ],
-    ];
+        ],
+      ),
+      child: TabSwitcher(
+        onChanged: null,
+        current: ctrl.socialTabToggled ? 1 : 0,
+        children: [
+          CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              _ReviewGrid(model.reviews.items, model.info.banner),
+              SliverFooter(loading: model.reviews.hasNextPage),
+            ],
+          ),
+          CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              if (model.stats.rankTexts.isNotEmpty)
+                _Ranks(model.stats.rankTexts, model.stats.rankTypes),
+              if (model.stats.scoreNames.isNotEmpty)
+                _Scores(model.stats.scoreNames, model.stats.scoreValues),
+              if (model.stats.statusNames.isNotEmpty)
+                _Statuses(model.stats.statusNames, model.stats.statusValues),
+              const SliverFooter(),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -52,20 +87,20 @@ class _ReviewGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty)
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'No reviews',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ),
+      return const SliverFillRemaining(
+        child: Center(child: Text('No reviews')),
       );
 
     return SliverPadding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
       sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 300,
+          height: 140,
+        ),
         delegate: SliverChildBuilderDelegate(
-          (_, i) => Column(
+          childCount: items.length,
+          (context, i) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ExploreIndexer(
@@ -113,11 +148,6 @@ class _ReviewGrid extends StatelessWidget {
               ),
             ],
           ),
-          childCount: items.length,
-        ),
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 300,
-          height: 140,
         ),
       ),
     );
@@ -126,6 +156,7 @@ class _ReviewGrid extends StatelessWidget {
 
 class _Ranks extends StatelessWidget {
   _Ranks(this.rankTexts, this.rankTypes);
+
   final List<String> rankTexts;
   final List<bool> rankTypes;
 
@@ -149,8 +180,7 @@ class _Ranks extends StatelessWidget {
               children: [
                 Icon(
                   rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
-                  size: Consts.iconBig,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 const SizedBox(width: 5),
                 Expanded(
@@ -172,6 +202,7 @@ class _Ranks extends StatelessWidget {
 
 class _Scores extends StatelessWidget {
   _Scores(this.scoreNames, this.scoreValues);
+
   final List<int> scoreNames;
   final List<int> scoreValues;
 
@@ -187,6 +218,7 @@ class _Scores extends StatelessWidget {
 
 class _Statuses extends StatelessWidget {
   _Statuses(this.statusNames, this.statusValues);
+
   final List<String> statusNames;
   final List<int> statusValues;
 

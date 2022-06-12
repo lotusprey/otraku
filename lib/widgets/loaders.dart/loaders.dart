@@ -75,25 +75,15 @@ class SliverFooter extends StatelessWidget {
   final bool loading;
 
   @override
-  Widget build(BuildContext context) =>
-      SliverToBoxAdapter(child: Footer(loading: loading));
-}
-
-class Footer extends StatelessWidget {
-  const Footer({this.loading = false});
-
-  final bool loading;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.only(
-          top: 10,
-          bottom: PageLayout.of(context).bottomOffset + 10,
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.only(
+              top: 10,
+              bottom: PageLayout.of(context).bottomOffset + 10,
+            ),
+            child: loading ? const Loader() : null,
+          ),
         ),
-        child: loading ? const Loader() : null,
-      ),
-    );
-  }
+      );
 }

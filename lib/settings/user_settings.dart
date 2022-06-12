@@ -29,9 +29,7 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());
       if (data.isEmpty) return;
       state = UserSettings(data['UpdateUser']);
-    } catch (e) {
-      print(e);
-    }
+    } catch (_) {}
   }
 
   void nullifyUnread() => state = state.copy();

@@ -16,6 +16,7 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class InboxView extends StatelessWidget {
@@ -96,11 +97,8 @@ class InboxView extends StatelessWidget {
             children: [
               ActionMenu(
                 current: homeCtrl.onFeed ? 1 : 0,
-                onChanged: (page) => homeCtrl.onFeed = page == 1,
-                items: const {
-                  'Progress': Ionicons.tv_outline,
-                  'Feed': Ionicons.chatbubble_outline,
-                },
+                onChanged: (i) => homeCtrl.onFeed = i == 1,
+                items: const ['Progress', 'Feed'],
               ),
             ],
           ),
@@ -121,58 +119,16 @@ class InboxView extends StatelessWidget {
               notificationIcon,
             ],
           ),
-          child: _InboxTabView(homeCtrl, scrollCtrl),
+          child: TabSwitcher(
+            onChanged: null,
+            current: homeCtrl.onFeed ? 1 : 0,
+            children: [
+              _ProgressView(scrollCtrl),
+              ActivitiesSubView(null, scrollCtrl),
+            ],
+          ),
         );
       },
-    );
-  }
-}
-
-class _InboxTabView extends StatefulWidget {
-  const _InboxTabView(this.homeCtrl, this.scrollCtrl);
-
-  final HomeController homeCtrl;
-  final ScrollController scrollCtrl;
-
-  @override
-  State<_InboxTabView> createState() => __InboxTabViewState();
-}
-
-class __InboxTabViewState extends State<_InboxTabView> {
-  late final PageController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PageController(initialPage: widget.homeCtrl.onFeed ? 1 : 0);
-  }
-
-  @override
-  void didUpdateWidget(covariant _InboxTabView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _ctrl.animateToPage(
-      widget.homeCtrl.onFeed ? 1 : 0,
-      curve: Curves.easeOutExpo,
-      duration: const Duration(milliseconds: 200),
-    );
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PageView(
-      controller: _ctrl,
-      physics: const NeverScrollableScrollPhysics(),
-      onPageChanged: (page) => widget.homeCtrl.onFeed = page == 1,
-      children: [
-        _ProgressView(widget.scrollCtrl),
-        ActivitiesSubView(null, widget.scrollCtrl),
-      ],
     );
   }
 }

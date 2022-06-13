@@ -45,7 +45,7 @@ class User {
   factory User(Map<String, dynamic> map) => User._(
         id: map['id'],
         name: map['name'],
-        description: map['about'],
+        description: map['about'] ?? '',
         imageUrl: map['avatar']['large'],
         bannerUrl: map['bannerImage'],
         siteUrl: map['siteUrl'],

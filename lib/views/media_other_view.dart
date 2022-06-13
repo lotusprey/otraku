@@ -26,6 +26,7 @@ class MediaOtherView extends StatelessWidget {
     return PageLayout(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
+        centered: true,
         children: [
           ActionMenu(
             items: const ['Related', 'Recommended'],

@@ -94,6 +94,7 @@ class InboxView extends StatelessWidget {
         return PageLayout(
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
+            centered: true,
             children: [
               ActionMenu(
                 current: homeCtrl.onFeed ? 1 : 0,

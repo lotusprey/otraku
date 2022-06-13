@@ -1,6 +1,7 @@
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/models/tag_model.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
 
 class MediaInfoModel {
   final int id;
@@ -12,7 +13,8 @@ class MediaInfoModel {
   final String? englishTitle;
   final String? nativeTitle;
   final List<String> synonyms;
-  final String? cover;
+  final String cover;
+  final String extraLargeCover;
   final String? banner;
   final String description;
   final String? format;
@@ -37,6 +39,7 @@ class MediaInfoModel {
   final String? hashtag;
   final String? siteUrl;
   final String? countryOfOrigin;
+  final bool isAdult;
 
   MediaInfoModel._({
     required this.id,
@@ -49,6 +52,7 @@ class MediaInfoModel {
     required this.nativeTitle,
     required this.synonyms,
     required this.cover,
+    required this.extraLargeCover,
     required this.banner,
     required this.description,
     required this.format,
@@ -70,6 +74,7 @@ class MediaInfoModel {
     required this.hashtag,
     required this.siteUrl,
     required this.countryOfOrigin,
+    required this.isAdult,
   });
 
   factory MediaInfoModel(Map<String, dynamic> map) {
@@ -98,7 +103,8 @@ class MediaInfoModel {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      cover: map['coverImage']['extraLarge'] ?? map['coverImage']['extraLarge'],
+      cover: map['coverImage'][Settings().imageQuality],
+      extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       description: Convert.clearHtml(map['description']),
       format: Convert.clarifyEnum(map['format']),
@@ -120,7 +126,8 @@ class MediaInfoModel {
       source: Convert.clarifyEnum(map['source']),
       hashtag: map['hashtag'],
       siteUrl: map['siteUrl'],
-      countryOfOrigin: Convert.COUNTRY_CODES[map['countryOfOrigin']],
+      countryOfOrigin: Convert.countryCodes[map['countryOfOrigin']],
+      isAdult: map['isAdult'] ?? false,
     );
 
     if (map['studios'] != null) {

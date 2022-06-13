@@ -6,14 +6,14 @@ import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/staff_controller.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
-import 'package:otraku/widgets/layouts/relation_grid.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/grids/relation_grid.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/tab_segments.dart';
 import 'package:otraku/widgets/navigation/app_bars.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
@@ -35,9 +35,6 @@ class StaffView extends StatelessWidget {
     double coverWidth = MediaQuery.of(context).size.width * 0.35;
     if (coverWidth > 200) coverWidth = 200;
     final coverHeight = coverWidth / 0.7;
-
-    final offset = (axis == Axis.vertical ? coverHeight * 2 : coverHeight) +
-        Consts.PADDING.top * 2;
 
     return GetBuilder<StaffController>(
       id: StaffController.ID_MAIN,
@@ -68,7 +65,7 @@ class StaffView extends StatelessWidget {
                   text: ctrl.model?.name,
                 ),
                 SliverPadding(
-                  padding: Consts.PADDING,
+                  padding: Consts.padding,
                   sliver: SliverToBoxAdapter(
                     child: SizedBox(
                       height: axis == Axis.horizontal
@@ -83,7 +80,7 @@ class StaffView extends StatelessWidget {
                               child: Hero(
                                 tag: ctrl.id,
                                 child: ClipRRect(
-                                  borderRadius: Consts.BORDER_RAD_MIN,
+                                  borderRadius: Consts.borderRadiusMin,
                                   child: Image.network(
                                     imageUrl!,
                                     fit: BoxFit.cover,
@@ -116,7 +113,7 @@ class StaffView extends StatelessWidget {
                           initial: ctrl.onCharacters,
                           onChanged: (bool value) {
                             ctrl.onCharacters = value;
-                            ctrl.scrollCtrl.scrollUpTo(offset);
+                            ctrl.scrollCtrl.scrollToTop();
                           },
                         );
                       },
@@ -163,9 +160,9 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<StaffController>(
       tag: id.toString(),
-      builder: (ctrl) => FloatingListener(
+      builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
-        child: ActionButton(
+        child: ActionButtonOld(
           icon: Ionicons.funnel_outline,
           tooltip: 'Filter',
           onTap: () {
@@ -181,10 +178,10 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                initialHeight: Consts.tapTargetSize * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,
@@ -271,10 +268,10 @@ class _Details extends StatelessWidget {
                 child: Expanded(
                   child: GestureDetector(
                     child: Container(
-                      padding: Consts.PADDING,
+                      padding: Consts.padding,
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Text(
                         Convert.clearHtml(model.description),

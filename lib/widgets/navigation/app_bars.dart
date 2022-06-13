@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 
 class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -18,7 +19,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: _ShadowBody([
-        AppBarIcon(
+        TopBarIcon(
           icon: Ionicons.chevron_back_outline,
           tooltip: 'Close',
           onTap: () => Navigator.pop(context),
@@ -34,7 +35,7 @@ class ShadowAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(Consts.TAP_TARGET_SIZE);
+  Size get preferredSize => Size.fromHeight(Consts.tapTargetSize);
 }
 
 class ShadowSliverAppBar extends StatelessWidget {
@@ -63,10 +64,10 @@ class _ShadowSliverAppBarDelegate implements SliverPersistentHeaderDelegate {
       _ShadowBody(children);
 
   @override
-  double get maxExtent => Consts.TAP_TARGET_SIZE;
+  double get maxExtent => Consts.tapTargetSize;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -93,7 +94,7 @@ class _ShadowBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Consts.TAP_TARGET_SIZE,
+      height: Consts.tapTargetSize,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -140,8 +141,8 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(
-                  maxHeight: Consts.TAP_TARGET_SIZE,
-                  maxWidth: Consts.LAYOUT_BIG,
+                  maxHeight: Consts.tapTargetSize,
+                  maxWidth: Consts.layoutBig,
                 ),
                 child: Row(children: children),
               ),
@@ -151,10 +152,10 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
       );
 
   @override
-  double get maxExtent => Consts.TAP_TARGET_SIZE;
+  double get maxExtent => Consts.tapTargetSize;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -172,32 +173,4 @@ class _TranslucentAppBarDelegate implements SliverPersistentHeaderDelegate {
 
   @override
   TickerProvider? get vsync => null;
-}
-
-class AppBarIcon extends StatelessWidget {
-  final IconData icon;
-  final String tooltip;
-  final Color? colour;
-  final void Function() onTap;
-
-  const AppBarIcon({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-    this.colour,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(icon),
-      tooltip: tooltip,
-      onPressed: onTap,
-      iconSize: Consts.ICON_BIG,
-      splashColor: Colors.transparent,
-      color: colour ?? Theme.of(context).colorScheme.onBackground,
-      constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
-      padding: Consts.PADDING,
-    );
-  }
 }

@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -26,7 +26,7 @@ class _AuthViewState extends State<AuthView> {
   void _verify(int account) {
     if (!_loading) setState(() => _loading = true);
 
-    Client.logIn(account).then((loggedIn) {
+    Api.logIn(account).then((loggedIn) {
       if (!loggedIn) {
         setState(() => _loading = false);
         return;
@@ -78,7 +78,7 @@ class _AuthViewState extends State<AuthView> {
         return;
       }
 
-      await Client.register(account, token, expiration);
+      await Api.register(account, token, expiration);
       _verify(account);
     });
 
@@ -115,9 +115,9 @@ class _AuthViewState extends State<AuthView> {
     return Scaffold(
       body: Container(
         alignment: Alignment.bottomCenter,
-        padding: Consts.PADDING,
+        padding: Consts.padding,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.LAYOUT_MEDIUM),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,10 +128,10 @@ class _AuthViewState extends State<AuthView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Row(
                   children: [
@@ -154,7 +154,7 @@ class _AuthViewState extends State<AuthView> {
                     ),
                     const Spacer(),
                     if (available0)
-                      AppBarIcon(
+                      TopBarIcon(
                         icon: Ionicons.close_circle_outline,
                         tooltip: 'Remove Account',
                         onTap: () => showPopUp(
@@ -163,12 +163,12 @@ class _AuthViewState extends State<AuthView> {
                             title: 'Remove Account?',
                             mainAction: 'Yes',
                             secondaryAction: 'No',
-                            onConfirm: () => Client.removeAccount(0)
+                            onConfirm: () => Api.removeAccount(0)
                                 .then((_) => setState(() {})),
                           ),
                         ),
                       ),
-                    AppBarIcon(
+                    TopBarIcon(
                       icon: Ionicons.enter_outline,
                       tooltip: available0 ? 'Log In' : 'Connect',
                       onTap: () =>
@@ -179,10 +179,10 @@ class _AuthViewState extends State<AuthView> {
               ),
               const SizedBox(height: 20),
               Container(
-                padding: Consts.PADDING,
+                padding: Consts.padding,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Row(
                   children: [
@@ -205,7 +205,7 @@ class _AuthViewState extends State<AuthView> {
                     ),
                     const Spacer(),
                     if (available1)
-                      AppBarIcon(
+                      TopBarIcon(
                         icon: Ionicons.close_circle_outline,
                         tooltip: 'Remove Account',
                         onTap: () => showPopUp(
@@ -214,12 +214,12 @@ class _AuthViewState extends State<AuthView> {
                             title: 'Remove Account?',
                             mainAction: 'Yes',
                             secondaryAction: 'No',
-                            onConfirm: () => Client.removeAccount(1)
+                            onConfirm: () => Api.removeAccount(1)
                                 .then((_) => setState(() {})),
                           ),
                         ),
                       ),
-                    AppBarIcon(
+                    TopBarIcon(
                       icon: Ionicons.enter_outline,
                       tooltip: available1 ? 'Log In' : 'Connect',
                       onTap: () =>

@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class CustomSliverHeader extends StatelessWidget {
@@ -16,12 +16,14 @@ class CustomSliverHeader extends StatelessWidget {
     required this.actions,
     required this.child,
     required this.heroId,
-    this.maxWidth = Consts.LAYOUT_BIG,
+    this.extraLargeImage,
+    this.maxWidth = Consts.layoutBig,
   });
 
   final String? title;
   final String? image;
   final String? banner;
+  final String? extraLargeImage;
   final bool squareImage;
   final bool implyLeading;
   final List<Widget> actions;
@@ -40,8 +42,8 @@ class CustomSliverHeader extends StatelessWidget {
     final imageWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.30
         : 100.0;
-    final imageHeight = imageWidth * (squareImage ? 1 : Consts.COVER_HW_RATIO);
-    final bannerHeight = 200.0;
+    final imageHeight = imageWidth * (squareImage ? 1 : Consts.coverHtoWRatio);
+    const bannerHeight = 200.0;
     final height = bannerHeight + imageHeight / 2;
 
     return SliverPersistentHeader(
@@ -49,6 +51,7 @@ class CustomSliverHeader extends StatelessWidget {
       delegate: _Delegate(
         title: title ?? '',
         image: image,
+        extraLargeImage: extraLargeImage,
         banner: banner,
         height: height,
         bannerHeight: bannerHeight,
@@ -68,6 +71,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   _Delegate({
     required this.title,
     required this.image,
+    required this.extraLargeImage,
     required this.banner,
     required this.height,
     required this.bannerHeight,
@@ -82,6 +86,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
   final String title;
   final String? image;
+  final String? extraLargeImage;
   final String? banner;
   final double height;
   final double bannerHeight;
@@ -174,7 +179,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                     child: Hero(
                       tag: heroId,
                       child: ClipRRect(
-                        borderRadius: Consts.BORDER_RAD_MIN,
+                        borderRadius: Consts.borderRadiusMin,
                         child: Container(
                           height: imageHeight,
                           width: imageWidth,
@@ -183,8 +188,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                               : null,
                           child: image != null
                               ? GestureDetector(
-                                  onTap: () =>
-                                      showPopUp(context, ImageDialog(image!)),
+                                  onTap: () => showPopUp(
+                                    context,
+                                    ImageDialog(extraLargeImage ?? image!),
+                                  ),
                                   child: FadeImage(
                                     image!,
                                     fit: complexImage
@@ -235,7 +242,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 children: [
                   implyLeading
                       ? IconShade(
-                          AppBarIcon(
+                          TopBarIcon(
                             tooltip: 'Close',
                             icon: Ionicons.chevron_back_outline,
                             onTap: Navigator.of(context).pop,
@@ -266,7 +273,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   double get maxExtent => height;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
@@ -305,6 +312,40 @@ class IconShade extends StatelessWidget {
         ],
       ),
       child: child,
+    );
+  }
+}
+
+class TextRail extends StatelessWidget {
+  const TextRail(this.items);
+
+  final Map<String, bool> items;
+
+  @override
+  Widget build(BuildContext context) {
+    const spacing = TextSpan(text: ' • ');
+
+    return RichText(
+      text: TextSpan(
+        style: Theme.of(context).textTheme.subtitle1,
+        children: [
+          for (int i = 0; i < items.length - 1; i++) ...[
+            TextSpan(
+              text: items.keys.elementAt(i),
+              style: items.values.elementAt(i)
+                  ? Theme.of(context).textTheme.bodyText1
+                  : null,
+            ),
+            spacing,
+          ],
+          TextSpan(
+            text: items.keys.last,
+            style: items.values.last
+                ? Theme.of(context).textTheme.bodyText1
+                : null,
+          ),
+        ],
+      ),
     );
   }
 }

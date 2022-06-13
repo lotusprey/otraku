@@ -1,26 +1,21 @@
+import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/models/media_model.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
 
-class MediaController extends ScrollingController {
-  // Tabs.
-  static const INFO = 0;
-  static const OTHER = 1;
-  static const PEOPLE = 2;
-  static const SOCIAL = 3;
-
+class MediaController extends GetxController {
   // GetBuilder ids.
   static const ID_BASE = 0;
-  static const ID_OUTER = 1;
-  static const ID_INNER = 2;
+  static const ID_INNER = 1;
+  static const ID_LANG = 2;
 
-  MediaController(this.id);
+  MediaController(this.id, this.settings);
 
   final int id;
+  final UserSettings settings;
   MediaModel? _model;
-  int _tab = INFO;
   bool _otherTabToggled = false;
   bool _peopleTabToggled = false;
   bool _socialTabToggled = false;
@@ -36,12 +31,6 @@ class MediaController extends ScrollingController {
     update([ID_INNER]);
   }
 
-  int get tab => _tab;
-  set tab(int val) {
-    _tab = val;
-    update([ID_OUTER]);
-  }
-
   bool get otherTabToggled => _otherTabToggled;
   set otherTabToggled(bool val) {
     _otherTabToggled = val;
@@ -51,7 +40,7 @@ class MediaController extends ScrollingController {
   bool get peopleTabToggled => _peopleTabToggled;
   set peopleTabToggled(bool val) {
     _peopleTabToggled = val;
-    update([ID_OUTER]);
+    update([ID_INNER, ID_LANG]);
   }
 
   bool get socialTabToggled => _socialTabToggled;
@@ -67,7 +56,7 @@ class MediaController extends ScrollingController {
   Future<void> fetch() async {
     if (_model != null) return;
 
-    final result = await Client.request(GqlQuery.media, {
+    final result = await Api.request(GqlQuery.media, {
       'id': id,
       'withMain': true,
       'withDetails': true,
@@ -78,7 +67,7 @@ class MediaController extends ScrollingController {
     });
     if (result == null) return;
 
-    _model = MediaModel(result['Media']);
+    _model = MediaModel(result['Media'], settings);
     _model!.addRecommendations(result['Media']);
     _model!.addCharacters(result['Media'], languages);
     _model!.addStaff(result['Media']);
@@ -86,73 +75,69 @@ class MediaController extends ScrollingController {
     update([ID_BASE]);
   }
 
-  @override
-  Future<void> fetchPage() async {
-    if (_model == null) return;
+  Future<void> fetchRecommendations() async {
+    if (!_otherTabToggled || !_model!.recommendations.hasNextPage) return;
 
-    switch (_tab) {
-      case OTHER:
-        if (!_otherTabToggled || !_model!.recommendations.hasNextPage) return;
+    final result = await Api.request(GqlQuery.media, {
+      'id': id,
+      'withRecommendations': true,
+      'recommendationPage': _model!.recommendations.nextPage,
+    });
 
-        final result = await Client.request(GqlQuery.media, {
-          'id': id,
-          'withRecommendations': true,
-          'recommendationPage': _model!.recommendations.nextPage,
-        });
+    if (result == null) return;
+    _model!.addRecommendations(result['Media']);
 
-        if (result == null) return;
-        _model!.addRecommendations(result['Media']);
+    update([ID_INNER]);
+  }
 
-        update([ID_INNER]);
-        return;
-      case PEOPLE:
-        if (!_peopleTabToggled) {
-          if (!_model!.characters.hasNextPage) return;
+  Future<void> fetchCharacters() async {
+    if (_peopleTabToggled || !_model!.characters.hasNextPage) return;
 
-          final result = await Client.request(GqlQuery.media, {
-            'id': id,
-            'withCharacters': true,
-            'characterPage': _model!.characters.nextPage,
-          });
+    final result = await Api.request(GqlQuery.media, {
+      'id': id,
+      'withCharacters': true,
+      'characterPage': _model!.characters.nextPage,
+    });
 
-          if (result == null) return;
-          _model!.addCharacters(result['Media'], languages);
-        } else {
-          if (!_model!.staff.hasNextPage) return;
+    if (result == null) return;
+    _model!.addCharacters(result['Media'], languages);
 
-          final result = await Client.request(GqlQuery.media, {
-            'id': id,
-            'withStaff': true,
-            'staffPage': _model!.staff.nextPage,
-          });
+    update([ID_INNER]);
+  }
 
-          if (result == null) return;
-          _model!.addStaff(result['Media']);
-        }
-        update([ID_INNER]);
-        return;
-      case SOCIAL:
-        if (_socialTabToggled || !_model!.reviews.hasNextPage) return;
+  Future<void> fetchStaff() async {
+    if (!_peopleTabToggled || !_model!.staff.hasNextPage) return;
 
-        final result = await Client.request(GqlQuery.media, {
-          'id': id,
-          'withReviews': true,
-          'reviewPage': _model!.reviews.nextPage,
-        });
+    final result = await Api.request(GqlQuery.media, {
+      'id': id,
+      'withStaff': true,
+      'staffPage': _model!.staff.nextPage,
+    });
 
-        if (result == null) return;
-        _model!.addReviews(result['Media']);
+    if (result == null) return;
+    _model!.addStaff(result['Media']);
 
-        update([ID_INNER]);
-        return;
-      default:
-        return;
-    }
+    update([ID_INNER]);
+  }
+
+  Future<void> fetchReviews() async {
+    if (_socialTabToggled || !_model!.reviews.hasNextPage) return;
+
+    final result = await Api.request(GqlQuery.media, {
+      'id': id,
+      'withReviews': true,
+      'reviewPage': _model!.reviews.nextPage,
+    });
+
+    if (result == null) return;
+    _model!.addReviews(result['Media']);
+
+    update([ID_INNER]);
   }
 
   Future<bool> toggleFavourite() async {
-    final data = await Client.request(
-      GqlMutation.toggleFavourite,
+    final data = await Api.request(
+      GqlMutation.toggleFavorite,
       {(_model!.info.type == Explorable.anime ? 'anime' : 'manga'): id},
     );
     if (data != null) _model!.info.isFavourite = !_model!.info.isFavourite;
@@ -160,7 +145,7 @@ class MediaController extends ScrollingController {
   }
 
   Future<bool> rateRecommendation(int recommendationId, bool? rating) async {
-    final data = await Client.request(GqlMutation.rateRecommendation, {
+    final data = await Api.request(GqlMutation.rateRecommendation, {
       'id': id,
       'recommendedId': recommendationId,
       'rating': rating == null

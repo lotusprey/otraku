@@ -6,15 +6,25 @@ import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class MediaInfoView {
-  static List<Widget> children(BuildContext context, MediaController ctrl) {
-    final model = ctrl.model!.info;
+class MediaInfoView extends StatelessWidget {
+  MediaInfoView(this.ctrl);
+
+  final MediaController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final info = ctrl.model!.info;
 
     final infoTitles = [
       'Format',
@@ -31,150 +41,232 @@ class MediaInfoView {
       'Popularity',
       'Favourites',
       'Source',
-      'Origin'
+      'Origin',
     ];
-    final infoChildren = [
-      model.format,
-      model.status,
-      model.episodes,
-      model.duration,
-      model.chapters,
-      model.volumes,
-      model.startDate,
-      model.endDate,
-      model.season,
-      model.averageScore,
-      model.meanScore,
-      model.popularity,
-      model.favourites,
-      model.source,
-      model.countryOfOrigin,
+
+    final infoData = [
+      info.format,
+      info.status,
+      info.episodes,
+      info.duration,
+      info.chapters,
+      info.volumes,
+      info.startDate,
+      info.endDate,
+      info.season,
+      info.averageScore,
+      info.meanScore,
+      info.popularity,
+      info.favourites,
+      info.source,
+      info.countryOfOrigin,
     ];
-    for (int i = infoChildren.length - 1; i >= 0; i--)
-      if (infoChildren[i] == null) {
-        infoChildren.removeAt(i);
+
+    for (int i = infoData.length - 1; i >= 0; i--)
+      if (infoData[i] == null) {
+        infoData.removeAt(i);
         infoTitles.removeAt(i);
       }
 
-    return [
-      if (model.description.isNotEmpty)
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: Consts.PADDING,
-            child: GestureDetector(
-              child: Container(
-                padding: Consts.PADDING,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.BORDER_RAD_MIN,
-                ),
-                child: Text(
-                  model.description,
-                  overflow: TextOverflow.fade,
-                  maxLines: 4,
-                ),
-              ),
-              onTap: () => showPopUp(
-                context,
-                TextDialog(title: 'Description', text: model.description),
-              ),
-            ),
+    final scrollCtrl = context
+        .findAncestorStateOfType<NestedScrollViewState>()!
+        .innerController;
+
+    return PageLayout(
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [_EditButton(ctrl), _FavoriteButton(ctrl)],
+      ),
+      child: CustomScrollView(
+        controller: scrollCtrl,
+        slivers: [
+          SliverOverlapInjector(
+            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
           ),
-        ),
-      SliverPadding(
-        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 5),
-        sliver: SliverGrid(
-          gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-            height: Consts.TAP_TARGET_SIZE,
-            minWidth: 130,
-          ),
-          delegate: SliverChildBuilderDelegate(
-            (_, i) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                borderRadius: Consts.BORDER_RAD_MIN,
-                color: Theme.of(context).colorScheme.surface,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    infoTitles[i],
-                    style: Theme.of(context).textTheme.subtitle1,
-                    maxLines: 1,
+          if (info.description.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: Consts.padding,
+                child: GestureDetector(
+                  child: Container(
+                    padding: Consts.padding,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: Consts.borderRadiusMin,
+                    ),
+                    child: Text(
+                      info.description,
+                      maxLines: 4,
+                      overflow: TextOverflow.fade,
+                    ),
                   ),
-                  Text(infoChildren[i].toString(), maxLines: 1),
-                ],
+                  onTap: () => showPopUp(
+                    context,
+                    TextDialog(title: 'Description', text: info.description),
+                  ),
+                ),
+              ),
+            )
+          else
+            const SizedBox(height: 10),
+          SliverPadding(
+            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+                height: Consts.tapTargetSize,
+                minWidth: 130,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, i) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: Consts.borderRadiusMin,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        infoTitles[i],
+                        maxLines: 1,
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                      Text(infoData[i].toString(), maxLines: 1),
+                    ],
+                  ),
+                ),
+                childCount: infoData.length,
               ),
             ),
-            childCount: infoChildren.length,
           ),
+          if (info.genres.isNotEmpty)
+            _ScrollCards(
+              title: 'Genres',
+              items: info.genres,
+              onTap: (i) {
+                final explCtrl = Get.find<ExploreController>();
+                explCtrl.filters.clear(false);
+                explCtrl.filters.genreIn.add(info.genres[i]);
+                explCtrl.type = info.type;
+                explCtrl.search = null;
+                Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+                Navigator.popUntil(context, (r) => r.isFirst);
+              },
+            ),
+          if (info.studios.isNotEmpty)
+            _ScrollCards(
+              title: 'Studios',
+              items: info.studios.keys.toList(),
+              onTap: (index) => ExploreIndexer.openView(
+                ctx: context,
+                id: info.studios[info.studios.keys.elementAt(index)]!,
+                imageUrl: info.studios.keys.elementAt(index),
+                explorable: Explorable.studio,
+              ),
+            ),
+          if (info.producers.isNotEmpty)
+            _ScrollCards(
+              title: 'Producers',
+              items: info.producers.keys.toList(),
+              onTap: (i) => ExploreIndexer.openView(
+                ctx: context,
+                id: info.producers[info.producers.keys.elementAt(i)]!,
+                imageUrl: info.producers.keys.elementAt(i),
+                explorable: Explorable.studio,
+              ),
+            ),
+          if (info.hashtag != null) ...[
+            const _Section('Hashtag'),
+            _Titles([info.hashtag!]),
+          ],
+          if (info.romajiTitle != null) ...[
+            const _Section('Romaji'),
+            _Titles([info.romajiTitle!]),
+          ],
+          if (info.englishTitle != null) ...[
+            const _Section('English'),
+            _Titles([info.englishTitle!]),
+          ],
+          if (info.nativeTitle != null) ...[
+            const _Section('Native'),
+            _Titles([info.nativeTitle!]),
+          ],
+          if (info.synonyms.isNotEmpty) ...[
+            const _Section('Synonyms'),
+            _Titles(info.synonyms),
+          ],
+          if (info.tags.isNotEmpty) ...[
+            const _Section('Tags'),
+            _Tags(ctrl),
+          ],
+          const SliverFooter(),
+        ],
+      ),
+    );
+  }
+}
+
+class _EditButton extends StatefulWidget {
+  _EditButton(this.ctrl);
+
+  final MediaController ctrl;
+
+  @override
+  State<_EditButton> createState() => __EditButtonState();
+}
+
+class __EditButtonState extends State<_EditButton> {
+  @override
+  Widget build(BuildContext context) {
+    if (widget.ctrl.model == null) return const SizedBox();
+    final model = widget.ctrl.model!;
+
+    return ActionButton(
+      icon: model.edit.status == null ? Icons.add : Icons.edit,
+      tooltip: model.edit.status == null ? 'Add' : 'Edit',
+      onTap: () => showSheet(
+        context,
+        EditView(
+          model.info.id,
+          edit: model.edit,
+          callback: (edit) => setState(() => model.edit = edit),
         ),
       ),
-      if (model.genres.isNotEmpty)
-        _ScrollCards(
-          title: 'Genres',
-          items: model.genres,
-          onTap: (index) {
-            final explCtrl = Get.find<ExploreController>();
-            explCtrl.filters.clear(false);
-            explCtrl.filters.genreIn.add(model.genres[index]);
-            explCtrl.type = model.type;
-            explCtrl.search = null;
-            Get.find<HomeController>().homeTab = HomeView.EXPLORE;
-            Navigator.popUntil(context, (r) => r.isFirst);
-          },
-        ),
-      if (model.studios.isNotEmpty)
-        _ScrollCards(
-          title: 'Studios',
-          items: model.studios.keys.toList(),
-          onTap: (index) => ExploreIndexer.openView(
-            ctx: context,
-            id: model.studios[model.studios.keys.elementAt(index)]!,
-            imageUrl: model.studios.keys.elementAt(index),
-            explorable: Explorable.studio,
-          ),
-        ),
-      if (model.producers.isNotEmpty)
-        _ScrollCards(
-          title: 'Producers',
-          items: model.producers.keys.toList(),
-          onTap: (index) => ExploreIndexer.openView(
-            ctx: context,
-            id: model.producers[model.producers.keys.elementAt(index)]!,
-            imageUrl: model.producers.keys.elementAt(index),
-            explorable: Explorable.studio,
-          ),
-        ),
-      if (model.romajiTitle != null) ...[
-        const _Section('Romaji'),
-        _Titles([model.romajiTitle!]),
-      ],
-      if (model.englishTitle != null) ...[
-        const _Section('English'),
-        _Titles([model.englishTitle!]),
-      ],
-      if (model.nativeTitle != null) ...[
-        const _Section('Native'),
-        _Titles([model.nativeTitle!]),
-      ],
-      if (model.synonyms.isNotEmpty) ...[
-        const _Section('Synonyms'),
-        _Titles(model.synonyms),
-      ],
-      if (model.tags.isNotEmpty) ...[
-        const _Section('Tags'),
-        _Tags(ctrl),
-      ],
-    ];
+    );
+  }
+}
+
+class _FavoriteButton extends StatefulWidget {
+  _FavoriteButton(this.ctrl);
+
+  final MediaController ctrl;
+
+  @override
+  State<_FavoriteButton> createState() => __FavoriteButtonState();
+}
+
+class __FavoriteButtonState extends State<_FavoriteButton> {
+  @override
+  Widget build(BuildContext context) {
+    if (widget.ctrl.model == null) return const SizedBox();
+    final model = widget.ctrl.model!;
+
+    return ActionButton(
+      icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
+      tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
+      onTap: () => widget.ctrl.toggleFavourite().then((_) => setState(() {})),
+    );
   }
 }
 
 class _Section extends StatelessWidget {
-  final String title;
   const _Section(this.title);
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -188,15 +280,15 @@ class _Section extends StatelessWidget {
 }
 
 class _ScrollCards extends StatelessWidget {
-  final String title;
-  final List<String> items;
-  final void Function(int) onTap;
-
   _ScrollCards({
     required this.title,
     required this.items,
     required this.onTap,
   });
+
+  final String title;
+  final List<String> items;
+  final void Function(int) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -214,22 +306,22 @@ class _ScrollCards extends StatelessWidget {
               height: 40,
               child: ListView.builder(
                 padding: const EdgeInsets.only(left: 10),
-                physics: Consts.PHYSICS,
+                physics: Consts.physics,
                 scrollDirection: Axis.horizontal,
+                itemCount: items.length,
                 itemBuilder: (_, index) => GestureDetector(
                   onTap: () => onTap(index),
                   onLongPress: () => Toast.copy(context, items[index]),
                   child: Container(
                     margin: const EdgeInsets.only(right: 10),
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     decoration: BoxDecoration(
-                      borderRadius: Consts.BORDER_RAD_MIN,
+                      borderRadius: Consts.borderRadiusMin,
                       color: Theme.of(context).colorScheme.surface,
                     ),
                     child: Text(items[index]),
                   ),
                 ),
-                itemCount: items.length,
               ),
             ),
           ],
@@ -240,8 +332,9 @@ class _ScrollCards extends StatelessWidget {
 }
 
 class _Titles extends StatelessWidget {
-  final List<String> titles;
   _Titles(this.titles);
+
+  final List<String> titles;
 
   @override
   Widget build(BuildContext context) {
@@ -250,19 +343,19 @@ class _Titles extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => SizedBox(
-            height: Consts.TAP_TARGET_SIZE + 10,
+            height: Consts.tapTargetSize + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
               child: Container(
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
-                  borderRadius: Consts.BORDER_RAD_MIN,
+                  borderRadius: Consts.borderRadiusMin,
                   color: Theme.of(context).colorScheme.surface,
                 ),
                 child: SingleChildScrollView(
-                  padding: Consts.PADDING,
+                  padding: Consts.padding,
                   scrollDirection: Axis.horizontal,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   child: Center(child: Text(titles[i])),
                 ),
               ),
@@ -276,8 +369,10 @@ class _Titles extends StatelessWidget {
 }
 
 class _Tags extends StatefulWidget {
-  final MediaController ctrl;
   _Tags(this.ctrl);
+
+  final MediaController ctrl;
+
   @override
   __TagsState createState() => __TagsState();
 }
@@ -297,12 +392,10 @@ class __TagsState extends State<_Tags> {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = widget.ctrl;
-
     late SliverChildBuilderDelegate delegate;
 
     if (!_hasSpoilers) {
-      final tags = ctrl.model!.info.tags;
+      final tags = widget.ctrl.model!.info.tags;
 
       delegate = SliverChildBuilderDelegate(
         (_, i) => GestureDetector(
@@ -311,7 +404,7 @@ class __TagsState extends State<_Tags> {
             final explCtrl = Get.find<ExploreController>();
             explCtrl.filters.clear(false);
             explCtrl.filters.tagIn.add(tags[i].name);
-            explCtrl.type = ctrl.model!.info.type;
+            explCtrl.type = widget.ctrl.model!.info.type;
             explCtrl.search = null;
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
@@ -323,7 +416,7 @@ class __TagsState extends State<_Tags> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              borderRadius: Consts.BORDER_RAD_MIN,
+              borderRadius: Consts.borderRadiusMin,
               color: Theme.of(context).colorScheme.surface,
             ),
             child: Row(
@@ -347,9 +440,9 @@ class __TagsState extends State<_Tags> {
         childCount: tags.length,
       );
     } else {
-      final tags = ctrl.showSpoilerTags
-          ? ctrl.model!.info.tags
-          : ctrl.model!.info.tags.where((t) => !t.isSpoiler).toList();
+      final tags = widget.ctrl.showSpoilerTags
+          ? widget.ctrl.model!.info.tags
+          : widget.ctrl.model!.info.tags.where((t) => !t.isSpoiler).toList();
 
       final spoilerStyle = Theme.of(context)
           .textTheme
@@ -357,19 +450,23 @@ class __TagsState extends State<_Tags> {
           .copyWith(color: Theme.of(context).colorScheme.error);
 
       delegate = SliverChildBuilderDelegate(
+        childCount: tags.length + 1,
         (_, i) {
           if (i == tags.length)
-            return TextButton.icon(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                  Theme.of(context).colorScheme.surface,
+            return ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                primary: Theme.of(context).colorScheme.surface,
+                onPrimary: Theme.of(context).colorScheme.primary,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Consts.borderRadiusMin,
                 ),
               ),
               onPressed: () => setState(
-                () => ctrl.showSpoilerTags = !ctrl.showSpoilerTags,
+                () =>
+                    widget.ctrl.showSpoilerTags = !widget.ctrl.showSpoilerTags,
               ),
               icon: Icon(
-                ctrl.showSpoilerTags
+                widget.ctrl.showSpoilerTags
                     ? Ionicons.eye_off_outline
                     : Ionicons.eye_outline,
               ),
@@ -382,7 +479,7 @@ class __TagsState extends State<_Tags> {
               final explCtrl = Get.find<ExploreController>();
               explCtrl.filters.clear(false);
               explCtrl.filters.tagIn.add(tags[i].name);
-              explCtrl.type = ctrl.model!.info.type;
+              explCtrl.type = widget.ctrl.model!.info.type;
               explCtrl.search = null;
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigator.popUntil(context, (r) => r.isFirst);
@@ -394,7 +491,7 @@ class __TagsState extends State<_Tags> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                borderRadius: Consts.BORDER_RAD_MIN,
+                borderRadius: Consts.borderRadiusMin,
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Row(
@@ -402,9 +499,9 @@ class __TagsState extends State<_Tags> {
                   Expanded(
                     child: Text(
                       tags[i].name,
-                      style: tags[i].isSpoiler ? spoilerStyle : null,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      style: tags[i].isSpoiler ? spoilerStyle : null,
                     ),
                   ),
                   const SizedBox(width: 5),
@@ -417,18 +514,17 @@ class __TagsState extends State<_Tags> {
             ),
           );
         },
-        childCount: tags.length + 1,
       );
     }
 
     return SliverPadding(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
       sliver: SliverGrid(
+        delegate: delegate,
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.TAP_TARGET_SIZE,
+          height: Consts.tapTargetSize,
           minWidth: 175,
         ),
-        delegate: delegate,
       ),
     );
   }

@@ -7,10 +7,10 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/layouts/tile_grid.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/grids/tile_grid.dart';
+import 'package:otraku/widgets/layouts/action_button.dart';
 import 'package:otraku/widgets/navigation/top_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -23,40 +23,42 @@ class StudioView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.LAYOUT_BIG
-        ? (MediaQuery.of(context).size.width - Consts.LAYOUT_BIG) / 2
+    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
+        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
         : 10.0;
 
     return GetBuilder<StudioController>(
       init: StudioController(id),
       tag: id.toString(),
-      builder: (ctrl) => Scaffold(
-        floatingActionButton: ctrl.model != null ? _ActionButton(id) : null,
-        floatingActionButtonLocation: Settings().leftHanded
-            ? FloatingActionButtonLocation.startFloat
-            : FloatingActionButtonLocation.endFloat,
-        body: SafeArea(
-          bottom: false,
-          child: CustomScrollView(
-            controller: ctrl.scrollCtrl,
-            semanticChildCount: ctrl.media.mediaCount,
-            slivers: [
-              TopSliverHeader(
-                toggleFavourite: ctrl.toggleFavourite,
-                isFavourite: ctrl.model?.isFavourite,
-                favourites: ctrl.model?.favourites,
-                text: ctrl.model?.name,
-              ),
-              if (name != null)
+      builder: (ctrl) {
+        final text = ctrl.model?.name ?? name ?? '';
+
+        return Scaffold(
+          floatingActionButton: ctrl.model != null ? _ActionButton(id) : null,
+          floatingActionButtonLocation: Settings().leftHanded
+              ? FloatingActionButtonLocation.startFloat
+              : FloatingActionButtonLocation.endFloat,
+          body: SafeArea(
+            bottom: false,
+            child: CustomScrollView(
+              controller: ctrl.scrollCtrl,
+              semanticChildCount: ctrl.media.mediaCount,
+              slivers: [
+                TopSliverHeader(
+                  toggleFavourite: ctrl.toggleFavourite,
+                  isFavourite: ctrl.model?.isFavourite,
+                  favourites: ctrl.model?.favourites,
+                  text: text,
+                ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: Consts.PADDING,
+                    padding: Consts.padding,
                     child: GestureDetector(
-                      onTap: () => Toast.copy(context, name!),
+                      onTap: () => Toast.copy(context, text),
                       child: Hero(
                         tag: id,
                         child: Text(
-                          name!,
+                          text,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headline1,
                         ),
@@ -64,56 +66,52 @@ class StudioView extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (ctrl.model != null) ...[
-                if (ctrl.media.names.isEmpty)
-                  SliverFillRemaining(
-                    child: Center(
-                      child: Text(
-                        'No results',
-                        style: Theme.of(context).textTheme.subtitle1,
+                if (ctrl.model != null) ...[
+                  if (ctrl.media.names.isEmpty)
+                    SliverFillRemaining(
+                      child: Center(
+                        child: Text(
+                          'No results',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
                       ),
                     ),
-                  ),
-                if (ctrl.sort == MediaSort.START_DATE ||
-                    ctrl.sort == MediaSort.START_DATE_DESC ||
-                    ctrl.sort == MediaSort.END_DATE ||
-                    ctrl.sort == MediaSort.END_DATE_DESC) ...[
-                  for (int i = 0; i < ctrl.media.names.length; i++) ...[
+                  if (ctrl.sort == MediaSort.START_DATE ||
+                      ctrl.sort == MediaSort.START_DATE_DESC ||
+                      ctrl.sort == MediaSort.END_DATE ||
+                      ctrl.sort == MediaSort.END_DATE_DESC) ...[
+                    for (int i = 0; i < ctrl.media.names.length; i++) ...[
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: sidePadding,
+                            vertical: 10,
+                          ),
+                          child: Text(
+                            ctrl.media.names[i],
+                            style: Theme.of(context).textTheme.headline1,
+                          ),
+                        ),
+                      ),
+                      TileGrid(models: ctrl.media.groups[i]),
+                    ],
+                  ] else
+                    TileGrid(models: ctrl.media.joined),
+                  if (ctrl.media.hasNextPage)
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: sidePadding,
-                          vertical: 10,
-                        ),
-                        child: Text(
-                          ctrl.media.names[i],
-                          style: Theme.of(context).textTheme.headline1,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: const Loader(),
                         ),
                       ),
                     ),
-                    TileGrid(models: ctrl.media.groups[i]),
-                  ],
-                ] else
-                  TileGrid(models: ctrl.media.joined),
-                if (ctrl.media.hasNextPage)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Center(
-                        child: const Loader(),
-                      ),
-                    ),
-                  ),
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).viewPadding.bottom,
-                  ),
-                ),
+                ],
               ],
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -127,9 +125,9 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<StudioController>(
       tag: id.toString(),
-      builder: (ctrl) => FloatingListener(
+      builder: (ctrl) => FloatingActionListener(
         scrollCtrl: ctrl.scrollCtrl,
-        child: ActionButton(
+        child: ActionButtonOld(
           icon: Ionicons.funnel_outline,
           tooltip: 'Filter',
           onTap: () {
@@ -145,10 +143,10 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.TAP_TARGET_SIZE * 4,
+                initialHeight: Consts.tapTargetSize * 4,
                 builder: (context, scrollCtrl) => GridView(
                   controller: scrollCtrl,
-                  physics: Consts.PHYSICS,
+                  physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,

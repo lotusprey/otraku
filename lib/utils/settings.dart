@@ -19,6 +19,7 @@ class Settings {
     this._defaultAnimeSort,
     this._defaultMangaSort,
     this._defaultExploreSort,
+    this._imageQuality,
     this._confirmExit,
     this._leftHanded,
     this._analogueClock,
@@ -44,6 +45,7 @@ class Settings {
       EntrySort.values[_box.get(_DEFAULT_MANGA_SORT) ?? 0],
       MediaSort.values[
           _box.get(_DEFAULT_EXPLORE_SORT) ?? MediaSort.TRENDING_DESC.index],
+      _box.get(_IMAGE_QUALITY) ?? 'large',
       _box.get(_CONFIRM_EXIT) ?? false,
       _box.get(_LEFT_HANDED) ?? false,
       _box.get(_ANALOGUE_CLOCK) ?? false,
@@ -72,6 +74,7 @@ class Settings {
   static const _DEFAULT_ANIME_SORT = 'defaultAnimeSort';
   static const _DEFAULT_MANGA_SORT = 'defaultMangaSort';
   static const _DEFAULT_EXPLORE_SORT = 'defaultExploreSort';
+  static const _IMAGE_QUALITY = 'imageQuality';
   static const _CONFIRM_EXIT = 'confirmExit';
   static const _LEFT_HANDED = 'leftHanded';
   static const _ANALOGUE_CLOCK = 'analogueClock';
@@ -112,6 +115,7 @@ class Settings {
   EntrySort _defaultAnimeSort;
   EntrySort _defaultMangaSort;
   MediaSort _defaultExploreSort;
+  String _imageQuality;
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
@@ -134,6 +138,7 @@ class Settings {
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
   EntrySort get defaultMangaSort => _defaultMangaSort;
   MediaSort get defaultExploreSort => _defaultExploreSort;
+  String get imageQuality => _imageQuality;
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
@@ -186,14 +191,14 @@ class Settings {
   }
 
   set lightTheme(int v) {
-    if (v < 0 || v >= Theming.themeCount || v == _lightTheme) return;
+    if (v < 0 || v >= Theming.schemes.length || v == _lightTheme) return;
     _lightTheme = v;
     Theming().refresh();
     _box.put(_LIGHT_THEME, v);
   }
 
   set darkTheme(int v) {
-    if (v < 0 || v >= Theming.themeCount || v == _darkTheme) return;
+    if (v < 0 || v >= Theming.schemes.length || v == _darkTheme) return;
     _darkTheme = v;
     Theming().refresh();
     _box.put(_DARK_THEME, v);
@@ -223,6 +228,12 @@ class Settings {
   set defaultExploreSort(MediaSort v) {
     _defaultExploreSort = v;
     _box.put(_DEFAULT_EXPLORE_SORT, v.index);
+  }
+
+  set imageQuality(String v) {
+    if (v != 'extraLarge' && v != 'large' && v != 'medium') return;
+    _imageQuality = v;
+    _box.put(_IMAGE_QUALITY, v);
   }
 
   set confirmExit(bool v) {

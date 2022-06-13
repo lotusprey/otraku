@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/favourite_button.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 
 // This is to be merged into SliverShadowAppBar, after
 // changes in how favouriting is handled take place.
@@ -56,7 +57,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     if (shrinkPercentage > 1) shrinkPercentage = 1;
 
     return Container(
-      height: Consts.TAP_TARGET_SIZE,
+      height: Consts.tapTargetSize,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.background,
         boxShadow: [
@@ -69,9 +70,9 @@ class _Delegate implements SliverPersistentHeaderDelegate {
       ),
       child: Row(
         children: [
-          AppBarIcon(
+          TopBarIcon(
             tooltip: 'Close',
-            icon: Icons.close_rounded,
+            icon: Ionicons.chevron_back_outline,
             onTap: () => Navigator.pop(context),
           ),
           if (text != null && isFavourite != null && favourites != null) ...[
@@ -81,7 +82,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       opacity: shrinkPercentage,
                       child: Text(
                         text!,
-                        style: Theme.of(context).textTheme.headline2,
+                        style: Theme.of(context).textTheme.headline1,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -101,10 +102,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => Consts.TAP_TARGET_SIZE;
+  double get maxExtent => Consts.tapTargetSize;
 
   @override
-  double get minExtent => Consts.TAP_TARGET_SIZE;
+  double get minExtent => Consts.tapTargetSize;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

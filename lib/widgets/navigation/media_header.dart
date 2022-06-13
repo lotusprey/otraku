@@ -3,54 +3,50 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaHeader extends StatelessWidget {
+  MediaHeader({required this.ctrl, required this.imageUrl});
+
   final MediaController ctrl;
   final String? imageUrl;
-
-  MediaHeader({required this.ctrl, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
     final info = ctrl.model?.info;
 
-    final details = <TextSpan>[];
+    final textRailItems = <String, bool>{};
     if (info != null) {
-      if (info.format != null)
-        details.add(TextSpan(text: Convert.clarifyEnum(info.format)));
+      if (info.isAdult) textRailItems['Adult'] = true;
 
-      final status = ctrl.model?.entry.status;
+      if (info.format != null)
+        textRailItems[Convert.clarifyEnum(info.format)!] = false;
+
+      final status = ctrl.model?.edit.status;
       if (status != null)
-        details.add(TextSpan(
-          text: '${details.isEmpty ? "" : ' • '}'
-              '${Convert.adaptListStatus(status, info.type == Explorable.anime)}',
-        ));
+        textRailItems[Convert.adaptListStatus(
+          status,
+          info.type == Explorable.anime,
+        )] = false;
 
       if (info.airingAt != null)
-        details.add(TextSpan(
-          text: '${details.isEmpty ? "" : ' • '}'
-              'Ep ${info.nextEpisode} in '
-              '${Convert.timeUntilTimestamp(info.airingAt)}',
-        ));
+        textRailItems['Ep ${info.nextEpisode} in '
+            '${Convert.timeUntilTimestamp(info.airingAt)}'] = true;
 
       if (status != null) {
-        final progress = ctrl.model?.entry.progress ?? 0;
+        final progress = ctrl.model?.edit.progress ?? 0;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
-          details.add(TextSpan(
-            text: '${details.isEmpty ? "" : ' • '}'
-                '${info.nextEpisode! - 1 - progress} ep behind',
-            style: Theme.of(context).textTheme.bodyText1,
-          ));
+          textRailItems['${info.nextEpisode! - 1 - progress} ep behind'] = true;
       }
     }
 
     return CustomSliverHeader(
       title: info?.preferredTitle,
       image: info?.cover ?? imageUrl,
+      extraLargeImage: info?.extraLargeCover,
       banner: info?.banner,
       squareImage: false,
       implyLeading: true,
@@ -58,7 +54,7 @@ class MediaHeader extends StatelessWidget {
       maxWidth: null,
       actions: [
         if (info?.siteUrl != null)
-          IconShade(AppBarIcon(
+          IconShade(TopBarIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
@@ -89,15 +85,7 @@ class MediaHeader extends StatelessWidget {
                     overflow: TextOverflow.fade,
                   ),
                 ),
-                if (details.isNotEmpty) ...[
-                  const SizedBox(height: 5),
-                  RichText(
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.subtitle1,
-                      children: details,
-                    ),
-                  ),
-                ],
+                if (textRailItems.isNotEmpty) TextRail(textRailItems),
               ]
             : [],
       ),

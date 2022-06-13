@@ -1,61 +1,149 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/models/relation_model.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
-import 'package:otraku/widgets/layouts/relation_grid.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/grids/relation_grid.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
-class MediaPeopleView {
-  static List<Widget> children(BuildContext ctx, MediaController ctrl) {
-    late final RelationGrid grid;
+class MediaPeopleView extends StatelessWidget {
+  MediaPeopleView(this.ctrl);
 
-    if (!ctrl.peopleTabToggled) {
-      if (ctrl.languages.isEmpty) {
-        grid = RelationGrid(
-          items: ctrl.model!.characters.items,
-          placeholder: 'No Characters',
-        );
-      } else {
-        final characters = <RelationModel>[];
-        final voiceActors = <RelationModel?>[];
+  final MediaController ctrl;
 
-        ctrl.model!.selectCharactersAndVoiceActors(
-          ctrl.languages[ctrl.langIndex],
-          characters,
-          voiceActors,
-        );
+  @override
+  Widget build(BuildContext context) {
+    late final RelationGrid characterGrid;
 
-        grid = RelationGrid(
-          items: characters,
-          connections: voiceActors,
-          placeholder: 'No Characters',
-        );
-      }
+    if (ctrl.languages.isEmpty) {
+      characterGrid = RelationGrid(
+        placeholder: 'No Characters',
+        items: ctrl.model!.characters.items,
+      );
     } else {
-      grid = RelationGrid(
-        items: ctrl.model!.staff.items,
-        placeholder: 'No Staff',
+      final characters = <RelationModel>[];
+      final voiceActors = <RelationModel?>[];
+
+      ctrl.model!.selectCharactersAndVoiceActors(
+        ctrl.languages[ctrl.langIndex],
+        characters,
+        voiceActors,
+      );
+
+      characterGrid = RelationGrid(
+        placeholder: 'No Characters',
+        items: characters,
+        connections: voiceActors,
       );
     }
 
-    return [
-      ShadowSliverAppBar([
-        Expanded(
-          child: TabSegments(
-            items: const {'Characters': false, 'Staff': true},
-            initial: ctrl.peopleTabToggled,
-            onChanged: (bool val) {
-              ctrl.scrollCtrl.scrollUpTo(0);
-              ctrl.peopleTabToggled = val;
+    final scrollCtrl = context
+        .findAncestorStateOfType<NestedScrollViewState>()!
+        .innerController;
+
+    return PageLayout(
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [
+          ActionMenu(
+            items: const ['Characters', 'Staff'],
+            current: ctrl.peopleTabToggled ? 1 : 0,
+            onChanged: (i) {
+              scrollCtrl.scrollToTop();
+              ctrl.peopleTabToggled = i == 1;
             },
           ),
-        ),
-      ]),
-      SliverPadding(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-        sliver: grid,
+          _LanguageButton(ctrl.id, scrollCtrl),
+        ],
       ),
-    ];
+      child: TabSwitcher(
+        onChanged: null,
+        current: ctrl.peopleTabToggled ? 1 : 0,
+        children: [
+          CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                sliver: characterGrid,
+              ),
+              SliverFooter(loading: ctrl.model!.characters.hasNextPage),
+            ],
+          ),
+          CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                sliver: RelationGrid(
+                  placeholder: 'No Staff',
+                  items: ctrl.model!.staff.items,
+                ),
+              ),
+              SliverFooter(loading: ctrl.model!.staff.hasNextPage),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LanguageButton extends StatelessWidget {
+  _LanguageButton(this.id, this.scrollCtrl);
+
+  final int id;
+  final ScrollController scrollCtrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return GetBuilder<MediaController>(
+      id: MediaController.ID_LANG,
+      tag: id.toString(),
+      builder: (ctrl) {
+        if (ctrl.peopleTabToggled || ctrl.languages.length < 2)
+          return const SizedBox(
+            width: actionButtonSize,
+            height: actionButtonSize,
+          );
+
+        return ActionButton(
+          tooltip: 'Language',
+          icon: Ionicons.globe_outline,
+          onTap: () => showSheet(
+            context,
+            DynamicGradientDragSheet(
+              onTap: (i) {
+                scrollCtrl.scrollToTop();
+                ctrl.langIndex = i;
+              },
+              children: [
+                for (int i = 0; i < ctrl.languages.length; i++)
+                  Text(
+                    ctrl.languages[i],
+                    style: i != ctrl.langIndex
+                        ? Theme.of(context).textTheme.headline1
+                        : Theme.of(context).textTheme.headline1?.copyWith(
+                            color: Theme.of(context).colorScheme.primary),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

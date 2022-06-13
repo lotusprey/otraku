@@ -35,22 +35,6 @@ abstract class ScrollingController extends GetxController {
   }
 }
 
-// Scroll up to a certain offset with an animation.
-extension ScrollCommand on ScrollController {
-  Future<void> scrollUpTo(double offset) async {
-    if (!hasClients || positions.last.pixels <= offset) return;
-
-    if (positions.last.pixels > offset + 100)
-      positions.last.jumpTo(offset + 100);
-
-    await positions.last.animateTo(
-      offset,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.decelerate,
-    );
-  }
-}
-
 // To be deprecated.
 class MultiScrollController extends ScrollController {
   // Returns the last attached ScrollPosition.

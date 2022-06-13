@@ -16,6 +16,61 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
+  static const currentMedia = r'''
+    query CurrentMedia($userId: Int, $page: Int = 1) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        mediaList(userId: $userId, status: CURRENT) {
+          mediaId
+          progress
+          media {
+            type
+            episodes
+            chapters
+            status(version: 2)
+            nextAiringEpisode {episode}
+            title {userPreferred}
+            coverImage {extraLarge large medium}
+          }
+        }
+      }
+    }
+  ''';
+
+  static const entry = r'''
+    query Entry($userId: Int, $mediaId: Int) {
+      MediaList(userId: $userId, mediaId: $mediaId) {
+        status
+        progress
+        progressVolumes
+        score
+        repeat
+        notes
+        startedAt {year month day}
+        completedAt {year month day}
+        updatedAt
+        createdAt
+        media {
+          id
+          type
+          episodes
+          chapters
+          volumes
+          title {userPreferred english romaji native}
+          format
+          status(version: 2)
+          startDate {year month day}
+          endDate {year month day}
+          coverImage {extraLarge large medium}
+          nextAiringEpisode {episode airingAt}
+          countryOfOrigin
+          genres
+          tags {id}
+        }
+      }
+    }
+  ''';
+
   static const media = r'''
     query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
         $withRecommendations: Boolean = false, $withCharacters: Boolean = false,
@@ -60,7 +115,7 @@ abstract class GqlQuery {
             format
             title {userPreferred} 
             status(version: 2)
-            coverImage {extraLarge}
+            coverImage {extraLarge large medium}
           }
         }
       }
@@ -75,7 +130,7 @@ abstract class GqlQuery {
             id
             type
             title {userPreferred}
-            coverImage {extraLarge}
+            coverImage {extraLarge large medium}
           }
         }
       }
@@ -123,7 +178,7 @@ abstract class GqlQuery {
         genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
         onList: $onList, startDate_greater: $startDate_greater, startDate_lesser: $startDate_lesser,
         countryOfOrigin: $countryOfOrigin, source: $source, season: $season, sort: $sort) {
-          id type title {userPreferred} coverImage {extraLarge}
+          id type title {userPreferred} coverImage {extraLarge large medium}
         }
       }
     }
@@ -157,7 +212,7 @@ abstract class GqlQuery {
       edges {
         characterRole
         voiceActors(sort: [LANGUAGE]) {id name {userPreferred} image {large} languageV2}
-        node {id type title {userPreferred} coverImage {extraLarge}}
+        node {id type title {userPreferred} coverImage {extraLarge large medium}}
       }
     }
   ''';
@@ -186,7 +241,7 @@ abstract class GqlQuery {
               id
               type
               title {userPreferred}
-              coverImage {extraLarge}
+              coverImage {extraLarge large medium}
               format
             }
             characters {
@@ -204,7 +259,7 @@ abstract class GqlQuery {
               id
               type
               title {userPreferred}
-              coverImage {extraLarge}
+              coverImage {extraLarge large medium}
             }
           }
         }
@@ -249,7 +304,7 @@ abstract class GqlQuery {
           nodes {
             id
             title {userPreferred}
-            coverImage {extraLarge}
+            coverImage {extraLarge large medium}
             startDate {year}
             status(version: 2)
           }
@@ -263,7 +318,7 @@ abstract class GqlQuery {
     query Studios($page: Int, $search: String) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        studios(search: $search) {id name}
+        studios(search: $search, sort: FAVOURITES_DESC) {id name}
       }
     }
   ''';
@@ -279,17 +334,18 @@ abstract class GqlQuery {
         ratingAmount
         userRating
         createdAt
-        media {id type title {userPreferred} coverImage {extraLarge} bannerImage}
+        siteUrl
+        media {id type title {userPreferred} coverImage {extraLarge large medium} bannerImage}
         user {id name avatar {large}}
       }
     }
   ''';
 
   static const reviews = r'''
-    query Reviews($userId: Int, $page: Int = 1) {
+    query Reviews($userId: Int, $page: Int = 1, $sort: [ReviewSort] = [CREATED_AT_DESC]) {
       Page(page: $page) {
-        pageInfo {hasNextPage}
-        reviews(userId: $userId, sort: CREATED_AT_DESC) {
+        pageInfo {hasNextPage total}
+        reviews(userId: $userId, sort: $sort) {
           id
           summary 
           body(asHtml: true)
@@ -312,34 +368,22 @@ abstract class GqlQuery {
   ''';
 
   static const user = r'''
-      query User($id: Int, $page: Int = 1, $withMain: Boolean = false, $withStats: Boolean = false,
-        $withAnime: Boolean = false, $withManga: Boolean = false, $withCharacters: Boolean = false,
-        $withStaff: Boolean = false, $withStudios: Boolean = false) {
-        User(id: $id) {
-          ...main @include(if: $withMain)
-          statistics @include(if: $withStats) {anime {...stats} manga {...stats}}
-          favourites {
-            anime(page: $page) @include(if: $withAnime) {...media}
-            manga(page: $page) @include(if: $withManga) {...media}
-            characters(page: $page) @include(if: $withCharacters) {...character}
-            staff(page: $page) @include(if: $withStaff) {...staff}
-            studios(page: $page) @include(if: $withStudios) {...studio}
-          }
+      query User($userId: Int) {
+        User(id: $userId) {
+          id
+          name
+          about(asHtml: true)
+          avatar {large}
+          bannerImage
+          isFollowing
+          isFollower
+          isBlocked
+          siteUrl
+          donatorTier
+          donatorBadge
+          moderatorRoles
+          statistics {anime {...stats} manga {...stats}}
         }
-      }
-      fragment main on User {
-        id
-        name
-        about(asHtml: true)
-        avatar {large}
-        bannerImage
-        isFollowing
-        isFollower
-        isBlocked
-        siteUrl
-        donatorTier
-        donatorBadge
-        moderatorRoles
       }
       fragment stats on UserStatistics {
         count
@@ -355,21 +399,37 @@ abstract class GqlQuery {
         statuses {count meanScore minutesWatched chaptersRead status}
         countries {count meanScore minutesWatched chaptersRead country}
       }
-      fragment media on MediaConnection {pageInfo {hasNextPage} nodes {id title {userPreferred} coverImage {extraLarge}}}
-      fragment character on CharacterConnection {pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}}
-      fragment staff on StaffConnection {pageInfo {hasNextPage} nodes {id name {userPreferred} image {large}}}
-      fragment studio on StudioConnection {pageInfo {hasNextPage} nodes {id name}}
     ''';
 
+  static const favorites = r'''
+    query Favorites($userId: Int, $page: Int = 1, $withAnime: Boolean = false,
+      $withManga: Boolean = false, $withCharacters: Boolean = false,
+      $withStaff: Boolean = false, $withStudios: Boolean = false) {
+      User(id: $userId) {
+        favourites {
+          anime(page: $page) @include(if: $withAnime) {...media}
+          manga(page: $page) @include(if: $withManga) {...media}
+          characters(page: $page) @include(if: $withCharacters) {...character}
+          staff(page: $page) @include(if: $withStaff) {...staff}
+          studios(page: $page) @include(if: $withStudios) {...studio}
+        }
+      }
+    }
+    fragment media on MediaConnection {pageInfo {hasNextPage total} nodes {id title {userPreferred} coverImage {extraLarge large medium}}}
+    fragment character on CharacterConnection {pageInfo {hasNextPage total} nodes {id name {userPreferred} image {large}}}
+    fragment staff on StaffConnection {pageInfo {hasNextPage total} nodes {id name {userPreferred} image {large}}}
+    fragment studio on StudioConnection {pageInfo {hasNextPage total} nodes {id name}}
+  ''';
+
   static const friends = r'''
-    query Friends($id: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
+    query Friends($userId: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
       following: Page(page: $page) @include(if: $withFollowing) {
-        pageInfo {hasNextPage}
-        following(userId: $id, sort: USERNAME) {id name avatar {large}}
+        pageInfo {hasNextPage total}
+        following(userId: $userId, sort: USERNAME) {id name avatar {large}}
       }
       followers: Page(page: $page) @include(if: $withFollowers) {
-        pageInfo {hasNextPage}
-        followers(userId: $id, sort: USERNAME) {id name avatar {large}}
+        pageInfo {hasNextPage total}
+        followers(userId: $userId, sort: USERNAME) {id name avatar {large}}
       }
     }
   ''';
@@ -400,7 +460,7 @@ abstract class GqlQuery {
     query Activities($userId: Int, $page: Int = 1, $isFollowing: Boolean, $hasRepliesOrTypeText: Boolean, $typeIn: [ActivityType]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(userId: $userId, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: ID_DESC) {
+        activities(userId: $userId, isFollowing: $isFollowing, hasRepliesOrTypeText: $hasRepliesOrTypeText, type_in: $typeIn, sort: [PINNED, ID_DESC]) {
           ... on TextActivity {...textActivity}
           ... on ListActivity {...listActivity}
           ... on MessageActivity {...messageActivity}
@@ -518,14 +578,14 @@ abstract class GqlQuery {
           ... on RelatedMediaAdditionNotification {
             id
             type
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaDataChangeNotification {
             id
             type
             reason
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaMergeNotification {
@@ -533,7 +593,7 @@ abstract class GqlQuery {
             type
             reason
             deletedMediaTitles
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaDeletionNotification {
@@ -547,7 +607,7 @@ abstract class GqlQuery {
             id
             type
             episode
-            media {id type title {userPreferred} coverImage {extraLarge}}
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
         }
@@ -583,15 +643,17 @@ abstract class GqlMutation {
   ''';
 
   static const updateSettings = r'''
-    mutation UpdateSettings($about: String, $titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
+    mutation UpdateSettings($titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
         $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
         $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
-        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $advancedScoringEnabled: Boolean, $advancedScoring: [String]) {
-      UpdateUser(about: $about, titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
+        $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $restrictMessagesToFollowing: Boolean,
+        $advancedScoringEnabled: Boolean, $advancedScoring: [String], $disabledListActivity: [ListActivityOptionInput]) {
+      UpdateUser(titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
           activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
-          airingNotifications: $airingNotifications, scoreFormat: $scoreFormat,
-          rowOrder: $rowOrder, notificationOptions: $notificationOptions,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, 
+          airingNotifications: $airingNotifications, restrictMessagesToFollowing: $restrictMessagesToFollowing,
+          scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
+          disabledListActivity: $disabledListActivity,
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime,
           advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
           mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
         ...userSettings
@@ -600,8 +662,8 @@ abstract class GqlMutation {
   '''
       '${_GqlFragment.userSettings}';
 
-  static const toggleFavourite = r'''
-    mutation ToggleFavourite($anime: Int, $manga: Int, $character: Int, $staff: Int, $studio: Int) {
+  static const toggleFavorite = r'''
+    mutation ToggleFavorite($anime: Int, $manga: Int, $character: Int, $staff: Int, $studio: Int) {
       ToggleFavourite(animeId: $anime, mangaId: $manga, characterId: $character, staffId: $staff, studioId: $studio) {
         anime(page: 1, perPage: 1) {nodes{isFavourite}}
         manga(page: 1, perPage: 1) {nodes{isFavourite}}
@@ -652,6 +714,15 @@ abstract class GqlMutation {
     }
   ''';
 
+  static const toggleActivityPin = r'''
+    mutation ToggleActivityPin($id: Int, $pinned: Boolean) {
+      ToggleActivityPin(id: $id, pinned: $pinned) {
+        ... on ListActivity {isPinned}
+        ... on TextActivity {isPinned}
+      }
+    }
+  ''';
+
   static const deleteActivity = r'''
     mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
   ''';
@@ -670,9 +741,11 @@ abstract class _GqlFragment {
       status(version: 2)
       startDate {year month day}
       endDate {year month day}
-      coverImage {extraLarge}
+      coverImage {extraLarge large medium}
       nextAiringEpisode {episode airingAt}
       countryOfOrigin
+      isAdult
+      hashtag
       genres
       tags {id}
     }
@@ -707,6 +780,8 @@ abstract class _GqlFragment {
         displayAdultContent
         airingNotifications
         notificationOptions {type enabled}
+        restrictMessagesToFollowing
+        disabledListActivity {type disabled}
       }
       mediaListOptions {
         scoreFormat
@@ -725,6 +800,7 @@ abstract class _GqlFragment {
       likeCount
       isLiked
       isSubscribed
+      isPinned
       createdAt
       siteUrl
       user {id name avatar {large}}
@@ -740,10 +816,11 @@ abstract class _GqlFragment {
       likeCount
       isLiked
       isSubscribed
+      isPinned
       createdAt
       siteUrl
       user {id name avatar {large}}
-      media {id type title {userPreferred} coverImage {extraLarge} format}
+      media {id type title {userPreferred} coverImage {extraLarge large medium} format}
       progress
       status
     }

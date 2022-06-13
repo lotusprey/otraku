@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
-import 'package:otraku/utils/settings.dart';
-import 'package:otraku/views/edit_view.dart';
+import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
-import 'package:otraku/widgets/layouts/nav_layout.dart';
-import 'package:otraku/widgets/loaders.dart/loader.dart';
-import 'package:otraku/widgets/navigation/action_button.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/navigation/media_header.dart';
-import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaView extends StatelessWidget {
   MediaView(this.id, this.coverUrl);
@@ -22,183 +21,184 @@ class MediaView extends StatelessWidget {
   final String? coverUrl;
 
   @override
-  Widget build(BuildContext context) {
-    final footer =
-        SliverToBoxAdapter(child: SizedBox(height: NavLayout.offset(context)));
-
-    const keys = [ValueKey(0), ValueKey(1), ValueKey(2), ValueKey(3)];
-
-    return GetBuilder<MediaController>(
-      init: MediaController(id),
-      id: MediaController.ID_BASE,
-      tag: id.toString(),
-      builder: (ctrl) {
-        final header = MediaHeader(ctrl: ctrl, imageUrl: coverUrl);
-
-        if (ctrl.model == null)
-          return Scaffold(
-            body: SafeArea(
-              child: CustomScrollView(
-                slivers: [
-                  header,
-                  const SliverFillRemaining(child: Center(child: Loader())),
-                ],
-              ),
-            ),
-          );
-
-        return GetBuilder<MediaController>(
-          id: MediaController.ID_OUTER,
+  Widget build(BuildContext context) => Consumer(
+        builder: (context, ref, _) => GetBuilder<MediaController>(
+          init: MediaController(id, ref.watch(userSettingsProvider)),
+          id: MediaController.ID_BASE,
           tag: id.toString(),
-          builder: (_) => NavLayout(
-            navRow: NavIconRow(
-              index: ctrl.tab,
-              onChanged: (page) => ctrl.tab = page,
-              onSame: (_) => ctrl.scrollCtrl.scrollUpTo(0),
-              items: const {
-                'Info': Ionicons.book_outline,
-                'Other': Ionicons.layers_outline,
-                'People': Icons.emoji_people_outlined,
-                'Social': Ionicons.stats_chart_outline,
-              },
+          builder: (ctrl) => _MediaView(id, coverUrl, ctrl),
+        ),
+      );
+}
+
+class _MediaView extends ConsumerStatefulWidget {
+  _MediaView(this.id, this.coverUrl, this.ctrl);
+
+  final int id;
+  final String? coverUrl;
+  final MediaController ctrl;
+
+  @override
+  ConsumerState<_MediaView> createState() => __MediaViewState();
+}
+
+class __MediaViewState extends ConsumerState<_MediaView> {
+  late final PaginationController _innerCtrl;
+  final _outerCtrl = ScrollController();
+  int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _innerCtrl = PaginationController(loadMore: () {
+      switch (_tab) {
+        case 1:
+          widget.ctrl.fetchRecommendations();
+          return;
+        case 2:
+          widget.ctrl.peopleTabToggled
+              ? widget.ctrl.fetchStaff()
+              : widget.ctrl.fetchCharacters();
+          return;
+        case 3:
+          widget.ctrl.fetchReviews();
+          return;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _innerCtrl.dispose();
+    _outerCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageLayout(
+      bottomBar: BottomBarIconTabs(
+        current: _tab,
+        onChanged: (i) => setState(() => _tab = i),
+        onSame: (_) => _outerCtrl.scrollToTop(),
+        items: const {
+          'Info': Ionicons.book_outline,
+          'Other': Ionicons.layers_outline,
+          'People': Icons.emoji_people_outlined,
+          'Social': Ionicons.stats_chart_outline,
+        },
+      ),
+      child: Padding(
+        padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
+        child: NestedScrollView(
+          controller: _outerCtrl,
+          headerSliverBuilder: (context, _) => [
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: MediaHeader(ctrl: widget.ctrl, imageUrl: widget.coverUrl),
             ),
-            trySubtab: (goRight) {
-              if (ctrl.tab == MediaController.OTHER) {
-                if (goRight && !ctrl.otherTabToggled) {
-                  ctrl.scrollCtrl.scrollUpTo(0);
-                  ctrl.otherTabToggled = true;
-                  return true;
-                }
-                if (!goRight && ctrl.otherTabToggled) {
-                  ctrl.scrollCtrl.scrollUpTo(0);
-                  ctrl.otherTabToggled = false;
-                  return true;
-                }
-              }
-
-              if (ctrl.tab == MediaController.PEOPLE) {
-                if (goRight && !ctrl.peopleTabToggled) {
-                  ctrl.scrollCtrl.scrollUpTo(0);
-                  ctrl.peopleTabToggled = true;
-                  return true;
-                }
-                if (!goRight && ctrl.peopleTabToggled) {
-                  ctrl.scrollCtrl.scrollUpTo(0);
-                  ctrl.peopleTabToggled = false;
-                  return true;
-                }
-              }
-
-              if (ctrl.tab == MediaController.SOCIAL) {
-                if (goRight && !ctrl.socialTabToggled) {
-                  ctrl.scrollCtrl.scrollUpTo(0);
-                  ctrl.socialTabToggled = true;
-                  return true;
-                }
-                if (!goRight && ctrl.socialTabToggled) {
-                  ctrl.scrollCtrl.scrollUpTo(0);
-                  ctrl.socialTabToggled = false;
-                  return true;
-                }
-              }
-
-              return false;
-            },
-            floating: _ActionButtons(ctrl),
-            child: GetBuilder<MediaController>(
-              key: keys[ctrl.tab],
-              id: MediaController.ID_INNER,
-              tag: id.toString(),
-              builder: (_) => CustomScrollView(
-                controller: ctrl.scrollCtrl,
-                slivers: [
-                  header,
-                  if (ctrl.tab == MediaController.INFO)
-                    ...MediaInfoView.children(context, ctrl)
-                  else if (ctrl.tab == MediaController.OTHER)
-                    ...MediaOtherView.children(context, ctrl)
-                  else if (ctrl.tab == MediaController.PEOPLE)
-                    ...MediaPeopleView.children(context, ctrl)
-                  else
-                    ...MediaSocialView.children(context, ctrl),
-                  footer,
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+          ],
+          body: widget.ctrl.model != null
+              ? _MediaSubView(
+                  widget.id,
+                  widget.ctrl,
+                  _tab,
+                  (i) => setState(() => _tab = i),
+                )
+              : const Center(child: Loader()),
+        ),
+      ),
     );
   }
 }
 
-class _ActionButtons extends StatefulWidget {
-  _ActionButtons(this.ctrl);
+class _MediaSubView extends StatefulWidget {
+  _MediaSubView(this.id, this.ctrl, this.tab, this.onChanged);
 
+  final int id;
   final MediaController ctrl;
+  final int tab;
+  final void Function(int) onChanged;
 
   @override
-  __ActionButtonsState createState() => __ActionButtonsState();
+  State<_MediaSubView> createState() => __MediaSubViewState();
 }
 
-class __ActionButtonsState extends State<_ActionButtons> {
+/// I absolutely hate this, but due to limitations of the current
+/// [NestedScrollView], the custom [PaginationController] can't be
+/// used here and it has to be reimplemented temporarely.
+/// Hopefully, this will help https://github.com/flutter/flutter/pull/104166.
+class __MediaSubViewState extends State<_MediaSubView> {
+  bool _didInit = false;
+  double _lastMaxExtent = 0;
+  late final _scrollCtrl;
+
+  void _listener() {
+    final pos = _scrollCtrl.positions.last;
+    if (pos.pixels < pos.maxScrollExtent - 100) return;
+    if (_lastMaxExtent == pos.maxScrollExtent) return;
+
+    _lastMaxExtent = pos.maxScrollExtent;
+    switch (widget.tab) {
+      case 1:
+        widget.ctrl.fetchRecommendations();
+        return;
+      case 2:
+        widget.ctrl.peopleTabToggled
+            ? widget.ctrl.fetchStaff()
+            : widget.ctrl.fetchCharacters();
+        return;
+      case 3:
+        widget.ctrl.fetchReviews();
+        return;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollCtrl = context
+        .findAncestorStateOfType<NestedScrollViewState>()!
+        .innerController;
+  }
+
+  @override
+  void didUpdateWidget(covariant _MediaSubView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.tab != oldWidget.tab) _lastMaxExtent = 0;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didInit) return;
+    _didInit = true;
+    _scrollCtrl.addListener(_listener);
+    Get.find<MediaController>(tag: widget.id.toString())
+        .addListenerId(MediaController.ID_INNER, () => _lastMaxExtent = 0);
+  }
+
+  @override
+  void dispose() {
+    _scrollCtrl.removeListener(_listener);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final model = widget.ctrl.model!;
-
-    List<Widget> children = [
-      if (widget.ctrl.tab == MediaController.PEOPLE &&
-          !widget.ctrl.peopleTabToggled &&
-          widget.ctrl.languages.length > 1) ...[
-        ActionButton(
-          tooltip: 'Language',
-          icon: Ionicons.globe_outline,
-          onTap: () => showSheet(
-            context,
-            DynamicGradientDragSheet(
-              onTap: (i) {
-                widget.ctrl.scrollCtrl.scrollUpTo(0);
-                widget.ctrl.langIndex = i;
-              },
-              itemCount: widget.ctrl.languages.length,
-              itemBuilder: (_, i) => Text(
-                widget.ctrl.languages[i],
-                style: i != widget.ctrl.langIndex
-                    ? Theme.of(context).textTheme.headline1
-                    : Theme.of(context).textTheme.headline1?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-      ],
-      ActionButton(
-        icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
-        tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-        onTap: () => widget.ctrl.toggleFavourite().then((_) => setState(() {})),
+    return GetBuilder<MediaController>(
+      id: MediaController.ID_INNER,
+      tag: widget.id.toString(),
+      builder: (ctrl) => TabSwitcher(
+        current: widget.tab,
+        onChanged: widget.onChanged,
+        children: [
+          MediaInfoView(ctrl),
+          MediaOtherView(ctrl),
+          MediaPeopleView(ctrl),
+          MediaSocialView(ctrl),
+        ],
       ),
-      const SizedBox(width: 10),
-      ActionButton(
-        icon: model.entry.status == null ? Icons.add : Icons.edit,
-        tooltip: model.entry.status == null ? 'Add' : 'Edit',
-        onTap: () => showSheet(
-          context,
-          EditView(
-            model.info.id,
-            model: model.entry,
-            callback: (entry) => setState(() => model.entry = entry),
-          ),
-        ),
-      ),
-    ];
-
-    if (Settings().leftHanded) children = children.reversed.toList();
-
-    return FloatingListener(
-      scrollCtrl: widget.ctrl.scrollCtrl,
-      child: Row(mainAxisSize: MainAxisSize.min, children: children),
     );
   }
 }

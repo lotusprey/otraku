@@ -1,19 +1,19 @@
 import 'dart:math';
 
+import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/models/filter_model.dart';
-import 'package:otraku/models/list_model.dart';
-import 'package:otraku/models/edit_model.dart';
-import 'package:otraku/models/list_entry_model.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/collections/entry_list.dart';
+import 'package:otraku/edit/edit.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
 
-class CollectionController extends ScrollingController {
+class CollectionController extends GetxController {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
+  static const ID_SCROLLVIEW = 2;
 
   static final _random = Random();
 
@@ -25,8 +25,8 @@ class CollectionController extends ScrollingController {
 
   final int userId;
   final bool ofAnime;
-  final _lists = <ListModel>[];
-  final _entries = <ListEntryModel>[];
+  final _lists = <EntryList>[];
+  final _entries = <Entry>[];
   late final filters = CollectionFilterModel(ofAnime, _onFilterChange);
   int _listIndex = 0;
   bool _isLoading = true;
@@ -43,9 +43,9 @@ class CollectionController extends ScrollingController {
   String? get search => _search;
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
-  List<ListEntryModel> get entries => _entries;
+  List<Entry> get entries => _entries;
 
-  List<ListEntryModel> listWithStatus(ListStatus status) {
+  List<Entry> listWithStatus(EntryStatus status) {
     for (final l in _lists) if (l.status == status) return [...l.entries];
     return const [];
   }
@@ -77,7 +77,7 @@ class CollectionController extends ScrollingController {
   }
 
   /// Returns a random entry from [_entries].
-  ListEntryModel get random => _entries[_random.nextInt(_entries.length)];
+  Entry get random => _entries[_random.nextInt(_entries.length)];
 
   // Getters for the current list.
   String get currentName => _lists[_listIndex].name;
@@ -86,7 +86,7 @@ class CollectionController extends ScrollingController {
   set listIndex(int val) {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
-    scrollCtrl.scrollUpTo(0);
+    update([ID_SCROLLVIEW]);
     _filter(true);
   }
 
@@ -103,7 +103,7 @@ class CollectionController extends ScrollingController {
     final tagIdNotIn = filters.tagIdNotIn;
 
     final list = _lists[_listIndex];
-    final e = <ListEntryModel>[];
+    final e = <Entry>[];
 
     for (final entry in list.entries) {
       if (searchLower.isNotEmpty) {
@@ -169,7 +169,10 @@ class CollectionController extends ScrollingController {
 
     _entries.clear();
     _entries.addAll(e);
-    update([ID_BODY, if (updateHead) ID_HEAD]);
+    update([
+      ID_BODY,
+      if (updateHead) ...[ID_HEAD, ID_SCROLLVIEW]
+    ]);
   }
 
   // ***************************************************************************
@@ -177,7 +180,7 @@ class CollectionController extends ScrollingController {
   // ***************************************************************************
 
   Future<void> _fetch() async {
-    Map<String, dynamic>? data = await Client.request(
+    Map<String, dynamic>? data = await Api.request(
       GqlQuery.collection,
       {'userId': userId, 'type': ofAnime ? 'ANIME' : 'MANGA'},
     );
@@ -209,13 +212,14 @@ class CollectionController extends ScrollingController {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(filters.sort));
     }
 
     for (final l in data['lists'])
-      _lists.add(ListModel(l, splitCompleted)..sort(filters.sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(filters.sort));
 
-    scrollCtrl.scrollUpTo(0);
+    update([ID_SCROLLVIEW]);
+    update();
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
     _filter(true);
@@ -227,43 +231,34 @@ class CollectionController extends ScrollingController {
     await _fetch();
   }
 
-  Future<void> updateEntry(EditModel oldEntry, EditModel newEntry) async {
-    // Update database item. Due to AL API bug, the tags cannot be obtained
-    // from the [SaveMediaListEntry] mutation, so only half of the data is
-    // obtained from the first request. The other half comes from a second
-    // request.
-    final data = await Client.request(
-      GqlMutation.updateEntry,
-      newEntry.toMap(),
-    );
-    if (data == null) return;
-
-    final mediaData = await Client.request(
-      GqlQuery.media,
-      {'id': newEntry.mediaId, 'withMain': true},
-    );
-    if (mediaData == null) return;
-    data['SaveMediaListEntry']['media'] = mediaData['Media'];
-
-    final entry = ListEntryModel(data['SaveMediaListEntry']);
-
-    // Update the entry model (necessary for the updateEntry() caller).
-    newEntry.entryId = data['SaveMediaListEntry']['id'];
+  /// Fetch the new version of the [entry], replace
+  /// the old version in the lists and return [entry].
+  Future<Entry?> updateEntry(Edit oldEdit, Edit newEdit) async {
+    late final Entry entry;
+    try {
+      final data = await Api.get(
+        GqlQuery.entry,
+        {'userId': userId, 'mediaId': newEdit.mediaId},
+      );
+      entry = Entry(data['MediaList']);
+    } catch (e) {
+      return null;
+    }
 
     // Find from which custom lists to remove the item and in which to add it.
-    final oldCustomLists = oldEntry.customLists.entries
+    final oldCustomLists = oldEdit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
-    final newCustomLists = newEntry.customLists.entries
+    final newCustomLists = newEdit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
 
     // Remove from old status list.
-    if (oldEntry.status != null && !oldEntry.hiddenFromStatusLists)
+    if (oldEdit.status != null && !oldEdit.hiddenFromStatusLists)
       for (final list in _lists)
-        if (oldEntry.status == list.status &&
+        if (oldEdit.status == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.removeByMediaId(entry.mediaId);
@@ -281,10 +276,10 @@ class CollectionController extends ScrollingController {
           }
 
     // Add to new status list.
-    if (!newEntry.hiddenFromStatusLists) {
+    if (!newEdit.hiddenFromStatusLists) {
       bool added = false;
       for (final list in _lists)
-        if (entry.listStatus == list.status &&
+        if (entry.entryStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.insertSorted(entry, filters.sort);
@@ -293,7 +288,7 @@ class CollectionController extends ScrollingController {
         }
       if (!added) {
         _fetch();
-        return;
+        return entry;
       }
     }
 
@@ -308,39 +303,31 @@ class CollectionController extends ScrollingController {
           }
       if (newCustomLists.isNotEmpty) {
         _fetch();
-        return;
+        return entry;
       }
     }
 
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) {
-          _listIndex--;
-          scrollCtrl.scrollUpTo(0);
-        }
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i--);
       }
 
     _filter();
+    return entry;
   }
 
   /// When the progress of an entry is changed, this should be called
   /// to reflect it into the database. When reaching the last episode,
   /// [updateEntry] should be called instead.
-  Future<void> updateProgress(ListEntryModel model) async {
-    if (model.progressMax != null && model.progress > model.progressMax! - 1)
-      return;
-
-    final progress = model.progress;
-
-    // Update database item.
-    final data = await Client.request(
-      GqlMutation.updateProgress,
-      {'mediaId': model.mediaId, 'progress': progress},
-    );
-    if (data == null) return;
-
+  Future<void> updateProgress(
+    int mediaId,
+    int progress,
+    List<String> customLists,
+    EntryStatus? listStatus,
+    String? format,
+  ) async {
     final sorting = filters.sort;
     final needsSort = sorting == EntrySort.PROGRESS ||
         sorting == EntrySort.PROGRESS_DESC ||
@@ -350,12 +337,12 @@ class CollectionController extends ScrollingController {
     // Update status list.
     for (final list in _lists) {
       if (list.isCustomList ||
-          list.status != model.listStatus ||
+          list.status != listStatus ||
           (list.splitCompletedListFormat != null &&
-              list.splitCompletedListFormat != model.format)) continue;
+              list.splitCompletedListFormat != format)) continue;
 
       for (final entry in list.entries)
-        if (entry.mediaId == model.mediaId) {
+        if (entry.mediaId == mediaId) {
           entry.progress = progress;
           break;
         }
@@ -365,17 +352,12 @@ class CollectionController extends ScrollingController {
     }
 
     // Update custom lists.
-    final customLists = <String>[];
-    if (data['SaveMediaListEntry']?['customLists'] != null)
-      for (final e in data['SaveMediaListEntry']['customLists'].entries)
-        if (e.value) customLists.add(e.key.toString().toLowerCase());
-
     if (customLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < customLists.length; i++)
           if (list.isCustomList && customLists[i] == list.name.toLowerCase()) {
             for (final entry in list.entries)
-              if (entry.mediaId == model.mediaId) {
+              if (entry.mediaId == mediaId) {
                 entry.progress = progress;
                 break;
               }
@@ -386,33 +368,24 @@ class CollectionController extends ScrollingController {
           }
   }
 
-  Future<void> removeEntry(EditModel entry) async {
-    // Update database item.
-    final data = await Client.request(
-      GqlMutation.removeEntry,
-      {'entryId': entry.entryId},
-    );
-
-    if (data == null || data['DeleteMediaListEntry']['deleted'] == false)
-      return;
-
-    final customLists = entry.customLists.entries
+  Future<void> removeEntry(Edit edit) async {
+    final customLists = edit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
 
     // Remove from status list.
-    if (!entry.hiddenFromStatusLists)
+    if (!edit.hiddenFromStatusLists)
       for (final list in _lists)
-        if (!list.isCustomList && list.status == entry.status)
-          list.removeByMediaId(entry.mediaId);
+        if (!list.isCustomList && list.status == edit.status)
+          list.removeByMediaId(edit.mediaId);
 
     // Remove from custom lists.
     if (customLists.isNotEmpty)
       for (final list in _lists)
         for (int i = 0; i < customLists.length; i++)
           if (customLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(entry.mediaId);
+            list.removeByMediaId(edit.mediaId);
             customLists.removeAt(i);
             break;
           }
@@ -420,10 +393,7 @@ class CollectionController extends ScrollingController {
     // Remove empty lists.
     for (int i = 0; i < _lists.length; i++)
       if (_lists[i].entries.isEmpty) {
-        if (i <= _listIndex && _listIndex != 0) {
-          _listIndex--;
-          scrollCtrl.scrollUpTo(0);
-        }
+        if (i <= _listIndex && _listIndex != 0) _listIndex--;
         _lists.removeAt(i--);
       }
 

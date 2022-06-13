@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
 
 class FadeImage extends StatelessWidget {
   FadeImage(
@@ -25,8 +24,8 @@ class FadeImage extends StatelessWidget {
         width: width,
         height: height,
         alignment: alignment,
-        fadeInDuration: Consts.FADE_DURATION,
-        fadeOutDuration: Consts.FADE_DURATION,
+        fadeInDuration: const Duration(milliseconds: 300),
+        fadeOutDuration: const Duration(milliseconds: 300),
         placeholder: _transparentImage,
         imageErrorBuilder: (_, err, stackTrace) =>
             const SizedBox(height: 5, width: 5),

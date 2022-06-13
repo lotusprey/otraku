@@ -1,10 +1,11 @@
 import 'package:otraku/models/studio_model.dart';
-import 'package:otraku/utils/client.dart';
+import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/models/group_page_model.dart';
 import 'package:otraku/models/explorable_model.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/scrolling_controller.dart';
 
 class StudioController extends ScrollingController {
@@ -30,7 +31,7 @@ class StudioController extends ScrollingController {
   }
 
   Future<void> _fetch() async {
-    final data = await Client.request(
+    final data = await Api.request(
       GqlQuery.studio,
       {'id': id, 'withMain': true, 'sort': _sort.name},
     );
@@ -42,9 +43,9 @@ class StudioController extends ScrollingController {
   }
 
   Future<void> refetch() async {
-    scrollCtrl.scrollUpTo(0);
+    scrollCtrl.scrollToTop();
 
-    final data = await Client.request(
+    final data = await Api.request(
       GqlQuery.studio,
       {'id': id, 'sort': _sort.name, 'onList': _onList},
     );
@@ -58,7 +59,7 @@ class StudioController extends ScrollingController {
   Future<void> fetchPage() async {
     if (!_media.hasNextPage) return;
 
-    final data = await Client.request(
+    final data = await Api.request(
       GqlQuery.studio,
       {
         'id': id,
@@ -74,8 +75,7 @@ class StudioController extends ScrollingController {
   }
 
   Future<bool> toggleFavourite() async {
-    final data =
-        await Client.request(GqlMutation.toggleFavourite, {'studio': id});
+    final data = await Api.request(GqlMutation.toggleFavorite, {'studio': id});
     if (data != null) _model!.isFavourite = !_model!.isFavourite;
     return _model!.isFavourite;
   }

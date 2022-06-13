@@ -3,37 +3,73 @@ import 'package:otraku/models/recommended_model.dart';
 import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/utils/scrolling_controller.dart';
+import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/layouts/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
-class MediaOtherView {
-  static List<Widget> children(BuildContext ctx, MediaController ctrl) => [
-        ShadowSliverAppBar([
-          Expanded(
-            child: TabSegments(
-              items: const {'Relations': false, 'Recommendations': true},
-              initial: ctrl.otherTabToggled,
-              onChanged: (bool val) {
-                ctrl.scrollCtrl.scrollUpTo(0);
-                ctrl.otherTabToggled = val;
-              },
-            ),
+class MediaOtherView extends StatelessWidget {
+  MediaOtherView(this.ctrl);
+
+  final MediaController ctrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final scrollCtrl = context
+        .findAncestorStateOfType<NestedScrollViewState>()!
+        .innerController;
+
+    return PageLayout(
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [
+          ActionMenu(
+            items: const ['Related', 'Recommended'],
+            current: ctrl.otherTabToggled ? 1 : 0,
+            onChanged: (i) {
+              scrollCtrl.scrollToTop();
+              ctrl.otherTabToggled = i == 1;
+            },
           ),
-        ]),
-        SliverPadding(
-          padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-          sliver: !ctrl.otherTabToggled
-              ? _RelationsGrid(ctrl.model!.otherMedia)
-              : _RecommendationsGrid(
-                  ctrl.model!.recommendations.items,
-                  ctrl.rateRecommendation,
-                ),
-        ),
-      ];
+        ],
+      ),
+      child: TabSwitcher(
+        onChanged: null,
+        current: ctrl.otherTabToggled ? 1 : 0,
+        children: [
+          CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              _RelationsGrid(ctrl.model!.otherMedia),
+              const SliverFooter(),
+            ],
+          ),
+          CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              _RecommendationsGrid(
+                ctrl.model!.recommendations.items,
+                ctrl.rateRecommendation,
+              ),
+              SliverFooter(loading: ctrl.model!.recommendations.hasNextPage),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _RelationsGrid extends StatelessWidget {
@@ -43,88 +79,83 @@ class _RelationsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'No Relations',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
+    if (items.isEmpty) return const Center(child: Text('No Relations'));
+
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 230,
+          height: 100,
         ),
-      );
-
-    return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 230,
-        height: 100,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        (_, i) {
-          final details = <TextSpan>[
-            TextSpan(
-              text: items[i].relationType,
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            if (items[i].format != null)
-              TextSpan(text: ' • ${items[i].format!}'),
-            if (items[i].status != null)
-              TextSpan(text: ' • ${items[i].status!}'),
-          ];
-
-          return ExploreIndexer(
-            id: items[i].id,
-            imageUrl: items[i].imageUrl,
-            explorable: items[i].type,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: Consts.BORDER_RAD_MIN,
+        delegate: SliverChildBuilderDelegate(
+          childCount: items.length,
+          (context, i) {
+            final details = <TextSpan>[
+              TextSpan(
+                text: items[i].relationType,
+                style: Theme.of(context).textTheme.bodyText1,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Hero(
-                    tag: items[i].id,
-                    child: ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
-                      child: Container(
-                        color: Theme.of(context).colorScheme.surface,
-                        child: FadeImage(
-                          items[i].imageUrl,
-                          width: 100 / Consts.COVER_HW_RATIO,
+              if (items[i].format != null)
+                TextSpan(text: ' • ${items[i].format!}'),
+              if (items[i].status != null)
+                TextSpan(text: ' • ${items[i].status!}'),
+            ];
+
+            return ExploreIndexer(
+              id: items[i].id,
+              text: items[i].imageUrl,
+              explorable: items[i].type,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: Consts.borderRadiusMin,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Hero(
+                      tag: items[i].id,
+                      child: ClipRRect(
+                        borderRadius: Consts.borderRadiusMin,
+                        child: Container(
+                          color: Theme.of(context).colorScheme.surface,
+                          child: FadeImage(
+                            items[i].imageUrl,
+                            width: 100 / Consts.coverHtoWRatio,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: Consts.PADDING,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              items[i].title,
-                              overflow: TextOverflow.fade,
+                    Expanded(
+                      child: Padding(
+                        padding: Consts.padding,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                items[i].title,
+                                overflow: TextOverflow.fade,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 5),
-                          RichText(
-                            text: TextSpan(
-                              style: Theme.of(context).textTheme.subtitle1,
-                              children: details,
+                            const SizedBox(height: 5),
+                            RichText(
+                              text: TextSpan(
+                                style: Theme.of(context).textTheme.subtitle1,
+                                children: details,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-        childCount: items.length,
+            );
+          },
+        ),
       ),
     );
   }
@@ -139,66 +170,65 @@ class _RecommendationsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty)
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'No Recommendations',
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ),
+      return const SliverFillRemaining(
+        child: Center(child: Text('No Recommendations')),
       );
 
-    return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
-        minWidth: 100,
-        extraHeight: 70,
-        rawHWRatio: Consts.COVER_HW_RATIO,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        (_, i) => DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.BORDER_RAD_MIN,
-          ),
-          child: ExploreIndexer(
-            id: items[i].id,
-            explorable: items[i].type,
-            imageUrl: items[i].imageUrl,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Hero(
-                    tag: items[i].id,
-                    child: ClipRRect(
-                      borderRadius: Consts.BORDER_RAD_MIN,
-                      child: Container(
-                        color: Theme.of(context).colorScheme.surface,
-                        child: FadeImage(items[i].imageUrl!),
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
+          minWidth: 100,
+          extraHeight: 70,
+          rawHWRatio: Consts.coverHtoWRatio,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          childCount: items.length,
+          (context, i) => DecoratedBox(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: Consts.borderRadiusMin,
+            ),
+            child: ExploreIndexer(
+              id: items[i].id,
+              explorable: items[i].type,
+              text: items[i].imageUrl,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Hero(
+                      tag: items[i].id,
+                      child: ClipRRect(
+                        borderRadius: Consts.borderRadiusMin,
+                        child: Container(
+                          color: Theme.of(context).colorScheme.surface,
+                          child: FadeImage(items[i].imageUrl!),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: SizedBox(
-                    height: 35,
-                    child: Text(
-                      items[i].title,
-                      overflow: TextOverflow.fade,
-                      maxLines: 2,
-                      style: Theme.of(context).textTheme.bodyText2,
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: SizedBox(
+                      height: 35,
+                      child: Text(
+                        items[i].title,
+                        overflow: TextOverflow.fade,
+                        maxLines: 2,
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
-                  child: _Rating(items[i], rate),
-                ),
-              ],
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                    child: _Rating(items[i], rate),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        childCount: items.length,
       ),
     );
   }
@@ -252,7 +282,7 @@ class __RatingState extends State<_Rating> {
           },
           child: Icon(
             Icons.thumb_up_outlined,
-            size: Consts.ICON_SMALL,
+            size: Consts.iconSmall,
             color: widget.model.userRating == true
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onBackground,
@@ -293,7 +323,7 @@ class __RatingState extends State<_Rating> {
           },
           child: Icon(
             Icons.thumb_down_outlined,
-            size: Consts.ICON_SMALL,
+            size: Consts.iconSmall,
             color: widget.model.userRating == false
                 ? Theme.of(context).colorScheme.error
                 : Theme.of(context).colorScheme.onBackground,

@@ -1,8 +1,9 @@
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/models/recommended_model.dart';
 import 'package:otraku/models/relation_model.dart';
+import 'package:otraku/edit/edit.dart';
+import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_info_model.dart';
 import 'package:otraku/models/related_media_model.dart';
@@ -10,30 +11,26 @@ import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/models/page_model.dart';
 
 class MediaModel {
-  MediaModel._({
-    required this.info,
-    required this.entry,
-    required this.stats,
-    required this.otherMedia,
-  });
+  MediaModel._({required this.info, required this.edit, required this.stats});
 
-  factory MediaModel(final Map<String, dynamic> map) {
+  factory MediaModel(Map<String, dynamic> map, UserSettings settings) {
     final other = <RelatedMediaModel>[];
     for (final relation in map['relations']['edges'])
       if (relation['node'] != null) other.add(RelatedMediaModel(relation));
 
     return MediaModel._(
       info: MediaInfoModel(map),
-      entry: EditModel(map),
+      edit: Edit(map, settings),
       stats: MediaStatsModel(map),
-      otherMedia: other,
-    )..addReviews(map);
+    )
+      ..otherMedia.addAll(other)
+      ..addReviews(map);
   }
 
+  late Edit edit;
   final MediaInfoModel info;
-  late EditModel entry;
   final MediaStatsModel stats;
-  final List<RelatedMediaModel> otherMedia;
+  final otherMedia = <RelatedMediaModel>[];
   final recommendations = PageModel<RecommendedModel>();
   final staff = PageModel<RelationModel>();
   final reviews = PageModel<RelatedReviewModel>();

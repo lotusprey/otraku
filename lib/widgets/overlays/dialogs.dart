@@ -121,11 +121,10 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         if (secondaryAction != null)
           TextButton(
-            child: Text(
-              secondaryAction!,
-              style:
-                  TextStyle(color: Theme.of(context).colorScheme.onBackground),
+            style: TextButton.styleFrom(
+              primary: Theme.of(context).colorScheme.error,
             ),
+            child: Text(secondaryAction!),
             onPressed: () => Navigator.pop(context),
           ),
         TextButton(
@@ -150,11 +149,16 @@ class ImageDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      shape: const RoundedRectangleBorder(borderRadius: Consts.BORDER_RAD_MIN),
+      shape: const RoundedRectangleBorder(borderRadius: Consts.borderRadiusMin),
       backgroundColor: Colors.transparent,
       child: ClipRRect(
-        borderRadius: Consts.BORDER_RAD_MIN,
-        child: Image.network(url, fit: fit),
+        borderRadius: Consts.borderRadiusMin,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+          ),
+          child: Image.network(url, fit: fit),
+        ),
       ),
     );
   }
@@ -200,10 +204,10 @@ class _DialogColumn extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Consts.RADIUS_MIN),
+              borderRadius: const BorderRadius.vertical(top: Consts.radiusMin),
               color: Theme.of(context).colorScheme.background,
             ),
-            padding: Consts.PADDING,
+            padding: Consts.padding,
             child: Text(title, style: Theme.of(context).textTheme.subtitle1),
           ),
           Flexible(
@@ -212,12 +216,12 @@ class _DialogColumn extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius:
-                    const BorderRadius.vertical(bottom: Consts.RADIUS_MIN),
+                    const BorderRadius.vertical(bottom: Consts.radiusMin),
                 color: Theme.of(context).colorScheme.surface,
               ),
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: Consts.PADDING,
+                  padding: Consts.padding,
                   child: child,
                 ),
               ),

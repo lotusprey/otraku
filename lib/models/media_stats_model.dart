@@ -1,4 +1,4 @@
-import 'package:otraku/constants/list_status.dart';
+import 'package:otraku/collections/entry.dart';
 import 'package:otraku/utils/convert.dart';
 
 class MediaStatsModel {
@@ -61,7 +61,7 @@ class MediaStatsModel {
           model.statusNames.insert(
             index,
             Convert.adaptListStatus(
-              ListStatus.values.byName(s['status']),
+              EntryStatus.values.byName(s['status']),
               map['type'] == 'ANIME',
             ),
           );

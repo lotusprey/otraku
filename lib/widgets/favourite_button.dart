@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/widgets/navigation/app_bars.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
 
 class FavouriteButton extends StatefulWidget {
   final int favourites;
@@ -32,7 +32,7 @@ class _FavouriteButtonState extends State<FavouriteButton> {
             child: Text(widget.favourites.toString()),
           ),
         ],
-        AppBarIcon(
+        TopBarIcon(
           tooltip: _isFavourite ? 'UnFavourite' : 'Favourite',
           icon: _isFavourite ? Icons.favorite : Icons.favorite_border,
           onTap: () =>

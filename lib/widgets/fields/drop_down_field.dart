@@ -56,7 +56,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.BORDER_RAD_MIN,
+          borderRadius: Consts.borderRadiusMin,
         ),
         child: DropdownButton<T>(
           value: _value,

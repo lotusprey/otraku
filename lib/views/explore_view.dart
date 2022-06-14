@@ -39,68 +39,84 @@ class ExploreView extends StatelessWidget {
                     : null,
               ),
             ),
-            if (ctrl.type == Explorable.anime || ctrl.type == Explorable.manga)
-              FilterMediaToolButton(ctrl.filters)
-            else if (ctrl.type == Explorable.character ||
-                ctrl.type == Explorable.staff)
-              _BirthdayFilter(
-                value: ctrl.isBirthday,
-                onChanged: (val) => ctrl.isBirthday = val,
-              )
-            else
-              const SizedBox(width: 10),
-          ],
-        ),
-        child: CustomScrollView(
-          physics: Consts.physics,
-          controller: scrollCtrl,
-          slivers: [
-            SliverRefreshControl(
-              onRefresh: ctrl.fetch,
-              canRefresh: () => !ctrl.isLoading,
+            GetBuilder<ExploreController>(
+              id: ExploreController.ID_HEAD,
+              builder: (ctrl) {
+                if (ctrl.type == Explorable.anime ||
+                    ctrl.type == Explorable.manga)
+                  return FilterMediaToolButton(ctrl.filters);
+
+                if (ctrl.type == Explorable.character ||
+                    ctrl.type == Explorable.staff)
+                  return _BirthdayFilter(
+                    value: ctrl.isBirthday,
+                    onChanged: (val) => ctrl.isBirthday = val,
+                  );
+
+                return const SizedBox(width: 10);
+              },
             ),
-            const _ExploreGrid(),
-            SliverFooter(loading: ctrl.hasNextPage),
           ],
         ),
+        child: _ExploreGrid(ctrl, scrollCtrl),
       ),
     );
   }
 }
 
 class _ExploreGrid extends StatelessWidget {
-  const _ExploreGrid();
+  _ExploreGrid(this.ctrl, this.scrollCtrl);
+
+  final ExploreController ctrl;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
+    final refreshControl = SliverRefreshControl(
+      onRefresh: ctrl.fetch,
+      canRefresh: () => !ctrl.isLoading,
+    );
+
+    final footer = SliverFooter(loading: ctrl.hasNextPage);
+
     return GetBuilder<ExploreController>(
       id: ExploreController.ID_BODY,
       builder: (ctrl) {
-        if (ctrl.isLoading)
-          return const SliverFillRemaining(child: Center(child: Loader()));
+        if (ctrl.isLoading) return const Center(child: Loader());
 
         final results = ctrl.results;
-        if (results.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(
-              child: Text(
-                'No results',
-                style: Theme.of(context).textTheme.subtitle1,
-              ),
-            ),
-          );
-        }
+        if (results.isEmpty) return const Center(child: Text('No results'));
 
         if (results[0].explorable == Explorable.studio)
-          return TitleGrid(results);
+          return CustomScrollView(
+            physics: Consts.physics,
+            controller: scrollCtrl,
+            slivers: [refreshControl, TitleGrid(results), footer],
+          );
 
         if (results[0].explorable == Explorable.user)
-          return TileGrid(models: results, full: false);
+          return CustomScrollView(
+            physics: Consts.physics,
+            controller: scrollCtrl,
+            slivers: [
+              refreshControl,
+              TileGrid(models: results, full: false),
+              footer,
+            ],
+          );
 
         if (results[0].explorable == Explorable.review)
-          return ReviewGridOld(items: results);
+          return CustomScrollView(
+            physics: Consts.physics,
+            controller: scrollCtrl,
+            slivers: [refreshControl, ReviewGridOld(items: results), footer],
+          );
 
-        return TileGrid(models: results);
+        return CustomScrollView(
+          physics: Consts.physics,
+          controller: scrollCtrl,
+          slivers: [refreshControl, TileGrid(models: results), footer],
+        );
       },
     );
   }

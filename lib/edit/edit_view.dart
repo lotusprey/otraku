@@ -55,12 +55,12 @@ class EditView extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) {
+        final notifier = ref.watch(editProvider.notifier);
+
         ref.listen<AsyncValue<Edit>>(
           currentEditProvider(mediaId),
           (_, state) => state.whenOrNull(
             data: (data) {
-              final notifier = ref.watch(editProvider.notifier);
-
               if (notifier.state.mediaId < 0)
                 notifier.update((_) => _resolveData(data));
             },
@@ -438,7 +438,7 @@ class _EditView extends StatelessWidget {
         if (!settings.advancedScoringEnabled ||
             settings.scoreFormat != ScoreFormat.POINT_100 &&
                 settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL)
-          return const SizedBox();
+          return const SliverToBoxAdapter(child: SizedBox());
 
         final scores = ref.watch(editProvider.notifier).state.advancedScores;
 

@@ -48,6 +48,9 @@ class FriendsNotifier extends ChangeNotifier {
 
   Future<void> fetch() async {
     final onFollowing = _onFollowing;
+    if (onFollowing && !(_following.valueOrNull?.hasNext ?? true) ||
+        !onFollowing && !(_followers.valueOrNull?.hasNext ?? true)) return;
+
     var users = onFollowing ? _following : _followers;
 
     users = await AsyncValue.guard(() async {

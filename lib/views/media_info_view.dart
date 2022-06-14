@@ -153,6 +153,7 @@ class MediaInfoView extends StatelessWidget {
                 explCtrl.filters.genreIn.add(info.genres[i]);
                 explCtrl.type = info.type;
                 explCtrl.search = null;
+                explCtrl.fetch();
                 Get.find<HomeController>().homeTab = HomeView.EXPLORE;
                 Navigator.popUntil(context, (r) => r.isFirst);
               },
@@ -404,8 +405,9 @@ class __TagsState extends State<_Tags> {
             final explCtrl = Get.find<ExploreController>();
             explCtrl.filters.clear(false);
             explCtrl.filters.tagIn.add(tags[i].name);
-            explCtrl.type = widget.ctrl.model!.info.type;
             explCtrl.search = null;
+            explCtrl.type = widget.ctrl.model!.info.type;
+            explCtrl.fetch();
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
           },

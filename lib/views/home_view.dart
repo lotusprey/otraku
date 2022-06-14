@@ -53,6 +53,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return Consumer(
       builder: (context, ref, _) {
         ref.watch(userSettingsProvider.notifier);
+        ref.watch(activitiesProvider(null).select((_) => null));
+        ref.watch(userProvider(widget.id).select((_) => null));
 
         return GetBuilder<HomeController>(
           id: HomeController.ID_HOME,
@@ -170,9 +172,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   void initState() {
     super.initState();
-    ref.read(activitiesProvider(null));
-    ref.read(userProvider(widget.id));
-
     homeCtrl = Get.put(HomeController());
     progressCtrl = Get.put(ProgressController());
     exploreCtrl = Get.put(ExploreController());

@@ -80,7 +80,10 @@ class _RelationsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) return const Center(child: Text('No Relations'));
+    if (items.isEmpty)
+      return const SliverFillRemaining(
+        child: Center(child: Text('No Relations')),
+      );
 
     return SliverPadding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),

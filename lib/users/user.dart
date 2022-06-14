@@ -3,7 +3,6 @@ import 'package:otraku/statistics/user_statistics.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/settings.dart';
 
 /// Follow/Unfollow user.
 Future<bool> toggleFollow(int userId) async {
@@ -17,8 +16,6 @@ Future<bool> toggleFollow(int userId) async {
 
 final userProvider = FutureProvider.autoDispose.family<User, int>(
   (ref, userId) async {
-    if (userId == Settings().id) ref.keepAlive();
-
     final data = await Api.get(GqlQuery.user, {'userId': userId});
     return User(data['User']);
   },

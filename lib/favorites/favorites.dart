@@ -84,18 +84,23 @@ class FavoritesNotifier extends ChangeNotifier {
       variables['withStaff'] = true;
       variables['withStudios'] = true;
     } else if (type == FavoriteType.anime) {
+      if (!(_anime.valueOrNull?.hasNext ?? true)) return;
       variables['withAnime'] = true;
       variables['page'] = _anime.valueOrNull?.next ?? 1;
     } else if (type == FavoriteType.manga) {
+      if (!(_manga.valueOrNull?.hasNext ?? true)) return;
       variables['withManga'] = true;
       variables['page'] = _manga.valueOrNull?.next ?? 1;
     } else if (type == FavoriteType.characters) {
+      if (!(_characters.valueOrNull?.hasNext ?? true)) return;
       variables['withCharacters'] = true;
       variables['page'] = _characters.valueOrNull?.next ?? 1;
     } else if (type == FavoriteType.staff) {
+      if (!(_staff.valueOrNull?.hasNext ?? true)) return;
       variables['withStaff'] = true;
       variables['page'] = _staff.valueOrNull?.next ?? 1;
     } else {
+      if (!(_studios.valueOrNull?.hasNext ?? true)) return;
       variables['withStudios'] = true;
       variables['page'] = _studios.valueOrNull?.next ?? 1;
     }

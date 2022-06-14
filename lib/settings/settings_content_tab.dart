@@ -44,7 +44,7 @@ class SettingsContentTab extends StatelessWidget {
             padding: EdgeInsets.only(top: PageLayout.of(context).topOffset),
             sliver: SliverToBoxAdapter(
               child: CheckBoxField(
-                title: 'Restirct Messages to Following',
+                title: 'Restrict Messages to Following',
                 initial: settings.restrictMessagesToFollowing,
                 onChanged: (val) {
                   settings.restrictMessagesToFollowing = val;

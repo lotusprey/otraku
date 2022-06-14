@@ -7,6 +7,7 @@ import 'package:otraku/users/user.dart';
 import 'package:otraku/users/user_header.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
+import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/constants/consts.dart';
@@ -93,91 +94,94 @@ class UserSubView extends StatelessWidget {
 
             items.add(SliverPadding(
               padding: padding,
-              sliver: SliverGrid.extent(
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                maxCrossAxisExtent: 200,
-                childAspectRatio: 5,
-                children: [
-                  _Button(
-                    Ionicons.film,
-                    'Anime',
-                    () => id == Settings().id
-                        ? Get.find<HomeController>().homeTab =
-                            HomeView.ANIME_LIST
-                        : Navigator.pushNamed(
-                            context,
-                            RouteArg.collection,
-                            arguments: RouteArg(id: id, variant: true),
-                          ),
-                  ),
-                  _Button(
-                    Ionicons.bookmark,
-                    'Manga',
-                    () => id == Settings().id
-                        ? Get.find<HomeController>().homeTab =
-                            HomeView.MANGA_LIST
-                        : Navigator.pushNamed(
-                            context,
-                            RouteArg.collection,
-                            arguments: RouteArg(id: id, variant: false),
-                          ),
-                  ),
-                  _Button(
-                    Ionicons.people_circle,
-                    'Following',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.friends,
-                      arguments: RouteArg(id: id, variant: true),
+              sliver: SliverGrid(
+                gridDelegate:
+                    const SliverGridDelegateWithMinWidthAndFixedHeight(
+                  minWidth: 160,
+                  height: 40,
+                ),
+                delegate: SliverChildListDelegate.fixed(
+                  [
+                    _Button(
+                      Ionicons.film,
+                      'Anime',
+                      () => id == Settings().id
+                          ? Get.find<HomeController>().homeTab =
+                              HomeView.ANIME_LIST
+                          : Navigator.pushNamed(
+                              context,
+                              RouteArg.collection,
+                              arguments: RouteArg(id: id, variant: true),
+                            ),
                     ),
-                  ),
-                  _Button(
-                    Ionicons.person_circle,
-                    'Followers',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.friends,
-                      arguments: RouteArg(id: id, variant: false),
+                    _Button(
+                      Ionicons.bookmark,
+                      'Manga',
+                      () => id == Settings().id
+                          ? Get.find<HomeController>().homeTab =
+                              HomeView.MANGA_LIST
+                          : Navigator.pushNamed(
+                              context,
+                              RouteArg.collection,
+                              arguments: RouteArg(id: id, variant: false),
+                            ),
                     ),
-                  ),
-                  _Button(
-                    Ionicons.chatbox,
-                    'Activities',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.activities,
-                      arguments: RouteArg(id: id),
+                    _Button(
+                      Ionicons.people_circle,
+                      'Following',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.friends,
+                        arguments: RouteArg(id: id, variant: true),
+                      ),
                     ),
-                  ),
-                  _Button(
-                    Icons.favorite,
-                    'Favourites',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.favourites,
-                      arguments: RouteArg(id: id),
+                    _Button(
+                      Ionicons.person_circle,
+                      'Followers',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.friends,
+                        arguments: RouteArg(id: id, variant: false),
+                      ),
                     ),
-                  ),
-                  _Button(
-                    Ionicons.stats_chart,
-                    'Statistics',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.statistics,
-                      arguments: RouteArg(id: id),
+                    _Button(
+                      Ionicons.chatbox,
+                      'Activities',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.activities,
+                        arguments: RouteArg(id: id),
+                      ),
                     ),
-                  ),
-                  _Button(
-                    Icons.rate_review,
-                    'Reviews',
-                    () => Navigator.pushNamed(
-                      context,
-                      RouteArg.reviews,
-                      arguments: RouteArg(id: id),
+                    _Button(
+                      Icons.favorite,
+                      'Favourites',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.favourites,
+                        arguments: RouteArg(id: id),
+                      ),
                     ),
-                  ),
-                ],
+                    _Button(
+                      Ionicons.stats_chart,
+                      'Statistics',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.statistics,
+                        arguments: RouteArg(id: id),
+                      ),
+                    ),
+                    _Button(
+                      Icons.rate_review,
+                      'Reviews',
+                      () => Navigator.pushNamed(
+                        context,
+                        RouteArg.reviews,
+                        arguments: RouteArg(id: id),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ));
 

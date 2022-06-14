@@ -53,24 +53,6 @@ final editProvider = StateProvider.autoDispose<Edit>(
 );
 
 class Edit {
-  final int mediaId;
-  final String? type;
-  final EntryStatus? status;
-  final int progress;
-  final int? progressMax;
-  final int progressVolumes;
-  final int? progressVolumesMax;
-  final double score;
-  final int repeat;
-  final DateTime? startedAt;
-  final DateTime? completedAt;
-  final bool private;
-  final bool hiddenFromStatusLists;
-  final Map<String, double> advancedScores;
-  final Map<String, bool> customLists;
-  int? entryId;
-  String notes;
-
   Edit._({
     required this.mediaId,
     this.type,
@@ -128,17 +110,36 @@ class Edit {
       progressMax: map['episodes'] ?? map['chapters'],
       progressVolumes: map['mediaListEntry']['progressVolumes'] ?? 0,
       progressVolumesMax: map['volumes'],
-      score: map['mediaListEntry']['score'].toDouble(),
-      repeat: map['mediaListEntry']['repeat'],
+      score: (map['mediaListEntry']['score'] ?? 0).toDouble(),
+      repeat: map['mediaListEntry']['repeat'] ?? 0,
       notes: map['mediaListEntry']['notes'] ?? '',
       startedAt: Convert.mapToDateTime(map['mediaListEntry']['startedAt']),
       completedAt: Convert.mapToDateTime(map['mediaListEntry']['completedAt']),
-      private: map['mediaListEntry']['private'],
-      hiddenFromStatusLists: map['mediaListEntry']['hiddenFromStatusLists'],
+      private: map['mediaListEntry']['private'] ?? false,
+      hiddenFromStatusLists:
+          map['mediaListEntry']['hiddenFromStatusLists'] ?? false,
       advancedScores: advancedScores,
       customLists: customLists,
     );
   }
+
+  final int mediaId;
+  final String? type;
+  final EntryStatus? status;
+  final int progress;
+  final int? progressMax;
+  final int progressVolumes;
+  final int? progressVolumesMax;
+  final double score;
+  final int repeat;
+  final DateTime? startedAt;
+  final DateTime? completedAt;
+  final bool private;
+  final bool hiddenFromStatusLists;
+  final Map<String, double> advancedScores;
+  final Map<String, bool> customLists;
+  int? entryId;
+  String notes;
 
   Edit copyWith({
     EntryStatus? status,

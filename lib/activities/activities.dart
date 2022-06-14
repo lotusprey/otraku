@@ -25,15 +25,11 @@ final activityFilterProvider = StateNotifierProvider.autoDispose
 
 final activitiesProvider = StateNotifierProvider.autoDispose
     .family<ActivitiesNotifier, AsyncValue<Pagination<Activity>>, int?>(
-  (ref, userId) {
-    if (userId == null) ref.keepAlive();
-
-    return ActivitiesNotifier(
-      userId: userId,
-      viewerId: Settings().id!,
-      filter: ref.watch(activityFilterProvider(userId)),
-    );
-  },
+  (ref, userId) => ActivitiesNotifier(
+    userId: userId,
+    viewerId: Settings().id!,
+    filter: ref.watch(activityFilterProvider(userId)),
+  ),
 );
 
 class ActivitiesNotifier

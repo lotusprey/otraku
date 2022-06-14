@@ -94,6 +94,7 @@ class InboxView extends StatelessWidget {
         return PageLayout(
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
+            centered: true,
             children: [
               ActionMenu(
                 current: homeCtrl.onFeed ? 1 : 0,
@@ -144,7 +145,7 @@ class _ProgressView extends StatelessWidget {
     final titleStyle = Theme.of(context).textTheme.headline2;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: GetBuilder<ProgressController>(
         builder: (ctrl) {
           if (ctrl.releasingAnime.isEmpty &&
@@ -164,46 +165,54 @@ class _ProgressView extends StatelessWidget {
                 onRefresh: () => ctrl.fetch(),
                 canRefresh: () => !ctrl.isLoading,
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: titlePadding,
-                  child: Text('Releasing Anime', style: titleStyle),
+              if (ctrl.releasingAnime.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: titlePadding,
+                    child: Text('Releasing Anime', style: titleStyle),
+                  ),
                 ),
-              ),
-              MinimalCollectionGrid(
-                items: ctrl.releasingAnime,
-                updateProgress: _updateAnimeProgress,
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: titlePadding,
-                  child: Text('Other Anime', style: titleStyle),
+                MinimalCollectionGrid(
+                  items: ctrl.releasingAnime,
+                  updateProgress: _updateAnimeProgress,
                 ),
-              ),
-              MinimalCollectionGrid(
-                items: ctrl.otherAnime,
-                updateProgress: _updateAnimeProgress,
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: titlePadding,
-                  child: Text('Releasing Manga', style: titleStyle),
+              ],
+              if (ctrl.otherAnime.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: titlePadding,
+                    child: Text('Other Anime', style: titleStyle),
+                  ),
                 ),
-              ),
-              MinimalCollectionGrid(
-                items: ctrl.releasingManga,
-                updateProgress: _updateMangaProgress,
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: titlePadding,
-                  child: Text('Other Manga', style: titleStyle),
+                MinimalCollectionGrid(
+                  items: ctrl.otherAnime,
+                  updateProgress: _updateAnimeProgress,
                 ),
-              ),
-              MinimalCollectionGrid(
-                items: ctrl.otherManga,
-                updateProgress: _updateMangaProgress,
-              ),
+              ],
+              if (ctrl.releasingManga.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: titlePadding,
+                    child: Text('Releasing Manga', style: titleStyle),
+                  ),
+                ),
+                MinimalCollectionGrid(
+                  items: ctrl.releasingManga,
+                  updateProgress: _updateMangaProgress,
+                ),
+              ],
+              if (ctrl.otherManga.isNotEmpty) ...[
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: titlePadding,
+                    child: Text('Other Manga', style: titleStyle),
+                  ),
+                ),
+                MinimalCollectionGrid(
+                  items: ctrl.otherManga,
+                  updateProgress: _updateMangaProgress,
+                ),
+              ],
               const SliverFooter(),
             ],
           );

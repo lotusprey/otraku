@@ -293,9 +293,10 @@ class _ActionButton extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
+  _Details(this.model, this.axis);
+
   final CharacterModel model;
   final Axis axis;
-  _Details(this.model, this.axis);
 
   @override
   Widget build(BuildContext context) {

@@ -20,7 +20,7 @@ abstract class GqlQuery {
     query CurrentMedia($userId: Int, $page: Int = 1) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        mediaList(userId: $userId, status: CURRENT) {
+        mediaList(userId: $userId, status: CURRENT, sort: UPDATED_TIME_DESC) {
           mediaId
           progress
           media {

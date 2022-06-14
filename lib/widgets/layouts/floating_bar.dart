@@ -6,10 +6,15 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
 class FloatingBar extends StatefulWidget {
-  FloatingBar({required this.scrollCtrl, required this.children});
+  FloatingBar({
+    required this.scrollCtrl,
+    required this.children,
+    this.centered = false,
+  });
 
   final List<Widget> children;
   final ScrollController scrollCtrl;
+  final bool centered;
 
   @override
   _FloatingBarState createState() => _FloatingBarState();
@@ -82,9 +87,11 @@ class _FloatingBarState extends State<FloatingBar>
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Row(
-            mainAxisAlignment: Settings().leftHanded
-                ? MainAxisAlignment.start
-                : MainAxisAlignment.end,
+            mainAxisAlignment: widget.centered
+                ? MainAxisAlignment.center
+                : Settings().leftHanded
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.end,
             children: [
               for (int i = 0; i < children.length; i++) ...[
                 const SizedBox(width: 10),

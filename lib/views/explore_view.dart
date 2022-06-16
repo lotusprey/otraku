@@ -77,8 +77,6 @@ class _ExploreGrid extends StatelessWidget {
       canRefresh: () => !ctrl.isLoading,
     );
 
-    final footer = SliverFooter(loading: ctrl.hasNextPage);
-
     return GetBuilder<ExploreController>(
       id: ExploreController.ID_BODY,
       builder: (ctrl) {
@@ -86,6 +84,8 @@ class _ExploreGrid extends StatelessWidget {
 
         final results = ctrl.results;
         if (results.isEmpty) return const Center(child: Text('No results'));
+
+        final footer = SliverFooter(loading: ctrl.hasNextPage);
 
         if (results[0].explorable == Explorable.studio)
           return CustomScrollView(

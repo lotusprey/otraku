@@ -34,6 +34,7 @@ class FavoritesNotifier extends ChangeNotifier {
   var _studios = const AsyncValue<Pagination<StudioItem>>.loading();
 
   int getCount(FavoriteType type) {
+    _type = type;
     switch (type) {
       case FavoriteType.anime:
         return _animeCount;
@@ -48,30 +49,11 @@ class FavoritesNotifier extends ChangeNotifier {
     }
   }
 
-  AsyncValue<Pagination<MediaItem>> get anime {
-    _type = FavoriteType.anime;
-    return _anime;
-  }
-
-  AsyncValue<Pagination<MediaItem>> get manga {
-    _type = FavoriteType.manga;
-    return _manga;
-  }
-
-  AsyncValue<Pagination<CharacterItem>> get characters {
-    _type = FavoriteType.characters;
-    return _characters;
-  }
-
-  AsyncValue<Pagination<StaffItem>> get staff {
-    _type = FavoriteType.staff;
-    return _staff;
-  }
-
-  AsyncValue<Pagination<StudioItem>> get studios {
-    _type = FavoriteType.studios;
-    return _studios;
-  }
+  AsyncValue<Pagination<MediaItem>> get anime => _anime;
+  AsyncValue<Pagination<MediaItem>> get manga => _manga;
+  AsyncValue<Pagination<CharacterItem>> get characters => _characters;
+  AsyncValue<Pagination<StaffItem>> get staff => _staff;
+  AsyncValue<Pagination<StudioItem>> get studios => _studios;
 
   Future<void> fetch() async {
     final type = _type;
@@ -116,7 +98,7 @@ class FavoritesNotifier extends ChangeNotifier {
         final map = data.value!['anime'];
         final value = _anime.valueOrNull ?? Pagination();
 
-        _animeCount = map['pageInfo']?['total'] ?? 0;
+        if (_animeCount == 0) _animeCount = map['pageInfo']['total'] ?? 0;
 
         final items = <MediaItem>[];
         for (final a in map['nodes']) items.add(MediaItem(a));
@@ -133,7 +115,7 @@ class FavoritesNotifier extends ChangeNotifier {
         final map = data.value!['manga'];
         final value = _manga.valueOrNull ?? Pagination();
 
-        _mangaCount = map['pageInfo']?['total'] ?? 0;
+        if (_mangaCount == 0) _mangaCount = map['pageInfo']['total'] ?? 0;
 
         final items = <MediaItem>[];
         for (final m in map['nodes']) items.add(MediaItem(m));
@@ -150,7 +132,8 @@ class FavoritesNotifier extends ChangeNotifier {
         final map = data.value!['characters'];
         final value = _characters.valueOrNull ?? Pagination();
 
-        _characterCount = map['pageInfo']?['total'] ?? 0;
+        if (_characterCount == 0)
+          _characterCount = map['pageInfo']['total'] ?? 0;
 
         final items = <CharacterItem>[];
         for (final c in map['nodes']) items.add(CharacterItem(c));
@@ -167,7 +150,7 @@ class FavoritesNotifier extends ChangeNotifier {
         final map = data.value!['staff'];
         final value = _staff.valueOrNull ?? Pagination();
 
-        _staffCount = map['pageInfo']?['total'] ?? 0;
+        if (_staffCount == 0) _staffCount = map['pageInfo']['total'] ?? 0;
 
         final items = <StaffItem>[];
         for (final s in map['nodes']) items.add(StaffItem(s));
@@ -184,7 +167,7 @@ class FavoritesNotifier extends ChangeNotifier {
         final map = data.value!['studios'];
         final value = _studios.valueOrNull ?? Pagination();
 
-        _studioCount = map['pageInfo']?['total'] ?? 0;
+        if (_studioCount == 0) _studioCount = map['pageInfo']['total'] ?? 0;
 
         final items = <StudioItem>[];
         for (final s in map['nodes']) items.add(StudioItem(s));

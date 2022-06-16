@@ -12,6 +12,8 @@ An unofficial AniList app.
 The iOS .ipa and the android .apk are bundled with each Github release.
 </p>
 
+Note: The project is going through a structural overhaul.
+
 <details><p align='center'>
 <summary>Screenshots</summary>
 

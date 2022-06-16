@@ -21,30 +21,30 @@ class FriendsNotifier extends ChangeNotifier {
   var _following = AsyncValue.data(Pagination<UserItem>());
   var _followers = AsyncValue.data(Pagination<UserItem>());
 
-  int getCount(bool onFollowing) =>
-      onFollowing ? _followingCount : _followersCount;
+  int getCount(bool onFollowing) {
+    _onFollowing = onFollowing;
+    if (onFollowing) {
+      if (_following is AsyncData &&
+          _following.value!.items.isEmpty &&
+          _following.value!.hasNext) {
+        _following = const AsyncValue.loading();
+        fetch();
+      }
 
-  AsyncValue<Pagination<UserItem>> get following {
-    _onFollowing = true;
-    if (_following is AsyncData &&
-        _following.value!.items.isEmpty &&
-        _following.value!.hasNext) {
-      _following = const AsyncValue.loading();
-      fetch();
+      return _followingCount;
     }
-    return _following;
-  }
 
-  AsyncValue<Pagination<UserItem>> get followers {
-    _onFollowing = false;
     if (_followers is AsyncData &&
         _followers.value!.items.isEmpty &&
         _followers.value!.hasNext) {
       _followers = const AsyncValue.loading();
       fetch();
     }
-    return _followers;
+    return _followersCount;
   }
+
+  AsyncValue<Pagination<UserItem>> get following => _following;
+  AsyncValue<Pagination<UserItem>> get followers => _followers;
 
   Future<void> fetch() async {
     final onFollowing = _onFollowing;
@@ -64,8 +64,12 @@ class FriendsNotifier extends ChangeNotifier {
       });
 
       final key = onFollowing ? 'following' : 'followers';
-      final count = data[key]['pageInfo']?['total'] ?? 0;
-      onFollowing ? _followingCount = count : _followersCount = count;
+      final count = data[key]['pageInfo']['total'] ?? 0;
+      if (onFollowing) {
+        if (_followingCount == 0) _followingCount = count;
+      } else {
+        if (_followersCount == 0) _followersCount = count;
+      }
 
       final items = <UserItem>[];
       for (final u in data[key][key]) items.add(UserItem(u));

@@ -28,15 +28,16 @@ class ProgressController extends GetxController {
 
       final data = await Api.request(GqlQuery.currentMedia, {
         'userId': Settings().id,
-        'page': 1,
+        'page': nextPage,
       });
       if (data == null) return;
 
       for (final m in data['Page']['mediaList']) {
         final model = EntryItem(m);
         final bool isAnime = m['media']['type'] == 'ANIME';
-        final status = MediaStatus.values
-            .byName(m['media']['status'] ?? 'NOT_YET_RELEASED');
+        final status = MediaStatus.values.byName(
+          m['media']['status'] ?? 'NOT_YET_RELEASED',
+        );
 
         if (isAnime) {
           if (status == MediaStatus.RELEASING)

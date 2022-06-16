@@ -108,7 +108,7 @@ class MediaInfoView extends StatelessWidget {
               ),
             )
           else
-            const SizedBox(height: 10),
+            const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverPadding(
             padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
             sliver: SliverGrid(

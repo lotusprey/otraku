@@ -288,5 +288,22 @@ class Theming with ChangeNotifier {
       errorContainer: Color(0xFFE74B4B),
       onError: Color(0xFFFFEDFE),
     ),
+    'Lavender': ColorScheme(
+      brightness: Brightness.dark,
+      background: Color(0xFF1B1B1B),
+      onBackground: Color(0xFFFFFFFF),
+      surface: Color(0xFF252525),
+      onSurface: Color(0xFFFFFFFF),
+      surfaceVariant: Color(0xFF5C5C99),
+      primary: Color(0xFFBCB4FF),
+      primaryContainer: Color(0xFF424DAB),
+      onPrimary: Color(0xFF0E0E0E),
+      secondary: Color(0xFF3AC77E),
+      secondaryContainer: Color(0xFF80DBAC),
+      onSecondary: Color(0xFF131329),
+      error: Color(0xFFD74761),
+      errorContainer: Color(0xFFe58a9b),
+      onError: Color(0xFF0D161E),
+    ),
   };
 }

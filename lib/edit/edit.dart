@@ -7,9 +7,9 @@ import 'package:otraku/utils/graphql.dart';
 
 /// Update an entry and return the entry id. This may be useful, if
 /// the entry didn't exist up until now, i.e. there wasn't an id.
-Future<int?> updateEntry(Edit oldEdit, Edit newEdit) async {
+Future<int?> updateEntry(Edit edit) async {
   try {
-    final data = await Api.get(GqlMutation.updateEntry, newEdit.toMap());
+    final data = await Api.get(GqlMutation.updateEntry, edit.toMap());
     return data['SaveMediaListEntry']['id'];
   } catch (e) {
     return null;
@@ -85,6 +85,14 @@ class Edit {
         for (final c in settings.mangaCustomLists) customLists[c] = false;
     }
 
+    final advancedScores = <String, double>{};
+    if (map['mediaListEntry']?['advancedScores'] != null) {
+      for (final e in map['mediaListEntry']['advancedScores'].entries)
+        advancedScores[e.key] = e.value.toDouble();
+    } else if (settings.advancedScoringEnabled) {
+      for (final a in settings.advancedScores) advancedScores[a] = 0;
+    }
+
     if (map['mediaListEntry'] == null)
       return Edit._(
         type: map['type'],
@@ -92,12 +100,8 @@ class Edit {
         progressMax: map['episodes'] ?? map['chapters'],
         progressVolumesMax: map['volumes'],
         customLists: customLists,
+        advancedScores: advancedScores,
       );
-
-    final advancedScores = <String, double>{};
-    if (map['mediaListEntry']['advancedScores'] != null)
-      for (final e in map['mediaListEntry']['advancedScores'].entries)
-        advancedScores[e.key] = e.value.toDouble();
 
     return Edit._(
       type: map['type'],
@@ -141,6 +145,60 @@ class Edit {
   int? entryId;
   String notes;
 
+  /// When an entry is removed, some of the
+  /// edit's meta data can still be usefull.
+  Edit emptyCopy() => Edit._(
+        type: type,
+        mediaId: mediaId,
+        progressMax: progressMax,
+        progressVolumesMax: progressVolumesMax,
+      );
+
+  /// A deep copy. If [complete] is `true`, [status], [progress],
+  /// [progressVolumes] and [completedAd] will be modified appropriately.
+  Edit copy([complete = false]) {
+    DateTime? startedAtCopy;
+    if (startedAt != null)
+      startedAtCopy = DateTime(
+        startedAt!.year,
+        startedAt!.month,
+        startedAt!.day,
+      );
+    DateTime? completedAtCopy;
+    if (complete) {
+      completedAtCopy = DateTime.now();
+    } else if (completedAt != null)
+      completedAtCopy = DateTime(
+        completedAt!.year,
+        completedAt!.month,
+        completedAt!.day,
+      );
+
+    return Edit._(
+      mediaId: mediaId,
+      type: type,
+      entryId: entryId,
+      status: complete ? EntryStatus.COMPLETED : status,
+      progress: complete && progressMax != null ? progressMax! : progress,
+      progressMax: progressMax,
+      progressVolumes: complete && progressVolumesMax != null
+          ? progressVolumesMax!
+          : progressVolumes,
+      progressVolumesMax: progressVolumesMax,
+      score: score,
+      repeat: repeat,
+      notes: notes,
+      startedAt: startedAtCopy,
+      completedAt: completedAtCopy,
+      private: private,
+      hiddenFromStatusLists: hiddenFromStatusLists,
+      advancedScores: {...advancedScores},
+      customLists: {...customLists},
+    );
+  }
+
+  /// [startedAt] and [completedAt] parameters are callbacks,
+  /// as `null` is a valid value for the actual fields.
   Edit copyWith({
     EntryStatus? status,
     int? progress,
@@ -172,15 +230,8 @@ class Edit {
         private: private ?? this.private,
         hiddenFromStatusLists:
             hiddenFromStatusLists ?? this.hiddenFromStatusLists,
-        advancedScores: advancedScores ?? {...this.advancedScores},
-        customLists: customLists ?? {...this.customLists},
-      );
-
-  Edit emptyCopy() => Edit._(
-        type: type,
-        mediaId: mediaId,
-        progressMax: progressMax,
-        progressVolumesMax: progressVolumesMax,
+        advancedScores: advancedScores ?? this.advancedScores,
+        customLists: customLists ?? this.customLists,
       );
 
   Map<String, dynamic> toMap() => {

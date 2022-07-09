@@ -46,7 +46,7 @@ class EditView extends StatelessWidget {
           final notifier = ref.watch(editProvider.notifier);
 
           if (notifier.state.mediaId < 0)
-            notifier.update((_) => _resolveData(edit!));
+            notifier.update((_) => edit!.copy(complete));
 
           return _build(edit!);
         },
@@ -62,7 +62,7 @@ class EditView extends StatelessWidget {
           (_, state) => state.whenOrNull(
             data: (data) {
               if (notifier.state.mediaId < 0)
-                notifier.update((_) => _resolveData(data));
+                notifier.update((_) => data.copy(complete));
             },
             error: (err, _) {
               Navigator.pop(context);
@@ -84,17 +84,6 @@ class EditView extends StatelessWidget {
               ),
             );
       },
-    );
-  }
-
-  Edit _resolveData(Edit data) {
-    if (!complete) return data.copyWith();
-
-    return data.copyWith(
-      status: EntryStatus.COMPLETED,
-      completedAt: DateTime.now,
-      progress: data.progressMax,
-      progressVolumes: data.progressVolumesMax,
     );
   }
 
@@ -177,12 +166,12 @@ class __SaveButtonState extends State<_SaveButton> {
           final newEdit = ref.read(editProvider);
           setState(() => _loading = true);
 
-          newEdit.entryId = await updateEntry(widget.oldEdit, newEdit);
+          newEdit.entryId = await updateEntry(newEdit);
           Navigator.pop(context);
           if (newEdit.entryId == null) return;
           widget.callback?.call(newEdit);
 
-          final isAnime = widget.oldEdit.type == 'ANIME';
+          final isAnime = newEdit.type == 'ANIME';
 
           final entry = await Get.find<CollectionController>(
             tag: isAnime ? '${Settings().id}true' : '${Settings().id}false',
@@ -513,9 +502,12 @@ class _EditView extends StatelessWidget {
               SliverToBoxAdapter(
                 child: LabeledField(
                   label: 'Notes',
-                  child: GrowableTextField(
-                    text: notifier.state.notes,
-                    onChanged: (notes) => notifier.state.notes = notes,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: GrowableTextField(
+                      text: notifier.state.notes,
+                      onChanged: (notes) => notifier.state.notes = notes,
+                    ),
                   ),
                 ),
               ),

@@ -121,8 +121,8 @@ class ActionButton extends StatelessWidget {
   final void Function() onTap;
 
   /// If not null, it will signal when the user swipes on the action button.
-  /// Passing [true] means 'go right', while [false] means 'go left'. If the
-  /// return value is not [null] the new [IconData] will replace the old one
+  /// Passing `true` means 'go right', while `false` means 'go left'. If the
+  /// return value is not `null` the new [IconData] will replace the old one
   /// through an animation.
   final IconData? Function(bool)? onSwipe;
 

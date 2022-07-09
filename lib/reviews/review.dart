@@ -22,7 +22,7 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
     });
   }
 
-  /// Rate a review: [true] for "agree", [false]
+  /// Rate a review: `true` for "agree", `false`
   /// for "disagree" and null for "unvote".
   Future<void> rate(bool? rating) async {
     if (!state.hasValue || state.isLoading) return;

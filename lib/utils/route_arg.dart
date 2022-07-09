@@ -18,7 +18,7 @@ import 'package:otraku/reviews/reviews_view.dart';
 import 'package:otraku/users/user_view.dart';
 
 /// A routing helper. When passing arguments to named routes, they should always
-/// be an instance of [RouteArg] or [null].
+/// be an instance of [RouteArg] or `null`.
 class RouteArg {
   const RouteArg({this.id, this.info, this.variant, this.callback});
 

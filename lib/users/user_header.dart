@@ -7,6 +7,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class UserHeader extends StatelessWidget {
   UserHeader({
@@ -61,16 +62,20 @@ class UserHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: user != null
             ? [
-                Text(
-                  user!.name,
-                  overflow: TextOverflow.fade,
-                  style: Theme.of(context).textTheme.headline1!.copyWith(
-                    shadows: [
-                      Shadow(
-                        color: Theme.of(context).colorScheme.background,
-                        blurRadius: 10,
-                      ),
-                    ],
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Toast.copy(context, user!.name),
+                  child: Text(
+                    user!.name,
+                    overflow: TextOverflow.fade,
+                    style: Theme.of(context).textTheme.headline1!.copyWith(
+                      shadows: [
+                        Shadow(
+                          color: Theme.of(context).colorScheme.background,
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 if (textRailItems.isNotEmpty)

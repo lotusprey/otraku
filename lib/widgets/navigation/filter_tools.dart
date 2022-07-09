@@ -16,7 +16,7 @@ class SearchToolField extends StatefulWidget {
   final String title;
   final String? value;
 
-  /// If [null], search mode cannot be turned on; [value] & [hint] are ignored.
+  /// If `null`, search mode cannot be turned on; [value] & [hint] are ignored.
   final void Function(String?)? onChanged;
 
   @override
@@ -44,7 +44,6 @@ class _SearchToolFieldState extends State<SearchToolField> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const SizedBox(width: 10),
           if (_value == null || widget.onChanged == null) ...[
             Expanded(
               child: Text(

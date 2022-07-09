@@ -18,8 +18,8 @@ class NavLayout extends StatelessWidget {
   final PreferredSizeWidget? appBar;
 
   /// When a tab swipe is detected, [NavLayout] will try to switch the subtab
-  /// of the page, instead of the tab itself. For 'go right' [true] is passed
-  /// to the callback and for 'go left' - [false]. The returned value
+  /// of the page, instead of the tab itself. For 'go right' `true` is passed
+  /// to the callback and for 'go left' - `false`. The returned value
   /// determines whether the subtab has been switched. If not (the
   /// end of the subtab carousel has been reached), it will
   /// attempt to switch the tab with [NavRow.move].

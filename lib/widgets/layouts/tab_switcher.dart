@@ -12,7 +12,7 @@ class TabSwitcher extends StatefulWidget {
   final List<Widget> children;
   final int current;
 
-  /// If [null] the tabs can't be swiped, but they will
+  /// If `null` the tabs can't be swiped, but they will
   /// still animate, when [current] is changed externally.
   final void Function(int)? onChanged;
 
@@ -24,7 +24,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   late final PageController _ctrl;
 
   /// While [TabSwitcher] is performing a switch triggered from the outside,
-  /// [_busy] is set to [true] to signal that [widget.onChanged] shouldn't be
+  /// [_busy] is set to `true` to signal that [widget.onChanged] shouldn't be
   /// called, as the outer environment already knows about the tab change.
   bool _busy = false;
 

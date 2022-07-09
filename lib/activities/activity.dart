@@ -5,7 +5,7 @@ import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 import 'package:otraku/utils/settings.dart';
 
-/// Toggles an activity like and returns [true] if successful.
+/// Toggles an activity like and returns `true` if successful.
 Future<bool> toggleActivityLike(Activity activity) async {
   try {
     await Api.get(GqlMutation.toggleLike, {
@@ -18,7 +18,7 @@ Future<bool> toggleActivityLike(Activity activity) async {
   }
 }
 
-/// Toggles an activity subscription and returns [true] if successful.
+/// Toggles an activity subscription and returns `true` if successful.
 Future<bool> toggleActivitySubscription(Activity activity) async {
   try {
     await Api.get(GqlMutation.toggleActivitySubscription, {
@@ -44,7 +44,7 @@ Future<Object?> toggleActivityPin(Activity activity) async {
   }
 }
 
-/// Toggles a reply like and returns [true] if successful.
+/// Toggles a reply like and returns `true` if successful.
 Future<bool> toggleReplyLike(ActivityReply reply) async {
   try {
     await Api.get(GqlMutation.toggleLike, {

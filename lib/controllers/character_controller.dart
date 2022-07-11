@@ -1,5 +1,5 @@
 import 'package:otraku/models/character_model.dart';
-import 'package:otraku/models/relation_model.dart';
+import 'package:otraku/models/relation.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
@@ -19,9 +19,9 @@ class CharacterController extends ScrollingController {
 
   final int id;
   CharacterModel? _model;
-  final _anime = PageModel<RelationModel>();
-  final _manga = PageModel<RelationModel>();
-  final _voiceActors = <String, Map<int, List<RelationModel>>>{};
+  final _anime = PageModel<Relation>();
+  final _manga = PageModel<Relation>();
+  final _voiceActors = <String, Map<int, List<Relation>>>{};
   final _languages = <String>[];
   bool _onAnime = true;
   int _langIndex = 0;
@@ -29,8 +29,8 @@ class CharacterController extends ScrollingController {
   bool? _onList;
 
   CharacterModel? get model => _model;
-  List<RelationModel> get anime => _anime.items;
-  List<RelationModel> get manga => _manga.items;
+  List<Relation> get anime => _anime.items;
+  List<Relation> get manga => _manga.items;
   List<String> get languages => _languages;
 
   bool get onAnime => _onAnime;
@@ -130,8 +130,8 @@ class CharacterController extends ScrollingController {
   }
 
   void selectMediaAndVoiceActors(
-    List<RelationModel> mediaList,
-    List<RelationModel?> voiceActorList,
+    List<Relation> mediaList,
+    List<Relation?> voiceActorList,
   ) {
     if (languages.isEmpty || _langIndex >= languages.length) return;
 
@@ -163,9 +163,9 @@ class CharacterController extends ScrollingController {
       _voiceActors.clear();
     }
 
-    final items = <RelationModel>[];
+    final items = <Relation>[];
     for (final a in data['anime']['edges']) {
-      items.add(RelationModel(
+      items.add(Relation(
         id: a['node']['id'],
         title: a['node']['title']['userPreferred'],
         imageUrl: a['node']['coverImage'][Settings().imageQuality],
@@ -182,7 +182,7 @@ class CharacterController extends ScrollingController {
 
           final currentLanguage = _voiceActors.putIfAbsent(
             l,
-            () => <int, List<RelationModel>>{},
+            () => <int, List<Relation>>{},
           );
 
           final currentMedia = currentLanguage.putIfAbsent(
@@ -190,7 +190,7 @@ class CharacterController extends ScrollingController {
             () => [],
           );
 
-          currentMedia.add(RelationModel(
+          currentMedia.add(Relation(
             id: va['id'],
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
@@ -206,9 +206,9 @@ class CharacterController extends ScrollingController {
   void _initManga(Map<String, dynamic> data, bool clear) {
     if (clear) _manga.clear();
 
-    final items = <RelationModel>[];
+    final items = <Relation>[];
     for (final m in data['manga']['edges'])
-      items.add(RelationModel(
+      items.add(Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
         imageUrl: m['node']['coverImage'][Settings().imageQuality],

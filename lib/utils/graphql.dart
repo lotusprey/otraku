@@ -201,11 +201,11 @@ abstract class GqlQuery {
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
+      bloodType
       gender
       age
       favourites 
       isFavourite
-      isFavouriteBlocked
     }
     fragment media on MediaConnection {
       pageInfo {hasNextPage}

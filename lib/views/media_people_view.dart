@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/models/relation_model.dart';
+import 'package:otraku/models/relation.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -26,8 +26,8 @@ class MediaPeopleView extends StatelessWidget {
         items: ctrl.model!.characters.items,
       );
     } else {
-      final characters = <RelationModel>[];
-      final voiceActors = <RelationModel?>[];
+      final characters = <Relation>[];
+      final voiceActors = <Relation?>[];
 
       ctrl.model!.selectCharactersAndVoiceActors(
         ctrl.languages[ctrl.langIndex],

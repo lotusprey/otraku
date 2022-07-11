@@ -1,4 +1,4 @@
-import 'package:otraku/models/relation_model.dart';
+import 'package:otraku/models/relation.dart';
 import 'package:otraku/models/staff_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/constants/explorable.dart';
@@ -19,17 +19,17 @@ class StaffController extends ScrollingController {
 
   final int id;
   StaffModel? _model;
-  final _media = <RelationModel>[];
-  final _characters = PageModel<RelationModel>();
-  final _roles = PageModel<RelationModel>();
+  final _media = <Relation>[];
+  final _characters = PageModel<Relation>();
+  final _roles = PageModel<Relation>();
   bool _onCharacters = true;
   MediaSort _sort = MediaSort.START_DATE_DESC;
   bool? _onList;
 
   StaffModel? get model => _model;
-  List<RelationModel> get media => _media;
-  List<RelationModel> get characters => _characters.items;
-  List<RelationModel> get roles => _roles.items;
+  List<Relation> get media => _media;
+  List<Relation> get characters => _characters.items;
+  List<Relation> get roles => _roles.items;
 
   bool get onCharacters => _onCharacters;
   set onCharacters(bool val) {
@@ -119,12 +119,12 @@ class StaffController extends ScrollingController {
       _media.clear();
     }
 
-    final items = <RelationModel>[];
+    final items = <Relation>[];
     for (final m in data['characterMedia']['edges'])
       for (final c in m['characters']) {
         if (c == null) continue;
 
-        _media.add(RelationModel(
+        _media.add(Relation(
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
           imageUrl: m['node']['coverImage'][Settings().imageQuality],
@@ -134,7 +134,7 @@ class StaffController extends ScrollingController {
               : Explorable.manga,
         ));
 
-        items.add(RelationModel(
+        items.add(Relation(
           id: c['id'],
           title: c['name']['userPreferred'],
           imageUrl: c['image']['large'],
@@ -152,9 +152,9 @@ class StaffController extends ScrollingController {
   void _initRoles(Map<String, dynamic> data, bool clear) {
     if (clear) _roles.clear();
 
-    final items = <RelationModel>[];
+    final items = <Relation>[];
     for (final s in data['staffMedia']['edges'])
-      items.add(RelationModel(
+      items.add(Relation(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
         imageUrl: s['node']['coverImage'][Settings().imageQuality],

@@ -1,7 +1,7 @@
 import 'package:otraku/constants/explorable.dart';
 
-class RelationModel {
-  RelationModel({
+class Relation {
+  Relation({
     required this.id,
     required this.title,
     required this.imageUrl,

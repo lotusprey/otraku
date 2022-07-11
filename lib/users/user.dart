@@ -4,7 +4,7 @@ import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 
-/// Follow/Unfollow user.
+/// Follow/Unfollow user. Returns `true` if successful.
 Future<bool> toggleFollow(int userId) async {
   try {
     await Api.get(GqlMutation.toggleFollow, {'userId': userId});

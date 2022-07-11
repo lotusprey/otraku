@@ -175,35 +175,33 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    child: Hero(
-                      tag: heroId,
-                      child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
-                        child: Container(
-                          height: imageHeight,
-                          width: imageWidth,
-                          color: complexImage
-                              ? Theme.of(context).colorScheme.surface
-                              : null,
-                          child: image != null
-                              ? GestureDetector(
-                                  onTap: () => showPopUp(
-                                    context,
-                                    ImageDialog(extraLargeImage ?? image!),
-                                  ),
-                                  child: FadeImage(
-                                    image!,
-                                    fit: complexImage
-                                        ? BoxFit.cover
-                                        : BoxFit.contain,
-                                    alignment: complexImage
-                                        ? Alignment.center
-                                        : Alignment.bottomCenter,
-                                  ),
-                                )
-                              : null,
-                        ),
+                  Hero(
+                    tag: heroId,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: Container(
+                        height: imageHeight,
+                        width: imageWidth,
+                        color: complexImage
+                            ? Theme.of(context).colorScheme.surface
+                            : null,
+                        child: image != null
+                            ? GestureDetector(
+                                onTap: () => showPopUp(
+                                  context,
+                                  ImageDialog(extraLargeImage ?? image!),
+                                ),
+                                child: FadeImage(
+                                  image!,
+                                  fit: complexImage
+                                      ? BoxFit.cover
+                                      : BoxFit.contain,
+                                  alignment: complexImage
+                                      ? Alignment.center
+                                      : Alignment.bottomCenter,
+                                ),
+                              )
+                            : null,
                       ),
                     ),
                   ),

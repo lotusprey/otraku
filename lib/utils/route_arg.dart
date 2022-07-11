@@ -3,7 +3,7 @@ import 'package:otraku/activities/activities_view.dart';
 import 'package:otraku/activities/activity_view.dart';
 import 'package:otraku/favorites/favorites_view.dart';
 import 'package:otraku/views/auth_view.dart';
-import 'package:otraku/views/character_view.dart';
+import 'package:otraku/characters/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/users/friends_view.dart';
 import 'package:otraku/views/home_view.dart';

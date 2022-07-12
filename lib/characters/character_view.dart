@@ -28,7 +28,10 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
   void initState() {
     super.initState();
     _ctrl = PaginationController(loadMore: () {
-      //
+      if (_tab == 0) return;
+      _tab == 1
+          ? ref.read(characterMediaProvider(widget.id)).fetchPage(true)
+          : ref.read(characterMediaProvider(widget.id)).fetchPage(false);
     });
   }
 
@@ -47,7 +50,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           showPopUp(
             context,
             ConfirmationDialog(
-              title: 'Could not load notifications',
+              title: 'Could not load character',
               content: s.error.toString(),
             ),
           );
@@ -66,16 +69,16 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
         items: const {
           'Bio': Ionicons.book_outline,
           'Anime': Ionicons.film_outline,
-          'Mnaga': Ionicons.bookmark_outline,
+          'Manga': Ionicons.bookmark_outline,
         },
       ),
       child: TabSwitcher(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
         children: [
-          CharacterInfo(widget.id, _ctrl),
-          CharacterMediaView(widget.id, _ctrl, true),
-          CharacterMediaView(widget.id, _ctrl, false),
+          CharacterInfoView(widget.id, widget.imageUrl, _ctrl),
+          CharacterAnimeView(widget.id, _ctrl),
+          CharacterMangaView(widget.id, _ctrl),
         ],
       ),
     );

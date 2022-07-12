@@ -20,14 +20,13 @@ final characterMediaProvider = ChangeNotifierProvider.autoDispose.family(
 
 class CharacterMediaNotifier extends ChangeNotifier {
   CharacterMediaNotifier(this.id, this.filter) {
-    fetch();
+    _fetch();
   }
 
   final int id;
   final CharacterFilter filter;
-  var _state = const AsyncValue<void>.data(null);
-  var _anime = Pagination<Relation>();
-  var _manga = Pagination<Relation>();
+  var _anime = const AsyncValue<Pagination<Relation>>.loading();
+  var _manga = const AsyncValue<Pagination<Relation>>.loading();
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -36,9 +35,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
   /// The currently selected language.
   var _language = '';
 
-  AsyncValue get state => _state;
-  Pagination<Relation> get anime => _anime;
-  Pagination<Relation> get manga => _manga;
+  AsyncValue<Pagination<Relation>> get anime => _anime;
+  AsyncValue<Pagination<Relation>> get manga => _manga;
   Iterable<String> get languages => _languages.keys;
   String get language => _language;
   set language(String l) {
@@ -52,17 +50,20 @@ class CharacterMediaNotifier extends ChangeNotifier {
   /// multiple VAs for a media, add the corresponding media item in [media]
   /// enough times to compensate. If there are no VAs to a media, compensate
   /// with one `null` item in [voiceActors].
-  void getMediaAndVoiceActors(
+  void getAnimeAndVoiceActors(
     List<Relation> media,
     List<Relation?> voiceActors,
   ) {
-    final byLanguage = _languages[language];
+    final anime = _anime.valueOrNull?.items;
+    if (anime == null || anime.isEmpty) return;
+
+    final byLanguage = _languages[_language];
     if (byLanguage == null) {
-      media.addAll(_anime.items);
+      media.addAll(anime);
       return;
     }
 
-    for (final a in _anime.items) {
+    for (final a in anime) {
       final vas = byLanguage[a.id];
       if (vas == null || vas.isEmpty) {
         media.add(a);
@@ -77,9 +78,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
     }
   }
 
-  Future<void> fetch() async {
-    _state = const AsyncValue.loading();
-
+  Future<void> _fetch() async {
     final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
       final data = await Api.get(GqlQuery.character, {
         'id': id,
@@ -92,24 +91,53 @@ class CharacterMediaNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _state = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _anime = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _manga = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
       return;
-    } else {
-      _state = const AsyncValue.data(null);
     }
 
-    _initAnime(data.value!['anime'], true);
-    _initManga(data.value!['manga'], true);
+    _anime = AsyncValue.data(Pagination());
+    _manga = AsyncValue.data(Pagination());
+
+    _initAnime(data.value!['anime']);
+    _initManga(data.value!['manga']);
 
     if (_languages.isNotEmpty) _language = _languages.keys.first;
     notifyListeners();
   }
 
-  void _initAnime(Map<String, dynamic> data, bool clear) {
-    if (clear) {
-      _anime.items.clear();
-      _languages.clear();
+  Future<void> fetchPage(bool ofAnime) async {
+    final value = ofAnime ? _anime.valueOrNull : _manga.valueOrNull;
+    if (value == null || !value.hasNext) return;
+
+    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
+      final data = await Api.get(GqlQuery.character, {
+        'id': id,
+        'withAnime': ofAnime,
+        'withManga': !ofAnime,
+        'onList': filter.onList,
+        'sort': filter.sort.name,
+        'page': value.next,
+      });
+      return data['Character'];
+    });
+
+    if (data.hasError) {
+      ofAnime
+          ? _anime = AsyncValue.error(data.error!, stackTrace: data.stackTrace)
+          : _manga = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      return;
     }
+
+    ofAnime
+        ? _initAnime(data.value!['anime'])
+        : _initManga(data.value!['manga']);
+    notifyListeners();
+  }
+
+  void _initAnime(Map<String, dynamic> data) {
+    var value = _anime.valueOrNull;
+    if (value == null) return;
 
     final items = <Relation>[];
     for (final a in data['edges']) {
@@ -146,11 +174,13 @@ class CharacterMediaNotifier extends ChangeNotifier {
         }
     }
 
-    _anime.append(items, data['pageInfo']['hasNextPage']);
+    value = value.append(items, data['pageInfo']['hasNextPage']);
+    _anime = AsyncValue.data(value);
   }
 
-  void _initManga(Map<String, dynamic> data, bool clear) {
-    if (clear) _manga.items.clear();
+  void _initManga(Map<String, dynamic> data) {
+    var value = _manga.valueOrNull;
+    if (value == null) return;
 
     final items = <Relation>[];
     for (final m in data['edges'])
@@ -162,7 +192,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
         type: Explorable.manga,
       ));
 
-    _manga.append(items, data['pageInfo']['hasNextPage']);
+    value = value.append(items, data['pageInfo']['hasNextPage']);
+    _manga = AsyncValue.data(value);
   }
 }
 

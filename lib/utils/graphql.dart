@@ -185,13 +185,13 @@ abstract class GqlQuery {
   ''';
 
   static const character = r'''
-    query Character($id: Int, $sort: [MediaSort], $animePage: Int = 1, $mangaPage: Int = 1, 
-        $onList: Boolean, $withMain: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
+    query Character($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
+        $withMain: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
       Character(id: $id) {
         ...main @include(if: $withMain)
-        anime: media(page: $animePage, type: ANIME, onList: $onList, sort: $sort) 
+        anime: media(page: $page, type: ANIME, onList: $onList, sort: $sort) 
           @include(if: $withAnime) {...media}
-        manga: media(page: $mangaPage, type: MANGA, onList: $onList, sort: $sort) 
+        manga: media(page: $page, type: MANGA, onList: $onList, sort: $sort) 
           @include(if: $withManga) {...media}
       }
     }

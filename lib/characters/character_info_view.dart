@@ -11,11 +11,12 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class CharacterInfo extends StatelessWidget {
-  const CharacterInfo(this.id, this.ctrl);
+class CharacterInfoView extends StatelessWidget {
+  const CharacterInfoView(this.id, this.imageUrl, this.scrollCtrl);
 
   final int id;
-  final ScrollController ctrl;
+  final String? imageUrl;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -28,130 +29,184 @@ class CharacterInfo extends StatelessWidget {
           },
         );
 
-        final imageWidth = MediaQuery.of(context).size.width < 430.0
-            ? MediaQuery.of(context).size.width * 0.30
-            : 100.0;
-        final imageHeight = imageWidth * Consts.coverHtoWRatio;
-
         return ref.watch(characterProvider(id)).when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => CustomScrollView(slivers: [refreshControl]),
-              data: (data) {
-                final headerRow = Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Hero(
-                      tag: id,
-                      child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
-                        child: Container(
-                          width: imageWidth,
-                          height: imageHeight,
-                          color: Theme.of(context).colorScheme.surface,
-                          child: GestureDetector(
-                            child: FadeImage(data.imageUrl),
-                            onTap: () => showPopUp(
-                              context,
-                              ImageDialog(data.imageUrl),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // TODO flexible?
-                    Flexible(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GestureDetector(
-                            onTap: () => Toast.copy(context, data.name),
-                            child: Text(
-                              data.name,
-                              style: Theme.of(context).textTheme.headline1,
-                            ),
-                          ),
-                          if (data.altNames.isNotEmpty)
-                            Text(data.altNames.join(', ')),
-                          if (data.altNamesSpoilers.isNotEmpty)
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              child: Text(
-                                'Spoiler names',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              ),
-                              onTap: () => showPopUp(
-                                context,
-                                TextDialog(
-                                  title: 'Spoiler names',
-                                  text: data.altNamesSpoilers.join(', '),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-
-                final infoGrid = SliverGrid(
-                  gridDelegate:
-                      const SliverGridDelegateWithMinWidthAndFixedHeight(
-                    height: Consts.tapTargetSize,
-                    minWidth: 130,
-                  ),
-                  delegate: SliverChildListDelegate([
-                    _InfoTile('Favourites', data.favorites.toString()),
-                    if (data.gender != null) _InfoTile('Gender', data.gender!),
-                    if (data.age != null) _InfoTile('Age', data.age!),
-                    if (data.dateOfBirth != null)
-                      _InfoTile('Date of Birth', data.dateOfBirth!),
-                    if (data.bloodType != null)
-                      _InfoTile('Blood Type', data.bloodType!),
-                  ]),
-                );
-
-                return PageLayout(
-                  floatingBar: FloatingBar(
-                    scrollCtrl: ctrl,
-                    children: [_FavoriteButton(data)],
-                  ),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints:
-                          const BoxConstraints(maxWidth: Consts.layoutBig),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: CustomScrollView(
-                          controller: ctrl,
-                          slivers: [
-                            refreshControl,
-                            SliverToBoxAdapter(child: headerRow),
-                            infoGrid,
-                            if (data.description.isNotEmpty)
-                              SliverToBoxAdapter(
-                                child: Container(
-                                  child: HtmlContent(data.description),
-                                  padding: Consts.padding,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                    borderRadius: Consts.borderRadiusMin,
-                                  ),
-                                ),
-                              ),
-                            const SliverFooter(),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
+              loading: () => _CharacterInfoView(
+                id: id,
+                data: null,
+                imageUrl: imageUrl,
+                scrollCtrl: scrollCtrl,
+                refreshControl: refreshControl,
+                loading: true,
+              ),
+              error: (_, __) => _CharacterInfoView(
+                id: id,
+                data: null,
+                imageUrl: imageUrl,
+                scrollCtrl: scrollCtrl,
+                refreshControl: refreshControl,
+                loading: false,
+              ),
+              data: (data) => _CharacterInfoView(
+                id: id,
+                data: data,
+                imageUrl: imageUrl,
+                scrollCtrl: scrollCtrl,
+                refreshControl: refreshControl,
+                loading: false,
+              ),
             );
       },
+    );
+  }
+}
+
+class _CharacterInfoView extends StatelessWidget {
+  _CharacterInfoView({
+    required this.id,
+    required this.data,
+    required this.imageUrl,
+    required this.scrollCtrl,
+    required this.refreshControl,
+    required this.loading,
+  });
+
+  final int id;
+  final Character? data;
+  final String? imageUrl;
+  final ScrollController scrollCtrl;
+  final Widget refreshControl;
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    final imageWidth = MediaQuery.of(context).size.width < 430.0
+        ? MediaQuery.of(context).size.width * 0.30
+        : 100.0;
+    final imageHeight = imageWidth * Consts.coverHtoWRatio;
+
+    final imageUrl = data?.imageUrl ?? this.imageUrl;
+
+    final headerRow = IntrinsicHeight(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (imageUrl != null)
+            Hero(
+              tag: id,
+              child: ClipRRect(
+                borderRadius: Consts.borderRadiusMin,
+                child: Container(
+                  width: imageWidth,
+                  height: imageHeight,
+                  color: Theme.of(context).colorScheme.surface,
+                  child: GestureDetector(
+                    child: FadeImage(imageUrl),
+                    onTap: () => showPopUp(context, ImageDialog(imageUrl)),
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(width: 10),
+          if (data != null)
+            Flexible(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  GestureDetector(
+                    onTap: () => Toast.copy(context, data!.name),
+                    child: Text(
+                      data!.name,
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
+                  ),
+                  if (data!.altNames.isNotEmpty)
+                    Text(data!.altNames.join(', ')),
+                  if (data!.altNamesSpoilers.isNotEmpty)
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      child: Text(
+                        'Spoiler names',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      onTap: () => showPopUp(
+                        context,
+                        TextDialog(
+                          title: 'Spoiler names',
+                          text: data!.altNamesSpoilers.join(', '),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+
+    const space = const SliverToBoxAdapter(child: SizedBox(height: 10));
+
+    return PageLayout(
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [if (data != null) _FavoriteButton(data!)],
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: CustomScrollView(
+              controller: scrollCtrl,
+              physics: Consts.physics,
+              slivers: [
+                refreshControl,
+                space,
+                SliverToBoxAdapter(child: headerRow),
+                if (data != null) ...[
+                  space,
+                  SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithMinWidthAndFixedHeight(
+                      height: Consts.tapTargetSize,
+                      minWidth: 150,
+                    ),
+                    delegate: SliverChildListDelegate([
+                      _InfoTile('Favourites', data!.favorites.toString()),
+                      if (data!.gender != null)
+                        _InfoTile('Gender', data!.gender!),
+                      if (data!.age != null) _InfoTile('Age', data!.age!),
+                      if (data!.dateOfBirth != null)
+                        _InfoTile('Date of Birth', data!.dateOfBirth!),
+                      if (data!.bloodType != null)
+                        _InfoTile('Blood Type', data!.bloodType!),
+                    ]),
+                  ),
+                  space,
+                  if (data!.description.isNotEmpty)
+                    SliverToBoxAdapter(
+                      child: Container(
+                        child: HtmlContent(data!.description),
+                        padding: Consts.padding,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: Consts.borderRadiusMin,
+                        ),
+                      ),
+                    ),
+                ] else
+                  SliverFillRemaining(
+                    child: Center(
+                      child: loading ? const Loader() : const Text('No data'),
+                    ),
+                  ),
+                const SliverFooter(),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

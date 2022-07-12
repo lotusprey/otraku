@@ -15,104 +15,88 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class CharacterMediaView extends StatelessWidget {
-  const CharacterMediaView(this.id, this.scrollCtrl, this.ofAnime);
+class CharacterAnimeView extends StatelessWidget {
+  CharacterAnimeView(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
-  final bool ofAnime;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        ref.listen<AsyncValue>(
-          characterMediaProvider(id).select((s) => s.state),
-          (_, s) {
-            if (s.hasError)
-              showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Could not load notifications',
-                  content: s.error.toString(),
-                ),
-              );
-          },
-        );
-
-        final refreshControl = SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(characterMediaProvider(id));
-            return Future.value();
-          },
-        );
-
-        return ref
-            .watch(characterMediaProvider(id).select((s) => s.state))
-            .when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => CustomScrollView(
-                slivers: [
-                  refreshControl,
-                  SliverFillRemaining(
-                    child: Text(ofAnime ? 'No anime' : 'No manga'),
-                  ),
-                ],
-              ),
-              data: (_) => ofAnime
-                  ? _AnimeTab(id, scrollCtrl, refreshControl)
-                  : _MangaTab(id, scrollCtrl, refreshControl),
-            );
-      },
-    );
-  }
-}
-
-class _AnimeTab extends StatelessWidget {
-  const _AnimeTab(this.id, this.scrollCtrl, this.refreshControl);
-
-  final int id;
-  final ScrollController scrollCtrl;
-  final Widget refreshControl;
 
   @override
   Widget build(BuildContext context) {
     return PageLayout(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
-        children: [_LanguageButton(id), _FilterButton(id)],
+        children: [_FilterButton(id), _LanguageButton(id)],
       ),
-      child: Consumer(
-        builder: (context, ref, _) {
-          final anime = <Relation>[];
-          final voiceActors = <Relation?>[];
-          final notifier = ref.watch(characterMediaProvider(id));
-          notifier.getMediaAndVoiceActors(anime, voiceActors);
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Consumer(
+          builder: (context, ref, _) {
+            ref.listen<AsyncValue>(
+              characterMediaProvider(id).select((s) => s.anime),
+              (_, s) {
+                if (s.hasError)
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Could not load anime',
+                      content: s.error.toString(),
+                    ),
+                  );
+              },
+            );
 
-          return CustomScrollView(
-            controller: scrollCtrl,
-            slivers: [
-              refreshControl,
-              RelationGrid(
-                items: anime,
-                connections: voiceActors,
-                placeholder: 'No anime',
-              ),
-              SliverFooter(loading: notifier.anime.hasNext),
-            ],
-          );
-        },
+            final refreshControl = SliverRefreshControl(
+              onRefresh: () {
+                ref.invalidate(characterMediaProvider(id));
+                return Future.value();
+              },
+            );
+
+            return ref.watch(characterMediaProvider(id)).anime.when(
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      const SliverFillRemaining(child: Text('No anime')),
+                    ],
+                  ),
+                  data: (data) {
+                    final anime = <Relation>[];
+                    final voiceActors = <Relation?>[];
+                    ref
+                        .watch(characterMediaProvider(id).notifier)
+                        .getAnimeAndVoiceActors(anime, voiceActors);
+
+                    return CustomScrollView(
+                      controller: scrollCtrl,
+                      physics: Consts.physics,
+                      slivers: [
+                        refreshControl,
+                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                        RelationGrid(
+                          items: anime,
+                          connections: voiceActors,
+                          placeholder: 'No anime',
+                        ),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    );
+                  },
+                );
+          },
+        ),
       ),
     );
   }
 }
 
-class _MangaTab extends StatelessWidget {
-  const _MangaTab(this.id, this.scrollCtrl, this.refreshControl);
+class CharacterMangaView extends StatelessWidget {
+  CharacterMangaView(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
-  final Widget refreshControl;
 
   @override
   Widget build(BuildContext context) {
@@ -121,21 +105,58 @@ class _MangaTab extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id)],
       ),
-      child: Consumer(
-        builder: (context, ref, _) {
-          final manga = ref.watch(
-            characterMediaProvider(id).select((s) => s.manga),
-          );
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Consumer(
+          builder: (context, ref, _) {
+            ref.listen<AsyncValue>(
+              characterMediaProvider(id).select((s) => s.manga),
+              (_, s) {
+                if (s.hasError)
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Could not load manga',
+                      content: s.error.toString(),
+                    ),
+                  );
+              },
+            );
 
-          return CustomScrollView(
-            controller: scrollCtrl,
-            slivers: [
-              refreshControl,
-              RelationGrid(items: manga.items, placeholder: 'No manga'),
-              SliverFooter(loading: manga.hasNext),
-            ],
-          );
-        },
+            final refreshControl = SliverRefreshControl(
+              onRefresh: () {
+                ref.invalidate(characterMediaProvider(id));
+                return Future.value();
+              },
+            );
+
+            return ref.watch(characterMediaProvider(id)).manga.when(
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      const SliverFillRemaining(child: Text('No manga')),
+                    ],
+                  ),
+                  data: (data) {
+                    return CustomScrollView(
+                      controller: scrollCtrl,
+                      physics: Consts.physics,
+                      slivers: [
+                        refreshControl,
+                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                        RelationGrid(
+                          items: data.items,
+                          placeholder: 'No manga',
+                        ),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    );
+                  },
+                );
+          },
+        ),
       ),
     );
   }
@@ -150,22 +171,25 @@ class _LanguageButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final languages =
-            ref.watch(characterMediaProvider(id).select((s) => s.languages));
-        if (languages.isEmpty) return const SizedBox();
-
-        final language =
-            ref.watch(characterMediaProvider(id).select((s) => s.language));
+        if (ref.watch(characterMediaProvider(id).select(
+          (s) => s.languages.isEmpty,
+        ))) return const SizedBox();
 
         return ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
           onTap: () {
+            final notifier = ref.read(characterMediaProvider(id));
+            final languages = notifier.languages;
+            final language = notifier.language;
+
             showSheet(
               context,
               DynamicGradientDragSheet(
-                onTap: (i) =>
-                    ref.read(characterMediaProvider(id)).language = language,
+                onTap: (i) {
+                  ref.read(characterMediaProvider(id)).language =
+                      languages.elementAt(i);
+                },
                 children: [
                   for (int i = 0; i < languages.length; i++)
                     Text(

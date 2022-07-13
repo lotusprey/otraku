@@ -4,7 +4,7 @@ import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/reviews/review_grid.dart';
+import 'package:otraku/review/review_grid.dart';
 import 'package:otraku/widgets/grids/title_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';

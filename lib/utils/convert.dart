@@ -1,4 +1,4 @@
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/utils/settings.dart';
 
 abstract class Convert {

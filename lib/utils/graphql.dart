@@ -186,16 +186,16 @@ abstract class GqlQuery {
 
   static const character = r'''
     query Character($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
-        $withMain: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
+        $withInfo: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
       Character(id: $id) {
-        ...main @include(if: $withMain)
+        ...info @include(if: $withInfo)
         anime: media(page: $page, type: ANIME, onList: $onList, sort: $sort) 
           @include(if: $withAnime) {...media}
         manga: media(page: $page, type: MANGA, onList: $onList, sort: $sort) 
           @include(if: $withManga) {...media}
       }
     }
-    fragment main on Character {
+    fragment info on Character {
       id
       name{userPreferred native alternative alternativeSpoiler}
       image{large}

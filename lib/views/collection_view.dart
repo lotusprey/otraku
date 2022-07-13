@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/progress_controller.dart';
-import 'package:otraku/edit/edit.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';

@@ -1,8 +1,8 @@
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/models/recommended_model.dart';
 import 'package:otraku/models/relation.dart';
-import 'package:otraku/edit/edit.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_info_model.dart';

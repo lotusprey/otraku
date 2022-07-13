@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/models/filter_model.dart';
-import 'package:otraku/collections/entry_list.dart';
-import 'package:otraku/edit/edit.dart';
+import 'package:otraku/collection/entry_list.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 

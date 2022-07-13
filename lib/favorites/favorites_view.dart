@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/characters/character_grid.dart';
+import 'package:otraku/character/character_grid.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/favorites/favorites.dart';
+import 'package:otraku/favorites/favorites_provider.dart';
 import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/staff/staff_grid.dart';
-import 'package:otraku/studios/studio_grid.dart';
+import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';

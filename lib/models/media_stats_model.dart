@@ -1,4 +1,4 @@
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/utils/convert.dart';
 
 class MediaStatsModel {

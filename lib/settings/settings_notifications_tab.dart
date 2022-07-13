@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/notifications/notifications.dart';
+import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';

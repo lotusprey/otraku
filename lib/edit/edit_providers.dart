@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/collection/entry.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/api.dart';
-import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 
 /// Update an entry and return the entry id. This may be useful, if

@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:otraku/staff/staff_info_tab.dart';
+import 'package:otraku/staff/staff_media_tab.dart';
+import 'package:otraku/staff/staff_providers.dart';
+import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
+
+class StaffView extends ConsumerStatefulWidget {
+  StaffView(this.id, this.imageUrl);
+
+  final int id;
+  final String? imageUrl;
+
+  @override
+  ConsumerState<StaffView> createState() => _StaffViewState();
+}
+
+class _StaffViewState extends ConsumerState<StaffView> {
+  late final PaginationController _ctrl;
+  int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = PaginationController(loadMore: () {
+      if (_tab == 0) return;
+      _tab == 1
+          ? ref.read(staffRelationProvider(widget.id)).fetchPage(true)
+          : ref.read(staffRelationProvider(widget.id)).fetchPage(false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AsyncValue>(
+      staffProvider(widget.id),
+      (_, s) {
+        if (s.hasError)
+          showPopUp(
+            context,
+            ConfirmationDialog(
+              title: 'Could not load staff',
+              content: s.error.toString(),
+            ),
+          );
+      },
+    );
+
+    ref.watch(staffRelationProvider(widget.id).select((_) => null));
+    final name = ref.watch(staffProvider(widget.id)).valueOrNull?.name;
+
+    return PageLayout(
+      topBar: TopBar(title: name),
+      bottomBar: BottomBarIconTabs(
+        current: _tab,
+        onChanged: (i) => setState(() => _tab = i),
+        onSame: (_) => _ctrl.scrollToTop(),
+        items: const {
+          'Bio': Ionicons.book_outline,
+          'Characters': Ionicons.mic_outline,
+          'Roles': Ionicons.briefcase_outline,
+        },
+      ),
+      child: TabSwitcher(
+        current: _tab,
+        onChanged: (i) => setState(() => _tab = i),
+        children: [
+          StaffInfoTab(widget.id, widget.imageUrl, _ctrl),
+          StaffCharactersTab(widget.id, _ctrl),
+          StaffRolesTab(widget.id, _ctrl),
+        ],
+      ),
+    );
+  }
+}

@@ -229,11 +229,11 @@ abstract class GqlQuery {
   ''';
 
   static const staff = r'''
-    query Staff($id: Int, $sort: [MediaSort], $characterPage: Int = 1, $staffPage: Int = 1, 
-        $onList: Boolean, $withMain: Boolean = false, $withCharacters: Boolean = false, $withStaff: Boolean = false) {
+    query Staff($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
+        $withInfo: Boolean = false, $withCharacters: Boolean = false, $withRoles: Boolean = false) {
       Staff(id: $id) {
-        ...main @include(if: $withMain)
-        characterMedia(page: $characterPage, sort: $sort, onList: $onList) @include(if: $withCharacters) {
+        ...info @include(if: $withInfo)
+        characterMedia(page: $page, sort: $sort, onList: $onList) @include(if: $withCharacters) {
           pageInfo {hasNextPage}
           edges {
             characterRole
@@ -251,7 +251,7 @@ abstract class GqlQuery {
             }
           }
         }
-        staffMedia(page: $staffPage, sort: $sort, onList: $onList) @include(if: $withStaff) {
+        staffMedia(page: $page, sort: $sort, onList: $onList) @include(if: $withRoles) {
           pageInfo {hasNextPage}
           edges {
             staffRole
@@ -265,22 +265,20 @@ abstract class GqlQuery {
         }
       }
     }
-    fragment main on Staff {
+    fragment info on Staff {
       id
       name{userPreferred native alternative}
       image{large}
       description(asHtml: true)
-      languageV2
-      primaryOccupations
       dateOfBirth{year month day}
       dateOfDeath{year month day}
       gender
       age
       yearsActive
+      bloodType
       homeTown
       favourites 
       isFavourite
-      isFavouriteBlocked
     }
   ''';
 

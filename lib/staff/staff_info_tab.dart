@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/character/character_models.dart';
-import 'package:otraku/character/character_providers.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/staff/staff_models.dart';
+import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -12,8 +12,8 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
-class CharacterInfoTab extends StatelessWidget {
-  CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+class StaffInfoTab extends StatelessWidget {
+  StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl);
 
   final int id;
   final String? imageUrl;
@@ -25,12 +25,12 @@ class CharacterInfoTab extends StatelessWidget {
       builder: (context, ref, _) {
         final refreshControl = SliverRefreshControl(
           onRefresh: () {
-            ref.invalidate(characterProvider(id));
+            ref.invalidate(staffProvider(id));
             return Future.value();
           },
         );
 
-        return ref.watch(characterProvider(id)).when(
+        return ref.watch(staffProvider(id)).when(
               loading: () => _TabContent(
                 id: id,
                 data: null,
@@ -72,7 +72,7 @@ class _TabContent extends StatelessWidget {
   });
 
   final int id;
-  final Character? data;
+  final Staff? data;
   final String? imageUrl;
   final ScrollController scrollCtrl;
   final Widget refreshControl;
@@ -124,21 +124,6 @@ class _TabContent extends StatelessWidget {
                   ),
                   if (data!.altNames.isNotEmpty)
                     Text(data!.altNames.join(', ')),
-                  if (data!.altNamesSpoilers.isNotEmpty)
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      child: Text(
-                        'Spoiler names',
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      onTap: () => showPopUp(
-                        context,
-                        TextDialog(
-                          title: 'Spoiler names',
-                          text: data!.altNamesSpoilers.join(', '),
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -180,6 +165,14 @@ class _TabContent extends StatelessWidget {
                       if (data!.age != null) _InfoTile('Age', data!.age!),
                       if (data!.dateOfBirth != null)
                         _InfoTile('Date of Birth', data!.dateOfBirth!),
+                      if (data!.dateOfDeath != null)
+                        _InfoTile('Date of Death', data!.dateOfDeath!),
+                      if (data!.startYear != null)
+                        _InfoTile('Active Since', data!.startYear!),
+                      if (data!.endYear != null)
+                        _InfoTile('Active Until', data!.endYear!),
+                      if (data!.homeTown != null)
+                        _InfoTile('Home Town', data!.homeTown!),
                       if (data!.bloodType != null)
                         _InfoTile('Blood Type', data!.bloodType!),
                     ]),
@@ -215,7 +208,7 @@ class _TabContent extends StatelessWidget {
 class _FavoriteButton extends StatefulWidget {
   _FavoriteButton(this.data);
 
-  final Character data;
+  final Staff data;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -231,7 +224,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
         setState(
           () => widget.data.isFavorite = !widget.data.isFavorite,
         );
-        toggleFavoriteCharacter(widget.data.id).then((ok) {
+        toggleFavoriteStaff(widget.data.id).then((ok) {
           if (!ok) {
             setState(
               () => widget.data.isFavorite = !widget.data.isFavorite,

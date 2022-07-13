@@ -11,7 +11,7 @@ import 'package:otraku/views/media_view.dart';
 import 'package:otraku/notifications/notifications_view.dart';
 import 'package:otraku/review/review_view.dart';
 import 'package:otraku/settings/settings_view.dart';
-import 'package:otraku/views/staff_view.dart';
+import 'package:otraku/staff/staff_view.dart';
 import 'package:otraku/statistics/statistics_view.dart';
 import 'package:otraku/views/studio_view.dart';
 import 'package:otraku/review/reviews_view.dart';

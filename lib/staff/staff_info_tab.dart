@@ -131,7 +131,7 @@ class _TabContent extends StatelessWidget {
       ),
     );
 
-    const space = const SliverToBoxAdapter(child: SizedBox(height: 10));
+    const space = SliverToBoxAdapter(child: SizedBox(height: 10));
 
     return PageLayout(
       floatingBar: FloatingBar(

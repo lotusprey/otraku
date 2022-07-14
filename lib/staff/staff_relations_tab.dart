@@ -27,60 +27,65 @@ class StaffCharactersTab extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id)],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue>(
-              staffRelationProvider(id).select((s) => s.characters),
-              (_, s) {
-                if (s.hasError)
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Could not load characters',
-                      content: s.error.toString(),
-                    ),
-                  );
-              },
-            );
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) {
+                ref.listen<AsyncValue>(
+                  staffRelationProvider(id).select((s) => s.characters),
+                  (_, s) {
+                    if (s.hasError)
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not load characters',
+                          content: s.error.toString(),
+                        ),
+                      );
+                  },
+                );
 
-            final refreshControl = SliverRefreshControl(
-              onRefresh: () {
-                ref.invalidate(staffRelationProvider(id));
-                return Future.value();
-              },
-            );
+                final refreshControl = SliverRefreshControl(
+                  onRefresh: () {
+                    ref.invalidate(staffRelationProvider(id));
+                    return Future.value();
+                  },
+                );
 
-            final notifier = ref.watch(staffRelationProvider(id));
+                final notifier = ref.watch(staffRelationProvider(id));
 
-            return notifier.characters.when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => CustomScrollView(
-                physics: Consts.physics,
-                slivers: [
-                  refreshControl,
-                  const SliverFillRemaining(child: Text('No characters')),
-                ],
-              ),
-              data: (data) {
-                return CustomScrollView(
-                  controller: scrollCtrl,
-                  physics: Consts.physics,
-                  slivers: [
-                    refreshControl,
-                    const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                    RelationGrid(
-                      items: data.items,
-                      connections: notifier.characterMedia,
-                      placeholder: 'No characters',
-                    ),
-                    SliverFooter(loading: data.hasNext),
-                  ],
+                return notifier.characters.when(
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      const SliverFillRemaining(child: Text('No characters')),
+                    ],
+                  ),
+                  data: (data) {
+                    return CustomScrollView(
+                      controller: scrollCtrl,
+                      physics: Consts.physics,
+                      slivers: [
+                        refreshControl,
+                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                        RelationGrid(
+                          items: data.items,
+                          connections: notifier.characterMedia,
+                          placeholder: 'No characters',
+                        ),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    );
+                  },
                 );
               },
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
@@ -100,57 +105,64 @@ class StaffRolesTab extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id)],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue>(
-              staffRelationProvider(id).select((s) => s.roles),
-              (_, s) {
-                if (s.hasError)
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Could not load roles',
-                      content: s.error.toString(),
-                    ),
-                  );
-              },
-            );
-
-            final refreshControl = SliverRefreshControl(
-              onRefresh: () {
-                ref.invalidate(staffRelationProvider(id));
-                return Future.value();
-              },
-            );
-
-            return ref.watch(staffRelationProvider(id)).roles.when(
-                  loading: () => const Center(child: Loader()),
-                  error: (_, __) => CustomScrollView(
-                    physics: Consts.physics,
-                    slivers: [
-                      refreshControl,
-                      const SliverFillRemaining(child: Text('No roles')),
-                    ],
-                  ),
-                  data: (data) {
-                    return CustomScrollView(
-                      controller: scrollCtrl,
-                      physics: Consts.physics,
-                      slivers: [
-                        refreshControl,
-                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                        RelationGrid(
-                          items: data.items,
-                          placeholder: 'No roles',
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) {
+                ref.listen<AsyncValue>(
+                  staffRelationProvider(id).select((s) => s.roles),
+                  (_, s) {
+                    if (s.hasError)
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not load roles',
+                          content: s.error.toString(),
                         ),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    );
+                      );
                   },
                 );
-          },
+
+                final refreshControl = SliverRefreshControl(
+                  onRefresh: () {
+                    ref.invalidate(staffRelationProvider(id));
+                    return Future.value();
+                  },
+                );
+
+                return ref.watch(staffRelationProvider(id)).roles.when(
+                      loading: () => const Center(child: Loader()),
+                      error: (_, __) => CustomScrollView(
+                        physics: Consts.physics,
+                        slivers: [
+                          refreshControl,
+                          const SliverFillRemaining(child: Text('No roles')),
+                        ],
+                      ),
+                      data: (data) {
+                        return CustomScrollView(
+                          controller: scrollCtrl,
+                          physics: Consts.physics,
+                          slivers: [
+                            refreshControl,
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 10),
+                            ),
+                            RelationGrid(
+                              items: data.items,
+                              placeholder: 'No roles',
+                            ),
+                            SliverFooter(loading: data.hasNext),
+                          ],
+                        );
+                      },
+                    );
+              },
+            ),
+          ),
         ),
       ),
     );

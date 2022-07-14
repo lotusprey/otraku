@@ -28,64 +28,71 @@ class CharacterAnimeTab extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id), _LanguageButton(id)],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue>(
-              characterMediaProvider(id).select((s) => s.anime),
-              (_, s) {
-                if (s.hasError)
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Could not load anime',
-                      content: s.error.toString(),
-                    ),
-                  );
-              },
-            );
-
-            final refreshControl = SliverRefreshControl(
-              onRefresh: () {
-                ref.invalidate(characterMediaProvider(id));
-                return Future.value();
-              },
-            );
-
-            return ref.watch(characterMediaProvider(id)).anime.when(
-                  loading: () => const Center(child: Loader()),
-                  error: (_, __) => CustomScrollView(
-                    physics: Consts.physics,
-                    slivers: [
-                      refreshControl,
-                      const SliverFillRemaining(child: Text('No anime')),
-                    ],
-                  ),
-                  data: (data) {
-                    final anime = <Relation>[];
-                    final voiceActors = <Relation?>[];
-                    ref
-                        .watch(characterMediaProvider(id).notifier)
-                        .getAnimeAndVoiceActors(anime, voiceActors);
-
-                    return CustomScrollView(
-                      controller: scrollCtrl,
-                      physics: Consts.physics,
-                      slivers: [
-                        refreshControl,
-                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                        RelationGrid(
-                          items: anime,
-                          connections: voiceActors,
-                          placeholder: 'No anime',
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) {
+                ref.listen<AsyncValue>(
+                  characterMediaProvider(id).select((s) => s.anime),
+                  (_, s) {
+                    if (s.hasError)
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not load anime',
+                          content: s.error.toString(),
                         ),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    );
+                      );
                   },
                 );
-          },
+
+                final refreshControl = SliverRefreshControl(
+                  onRefresh: () {
+                    ref.invalidate(characterMediaProvider(id));
+                    return Future.value();
+                  },
+                );
+
+                return ref.watch(characterMediaProvider(id)).anime.when(
+                      loading: () => const Center(child: Loader()),
+                      error: (_, __) => CustomScrollView(
+                        physics: Consts.physics,
+                        slivers: [
+                          refreshControl,
+                          const SliverFillRemaining(child: Text('No anime')),
+                        ],
+                      ),
+                      data: (data) {
+                        final anime = <Relation>[];
+                        final voiceActors = <Relation?>[];
+                        ref
+                            .watch(characterMediaProvider(id).notifier)
+                            .getAnimeAndVoiceActors(anime, voiceActors);
+
+                        return CustomScrollView(
+                          controller: scrollCtrl,
+                          physics: Consts.physics,
+                          slivers: [
+                            refreshControl,
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 10),
+                            ),
+                            RelationGrid(
+                              items: anime,
+                              connections: voiceActors,
+                              placeholder: 'No anime',
+                            ),
+                            SliverFooter(loading: data.hasNext),
+                          ],
+                        );
+                      },
+                    );
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -105,57 +112,64 @@ class CharacterMangaTab extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id)],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue>(
-              characterMediaProvider(id).select((s) => s.manga),
-              (_, s) {
-                if (s.hasError)
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Could not load manga',
-                      content: s.error.toString(),
-                    ),
-                  );
-              },
-            );
-
-            final refreshControl = SliverRefreshControl(
-              onRefresh: () {
-                ref.invalidate(characterMediaProvider(id));
-                return Future.value();
-              },
-            );
-
-            return ref.watch(characterMediaProvider(id)).manga.when(
-                  loading: () => const Center(child: Loader()),
-                  error: (_, __) => CustomScrollView(
-                    physics: Consts.physics,
-                    slivers: [
-                      refreshControl,
-                      const SliverFillRemaining(child: Text('No manga')),
-                    ],
-                  ),
-                  data: (data) {
-                    return CustomScrollView(
-                      controller: scrollCtrl,
-                      physics: Consts.physics,
-                      slivers: [
-                        refreshControl,
-                        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                        RelationGrid(
-                          items: data.items,
-                          placeholder: 'No manga',
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) {
+                ref.listen<AsyncValue>(
+                  characterMediaProvider(id).select((s) => s.manga),
+                  (_, s) {
+                    if (s.hasError)
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not load manga',
+                          content: s.error.toString(),
                         ),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    );
+                      );
                   },
                 );
-          },
+
+                final refreshControl = SliverRefreshControl(
+                  onRefresh: () {
+                    ref.invalidate(characterMediaProvider(id));
+                    return Future.value();
+                  },
+                );
+
+                return ref.watch(characterMediaProvider(id)).manga.when(
+                      loading: () => const Center(child: Loader()),
+                      error: (_, __) => CustomScrollView(
+                        physics: Consts.physics,
+                        slivers: [
+                          refreshControl,
+                          const SliverFillRemaining(child: Text('No manga')),
+                        ],
+                      ),
+                      data: (data) {
+                        return CustomScrollView(
+                          controller: scrollCtrl,
+                          physics: Consts.physics,
+                          slivers: [
+                            refreshControl,
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 10),
+                            ),
+                            RelationGrid(
+                              items: data.items,
+                              placeholder: 'No manga',
+                            ),
+                            SliverFooter(loading: data.hasNext),
+                          ],
+                        );
+                      },
+                    );
+              },
+            ),
+          ),
         ),
       ),
     );

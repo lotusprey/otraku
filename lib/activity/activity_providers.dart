@@ -189,7 +189,11 @@ class ActivitiesNotifier
     for (int i = 0; i < value.items.length; i++)
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
-        state = AsyncData(value.copyWith([...value.items]));
+        state = AsyncData(Pagination.from(
+          items: value.items,
+          hasNext: value.hasNext,
+          next: value.next,
+        ));
         return;
       }
   }
@@ -201,7 +205,12 @@ class ActivitiesNotifier
 
     for (int i = 0; i < value.items.length; i++)
       if (value.items[i].id == activityId) {
-        state = AsyncData(value.copyWith([...value.items..removeAt(i)]));
+        value.items.removeAt(i);
+        state = AsyncData(Pagination.from(
+          items: value.items,
+          hasNext: value.hasNext,
+          next: value.next,
+        ));
         return;
       }
   }
@@ -218,7 +227,11 @@ class ActivitiesNotifier
         if (value.items[i].isPinned && value.items[0].isPinned && i > 0)
           value.items[0].isPinned = false;
 
-        state = AsyncData(value.copyWith([...value.items]));
+        state = AsyncData(Pagination.from(
+          items: value.items,
+          hasNext: value.hasNext,
+          next: value.next,
+        ));
         return;
       }
   }

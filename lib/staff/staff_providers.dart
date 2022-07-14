@@ -29,9 +29,8 @@ final staffProvider = FutureProvider.autoDispose.family(
   },
 );
 
-final staffFilterProvider = StateProvider.autoDispose.family(
-  (ref, _) => StaffFilter(),
-);
+final staffFilterProvider =
+    StateProvider.autoDispose.family((ref, _) => StaffFilter());
 
 final staffRelationProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, int id) =>

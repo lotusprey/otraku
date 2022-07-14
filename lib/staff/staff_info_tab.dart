@@ -139,10 +139,10 @@ class _TabContent extends StatelessWidget {
         children: [if (data != null) _FavoriteButton(data!)],
       ),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
             child: CustomScrollView(
               controller: scrollCtrl,
               physics: Consts.physics,

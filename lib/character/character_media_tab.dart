@@ -113,10 +113,10 @@ class CharacterMangaTab extends StatelessWidget {
         children: [_FilterButton(id)],
       ),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
             child: Consumer(
               builder: (context, ref, _) {
                 ref.listen<AsyncValue>(

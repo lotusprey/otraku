@@ -127,16 +127,20 @@ class _AnimeTab extends StatelessWidget {
               if (data.items.isEmpty) return empty;
 
               return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      MediaGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(maxWidth: Consts.layoutBig),
+                    child: CustomScrollView(
+                      physics: Consts.physics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl,
+                        MediaGrid(data.items),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -181,16 +185,20 @@ class _MangaTab extends StatelessWidget {
               if (data.items.isEmpty) return empty;
 
               return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      MediaGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(maxWidth: Consts.layoutBig),
+                    child: CustomScrollView(
+                      physics: Consts.physics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl,
+                        MediaGrid(data.items),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    ),
                   ),
                 ),
               );

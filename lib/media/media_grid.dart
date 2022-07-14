@@ -13,8 +13,11 @@ class MediaGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty)
+      return const SliverFillRemaining(child: Center(child: Text('No Media')));
+
     return SliverPadding(
-      padding: Consts.padding,
+      padding: const EdgeInsets.symmetric(vertical: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
           minWidth: 100,

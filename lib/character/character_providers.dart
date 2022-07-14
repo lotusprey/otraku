@@ -29,9 +29,8 @@ final characterProvider = FutureProvider.autoDispose.family(
   },
 );
 
-final characterFilterProvider = StateProvider.autoDispose.family(
-  (ref, _) => CharacterFilter(),
-);
+final characterFilterProvider =
+    StateProvider.autoDispose.family((ref, _) => CharacterFilter());
 
 final characterMediaProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, int id) =>

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
 import 'package:otraku/media/media_item.dart';
 import 'package:otraku/staff/staff_models.dart';
-import 'package:otraku/studio/studio_item.dart';
+import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';

@@ -294,22 +294,23 @@ abstract class GqlQuery {
   ''';
 
   static const studio = r'''
-    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $isMain: Boolean, $onList: Boolean, $withMain: Boolean = false) {
+    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $onList: Boolean, $isMain: Boolean, $withInfo: Boolean = false) {
       Studio(id: $id) {
-        ...studio @include(if: $withMain)
-        media(page: $page, sort: $sort, isMain: $isMain, onList: $onList) {
+        ...info @include(if: $withInfo)
+        media(page: $page, sort: $sort, onList: $onList, isMain: $isMain) {
           pageInfo {hasNextPage}
           nodes {
             id
             title {userPreferred}
             coverImage {extraLarge large medium}
             startDate {year}
+            endDate {year}
             status(version: 2)
           }
         }
       }
     }
-    fragment studio on Studio {id name favourites isFavourite isAnimationStudio}
+    fragment info on Studio {id name favourites isFavourite}
   ''';
 
   static const studios = r'''

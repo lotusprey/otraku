@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/studio/studio_item.dart';
+import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 

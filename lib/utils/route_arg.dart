@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/activity/activities_view.dart';
 import 'package:otraku/activity/activity_view.dart';
 import 'package:otraku/favorites/favorites_view.dart';
+import 'package:otraku/studio/studio_view.dart';
 import 'package:otraku/views/auth_view.dart';
 import 'package:otraku/character/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
@@ -13,7 +14,6 @@ import 'package:otraku/review/review_view.dart';
 import 'package:otraku/settings/settings_view.dart';
 import 'package:otraku/staff/staff_view.dart';
 import 'package:otraku/statistics/statistics_view.dart';
-import 'package:otraku/views/studio_view.dart';
 import 'package:otraku/review/reviews_view.dart';
 import 'package:otraku/user/user_view.dart';
 

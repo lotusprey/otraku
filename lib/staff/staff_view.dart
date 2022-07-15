@@ -5,6 +5,7 @@ import 'package:otraku/staff/staff_info_tab.dart';
 import 'package:otraku/staff/staff_relations_tab.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';

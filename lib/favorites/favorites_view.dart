@@ -8,6 +8,7 @@ import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/staff/staff_grid.dart';
 import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';

@@ -5,6 +5,7 @@ import 'package:otraku/character/character_providers.dart';
 import 'package:otraku/character/character_info_tab.dart';
 import 'package:otraku/character/character_media_tab.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';

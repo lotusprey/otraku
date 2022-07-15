@@ -17,6 +17,7 @@ import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/growable_text_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
@@ -90,100 +91,90 @@ class EditView extends StatelessWidget {
 
   Widget _build(Edit oldEdit) {
     return OpaqueSheetView(
-      buttons: [
-        if (oldEdit.entryId != null)
-          _RemoveButton(oldEdit, callback)
-        else
-          const Spacer(),
-        _SaveButton(mediaId, oldEdit, callback),
-      ],
+      buttons: _Buttons(mediaId, oldEdit, callback),
       builder: (context, scrollCtrl) => _EditView(scrollCtrl, oldEdit),
     );
   }
 }
 
-class _RemoveButton extends StatelessWidget {
-  _RemoveButton(this.oldEdit, this.callback);
-
-  final Edit oldEdit;
-  final void Function(Edit)? callback;
-
-  @override
-  Widget build(BuildContext context) {
-    return OpaqueSheetViewButton(
-      text: 'Remove',
-      icon: Ionicons.trash_bin_outline,
-      warning: true,
-      onTap: () => showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Remove entry?',
-          mainAction: 'Yes',
-          secondaryAction: 'No',
-          onConfirm: () {
-            removeEntry(oldEdit.entryId!);
-
-            Get.find<CollectionController>(
-              tag: oldEdit.type == 'ANIME'
-                  ? '${Settings().id}true'
-                  : '${Settings().id}false',
-            ).removeEntry(oldEdit);
-
-            if (oldEdit.status == EntryStatus.CURRENT)
-              Get.find<ProgressController>().remove(oldEdit.mediaId);
-
-            callback?.call(oldEdit.emptyCopy());
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _SaveButton extends StatefulWidget {
-  _SaveButton(this.mediaId, this.oldEdit, this.callback);
+class _Buttons extends StatefulWidget {
+  _Buttons(this.mediaId, this.oldEdit, this.callback);
 
   final int mediaId;
   final Edit oldEdit;
   final void Function(Edit)? callback;
 
   @override
-  __SaveButtonState createState() => __SaveButtonState();
+  State<_Buttons> createState() => __ButtonsState();
 }
 
-class __SaveButtonState extends State<_SaveButton> {
+class __ButtonsState extends State<_Buttons> {
   bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Expanded(child: Center(child: Loader()));
-
     return Consumer(
-      builder: (__, ref, _) => OpaqueSheetViewButton(
-        text: 'Save',
-        icon: Ionicons.save_outline,
-        onTap: () async {
-          final newEdit = ref.read(editProvider);
-          setState(() => _loading = true);
+      builder: (__, ref, _) => BottomBarDualButtonRow(
+        primary: _loading
+            ? null
+            : BottomBarButton(
+                text: 'Save',
+                icon: Ionicons.save_outline,
+                onTap: () async {
+                  final newEdit = ref.read(editProvider);
+                  setState(() => _loading = true);
 
-          newEdit.entryId = await updateEntry(newEdit);
-          Navigator.pop(context);
-          if (newEdit.entryId == null) return;
-          widget.callback?.call(newEdit);
+                  newEdit.entryId = await updateEntry(newEdit);
+                  Navigator.pop(context);
+                  if (newEdit.entryId == null) return;
+                  widget.callback?.call(newEdit);
 
-          final isAnime = newEdit.type == 'ANIME';
+                  final isAnime = newEdit.type == 'ANIME';
 
-          final entry = await Get.find<CollectionController>(
-            tag: isAnime ? '${Settings().id}true' : '${Settings().id}false',
-          ).updateEntry(widget.oldEdit, newEdit);
-          if (entry == null) return;
+                  final entry = await Get.find<CollectionController>(
+                    tag: isAnime
+                        ? '${Settings().id}true'
+                        : '${Settings().id}false',
+                  ).updateEntry(widget.oldEdit, newEdit);
+                  if (entry == null) return;
 
-          if (widget.oldEdit.status == null)
-            Get.find<ProgressController>().add(entry, isAnime);
-          else
-            Get.find<ProgressController>().updateEntry(entry, isAnime);
-        },
+                  if (widget.oldEdit.status == null)
+                    Get.find<ProgressController>().add(entry, isAnime);
+                  else
+                    Get.find<ProgressController>().updateEntry(entry, isAnime);
+                },
+              ),
+        secondary: widget.oldEdit.entryId == null
+            ? null
+            : BottomBarButton(
+                text: 'Remove',
+                icon: Ionicons.trash_bin_outline,
+                warning: true,
+                onTap: () => showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Remove entry?',
+                    mainAction: 'Yes',
+                    secondaryAction: 'No',
+                    onConfirm: () {
+                      final oldEdit = widget.oldEdit;
+                      removeEntry(oldEdit.entryId!);
+
+                      Get.find<CollectionController>(
+                        tag: oldEdit.type == 'ANIME'
+                            ? '${Settings().id}true'
+                            : '${Settings().id}false',
+                      ).removeEntry(oldEdit);
+
+                      if (oldEdit.status == EntryStatus.CURRENT)
+                        Get.find<ProgressController>().remove(oldEdit.mediaId);
+
+                      widget.callback?.call(oldEdit.emptyCopy());
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+              ),
       ),
     );
   }

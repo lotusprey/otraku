@@ -10,6 +10,7 @@ import 'package:otraku/settings/settings_app_tab.dart';
 import 'package:otraku/settings/settings_content_tab.dart';
 import 'package:otraku/settings/settings_notifications_tab.dart';
 import 'package:otraku/settings/settings_about_tab.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 

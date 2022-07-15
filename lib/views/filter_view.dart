@@ -15,6 +15,7 @@ import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -52,8 +53,16 @@ class FilterView extends StatelessWidget {
     }
 
     return OpaqueSheetView(
-      buttons: [
-        OpaqueSheetViewButton(
+      buttons: BottomBarDualButtonRow(
+        primary: BottomBarButton(
+          text: 'Apply',
+          icon: Icons.done_rounded,
+          onTap: () {
+            model.copy(copy);
+            Navigator.pop(context);
+          },
+        ),
+        secondary: BottomBarButton(
           text: 'Clear',
           icon: Icons.close,
           warning: true,
@@ -62,15 +71,7 @@ class FilterView extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        OpaqueSheetViewButton(
-          text: 'Apply',
-          icon: Icons.done_rounded,
-          onTap: () {
-            model.copy(copy);
-            Navigator.pop(context);
-          },
-        ),
-      ],
+      ),
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         padding: const EdgeInsets.only(

@@ -8,6 +8,7 @@ import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';

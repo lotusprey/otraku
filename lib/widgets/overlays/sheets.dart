@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 /// Used to open [DraggableScrollableSheet].
@@ -61,10 +60,10 @@ class OpaqueSheet extends StatelessWidget {
 /// A wide implementation of [DraggableScrollableSheet]
 /// with a lane of buttons at the bottom.
 class OpaqueSheetView extends StatelessWidget {
-  OpaqueSheetView({required this.builder, this.buttons = const []});
+  OpaqueSheetView({required this.builder, this.buttons});
 
   final Widget Function(BuildContext, ScrollController) builder;
-  final List<Widget> buttons;
+  final Widget? buttons;
 
   @override
   Widget build(BuildContext context) {
@@ -94,64 +93,12 @@ class OpaqueSheetView extends StatelessWidget {
           child: Stack(
             children: [
               builder(context, scrollCtrl),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: Consts.filter,
-                    child: Container(
-                      height: MediaQuery.of(context).viewPadding.bottom + 50,
-                      padding: EdgeInsets.only(
-                        left: 10,
-                        right: 10,
-                        bottom: MediaQuery.of(context).viewPadding.bottom,
-                      ),
-                      color: Theme.of(context).cardColor,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: Settings().leftHanded
-                            ? buttons.reversed.toList()
-                            : buttons,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              if (buttons != null)
+                Align(alignment: Alignment.bottomCenter, child: buttons!),
             ],
           ),
         ),
       );
-}
-
-/// Buttons, typically used in [OpaqueSheetView]
-class OpaqueSheetViewButton extends StatelessWidget {
-  OpaqueSheetViewButton({
-    required this.text,
-    required this.icon,
-    required this.onTap,
-    this.warning = false,
-  });
-
-  final String text;
-  final IconData icon;
-  final void Function() onTap;
-
-  // If the icon/text should be in the error colour.
-  final bool warning;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: TextButton.icon(
-        label: Text(text),
-        icon: Icon(icon),
-        onPressed: onTap,
-        style: TextButton.styleFrom(
-          primary: warning ? Theme.of(context).colorScheme.error : null,
-        ),
-      ),
-    );
-  }
 }
 
 /// An implementation of [DraggableScrollableSheet] with

@@ -9,6 +9,7 @@ import 'package:otraku/views/media_info_view.dart';
 import 'package:otraku/views/media_other_view.dart';
 import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';

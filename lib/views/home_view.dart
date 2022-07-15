@@ -17,6 +17,7 @@ import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/user/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/tab_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';

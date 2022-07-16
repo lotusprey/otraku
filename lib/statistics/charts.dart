@@ -9,13 +9,13 @@ class BarChart extends StatelessWidget {
     required this.names,
     required this.values,
     this.barWidth = 60,
-    this.trailing,
+    this.action,
   }) : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
   final List<num> values;
-  final Widget? trailing;
+  final Widget? action;
   final double barWidth;
 
   @override
@@ -33,7 +33,7 @@ class BarChart extends StatelessWidget {
           padding: Consts.padding,
           child: Text(title, style: Theme.of(context).textTheme.headline3),
         ),
-        if (trailing != null) trailing!,
+        if (action != null) action!,
         SizedBox(
           height: 280,
           child: ListView.builder(

@@ -16,7 +16,8 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class InboxView extends StatelessWidget {
@@ -96,7 +97,7 @@ class InboxView extends StatelessWidget {
             scrollCtrl: scrollCtrl,
             centered: true,
             children: [
-              ActionMenu(
+              SegmentSwitcher(
                 current: homeCtrl.onFeed ? 1 : 0,
                 onChanged: (i) => homeCtrl.onFeed = i == 1,
                 items: const ['Progress', 'Feed'],
@@ -120,7 +121,7 @@ class InboxView extends StatelessWidget {
               notificationIcon,
             ],
           ),
-          child: TabSwitcher(
+          child: DirectPageView(
             onChanged: null,
             current: homeCtrl.onFeed ? 1 : 0,
             children: [

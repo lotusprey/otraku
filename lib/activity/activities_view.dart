@@ -12,7 +12,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -32,10 +32,10 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Consts.physics,
+        padding: Consts.padding,
         children: [
           ListView(
             shrinkWrap: true,
-            padding: Consts.padding,
             physics: const NeverScrollableScrollPhysics(),
             children: [
               for (final a in ActivityType.values)
@@ -50,11 +50,11 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
             ],
           ),
           if (onFollowing != null)
-            TabSegments<bool>(
-              items: const {'Following': true, 'Global': false},
-              initial: onFollowing!,
+            CompactSegmentSwitcher(
+              items: const ['Following', 'Global'],
+              current: onFollowing! ? 0 : 1,
               onChanged: (val) {
-                onFollowing = val;
+                onFollowing = val == 0;
                 changed = true;
               },
             ),

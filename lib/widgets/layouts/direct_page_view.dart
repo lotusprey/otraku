@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 /// A wrapper around [PageView] that skips over unnecessary
 /// tabs when animating through multiple of them.
-class TabSwitcher extends StatefulWidget {
-  const TabSwitcher({
+class DirectPageView extends StatefulWidget {
+  const DirectPageView({
     required this.children,
     required this.current,
     required this.onChanged,
@@ -17,13 +17,13 @@ class TabSwitcher extends StatefulWidget {
   final void Function(int)? onChanged;
 
   @override
-  State<TabSwitcher> createState() => _TabSwitcherState();
+  State<DirectPageView> createState() => _DirectPageViewState();
 }
 
-class _TabSwitcherState extends State<TabSwitcher> {
+class _DirectPageViewState extends State<DirectPageView> {
   late final PageController _ctrl;
 
-  /// While [TabSwitcher] is performing a switch triggered from the outside,
+  /// While [DirectPageView] is performing a switch triggered from the outside,
   /// [_busy] is set to `true` to signal that [widget.onChanged] shouldn't be
   /// called, as the outer environment already knows about the tab change.
   bool _busy = false;
@@ -35,7 +35,7 @@ class _TabSwitcherState extends State<TabSwitcher> {
   }
 
   @override
-  void didUpdateWidget(covariant TabSwitcher oldWidget) {
+  void didUpdateWidget(covariant DirectPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
     _animateToCurrent();
   }

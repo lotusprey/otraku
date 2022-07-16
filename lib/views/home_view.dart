@@ -19,7 +19,7 @@ import 'package:otraku/user/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -105,7 +105,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     }
                   },
                 ),
-                child: TabSwitcher(
+                child: DirectPageView(
                   current: homeCtrl.homeTab,
                   onChanged: (i) => homeCtrl.homeTab = i,
                   children: [

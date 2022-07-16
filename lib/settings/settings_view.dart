@@ -12,7 +12,7 @@ import 'package:otraku/settings/settings_notifications_tab.dart';
 import 'package:otraku/settings/settings_about_tab.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 
 class SettingsView extends StatefulWidget {
   const SettingsView();
@@ -89,7 +89,7 @@ class _SettingsViewState extends State<SettingsView> {
                 'About': Ionicons.information_outline,
               },
             ),
-            child: TabSwitcher(
+            child: DirectPageView(
               children: tabs,
               current: _tabIndex,
               onChanged: (i) => setState(() => _tabIndex = i),

@@ -7,7 +7,7 @@ import 'package:otraku/user/user_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -78,7 +78,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
           'Followers': Ionicons.person_circle,
         },
       ),
-      child: TabSwitcher(
+      child: DirectPageView(
         current: _onFollowing ? 0 : 1,
         onChanged: (page) {
           setState(() => _onFollowing = page == 0 ? true : false);

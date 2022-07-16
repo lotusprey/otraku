@@ -10,7 +10,7 @@ import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -77,7 +77,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
           'Studios': Ionicons.business_outline,
         },
       ),
-      child: TabSwitcher(
+      child: DirectPageView(
         current: _tab.index,
         onChanged: (page) =>
             setState(() => _tab = FavoriteType.values.elementAt(page)),

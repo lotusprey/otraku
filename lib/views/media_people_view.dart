@@ -7,7 +7,8 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -51,7 +52,7 @@ class MediaPeopleView extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         centered: true,
         children: [
-          ActionMenu(
+          SegmentSwitcher(
             items: const ['Characters', 'Staff'],
             current: ctrl.peopleTabToggled ? 1 : 0,
             onChanged: (i) {
@@ -62,7 +63,7 @@ class MediaPeopleView extends StatelessWidget {
           _LanguageButton(ctrl.id, scrollCtrl),
         ],
       ),
-      child: TabSwitcher(
+      child: DirectPageView(
         onChanged: null,
         current: ctrl.peopleTabToggled ? 1 : 0,
         children: [

@@ -4,7 +4,7 @@ import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
+import 'package:otraku/widgets/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 

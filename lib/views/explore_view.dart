@@ -10,7 +10,7 @@ import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/tile_grid.dart';
-import 'package:otraku/widgets/navigation/filter_tools.dart';
+import 'package:otraku/widgets/filter_tools.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreView extends StatelessWidget {

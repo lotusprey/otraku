@@ -5,7 +5,7 @@ import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/navigation/custom_sliver_header.dart';
+import 'package:otraku/widgets/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';

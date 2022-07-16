@@ -11,9 +11,9 @@ import 'package:otraku/views/media_people_view.dart';
 import 'package:otraku/views/media_social_view.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/navigation/media_header.dart';
+import 'package:otraku/media/media_header.dart';
 
 class MediaView extends StatelessWidget {
   MediaView(this.id, this.coverUrl);
@@ -190,7 +190,7 @@ class __MediaSubViewState extends State<_MediaSubView> {
     return GetBuilder<MediaController>(
       id: MediaController.ID_INNER,
       tag: widget.id.toString(),
-      builder: (ctrl) => TabSwitcher(
+      builder: (ctrl) => DirectPageView(
         current: widget.tab,
         onChanged: widget.onChanged,
         children: [

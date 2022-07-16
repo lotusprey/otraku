@@ -7,7 +7,7 @@ import 'package:otraku/character/character_media_tab.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class CharacterView extends ConsumerStatefulWidget {
@@ -72,7 +72,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           'Manga': Ionicons.bookmark_outline,
         },
       ),
-      child: TabSwitcher(
+      child: DirectPageView(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
         children: [

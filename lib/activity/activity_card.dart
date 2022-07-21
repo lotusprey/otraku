@@ -308,7 +308,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
       Consumer(
         builder: (_, ref, __) =>
             FixedGradientDragSheet.link(context, activity.siteUrl!, [
-          if (activity.isDeletable)
+          if (activity.isOwned)
             FixedGradientSheetTile(
               text: 'Delete',
               icon: Ionicons.trash_outline,
@@ -325,7 +325,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 ),
               ),
             ),
-          if (widget.onPinned != null && activity.type != ActivityType.MESSAGE)
+          if (widget.onPinned != null &&
+              activity.isOwned &&
+              activity.type != ActivityType.MESSAGE)
             FixedGradientSheetTile(
               text: activity.isPinned ? 'Unpin' : 'Pin',
               icon:

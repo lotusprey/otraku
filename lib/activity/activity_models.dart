@@ -47,7 +47,7 @@ class Activity {
     required this.agent,
     required this.createdAt,
     required this.siteUrl,
-    required this.isDeletable,
+    required this.isOwned,
     required this.isPinned,
     this.media,
     this.reciever,
@@ -71,7 +71,7 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: map['text'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
-          isDeletable: map['user']['id'] == viewerId,
+          isOwned: map['user']['id'] == viewerId,
           replyCount: map['replyCount'] ?? 0,
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
@@ -98,7 +98,7 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: '$status $progress',
           createdAt: Convert.millisToStr(map['createdAt']),
-          isDeletable: map['user']['id'] == viewerId,
+          isOwned: map['user']['id'] == viewerId,
           replyCount: map['replyCount'] ?? 0,
           likeCount: map['likeCount'] ?? 0,
           isLiked: map['isLiked'] ?? false,
@@ -116,7 +116,7 @@ class Activity {
           siteUrl: map['siteUrl'],
           text: map['message'] ?? '',
           createdAt: Convert.millisToStr(map['createdAt']),
-          isDeletable: map['messenger']['id'] == viewerId ||
+          isOwned: map['messenger']['id'] == viewerId ||
               map['recipient']['id'] == viewerId,
           isPrivate: map['isPrivate'] ?? false,
           replyCount: map['replyCount'] ?? 0,
@@ -137,7 +137,7 @@ class Activity {
   final ActivityMedia? media;
   final String? siteUrl;
   final String text;
-  final bool isDeletable;
+  final bool isOwned;
   final bool isPrivate;
   final String createdAt;
   int likeCount;

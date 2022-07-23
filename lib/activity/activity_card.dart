@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/composition/composition_model.dart';
+import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -200,6 +203,7 @@ class ActivityFooter extends StatefulWidget {
     required this.onPinned,
     required this.onChanged,
     required this.onOpenReplies,
+    required this.onEdited,
   });
 
   final Activity activity;
@@ -207,6 +211,7 @@ class ActivityFooter extends StatefulWidget {
   final void Function()? onPinned;
   final void Function()? onChanged;
   final void Function()? onOpenReplies;
+  final void Function(Map<String, dynamic>)? onEdited;
 
   @override
   State<ActivityFooter> createState() => _ActivityFooterState();
@@ -306,9 +311,30 @@ class _ActivityFooterState extends State<ActivityFooter> {
     showSheet(
       context,
       Consumer(
-        builder: (_, ref, __) =>
+        builder: (context, ref, __) =>
             FixedGradientDragSheet.link(context, activity.siteUrl!, [
-          if (activity.isOwned)
+          if (activity.isOwned) ...[
+            if (activity.type == ActivityType.TEXT ||
+                activity.type == ActivityType.MESSAGE &&
+                    activity.agent.id == Settings().id)
+              FixedGradientSheetTile(
+                text: 'Edit',
+                icon: Icons.edit_outlined,
+                onTap: () => showSheet(
+                  context,
+                  CompositionView(
+                    composition: activity.reciever == null
+                        ? Composition.status(activity.id, activity.text)
+                        : Composition.message(
+                            activity.id,
+                            activity.text,
+                            activity.reciever!.id,
+                            activity.isPrivate,
+                          ),
+                    onDone: (map) => widget.onEdited?.call(map),
+                  ),
+                ),
+              ),
             FixedGradientSheetTile(
               text: 'Delete',
               icon: Ionicons.trash_outline,
@@ -325,6 +351,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 ),
               ),
             ),
+          ],
           if (widget.onPinned != null &&
               activity.isOwned &&
               activity.type != ActivityType.MESSAGE)

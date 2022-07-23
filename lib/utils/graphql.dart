@@ -692,6 +692,33 @@ abstract class GqlMutation {
     }
   ''';
 
+  static const saveStatusActivity = r'''
+    mutation SaveStatusActivity($id: Int, $text: String) {
+      SaveTextActivity(id: $id, text: $text) {...textActivity}
+    }
+  '''
+      '${_GqlFragment.textActivity}';
+
+  static const saveMessageActivity = r'''
+    mutation SaveMessageActivity($id: Int, $recipientId: Int, $text: String, $private: Boolean) {
+      SaveMessageActivity(id: $id, recipientId: $recipientId, message: $text, private: $private) {...messageActivity}
+    }
+  '''
+      '${_GqlFragment.messageActivity}';
+
+  static const saveActivityReply = r'''
+    mutation SaveActivityReply($id: Int, $activityId: Int, $text: String) {
+      SaveActivityReply(id: $id, activityId: $activityId, text: $text) {
+        id
+        likeCount
+        isLiked
+        createdAt
+        text(asHtml: true)
+        user {id name avatar {large}}
+      }
+    }
+  ''';
+
   static const toggleLike = r'''
     mutation ToggleLike($id: Int, $type: LikeableType) {
       ToggleLikeV2(id: $id, type: $type) {
@@ -724,6 +751,10 @@ abstract class GqlMutation {
 
   static const deleteActivity = r'''
     mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
+  ''';
+
+  static const deleteActivityReply = r'''
+    mutation DeleteActivityReply($id: Int) {DeleteActivityReply(id: $id) {deleted}}
   ''';
 }
 

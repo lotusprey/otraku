@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/composition/composition_model.dart';
+import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
-  ReplyCard(this.reply);
+  ReplyCard(this.activityId, this.reply);
 
+  final int activityId;
   final ActivityReply reply;
 
   @override
@@ -54,12 +62,28 @@ class ReplyCard extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     reply.createdAt,
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
+                  const Spacer(),
+                  if (reply.user.id == Settings().id)
+                    Consumer(
+                      builder: (context, ref, _) => IconButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        splashColor: Colors.transparent,
+                        tooltip: 'More',
+                        constraints: const BoxConstraints(
+                          maxHeight: Consts.iconSmall,
+                        ),
+                        icon: const Icon(
+                          Ionicons.ellipsis_horizontal,
+                          size: Consts.iconSmall,
+                        ),
+                        onPressed: () => _showMoreSheet(context, ref),
+                      ),
+                    ),
                   _ReplyLikeButton(reply),
                 ],
               ),
@@ -67,6 +91,49 @@ class ReplyCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// Show a sheet with additional options.
+  void _showMoreSheet(BuildContext context, WidgetRef ref) {
+    showSheet(
+      context,
+      FixedGradientDragSheet(
+        children: [
+          FixedGradientSheetTile(
+            text: 'Edit',
+            icon: Icons.edit_outlined,
+            onTap: () => showSheet(
+              context,
+              CompositionView(
+                composition:
+                    Composition.reply(reply.id, reply.text, activityId),
+                onDone: (map) => ref
+                    .read(activityProvider(activityId).notifier)
+                    .replaceReply(map),
+              ),
+            ),
+          ),
+          FixedGradientSheetTile(
+            text: 'Delete',
+            icon: Ionicons.trash_outline,
+            onTap: () => showPopUp(
+              context,
+              ConfirmationDialog(
+                title: 'Delete?',
+                mainAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: () => deleteActivityReply(reply.id).then((ok) {
+                  if (ok)
+                    ref
+                        .read(activityProvider(activityId).notifier)
+                        .removeReply(reply.id);
+                }),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

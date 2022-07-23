@@ -67,6 +67,16 @@ Future<bool> deleteActivity(int activityId) async {
   }
 }
 
+/// Deletes an activity reply.
+Future<bool> deleteActivityReply(int replyId) async {
+  try {
+    await Api.get(GqlMutation.deleteActivityReply, {'id': replyId});
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 final activityProvider = StateNotifierProvider.autoDispose
     .family<ActivityNotifier, AsyncValue<ActivityState>, int>(
   (ref, userId) => ActivityNotifier(userId, Settings().id!),
@@ -137,6 +147,81 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
       );
     });
   }
+
+  /// Deserializes [map] and replaces the current activity.
+  void replaceActivity(Map<String, dynamic> map, int viewerId) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    final activity = Activity.maybe(map, viewerId);
+    if (activity == null) return;
+
+    state = AsyncData(ActivityState(activity, value.replies));
+  }
+
+  /// Deserializes [map] and appends it at the end.
+  void appendReply(Map<String, dynamic> map) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    final reply = ActivityReply.maybe(map);
+    if (reply == null) return;
+
+    value.activity.replyCount++;
+    state = AsyncData(ActivityState(
+      value.activity,
+      Pagination.from(
+        items: [...value.replies.items, reply],
+        hasNext: value.replies.hasNext,
+        next: value.replies.next,
+      ),
+    ));
+  }
+
+  /// Replaces an existing reply with another one.
+  void replaceReply(Map<String, dynamic> map) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    final reply = ActivityReply.maybe(map);
+    if (reply == null) return;
+
+    for (int i = 0; i < value.replies.items.length; i++)
+      if (value.replies.items[i].id == reply.id) {
+        value.replies.items[i] = reply;
+        state = AsyncData(ActivityState(
+          value.activity,
+          Pagination.from(
+            items: value.replies.items,
+            hasNext: value.replies.hasNext,
+            next: value.replies.next,
+          ),
+        ));
+        return;
+      }
+  }
+
+  /// Removes an already deleted reply.
+  void removeReply(int replyId) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    for (int i = 0; i < value.replies.items.length; i++)
+      if (value.replies.items[i].id == replyId) {
+        value.replies.items.removeAt(i);
+        value.activity.replyCount--;
+
+        state = AsyncData(ActivityState(
+          value.activity,
+          Pagination.from(
+            items: value.replies.items,
+            hasNext: value.replies.hasNext,
+            next: value.replies.next,
+          ),
+        ));
+        return;
+      }
+  }
 }
 
 class ActivitiesNotifier
@@ -149,6 +234,7 @@ class ActivitiesNotifier
     fetch();
   }
 
+  /// [userId] being `null` means that this notifier handles the home feed.
   final int? userId;
   final int viewerId;
   final ActivityFilter filter;
@@ -181,8 +267,43 @@ class ActivitiesNotifier
     });
   }
 
-  /// Replace an existing activity with another one.
-  void replaceActivity(Activity activity) {
+  /// Deserializes [map] and inserts it at the beginning.
+  void insertActivity(Map<String, dynamic> map, int viewerId) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    final activity = Activity.maybe(map, viewerId);
+    if (activity == null) return;
+
+    state = AsyncData(Pagination.from(
+      items: [activity, ...value.items],
+      hasNext: value.hasNext,
+      next: value.next,
+    ));
+  }
+
+  /// Deserializes [map] and replaces an existing activity with another one.
+  void replaceActivity(Map<String, dynamic> map) {
+    if (!state.hasValue) return;
+    final value = state.value!;
+
+    final activity = Activity.maybe(map, viewerId);
+    if (activity == null) return;
+
+    for (int i = 0; i < value.items.length; i++)
+      if (value.items[i].id == activity.id) {
+        value.items[i] = activity;
+        state = AsyncData(Pagination.from(
+          items: value.items,
+          hasNext: value.hasNext,
+          next: value.next,
+        ));
+        return;
+      }
+  }
+
+  /// Updates an existing activity with another one.
+  void updateActivity(Activity activity) {
     if (!state.hasValue) return;
     final value = state.value!;
 
@@ -199,7 +320,7 @@ class ActivitiesNotifier
   }
 
   /// Removes an already deleted activity.
-  void delete(int activityId) {
+  void remove(int activityId) {
     if (!state.hasValue) return;
     final value = state.value!;
 

@@ -5,14 +5,19 @@ import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/activity/activity_card.dart';
 import 'package:otraku/activity/reply_card.dart';
+import 'package:otraku/composition/composition_model.dart';
+import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ActivityView extends ConsumerStatefulWidget {
   const ActivityView(this.id, this.onChanged);
@@ -117,6 +122,24 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
             ),
         ],
       ),
+      floatingBar: FloatingBar(
+        scrollCtrl: _ctrl,
+        children: [
+          ActionButton(
+            tooltip: 'New Reply',
+            icon: Icons.edit_outlined,
+            onTap: () => showSheet(
+              context,
+              CompositionView(
+                composition: Composition.reply(null, '', widget.id),
+                onDone: (map) => ref
+                    .read(activityProvider(widget.id).notifier)
+                    .appendReply(map),
+              ),
+            ),
+          ),
+        ],
+      ),
       child: Consumer(
         child: SliverRefreshControl(
           onRefresh: () {
@@ -166,13 +189,19 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                               },
                               onPinned: () => setState(() {}),
                               onOpenReplies: null,
+                              onEdited: (map) {
+                                ref
+                                    .read(activityProvider(widget.id).notifier)
+                                    .replaceActivity(map, Settings().id!);
+                              },
                             ),
                           ),
                         ),
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             childCount: data.replies.items.length,
-                            (context, i) => ReplyCard(data.replies.items[i]),
+                            (context, i) =>
+                                ReplyCard(widget.id, data.replies.items[i]),
                           ),
                         ),
                         SliverFooter(loading: data.replies.hasNext),

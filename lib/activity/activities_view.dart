@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/activity/activity_card.dart';
+import 'package:otraku/composition/composition_model.dart';
+import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
@@ -101,6 +103,21 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
         scrollCtrl: _ctrl,
         children: [
           ActionButton(
+            tooltip: widget.id == Settings().id ? 'New Post' : 'New Message',
+            icon: Icons.edit_outlined,
+            onTap: () => showSheet(
+              context,
+              CompositionView(
+                composition: widget.id == Settings().id
+                    ? Composition.status(null, '')
+                    : Composition.message(null, '', widget.id, false),
+                onDone: (map) => ref
+                    .read(activitiesProvider(widget.id).notifier)
+                    .insertActivity(map, Settings().id!),
+              ),
+            ),
+          ),
+          ActionButton(
             tooltip: 'Filter',
             icon: Ionicons.funnel_outline,
             onTap: () => showActivityFilterSheet(context, ref, widget.id),
@@ -165,7 +182,7 @@ class ActivitiesSubView extends StatelessWidget {
                               activity: data.items[i],
                               onDeleted: () => ref
                                   .read(activitiesProvider(id).notifier)
-                                  .delete(data.items[i].id),
+                                  .remove(data.items[i].id),
                               onChanged: null,
                               onPinned: id == Settings().id
                                   ? () => ref
@@ -182,16 +199,21 @@ class ActivitiesSubView extends StatelessWidget {
                                     if (updatedActivity == null) {
                                       ref
                                           .read(activitiesProvider(id).notifier)
-                                          .delete(data.items[i].id);
+                                          .remove(data.items[i].id);
                                       return;
                                     }
 
                                     ref
                                         .read(activitiesProvider(id).notifier)
-                                        .replaceActivity(updatedActivity);
+                                        .updateActivity(updatedActivity);
                                   },
                                 ),
                               ),
+                              onEdited: (map) {
+                                ref
+                                    .read(activitiesProvider(id).notifier)
+                                    .replaceActivity(map);
+                              },
                             ),
                           ),
                         ),

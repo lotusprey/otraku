@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activities_view.dart';
+import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/collection/entry_item.dart';
+import 'package:otraku/composition/composition_model.dart';
+import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/collection/entry.dart';
 import 'package:otraku/controllers/collection_controller.dart';
@@ -19,6 +22,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class InboxView extends StatelessWidget {
   InboxView(this.scrollCtrl);
@@ -92,42 +96,54 @@ class InboxView extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: HomeController.ID_HOME,
       builder: (homeCtrl) {
-        return PageLayout(
-          floatingBar: FloatingBar(
-            scrollCtrl: scrollCtrl,
-            centered: true,
-            children: [
-              SegmentSwitcher(
-                current: homeCtrl.onFeed ? 1 : 0,
-                onChanged: (i) => homeCtrl.onFeed = i == 1,
-                items: const ['Progress', 'Feed'],
-              ),
-            ],
-          ),
-          topBar: TopBar(
-            canPop: false,
-            title: homeCtrl.onFeed ? 'Feed' : 'Progress',
-            items: [
-              if (homeCtrl.onFeed)
-                Consumer(
-                  builder: (context, ref, _) => TopBarIcon(
+        return Consumer(
+          builder: (context, ref, _) => PageLayout(
+            floatingBar: FloatingBar(
+              scrollCtrl: scrollCtrl,
+              children: [
+                ActionButton(
+                  tooltip: 'New Post',
+                  icon: Icons.edit_outlined,
+                  onTap: () => showSheet(
+                    context,
+                    CompositionView(
+                      composition: Composition.status(null, ''),
+                      onDone: (map) => ref
+                          .read(activitiesProvider(null).notifier)
+                          .insertActivity(map, Settings().id!),
+                    ),
+                  ),
+                ),
+                SegmentSwitcher(
+                  current: homeCtrl.onFeed ? 1 : 0,
+                  onChanged: (i) => homeCtrl.onFeed = i == 1,
+                  items: const ['Progress', 'Feed'],
+                ),
+              ],
+            ),
+            topBar: TopBar(
+              canPop: false,
+              title: homeCtrl.onFeed ? 'Feed' : 'Progress',
+              items: [
+                if (homeCtrl.onFeed)
+                  TopBarIcon(
                     tooltip: 'Filter',
                     icon: Ionicons.funnel_outline,
                     onTap: () => showActivityFilterSheet(context, ref, null),
-                  ),
-                )
-              else
-                const SizedBox(width: 45),
-              notificationIcon,
-            ],
-          ),
-          child: DirectPageView(
-            onChanged: null,
-            current: homeCtrl.onFeed ? 1 : 0,
-            children: [
-              _ProgressView(scrollCtrl),
-              ActivitiesSubView(null, scrollCtrl),
-            ],
+                  )
+                else
+                  const SizedBox(width: 45),
+                notificationIcon,
+              ],
+            ),
+            child: DirectPageView(
+              onChanged: null,
+              current: homeCtrl.onFeed ? 1 : 0,
+              children: [
+                _ProgressView(scrollCtrl),
+                ActivitiesSubView(null, scrollCtrl),
+              ],
+            ),
           ),
         );
       },

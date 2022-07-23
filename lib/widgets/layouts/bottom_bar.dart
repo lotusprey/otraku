@@ -4,8 +4,8 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 /// A bottom app bar implementation that uses a blurred, translucent background.
-class _BottomBar extends StatelessWidget {
-  const _BottomBar({required this.child});
+class BottomBar extends StatelessWidget {
+  const BottomBar({required this.child});
 
   final Widget child;
 
@@ -27,7 +27,7 @@ class _BottomBar extends StatelessWidget {
   }
 }
 
-/// A [_BottomBar] implementation with icons for tab switching. If the screen
+/// A [BottomBar] implementation with icons for tab switching. If the screen
 /// is wide enough, next to each icon will be the name of the tab.
 class BottomBarIconTabs extends StatelessWidget {
   const BottomBarIconTabs({
@@ -52,7 +52,7 @@ class BottomBarIconTabs extends StatelessWidget {
     final width =
         MediaQuery.of(context).size.width > items.length * 130 ? 130.0 : 50.0;
 
-    return _BottomBar(
+    return BottomBar(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -91,7 +91,7 @@ class BottomBarIconTabs extends StatelessWidget {
   }
 }
 
-/// A [_BottomBar] implementation with 2 buttons. If [primary] is `null`,
+/// A [BottomBar] implementation with 2 buttons. If [primary] is `null`,
 /// there will be a [Loader] in its place. If [secondary] is `null`,
 /// there won't be anything in its place.
 class BottomBarDualButtonRow extends StatelessWidget {
@@ -110,11 +110,10 @@ class BottomBarDualButtonRow extends StatelessWidget {
         : const Expanded(child: Center(child: Loader()));
     final secondary = this.secondary != null ? this.secondary! : const Spacer();
 
-    return _BottomBar(
+    return BottomBar(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             if (Settings().leftHanded) ...[
               primary,

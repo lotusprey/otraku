@@ -227,7 +227,7 @@ class __EditButtonState extends State<_EditButton> {
     final model = widget.ctrl.model!;
 
     return ActionButton(
-      icon: model.edit.status == null ? Icons.add : Icons.edit,
+      icon: model.edit.status == null ? Icons.add : Icons.edit_outlined,
       tooltip: model.edit.status == null ? 'Add' : 'Edit',
       onTap: () => showSheet(
         context,

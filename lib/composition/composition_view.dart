@@ -54,6 +54,24 @@ class _CompositionViewState extends State<CompositionView> {
               )
             : Row(
                 children: [
+                  _FormatButton(
+                    tag: 'b',
+                    name: 'Bold',
+                    icon: Icons.format_bold_outlined,
+                    textCtrl: _ctrl,
+                  ),
+                  _FormatButton(
+                    tag: 'i',
+                    name: 'Italic',
+                    icon: Icons.format_italic_outlined,
+                    textCtrl: _ctrl,
+                  ),
+                  _FormatButton(
+                    tag: 'del',
+                    name: 'Strikethrough',
+                    icon: Icons.format_strikethrough_outlined,
+                    textCtrl: _ctrl,
+                  ),
                   const Spacer(),
                   if (widget.composition.isPrivate != null)
                     _PrivateButton(
@@ -89,6 +107,44 @@ class _CompositionViewState extends State<CompositionView> {
       ),
     );
   }
+}
+
+class _FormatButton extends StatelessWidget {
+  _FormatButton({
+    required this.tag,
+    required this.name,
+    required this.icon,
+    required this.textCtrl,
+  });
+
+  final String tag;
+  final String name;
+  final IconData icon;
+  final TextEditingController textCtrl;
+
+  @override
+  Widget build(BuildContext context) => TopBarIcon(
+        icon: icon,
+        tooltip: '$name Format',
+        onTap: () {
+          final txt = textCtrl.text;
+          final beg = textCtrl.selection.start;
+          final end = textCtrl.selection.end;
+          final text = '${txt.substring(0, beg)}'
+              '<$tag>'
+              '${txt.substring(beg, end)}'
+              '</$tag>'
+              '${txt.substring(end)}';
+
+          final offset = textCtrl.selection.isCollapsed
+              ? textCtrl.selection.end + tag.length + 2
+              : textCtrl.selection.end + tag.length * 2 + 5;
+          textCtrl.value = TextEditingValue(
+            text: text,
+            selection: TextSelection.collapsed(offset: offset),
+          );
+        },
+      );
 }
 
 class _PrivateButton extends StatefulWidget {

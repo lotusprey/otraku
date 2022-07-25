@@ -111,25 +111,28 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                child: Row(
-                  children: [
-                    if (canPop)
-                      TopBarIcon(
-                        tooltip: 'Close',
-                        icon: Ionicons.chevron_back_outline,
-                        onTap: () => Navigator.maybePop(context),
-                      )
-                    else
-                      const SizedBox(width: 10),
-                    if (title != null)
-                      Expanded(
-                        child: Text(
-                          title!,
-                          style: Theme.of(context).textTheme.headline1,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Row(
+                    children: [
+                      if (canPop)
+                        TopBarIcon(
+                          tooltip: 'Close',
+                          icon: Ionicons.chevron_back_outline,
+                          onTap: () => Navigator.maybePop(context),
+                        )
+                      else
+                        const SizedBox(width: 10),
+                      if (title != null)
+                        Expanded(
+                          child: Text(
+                            title!,
+                            style: Theme.of(context).textTheme.headline1,
+                          ),
                         ),
-                      ),
-                    ...items,
-                  ],
+                      ...items,
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -161,7 +164,6 @@ class TopBarIcon extends StatelessWidget {
       tooltip: tooltip,
       onPressed: onTap,
       iconSize: Consts.iconBig,
-      splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
       padding: Consts.padding,

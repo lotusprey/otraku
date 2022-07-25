@@ -20,7 +20,7 @@ class BottomBar extends StatelessWidget {
           height: paddingBottom + Consts.tapTargetSize,
           padding: EdgeInsets.only(bottom: paddingBottom),
           color: Theme.of(context).cardColor,
-          child: child,
+          child: Material(color: Colors.transparent, child: child),
         ),
       ),
     );

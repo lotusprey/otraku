@@ -56,7 +56,7 @@ class Theming with ChangeNotifier {
         disabledColor: scheme.surfaceVariant,
         unselectedWidgetColor: scheme.surfaceVariant,
         toggleableActiveColor: scheme.primary,
-        splashColor: scheme.surfaceVariant.withAlpha(50),
+        splashColor: scheme.onBackground.withAlpha(20),
         highlightColor: Colors.transparent,
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
@@ -295,8 +295,8 @@ class Theming with ChangeNotifier {
       surface: Color(0xFF2D203B),
       onSurface: Color(0xFFCDBBE1),
       surfaceVariant: Color(0xFF5C5C99),
-      primary: Color(0xFFBCB4FF),
-      primaryContainer: Color(0xFF424DAB),
+      primary: Color(0xFFB4ABF5),
+      primaryContainer: Color(0xFF614DC4),
       onPrimary: Color(0xFF0E0E0E),
       secondary: Color(0xFF3AC77E),
       secondaryContainer: Color(0xFF80DBAC),

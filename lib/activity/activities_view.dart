@@ -110,7 +110,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
               CompositionView(
                 composition: widget.id == Settings().id
                     ? Composition.status(null, '')
-                    : Composition.message(null, '', widget.id, false),
+                    : Composition.message(null, '', widget.id),
                 onDone: (map) => ref
                     .read(activitiesProvider(widget.id).notifier)
                     .insertActivity(map, Settings().id!),

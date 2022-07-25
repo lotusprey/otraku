@@ -43,10 +43,11 @@ class Composition {
   Composition.status(this.id, this.text)
       : type = CompositionType.statusActivity;
 
-  Composition.message(this.id, this.text, int recipientId, bool private)
+  Composition.message(this.id, this.text, int recipientId)
       : type = CompositionType.messageActivity,
-        additionalId = recipientId,
-        isPrivate = private;
+        additionalId = recipientId {
+    if (id == null) isPrivate = false;
+  }
 
   Composition.reply(this.id, this.text, int activityId)
       : type = CompositionType.activityReply,
@@ -56,10 +57,11 @@ class Composition {
   /// When updating, [id] should be the item id.
   int? id;
 
-  CompositionType type;
+  final CompositionType type;
   String text;
 
   /// This is `null`, unless [type] is [CompositionType.messageActivity]
+  /// and [id] is `null` (i.e. this is a new message).
   bool? isPrivate;
 
   /// Depends on the value of [type]:

@@ -329,7 +329,6 @@ class _ActivityFooterState extends State<ActivityFooter> {
                             activity.id,
                             activity.text,
                             activity.reciever!.id,
-                            activity.isPrivate,
                           ),
                     onDone: (map) => widget.onEdited?.call(map),
                   ),

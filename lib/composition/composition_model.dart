@@ -40,18 +40,31 @@ Future<Map<String, dynamic>> saveComposition(Composition composition) async {
 }
 
 class Composition {
-  Composition.status(this.id, this.text)
-      : type = CompositionType.statusActivity;
-
-  Composition.message(this.id, this.text, int recipientId)
-      : type = CompositionType.messageActivity,
-        additionalId = recipientId {
-    if (id == null) isPrivate = false;
+  Composition._(
+    this.id,
+    this.type,
+    this.text, [
+    this.additionalId,
+    this.isPrivate,
+  ]) {
+    /// Remove the "paragraph" tags from the html.
+    text = text.replaceAll(RegExp(r'\</?p\>'), '');
   }
 
-  Composition.reply(this.id, this.text, int activityId)
-      : type = CompositionType.activityReply,
-        additionalId = activityId;
+  Composition.status(int? id, String text)
+      : this._(id, CompositionType.statusActivity, text);
+
+  Composition.reply(int? id, String text, int activityId)
+      : this._(id, CompositionType.activityReply, text, activityId);
+
+  Composition.message(int? id, String text, int recipientId)
+      : this._(
+          id,
+          CompositionType.messageActivity,
+          text,
+          recipientId,
+          id == null ? false : null,
+        );
 
   /// When creating a new item, [id] should be `null`.
   /// When updating, [id] should be the item id.

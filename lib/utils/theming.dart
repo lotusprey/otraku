@@ -52,10 +52,11 @@ class Theming with ChangeNotifier {
         fontFamily: 'Rubik',
         colorScheme: scheme,
         scaffoldBackgroundColor: scheme.background,
-        cardColor: scheme.background.withAlpha(190),
         disabledColor: scheme.surfaceVariant,
         unselectedWidgetColor: scheme.surfaceVariant,
         toggleableActiveColor: scheme.primary,
+        cardColor: scheme.surfaceVariant,
+        bottomAppBarColor: scheme.background.withAlpha(190),
         splashColor: scheme.onBackground.withAlpha(20),
         highlightColor: Colors.transparent,
         pageTransitionsTheme: const PageTransitionsTheme(

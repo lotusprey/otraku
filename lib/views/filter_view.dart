@@ -389,7 +389,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
             filter: Consts.filter,
             child: Container(
               height: 95,
-              color: Theme.of(context).cardColor,
+              color: Theme.of(context).bottomAppBarColor,
               padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Column(
                 children: [

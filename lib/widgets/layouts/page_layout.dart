@@ -102,7 +102,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         filter: Consts.filter,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: Theme.of(context).bottomAppBarColor,
           ),
           child: Padding(
             padding: EdgeInsets.only(

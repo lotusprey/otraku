@@ -67,7 +67,7 @@ class NavLayout extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewPadding.bottom,
                   ),
-                  color: Theme.of(context).cardColor,
+                  color: Theme.of(context).bottomAppBarColor,
                   child: navRow,
                 ),
               ),

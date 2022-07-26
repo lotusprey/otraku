@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/composition/composition_model.dart';
-import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
@@ -27,7 +26,7 @@ class CompositionView extends StatefulWidget {
 
 class _CompositionViewState extends State<CompositionView> {
   late final _ctrl = TextEditingController(text: widget.composition.text);
-  var _loading = false;
+  final _tab = ValueNotifier(0);
 
   @override
   void initState() {
@@ -37,6 +36,7 @@ class _CompositionViewState extends State<CompositionView> {
 
   @override
   void dispose() {
+    _tab.dispose();
     _ctrl.dispose();
     super.dispose();
   }
@@ -44,71 +44,120 @@ class _CompositionViewState extends State<CompositionView> {
   @override
   Widget build(BuildContext context) {
     return OpaqueSheetView(
-      builder: (context, scrollCtrl) =>
-          _CompositionContent(scrollCtrl: scrollCtrl, textCtrl: _ctrl),
+      builder: (context, scrollCtrl) => _CompositionContent(
+        tab: _tab,
+        textCtrl: _ctrl,
+        scrollCtrl: scrollCtrl,
+      ),
       buttons: BottomBar(
-        child: _loading
-            ? const SizedBox(
-                height: Consts.tapTargetSize,
-                child: Center(child: Loader()),
-              )
-            : Row(
-                children: [
-                  _FormatButton(
-                    tag: 'b',
-                    name: 'Bold',
-                    icon: Icons.format_bold_outlined,
-                    textCtrl: _ctrl,
-                  ),
-                  _FormatButton(
-                    tag: 'i',
-                    name: 'Italic',
-                    icon: Icons.format_italic_outlined,
-                    textCtrl: _ctrl,
-                  ),
-                  _FormatButton(
-                    tag: 'del',
-                    name: 'Strikethrough',
-                    icon: Icons.format_strikethrough_outlined,
-                    textCtrl: _ctrl,
-                  ),
-                  const Spacer(),
-                  if (widget.composition.isPrivate != null)
-                    _PrivateButton(
-                      widget.composition.isPrivate!,
-                      (v) => widget.composition.isPrivate = v,
-                    ),
-                  TopBarIcon(
-                    tooltip: 'Post',
-                    icon: Ionicons.send_outline,
-                    onTap: () async {
-                      setState(() => _loading = true);
-
-                      try {
-                        widget.onDone(
-                          await saveComposition(widget.composition),
-                        );
-                        if (mounted) Navigator.pop(context);
-                      } catch (e) {
-                        if (!mounted) return;
-                        Navigator.pop(context);
-                        showPopUp(
-                          context,
-                          ConfirmationDialog(
-                            title: 'Could not post',
-                            content: e.toString(),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ],
-              ),
+        child: _ButtonRow(
+          tab: _tab,
+          textCtrl: _ctrl,
+          composition: widget.composition,
+          onSave: () async {
+            try {
+              widget.onDone(
+                await saveComposition(widget.composition),
+              );
+              if (mounted) Navigator.pop(context);
+            } catch (e) {
+              if (!mounted) return;
+              Navigator.pop(context);
+              showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Could not post',
+                  content: e.toString(),
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }
 }
 
+/// A button menu. Some of the buttons are hidden,
+/// when the user isn't on the editing tab.
+class _ButtonRow extends StatefulWidget {
+  const _ButtonRow({
+    required this.tab,
+    required this.composition,
+    required this.textCtrl,
+    required this.onSave,
+  });
+
+  final ValueNotifier<int> tab;
+  final Composition composition;
+  final TextEditingController textCtrl;
+  final void Function() onSave;
+
+  @override
+  State<_ButtonRow> createState() => _ButtonRowState();
+}
+
+class _ButtonRowState extends State<_ButtonRow> {
+  bool _loading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) return const Center(child: Loader());
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ValueListenableBuilder(
+          valueListenable: widget.tab,
+          builder: (context, i, child) => i == 0 ? child! : const SizedBox(),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _FormatButton(
+                tag: 'b',
+                name: 'Bold',
+                icon: Icons.format_bold_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                tag: 'i',
+                name: 'Italic',
+                icon: Icons.format_italic_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                tag: 'del',
+                name: 'Strikethrough',
+                icon: Icons.format_strikethrough_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (widget.composition.isPrivate != null)
+              _PrivateButton(
+                widget.composition.isPrivate!,
+                (v) => widget.composition.isPrivate = v,
+              ),
+            TopBarIcon(
+              tooltip: 'Post',
+              icon: Ionicons.send_outline,
+              onTap: () async {
+                setState(() => _loading = true);
+                widget.onSave();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Encloses the current text selection in a given tag.
 class _FormatButton extends StatelessWidget {
   _FormatButton({
     required this.tag,
@@ -130,6 +179,7 @@ class _FormatButton extends StatelessWidget {
           final txt = textCtrl.text;
           final beg = textCtrl.selection.start;
           final end = textCtrl.selection.end;
+          if (beg < 0) return;
           final text = '${txt.substring(0, beg)}'
               '<$tag>'
               '${txt.substring(beg, end)}'
@@ -147,6 +197,7 @@ class _FormatButton extends StatelessWidget {
       );
 }
 
+/// Controls whether a message will be created as private or public.
 class _PrivateButton extends StatefulWidget {
   _PrivateButton(this.isPrivate, this.onChanged);
 
@@ -175,18 +226,17 @@ class __PrivateButtonState extends State<_PrivateButton> {
       );
 }
 
-class _CompositionContent extends StatefulWidget {
-  _CompositionContent({required this.scrollCtrl, required this.textCtrl});
+/// A view with 2 tabs - one for editing and one for an html preview.
+class _CompositionContent extends StatelessWidget {
+  _CompositionContent({
+    required this.tab,
+    required this.textCtrl,
+    required this.scrollCtrl,
+  });
 
-  final ScrollController scrollCtrl;
+  final ValueNotifier<int> tab;
   final TextEditingController textCtrl;
-
-  @override
-  State<_CompositionContent> createState() => _CompositionContentState();
-}
-
-class _CompositionContentState extends State<_CompositionContent> {
-  int _tab = 0;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -195,41 +245,42 @@ class _CompositionContentState extends State<_CompositionContent> {
       vertical: 60,
     );
 
-    final onChanged = (val) => setState(() => _tab = val);
-
-    return Stack(
-      children: [
-        DirectPageView(
-          current: _tab,
-          onChanged: onChanged,
-          children: [
-            TextField(
-              controller: widget.textCtrl,
-              scrollController: widget.scrollCtrl,
-              style: Theme.of(context).textTheme.bodyText2,
-              maxLines: null,
-              decoration: InputDecoration(
-                fillColor: Theme.of(context).colorScheme.background,
-                contentPadding: padding,
+    return ValueListenableBuilder(
+      valueListenable: tab,
+      builder: (context, int i, _) => Stack(
+        children: [
+          DirectPageView(
+            current: i,
+            onChanged: (val) => tab.value = val,
+            children: [
+              TextField(
+                controller: textCtrl,
+                scrollController: scrollCtrl,
+                style: Theme.of(context).textTheme.bodyText2,
+                maxLines: null,
+                decoration: InputDecoration(
+                  fillColor: Theme.of(context).colorScheme.background,
+                  contentPadding: padding,
+                ),
               ),
-            ),
-            Padding(
-              padding: padding,
-              child: HtmlContent(widget.textCtrl.text),
-            ),
-          ],
-        ),
-        Positioned(
-          top: 10,
-          left: 10,
-          right: 10,
-          child: CompactSegmentSwitcher(
-            current: _tab,
-            items: const ['Edit', 'Preview'],
-            onChanged: onChanged,
+              Padding(
+                padding: padding,
+                child: HtmlContent(textCtrl.text),
+              ),
+            ],
           ),
-        ),
-      ],
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            child: CompactSegmentSwitcher(
+              current: i,
+              items: const ['Edit', 'Preview'],
+              onChanged: (val) => tab.value = val,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

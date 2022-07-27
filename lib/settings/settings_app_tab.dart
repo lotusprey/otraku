@@ -5,53 +5,36 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/containers/theme_preview_row.dart';
+import 'package:otraku/widgets/containers/theme_preview.dart';
 
 class SettingsAppTab extends StatelessWidget {
   SettingsAppTab(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
-  final Map<String, int> colorSchemeMap = <String, int>{};
 
   @override
   Widget build(BuildContext context) {
-    for (int i = 0; i < Theming.schemes.length; i++)
-      colorSchemeMap[Theming.schemes.keys.elementAt(i)] = i;
-
-    var lightThemes = Theming.schemes.entries
-        .where((entry) => entry.value.brightness == Brightness.light);
-    var darkThemes = Theming.schemes.entries
-        .where((entry) => entry.value.brightness == Brightness.dark);
-
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: CustomScrollView(
           controller: scrollCtrl,
           slivers: [
             SliverToBoxAdapter(
-                child: SizedBox(height: PageLayout.of(context).topOffset + 10)),
-            ThemePreviewRow(
-                colorSchemeMap: colorSchemeMap,
-                title: "Light Theme",
-                activeKey: Settings().lightTheme,
-                themes: lightThemes,
-                onTap: (name) => Settings().lightTheme = colorSchemeMap[name]!),
-            ThemePreviewRow(
-                colorSchemeMap: colorSchemeMap,
-                title: "Dark Theme",
-                activeKey: Settings().darkTheme,
-                themes: darkThemes,
-                onTap: (name) => Settings().darkTheme = colorSchemeMap[name]!),
+              child: SizedBox(height: PageLayout.of(context).topOffset + 10),
+            ),
+            ThemePreview(isDark: false),
+            ThemePreview(isDark: true),
             SliverGrid(
               gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-                  minWidth: 160, height: 75),
+                minWidth: 160,
+                height: 75,
+              ),
               delegate: SliverChildListDelegate.fixed([
                 DropDownField<ThemeMode>(
                   title: 'Theme Mode',

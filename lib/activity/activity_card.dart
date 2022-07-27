@@ -294,14 +294,25 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.likeCount += isLiked ? -1 : 1;
     });
 
-    toggleActivityLike(activity).then(
-      (ok) => ok
-          ? widget.onChanged?.call()
-          : setState(() {
-              activity.isLiked = isLiked;
-              activity.likeCount += isLiked ? 1 : -1;
-            }),
-    );
+    toggleActivityLike(activity).then((err) {
+      if (err == null) {
+        widget.onChanged?.call();
+        return;
+      }
+
+      setState(() {
+        activity.isLiked = isLiked;
+        activity.likeCount += isLiked ? 1 : -1;
+      });
+
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not toggle like',
+          content: err.toString(),
+        ),
+      );
+    });
   }
 
   /// Show a sheet with additional options.
@@ -343,10 +354,19 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   title: 'Delete?',
                   mainAction: 'Yes',
                   secondaryAction: 'No',
-                  onConfirm: () =>
-                      deleteActivity(widget.activity.id).then((ok) {
-                    if (ok) widget.onDeleted();
-                  }),
+                  onConfirm: () {
+                    deleteActivity(widget.activity.id).then((err) {
+                      err == null
+                          ? widget.onDeleted()
+                          : showPopUp(
+                              context,
+                              ConfirmationDialog(
+                                title: 'Could not delete activity',
+                                content: err.toString(),
+                              ),
+                            );
+                    });
+                  },
                 ),
               ),
             ),
@@ -362,8 +382,8 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 final isPinned = activity.isPinned;
                 activity.isPinned = !isPinned;
 
-                toggleActivityPin(activity).then((error) {
-                  if (error == null) {
+                toggleActivityPin(activity).then((err) {
+                  if (err == null) {
                     widget.onPinned!();
                     return;
                   }
@@ -373,7 +393,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     context,
                     ConfirmationDialog(
                       title: 'Could not toggle pin',
-                      content: error.toString(),
+                      content: err.toString(),
                     ),
                   );
                 });
@@ -388,10 +408,20 @@ class _ActivityFooterState extends State<ActivityFooter> {
               final isSubscribed = activity.isSubscribed;
               activity.isSubscribed = !isSubscribed;
 
-              toggleActivitySubscription(activity).then((ok) {
-                ok
-                    ? widget.onChanged?.call()
-                    : activity.isSubscribed = isSubscribed;
+              toggleActivitySubscription(activity).then((err) {
+                if (err == null) {
+                  widget.onChanged?.call();
+                  return;
+                }
+
+                activity.isSubscribed = isSubscribed;
+                showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Could not toggle subscription',
+                    content: err.toString(),
+                  ),
+                );
               });
             },
           ),

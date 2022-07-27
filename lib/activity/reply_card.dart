@@ -123,12 +123,23 @@ class ReplyCard extends StatelessWidget {
                 title: 'Delete?',
                 mainAction: 'Yes',
                 secondaryAction: 'No',
-                onConfirm: () => deleteActivityReply(reply.id).then((ok) {
-                  if (ok)
-                    ref
-                        .read(activityProvider(activityId).notifier)
-                        .removeReply(reply.id);
-                }),
+                onConfirm: () {
+                  deleteActivityReply(reply.id).then((err) {
+                    if (err == null) {
+                      ref
+                          .read(activityProvider(activityId).notifier)
+                          .removeReply(reply.id);
+                    } else {
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not delete reply',
+                          content: err.toString(),
+                        ),
+                      );
+                    }
+                  });
+                },
               ),
             ),
           ),
@@ -191,13 +202,21 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       reply.likeCount += isLiked ? -1 : 1;
     });
 
-    toggleReplyLike(reply).then((ok) {
-      if (ok) return;
+    toggleReplyLike(reply).then((err) {
+      if (err == null) return;
 
       setState(() {
         reply.isLiked = isLiked;
         reply.likeCount += isLiked ? 1 : -1;
       });
+
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not toggle reply like',
+          content: err.toString(),
+        ),
+      );
     });
   }
 }

@@ -48,7 +48,7 @@ class Composition {
     this.isPrivate,
   ]) {
     /// Remove the "paragraph" tags from the html.
-    text = text.replaceAll(RegExp(r'\</?p\>'), '');
+    text = text.replaceAll(_paragraphRegex, '');
   }
 
   Composition.status(int? id, String text)
@@ -65,6 +65,8 @@ class Composition {
           recipientId,
           id == null ? false : null,
         );
+
+  static final _paragraphRegex = RegExp(r'\</?p\>');
 
   /// When creating a new item, [id] should be `null`.
   /// When updating, [id] should be the item id.

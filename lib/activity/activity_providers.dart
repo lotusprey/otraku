@@ -5,33 +5,33 @@ import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 import 'package:otraku/utils/settings.dart';
 
-/// Toggles an activity like and returns `true` if successful.
-Future<bool> toggleActivityLike(Activity activity) async {
+/// Toggles an activity like and returns an error if unsuccessful.
+Future<Object?> toggleActivityLike(Activity activity) async {
   try {
     await Api.get(GqlMutation.toggleLike, {
       'id': activity.id,
       'type': 'ACTIVITY',
     });
-    return true;
-  } catch (_) {
-    return false;
+    return null;
+  } catch (e) {
+    return e;
   }
 }
 
-/// Toggles an activity subscription and returns `true` if successful.
-Future<bool> toggleActivitySubscription(Activity activity) async {
+/// Toggles an activity subscription and returns an error if unsuccessful.
+Future<Object?> toggleActivitySubscription(Activity activity) async {
   try {
     await Api.get(GqlMutation.toggleActivitySubscription, {
       'id': activity.id,
       'subscribe': activity.isSubscribed,
     });
-    return true;
-  } catch (_) {
-    return false;
+    return null;
+  } catch (e) {
+    return e;
   }
 }
 
-/// Pins/Unpins an activity and returns the error if successful.
+/// Pins/Unpins an activity and returns an error if unsuccessful.
 Future<Object?> toggleActivityPin(Activity activity) async {
   try {
     await Api.get(GqlMutation.toggleActivityPin, {
@@ -44,36 +44,36 @@ Future<Object?> toggleActivityPin(Activity activity) async {
   }
 }
 
-/// Toggles a reply like and returns `true` if successful.
-Future<bool> toggleReplyLike(ActivityReply reply) async {
+/// Toggles a reply like and returns an error if unsuccessful.
+Future<Object?> toggleReplyLike(ActivityReply reply) async {
   try {
     await Api.get(GqlMutation.toggleLike, {
       'id': reply.id,
       'type': 'ACTIVITY_REPLY',
     });
-    return true;
-  } catch (_) {
-    return false;
+    return null;
+  } catch (e) {
+    return e;
   }
 }
 
-/// Deletes an activity.
-Future<bool> deleteActivity(int activityId) async {
+/// Deletes an activity and returns an error if unsuccessful.
+Future<Object?> deleteActivity(int activityId) async {
   try {
     await Api.get(GqlMutation.deleteActivity, {'id': activityId});
-    return true;
-  } catch (_) {
-    return false;
+    return null;
+  } catch (e) {
+    return e;
   }
 }
 
-/// Deletes an activity reply.
-Future<bool> deleteActivityReply(int replyId) async {
+/// Deletes an activity reply and returns an error if unsuccessful.
+Future<Object?> deleteActivityReply(int replyId) async {
   try {
     await Api.get(GqlMutation.deleteActivityReply, {'id': replyId});
-    return true;
-  } catch (_) {
-    return false;
+    return null;
+  } catch (e) {
+    return e;
   }
 }
 

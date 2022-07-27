@@ -18,7 +18,7 @@ class ThemePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     Color borderColor = active ? scheme.primary : scheme.inverseSurface;
+     Color borderColor = active ? Theme.of(context).colorScheme.primary : scheme.inverseSurface;
      double borderWidth = active ? 2 : 1;
 
     return GestureDetector(

@@ -131,6 +131,12 @@ class _ButtonRowState extends State<_ButtonRow> {
                 icon: Icons.format_strikethrough_outlined,
                 textCtrl: widget.textCtrl,
               ),
+              _FormatButton(
+                tag: 'code',
+                name: 'Code',
+                icon: Icons.code_outlined,
+                textCtrl: widget.textCtrl,
+              ),
             ],
           ),
         ),
@@ -174,7 +180,7 @@ class _FormatButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => TopBarIcon(
         icon: icon,
-        tooltip: '$name Format',
+        tooltip: name,
         onTap: () {
           final txt = textCtrl.text;
           final beg = textCtrl.selection.start;

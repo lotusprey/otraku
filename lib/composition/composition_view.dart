@@ -27,25 +27,31 @@ class CompositionView extends StatefulWidget {
 class _CompositionViewState extends State<CompositionView> {
   late final _ctrl = TextEditingController(text: widget.composition.text);
   final _tab = ValueNotifier(0);
+  final _focus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _ctrl.addListener(() => widget.composition.text = _ctrl.text);
+    _tab.addListener(
+      () => _tab.value == 0 ? _focus.requestFocus() : _focus.unfocus(),
+    );
   }
 
   @override
   void dispose() {
     _tab.dispose();
     _ctrl.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return OpaqueSheetView(
-      builder: (context, scrollCtrl) => _CompositionContent(
+      builder: (context, scrollCtrl) => _CompositionView(
         tab: _tab,
+        focus: _focus,
         textCtrl: _ctrl,
         scrollCtrl: scrollCtrl,
       ),
@@ -73,6 +79,74 @@ class _CompositionViewState extends State<CompositionView> {
             }
           },
         ),
+      ),
+    );
+  }
+}
+
+/// A view with 2 tabs - one for editing and one for an html preview.
+class _CompositionView extends StatelessWidget {
+  _CompositionView({
+    required this.tab,
+    required this.focus,
+    required this.textCtrl,
+    required this.scrollCtrl,
+  });
+
+  final ValueNotifier<int> tab;
+  final FocusNode focus;
+  final TextEditingController textCtrl;
+  final ScrollController scrollCtrl;
+
+  @override
+  Widget build(BuildContext context) {
+    const padding = EdgeInsets.symmetric(
+      horizontal: 10,
+      vertical: 60,
+    );
+
+    return ValueListenableBuilder(
+      valueListenable: tab,
+      builder: (context, int i, _) => Stack(
+        children: [
+          DirectPageView(
+            current: i,
+            onChanged: (val) => tab.value = val,
+            children: [
+              SingleChildScrollView(
+                controller: scrollCtrl,
+                child: TextField(
+                  autofocus: true,
+                  focusNode: focus,
+                  controller: textCtrl,
+                  style: Theme.of(context).textTheme.bodyText2,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    fillColor: Theme.of(context).colorScheme.background,
+                    contentPadding: padding,
+                  ),
+                ),
+              ),
+              SingleChildScrollView(
+                controller: scrollCtrl,
+                child: Padding(
+                  padding: padding,
+                  child: HtmlContent(textCtrl.text),
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            child: CompactSegmentSwitcher(
+              current: i,
+              items: const ['Edit', 'Preview'],
+              onChanged: (val) => tab.value = val,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -230,63 +304,4 @@ class __PrivateButtonState extends State<_PrivateButton> {
           );
         },
       );
-}
-
-/// A view with 2 tabs - one for editing and one for an html preview.
-class _CompositionContent extends StatelessWidget {
-  _CompositionContent({
-    required this.tab,
-    required this.textCtrl,
-    required this.scrollCtrl,
-  });
-
-  final ValueNotifier<int> tab;
-  final TextEditingController textCtrl;
-  final ScrollController scrollCtrl;
-
-  @override
-  Widget build(BuildContext context) {
-    const padding = EdgeInsets.symmetric(
-      horizontal: 10,
-      vertical: 60,
-    );
-
-    return ValueListenableBuilder(
-      valueListenable: tab,
-      builder: (context, int i, _) => Stack(
-        children: [
-          DirectPageView(
-            current: i,
-            onChanged: (val) => tab.value = val,
-            children: [
-              TextField(
-                controller: textCtrl,
-                scrollController: scrollCtrl,
-                style: Theme.of(context).textTheme.bodyText2,
-                maxLines: null,
-                decoration: InputDecoration(
-                  fillColor: Theme.of(context).colorScheme.background,
-                  contentPadding: padding,
-                ),
-              ),
-              Padding(
-                padding: padding,
-                child: HtmlContent(textCtrl.text),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 10,
-            left: 10,
-            right: 10,
-            child: CompactSegmentSwitcher(
-              current: i,
-              items: const ['Edit', 'Preview'],
-              onChanged: (val) => tab.value = val,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

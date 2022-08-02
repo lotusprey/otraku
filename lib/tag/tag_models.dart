@@ -1,8 +1,30 @@
 import 'dart:collection';
 
+class Tag {
+  final String name;
+  final String desciption;
+  final bool isSpoiler;
+  final int? rank;
+
+  Tag._({
+    required this.name,
+    required this.rank,
+    required this.desciption,
+    required this.isSpoiler,
+  });
+
+  factory Tag(Map<String, dynamic> map) => Tag._(
+        name: map['name'],
+        rank: map['rank'],
+        desciption: map['description'] ?? 'No description',
+        isSpoiler: (map['isGeneralSpoiler'] ?? false) ||
+            (map['isMediaSpoiler'] ?? false),
+      );
+}
+
 // Stores all tags (genres as treated as tags too).
-class TagGroupModel {
-  TagGroupModel._({
+class TagGroup {
+  TagGroup._({
     required this.categoryNames,
     required this.categoryItems,
     required this.ids,
@@ -11,7 +33,7 @@ class TagGroupModel {
     required this.indices,
   });
 
-  factory TagGroupModel(Map<String, dynamic> map) {
+  factory TagGroup(Map<String, dynamic> map) {
     final categoryNames = <String>['Genres'];
     final categoryItems = <List<int>>[[]];
     final ids = <int>[];
@@ -53,7 +75,7 @@ class TagGroupModel {
       indices.putIfAbsent(t['name'], () => names.length - 1);
     }
 
-    return TagGroupModel._(
+    return TagGroup._(
       categoryNames: categoryNames,
       categoryItems: categoryItems,
       ids: ids,

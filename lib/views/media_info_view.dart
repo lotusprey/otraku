@@ -149,10 +149,13 @@ class MediaInfoView extends StatelessWidget {
               items: info.genres,
               onTap: (i) {
                 final explCtrl = Get.find<ExploreController>();
-                explCtrl.filters.clear(false);
-                explCtrl.filters.genreIn.add(info.genres[i]);
+                final filter = explCtrl.filter.clear();
+                filter.genreIn.add(info.genres[i]);
+                explCtrl.canFetch = false;
+                explCtrl.filter = filter;
                 explCtrl.type = info.type;
                 explCtrl.search = null;
+                explCtrl.canFetch = true;
                 explCtrl.fetch();
                 Get.find<HomeController>().homeTab = HomeView.EXPLORE;
                 Navigator.popUntil(context, (r) => r.isFirst);
@@ -403,10 +406,13 @@ class __TagsState extends State<_Tags> {
           behavior: HitTestBehavior.opaque,
           onTap: () {
             final explCtrl = Get.find<ExploreController>();
-            explCtrl.filters.clear(false);
-            explCtrl.filters.tagIn.add(tags[i].name);
-            explCtrl.search = null;
+            final filter = explCtrl.filter.clear();
+            filter.tagIn.add(tags[i].name);
+            explCtrl.canFetch = false;
+            explCtrl.filter = filter;
             explCtrl.type = widget.ctrl.model!.info.type;
+            explCtrl.search = null;
+            explCtrl.canFetch = true;
             explCtrl.fetch();
             Get.find<HomeController>().homeTab = HomeView.EXPLORE;
             Navigator.popUntil(context, (r) => r.isFirst);
@@ -479,10 +485,14 @@ class __TagsState extends State<_Tags> {
             behavior: HitTestBehavior.opaque,
             onTap: () {
               final explCtrl = Get.find<ExploreController>();
-              explCtrl.filters.clear(false);
-              explCtrl.filters.tagIn.add(tags[i].name);
+              final filter = explCtrl.filter.clear();
+              filter.tagIn.add(tags[i].name);
+              explCtrl.canFetch = false;
+              explCtrl.filter = filter;
               explCtrl.type = widget.ctrl.model!.info.type;
               explCtrl.search = null;
+              explCtrl.canFetch = true;
+              explCtrl.fetch();
               Get.find<HomeController>().homeTab = HomeView.EXPLORE;
               Navigator.popUntil(context, (r) => r.isFirst);
             },

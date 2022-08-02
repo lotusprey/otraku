@@ -5,7 +5,7 @@ import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/collection/entry.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/edit/edit_model.dart';
-import 'package:otraku/models/filter_model.dart';
+import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/collection/entry_list.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -27,7 +27,7 @@ class CollectionController extends GetxController {
   final bool ofAnime;
   final _lists = <EntryList>[];
   final _entries = <Entry>[];
-  late final filters = CollectionFilterModel(ofAnime, _onFilterChange);
+  late var _filter = CollectionFilter(ofAnime);
   int _listIndex = 0;
   bool _isLoading = true;
   String? _search;
@@ -44,10 +44,18 @@ class CollectionController extends GetxController {
   int get listCount => _lists.length;
   ScoreFormat? get scoreFormat => _scoreFormat;
   List<Entry> get entries => _entries;
+  CollectionFilter get filter => _filter;
 
   List<Entry> listWithStatus(EntryStatus status) {
     for (final l in _lists) if (l.status == status) return [...l.entries];
     return const [];
+  }
+
+  set filter(CollectionFilter val) {
+    if (_filter.sort != val.sort)
+      for (final list in _lists) list.sort(val.sort);
+    _filter = val;
+    _filterEntries(true);
   }
 
   set search(String? val) {
@@ -59,9 +67,9 @@ class CollectionController extends GetxController {
     if ((oldVal == null) != (val == null)) {
       update([ID_HEAD]);
       if ((oldVal?.isNotEmpty ?? false) || (val?.isNotEmpty ?? false))
-        _filter();
+        _filterEntries();
     } else
-      _filter();
+      _filterEntries();
   }
 
   List<String> get listNames {
@@ -87,20 +95,15 @@ class CollectionController extends GetxController {
     if (val < 0 || val >= _lists.length || val == _listIndex) return;
     _listIndex = val;
     update([ID_SCROLLVIEW]);
-    _filter(true);
+    _filterEntries(true);
   }
 
-  void _onFilterChange(bool withSort) {
-    if (withSort) for (final list in _lists) list.sort(filters.sort);
-    _filter(true);
-  }
-
-  void _filter([bool updateHead = false]) {
+  void _filterEntries([bool updateHead = false]) {
     if (_lists.isEmpty) return;
 
     final searchLower = _search?.toLowerCase() ?? '';
-    final tagIdIn = filters.tagIdIn;
-    final tagIdNotIn = filters.tagIdNotIn;
+    final tagIdIn = _filter.tagIdIn;
+    final tagIdNotIn = _filter.tagIdNotIn;
 
     final list = _lists[_listIndex];
     final e = <Entry>[];
@@ -116,17 +119,17 @@ class CollectionController extends GetxController {
         if (!contains) continue;
       }
 
-      if (filters.country != null && entry.country != filters.country) continue;
+      if (_filter.country != null && entry.country != _filter.country) continue;
 
-      if (filters.formats.isNotEmpty && !filters.formats.contains(entry.format))
+      if (_filter.formats.isNotEmpty && !_filter.formats.contains(entry.format))
         continue;
 
-      if (filters.statuses.isNotEmpty &&
-          !filters.statuses.contains(entry.status)) continue;
+      if (_filter.statuses.isNotEmpty &&
+          !_filter.statuses.contains(entry.status)) continue;
 
-      if (filters.genreIn.isNotEmpty) {
+      if (_filter.genreIn.isNotEmpty) {
         bool isIn = true;
-        for (final genre in filters.genreIn)
+        for (final genre in _filter.genreIn)
           if (!entry.genres.contains(genre)) {
             isIn = false;
             break;
@@ -134,9 +137,9 @@ class CollectionController extends GetxController {
         if (!isIn) continue;
       }
 
-      if (filters.genreNotIn.isNotEmpty) {
+      if (_filter.genreNotIn.isNotEmpty) {
         bool isIn = false;
-        for (final genre in filters.genreNotIn)
+        for (final genre in _filter.genreNotIn)
           if (entry.genres.contains(genre)) {
             isIn = true;
             break;
@@ -212,17 +215,17 @@ class CollectionController extends GetxController {
 
       final l = (data['lists'] as List<dynamic>).removeAt(index);
 
-      _lists.add(EntryList(l, splitCompleted)..sort(filters.sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(_filter.sort));
     }
 
     for (final l in data['lists'])
-      _lists.add(EntryList(l, splitCompleted)..sort(filters.sort));
+      _lists.add(EntryList(l, splitCompleted)..sort(_filter.sort));
 
     update([ID_SCROLLVIEW]);
     update();
     if (_listIndex >= _lists.length) _listIndex = 0;
     _isLoading = false;
-    _filter(true);
+    _filterEntries(true);
   }
 
   Future<void> refetch() async {
@@ -282,7 +285,7 @@ class CollectionController extends GetxController {
         if (entry.entryStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
-          list.insertSorted(entry, filters.sort);
+          list.insertSorted(entry, _filter.sort);
           added = true;
           break;
         }
@@ -297,7 +300,7 @@ class CollectionController extends GetxController {
       for (final list in _lists)
         for (int i = 0; i < newCustomLists.length; i++)
           if (newCustomLists[i] == list.name.toLowerCase()) {
-            list.insertSorted(entry, filters.sort);
+            list.insertSorted(entry, _filter.sort);
             newCustomLists.removeAt(i);
             break;
           }
@@ -314,7 +317,7 @@ class CollectionController extends GetxController {
         _lists.removeAt(i--);
       }
 
-    _filter();
+    _filterEntries();
     return entry;
   }
 
@@ -328,7 +331,7 @@ class CollectionController extends GetxController {
     EntryStatus? listStatus,
     String? format,
   ) async {
-    final sorting = filters.sort;
+    final sorting = _filter.sort;
     final needsSort = sorting == EntrySort.PROGRESS ||
         sorting == EntrySort.PROGRESS_DESC ||
         sorting == EntrySort.UPDATED_AT ||
@@ -397,7 +400,7 @@ class CollectionController extends GetxController {
         _lists.removeAt(i--);
       }
 
-    _filter();
+    _filterEntries();
   }
 
   @override

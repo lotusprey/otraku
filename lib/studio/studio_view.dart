@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/studio/studio_models.dart';
@@ -264,38 +265,18 @@ class _FilterButton extends StatelessWidget {
                     height: 75,
                   ),
                   children: [
-                    DropDownField<int>(
-                      title: 'Sort',
-                      value: filter.sort.index ~/ 2,
-                      items: sortItems,
-                      onChanged: (val) {
-                        int index = val * 2;
-                        if (filter.sort.index % 2 != 0) index++;
-                        filter = filter.copyWith(sort: MediaSort.values[index]);
-                      },
+                    SortDropDown(
+                      MediaSort.values,
+                      () => filter.sort.index,
+                      (MediaSort val) => filter = filter.copyWith(sort: val),
                     ),
-                    DropDownField<bool>(
-                      title: 'Order',
-                      value: filter.sort.index % 2 == 0,
-                      items: const {'Ascending': true, 'Descending': false},
-                      onChanged: (val) {
-                        int index = filter.sort.index;
-                        if (!val && index % 2 == 0) {
-                          index++;
-                        } else if (val && index % 2 != 0) {
-                          index--;
-                        }
-                        filter = filter.copyWith(sort: MediaSort.values[index]);
-                      },
+                    OrderDropDown(
+                      MediaSort.values,
+                      () => filter.sort.index,
+                      (MediaSort val) => filter = filter.copyWith(sort: val),
                     ),
-                    DropDownField<bool?>(
-                      title: 'List Filter',
+                    ListPresenceDropDown(
                       value: filter.onList,
-                      items: const {
-                        'Everything': null,
-                        'On List': true,
-                        'Not On List': false,
-                      },
                       onChanged: (val) =>
                           filter = filter.copyWith(onList: () => val),
                     ),

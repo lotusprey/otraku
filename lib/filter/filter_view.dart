@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/anime_format.dart';
 import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/controllers/tag_group_controller.dart';
-import 'package:otraku/models/filter_model.dart';
-import 'package:otraku/models/tag_group_model.dart';
+import 'package:otraku/filter/filter_models.dart';
+import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/tag/tag_models.dart';
+import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/manga_format.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
-import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
@@ -20,45 +20,34 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-/// A sheet for collection/explore filtering. Should be opened with [showSheet].
-class FilterView extends StatelessWidget {
-  FilterView(this.model);
+class _FilterView<T extends ApplicableMediaFilter<T>> extends StatefulWidget {
+  _FilterView({
+    required this.filter,
+    required this.onChanged,
+    required this.builder,
+  });
 
-  final FilterModel model;
+  final T filter;
+  final void Function(T) onChanged;
+  final Widget Function(BuildContext, ScrollController, T) builder;
+
+  @override
+  State<_FilterView<T>> createState() => __FilterViewState<T>();
+}
+
+class __FilterViewState<T extends ApplicableMediaFilter<T>>
+    extends State<_FilterView<T>> {
+  late T _filter = widget.filter.copy();
 
   @override
   Widget build(BuildContext context) {
-    late final FilterModel copy;
-    if (model is CollectionFilterModel)
-      copy = CollectionFilterModel(model.ofAnime, null);
-    else if (model is ExploreFilterModel)
-      copy = ExploreFilterModel(model.ofAnime, null);
-    copy.copy(model);
-
-    // Statuses.
-    final statusOptions = <String>[];
-    final statusValues = <String>[];
-    for (final v in MediaStatus.values) {
-      statusValues.add(v.name);
-      statusOptions.add(Convert.clarifyEnum(statusValues.last)!);
-    }
-
-    // Formats.
-    final formatOptions = <String>[];
-    final formatValues = <String>[];
-    final formatEnum = model.ofAnime ? AnimeFormat.values : MangaFormat.values;
-    for (final v in formatEnum) {
-      formatValues.add(v.name);
-      formatOptions.add(Convert.clarifyEnum(formatValues.last)!);
-    }
-
     return OpaqueSheetView(
       buttons: BottomBarDualButtonRow(
         primary: BottomBarButton(
           text: 'Apply',
           icon: Icons.done_rounded,
           onTap: () {
-            model.copy(copy);
+            widget.onChanged(_filter);
             Navigator.pop(context);
           },
         ),
@@ -67,12 +56,29 @@ class FilterView extends StatelessWidget {
           icon: Icons.close,
           warning: true,
           onTap: () {
-            model.clear(true);
+            widget.onChanged(_filter.clear());
             Navigator.pop(context);
           },
         ),
       ),
-      builder: (context, scrollCtrl) => ListView(
+      builder: (context, scrollCtrl) =>
+          widget.builder(context, scrollCtrl, _filter),
+    );
+  }
+}
+
+class CollectionFilterView extends StatelessWidget {
+  CollectionFilterView({required this.filter, required this.onChanged});
+
+  final CollectionFilter filter;
+  final void Function(CollectionFilter) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return _FilterView<CollectionFilter>(
+      filter: filter,
+      onChanged: onChanged,
+      builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
         padding: const EdgeInsets.only(
           left: 10,
@@ -89,77 +95,44 @@ class FilterView extends StatelessWidget {
               height: 75,
             ),
             children: [
-              if (copy is CollectionFilterModel) ...[
-                SortDropDown(
-                  EntrySort.values,
-                  () => copy.sort.index,
-                  (EntrySort val) => copy.sort = val,
-                ),
-                OrderDropDown(
-                  EntrySort.values,
-                  () => copy.sort.index,
-                  (EntrySort val) => copy.sort = val,
-                )
-              ] else if (copy is ExploreFilterModel) ...[
-                SortDropDown(
-                  MediaSort.values,
-                  () => copy.sort.index,
-                  (MediaSort val) => copy.sort = val,
-                ),
-                OrderDropDown(
-                  MediaSort.values,
-                  () => copy.sort.index,
-                  (MediaSort val) => copy.sort = val,
-                )
-              ],
-              CountryDropDown(copy.country, (val) => copy.country = val),
-              if (copy is ExploreFilterModel)
-                ListPresenceDropDown(
-                  copy.onList,
-                  (val) => (copy as ExploreFilterModel).onList = val,
-                ),
+              SortDropDown(
+                EntrySort.values,
+                () => filter.sort.index,
+                (EntrySort val) => filter.sort = val,
+              ),
+              OrderDropDown(
+                EntrySort.values,
+                () => filter.sort.index,
+                (EntrySort val) => filter.sort = val,
+              ),
+              CountryDropDown(filter.country, (val) => filter.country = val),
             ],
           ),
-          ChipGrid(
-            title: 'Status',
-            placeholder: 'statuses',
-            names: copy.statuses,
-            onEdit: (selected) => showSheet(
-              context,
-              _SelectionSheet(
-                options: statusOptions,
-                values: statusValues,
-                selected: selected,
-              ),
-            ),
+          EnumChipGrid(
+            title: 'Statuses',
+            enumValues: MediaStatus.values,
+            selected: filter.statuses,
           ),
-          ChipGrid(
-            title: 'Format',
-            placeholder: 'formats',
-            names: copy.formats,
-            onEdit: (selected) => showSheet(
-              context,
-              _SelectionSheet(
-                options: formatOptions,
-                values: formatValues,
-                selected: selected,
-              ),
-            ),
+          EnumChipGrid(
+            title: 'Formats',
+            enumValues:
+                filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            selected: filter.formats,
           ),
-          GetBuilder<TagGroupController>(
-            builder: (ctrl) {
-              if (ctrl.model == null)
-                const SizedBox(height: 30, child: Loader());
-
-              return ChipTagGrid(
-                title: 'Tags',
-                placeholder: 'tags',
-                inclusiveGenres: copy.genreIn,
-                exclusiveGenres: copy.genreNotIn,
-                inclusiveTags: copy.tagIn,
-                exclusiveTags: copy.tagNotIn,
-              );
-            },
+          Consumer(
+            builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                  loading: () => const Loader(),
+                  error: (_, __) => const Text('Could not load tags'),
+                  data: (tags) => ChipTagGrid(
+                    inclusiveGenres: filter.genreIn,
+                    exclusiveGenres: filter.genreNotIn,
+                    inclusiveTags: filter.tagIn,
+                    exclusiveTags: filter.tagNotIn,
+                    tags: tags,
+                    tagIdIn: filter.tagIdIn,
+                    tagIdNotIn: filter.tagIdNotIn,
+                  ),
+                ),
           ),
         ],
       ),
@@ -167,95 +140,104 @@ class FilterView extends StatelessWidget {
   }
 }
 
-/// [DropDownField] implementations used for filtering.
+class ExploreFilterView extends StatelessWidget {
+  ExploreFilterView({required this.filter, required this.onChanged});
 
-class SortDropDown<T extends Enum> extends StatelessWidget {
-  SortDropDown(this.values, this.index, this.onChange);
-
-  final List<T> values;
-  final int Function() index;
-  final void Function(T) onChange;
+  final ExploreFilter filter;
+  final void Function(ExploreFilter) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final items = <String, int>{};
-    for (int i = 0; i < values.length; i += 2) {
-      String key = Convert.clarifyEnum(values[i].name)!;
-      items[key] = i ~/ 2;
+    return _FilterView<ExploreFilter>(
+      filter: filter,
+      onChanged: onChanged,
+      builder: (context, scrollCtrl, filter) => ListView(
+        controller: scrollCtrl,
+        padding:
+            const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 60),
+        children: [
+          GridView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              minWidth: 140,
+              height: 75,
+            ),
+            children: [
+              SortDropDown(
+                MediaSort.values,
+                () => filter.sort.index,
+                (MediaSort val) => filter.sort = val,
+              ),
+              OrderDropDown(
+                MediaSort.values,
+                () => filter.sort.index,
+                (MediaSort val) => filter.sort = val,
+              ),
+              CountryDropDown(filter.country, (val) => filter.country = val),
+              ListPresenceDropDown(
+                value: filter.onList,
+                onChanged: (val) => filter.onList = val,
+              ),
+            ],
+          ),
+          EnumChipGrid(
+            title: 'Statuses',
+            enumValues: MediaStatus.values,
+            selected: filter.statuses,
+          ),
+          EnumChipGrid(
+            title: 'Formats',
+            enumValues:
+                filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            selected: filter.formats,
+          ),
+          Consumer(
+            builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                  loading: () => const Loader(),
+                  error: (_, __) => const Text('Could not load tags'),
+                  data: (tags) => ChipTagGrid(
+                    inclusiveGenres: filter.genreIn,
+                    exclusiveGenres: filter.genreNotIn,
+                    inclusiveTags: filter.tagIn,
+                    exclusiveTags: filter.tagNotIn,
+                  ),
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class EnumChipGrid<T extends Enum> extends StatelessWidget {
+  const EnumChipGrid({
+    required this.title,
+    required this.enumValues,
+    required this.selected,
+  });
+
+  final String title;
+  final List<T> enumValues;
+  final List<String> selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final options = <String>[];
+    final values = <String>[];
+    for (final v in enumValues) {
+      values.add(v.name);
+      options.add(Convert.clarifyEnum(values.last)!);
     }
 
-    return DropDownField<int>(
-      title: 'Sort',
-      value: index() ~/ 2,
-      items: items,
-      onChanged: (val) {
-        int i = val * 2;
-        if (index() % 2 != 0) i++;
-        onChange(values[i]);
-      },
-    );
-  }
-}
-
-class OrderDropDown<T extends Enum> extends StatelessWidget {
-  OrderDropDown(this.values, this.index, this.onChange);
-
-  final List<T> values;
-  final int Function() index;
-  final void Function(T) onChange;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropDownField<bool>(
-      title: 'Order',
-      value: index() % 2 == 0,
-      items: const {'Ascending': true, 'Descending': false},
-      onChanged: (val) {
-        int i = index();
-        if (!val && i % 2 == 0) {
-          i++;
-        } else if (val && i % 2 != 0) {
-          i--;
-        }
-        onChange(values[i]);
-      },
-    );
-  }
-}
-
-class CountryDropDown extends StatelessWidget {
-  CountryDropDown(this.value, this.onChange);
-
-  final String? value;
-  final void Function(String?) onChange;
-
-  @override
-  Widget build(BuildContext context) {
-    final countries = <String, String?>{'All': null};
-    for (final e in Convert.countryCodes.entries) countries[e.value] = e.key;
-
-    return DropDownField<String?>(
-      title: 'Country',
-      value: value,
-      items: countries,
-      onChanged: onChange,
-    );
-  }
-}
-
-class ListPresenceDropDown extends StatelessWidget {
-  ListPresenceDropDown(this.value, this.onChange);
-
-  final bool? value;
-  final void Function(bool?) onChange;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropDownField<bool?>(
-      title: 'List Filter',
-      value: value,
-      items: const {'Everything': null, 'On List': true, 'Not On List': false},
-      onChanged: onChange,
+    return ChipGrid(
+      title: title,
+      placeholder: title.toLowerCase(),
+      names: selected,
+      onEdit: (selected) => showSheet(
+        context,
+        _SelectionSheet(options: options, values: values, selected: selected),
+      ),
     );
   }
 }
@@ -292,7 +274,7 @@ class _SelectionSheet<T> extends StatelessWidget {
   }
 }
 
-class TagSheetBody extends StatefulWidget {
+class TagSheetBody extends ConsumerStatefulWidget {
   TagSheetBody({
     required this.inclusiveGenres,
     required this.exclusiveGenres,
@@ -311,8 +293,8 @@ class TagSheetBody extends StatefulWidget {
   _TagSheetBodyState createState() => _TagSheetBodyState();
 }
 
-class _TagSheetBodyState extends State<TagSheetBody> {
-  late final TagGroupModel _tags;
+class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
+  late final TagGroup _tags;
   late final List<int> _categoryIndices;
   late final List<int> _itemIndices;
   String _filter = '';
@@ -321,7 +303,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
   @override
   void initState() {
     super.initState();
-    _tags = Get.find<TagGroupController>().model!;
+    _tags = ref.read(tagsProvider).valueOrNull!;
     _itemIndices = [..._tags.categoryItems[_index]];
     _categoryIndices = [];
     for (int i = 0; i < _tags.categoryNames.length; i++)
@@ -356,7 +338,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
             itemBuilder: (_, i) {
               final name = _tags.names[_itemIndices[i]];
               return CheckBoxTriField(
-                key: UniqueKey(),
+                key: Key(name),
                 title: name,
                 initial: inclusive.contains(name)
                     ? 1
@@ -377,12 +359,7 @@ class _TagSheetBodyState extends State<TagSheetBody> {
             },
           )
         else
-          Center(
-            child: Text(
-              'No Results',
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          ),
+          const Center(child: Text('No Results')),
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
           child: BackdropFilter(

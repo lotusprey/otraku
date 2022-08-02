@@ -5,6 +5,7 @@ import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/edit/edit_providers.dart';
+import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
@@ -12,7 +13,8 @@ import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/large_collection_grid.dart';
-import 'package:otraku/widgets/filter_tools.dart';
+import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CollectionView extends StatefulWidget {
@@ -105,7 +107,7 @@ class _CollectionSubViewState extends State<CollectionSubView> {
                   GetBuilder<CollectionController>(
                     id: CollectionController.ID_HEAD,
                     tag: widget.ctrlTag,
-                    builder: (ctrl) => SearchToolField(
+                    builder: (ctrl) => MediaSearchField(
                       value: ctrl.search,
                       title: ctrl.currentName,
                       onChanged: (val) => ctrl.search = val,
@@ -124,7 +126,17 @@ class _CollectionSubViewState extends State<CollectionSubView> {
                       );
                     },
                   ),
-                  FilterMediaToolButton(ctrl.filters),
+                  TopBarIcon(
+                    tooltip: 'Filter',
+                    icon: Ionicons.funnel_outline,
+                    onTap: () => showSheet(
+                      context,
+                      CollectionFilterView(
+                        filter: ctrl.filter,
+                        onChanged: (filter) => ctrl.filter = filter,
+                      ),
+                    ),
+                  ),
                 ]
               : const [],
         ),
@@ -166,15 +178,26 @@ class _CollectionSubViewState extends State<CollectionSubView> {
                     scoreFormat: ctrl.scoreFormat!,
                     updateProgress: isMe
                         ? (e) async {
-                            final customLists =
-                                await updateProgress(e.mediaId, e.progress);
+                            final result = await updateProgress(
+                              e.mediaId,
+                              e.progress,
+                            );
 
-                            if (customLists == null) return;
+                            if (result is! List<String>) {
+                              showPopUp(
+                                context,
+                                ConfirmationDialog(
+                                  title: 'Could not update progress',
+                                  content: result.toString(),
+                                ),
+                              );
+                              return;
+                            }
 
                             ctrl.updateProgress(
                               e.mediaId,
                               e.progress,
-                              customLists,
+                              result,
                               e.entryStatus,
                               e.format,
                             );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/views/filter_view.dart';
+import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -100,7 +101,7 @@ class _ChipGridState extends State<ChipGrid> {
     final children = <Widget>[];
     for (int i = 0; i < widget.names.length; i++)
       children.add(ChipField(
-        key: UniqueKey(),
+        key: Key(widget.names[i]),
         name: Convert.clarifyEnum(widget.names[i])!,
         onRemoved: () => setState(() => widget.names.removeAt(i)),
       ));
@@ -137,7 +138,7 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
     final children = <Widget>[];
     for (int i = 0; i < widget.names.length; i++)
       children.add(ChipNamingField(
-        key: UniqueKey(),
+        key: Key(widget.names[i]),
         name: widget.names[i],
         onChanged: (n) => setState(() => widget.names[i] = n),
         onRemoved: () => setState(() => widget.names.removeAt(i)),
@@ -163,20 +164,22 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
 
 class ChipTagGrid extends StatefulWidget {
   ChipTagGrid({
-    required this.title,
-    required this.placeholder,
     required this.inclusiveGenres,
     required this.exclusiveGenres,
     required this.inclusiveTags,
     required this.exclusiveTags,
+    this.tags,
+    this.tagIdIn,
+    this.tagIdNotIn,
   });
 
-  final String title;
-  final String placeholder;
   final List<String> inclusiveGenres;
   final List<String> exclusiveGenres;
   final List<String> inclusiveTags;
   final List<String> exclusiveTags;
+  final TagGroup? tags;
+  final List<int>? tagIdIn;
+  final List<int>? tagIdNotIn;
 
   @override
   _ChipTagGridState createState() => _ChipTagGridState();
@@ -190,7 +193,7 @@ class _ChipTagGridState extends State<ChipTagGrid> {
     for (int i = 0; i < widget.inclusiveGenres.length; i++) {
       final name = widget.inclusiveGenres[i];
       children.add(ChipToggleField(
-        key: UniqueKey(),
+        key: Key(widget.inclusiveGenres[i]),
         name: Convert.clarifyEnum(name)!,
         initial: true,
         onChanged: (positive) => _toggleGenre(name, positive),
@@ -201,7 +204,7 @@ class _ChipTagGridState extends State<ChipTagGrid> {
     for (int i = 0; i < widget.inclusiveTags.length; i++) {
       final name = widget.inclusiveTags[i];
       children.add(ChipToggleField(
-        key: UniqueKey(),
+        key: Key(widget.inclusiveTags[i]),
         name: Convert.clarifyEnum(name)!,
         initial: true,
         onChanged: (positive) => _toggleTag(name, positive),
@@ -212,7 +215,7 @@ class _ChipTagGridState extends State<ChipTagGrid> {
     for (int i = 0; i < widget.exclusiveGenres.length; i++) {
       final name = widget.exclusiveGenres[i];
       children.add(ChipToggleField(
-        key: UniqueKey(),
+        key: Key(widget.exclusiveGenres[i]),
         name: Convert.clarifyEnum(name)!,
         initial: false,
         onChanged: (positive) => _toggleGenre(name, positive),
@@ -223,7 +226,7 @@ class _ChipTagGridState extends State<ChipTagGrid> {
     for (int i = 0; i < widget.exclusiveTags.length; i++) {
       final name = widget.exclusiveTags[i];
       children.add(ChipToggleField(
-        key: UniqueKey(),
+        key: Key(widget.exclusiveTags[i]),
         name: Convert.clarifyEnum(name)!,
         initial: false,
         onChanged: (positive) => _toggleTag(name, positive),
@@ -232,8 +235,8 @@ class _ChipTagGridState extends State<ChipTagGrid> {
     }
 
     return _ChipGrid(
-      title: widget.title,
-      placeholder: widget.placeholder,
+      title: 'Tags',
+      placeholder: 'tags',
       children: children,
       onEdit: () => showSheet(
         context,
@@ -246,7 +249,26 @@ class _ChipTagGridState extends State<ChipTagGrid> {
             scrollCtrl: scrollCtrl,
           ),
         ),
-      ).then((_) => setState(() {})),
+      ).then((_) {
+        setState(() {});
+
+        if (widget.tags == null ||
+            widget.tagIdIn == null ||
+            widget.tagIdNotIn == null) return;
+
+        widget.tagIdIn!.clear();
+        widget.tagIdNotIn!.clear();
+        for (final t in widget.inclusiveTags) {
+          final i = widget.tags!.indices[t];
+          if (i == null) continue;
+          widget.tagIdIn!.add(widget.tags!.ids[i]);
+        }
+        for (final t in widget.exclusiveTags) {
+          final i = widget.tags!.indices[t];
+          if (i == null) continue;
+          widget.tagIdNotIn!.add(widget.tags!.ids[i]);
+        }
+      }),
       onClear: () => setState(() {
         widget.inclusiveGenres.clear();
         widget.exclusiveGenres.clear();

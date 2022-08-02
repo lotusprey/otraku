@@ -23,7 +23,7 @@ dependencies:
   workmanager: ^0.5.0
   flutter_local_notifications: ^9.7.0
   flutter_widget_from_html_core: ^0.8.5+3
-  ionicons: ^0.1.2
+  ionicons: ^0.2.1
 
 dev_dependencies:
   flutter_test:

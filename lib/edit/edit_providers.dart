@@ -4,20 +4,21 @@ import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
-/// Update an entry and return the entry id. This may be useful, if
-/// the entry didn't exist up until now, i.e. there wasn't an id.
-Future<int?> updateEntry(Edit edit) async {
+/// Updates an entry and returns the entry id or an error if unsuccessful. This
+/// is useful, if the entry didn't exist up until now, i.e. there wasn't an id.
+Future<Object> updateEntry(Edit edit) async {
   try {
     final data = await Api.get(GqlMutation.updateEntry, edit.toMap());
     return data['SaveMediaListEntry']['id'];
   } catch (e) {
-    return null;
+    return e;
   }
 }
 
-/// Increment entry progress. The entry's custom lists are returned,
-/// so that all of them can easily be updated locally.
-Future<List<String>?> updateProgress(int mediaId, int progress) async {
+/// Increments entry progress and returns the entry's custom lists
+/// (`List<String>`) or an error if unsuccessful. The lists are
+/// used to easily update the entry locally.
+Future<Object> updateProgress(int mediaId, int progress) async {
   try {
     final data = await Api.get(
       GqlMutation.updateProgress,
@@ -29,15 +30,18 @@ Future<List<String>?> updateProgress(int mediaId, int progress) async {
       if (e.value) customLists.add(e.key.toString().toLowerCase());
     return customLists;
   } catch (e) {
-    return null;
+    return e;
   }
 }
 
-/// Remove an entry.
-Future<void> removeEntry(int entryId) async {
+/// Removes an entry and returns an error if unsuccessful.
+Future<Object?> removeEntry(int entryId) async {
   try {
     await Api.get(GqlMutation.removeEntry, {'entryId': entryId});
-  } catch (e) {}
+    return null;
+  } catch (e) {
+    return e;
+  }
 }
 
 final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(

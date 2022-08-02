@@ -124,8 +124,21 @@ class __ButtonsState extends State<_Buttons> {
                   final newEdit = ref.read(editProvider);
                   setState(() => _loading = true);
 
-                  newEdit.entryId = await updateEntry(newEdit);
+                  final result = await updateEntry(newEdit);
                   Navigator.pop(context);
+
+                  if (result is! int) {
+                    showPopUp(
+                      context,
+                      ConfirmationDialog(
+                        title: 'Could not update entry',
+                        content: result.toString(),
+                      ),
+                    );
+                    return;
+                  }
+
+                  newEdit.entryId = result;
                   if (newEdit.entryId == null) return;
                   widget.callback?.call(newEdit);
 
@@ -157,20 +170,35 @@ class __ButtonsState extends State<_Buttons> {
                     mainAction: 'Yes',
                     secondaryAction: 'No',
                     onConfirm: () {
+                      setState(() => _loading = true);
+
                       final oldEdit = widget.oldEdit;
-                      removeEntry(oldEdit.entryId!);
+                      removeEntry(oldEdit.entryId!).then((err) {
+                        Navigator.pop(context);
 
-                      Get.find<CollectionController>(
-                        tag: oldEdit.type == 'ANIME'
-                            ? '${Settings().id}true'
-                            : '${Settings().id}false',
-                      ).removeEntry(oldEdit);
+                        if (err != null) {
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Could not remove entry',
+                              content: err.toString(),
+                            ),
+                          );
+                          return;
+                        }
 
-                      if (oldEdit.status == EntryStatus.CURRENT)
-                        Get.find<ProgressController>().remove(oldEdit.mediaId);
+                        Get.find<CollectionController>(
+                          tag: oldEdit.type == 'ANIME'
+                              ? '${Settings().id}true'
+                              : '${Settings().id}false',
+                        ).removeEntry(oldEdit);
 
-                      widget.callback?.call(oldEdit.emptyCopy());
-                      Navigator.pop(context);
+                        if (oldEdit.status == EntryStatus.CURRENT)
+                          Get.find<ProgressController>()
+                              .remove(oldEdit.mediaId);
+
+                        widget.callback?.call(oldEdit.emptyCopy());
+                      });
                     },
                   ),
                 ),

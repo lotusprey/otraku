@@ -22,6 +22,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class InboxView extends StatelessWidget {
@@ -191,7 +192,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.releasingAnime,
-                  updateProgress: _updateAnimeProgress,
+                  updateProgress: (e) => _updateProgress(context, true, e),
                 ),
               ],
               if (ctrl.otherAnime.isNotEmpty) ...[
@@ -203,7 +204,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.otherAnime,
-                  updateProgress: _updateAnimeProgress,
+                  updateProgress: (e) => _updateProgress(context, true, e),
                 ),
               ],
               if (ctrl.releasingManga.isNotEmpty) ...[
@@ -215,7 +216,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.releasingManga,
-                  updateProgress: _updateMangaProgress,
+                  updateProgress: (e) => _updateProgress(context, false, e),
                 ),
               ],
               if (ctrl.otherManga.isNotEmpty) ...[
@@ -227,7 +228,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.otherManga,
-                  updateProgress: _updateMangaProgress,
+                  updateProgress: (e) => _updateProgress(context, false, e),
                 ),
               ],
               const SliverFooter(),
@@ -238,27 +239,28 @@ class _ProgressView extends StatelessWidget {
     );
   }
 
-  Future<void> _updateAnimeProgress(EntryItem e) async {
-    final customLists = await updateProgress(e.mediaId, e.progress);
-    if (customLists == null) return;
+  Future<void> _updateProgress(
+    BuildContext context,
+    bool ofAnime,
+    EntryItem e,
+  ) async {
+    final result = await updateProgress(e.mediaId, e.progress);
+    if (result is! List<String>) {
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not update progress',
+          content: result.toString(),
+        ),
+      );
+      return;
+    }
 
-    Get.find<CollectionController>(tag: '${Settings().id}true').updateProgress(
+    Get.find<CollectionController>(tag: '${Settings().id}$ofAnime')
+        .updateProgress(
       e.mediaId,
       e.progress,
-      customLists,
-      EntryStatus.CURRENT,
-      null,
-    );
-  }
-
-  Future<void> _updateMangaProgress(EntryItem e) async {
-    final customLists = await updateProgress(e.mediaId, e.progress);
-    if (customLists == null) return;
-
-    Get.find<CollectionController>(tag: '${Settings().id}false').updateProgress(
-      e.mediaId,
-      e.progress,
-      customLists,
+      result,
       EntryStatus.CURRENT,
       null,
     );

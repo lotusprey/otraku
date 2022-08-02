@@ -184,34 +184,42 @@ class _ButtonRowState extends State<_ButtonRow> {
         ValueListenableBuilder(
           valueListenable: widget.tab,
           builder: (context, i, child) => i == 0 ? child! : const SizedBox(),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _FormatButton(
-                tag: 'b',
-                name: 'Bold',
-                icon: Icons.format_bold_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'i',
-                name: 'Italic',
-                icon: Icons.format_italic_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'del',
-                name: 'Strikethrough',
-                icon: Icons.format_strikethrough_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'code',
-                name: 'Code',
-                icon: Icons.code_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-            ],
+          child: Expanded(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                _FormatButton(
+                  tag: 'b',
+                  name: 'Bold',
+                  icon: Icons.format_bold_outlined,
+                  textCtrl: widget.textCtrl,
+                ),
+                _FormatButton(
+                  tag: 'i',
+                  name: 'Italic',
+                  icon: Icons.format_italic_outlined,
+                  textCtrl: widget.textCtrl,
+                ),
+                _FormatButton(
+                  tag: 'del',
+                  name: 'Strikethrough',
+                  icon: Icons.format_strikethrough_outlined,
+                  textCtrl: widget.textCtrl,
+                ),
+                _FormatButton(
+                  tag: 'center',
+                  name: 'Center',
+                  icon: Icons.align_horizontal_center_outlined,
+                  textCtrl: widget.textCtrl,
+                ),
+                _FormatButton(
+                  tag: 'code',
+                  name: 'Code',
+                  icon: Icons.code_outlined,
+                  textCtrl: widget.textCtrl,
+                ),
+              ],
+            ),
           ),
         ),
         Row(

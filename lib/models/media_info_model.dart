@@ -1,5 +1,5 @@
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/tag_model.dart';
+import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 
@@ -34,7 +34,7 @@ class MediaInfoModel {
   final List<String> genres;
   final studios = <String, int>{};
   final producers = <String, int>{};
-  final tags = <TagModel>[];
+  final tags = <Tag>[];
   final String? source;
   final String? hashtag;
   final String? siteUrl;
@@ -140,7 +140,7 @@ class MediaInfoModel {
     }
 
     if (map['tags'] != null)
-      for (final tag in map['tags']) model.tags.add(TagModel(tag));
+      for (final tag in map['tags']) model.tags.add(Tag(tag));
 
     return model;
   }

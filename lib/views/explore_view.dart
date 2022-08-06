@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/explore_controller.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/constants/consts.dart';
+import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/reviews/review_grid.dart';
+import 'package:otraku/review/review_grid.dart';
 import 'package:otraku/widgets/grids/title_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/tile_grid.dart';
-import 'package:otraku/widgets/navigation/filter_tools.dart';
+import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ExploreView extends StatelessWidget {
@@ -31,7 +33,7 @@ class ExploreView extends StatelessWidget {
           items: [
             GetBuilder<ExploreController>(
               id: ExploreController.ID_HEAD,
-              builder: (ctrl) => SearchToolField(
+              builder: (ctrl) => MediaSearchField(
                 value: ctrl.search,
                 title: Convert.clarifyEnum(ctrl.type.name)!,
                 onChanged: ctrl.type != Explorable.review
@@ -44,7 +46,17 @@ class ExploreView extends StatelessWidget {
               builder: (ctrl) {
                 if (ctrl.type == Explorable.anime ||
                     ctrl.type == Explorable.manga)
-                  return FilterMediaToolButton(ctrl.filters);
+                  return TopBarIcon(
+                    tooltip: 'Filter',
+                    icon: Ionicons.funnel_outline,
+                    onTap: () => showSheet(
+                      context,
+                      ExploreFilterView(
+                        filter: ctrl.filter,
+                        onChanged: (filter) => ctrl.filter = filter,
+                      ),
+                    ),
+                  );
 
                 if (ctrl.type == Explorable.character ||
                     ctrl.type == Explorable.staff)

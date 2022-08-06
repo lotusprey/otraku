@@ -1,8 +1,8 @@
 import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/models/recommended_model.dart';
-import 'package:otraku/models/relation_model.dart';
-import 'package:otraku/edit/edit.dart';
+import 'package:otraku/models/relation.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/models/media_info_model.dart';
@@ -32,15 +32,15 @@ class MediaModel {
   final MediaStatsModel stats;
   final otherMedia = <RelatedMediaModel>[];
   final recommendations = PageModel<RecommendedModel>();
-  final staff = PageModel<RelationModel>();
+  final staff = PageModel<Relation>();
   final reviews = PageModel<RelatedReviewModel>();
-  final characters = PageModel<RelationModel>();
-  final _voiceActors = <String, Map<int, List<RelationModel>>>{};
+  final characters = PageModel<Relation>();
+  final _voiceActors = <String, Map<int, List<Relation>>>{};
 
   void selectCharactersAndVoiceActors(
     String language,
-    List<RelationModel> characterList,
-    List<RelationModel?> voiceActorList,
+    List<Relation> characterList,
+    List<Relation?> voiceActorList,
   ) {
     final byLanguage = _voiceActors[language];
     if (byLanguage == null) {
@@ -75,9 +75,9 @@ class MediaModel {
   }
 
   void addCharacters(Map<String, dynamic> map, List<String> languages) {
-    final items = <RelationModel>[];
+    final items = <Relation>[];
     for (final c in map['characters']['edges']) {
-      items.add(RelationModel(
+      items.add(Relation(
         id: c['node']['id'],
         title: c['node']['name']['userPreferred'],
         imageUrl: c['node']['image']['large'],
@@ -94,7 +94,7 @@ class MediaModel {
 
           final currentLanguage = _voiceActors.putIfAbsent(
             l,
-            () => <int, List<RelationModel>>{},
+            () => <int, List<Relation>>{},
           );
 
           final currentCharacter = currentLanguage.putIfAbsent(
@@ -102,7 +102,7 @@ class MediaModel {
             () => [],
           );
 
-          currentCharacter.add(RelationModel(
+          currentCharacter.add(Relation(
             id: va['id'],
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
@@ -116,9 +116,9 @@ class MediaModel {
   }
 
   void addStaff(Map<String, dynamic> map) {
-    final items = <RelationModel>[];
+    final items = <Relation>[];
     for (final connection in map['staff']['edges'])
-      items.add(RelationModel(
+      items.add(Relation(
         id: connection['node']['id'],
         title: connection['node']['name']['userPreferred'],
         imageUrl: connection['node']['image']['large'],

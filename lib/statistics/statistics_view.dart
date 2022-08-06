@@ -3,14 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/statistics/user_statistics.dart';
-import 'package:otraku/users/user.dart';
+import 'package:otraku/user/user_models.dart';
+import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/navigation/tab_segments.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class StatisticsView extends StatefulWidget {
@@ -56,7 +58,7 @@ class _StatisticsViewState extends State<StatisticsView> {
               orElse: () => const Center(child: Text('No statistics')),
               loading: () => const Center(child: Loader()),
               data: (data) {
-                return TabSwitcher(
+                return DirectPageView(
                   current: _onAnime ? 0 : 1,
                   onChanged: (i) =>
                       setState(() => _onAnime = i > 0 ? false : true),
@@ -289,17 +291,20 @@ class _BarChartState extends State<_BarChart> {
 
     return BarChart(
       title: widget.title,
-      trailing: TabSegments<int>(
-        items: {
-          'Titles': 0,
-          if (widget.ofAnime) 'Hours': 1 else 'Chapters': 1,
-          if (widget.full) 'Mean Score': 2,
-        },
-        initial: _tab,
-        onChanged: (val) {
-          setState(() => _tab = val);
-          widget.onTabChanged(val);
-        },
+      action: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: CompactSegmentSwitcher(
+          items: [
+            'Titles',
+            widget.ofAnime ? 'Hours' : 'Chapters',
+            if (widget.full) 'Mean Score',
+          ],
+          current: _tab,
+          onChanged: (val) {
+            setState(() => _tab = val);
+            widget.onTabChanged(val);
+          },
+        ),
       ),
       names: widget.statistics.map((s) => s.type).toList(),
       values: values,

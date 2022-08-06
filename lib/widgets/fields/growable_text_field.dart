@@ -16,7 +16,7 @@ class GrowableTextField extends StatefulWidget {
 }
 
 class _GrowableTextFieldState extends State<GrowableTextField> {
-  late final TextEditingController _ctrl;
+  late final _ctrl = TextEditingController(text: widget.text);
 
   @override
   Widget build(BuildContext context) => TextField(
@@ -27,12 +27,6 @@ class _GrowableTextFieldState extends State<GrowableTextField> {
         controller: _ctrl,
         onChanged: (text) => widget.onChanged(text),
       );
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = TextEditingController(text: widget.text);
-  }
 
   @override
   void dispose() {

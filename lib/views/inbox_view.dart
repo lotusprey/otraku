@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/activities/activities_view.dart';
-import 'package:otraku/collections/entry_item.dart';
+import 'package:otraku/activity/activities_view.dart';
+import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/collection/entry_item.dart';
+import 'package:otraku/composition/composition_model.dart';
+import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/controllers/collection_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/edit/edit.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -16,8 +19,11 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class InboxView extends StatelessWidget {
   InboxView(this.scrollCtrl);
@@ -91,42 +97,54 @@ class InboxView extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: HomeController.ID_HOME,
       builder: (homeCtrl) {
-        return PageLayout(
-          floatingBar: FloatingBar(
-            scrollCtrl: scrollCtrl,
-            centered: true,
-            children: [
-              ActionMenu(
-                current: homeCtrl.onFeed ? 1 : 0,
-                onChanged: (i) => homeCtrl.onFeed = i == 1,
-                items: const ['Progress', 'Feed'],
-              ),
-            ],
-          ),
-          topBar: TopBar(
-            canPop: false,
-            title: homeCtrl.onFeed ? 'Feed' : 'Progress',
-            items: [
-              if (homeCtrl.onFeed)
-                Consumer(
-                  builder: (context, ref, _) => TopBarIcon(
+        return Consumer(
+          builder: (context, ref, _) => PageLayout(
+            floatingBar: FloatingBar(
+              scrollCtrl: scrollCtrl,
+              children: [
+                ActionButton(
+                  tooltip: 'New Post',
+                  icon: Icons.edit_outlined,
+                  onTap: () => showSheet(
+                    context,
+                    CompositionView(
+                      composition: Composition.status(null, ''),
+                      onDone: (map) => ref
+                          .read(activitiesProvider(null).notifier)
+                          .insertActivity(map, Settings().id!),
+                    ),
+                  ),
+                ),
+                SegmentSwitcher(
+                  current: homeCtrl.onFeed ? 1 : 0,
+                  onChanged: (i) => homeCtrl.onFeed = i == 1,
+                  items: const ['Progress', 'Feed'],
+                ),
+              ],
+            ),
+            topBar: TopBar(
+              canPop: false,
+              title: homeCtrl.onFeed ? 'Feed' : 'Progress',
+              items: [
+                if (homeCtrl.onFeed)
+                  TopBarIcon(
                     tooltip: 'Filter',
                     icon: Ionicons.funnel_outline,
                     onTap: () => showActivityFilterSheet(context, ref, null),
-                  ),
-                )
-              else
-                const SizedBox(width: 45),
-              notificationIcon,
-            ],
-          ),
-          child: TabSwitcher(
-            onChanged: null,
-            current: homeCtrl.onFeed ? 1 : 0,
-            children: [
-              _ProgressView(scrollCtrl),
-              ActivitiesSubView(null, scrollCtrl),
-            ],
+                  )
+                else
+                  const SizedBox(width: 45),
+                notificationIcon,
+              ],
+            ),
+            child: DirectPageView(
+              onChanged: null,
+              current: homeCtrl.onFeed ? 1 : 0,
+              children: [
+                _ProgressView(scrollCtrl),
+                ActivitiesSubView(null, scrollCtrl),
+              ],
+            ),
           ),
         );
       },
@@ -174,7 +192,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.releasingAnime,
-                  updateProgress: _updateAnimeProgress,
+                  updateProgress: (e) => _updateProgress(context, true, e),
                 ),
               ],
               if (ctrl.otherAnime.isNotEmpty) ...[
@@ -186,7 +204,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.otherAnime,
-                  updateProgress: _updateAnimeProgress,
+                  updateProgress: (e) => _updateProgress(context, true, e),
                 ),
               ],
               if (ctrl.releasingManga.isNotEmpty) ...[
@@ -198,7 +216,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.releasingManga,
-                  updateProgress: _updateMangaProgress,
+                  updateProgress: (e) => _updateProgress(context, false, e),
                 ),
               ],
               if (ctrl.otherManga.isNotEmpty) ...[
@@ -210,7 +228,7 @@ class _ProgressView extends StatelessWidget {
                 ),
                 MinimalCollectionGrid(
                   items: ctrl.otherManga,
-                  updateProgress: _updateMangaProgress,
+                  updateProgress: (e) => _updateProgress(context, false, e),
                 ),
               ],
               const SliverFooter(),
@@ -221,27 +239,28 @@ class _ProgressView extends StatelessWidget {
     );
   }
 
-  Future<void> _updateAnimeProgress(EntryItem e) async {
-    final customLists = await updateProgress(e.mediaId, e.progress);
-    if (customLists == null) return;
+  Future<void> _updateProgress(
+    BuildContext context,
+    bool ofAnime,
+    EntryItem e,
+  ) async {
+    final result = await updateProgress(e.mediaId, e.progress);
+    if (result is! List<String>) {
+      showPopUp(
+        context,
+        ConfirmationDialog(
+          title: 'Could not update progress',
+          content: result.toString(),
+        ),
+      );
+      return;
+    }
 
-    Get.find<CollectionController>(tag: '${Settings().id}true').updateProgress(
+    Get.find<CollectionController>(tag: '${Settings().id}$ofAnime')
+        .updateProgress(
       e.mediaId,
       e.progress,
-      customLists,
-      EntryStatus.CURRENT,
-      null,
-    );
-  }
-
-  Future<void> _updateMangaProgress(EntryItem e) async {
-    final customLists = await updateProgress(e.mediaId, e.progress);
-    if (customLists == null) return;
-
-    Get.find<CollectionController>(tag: '${Settings().id}false').updateProgress(
-      e.mediaId,
-      e.progress,
-      customLists,
+      result,
       EntryStatus.CURRENT,
       null,
     );

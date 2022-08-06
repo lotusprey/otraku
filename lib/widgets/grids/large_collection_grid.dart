@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';

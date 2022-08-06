@@ -185,27 +185,27 @@ abstract class GqlQuery {
   ''';
 
   static const character = r'''
-    query Character($id: Int, $sort: [MediaSort], $animePage: Int = 1, $mangaPage: Int = 1, 
-        $onList: Boolean, $withMain: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
+    query Character($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
+        $withInfo: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
       Character(id: $id) {
-        ...main @include(if: $withMain)
-        anime: media(page: $animePage, type: ANIME, onList: $onList, sort: $sort) 
+        ...info @include(if: $withInfo)
+        anime: media(page: $page, type: ANIME, onList: $onList, sort: $sort) 
           @include(if: $withAnime) {...media}
-        manga: media(page: $mangaPage, type: MANGA, onList: $onList, sort: $sort) 
+        manga: media(page: $page, type: MANGA, onList: $onList, sort: $sort) 
           @include(if: $withManga) {...media}
       }
     }
-    fragment main on Character {
+    fragment info on Character {
       id
       name{userPreferred native alternative alternativeSpoiler}
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
+      bloodType
       gender
       age
       favourites 
       isFavourite
-      isFavouriteBlocked
     }
     fragment media on MediaConnection {
       pageInfo {hasNextPage}
@@ -229,11 +229,11 @@ abstract class GqlQuery {
   ''';
 
   static const staff = r'''
-    query Staff($id: Int, $sort: [MediaSort], $characterPage: Int = 1, $staffPage: Int = 1, 
-        $onList: Boolean, $withMain: Boolean = false, $withCharacters: Boolean = false, $withStaff: Boolean = false) {
+    query Staff($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
+        $withInfo: Boolean = false, $withCharacters: Boolean = false, $withRoles: Boolean = false) {
       Staff(id: $id) {
-        ...main @include(if: $withMain)
-        characterMedia(page: $characterPage, sort: $sort, onList: $onList) @include(if: $withCharacters) {
+        ...info @include(if: $withInfo)
+        characterMedia(page: $page, sort: $sort, onList: $onList) @include(if: $withCharacters) {
           pageInfo {hasNextPage}
           edges {
             characterRole
@@ -251,7 +251,7 @@ abstract class GqlQuery {
             }
           }
         }
-        staffMedia(page: $staffPage, sort: $sort, onList: $onList) @include(if: $withStaff) {
+        staffMedia(page: $page, sort: $sort, onList: $onList) @include(if: $withRoles) {
           pageInfo {hasNextPage}
           edges {
             staffRole
@@ -265,22 +265,20 @@ abstract class GqlQuery {
         }
       }
     }
-    fragment main on Staff {
+    fragment info on Staff {
       id
       name{userPreferred native alternative}
       image{large}
       description(asHtml: true)
-      languageV2
-      primaryOccupations
       dateOfBirth{year month day}
       dateOfDeath{year month day}
       gender
       age
       yearsActive
+      bloodType
       homeTown
       favourites 
       isFavourite
-      isFavouriteBlocked
     }
   ''';
 
@@ -296,22 +294,23 @@ abstract class GqlQuery {
   ''';
 
   static const studio = r'''
-    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $isMain: Boolean, $onList: Boolean, $withMain: Boolean = false) {
+    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $onList: Boolean, $isMain: Boolean, $withInfo: Boolean = false) {
       Studio(id: $id) {
-        ...studio @include(if: $withMain)
-        media(page: $page, sort: $sort, isMain: $isMain, onList: $onList) {
+        ...info @include(if: $withInfo)
+        media(page: $page, sort: $sort, onList: $onList, isMain: $isMain) {
           pageInfo {hasNextPage}
           nodes {
             id
             title {userPreferred}
             coverImage {extraLarge large medium}
             startDate {year}
+            endDate {year}
             status(version: 2)
           }
         }
       }
     }
-    fragment studio on Studio {id name favourites isFavourite isAnimationStudio}
+    fragment info on Studio {id name favourites isFavourite}
   ''';
 
   static const studios = r'''
@@ -693,6 +692,33 @@ abstract class GqlMutation {
     }
   ''';
 
+  static const saveStatusActivity = r'''
+    mutation SaveStatusActivity($id: Int, $text: String) {
+      SaveTextActivity(id: $id, text: $text) {...textActivity}
+    }
+  '''
+      '${_GqlFragment.textActivity}';
+
+  static const saveMessageActivity = r'''
+    mutation SaveMessageActivity($id: Int, $recipientId: Int, $text: String, $private: Boolean) {
+      SaveMessageActivity(id: $id, recipientId: $recipientId, message: $text, private: $private) {...messageActivity}
+    }
+  '''
+      '${_GqlFragment.messageActivity}';
+
+  static const saveActivityReply = r'''
+    mutation SaveActivityReply($id: Int, $activityId: Int, $text: String) {
+      SaveActivityReply(id: $id, activityId: $activityId, text: $text) {
+        id
+        likeCount
+        isLiked
+        createdAt
+        text(asHtml: true)
+        user {id name avatar {large}}
+      }
+    }
+  ''';
+
   static const toggleLike = r'''
     mutation ToggleLike($id: Int, $type: LikeableType) {
       ToggleLikeV2(id: $id, type: $type) {
@@ -725,6 +751,10 @@ abstract class GqlMutation {
 
   static const deleteActivity = r'''
     mutation DeleteActivity($id: Int) {DeleteActivity(id: $id) {deleted}}
+  ''';
+
+  static const deleteActivityReply = r'''
+    mutation DeleteActivityReply($id: Int) {DeleteActivityReply(id: $id) {deleted}}
   ''';
 }
 

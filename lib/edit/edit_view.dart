@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/progress_controller.dart';
-import 'package:otraku/edit/edit.dart';
+import 'package:otraku/edit/edit_model.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
@@ -16,6 +17,7 @@ import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/growable_text_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
@@ -46,7 +48,7 @@ class EditView extends StatelessWidget {
           final notifier = ref.watch(editProvider.notifier);
 
           if (notifier.state.mediaId < 0)
-            notifier.update((_) => _resolveData(edit!));
+            notifier.update((_) => edit!.copy(complete));
 
           return _build(edit!);
         },
@@ -62,7 +64,7 @@ class EditView extends StatelessWidget {
           (_, state) => state.whenOrNull(
             data: (data) {
               if (notifier.state.mediaId < 0)
-                notifier.update((_) => _resolveData(data));
+                notifier.update((_) => data.copy(complete));
             },
             error: (err, _) {
               Navigator.pop(context);
@@ -87,113 +89,120 @@ class EditView extends StatelessWidget {
     );
   }
 
-  Edit _resolveData(Edit data) {
-    if (!complete) return data.copyWith();
-
-    return data.copyWith(
-      status: EntryStatus.COMPLETED,
-      completedAt: DateTime.now,
-      progress: data.progressMax,
-      progressVolumes: data.progressVolumesMax,
-    );
-  }
-
   Widget _build(Edit oldEdit) {
     return OpaqueSheetView(
-      buttons: [
-        if (oldEdit.entryId != null)
-          _RemoveButton(oldEdit, callback)
-        else
-          const Spacer(),
-        _SaveButton(mediaId, oldEdit, callback),
-      ],
+      buttons: _Buttons(mediaId, oldEdit, callback),
       builder: (context, scrollCtrl) => _EditView(scrollCtrl, oldEdit),
     );
   }
 }
 
-class _RemoveButton extends StatelessWidget {
-  _RemoveButton(this.oldEdit, this.callback);
-
-  final Edit oldEdit;
-  final void Function(Edit)? callback;
-
-  @override
-  Widget build(BuildContext context) {
-    return OpaqueSheetViewButton(
-      text: 'Remove',
-      icon: Ionicons.trash_bin_outline,
-      warning: true,
-      onTap: () => showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Remove entry?',
-          mainAction: 'Yes',
-          secondaryAction: 'No',
-          onConfirm: () {
-            removeEntry(oldEdit.entryId!);
-
-            Get.find<CollectionController>(
-              tag: oldEdit.type == 'ANIME'
-                  ? '${Settings().id}true'
-                  : '${Settings().id}false',
-            ).removeEntry(oldEdit);
-
-            if (oldEdit.status == EntryStatus.CURRENT)
-              Get.find<ProgressController>().remove(oldEdit.mediaId);
-
-            callback?.call(oldEdit.emptyCopy());
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class _SaveButton extends StatefulWidget {
-  _SaveButton(this.mediaId, this.oldEdit, this.callback);
+class _Buttons extends StatefulWidget {
+  _Buttons(this.mediaId, this.oldEdit, this.callback);
 
   final int mediaId;
   final Edit oldEdit;
   final void Function(Edit)? callback;
 
   @override
-  __SaveButtonState createState() => __SaveButtonState();
+  State<_Buttons> createState() => __ButtonsState();
 }
 
-class __SaveButtonState extends State<_SaveButton> {
+class __ButtonsState extends State<_Buttons> {
   bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Expanded(child: Center(child: Loader()));
-
     return Consumer(
-      builder: (__, ref, _) => OpaqueSheetViewButton(
-        text: 'Save',
-        icon: Ionicons.save_outline,
-        onTap: () async {
-          final newEdit = ref.read(editProvider);
-          setState(() => _loading = true);
+      builder: (__, ref, _) => BottomBarDualButtonRow(
+        primary: _loading
+            ? null
+            : BottomBarButton(
+                text: 'Save',
+                icon: Ionicons.save_outline,
+                onTap: () async {
+                  final newEdit = ref.read(editProvider);
+                  setState(() => _loading = true);
 
-          newEdit.entryId = await updateEntry(widget.oldEdit, newEdit);
-          Navigator.pop(context);
-          if (newEdit.entryId == null) return;
-          widget.callback?.call(newEdit);
+                  final result = await updateEntry(newEdit);
+                  Navigator.pop(context);
 
-          final isAnime = widget.oldEdit.type == 'ANIME';
+                  if (result is! int) {
+                    showPopUp(
+                      context,
+                      ConfirmationDialog(
+                        title: 'Could not update entry',
+                        content: result.toString(),
+                      ),
+                    );
+                    return;
+                  }
 
-          final entry = await Get.find<CollectionController>(
-            tag: isAnime ? '${Settings().id}true' : '${Settings().id}false',
-          ).updateEntry(widget.oldEdit, newEdit);
-          if (entry == null) return;
+                  newEdit.entryId = result;
+                  if (newEdit.entryId == null) return;
+                  widget.callback?.call(newEdit);
 
-          if (widget.oldEdit.status == null)
-            Get.find<ProgressController>().add(entry, isAnime);
-          else
-            Get.find<ProgressController>().updateEntry(entry, isAnime);
-        },
+                  final isAnime = newEdit.type == 'ANIME';
+
+                  final entry = await Get.find<CollectionController>(
+                    tag: isAnime
+                        ? '${Settings().id}true'
+                        : '${Settings().id}false',
+                  ).updateEntry(widget.oldEdit, newEdit);
+                  if (entry == null) return;
+
+                  if (widget.oldEdit.status == null)
+                    Get.find<ProgressController>().add(entry, isAnime);
+                  else
+                    Get.find<ProgressController>().updateEntry(entry, isAnime);
+                },
+              ),
+        secondary: widget.oldEdit.entryId == null
+            ? null
+            : BottomBarButton(
+                text: 'Remove',
+                icon: Ionicons.trash_bin_outline,
+                warning: true,
+                onTap: () => showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Remove entry?',
+                    mainAction: 'Yes',
+                    secondaryAction: 'No',
+                    onConfirm: () {
+                      setState(() => _loading = true);
+
+                      final oldEdit = widget.oldEdit;
+                      removeEntry(oldEdit.entryId!).then((err) {
+                        Navigator.pop(context);
+
+                        if (err != null) {
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Could not remove entry',
+                              content: err.toString(),
+                            ),
+                          );
+                          return;
+                        }
+
+                        Get.find<CollectionController>(
+                          tag: oldEdit.type == 'ANIME'
+                              ? '${Settings().id}true'
+                              : '${Settings().id}false',
+                        ).removeEntry(oldEdit);
+
+                        if (oldEdit.status == EntryStatus.CURRENT)
+                          Get.find<ProgressController>()
+                              .remove(oldEdit.mediaId);
+
+                        widget.callback?.call(oldEdit.emptyCopy());
+                      });
+                    },
+                  ),
+                ),
+              ),
       ),
     );
   }
@@ -513,9 +522,12 @@ class _EditView extends StatelessWidget {
               SliverToBoxAdapter(
                 child: LabeledField(
                   label: 'Notes',
-                  child: GrowableTextField(
-                    text: notifier.state.notes,
-                    onChanged: (notes) => notifier.state.notes = notes,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: GrowableTextField(
+                      text: notifier.state.notes,
+                      onChanged: (notes) => notifier.state.notes = notes,
+                    ),
                   ),
                 ),
               ),

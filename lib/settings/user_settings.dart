@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/notifications/notifications.dart';
+import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 

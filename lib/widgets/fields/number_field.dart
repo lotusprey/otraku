@@ -27,13 +27,12 @@ class _NumberFieldState extends State<NumberField> {
     super.didUpdateWidget(oldWidget);
     final text = widget.initial.toString();
     if (text != _ctrl.text)
-      _ctrl.value = _ctrl.value.copyWith(
+      _ctrl.value = TextEditingValue(
         text: text,
         selection: TextSelection(
           baseOffset: text.length,
           extentOffset: text.length,
         ),
-        composing: TextRange.empty,
       );
   }
 

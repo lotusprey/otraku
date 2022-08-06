@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:otraku/notifications/notifications.dart';
+import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';

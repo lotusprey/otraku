@@ -1,9 +1,32 @@
-import 'package:otraku/collections/entry.dart';
+import 'package:otraku/collection/entry.dart';
 import 'package:otraku/utils/settings.dart';
 
 abstract class Convert {
-  // Replaces _ with intervals and makes each word start with
-  // an upper case letter and continue with lower case ones.
+  /// Code points of some characters.
+  static final _ampersand = '&'.codeUnitAt(0);
+  static final _hashtag = '#'.codeUnitAt(0);
+  static final _semicolon = ';'.codeUnitAt(0);
+
+  /// AniList can't handle some unicode characters, so before uploading text,
+  /// symbols that are too big should be represented as HTML character entity
+  /// references. Important primarily for emojis, hence the name.
+  static String parseEmojis(String source) {
+    final runes = source.runes.toList();
+    final parsedRunes = <int>[];
+    for (final c in runes)
+      if (c > 0xFFFF)
+        // Prepend "&#", append ";" and represent symbol code as digits.
+        parsedRunes.addAll(
+          [_ampersand, _hashtag, ...c.toString().codeUnits, _semicolon],
+        );
+      else
+        parsedRunes.add(c);
+
+    return String.fromCharCodes(parsedRunes);
+  }
+
+  /// Replaces _ with intervals and makes each word start with
+  /// an upper case letter and continue with lower case ones.
   static String? clarifyEnum(String? str) {
     if (str == null) return null;
     return str.splitMapJoin(
@@ -24,13 +47,13 @@ abstract class Convert {
     return str[0] + str.substring(1).toLowerCase();
   }
 
-  // Removes all html tags.
+  /// Removes all html tags.
   static String clearHtml(String? str) {
     if (str == null) return '';
     return str.replaceAll(RegExp(r'<[^>]+>'), '');
   }
 
-  // Converts a map (representing a date) to String.
+  /// Converts a map (representing a date) to String.
   static String? mapToDateStr(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
 
@@ -45,27 +68,27 @@ abstract class Convert {
     return '$month $day, ${map['year']}';
   }
 
-  // Converts a map (representing a date) to milliseconds count.
+  /// Converts a map (representing a date) to milliseconds count.
   static int? mapToMillis(Map<String, dynamic> map) {
     if (map['year'] == null) return null;
     return DateTime(map['year'], map['month'] ?? 0, map['day'] ?? 0)
         .millisecondsSinceEpoch;
   }
 
-  // Converts a map (representing a date) to DateTime.
+  /// Converts a map (representing a date) to DateTime.
   static DateTime? mapToDateTime(Map<String, dynamic> map) {
     if (map['year'] == null || map['month'] == null || map['day'] == null)
       return null;
     return DateTime(map['year'], map['month'], map['day']);
   }
 
-  // Converts DateTime to map.
+  /// Converts DateTime to map.
   static Map<String, int>? dateTimeToMap(DateTime? date) {
     if (date == null) return null;
     return {'year': date.year, 'month': date.month, 'day': date.day};
   }
 
-  // Timestamp string from seconds.
+  /// Timestamp string from seconds.
   static String millisToStr(int? seconds) {
     if (seconds == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
@@ -85,7 +108,7 @@ abstract class Convert {
         '${date.minute <= 9 ? 0 : ""}${date.minute}';
   }
 
-  // Time until a given timestamp of seconds.
+  /// Time until a given timestamp of seconds.
   static String? timeUntilTimestamp(int? seconds) {
     if (seconds == null) return null;
 

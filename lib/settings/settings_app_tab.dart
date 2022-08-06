@@ -5,13 +5,13 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/utils/theming.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/settings/theme_preview.dart';
 
 class SettingsAppTab extends StatelessWidget {
   SettingsAppTab(this.scrollCtrl);
@@ -20,36 +20,22 @@ class SettingsAppTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorSchemeMap = <String, int>{};
-    for (int i = 0; i < Theming.schemes.length; i++)
-      colorSchemeMap[Theming.schemes.keys.elementAt(i)] = i;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: CustomScrollView(
-        controller: scrollCtrl,
-        slivers: [
-          SliverToBoxAdapter(
-            child: SizedBox(height: PageLayout.of(context).topOffset + 10),
-          ),
-          SliverGrid(
+    return CustomScrollView(
+      controller: scrollCtrl,
+      slivers: [
+        SliverToBoxAdapter(
+          child: SizedBox(height: PageLayout.of(context).topOffset + 10),
+        ),
+        const ThemePreview(isDark: false),
+        const ThemePreview(isDark: true),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 160,
               height: 75,
             ),
             delegate: SliverChildListDelegate.fixed([
-              DropDownField<int>(
-                title: 'Light Theme',
-                value: Settings().lightTheme,
-                items: colorSchemeMap,
-                onChanged: (val) => Settings().lightTheme = val,
-              ),
-              DropDownField<int>(
-                title: 'Dark Theme',
-                value: Settings().darkTheme,
-                items: colorSchemeMap,
-                onChanged: (val) => Settings().darkTheme = val,
-              ),
               DropDownField<ThemeMode>(
                 title: 'Theme Mode',
                 value: Settings().themeMode,
@@ -64,7 +50,7 @@ class SettingsAppTab extends StatelessWidget {
                 title: 'Startup Page',
                 value: Settings().defaultHomeTab,
                 items: const {
-                  'Inbox': HomeView.INBOX,
+                  'Feed': HomeView.INBOX,
                   'Anime List': HomeView.ANIME_LIST,
                   'Manga List': HomeView.MANGA_LIST,
                   'Explore': HomeView.EXPLORE,
@@ -120,7 +106,10 @@ class SettingsAppTab extends StatelessWidget {
               ),
             ]),
           ),
-          SliverGrid(
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 200,
               mainAxisSpacing: 0,
@@ -145,9 +134,9 @@ class SettingsAppTab extends StatelessWidget {
               ),
             ]),
           ),
-          const SliverFooter(),
-        ],
-      ),
+        ),
+        const SliverFooter(),
+      ],
     );
   }
 }

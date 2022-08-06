@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/collections/entry_item.dart';
+import 'package:otraku/collection/entry_item.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
 import 'package:otraku/edit/edit_view.dart';

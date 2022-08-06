@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/activities/activities_view.dart';
-import 'package:otraku/activities/activity_view.dart';
+import 'package:otraku/activity/activities_view.dart';
+import 'package:otraku/activity/activity_view.dart';
 import 'package:otraku/favorites/favorites_view.dart';
+import 'package:otraku/studio/studio_view.dart';
 import 'package:otraku/views/auth_view.dart';
-import 'package:otraku/views/character_view.dart';
+import 'package:otraku/character/character_view.dart';
 import 'package:otraku/views/collection_view.dart';
-import 'package:otraku/users/friends_view.dart';
+import 'package:otraku/user/friends_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/views/media_view.dart';
 import 'package:otraku/notifications/notifications_view.dart';
-import 'package:otraku/reviews/review_view.dart';
+import 'package:otraku/review/review_view.dart';
 import 'package:otraku/settings/settings_view.dart';
-import 'package:otraku/views/staff_view.dart';
+import 'package:otraku/staff/staff_view.dart';
 import 'package:otraku/statistics/statistics_view.dart';
-import 'package:otraku/views/studio_view.dart';
-import 'package:otraku/reviews/reviews_view.dart';
-import 'package:otraku/users/user_view.dart';
+import 'package:otraku/review/reviews_view.dart';
+import 'package:otraku/user/user_view.dart';
 
 /// A routing helper. When passing arguments to named routes, they should always
-/// be an instance of [RouteArg] or [null].
+/// be an instance of [RouteArg] or `null`.
 class RouteArg {
   const RouteArg({this.id, this.info, this.variant, this.callback});
 

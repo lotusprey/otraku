@@ -31,11 +31,4 @@ class Pagination<T> {
         hasNext: newHasNext,
         next: next + 1,
       );
-
-  /// Recreate [this] with other [items].
-  Pagination<T> copyWith(List<T> otherItems) => Pagination._(
-        items: otherItems,
-        hasNext: hasNext,
-        next: next,
-      );
 }

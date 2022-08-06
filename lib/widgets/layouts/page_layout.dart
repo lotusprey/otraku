@@ -74,8 +74,7 @@ class PageLayoutState extends State<PageLayout> {
       body: widget.child,
       appBar: widget.topBar,
       floatingActionButton: widget.floatingBar,
-      bottomNavigationBar:
-          widget.bottomBar != null ? _BottomBar(widget.bottomBar!) : null,
+      bottomNavigationBar: widget.bottomBar,
       extendBody: true,
       extendBodyBehindAppBar: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -103,7 +102,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         filter: Consts.filter,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
+            color: Theme.of(context).bottomAppBarColor,
           ),
           child: Padding(
             padding: EdgeInsets.only(
@@ -112,25 +111,28 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                child: Row(
-                  children: [
-                    if (canPop)
-                      TopBarIcon(
-                        tooltip: 'Close',
-                        icon: Ionicons.chevron_back_outline,
-                        onTap: () => Navigator.maybePop(context),
-                      )
-                    else
-                      const SizedBox(width: 10),
-                    if (title != null)
-                      Expanded(
-                        child: Text(
-                          title!,
-                          style: Theme.of(context).textTheme.headline1,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Row(
+                    children: [
+                      if (canPop)
+                        TopBarIcon(
+                          tooltip: 'Close',
+                          icon: Ionicons.chevron_back_outline,
+                          onTap: () => Navigator.maybePop(context),
+                        )
+                      else
+                        const SizedBox(width: 10),
+                      if (title != null)
+                        Expanded(
+                          child: Text(
+                            title!,
+                            style: Theme.of(context).textTheme.headline1,
+                          ),
                         ),
-                      ),
-                    ...items,
-                  ],
+                      ...items,
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -162,96 +164,9 @@ class TopBarIcon extends StatelessWidget {
       tooltip: tooltip,
       onPressed: onTap,
       iconSize: Consts.iconBig,
-      splashColor: Colors.transparent,
       color: colour ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
       padding: Consts.padding,
-    );
-  }
-}
-
-/// A bottom app bar implementation that uses a blurred, translucent background.
-class _BottomBar extends StatelessWidget {
-  const _BottomBar(this.child);
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final paddingBottom = MediaQuery.of(context).viewPadding.bottom;
-
-    return ClipRect(
-      child: BackdropFilter(
-        filter: Consts.filter,
-        child: Container(
-          height: paddingBottom + Consts.tapTargetSize,
-          padding: EdgeInsets.only(bottom: paddingBottom),
-          color: Theme.of(context).cardColor,
-          child: child,
-        ),
-      ),
-    );
-  }
-}
-
-/// A row with icons for tab switching. If the screen is
-/// wide enough, next to the icon will be the name of the tab.
-class BottomBarIconTabs extends StatelessWidget {
-  const BottomBarIconTabs({
-    required this.current,
-    required this.items,
-    required this.onChanged,
-    required this.onSame,
-  });
-
-  final int current;
-  final Map<String, IconData> items;
-
-  /// Called when a new tab is selected.
-  final void Function(int) onChanged;
-
-  /// Called when the currently selected tab is pressed.
-  /// Usually this toggles special functionality like search.
-  final void Function(int) onSame;
-
-  @override
-  Widget build(BuildContext context) {
-    final width =
-        MediaQuery.of(context).size.width > items.length * 130 ? 130.0 : 50.0;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        for (int i = 0; i < items.length; i++)
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => i != current ? onChanged(i) : onSame(i),
-            child: SizedBox(
-              height: double.infinity,
-              width: width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    items.values.elementAt(i),
-                    color: i != current
-                        ? Theme.of(context).colorScheme.surfaceVariant
-                        : Theme.of(context).colorScheme.primary,
-                  ),
-                  if (width > 50) ...[
-                    const SizedBox(width: 5),
-                    Text(
-                      items.keys.elementAt(i),
-                      style: i != current
-                          ? Theme.of(context).textTheme.subtitle1
-                          : Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ),
-      ],
     );
   }
 }

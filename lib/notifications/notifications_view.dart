@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/notifications/notifications.dart';
+import 'package:otraku/notifications/notification_model.dart';
+import 'package:otraku/notifications/notification_provider.dart';
+import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
@@ -29,6 +31,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   @override
   void initState() {
     super.initState();
+    BackgroundHandler.clearNotifications();
     _ctrl = PaginationController(
       loadMore: () => ref.read(notificationsProvider).fetch(),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/models/relation_model.dart';
+import 'package:otraku/models/relation.dart';
 import 'package:otraku/widgets/explore_indexer.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
@@ -13,8 +13,8 @@ class RelationGrid extends StatelessWidget {
   }) : assert(connections.isEmpty || items.length == connections.length);
 
   final String placeholder;
-  final List<RelationModel> items;
-  final List<RelationModel?> connections;
+  final List<Relation> items;
+  final List<Relation?> connections;
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +39,8 @@ class RelationGrid extends StatelessWidget {
 class _RelationTile extends StatelessWidget {
   _RelationTile(this.item, this.connection);
 
-  final RelationModel item;
-  final RelationModel? connection;
+  final Relation item;
+  final Relation? connection;
 
   @override
   Widget build(BuildContext context) {

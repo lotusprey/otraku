@@ -12,7 +12,7 @@ class DragDetector extends StatelessWidget {
   final Widget child;
   final void Function()? onTap;
 
-  /// Passing [true] means 'go right' and [false] means 'go left'
+  /// Passing `true` means 'go right' and `false` means 'go left'
   final void Function(bool) onSwipe;
 
   /// How far should the user drag to trigger [onSwipe].

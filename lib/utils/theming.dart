@@ -52,11 +52,12 @@ class Theming with ChangeNotifier {
         fontFamily: 'Rubik',
         colorScheme: scheme,
         scaffoldBackgroundColor: scheme.background,
-        cardColor: scheme.background.withAlpha(190),
         disabledColor: scheme.surfaceVariant,
         unselectedWidgetColor: scheme.surfaceVariant,
         toggleableActiveColor: scheme.primary,
-        splashColor: scheme.surfaceVariant.withAlpha(50),
+        cardColor: scheme.surfaceVariant,
+        bottomAppBarColor: scheme.background.withAlpha(190),
+        splashColor: scheme.onBackground.withAlpha(20),
         highlightColor: Colors.transparent,
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
@@ -287,6 +288,23 @@ class Theming with ChangeNotifier {
       error: Color(0xFFD11C1C),
       errorContainer: Color(0xFFE74B4B),
       onError: Color(0xFFFFEDFE),
+    ),
+    'Lavender': ColorScheme(
+      brightness: Brightness.dark,
+      background: Color(0xFF1D1329),
+      onBackground: Color(0xFFCFBBE1),
+      surface: Color(0xFF2D203B),
+      onSurface: Color(0xFFCDBBE1),
+      surfaceVariant: Color(0xFF5C5C99),
+      primary: Color(0xFFB4ABF5),
+      primaryContainer: Color(0xFF614DC4),
+      onPrimary: Color(0xFF0E0E0E),
+      secondary: Color(0xFF3AC77E),
+      secondaryContainer: Color(0xFF80DBAC),
+      onSecondary: Color(0xFF131329),
+      error: Color(0xFFD74761),
+      errorContainer: Color(0xFFe58a9b),
+      onError: Color(0xFF0D161E),
     ),
   };
 }

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
-import 'package:otraku/collections/entry.dart';
-import 'package:otraku/collections/entry_item.dart';
+import 'package:otraku/collection/entry.dart';
+import 'package:otraku/collection/entry_item.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';

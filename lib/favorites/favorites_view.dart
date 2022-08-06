@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/characters/character_grid.dart';
+import 'package:otraku/character/character_grid.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/favorites/favorites.dart';
+import 'package:otraku/favorites/favorites_provider.dart';
 import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/staff/staff_grid.dart';
-import 'package:otraku/studios/studio_grid.dart';
+import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/tab_switcher.dart';
+import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -76,7 +77,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
           'Studios': Ionicons.business_outline,
         },
       ),
-      child: TabSwitcher(
+      child: DirectPageView(
         current: _tab.index,
         onChanged: (page) =>
             setState(() => _tab = FavoriteType.values.elementAt(page)),
@@ -127,16 +128,20 @@ class _AnimeTab extends StatelessWidget {
               if (data.items.isEmpty) return empty;
 
               return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      MediaGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(maxWidth: Consts.layoutBig),
+                    child: CustomScrollView(
+                      physics: Consts.physics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl,
+                        MediaGrid(data.items),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -181,16 +186,20 @@ class _MangaTab extends StatelessWidget {
               if (data.items.isEmpty) return empty;
 
               return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      MediaGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(maxWidth: Consts.layoutBig),
+                    child: CustomScrollView(
+                      physics: Consts.physics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl,
+                        MediaGrid(data.items),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    ),
                   ),
                 ),
               );

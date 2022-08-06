@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/filter_model.dart';
+import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/models/explorable_model.dart';
@@ -16,13 +16,16 @@ class ExploreController extends GetxController {
 
   final _results = PageModel<ExplorableModel>();
   late final _debounce = Debounce(fetch);
-  late final filters = ExploreFilterModel(_type == Explorable.anime, fetch);
+  late var _filter = ExploreFilter(_type == Explorable.anime);
   int _page = 1;
   Explorable _type = Settings().defaultExplorable;
   String? _search;
   bool _isBirthday = false;
   bool _isLoading = true;
   int _concurrentFetches = 0;
+
+  // A temporary workaround.
+  bool canFetch = true;
 
   // ***************************************************************************
   // GETTERS & SETTERS
@@ -36,13 +39,20 @@ class ExploreController extends GetxController {
 
   Explorable get type => _type;
 
+  ExploreFilter get filter => _filter;
+
   String? get search => _search;
 
   set type(Explorable val) {
     if (_type == val) return;
     _type = val;
-    filters.ofAnime = val == Explorable.anime;
+    _filter.ofAnime = val == Explorable.anime;
     update([ID_HEAD, ID_BUTTON]);
+    fetch();
+  }
+
+  set filter(ExploreFilter val) {
+    _filter = val;
     fetch();
   }
 
@@ -72,6 +82,7 @@ class ExploreController extends GetxController {
   // ***************************************************************************
 
   Future<void> fetch({bool clean = true}) async {
+    if (!canFetch) return;
     _concurrentFetches++;
 
     if (clean) {
@@ -95,7 +106,7 @@ class ExploreController extends GetxController {
       query = GqlQuery.users;
 
     final variables =
-        _type != Explorable.review ? filters.toMap() : <String, dynamic>{};
+        _type != Explorable.review ? _filter.toMap() : <String, dynamic>{};
     variables['page'] = _page;
     if (_search?.isNotEmpty ?? false) variables['search'] = _search;
 

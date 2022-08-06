@@ -50,7 +50,7 @@ class SettingsAppTab extends StatelessWidget {
                 title: 'Startup Page',
                 value: Settings().defaultHomeTab,
                 items: const {
-                  'Inbox': HomeView.INBOX,
+                  'Feed': HomeView.INBOX,
                   'Anime List': HomeView.ANIME_LIST,
                   'Manga List': HomeView.MANGA_LIST,
                   'Explore': HomeView.EXPLORE,

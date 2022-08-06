@@ -1,17 +1,20 @@
 import 'package:otraku/utils/api.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 
 /// Can throw. Creates/updates an activity/reply
 /// and returns it as a map for deserialization.
 /// A creation happens, when [id] is `null`.
 Future<Map<String, dynamic>> saveComposition(Composition composition) async {
+  final text = Convert.parseEmojis(composition.text);
+
   switch (composition.type) {
     case CompositionType.statusActivity:
       final data = await Api.get(
         GqlMutation.saveStatusActivity,
         {
           if (composition.id != null) 'id': composition.id,
-          'text': composition.text,
+          'text': text,
         },
       );
       return data['SaveTextActivity'];
@@ -20,7 +23,7 @@ Future<Map<String, dynamic>> saveComposition(Composition composition) async {
         GqlMutation.saveMessageActivity,
         {
           if (composition.id != null) 'id': composition.id,
-          'text': composition.text,
+          'text': text,
           'recipientId': composition.additionalId,
           'private': composition.isPrivate,
         },
@@ -31,7 +34,7 @@ Future<Map<String, dynamic>> saveComposition(Composition composition) async {
         GqlMutation.saveActivityReply,
         {
           if (composition.id != null) 'id': composition.id,
-          'text': composition.text,
+          'text': text,
           'activityId': composition.additionalId,
         },
       );

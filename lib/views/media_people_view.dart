@@ -116,7 +116,9 @@ class _LanguageButton extends StatelessWidget {
       id: MediaController.ID_LANG,
       tag: id.toString(),
       builder: (ctrl) {
-        if (ctrl.peopleTabToggled || ctrl.languages.length < 2)
+        if (ctrl.languages.length < 2) return const SizedBox();
+
+        if (ctrl.peopleTabToggled)
           return const SizedBox(
             width: actionButtonSize,
             height: actionButtonSize,

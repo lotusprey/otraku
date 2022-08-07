@@ -25,8 +25,11 @@ Future<Object> updateProgress(int mediaId, int progress) async {
       {'mediaId': mediaId, 'progress': progress},
     );
 
+    final entries = data['SaveMediaListEntry']?['customLists']?.entries;
+    if (entries == null) return [];
+
     final customLists = <String>[];
-    for (final e in data['SaveMediaListEntry']['customLists'].entries)
+    for (final e in entries)
       if (e.value) customLists.add(e.key.toString().toLowerCase());
     return customLists;
   } catch (e) {

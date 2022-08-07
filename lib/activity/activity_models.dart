@@ -60,73 +60,77 @@ class Activity {
   });
 
   static Activity? maybe(Map<String, dynamic> map, int viewerId) {
-    switch (map['type']) {
-      case 'TEXT':
-        if (map['user'] == null) return null;
+    try {
+      switch (map['type']) {
+        case 'TEXT':
+          if (map['user'] == null) return null;
 
-        return Activity._(
-          id: map['id'],
-          type: ActivityType.TEXT,
-          agent: ActivityUser(map['user']),
-          siteUrl: map['siteUrl'],
-          text: map['text'] ?? '',
-          createdAt: Convert.millisToStr(map['createdAt']),
-          isOwned: map['user']['id'] == viewerId,
-          replyCount: map['replyCount'] ?? 0,
-          likeCount: map['likeCount'] ?? 0,
-          isLiked: map['isLiked'] ?? false,
-          isSubscribed: map['isSubscribed'] ?? false,
-          isPinned: map['isPinned'] ?? false,
-        );
-      case 'ANIME_LIST':
-      case 'MANGA_LIST':
-        if (map['user'] == null || map['media'] == null) return null;
+          return Activity._(
+            id: map['id'],
+            type: ActivityType.TEXT,
+            agent: ActivityUser(map['user']),
+            siteUrl: map['siteUrl'],
+            text: map['text'] ?? '',
+            createdAt: Convert.millisToStr(map['createdAt']),
+            isOwned: map['user']['id'] == viewerId,
+            replyCount: map['replyCount'] ?? 0,
+            likeCount: map['likeCount'] ?? 0,
+            isLiked: map['isLiked'] ?? false,
+            isSubscribed: map['isSubscribed'] ?? false,
+            isPinned: map['isPinned'] ?? false,
+          );
+        case 'ANIME_LIST':
+        case 'MANGA_LIST':
+          if (map['user'] == null || map['media'] == null) return null;
 
-        final type = map['type'] == 'ANIME_LIST'
-            ? ActivityType.ANIME_LIST
-            : ActivityType.MANGA_LIST;
-        final progress =
-            map['progress'] != null ? '${map['progress']} of ' : '';
-        final status = (map['status'] as String)[0].toUpperCase() +
-            (map['status'] as String).substring(1);
+          final type = map['type'] == 'ANIME_LIST'
+              ? ActivityType.ANIME_LIST
+              : ActivityType.MANGA_LIST;
+          final progress =
+              map['progress'] != null ? '${map['progress']} of ' : '';
+          final status = (map['status'] as String)[0].toUpperCase() +
+              (map['status'] as String).substring(1);
 
-        return Activity._(
-          id: map['id'],
-          type: type,
-          agent: ActivityUser(map['user']),
-          media: ActivityMedia(map),
-          siteUrl: map['siteUrl'],
-          text: '$status $progress',
-          createdAt: Convert.millisToStr(map['createdAt']),
-          isOwned: map['user']['id'] == viewerId,
-          replyCount: map['replyCount'] ?? 0,
-          likeCount: map['likeCount'] ?? 0,
-          isLiked: map['isLiked'] ?? false,
-          isSubscribed: map['isSubscribed'] ?? false,
-          isPinned: map['isPinned'] ?? false,
-        );
-      case 'MESSAGE':
-        if (map['messenger'] == null || map['recipient'] == null) return null;
+          return Activity._(
+            id: map['id'],
+            type: type,
+            agent: ActivityUser(map['user']),
+            media: ActivityMedia(map),
+            siteUrl: map['siteUrl'],
+            text: '$status $progress',
+            createdAt: Convert.millisToStr(map['createdAt']),
+            isOwned: map['user']['id'] == viewerId,
+            replyCount: map['replyCount'] ?? 0,
+            likeCount: map['likeCount'] ?? 0,
+            isLiked: map['isLiked'] ?? false,
+            isSubscribed: map['isSubscribed'] ?? false,
+            isPinned: map['isPinned'] ?? false,
+          );
+        case 'MESSAGE':
+          if (map['messenger'] == null || map['recipient'] == null) return null;
 
-        return Activity._(
-          id: map['id'],
-          type: ActivityType.MESSAGE,
-          agent: ActivityUser(map['messenger']),
-          reciever: ActivityUser(map['recipient']),
-          siteUrl: map['siteUrl'],
-          text: map['message'] ?? '',
-          createdAt: Convert.millisToStr(map['createdAt']),
-          isOwned: map['messenger']['id'] == viewerId ||
-              map['recipient']['id'] == viewerId,
-          isPrivate: map['isPrivate'] ?? false,
-          replyCount: map['replyCount'] ?? 0,
-          likeCount: map['likeCount'] ?? 0,
-          isLiked: map['isLiked'] ?? false,
-          isSubscribed: map['isSubscribed'] ?? false,
-          isPinned: false,
-        );
-      default:
-        return null;
+          return Activity._(
+            id: map['id'],
+            type: ActivityType.MESSAGE,
+            agent: ActivityUser(map['messenger']),
+            reciever: ActivityUser(map['recipient']),
+            siteUrl: map['siteUrl'],
+            text: map['message'] ?? '',
+            createdAt: Convert.millisToStr(map['createdAt']),
+            isOwned: map['messenger']['id'] == viewerId ||
+                map['recipient']['id'] == viewerId,
+            isPrivate: map['isPrivate'] ?? false,
+            replyCount: map['replyCount'] ?? 0,
+            likeCount: map['likeCount'] ?? 0,
+            isLiked: map['isLiked'] ?? false,
+            isSubscribed: map['isSubscribed'] ?? false,
+            isPinned: false,
+          );
+        default:
+          return null;
+      }
+    } catch (_) {
+      return null;
     }
   }
 

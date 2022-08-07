@@ -154,9 +154,9 @@ class ActivitiesSubView extends StatelessWidget {
 
         const empty = Center(child: Text('No Activities'));
 
-        return ref.watch(activitiesProvider(id)).unwrapPrevious().maybeWhen(
+        return ref.watch(activitiesProvider(id)).unwrapPrevious().when(
               loading: () => const Center(child: Loader()),
-              orElse: () => empty,
+              error: (_, __) => empty,
               data: (data) {
                 if (data.items.isEmpty) return empty;
 

@@ -17,7 +17,7 @@ dependencies:
   hive: ^2.2.3
   flutter_riverpod: ^2.0.0-dev.9
   path_provider: ^2.0.11
-  flutter_secure_storage: ^5.1.0
+  flutter_secure_storage: 5.0.2
   url_launcher: ^6.1.5
   app_links: ^3.2.0 # Flutter deep linking doesn't handle url fragments due to a bug. When its fixed, this package can be removed.
   workmanager: ^0.5.0

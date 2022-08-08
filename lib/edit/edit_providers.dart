@@ -26,7 +26,7 @@ Future<Object> updateProgress(int mediaId, int progress) async {
     );
 
     final entries = data['SaveMediaListEntry']?['customLists']?.entries;
-    if (entries == null) return [];
+    if (entries == null) return <String>[];
 
     final customLists = <String>[];
     for (final e in entries)

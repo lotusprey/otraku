@@ -367,7 +367,8 @@ class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
         ? ActivityFilter(typeIn, null)
         : ActivityFilter(typeIn, onFollowing ?? state.onFollowing);
 
+    if (onFollowing == null) return;
     Settings().feedActivityFilters = typeIn.map((e) => e.index).toList();
-    if (onFollowing != null) Settings().feedOnFollowing = onFollowing;
+    Settings().feedOnFollowing = onFollowing;
   }
 }

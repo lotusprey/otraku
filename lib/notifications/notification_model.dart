@@ -236,7 +236,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [
               map['user']['name'],
-              ' like your thread ',
+              ' liked your thread ',
               if (map['thread'] != null) map['thread']['title'],
             ],
             markTextOnEvenIndex: true,

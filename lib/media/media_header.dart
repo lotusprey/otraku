@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -29,7 +29,7 @@ class MediaHeader extends StatelessWidget {
       if (status != null)
         textRailItems[Convert.adaptListStatus(
           status,
-          info.type == Explorable.anime,
+          info.type == DiscoverType.anime,
         )] = false;
 
       if (info.airingAt != null)

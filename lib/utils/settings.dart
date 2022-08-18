@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/utils/theming.dart';
@@ -15,10 +15,10 @@ class Settings {
     this._lightTheme,
     this._darkTheme,
     this._defaultHomeTab,
-    this._defaultExplorable,
+    this._defaultDiscoverType,
     this._defaultAnimeSort,
     this._defaultMangaSort,
-    this._defaultExploreSort,
+    this._defaultDiscoverSort,
     this._imageQuality,
     this._confirmExit,
     this._leftHanded,
@@ -40,11 +40,11 @@ class Settings {
       _box.get(_LIGHT_THEME) ?? 0,
       _box.get(_DARK_THEME) ?? 0,
       _box.get(_DEFAULT_HOME_TAB) ?? 0,
-      Explorable.values[_box.get(_DEFAULT_EXPLORABLE) ?? 0],
+      DiscoverType.values[_box.get(_DEFAULT_DISCOVER_TYPE) ?? 0],
       EntrySort.values[_box.get(_DEFAULT_ANIME_SORT) ?? 0],
       EntrySort.values[_box.get(_DEFAULT_MANGA_SORT) ?? 0],
       MediaSort.values[
-          _box.get(_DEFAULT_EXPLORE_SORT) ?? MediaSort.TRENDING_DESC.index],
+          _box.get(_DEFAULT_DISCOVER_SORT) ?? MediaSort.TRENDING_DESC.index],
       _box.get(_IMAGE_QUALITY) ?? 'large',
       _box.get(_CONFIRM_EXIT) ?? false,
       _box.get(_LEFT_HANDED) ?? false,
@@ -70,10 +70,10 @@ class Settings {
   static const _LIGHT_THEME = 'theme1';
   static const _DARK_THEME = 'theme2';
   static const _DEFAULT_HOME_TAB = 'defaultHomeTab';
-  static const _DEFAULT_EXPLORABLE = 'defaultExplorable';
+  static const _DEFAULT_DISCOVER_TYPE = 'defaultExplorable';
   static const _DEFAULT_ANIME_SORT = 'defaultAnimeSort';
   static const _DEFAULT_MANGA_SORT = 'defaultMangaSort';
-  static const _DEFAULT_EXPLORE_SORT = 'defaultExploreSort';
+  static const _DEFAULT_DISCOVER_SORT = 'defaultExploreSort';
   static const _IMAGE_QUALITY = 'imageQuality';
   static const _CONFIRM_EXIT = 'confirmExit';
   static const _LEFT_HANDED = 'leftHanded';
@@ -111,10 +111,10 @@ class Settings {
   int _lightTheme;
   int _darkTheme;
   int _defaultHomeTab;
-  Explorable _defaultExplorable;
+  DiscoverType _defaultDiscoverType;
   EntrySort _defaultAnimeSort;
   EntrySort _defaultMangaSort;
-  MediaSort _defaultExploreSort;
+  MediaSort _defaultDiscoverSort;
   String _imageQuality;
   bool _confirmExit;
   bool _leftHanded;
@@ -134,10 +134,10 @@ class Settings {
   int get lightTheme => _lightTheme;
   int get darkTheme => _darkTheme;
   int get defaultHomeTab => _defaultHomeTab;
-  Explorable get defaultExplorable => _defaultExplorable;
+  DiscoverType get defaultDiscoverType => _defaultDiscoverType;
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
   EntrySort get defaultMangaSort => _defaultMangaSort;
-  MediaSort get defaultExploreSort => _defaultExploreSort;
+  MediaSort get defaultDiscoverSort => _defaultDiscoverSort;
   String get imageQuality => _imageQuality;
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
@@ -210,9 +210,9 @@ class Settings {
     _box.put(_DEFAULT_HOME_TAB, v);
   }
 
-  set defaultExplorable(Explorable v) {
-    _defaultExplorable = v;
-    _box.put(_DEFAULT_EXPLORABLE, v.index);
+  set defaultDiscoverType(DiscoverType v) {
+    _defaultDiscoverType = v;
+    _box.put(_DEFAULT_DISCOVER_TYPE, v.index);
   }
 
   set defaultAnimeSort(EntrySort v) {
@@ -225,9 +225,9 @@ class Settings {
     _box.put(_DEFAULT_MANGA_SORT, v.index);
   }
 
-  set defaultExploreSort(MediaSort v) {
-    _defaultExploreSort = v;
-    _box.put(_DEFAULT_EXPLORE_SORT, v.index);
+  set defaultDiscoverSort(MediaSort v) {
+    _defaultDiscoverSort = v;
+    _box.put(_DEFAULT_DISCOVER_SORT, v.index);
   }
 
   set imageQuality(String v) {

@@ -140,15 +140,15 @@ class CollectionFilterView extends StatelessWidget {
   }
 }
 
-class ExploreFilterView extends StatelessWidget {
-  ExploreFilterView({required this.filter, required this.onChanged});
+class DiscoverFilterView extends StatelessWidget {
+  DiscoverFilterView({required this.filter, required this.onChanged});
 
-  final ExploreFilter filter;
-  final void Function(ExploreFilter) onChanged;
+  final DiscoverFilter filter;
+  final void Function(DiscoverFilter) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return _FilterView<ExploreFilter>(
+    return _FilterView<DiscoverFilter>(
       filter: filter,
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(

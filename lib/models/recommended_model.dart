@@ -1,4 +1,4 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/settings.dart';
 
 class RecommendedModel {
@@ -21,7 +21,7 @@ class RecommendedModel {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      type: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
           [Settings().imageQuality],
     );
@@ -31,6 +31,6 @@ class RecommendedModel {
   int rating;
   bool? userRating;
   final String title;
-  final Explorable type;
+  final DiscoverType type;
   final String? imageUrl;
 }

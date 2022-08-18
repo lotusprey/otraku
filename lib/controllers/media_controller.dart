@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -138,7 +138,7 @@ class MediaController extends GetxController {
   Future<bool> toggleFavourite() async {
     final data = await Api.request(
       GqlMutation.toggleFavorite,
-      {(_model!.info.type == Explorable.anime ? 'anime' : 'manga'): id},
+      {(_model!.info.type == DiscoverType.anime ? 'anime' : 'manga'): id},
     );
     if (data != null) _model!.info.isFavourite = !_model!.info.isFavourite;
     return _model!.info.isFavourite;

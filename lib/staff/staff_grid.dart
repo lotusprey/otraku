@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/staff/staff_models.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
@@ -23,10 +23,10 @@ class StaffGrid extends StatelessWidget {
         ),
         delegate: SliverChildBuilderDelegate(
           childCount: items.length,
-          (_, i) => ExploreIndexer(
+          (_, i) => LinkTile(
             id: items[i].id,
             text: items[i].imageUrl,
-            explorable: Explorable.staff,
+            discoverType: DiscoverType.staff,
             child: Column(
               children: [
                 Expanded(

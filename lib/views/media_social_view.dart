@@ -3,10 +3,10 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -105,10 +105,10 @@ class _ReviewGrid extends StatelessWidget {
           (context, i) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ExploreIndexer(
+              LinkTile(
                 id: items[i].userId,
                 text: items[i].avatar,
-                explorable: Explorable.user,
+                discoverType: DiscoverType.user,
                 child: Row(
                   children: [
                     Hero(
@@ -129,10 +129,10 @@ class _ReviewGrid extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Expanded(
-                child: ExploreIndexer(
+                child: LinkTile(
                   id: items[i].reviewId,
                   text: bannerUrl,
-                  explorable: Explorable.review,
+                  discoverType: DiscoverType.review,
                   child: Container(
                     width: double.infinity,
                     padding: Consts.padding,

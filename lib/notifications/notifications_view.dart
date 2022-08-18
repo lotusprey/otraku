@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/notifications/notification_provider.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -184,15 +184,16 @@ class _NotificationWidget extends StatelessWidget {
             children: [
               if (notification.imageUrl != null && notification.headId != null)
                 GestureDetector(
-                  onTap: () => ExploreIndexer.openView(
+                  onTap: () => LinkTile.openView(
                     ctx: context,
                     id: notification.headId!,
                     imageUrl: notification.imageUrl,
-                    explorable: notification.explorable ?? Explorable.user,
+                    discoverType:
+                        notification.discoverType ?? DiscoverType.user,
                   ),
                   onLongPress: () {
-                    if (notification.explorable == Explorable.anime ||
-                        notification.explorable == Explorable.manga)
+                    if (notification.discoverType == DiscoverType.anime ||
+                        notification.discoverType == DiscoverType.manga)
                       showSheet(context, EditView(notification.headId!));
                   },
                   child: ClipRRect(
@@ -220,20 +221,20 @@ class _NotificationWidget extends StatelessWidget {
                         );
                         return;
                       case NotificationType.FOLLOWING:
-                        ExploreIndexer.openView(
+                        LinkTile.openView(
                           ctx: context,
                           id: notification.headId!,
                           imageUrl: notification.imageUrl,
-                          explorable: Explorable.user,
+                          discoverType: DiscoverType.user,
                         );
                         return;
                       case NotificationType.AIRING:
                       case NotificationType.RELATED_MEDIA_ADDITION:
-                        ExploreIndexer.openView(
+                        LinkTile.openView(
                           ctx: context,
                           id: notification.bodyId!,
                           imageUrl: notification.imageUrl,
-                          explorable: notification.explorable!,
+                          discoverType: notification.discoverType!,
                         );
                         return;
                       case NotificationType.MEDIA_DATA_CHANGE:
@@ -252,8 +253,8 @@ class _NotificationWidget extends StatelessWidget {
                     }
                   },
                   onLongPress: () {
-                    if (notification.explorable == Explorable.anime ||
-                        notification.explorable == Explorable.manga)
+                    if (notification.discoverType == DiscoverType.anime ||
+                        notification.discoverType == DiscoverType.manga)
                       showSheet(context, EditView(notification.headId!));
                   },
                   child: Padding(

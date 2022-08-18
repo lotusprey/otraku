@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/explorable_model.dart';
+import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/models/discover_model.dart';
 import 'package:otraku/review/review_models.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
@@ -37,10 +37,10 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
+    return LinkTile(
       id: item.id,
       text: item.bannerUrl,
-      explorable: Explorable.review,
+      discoverType: DiscoverType.review,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -126,7 +126,7 @@ class _Tile extends StatelessWidget {
 class ReviewGridOld extends StatelessWidget {
   ReviewGridOld({required this.items});
 
-  final List<ExplorableModel> items;
+  final List<DiscoverModel> items;
 
   @override
   Widget build(BuildContext context) {
@@ -151,15 +151,15 @@ class ReviewGridOld extends StatelessWidget {
 }
 
 class _TileOld extends StatelessWidget {
-  final ExplorableModel model;
+  final DiscoverModel model;
   _TileOld(this.model);
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
+    return LinkTile(
       id: model.id,
       text: model.imageUrl,
-      explorable: Explorable.review,
+      discoverType: DiscoverType.review,
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,

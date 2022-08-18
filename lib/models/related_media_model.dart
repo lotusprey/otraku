@@ -1,4 +1,4 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 
@@ -21,12 +21,12 @@ class RelatedMediaModel {
         status: Convert.clarifyEnum(map['node']['status']),
         imageUrl: map['node']['coverImage'][Settings().imageQuality],
         type: map['node']['type'] == 'ANIME'
-            ? Explorable.anime
-            : Explorable.manga,
+            ? DiscoverType.anime
+            : DiscoverType.manga,
       );
 
   final int id;
-  final Explorable type;
+  final DiscoverType type;
   final String title;
   final String imageUrl;
   final String relationType;

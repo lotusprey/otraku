@@ -1,87 +1,80 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/settings.dart';
 
-class ExplorableModel {
+class DiscoverModel {
   final int id;
   final String text1;
   final String? text2;
   final String? text3;
   final String? imageUrl;
-  final Explorable explorable;
+  final DiscoverType discoverType;
 
-  ExplorableModel({
+  DiscoverModel({
     required this.id,
     required this.text1,
-    required this.explorable,
+    required this.discoverType,
     this.text2,
     this.text3,
     this.imageUrl,
   });
 
-  factory ExplorableModel.media(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.media(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Settings().imageQuality],
-        explorable:
-            map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+        discoverType:
+            map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       );
 
-  factory ExplorableModel.anime(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.anime(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Settings().imageQuality],
-        explorable: Explorable.anime,
+        discoverType: DiscoverType.anime,
       );
 
-  factory ExplorableModel.manga(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.manga(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Settings().imageQuality],
-        explorable: Explorable.manga,
+        discoverType: DiscoverType.manga,
       );
 
-  factory ExplorableModel.character(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.character(final Map<String, dynamic> map) =>
+      DiscoverModel(
         id: map['id'],
         text1: map['name']['userPreferred'],
         imageUrl: map['image']['large'],
-        explorable: Explorable.character,
+        discoverType: DiscoverType.character,
       );
 
-  factory ExplorableModel.staff(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.staff(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1: map['name']['userPreferred'],
         imageUrl: map['image']['large'],
-        explorable: Explorable.staff,
+        discoverType: DiscoverType.staff,
       );
 
-  factory ExplorableModel.studio(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.studio(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1: map['name'],
-        explorable: Explorable.studio,
+        discoverType: DiscoverType.studio,
       );
 
-  factory ExplorableModel.user(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.user(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1: map['name'],
         imageUrl: map['avatar']['large'],
-        explorable: Explorable.user,
+        discoverType: DiscoverType.user,
       );
 
-  factory ExplorableModel.review(final Map<String, dynamic> map) =>
-      ExplorableModel(
+  factory DiscoverModel.review(final Map<String, dynamic> map) => DiscoverModel(
         id: map['id'],
         text1:
             'Review of ${map['media']['title']['userPreferred']} by ${map['user']['name']}',
         text2: map['summary'],
         text3: '${map['rating']}/${map['ratingAmount']}',
         imageUrl: map['media']['bannerImage'],
-        explorable: Explorable.review,
+        discoverType: DiscoverType.review,
       );
 }

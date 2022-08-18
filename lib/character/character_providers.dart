@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/models/relation.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
@@ -165,7 +165,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
         title: a['node']['title']['userPreferred'],
         imageUrl: a['node']['coverImage'][Settings().imageQuality],
         subtitle: Convert.clarifyEnum(a['characterRole']),
-        type: Explorable.anime,
+        type: DiscoverType.anime,
       ));
 
       if (a['voiceActors'] != null)
@@ -188,7 +188,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
             subtitle: l,
-            type: Explorable.staff,
+            type: DiscoverType.staff,
           ));
         }
     }
@@ -208,7 +208,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
         title: m['node']['title']['userPreferred'],
         imageUrl: m['node']['coverImage'][Settings().imageQuality],
         subtitle: Convert.clarifyEnum(m['characterRole']),
-        type: Explorable.manga,
+        type: DiscoverType.manga,
       ));
 
     value = value.append(items, data['pageInfo']['hasNextPage']);

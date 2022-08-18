@@ -47,8 +47,8 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   CollectionFilter clear() => CollectionFilter(_ofAnime);
 }
 
-class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
-  ExploreFilter(super._ofAnime);
+class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
+  DiscoverFilter(super._ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -56,7 +56,7 @@ class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
   final genreNotIn = <String>[];
   final tagIn = <String>[];
   final tagNotIn = <String>[];
-  MediaSort sort = Settings().defaultExploreSort;
+  MediaSort sort = Settings().defaultDiscoverSort;
   String? country;
   bool? onList;
 
@@ -66,7 +66,7 @@ class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
   }
 
   @override
-  ExploreFilter copy() => ExploreFilter(_ofAnime)
+  DiscoverFilter copy() => DiscoverFilter(_ofAnime)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)
@@ -78,7 +78,7 @@ class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
     ..onList = onList;
 
   @override
-  ExploreFilter clear() => ExploreFilter(_ofAnime);
+  DiscoverFilter clear() => DiscoverFilter(_ofAnime);
 
   Map<String, dynamic> toMap() {
     final map = <String, dynamic>{'sort': sort.name};

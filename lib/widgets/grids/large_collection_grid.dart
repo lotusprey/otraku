@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/entry.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -54,9 +54,9 @@ class _Tile extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: Consts.borderRadiusMin,
       ),
-      child: ExploreIndexer(
+      child: LinkTile(
         id: model.mediaId,
-        explorable: Explorable.anime,
+        discoverType: DiscoverType.anime,
         text: model.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

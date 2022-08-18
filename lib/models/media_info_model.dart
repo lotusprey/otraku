@@ -1,11 +1,11 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 
 class MediaInfoModel {
   final int id;
-  final Explorable type;
+  final DiscoverType type;
   final int? favourites;
   bool isFavourite;
   final String? preferredTitle;
@@ -95,7 +95,7 @@ class MediaInfoModel {
 
     final model = MediaInfoModel._(
       id: map['id'],
-      type: map['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       isFavourite: map['isFavourite'] ?? false,
       favourites: map['favourites'],
       preferredTitle: map['title']['userPreferred'],

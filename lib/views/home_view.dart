@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/explore_controller.dart';
+import 'package:otraku/controllers/discover_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/settings/user_settings.dart';
@@ -12,7 +12,7 @@ import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/views/explore_view.dart';
+import 'package:otraku/views/discover_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/user/user_view.dart';
@@ -30,7 +30,7 @@ class HomeView extends ConsumerStatefulWidget {
   static const INBOX = 0;
   static const ANIME_LIST = 1;
   static const MANGA_LIST = 2;
-  static const EXPLORE = 3;
+  static const DISCOVER = 3;
   static const USER = 4;
 
   @override
@@ -42,7 +42,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   late final HomeController homeCtrl;
   late final ProgressController progressCtrl;
-  late final ExploreController exploreCtrl;
+  late final DiscoverController discoverCtrl;
   late final CollectionController animeCtrl;
   late final CollectionController mangaCtrl;
 
@@ -70,7 +70,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                     'Feed': Ionicons.file_tray_outline,
                     'Anime': Ionicons.film_outline,
                     'Manga': Ionicons.bookmark_outline,
-                    'Explore': Ionicons.compass_outline,
+                    'Discover': Ionicons.compass_outline,
                     'Profile': Ionicons.person_outline,
                   },
                   onSame: (i) {
@@ -91,13 +91,13 @@ class _HomeViewState extends ConsumerState<HomeView> {
                               ? mangaCtrl.search = ''
                               : mangaCtrl.search = null;
                         return;
-                      case HomeView.EXPLORE:
+                      case HomeView.DISCOVER:
                         if (_ctrl.position.pixels > 0)
                           _ctrl.scrollToTop();
                         else
-                          exploreCtrl.search == null
-                              ? exploreCtrl.search = ''
-                              : exploreCtrl.search = null;
+                          discoverCtrl.search == null
+                              ? discoverCtrl.search = ''
+                              : discoverCtrl.search = null;
                         return;
                       default:
                         _ctrl.scrollToTop();
@@ -120,7 +120,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
                       ctrlTag: '${widget.id}false',
                       key: Key(false.toString()),
                     ),
-                    ExploreView(_ctrl),
+                    DiscoverView(_ctrl),
                     UserSubView(widget.id, null, _ctrl),
                   ],
                 ),
@@ -135,14 +135,14 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void _scrollListener() {
     if (homeCtrl.homeTab == HomeView.INBOX && homeCtrl.onFeed)
       ref.read(activitiesProvider(null).notifier).fetch();
-    else if (homeCtrl.homeTab == HomeView.EXPLORE) {
-      exploreCtrl.fetchPage();
+    else if (homeCtrl.homeTab == HomeView.DISCOVER) {
+      discoverCtrl.fetchPage();
     }
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
-    if (homeCtrl.homeTab == HomeView.EXPLORE && exploreCtrl.search != null) {
-      exploreCtrl.search = null;
+    if (homeCtrl.homeTab == HomeView.DISCOVER && discoverCtrl.search != null) {
+      discoverCtrl.search = null;
       return Future.value(false);
     }
     if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.search != null) {
@@ -175,7 +175,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     super.initState();
     homeCtrl = Get.put(HomeController());
     progressCtrl = Get.put(ProgressController());
-    exploreCtrl = Get.put(ExploreController());
+    discoverCtrl = Get.put(DiscoverController());
     animeCtrl = Get.put(
       CollectionController(widget.id, true),
       tag: '${widget.id}true',
@@ -191,7 +191,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     _ctrl.dispose();
     Get.delete<HomeController>();
     Get.delete<ProgressController>();
-    Get.delete<ExploreController>();
+    Get.delete<DiscoverController>();
     Get.delete<CollectionController>(tag: '${widget.id}true');
     Get.delete<CollectionController>(tag: '${widget.id}false');
     super.dispose();

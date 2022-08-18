@@ -4,7 +4,7 @@ import 'package:otraku/models/related_media_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -107,10 +107,10 @@ class _RelationsGrid extends StatelessWidget {
                 TextSpan(text: ' • ${items[i].status!}'),
             ];
 
-            return ExploreIndexer(
+            return LinkTile(
               id: items[i].id,
               text: items[i].imageUrl,
-              explorable: items[i].type,
+              discoverType: items[i].type,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
@@ -194,9 +194,9 @@ class _RecommendationsGrid extends StatelessWidget {
               color: Theme.of(context).colorScheme.surface,
               borderRadius: Consts.borderRadiusMin,
             ),
-            child: ExploreIndexer(
+            child: LinkTile(
               id: items[i].id,
-              explorable: items[i].type,
+              discoverType: items[i].type,
               text: items[i].imageUrl,
               child: Column(
                 children: [

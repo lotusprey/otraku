@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/models/explorable_model.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/models/discover_model.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class TileGrid extends StatelessWidget {
-  final List<ExplorableModel> models;
+  final List<DiscoverModel> models;
   final bool full;
   final ScrollController? scrollCtrl;
 
@@ -61,15 +61,15 @@ class TileGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  final ExplorableModel data;
+  final DiscoverModel data;
   final bool full;
 
   _Tile(this.data, this.full);
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
-      explorable: data.explorable,
+    return LinkTile(
+      discoverType: data.discoverType,
       id: data.id,
       text: data.imageUrl,
       child: Column(

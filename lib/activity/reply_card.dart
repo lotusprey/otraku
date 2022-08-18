@@ -6,9 +6,9 @@ import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -25,10 +25,10 @@ class ReplyCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ExploreIndexer(
+        LinkTile(
           id: reply.user.id,
           text: reply.user.imageUrl,
-          explorable: Explorable.user,
+          discoverType: DiscoverType.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

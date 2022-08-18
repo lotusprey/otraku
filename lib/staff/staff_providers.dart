@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/models/relation.dart';
 import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/utils/api.dart';
@@ -121,8 +121,9 @@ class StaffRelationNotifier extends ChangeNotifier {
         title: m['node']['title']['userPreferred'],
         imageUrl: m['node']['coverImage'][Settings().imageQuality],
         subtitle: Convert.clarifyEnum(m['node']['format']),
-        type:
-            m['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+        type: m['node']['type'] == 'ANIME'
+            ? DiscoverType.anime
+            : DiscoverType.manga,
       );
 
       for (final c in m['characters']) {
@@ -134,7 +135,7 @@ class StaffRelationNotifier extends ChangeNotifier {
           id: c['id'],
           title: c['name']['userPreferred'],
           imageUrl: c['image']['large'],
-          type: Explorable.character,
+          type: DiscoverType.character,
           subtitle: Convert.clarifyEnum(m['characterRole']),
         ));
       }
@@ -155,8 +156,9 @@ class StaffRelationNotifier extends ChangeNotifier {
         title: s['node']['title']['userPreferred'],
         imageUrl: s['node']['coverImage'][Settings().imageQuality],
         subtitle: s['staffRole'],
-        type:
-            s['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+        type: s['node']['type'] == 'ANIME'
+            ? DiscoverType.anime
+            : DiscoverType.manga,
       ));
 
     value = value.append(items, data['pageInfo']['hasNextPage']);

@@ -1,4 +1,4 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 
 class Relation {
   Relation({
@@ -12,6 +12,6 @@ class Relation {
   final int id;
   final String title;
   final String imageUrl;
-  final Explorable type;
+  final DiscoverType type;
   final String? subtitle;
 }

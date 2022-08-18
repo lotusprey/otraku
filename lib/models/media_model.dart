@@ -1,4 +1,4 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/models/recommended_model.dart';
@@ -82,7 +82,7 @@ class MediaModel {
         title: c['node']['name']['userPreferred'],
         imageUrl: c['node']['image']['large'],
         subtitle: Convert.clarifyEnum(c['role']),
-        type: Explorable.character,
+        type: DiscoverType.character,
       ));
 
       if (c['voiceActors'] != null)
@@ -107,7 +107,7 @@ class MediaModel {
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
             subtitle: l,
-            type: Explorable.staff,
+            type: DiscoverType.staff,
           ));
         }
     }
@@ -123,7 +123,7 @@ class MediaModel {
         title: connection['node']['name']['userPreferred'],
         imageUrl: connection['node']['image']['large'],
         subtitle: connection['role'],
-        type: Explorable.staff,
+        type: DiscoverType.staff,
       ));
 
     staff.append(items, map['staff']['pageInfo']['hasNextPage']);

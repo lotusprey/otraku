@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/studio/studio_models.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class StudioGrid extends StatelessWidget {
@@ -21,10 +21,10 @@ class StudioGrid extends StatelessWidget {
         ),
         delegate: SliverChildBuilderDelegate(
           childCount: items.length,
-          (_, i) => ExploreIndexer(
+          (_, i) => LinkTile(
             id: items[i].id,
             text: items[i].name,
-            explorable: Explorable.studio,
+            discoverType: DiscoverType.studio,
             child: Hero(
               tag: items[i].id,
               child: Text(

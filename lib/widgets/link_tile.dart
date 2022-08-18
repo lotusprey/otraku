@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class ExploreIndexer extends StatelessWidget {
-  final Explorable explorable;
+class LinkTile extends StatelessWidget {
+  final DiscoverType discoverType;
   final int id;
   final String? text;
   final Widget child;
 
-  ExploreIndexer({
+  LinkTile({
     required this.id,
     required this.text,
-    required this.explorable,
+    required this.discoverType,
     required this.child,
   });
 
@@ -25,39 +25,39 @@ class ExploreIndexer extends StatelessWidget {
     required BuildContext ctx,
     required int id,
     required String? imageUrl,
-    required Explorable explorable,
+    required DiscoverType discoverType,
   }) {
-    switch (explorable) {
-      case Explorable.anime:
-      case Explorable.manga:
+    switch (discoverType) {
+      case DiscoverType.anime:
+      case DiscoverType.manga:
         Navigator.pushNamed(
           ctx,
           RouteArg.media,
           arguments: RouteArg(id: id, info: imageUrl),
         );
         return;
-      case Explorable.character:
+      case DiscoverType.character:
         Navigator.pushNamed(
           ctx,
           RouteArg.character,
           arguments: RouteArg(id: id, info: imageUrl),
         );
         return;
-      case Explorable.staff:
+      case DiscoverType.staff:
         Navigator.pushNamed(
           ctx,
           RouteArg.staff,
           arguments: RouteArg(id: id, info: imageUrl),
         );
         return;
-      case Explorable.studio:
+      case DiscoverType.studio:
         Navigator.pushNamed(
           ctx,
           RouteArg.studio,
           arguments: RouteArg(id: id, info: imageUrl),
         );
         return;
-      case Explorable.user:
+      case DiscoverType.user:
         if (id != Settings().id)
           Navigator.pushNamed(
             ctx,
@@ -69,7 +69,7 @@ class ExploreIndexer extends StatelessWidget {
           Navigator.popUntil(ctx, (r) => r.isFirst);
         }
         return;
-      case Explorable.review:
+      case DiscoverType.review:
         Navigator.pushNamed(
           ctx,
           RouteArg.review,
@@ -86,9 +86,10 @@ class ExploreIndexer extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => openView(
-          ctx: context, id: id, imageUrl: text, explorable: explorable),
+          ctx: context, id: id, imageUrl: text, discoverType: discoverType),
       onLongPress: () {
-        if (explorable == Explorable.anime || explorable == Explorable.manga)
+        if (discoverType == DiscoverType.anime ||
+            discoverType == DiscoverType.manga)
           showSheet(context, EditView(id));
       },
       child: child,

@@ -6,9 +6,9 @@ import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -70,10 +70,10 @@ class ActivityCard extends StatelessWidget {
         Row(
           children: [
             Flexible(
-              child: ExploreIndexer(
+              child: LinkTile(
                 id: activity.agent.id,
                 text: activity.agent.imageUrl,
-                explorable: Explorable.user,
+                discoverType: DiscoverType.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -107,10 +107,10 @@ class ActivityCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Icon(Icons.arrow_right_alt),
               ),
-              ExploreIndexer(
+              LinkTile(
                 id: activity.reciever!.id,
                 text: activity.reciever!.imageUrl,
-                explorable: Explorable.user,
+                discoverType: DiscoverType.user,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
                   child: FadeImage(
@@ -142,10 +142,11 @@ class _ActivityMediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
+    return LinkTile(
       id: activityMedia.id,
       text: activityMedia.imageUrl,
-      explorable: activityMedia.isAnime ? Explorable.anime : Explorable.manga,
+      discoverType:
+          activityMedia.isAnime ? DiscoverType.anime : DiscoverType.manga,
       child: ConstrainedBox(
         constraints: BoxConstraints(maxHeight: 108),
         child: Row(

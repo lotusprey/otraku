@@ -1,24 +1,24 @@
 import 'package:get/get.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/models/page_model.dart';
 import 'package:otraku/utils/debounce.dart';
-import 'package:otraku/models/explorable_model.dart';
+import 'package:otraku/models/discover_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/settings.dart';
 
-// Searches and filters items from the Explorable enum
-class ExploreController extends GetxController {
+/// Searches and filters items from [DiscoverType]
+class DiscoverController extends GetxController {
   static const ID_HEAD = 0;
   static const ID_BODY = 1;
   static const ID_BUTTON = 2;
 
-  final _results = PageModel<ExplorableModel>();
+  final _results = PageModel<DiscoverModel>();
   late final _debounce = Debounce(fetch);
-  late var _filter = ExploreFilter(_type == Explorable.anime);
+  late var _filter = DiscoverFilter(_type == DiscoverType.anime);
   int _page = 1;
-  Explorable _type = Settings().defaultExplorable;
+  DiscoverType _type = Settings().defaultDiscoverType;
   String? _search;
   bool _isBirthday = false;
   bool _isLoading = true;
@@ -35,23 +35,23 @@ class ExploreController extends GetxController {
 
   bool get isLoading => _isLoading;
 
-  List<ExplorableModel> get results => _results.items;
+  List<DiscoverModel> get results => _results.items;
 
-  Explorable get type => _type;
+  DiscoverType get type => _type;
 
-  ExploreFilter get filter => _filter;
+  DiscoverFilter get filter => _filter;
 
   String? get search => _search;
 
-  set type(Explorable val) {
+  set type(DiscoverType val) {
     if (_type == val) return;
     _type = val;
-    _filter.ofAnime = val == Explorable.anime;
+    _filter.ofAnime = val == DiscoverType.anime;
     update([ID_HEAD, ID_BUTTON]);
     fetch();
   }
 
-  set filter(ExploreFilter val) {
+  set filter(DiscoverFilter val) {
     _filter = val;
     fetch();
   }
@@ -92,29 +92,29 @@ class ExploreController extends GetxController {
     }
 
     late String query;
-    if (_type == Explorable.anime || _type == Explorable.manga)
+    if (_type == DiscoverType.anime || _type == DiscoverType.manga)
       query = GqlQuery.medias;
-    else if (_type == Explorable.character)
+    else if (_type == DiscoverType.character)
       query = GqlQuery.characters;
-    else if (_type == Explorable.staff)
+    else if (_type == DiscoverType.staff)
       query = GqlQuery.staffs;
-    else if (_type == Explorable.studio)
+    else if (_type == DiscoverType.studio)
       query = GqlQuery.studios;
-    else if (_type == Explorable.review)
+    else if (_type == DiscoverType.review)
       query = GqlQuery.reviews;
     else
       query = GqlQuery.users;
 
     final variables =
-        _type != Explorable.review ? _filter.toMap() : <String, dynamic>{};
+        _type != DiscoverType.review ? _filter.toMap() : <String, dynamic>{};
     variables['page'] = _page;
     if (_search?.isNotEmpty ?? false) variables['search'] = _search;
 
-    if (type == Explorable.anime)
+    if (type == DiscoverType.anime)
       variables['type'] = 'ANIME';
-    else if (type == Explorable.manga)
+    else if (type == DiscoverType.manga)
       variables['type'] = 'MANGA';
-    else if (type == Explorable.character || type == Explorable.staff) {
+    else if (type == DiscoverType.character || type == DiscoverType.staff) {
       if (_isBirthday) variables['isBirthday'] = _isBirthday;
     }
 
@@ -125,21 +125,20 @@ class ExploreController extends GetxController {
 
     data = data['Page'];
 
-    final items = <ExplorableModel>[];
+    final items = <DiscoverModel>[];
 
     if (data!['media'] != null)
-      for (final m in data['media']) items.add(ExplorableModel.media(m));
+      for (final m in data['media']) items.add(DiscoverModel.media(m));
     else if (data['characters'] != null)
-      for (final c in data['characters'])
-        items.add(ExplorableModel.character(c));
+      for (final c in data['characters']) items.add(DiscoverModel.character(c));
     else if (data['staff'] != null)
-      for (final s in data['staff']) items.add(ExplorableModel.staff(s));
+      for (final s in data['staff']) items.add(DiscoverModel.staff(s));
     else if (data['studios'] != null)
-      for (final s in data['studios']) items.add(ExplorableModel.studio(s));
+      for (final s in data['studios']) items.add(DiscoverModel.studio(s));
     else if (data['users'] != null)
-      for (final u in data['users']) items.add(ExplorableModel.user(u));
+      for (final u in data['users']) items.add(DiscoverModel.user(u));
     else if (data['reviews'] != null)
-      for (final r in data['reviews']) items.add(ExplorableModel.review(r));
+      for (final r in data['reviews']) items.add(DiscoverModel.review(r));
 
     if (clean) _results.clear();
     _results.append(items, data['pageInfo']['hasNextPage']);

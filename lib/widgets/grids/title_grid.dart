@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/explorable_model.dart';
+import 'package:otraku/models/discover_model.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/nav_layout.dart';
 
 class TitleGrid extends StatelessWidget {
-  final List<ExplorableModel> results;
+  final List<DiscoverModel> results;
   final ScrollController? scrollCtrl;
 
   TitleGrid(this.results, {this.scrollCtrl, super.key});
@@ -53,13 +53,13 @@ class TitleGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  final ExplorableModel data;
+  final DiscoverModel data;
   _Tile(this.data);
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
-      explorable: data.explorable,
+    return LinkTile(
+      discoverType: data.discoverType,
       id: data.id,
       text: data.text1,
       child: Hero(

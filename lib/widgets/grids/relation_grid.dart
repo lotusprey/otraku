@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/models/relation.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
@@ -51,9 +51,9 @@ class _RelationTile extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
-            child: ExploreIndexer(
+            child: LinkTile(
               id: item.id,
-              explorable: item.type,
+              discoverType: item.type,
               text: item.imageUrl,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -78,9 +78,9 @@ class _RelationTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 3),
-          ExploreIndexer(
+          LinkTile(
             id: connection!.id,
-            explorable: connection!.type,
+            discoverType: connection!.type,
             text: connection!.imageUrl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -107,9 +107,9 @@ class _RelationTile extends StatelessWidget {
         ],
       );
     else
-      centerContent = ExploreIndexer(
+      centerContent = LinkTile(
         id: item.id,
-        explorable: item.type,
+        discoverType: item.type,
         text: item.imageUrl,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -134,9 +134,9 @@ class _RelationTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ExploreIndexer(
+          LinkTile(
             id: item.id,
-            explorable: item.type,
+            discoverType: item.type,
             text: item.imageUrl,
             child: ClipRRect(
               child: FadeImage(item.imageUrl, width: 80),
@@ -147,9 +147,9 @@ class _RelationTile extends StatelessWidget {
             child: Padding(padding: Consts.padding, child: centerContent),
           ),
           if (connection != null)
-            ExploreIndexer(
+            LinkTile(
               id: connection!.id,
-              explorable: connection!.type,
+              discoverType: connection!.type,
               text: connection!.imageUrl,
               child: ClipRRect(
                 child: FadeImage(connection!.imageUrl, width: 80),

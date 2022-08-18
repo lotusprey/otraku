@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
@@ -51,9 +51,9 @@ class SettingsAppTab extends StatelessWidget {
                 value: Settings().defaultHomeTab,
                 items: const {
                   'Feed': HomeView.INBOX,
-                  'Anime List': HomeView.ANIME_LIST,
-                  'Manga List': HomeView.MANGA_LIST,
-                  'Explore': HomeView.EXPLORE,
+                  'Anime': HomeView.ANIME_LIST,
+                  'Manga': HomeView.MANGA_LIST,
+                  'Discover': HomeView.DISCOVER,
                   'Profile': HomeView.USER,
                 },
                 onChanged: (val) => Settings().defaultHomeTab = val,
@@ -77,22 +77,22 @@ class SettingsAppTab extends StatelessWidget {
                 onChanged: (val) => Settings().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
-                title: 'Default Explore Sort',
-                value: Settings().defaultExploreSort,
+                title: 'Default Discover Sort',
+                value: Settings().defaultDiscoverSort,
                 items: Map.fromIterable(
                   MediaSort.values,
                   key: (v) => Convert.clarifyEnum((v as MediaSort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultExploreSort = val,
+                onChanged: (val) => Settings().defaultDiscoverSort = val,
               ),
-              DropDownField<Explorable>(
-                title: 'Default Explorable',
-                value: Settings().defaultExplorable,
+              DropDownField<DiscoverType>(
+                title: 'Default Discover Type',
+                value: Settings().defaultDiscoverType,
                 items: Map.fromIterable(
-                  Explorable.values,
-                  key: (v) => Convert.clarifyEnum((v as Explorable).name)!,
+                  DiscoverType.values,
+                  key: (v) => Convert.clarifyEnum((v as DiscoverType).name)!,
                 ),
-                onChanged: (val) => Settings().defaultExplorable = val,
+                onChanged: (val) => Settings().defaultDiscoverType = val,
               ),
               DropDownField<String>(
                 title: 'Image Quality',

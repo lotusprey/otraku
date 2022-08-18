@@ -4,11 +4,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/explore_controller.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/controllers/discover_controller.dart';
+import 'package:otraku/constants/discover_type.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -148,16 +148,16 @@ class MediaInfoView extends StatelessWidget {
               title: 'Genres',
               items: info.genres,
               onTap: (i) {
-                final explCtrl = Get.find<ExploreController>();
-                final filter = explCtrl.filter.clear();
+                final discoverCtrl = Get.find<DiscoverController>();
+                final filter = discoverCtrl.filter.clear();
                 filter.genreIn.add(info.genres[i]);
-                explCtrl.canFetch = false;
-                explCtrl.filter = filter;
-                explCtrl.type = info.type;
-                explCtrl.search = null;
-                explCtrl.canFetch = true;
-                explCtrl.fetch();
-                Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+                discoverCtrl.canFetch = false;
+                discoverCtrl.filter = filter;
+                discoverCtrl.type = info.type;
+                discoverCtrl.search = null;
+                discoverCtrl.canFetch = true;
+                discoverCtrl.fetch();
+                Get.find<HomeController>().homeTab = HomeView.DISCOVER;
                 Navigator.popUntil(context, (r) => r.isFirst);
               },
             ),
@@ -165,22 +165,22 @@ class MediaInfoView extends StatelessWidget {
             _ScrollCards(
               title: 'Studios',
               items: info.studios.keys.toList(),
-              onTap: (index) => ExploreIndexer.openView(
+              onTap: (index) => LinkTile.openView(
                 ctx: context,
                 id: info.studios[info.studios.keys.elementAt(index)]!,
                 imageUrl: info.studios.keys.elementAt(index),
-                explorable: Explorable.studio,
+                discoverType: DiscoverType.studio,
               ),
             ),
           if (info.producers.isNotEmpty)
             _ScrollCards(
               title: 'Producers',
               items: info.producers.keys.toList(),
-              onTap: (i) => ExploreIndexer.openView(
+              onTap: (i) => LinkTile.openView(
                 ctx: context,
                 id: info.producers[info.producers.keys.elementAt(i)]!,
                 imageUrl: info.producers.keys.elementAt(i),
-                explorable: Explorable.studio,
+                discoverType: DiscoverType.studio,
               ),
             ),
           if (info.hashtag != null) ...[
@@ -405,16 +405,16 @@ class __TagsState extends State<_Tags> {
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            final explCtrl = Get.find<ExploreController>();
-            final filter = explCtrl.filter.clear();
+            final discoverCtrl = Get.find<DiscoverController>();
+            final filter = discoverCtrl.filter.clear();
             filter.tagIn.add(tags[i].name);
-            explCtrl.canFetch = false;
-            explCtrl.filter = filter;
-            explCtrl.type = widget.ctrl.model!.info.type;
-            explCtrl.search = null;
-            explCtrl.canFetch = true;
-            explCtrl.fetch();
-            Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+            discoverCtrl.canFetch = false;
+            discoverCtrl.filter = filter;
+            discoverCtrl.type = widget.ctrl.model!.info.type;
+            discoverCtrl.search = null;
+            discoverCtrl.canFetch = true;
+            discoverCtrl.fetch();
+            Get.find<HomeController>().homeTab = HomeView.DISCOVER;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
           onLongPress: () => showPopUp(
@@ -484,16 +484,16 @@ class __TagsState extends State<_Tags> {
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              final explCtrl = Get.find<ExploreController>();
-              final filter = explCtrl.filter.clear();
+              final discoverCtrl = Get.find<DiscoverController>();
+              final filter = discoverCtrl.filter.clear();
               filter.tagIn.add(tags[i].name);
-              explCtrl.canFetch = false;
-              explCtrl.filter = filter;
-              explCtrl.type = widget.ctrl.model!.info.type;
-              explCtrl.search = null;
-              explCtrl.canFetch = true;
-              explCtrl.fetch();
-              Get.find<HomeController>().homeTab = HomeView.EXPLORE;
+              discoverCtrl.canFetch = false;
+              discoverCtrl.filter = filter;
+              discoverCtrl.type = widget.ctrl.model!.info.type;
+              discoverCtrl.search = null;
+              discoverCtrl.canFetch = true;
+              discoverCtrl.fetch();
+              Get.find<HomeController>().homeTab = HomeView.DISCOVER;
               Navigator.popUntil(context, (r) => r.isFirst);
             },
             onLongPress: () => showPopUp(

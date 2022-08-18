@@ -131,7 +131,7 @@ class _CompositionView extends StatelessWidget {
                 controller: scrollCtrl,
                 child: Padding(
                   padding: padding,
-                  child: HtmlContent(textCtrl.text),
+                  child: HtmlContent('<p>${textCtrl.text}</p>'),
                 ),
               ),
             ],

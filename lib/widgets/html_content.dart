@@ -6,8 +6,9 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class HtmlContent extends StatelessWidget {
-  final String text;
   HtmlContent(this.text);
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class HtmlContent extends StatelessWidget {
       onTapUrl: (url) => Toast.launch(context, url),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
-        icon: Icon(Icons.close),
+        icon: const Icon(Icons.close),
         color: Theme.of(context).colorScheme.error,
         onPressed: () => showPopUp(
           context,
@@ -29,6 +30,8 @@ class HtmlContent extends StatelessWidget {
       ),
       customStylesBuilder: (element) {
         final styles = <String, String>{};
+
+        if (element.localName == 'p') styles['white-space'] = 'pre';
 
         if (element.localName == 'h1' ||
             element.localName == 'h2' ||

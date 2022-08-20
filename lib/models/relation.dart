@@ -1,4 +1,4 @@
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 
 class Relation {
   Relation({

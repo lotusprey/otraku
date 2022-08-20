@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';

@@ -1,4 +1,4 @@
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/models/media_stats_model.dart';
 import 'package:otraku/models/recommended_model.dart';

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/discover_controller.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/views/home_view.dart';
 import 'package:otraku/widgets/link_tile.dart';
@@ -72,143 +73,148 @@ class MediaInfoView extends StatelessWidget {
         .findAncestorStateOfType<NestedScrollViewState>()!
         .innerController;
 
-    return PageLayout(
-      floatingBar: FloatingBar(
-        scrollCtrl: scrollCtrl,
-        children: [_EditButton(ctrl), _FavoriteButton(ctrl)],
-      ),
-      child: CustomScrollView(
-        controller: scrollCtrl,
-        slivers: [
-          SliverOverlapInjector(
-            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-          ),
-          if (info.description.isNotEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: Consts.padding,
-                child: GestureDetector(
-                  child: Container(
-                    padding: Consts.padding,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: Consts.borderRadiusMin,
-                    ),
-                    child: Text(
-                      info.description,
-                      maxLines: 4,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ),
-                  onTap: () => showPopUp(
-                    context,
-                    TextDialog(title: 'Description', text: info.description),
-                  ),
-                ),
-              ),
-            )
-          else
-            const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverPadding(
-            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-                height: Consts.tapTargetSize,
-                minWidth: 130,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: Consts.borderRadiusMin,
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        infoTitles[i],
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.subtitle1,
+    return Consumer(
+      builder: (context, ref, _) => PageLayout(
+        floatingBar: FloatingBar(
+          scrollCtrl: scrollCtrl,
+          children: [_EditButton(ctrl), _FavoriteButton(ctrl)],
+        ),
+        child: CustomScrollView(
+          controller: scrollCtrl,
+          slivers: [
+            SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+            if (info.description.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: Consts.padding,
+                  child: GestureDetector(
+                    child: Container(
+                      padding: Consts.padding,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: Consts.borderRadiusMin,
                       ),
-                      Text(infoData[i].toString(), maxLines: 1),
-                    ],
+                      child: Text(
+                        info.description,
+                        maxLines: 4,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                    onTap: () => showPopUp(
+                      context,
+                      TextDialog(title: 'Description', text: info.description),
+                    ),
                   ),
                 ),
-                childCount: infoData.length,
+              )
+            else
+              const SliverToBoxAdapter(child: SizedBox(height: 10)),
+            SliverPadding(
+              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              sliver: SliverGrid(
+                gridDelegate:
+                    const SliverGridDelegateWithMinWidthAndFixedHeight(
+                  height: Consts.tapTargetSize,
+                  minWidth: 130,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, i) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: Consts.borderRadiusMin,
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          infoTitles[i],
+                          maxLines: 1,
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                        Text(infoData[i].toString(), maxLines: 1),
+                      ],
+                    ),
+                  ),
+                  childCount: infoData.length,
+                ),
               ),
             ),
-          ),
-          if (info.genres.isNotEmpty)
-            _ScrollCards(
-              title: 'Genres',
-              items: info.genres,
-              onTap: (i) {
-                final discoverCtrl = Get.find<DiscoverController>();
-                final filter = discoverCtrl.filter.clear();
-                filter.genreIn.add(info.genres[i]);
-                discoverCtrl.canFetch = false;
-                discoverCtrl.filter = filter;
-                discoverCtrl.type = info.type;
-                discoverCtrl.search = null;
-                discoverCtrl.canFetch = true;
-                discoverCtrl.fetch();
-                Get.find<HomeController>().homeTab = HomeView.DISCOVER;
-                Navigator.popUntil(context, (r) => r.isFirst);
-              },
-            ),
-          if (info.studios.isNotEmpty)
-            _ScrollCards(
-              title: 'Studios',
-              items: info.studios.keys.toList(),
-              onTap: (index) => LinkTile.openView(
-                ctx: context,
-                id: info.studios[info.studios.keys.elementAt(index)]!,
-                imageUrl: info.studios.keys.elementAt(index),
-                discoverType: DiscoverType.studio,
+            if (info.genres.isNotEmpty)
+              _ScrollCards(
+                title: 'Genres',
+                items: info.genres,
+                onTap: (i) {
+                  ref.read(discoverTypeProvider.notifier).state = info.type;
+                  ref.read(discoverSearchFilterProvider.notifier).state = null;
+
+                  final ofAnime = info.type == DiscoverType.anime;
+                  final notifier = ref.read(
+                    discoverMediaFilterProvider(ofAnime).notifier,
+                  );
+                  final filter = notifier.state.clear();
+                  filter.genreIn.add(info.genres[i]);
+                  notifier.state = filter;
+
+                  Get.find<HomeController>().homeTab = HomeView.DISCOVER;
+                  Navigator.popUntil(context, (r) => r.isFirst);
+                },
               ),
-            ),
-          if (info.producers.isNotEmpty)
-            _ScrollCards(
-              title: 'Producers',
-              items: info.producers.keys.toList(),
-              onTap: (i) => LinkTile.openView(
-                ctx: context,
-                id: info.producers[info.producers.keys.elementAt(i)]!,
-                imageUrl: info.producers.keys.elementAt(i),
-                discoverType: DiscoverType.studio,
+            if (info.studios.isNotEmpty)
+              _ScrollCards(
+                title: 'Studios',
+                items: info.studios.keys.toList(),
+                onTap: (index) => LinkTile.openView(
+                  ctx: context,
+                  id: info.studios[info.studios.keys.elementAt(index)]!,
+                  imageUrl: info.studios.keys.elementAt(index),
+                  discoverType: DiscoverType.studio,
+                ),
               ),
-            ),
-          if (info.hashtag != null) ...[
-            const _Section('Hashtag'),
-            _Titles([info.hashtag!]),
+            if (info.producers.isNotEmpty)
+              _ScrollCards(
+                title: 'Producers',
+                items: info.producers.keys.toList(),
+                onTap: (i) => LinkTile.openView(
+                  ctx: context,
+                  id: info.producers[info.producers.keys.elementAt(i)]!,
+                  imageUrl: info.producers.keys.elementAt(i),
+                  discoverType: DiscoverType.studio,
+                ),
+              ),
+            if (info.hashtag != null) ...[
+              const _Section('Hashtag'),
+              _Titles([info.hashtag!]),
+            ],
+            if (info.romajiTitle != null) ...[
+              const _Section('Romaji'),
+              _Titles([info.romajiTitle!]),
+            ],
+            if (info.englishTitle != null) ...[
+              const _Section('English'),
+              _Titles([info.englishTitle!]),
+            ],
+            if (info.nativeTitle != null) ...[
+              const _Section('Native'),
+              _Titles([info.nativeTitle!]),
+            ],
+            if (info.synonyms.isNotEmpty) ...[
+              const _Section('Synonyms'),
+              _Titles(info.synonyms),
+            ],
+            if (info.tags.isNotEmpty) ...[
+              const _Section('Tags'),
+              _Tags(ctrl, ref),
+            ],
+            const SliverFooter(),
           ],
-          if (info.romajiTitle != null) ...[
-            const _Section('Romaji'),
-            _Titles([info.romajiTitle!]),
-          ],
-          if (info.englishTitle != null) ...[
-            const _Section('English'),
-            _Titles([info.englishTitle!]),
-          ],
-          if (info.nativeTitle != null) ...[
-            const _Section('Native'),
-            _Titles([info.nativeTitle!]),
-          ],
-          if (info.synonyms.isNotEmpty) ...[
-            const _Section('Synonyms'),
-            _Titles(info.synonyms),
-          ],
-          if (info.tags.isNotEmpty) ...[
-            const _Section('Tags'),
-            _Tags(ctrl),
-          ],
-          const SliverFooter(),
-        ],
+        ),
       ),
     );
   }
@@ -373,9 +379,10 @@ class _Titles extends StatelessWidget {
 }
 
 class _Tags extends StatefulWidget {
-  _Tags(this.ctrl);
+  _Tags(this.ctrl, this.ref);
 
   final MediaController ctrl;
+  final WidgetRef ref;
 
   @override
   __TagsState createState() => __TagsState();
@@ -405,15 +412,19 @@ class __TagsState extends State<_Tags> {
         (_, i) => GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
-            final discoverCtrl = Get.find<DiscoverController>();
-            final filter = discoverCtrl.filter.clear();
+            final ref = widget.ref;
+            final info = widget.ctrl.model!.info;
+            ref.read(discoverTypeProvider.notifier).state = info.type;
+            ref.read(discoverSearchFilterProvider.notifier).state = null;
+
+            final ofAnime = info.type == DiscoverType.anime;
+            final notifier = ref.read(
+              discoverMediaFilterProvider(ofAnime).notifier,
+            );
+            final filter = notifier.state.clear();
             filter.tagIn.add(tags[i].name);
-            discoverCtrl.canFetch = false;
-            discoverCtrl.filter = filter;
-            discoverCtrl.type = widget.ctrl.model!.info.type;
-            discoverCtrl.search = null;
-            discoverCtrl.canFetch = true;
-            discoverCtrl.fetch();
+            notifier.state = filter;
+
             Get.find<HomeController>().homeTab = HomeView.DISCOVER;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
@@ -484,15 +495,19 @@ class __TagsState extends State<_Tags> {
           return GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () {
-              final discoverCtrl = Get.find<DiscoverController>();
-              final filter = discoverCtrl.filter.clear();
+              final ref = widget.ref;
+              final info = widget.ctrl.model!.info;
+              ref.read(discoverTypeProvider.notifier).state = info.type;
+              ref.read(discoverSearchFilterProvider.notifier).state = null;
+
+              final ofAnime = info.type == DiscoverType.anime;
+              final notifier = ref.read(
+                discoverMediaFilterProvider(ofAnime).notifier,
+              );
+              final filter = notifier.state.clear();
               filter.tagIn.add(tags[i].name);
-              discoverCtrl.canFetch = false;
-              discoverCtrl.filter = filter;
-              discoverCtrl.type = widget.ctrl.model!.info.type;
-              discoverCtrl.search = null;
-              discoverCtrl.canFetch = true;
-              discoverCtrl.fetch();
+              notifier.state = filter;
+
               Get.find<HomeController>().homeTab = HomeView.DISCOVER;
               Navigator.popUntil(context, (r) => r.isFirst);
             },

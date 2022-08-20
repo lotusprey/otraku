@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';

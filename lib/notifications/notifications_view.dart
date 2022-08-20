@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/notifications/notification_provider.dart';
 import 'package:otraku/utils/background_handler.dart';

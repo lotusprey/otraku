@@ -4,15 +4,16 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/discover_controller.dart';
 import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/progress_controller.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/views/discover_view.dart';
+import 'package:otraku/discover/discover_view.dart';
 import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/user/user_view.dart';
@@ -42,9 +43,33 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   late final HomeController homeCtrl;
   late final ProgressController progressCtrl;
-  late final DiscoverController discoverCtrl;
   late final CollectionController animeCtrl;
   late final CollectionController mangaCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    homeCtrl = Get.put(HomeController());
+    progressCtrl = Get.put(ProgressController());
+    animeCtrl = Get.put(
+      CollectionController(widget.id, true),
+      tag: '${widget.id}true',
+    );
+    mangaCtrl = Get.put(
+      CollectionController(widget.id, false),
+      tag: '${widget.id}false',
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    Get.delete<HomeController>();
+    Get.delete<ProgressController>();
+    Get.delete<CollectionController>(tag: '${widget.id}true');
+    Get.delete<CollectionController>(tag: '${widget.id}false');
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +77,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return Consumer(
       builder: (context, ref, _) {
-        ref.watch(userSettingsProvider.notifier);
-        ref.watch(tagsProvider.select((_) => null));
-        ref.watch(activitiesProvider(null).select((_) => null));
-        ref.watch(userProvider(widget.id).select((_) => null));
+        _keepHomeProvidersAlive(ref);
 
         return GetBuilder<HomeController>(
           id: HomeController.ID_HOME,
@@ -92,12 +114,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
                               : mangaCtrl.search = null;
                         return;
                       case HomeView.DISCOVER:
-                        if (_ctrl.position.pixels > 0)
+                        if (_ctrl.position.pixels > 0) {
                           _ctrl.scrollToTop();
-                        else
-                          discoverCtrl.search == null
-                              ? discoverCtrl.search = ''
-                              : discoverCtrl.search = null;
+                        } else {
+                          final notifier = ref.read(
+                            discoverSearchFilterProvider.notifier,
+                          );
+                          notifier.state == null
+                              ? notifier.state = ''
+                              : notifier.state = null;
+                        }
                         return;
                       default:
                         _ctrl.scrollToTop();
@@ -132,18 +158,45 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
   }
 
+  void _keepHomeProvidersAlive(WidgetRef ref) {
+    ref.watch(userSettingsProvider.select((_) => null));
+    ref.watch(tagsProvider.select((_) => null));
+    ref.watch(activitiesProvider(null).select((_) => null));
+    ref.watch(userProvider(widget.id).select((_) => null));
+    final discoverType = ref.watch(discoverTypeProvider);
+    switch (discoverType) {
+      case DiscoverType.anime:
+        return ref.watch(discoverAnimeProvider.select((_) => null));
+      case DiscoverType.manga:
+        return ref.watch(discoverMangaProvider.select((_) => null));
+      case DiscoverType.character:
+        return ref.watch(discoverCharacterProvider.select((_) => null));
+      case DiscoverType.staff:
+        return ref.watch(discoverStaffProvider.select((_) => null));
+      case DiscoverType.studio:
+        return ref.watch(discoverStudioProvider.select((_) => null));
+      case DiscoverType.user:
+        return ref.watch(discoverUserProvider.select((_) => null));
+      case DiscoverType.review:
+        return ref.watch(discoverReviewProvider.select((_) => null));
+    }
+  }
+
   void _scrollListener() {
-    if (homeCtrl.homeTab == HomeView.INBOX && homeCtrl.onFeed)
+    if (homeCtrl.homeTab == HomeView.INBOX && homeCtrl.onFeed) {
       ref.read(activitiesProvider(null).notifier).fetch();
-    else if (homeCtrl.homeTab == HomeView.DISCOVER) {
-      discoverCtrl.fetchPage();
+    } else if (homeCtrl.homeTab == HomeView.DISCOVER) {
+      discoverLoadMore(ref);
     }
   }
 
   Future<bool> _onWillPop(BuildContext ctx) async {
-    if (homeCtrl.homeTab == HomeView.DISCOVER && discoverCtrl.search != null) {
-      discoverCtrl.search = null;
-      return Future.value(false);
+    if (homeCtrl.homeTab == HomeView.DISCOVER) {
+      final notifier = ref.read(discoverSearchFilterProvider.notifier);
+      if (notifier.state != null) {
+        notifier.state = null;
+        return Future.value(false);
+      }
     }
     if (homeCtrl.homeTab == HomeView.ANIME_LIST && animeCtrl.search != null) {
       animeCtrl.search = null;
@@ -168,32 +221,5 @@ class _HomeViewState extends ConsumerState<HomeView> {
     );
 
     return Future.value(ok);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    homeCtrl = Get.put(HomeController());
-    progressCtrl = Get.put(ProgressController());
-    discoverCtrl = Get.put(DiscoverController());
-    animeCtrl = Get.put(
-      CollectionController(widget.id, true),
-      tag: '${widget.id}true',
-    );
-    mangaCtrl = Get.put(
-      CollectionController(widget.id, false),
-      tag: '${widget.id}false',
-    );
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    Get.delete<HomeController>();
-    Get.delete<ProgressController>();
-    Get.delete<DiscoverController>();
-    Get.delete<CollectionController>(tag: '${widget.id}true');
-    Get.delete<CollectionController>(tag: '${widget.id}false');
-    super.dispose();
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/entry_item.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';

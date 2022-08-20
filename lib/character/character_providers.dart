@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/models/relation.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';

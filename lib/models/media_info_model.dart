@@ -1,4 +1,4 @@
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';

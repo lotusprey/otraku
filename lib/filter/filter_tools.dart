@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -96,6 +98,70 @@ class ListPresenceDropDown extends StatelessWidget {
   }
 }
 
+/// Openable search field that connects to [provider].
+/// `null` state means that the field is closed.
+class SearchFilterField extends StatelessWidget {
+  const SearchFilterField({required this.title, required this.provider});
+
+  final String title;
+  final AutoDisposeStateProvider<String?>? provider;
+
+  @override
+  Widget build(BuildContext context) {
+    if (provider == null)
+      return Expanded(
+        child: Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.headline1,
+        ),
+      );
+
+    final debounce = Debounce();
+
+    return Consumer(
+      builder: (context, ref, _) {
+        final value = ref.watch(provider!);
+
+        return Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (value == null) ...[
+                Expanded(
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                ),
+                TopBarIcon(
+                  tooltip: 'Search',
+                  icon: Ionicons.search_outline,
+                  onTap: () => ref.read(provider!.notifier).state = '',
+                ),
+              ] else
+                Expanded(
+                  child: SearchField(
+                    value: value,
+                    hint: title,
+                    onChange: (val) => debounce.run(
+                      () => ref.read(provider!.notifier).state = val,
+                    ),
+                    onHide: () => ref.read(provider!.notifier).state = null,
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// TODO deprecate
 class MediaSearchField extends StatefulWidget {
   MediaSearchField({
     required this.title,

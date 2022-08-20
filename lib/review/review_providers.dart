@@ -10,7 +10,7 @@ final reviewProvider = StateNotifierProvider.autoDispose
   (ref, id) => ReviewNotifier(id),
 );
 
-final reviewSortProvider = StateProvider.autoDispose.family<ReviewSort, int>(
+final reviewSortProvider = StateProvider.autoDispose.family<ReviewSort, int?>(
   (ref, _) => ReviewSort.CREATED_AT_DESC,
 );
 

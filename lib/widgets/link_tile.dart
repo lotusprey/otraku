@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:otraku/controllers/home_controller.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';

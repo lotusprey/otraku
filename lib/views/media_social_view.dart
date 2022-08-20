@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/models/related_review_model.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/link_tile.dart';

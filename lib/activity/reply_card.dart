@@ -6,7 +6,7 @@ import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';

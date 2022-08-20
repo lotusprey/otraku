@@ -1,17 +1,14 @@
 import 'dart:async';
 
-/// After [delay] time has passed, since the last
-/// call to the [run] method, call [callback].
+/// After [_delay] time has passed, since the last [run] call, call [callback].
 /// E.g. do a search query after the user stops typing.
 class Debounce {
-  Debounce(this.callback, [this.delay = const Duration(milliseconds: 600)]);
+  static const _delay = Duration(milliseconds: 600);
 
-  final void Function() callback;
-  final Duration delay;
   Timer? _timer;
 
-  void run() {
+  void run(void Function() callback) {
     _timer?.cancel();
-    _timer = Timer(delay, callback);
+    _timer = Timer(_delay, callback);
   }
 }

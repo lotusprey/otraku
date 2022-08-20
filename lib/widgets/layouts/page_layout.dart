@@ -12,7 +12,7 @@ class PageLayout extends StatefulWidget {
   });
 
   final Widget child;
-  final TopBar? topBar;
+  final PreferredSizeWidget? topBar;
   final FloatingBar? floatingBar;
   final Widget? bottomBar;
 
@@ -55,7 +55,9 @@ class PageLayoutState extends State<PageLayout> {
     if (_didCalculateOffsets) return;
     _didCalculateOffsets = true;
 
-    if (widget.topBar != null) _topOffset += Consts.tapTargetSize;
+    if (widget.topBar != null)
+      _topOffset += widget.topBar!.preferredSize.height;
+
     if (widget.bottomBar != null) _bottomOffset += Consts.tapTargetSize;
 
     final pageLayout = context.findAncestorStateOfType<PageLayoutState>();

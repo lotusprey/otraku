@@ -12,6 +12,7 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -70,123 +71,113 @@ class _StudioViewState extends ConsumerState<StudioView> {
           ],
         ],
       ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-            child: Consumer(
-              builder: (context, ref, _) {
-                ref.listen<AsyncValue>(
-                  studioProvider(widget.id),
-                  (_, s) {
-                    if (s.hasError)
-                      showPopUp(
-                        context,
-                        ConfirmationDialog(
-                          title: 'Could not load studio',
-                          content: s.error.toString(),
-                        ),
-                      );
-                  },
-                );
+      child: ConstrainedView(
+        child: Consumer(
+          builder: (context, ref, _) {
+            ref.listen<AsyncValue>(
+              studioProvider(widget.id),
+              (_, s) {
+                if (s.hasError)
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Could not load studio',
+                      content: s.error.toString(),
+                    ),
+                  );
+              },
+            );
 
-                final name = studio?.name ?? widget.name;
-                final titleWidget = name != null
-                    ? SliverToBoxAdapter(
-                        child: GestureDetector(
-                          onTap: () => Toast.copy(context, name),
-                          child: Hero(
-                            tag: widget.id,
-                            child: Text(
-                              name,
-                              style: Theme.of(context).textTheme.headline1,
-                            ),
+            final name = studio?.name ?? widget.name;
+            final titleWidget = name != null
+                ? SliverToBoxAdapter(
+                    child: GestureDetector(
+                      onTap: () => Toast.copy(context, name),
+                      child: Hero(
+                        tag: widget.id,
+                        child: Text(
+                          name,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      ),
+                    ),
+                  )
+                : null;
+
+            return ref.watch(studioProvider(widget.id)).unwrapPrevious().when(
+                  loading: () => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      if (titleWidget != null) titleWidget,
+                      const SliverFillRemaining(
+                        child: Center(child: Loader()),
+                      ),
+                    ],
+                  ),
+                  error: (_, __) => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      if (titleWidget != null) titleWidget,
+                      const SliverFillRemaining(
+                        child: Center(child: Text('Could not load studio')),
+                      ),
+                    ],
+                  ),
+                  data: (data) {
+                    final items = <Widget>[
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 20),
+                          child: Text(
+                            '${data.studio.favorites.toString()} favourites',
+                            style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ),
                       )
-                    : null;
+                    ];
+                    final sort =
+                        ref.watch(studioFilterProvider(widget.id)).sort;
 
-                return ref
-                    .watch(studioProvider(widget.id))
-                    .unwrapPrevious()
-                    .when(
-                      loading: () => CustomScrollView(
-                        physics: Consts.physics,
-                        slivers: [
-                          refreshControl,
-                          if (titleWidget != null) titleWidget,
-                          const SliverFillRemaining(
-                            child: Center(child: Loader()),
+                    if (sort == MediaSort.START_DATE ||
+                        sort == MediaSort.START_DATE_DESC ||
+                        sort == MediaSort.END_DATE ||
+                        sort == MediaSort.END_DATE_DESC) {
+                      for (int i = 0; i < data.categories.length; i++) {
+                        items.add(SliverToBoxAdapter(
+                          child: Text(
+                            data.categories.keys.elementAt(i),
+                            style: Theme.of(context).textTheme.headline2,
                           ),
-                        ],
-                      ),
-                      error: (_, __) => CustomScrollView(
-                        physics: Consts.physics,
-                        slivers: [
-                          refreshControl,
-                          if (titleWidget != null) titleWidget,
-                          const SliverFillRemaining(
-                            child: Center(child: Text('Could not load studio')),
-                          ),
-                        ],
-                      ),
-                      data: (data) {
-                        final items = <Widget>[
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 10, bottom: 20),
-                              child: Text(
-                                '${data.studio.favorites.toString()} favourites',
-                                style: Theme.of(context).textTheme.subtitle1,
-                              ),
-                            ),
-                          )
-                        ];
-                        final sort =
-                            ref.watch(studioFilterProvider(widget.id)).sort;
+                        ));
 
-                        if (sort == MediaSort.START_DATE ||
-                            sort == MediaSort.START_DATE_DESC ||
-                            sort == MediaSort.END_DATE ||
-                            sort == MediaSort.END_DATE_DESC) {
-                          for (int i = 0; i < data.categories.length; i++) {
-                            items.add(SliverToBoxAdapter(
-                              child: Text(
-                                data.categories.keys.elementAt(i),
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ));
+                        final beg = data.categories.values.elementAt(i);
+                        final end = i < data.categories.length - 1
+                            ? data.categories.values.elementAt(i + 1)
+                            : data.media.items.length;
 
-                            final beg = data.categories.values.elementAt(i);
-                            final end = i < data.categories.length - 1
-                                ? data.categories.values.elementAt(i + 1)
-                                : data.media.items.length;
-
-                            items.add(
-                              MediaGrid(data.media.items.sublist(beg, end)),
-                            );
-                          }
-                        } else {
-                          items.add(MediaGrid(data.media.items));
-                        }
-
-                        return CustomScrollView(
-                          physics: Consts.physics,
-                          controller: _ctrl,
-                          slivers: [
-                            refreshControl,
-                            titleWidget!,
-                            ...items,
-                            SliverFooter(loading: data.media.hasNext),
-                          ],
+                        items.add(
+                          MediaGrid(data.media.items.sublist(beg, end)),
                         );
-                      },
+                      }
+                    } else {
+                      items.add(MediaGrid(data.media.items));
+                    }
+
+                    return CustomScrollView(
+                      physics: Consts.physics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl,
+                        titleWidget!,
+                        ...items,
+                        SliverFooter(loading: data.media.hasNext),
+                      ],
                     );
-              },
-            ),
-          ),
+                  },
+                );
+          },
         ),
       ),
     );

@@ -8,7 +8,7 @@ import 'package:otraku/activity/reply_card.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/discover_type.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/link_tile.dart';
@@ -52,75 +52,9 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
         activityProvider(widget.id).select((s) => s.valueOrNull?.activity));
 
     return PageLayout(
-      topBar: TopBar(
-        items: [
-          if (activity != null)
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: LinkTile(
-                      id: activity.agent.id,
-                      text: activity.agent.imageUrl,
-                      discoverType: DiscoverType.user,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Hero(
-                            tag: activity.agent.id,
-                            child: ClipRRect(
-                              borderRadius: Consts.borderRadiusMin,
-                              child: FadeImage(
-                                activity.agent.imageUrl,
-                                height: 40,
-                                width: 40,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Flexible(
-                            child: Text(
-                              activity.agent.name,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  if (activity.reciever != null) ...[
-                    if (activity.isPrivate)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Icon(Ionicons.eye_off_outline),
-                      ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Icon(Icons.arrow_right_alt),
-                    ),
-                    LinkTile(
-                      id: activity.reciever!.id,
-                      text: activity.reciever!.imageUrl,
-                      discoverType: DiscoverType.user,
-                      child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
-                        child: FadeImage(
-                          activity.reciever!.imageUrl,
-                          height: 40,
-                          width: 40,
-                        ),
-                      ),
-                    ),
-                  ] else if (activity.isPinned)
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Icon(Icons.push_pin_outlined),
-                    ),
-                ],
-              ),
-            ),
-        ],
+      topBar: PreferredSize(
+        preferredSize: const Size.fromHeight(Consts.tapTargetSize),
+        child: activity == null ? const TopBar() : _TopBar(activity),
       ),
       floatingBar: FloatingBar(
         scrollCtrl: _ctrl,
@@ -166,7 +100,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
               .unwrapPrevious()
               .maybeWhen(
                 loading: () => const Center(child: Loader()),
-                orElse: () => Center(child: Text('No Activity')),
+                orElse: () => const Center(child: Text('No Activity')),
                 data: (data) {
                   return Padding(
                     padding: Consts.padding,
@@ -212,6 +146,85 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
               );
         },
       ),
+    );
+  }
+}
+
+class _TopBar extends StatelessWidget {
+  _TopBar(this.activity);
+
+  final Activity activity;
+
+  @override
+  Widget build(BuildContext context) {
+    return TopBar(
+      items: [
+        Expanded(
+          child: Row(
+            children: [
+              Flexible(
+                child: LinkTile(
+                  id: activity.agent.id,
+                  text: activity.agent.imageUrl,
+                  discoverType: DiscoverType.user,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Hero(
+                        tag: activity.agent.id,
+                        child: ClipRRect(
+                          borderRadius: Consts.borderRadiusMin,
+                          child: FadeImage(
+                            activity.agent.imageUrl,
+                            height: 40,
+                            width: 40,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text(
+                          activity.agent.name,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (activity.reciever != null) ...[
+                if (activity.isPrivate)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Icon(Ionicons.eye_off_outline),
+                  ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(Icons.arrow_right_alt),
+                ),
+                LinkTile(
+                  id: activity.reciever!.id,
+                  text: activity.reciever!.imageUrl,
+                  discoverType: DiscoverType.user,
+                  child: ClipRRect(
+                    borderRadius: Consts.borderRadiusMin,
+                    child: FadeImage(
+                      activity.reciever!.imageUrl,
+                      height: 40,
+                      width: 40,
+                    ),
+                  ),
+                ),
+              ] else if (activity.isPinned)
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Icon(Icons.push_pin_outlined),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

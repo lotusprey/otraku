@@ -9,6 +9,7 @@ import 'package:otraku/staff/staff_grid.dart';
 import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -127,22 +128,15 @@ class _AnimeTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: Consts.layoutBig),
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl,
-                        MediaGrid(data.items),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    MediaGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -185,22 +179,15 @@ class _MangaTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: Consts.layoutBig),
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl,
-                        MediaGrid(data.items),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    MediaGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -243,18 +230,15 @@ class _CharactersTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      CharacterGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    CharacterGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -297,18 +281,15 @@ class _StaffTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      StaffGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    StaffGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -351,18 +332,15 @@ class _StudiosTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      StudioGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    StudioGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });

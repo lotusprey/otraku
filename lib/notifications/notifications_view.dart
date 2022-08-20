@@ -9,6 +9,7 @@ import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -17,6 +18,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {
   const NotificationsView();
@@ -130,29 +132,27 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return CustomScrollView(
-                physics: Consts.physics,
-                controller: _ctrl,
-                slivers: [
-                  refreshControl!,
-                  SliverPadding(
-                    padding: const EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      top: 10,
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => _NotificationWidget(
-                          data.items[i],
-                          i < notifier.unreadCount,
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl!,
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, i) => _NotificationItem(
+                            data.items[i],
+                            i < notifier.unreadCount,
+                          ),
+                          childCount: data.items.length,
                         ),
-                        childCount: data.items.length,
                       ),
                     ),
-                  ),
-                  SliverFooter(loading: data.hasNext),
-                ],
+                    SliverFooter(loading: data.hasNext),
+                  ],
+                ),
               );
             },
           );
@@ -162,8 +162,8 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   }
 }
 
-class _NotificationWidget extends StatelessWidget {
-  _NotificationWidget(this.notification, this.unread);
+class _NotificationItem extends StatelessWidget {
+  _NotificationItem(this.notification, this.unread);
 
   final SiteNotification notification;
   final bool unread;
@@ -245,8 +245,15 @@ class _NotificationWidget extends StatelessWidget {
                       default:
                         showPopUp(
                           context,
-                          const ConfirmationDialog(
+                          ConfirmationDialog(
                             title: 'Forum is not yet supported',
+                            content: 'Open in browser?',
+                            mainAction: 'Open Browser',
+                            secondaryAction: 'Cancel',
+                            onConfirm: () => Toast.launch(
+                              context,
+                              'https://anilist.co/forum/thread/${notification.bodyId}',
+                            ),
                           ),
                         );
                         return;

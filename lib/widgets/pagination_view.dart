@@ -6,8 +6,8 @@ import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
-/// Subscribes to an asynchronous provider. Listens for errors and shows a pop
-/// up, if there is one.
+/// Subscribes to a paginated, asynchronous provider.
+/// Listens for errors and shows a pop up, if there is one.
 /// [onRefresh] allows for refreshing. If [scrollCtrl] is
 /// [PaginationController], pagination will automatically work.
 /// [dateType] is a lowercase word for the data being handled (e.g. "reviews").

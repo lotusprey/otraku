@@ -13,10 +13,9 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
-import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/pagination_view.dart';
 
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
   final filter = ref.read(activityFilterProvider(id));
@@ -130,100 +129,73 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
 }
 
 class ActivitiesSubView extends StatelessWidget {
-  const ActivitiesSubView(this.id, this.ctrl);
+  const ActivitiesSubView(this.id, this.scrollCtrl);
 
   final int? id;
-  final ScrollController ctrl;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        ref.listen<AsyncValue>(
-          activitiesProvider(id),
-          (_, s) => s.whenOrNull(
-            error: (error, _) => showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Could not load activities',
-                content: error.toString(),
+        return PaginationView<Activity>(
+          provider: activitiesProvider(id),
+          scrollCtrl: scrollCtrl,
+          dataType: 'activities',
+          onRefresh: () {
+            ref.invalidate(activitiesProvider(id));
+            return Future.value();
+          },
+          onData: (data) => SliverPadding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                childCount: data.items.length,
+                (context, i) => ActivityCard(
+                  withHeader: true,
+                  activity: data.items[i],
+                  footer: ActivityFooter(
+                    activity: data.items[i],
+                    onDeleted: () => ref
+                        .read(activitiesProvider(id).notifier)
+                        .remove(data.items[i].id),
+                    onChanged: null,
+                    onPinned: id == Settings().id
+                        ? () => ref
+                            .read(activitiesProvider(id).notifier)
+                            .togglePin(data.items[i].id)
+                        : null,
+                    onOpenReplies: () => Navigator.pushNamed(
+                      context,
+                      RouteArg.activity,
+                      arguments: RouteArg(
+                        id: data.items[i].id,
+                        callback: (arg) {
+                          final updatedActivity = arg as Activity?;
+                          if (updatedActivity == null) {
+                            ref
+                                .read(activitiesProvider(id).notifier)
+                                .remove(data.items[i].id);
+                            return;
+                          }
+
+                          ref
+                              .read(activitiesProvider(id).notifier)
+                              .updateActivity(updatedActivity);
+                        },
+                      ),
+                    ),
+                    onEdited: (map) {
+                      ref
+                          .read(activitiesProvider(id).notifier)
+                          .replaceActivity(map);
+                    },
+                  ),
+                ),
               ),
             ),
           ),
         );
-
-        const empty = Center(child: Text('No Activities'));
-
-        return ref.watch(activitiesProvider(id)).unwrapPrevious().when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => empty,
-              data: (data) {
-                if (data.items.isEmpty) return empty;
-
-                return Padding(
-                  padding: Consts.padding,
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: ctrl,
-                    slivers: [
-                      SliverRefreshControl(
-                        onRefresh: () {
-                          ref.invalidate(activitiesProvider(id));
-                          return Future.value();
-                        },
-                      ),
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          childCount: data.items.length,
-                          (context, i) => ActivityCard(
-                            withHeader: true,
-                            activity: data.items[i],
-                            footer: ActivityFooter(
-                              activity: data.items[i],
-                              onDeleted: () => ref
-                                  .read(activitiesProvider(id).notifier)
-                                  .remove(data.items[i].id),
-                              onChanged: null,
-                              onPinned: id == Settings().id
-                                  ? () => ref
-                                      .read(activitiesProvider(id).notifier)
-                                      .togglePin(data.items[i].id)
-                                  : null,
-                              onOpenReplies: () => Navigator.pushNamed(
-                                context,
-                                RouteArg.activity,
-                                arguments: RouteArg(
-                                  id: data.items[i].id,
-                                  callback: (arg) {
-                                    final updatedActivity = arg as Activity?;
-                                    if (updatedActivity == null) {
-                                      ref
-                                          .read(activitiesProvider(id).notifier)
-                                          .remove(data.items[i].id);
-                                      return;
-                                    }
-
-                                    ref
-                                        .read(activitiesProvider(id).notifier)
-                                        .updateActivity(updatedActivity);
-                                  },
-                                ),
-                              ),
-                              onEdited: (map) {
-                                ref
-                                    .read(activitiesProvider(id).notifier)
-                                    .replaceActivity(map);
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
-                );
-              },
-            );
       },
     );
   }

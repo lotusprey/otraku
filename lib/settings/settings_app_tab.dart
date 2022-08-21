@@ -10,6 +10,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/settings/theme_preview.dart';
 
@@ -24,7 +25,24 @@ class SettingsAppTab extends StatelessWidget {
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: PageLayout.of(context).topOffset + 10),
+          child: SizedBox(height: PageLayout.of(context).topOffset),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.only(left: 10, top: 10),
+          sliver: SliverToBoxAdapter(
+            child: Text('Theme', style: Theme.of(context).textTheme.subtitle1),
+          ),
+        ),
+        SliverPadding(
+          padding: Consts.padding,
+          sliver: SliverToBoxAdapter(
+            child: CompactSegmentSwitcher(
+              current: Settings().themeMode.index,
+              items: const ['System', 'Light', 'Dark'],
+              onChanged: (i) =>
+                  Settings().themeMode = ThemeMode.values.elementAt(i),
+            ),
+          ),
         ),
         const ThemePreview(isDark: false),
         const ThemePreview(isDark: true),
@@ -36,16 +54,6 @@ class SettingsAppTab extends StatelessWidget {
               height: 75,
             ),
             delegate: SliverChildListDelegate.fixed([
-              DropDownField<ThemeMode>(
-                title: 'Theme Mode',
-                value: Settings().themeMode,
-                items: const {
-                  'Auto': ThemeMode.system,
-                  'Light': ThemeMode.light,
-                  'Dark': ThemeMode.dark,
-                },
-                onChanged: (val) => Settings().themeMode = val,
-              ),
               DropDownField<int>(
                 title: 'Startup Page',
                 value: Settings().defaultHomeTab,

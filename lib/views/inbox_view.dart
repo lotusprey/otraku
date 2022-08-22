@@ -10,8 +10,8 @@ import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/collection/entry.dart';
 import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/edit/edit_providers.dart';
+import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -94,57 +94,56 @@ class InboxView extends StatelessWidget {
       },
     );
 
-    return GetBuilder<HomeController>(
-      id: HomeController.ID_HOME,
-      builder: (homeCtrl) {
-        return Consumer(
-          builder: (context, ref, _) => PageLayout(
-            floatingBar: FloatingBar(
-              scrollCtrl: scrollCtrl,
-              children: [
-                ActionButton(
-                  tooltip: 'New Post',
-                  icon: Icons.edit_outlined,
-                  onTap: () => showSheet(
-                    context,
-                    CompositionView(
-                      composition: Composition.status(null, ''),
-                      onDone: (map) => ref
-                          .read(activitiesProvider(null).notifier)
-                          .insertActivity(map, Settings().id!),
-                    ),
+    return Consumer(
+      builder: (context, ref, _) {
+        final notifier = ref.watch(homeProvider);
+
+        return PageLayout(
+          floatingBar: FloatingBar(
+            scrollCtrl: scrollCtrl,
+            children: [
+              ActionButton(
+                tooltip: 'New Post',
+                icon: Icons.edit_outlined,
+                onTap: () => showSheet(
+                  context,
+                  CompositionView(
+                    composition: Composition.status(null, ''),
+                    onDone: (map) => ref
+                        .read(activitiesProvider(null).notifier)
+                        .insertActivity(map, Settings().id!),
                   ),
                 ),
-                SegmentSwitcher(
-                  current: homeCtrl.onFeed ? 1 : 0,
-                  onChanged: (i) => homeCtrl.onFeed = i == 1,
-                  items: const ['Progress', 'Feed'],
-                ),
-              ],
-            ),
-            topBar: TopBar(
-              canPop: false,
-              title: homeCtrl.onFeed ? 'Feed' : 'Progress',
-              items: [
-                if (homeCtrl.onFeed)
-                  TopBarIcon(
-                    tooltip: 'Filter',
-                    icon: Ionicons.funnel_outline,
-                    onTap: () => showActivityFilterSheet(context, ref, null),
-                  )
-                else
-                  const SizedBox(width: 45),
-                notificationIcon,
-              ],
-            ),
-            child: DirectPageView(
-              onChanged: null,
-              current: homeCtrl.onFeed ? 1 : 0,
-              children: [
-                _ProgressView(scrollCtrl),
-                ActivitiesSubView(null, scrollCtrl),
-              ],
-            ),
+              ),
+              SegmentSwitcher(
+                current: notifier.inboxOnFeed ? 1 : 0,
+                onChanged: (i) => ref.read(homeProvider).inboxOnFeed = i == 1,
+                items: const ['Progress', 'Feed'],
+              ),
+            ],
+          ),
+          topBar: TopBar(
+            canPop: false,
+            title: notifier.inboxOnFeed ? 'Feed' : 'Progress',
+            items: [
+              if (notifier.inboxOnFeed)
+                TopBarIcon(
+                  tooltip: 'Filter',
+                  icon: Ionicons.funnel_outline,
+                  onTap: () => showActivityFilterSheet(context, ref, null),
+                )
+              else
+                const SizedBox(width: 45),
+              notificationIcon,
+            ],
+          ),
+          child: DirectPageView(
+            onChanged: null,
+            current: notifier.inboxOnFeed ? 1 : 0,
+            children: [
+              _ProgressView(scrollCtrl),
+              ActivitiesSubView(null, scrollCtrl),
+            ],
           ),
         );
       },

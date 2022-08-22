@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
 import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/edit/edit_view.dart';
-import 'package:otraku/views/home_view.dart';
+import 'package:otraku/home/home_provider.dart';
+import 'package:otraku/home/home_view.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -162,7 +161,7 @@ class MediaInfoView extends StatelessWidget {
                   filter.genreIn.add(info.genres[i]);
                   notifier.state = filter;
 
-                  Get.find<HomeController>().homeTab = HomeView.DISCOVER;
+                  ref.read(homeProvider).homeTab = HomeView.DISCOVER;
                   Navigator.popUntil(context, (r) => r.isFirst);
                 },
               ),
@@ -171,7 +170,7 @@ class MediaInfoView extends StatelessWidget {
                 title: 'Studios',
                 items: info.studios.keys.toList(),
                 onTap: (index) => LinkTile.openView(
-                  ctx: context,
+                  context: context,
                   id: info.studios[info.studios.keys.elementAt(index)]!,
                   imageUrl: info.studios.keys.elementAt(index),
                   discoverType: DiscoverType.studio,
@@ -182,7 +181,7 @@ class MediaInfoView extends StatelessWidget {
                 title: 'Producers',
                 items: info.producers.keys.toList(),
                 onTap: (i) => LinkTile.openView(
-                  ctx: context,
+                  context: context,
                   id: info.producers[info.producers.keys.elementAt(i)]!,
                   imageUrl: info.producers.keys.elementAt(i),
                   discoverType: DiscoverType.studio,
@@ -425,7 +424,7 @@ class __TagsState extends State<_Tags> {
             filter.tagIn.add(tags[i].name);
             notifier.state = filter;
 
-            Get.find<HomeController>().homeTab = HomeView.DISCOVER;
+            ref.read(homeProvider).homeTab = HomeView.DISCOVER;
             Navigator.popUntil(context, (r) => r.isFirst);
           },
           onLongPress: () => showPopUp(
@@ -508,7 +507,7 @@ class __TagsState extends State<_Tags> {
               filter.tagIn.add(tags[i].name);
               notifier.state = filter;
 
-              Get.find<HomeController>().homeTab = HomeView.DISCOVER;
+              ref.read(homeProvider).homeTab = HomeView.DISCOVER;
               Navigator.popUntil(context, (r) => r.isFirst);
             },
             onLongPress: () => showPopUp(

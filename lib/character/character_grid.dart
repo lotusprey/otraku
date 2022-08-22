@@ -25,7 +25,7 @@ class CharacterGrid extends StatelessWidget {
           childCount: items.length,
           (_, i) => LinkTile(
             id: items[i].id,
-            text: items[i].imageUrl,
+            info: items[i].imageUrl,
             discoverType: DiscoverType.character,
             child: Column(
               children: [

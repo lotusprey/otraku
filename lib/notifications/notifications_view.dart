@@ -185,7 +185,7 @@ class _NotificationItem extends StatelessWidget {
               if (notification.imageUrl != null && notification.headId != null)
                 GestureDetector(
                   onTap: () => LinkTile.openView(
-                    ctx: context,
+                    context: context,
                     id: notification.headId!,
                     imageUrl: notification.imageUrl,
                     discoverType:
@@ -222,7 +222,7 @@ class _NotificationItem extends StatelessWidget {
                         return;
                       case NotificationType.FOLLOWING:
                         LinkTile.openView(
-                          ctx: context,
+                          context: context,
                           id: notification.headId!,
                           imageUrl: notification.imageUrl,
                           discoverType: DiscoverType.user,
@@ -231,7 +231,7 @@ class _NotificationItem extends StatelessWidget {
                       case NotificationType.AIRING:
                       case NotificationType.RELATED_MEDIA_ADDITION:
                         LinkTile.openView(
-                          ctx: context,
+                          context: context,
                           id: notification.bodyId!,
                           imageUrl: notification.imageUrl,
                           discoverType: notification.discoverType!,

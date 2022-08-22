@@ -57,7 +57,7 @@ class _Tile extends StatelessWidget {
       child: LinkTile(
         id: model.mediaId,
         discoverType: DiscoverType.anime,
-        text: model.imageUrl,
+        info: model.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

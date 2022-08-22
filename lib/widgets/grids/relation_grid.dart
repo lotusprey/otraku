@@ -54,7 +54,7 @@ class _RelationTile extends StatelessWidget {
             child: LinkTile(
               id: item.id,
               discoverType: item.type,
-              text: item.imageUrl,
+              info: item.imageUrl,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +81,7 @@ class _RelationTile extends StatelessWidget {
           LinkTile(
             id: connection!.id,
             discoverType: connection!.type,
-            text: connection!.imageUrl,
+            info: connection!.imageUrl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -110,7 +110,7 @@ class _RelationTile extends StatelessWidget {
       centerContent = LinkTile(
         id: item.id,
         discoverType: item.type,
-        text: item.imageUrl,
+        info: item.imageUrl,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +137,7 @@ class _RelationTile extends StatelessWidget {
           LinkTile(
             id: item.id,
             discoverType: item.type,
-            text: item.imageUrl,
+            info: item.imageUrl,
             child: ClipRRect(
               child: FadeImage(item.imageUrl, width: 80),
               borderRadius: Consts.borderRadiusMin,
@@ -150,7 +150,7 @@ class _RelationTile extends StatelessWidget {
             LinkTile(
               id: connection!.id,
               discoverType: connection!.type,
-              text: connection!.imageUrl,
+              info: connection!.imageUrl,
               child: ClipRRect(
                 child: FadeImage(connection!.imageUrl, width: 80),
                 borderRadius: Consts.borderRadiusMin,

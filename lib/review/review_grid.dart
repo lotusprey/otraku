@@ -38,7 +38,7 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return LinkTile(
       id: item.id,
-      text: item.bannerUrl,
+      info: item.bannerUrl,
       discoverType: DiscoverType.review,
       child: Container(
         decoration: BoxDecoration(

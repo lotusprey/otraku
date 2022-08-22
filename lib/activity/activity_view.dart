@@ -165,7 +165,7 @@ class _TopBar extends StatelessWidget {
               Flexible(
                 child: LinkTile(
                   id: activity.agent.id,
-                  text: activity.agent.imageUrl,
+                  info: activity.agent.imageUrl,
                   discoverType: DiscoverType.user,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -205,7 +205,7 @@ class _TopBar extends StatelessWidget {
                 ),
                 LinkTile(
                   id: activity.reciever!.id,
-                  text: activity.reciever!.imageUrl,
+                  info: activity.reciever!.imageUrl,
                   discoverType: DiscoverType.user,
                   child: ClipRRect(
                     borderRadius: Consts.borderRadiusMin,

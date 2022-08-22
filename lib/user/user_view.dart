@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/user/user_header.dart';
@@ -10,7 +9,7 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
-import 'package:otraku/views/home_view.dart';
+import 'package:otraku/home/home_view.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -107,8 +106,7 @@ class UserSubView extends StatelessWidget {
                       Ionicons.film,
                       'Anime',
                       () => id == Settings().id
-                          ? Get.find<HomeController>().homeTab =
-                              HomeView.ANIME_LIST
+                          ? ref.read(homeProvider).homeTab = HomeView.ANIME_LIST
                           : Navigator.pushNamed(
                               context,
                               RouteArg.collection,
@@ -119,8 +117,7 @@ class UserSubView extends StatelessWidget {
                       Ionicons.bookmark,
                       'Manga',
                       () => id == Settings().id
-                          ? Get.find<HomeController>().homeTab =
-                              HomeView.MANGA_LIST
+                          ? ref.read(homeProvider).homeTab = HomeView.MANGA_LIST
                           : Navigator.pushNamed(
                               context,
                               RouteArg.collection,

@@ -5,7 +5,7 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/views/home_view.dart';
+import 'package:otraku/home/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';

@@ -32,7 +32,7 @@ class MinimalCollectionGrid extends StatelessWidget {
           child: LinkTile(
             id: items[i].mediaId,
             discoverType: DiscoverType.anime,
-            text: items[i].imageUrl,
+            info: items[i].imageUrl,
             child: Column(
               children: [
                 Expanded(

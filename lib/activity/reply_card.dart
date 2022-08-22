@@ -27,7 +27,7 @@ class ReplyCard extends StatelessWidget {
       children: [
         LinkTile(
           id: reply.user.id,
-          text: reply.user.imageUrl,
+          info: reply.user.imageUrl,
           discoverType: DiscoverType.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,

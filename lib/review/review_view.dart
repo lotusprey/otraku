@@ -50,7 +50,7 @@ class ReviewView extends StatelessWidget {
                     delegate: SliverChildListDelegate.fixed([
                       GestureDetector(
                         onTap: () => LinkTile.openView(
-                          ctx: context,
+                          context: context,
                           id: data.mediaId,
                           imageUrl: data.mediaCover,
                           discoverType: DiscoverType.anime,
@@ -64,7 +64,7 @@ class ReviewView extends StatelessWidget {
                       const SizedBox(height: 5),
                       GestureDetector(
                         onTap: () => LinkTile.openView(
-                          ctx: context,
+                          context: context,
                           id: data.userId,
                           imageUrl: data.userAvatar,
                           discoverType: DiscoverType.user,

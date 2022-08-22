@@ -107,7 +107,7 @@ class _ReviewGrid extends StatelessWidget {
             children: [
               LinkTile(
                 id: items[i].userId,
-                text: items[i].avatar,
+                info: items[i].avatar,
                 discoverType: DiscoverType.user,
                 child: Row(
                   children: [
@@ -131,7 +131,7 @@ class _ReviewGrid extends StatelessWidget {
               Expanded(
                 child: LinkTile(
                   id: items[i].reviewId,
-                  text: bannerUrl,
+                  info: bannerUrl,
                   discoverType: DiscoverType.review,
                   child: Container(
                     width: double.infinity,

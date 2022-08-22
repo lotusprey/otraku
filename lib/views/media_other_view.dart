@@ -109,7 +109,7 @@ class _RelationsGrid extends StatelessWidget {
 
             return LinkTile(
               id: items[i].id,
-              text: items[i].imageUrl,
+              info: items[i].imageUrl,
               discoverType: items[i].type,
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -197,7 +197,7 @@ class _RecommendationsGrid extends StatelessWidget {
             child: LinkTile(
               id: items[i].id,
               discoverType: items[i].type,
-              text: items[i].imageUrl,
+              info: items[i].imageUrl,
               child: Column(
                 children: [
                   Expanded(

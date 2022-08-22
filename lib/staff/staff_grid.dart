@@ -25,7 +25,7 @@ class StaffGrid extends StatelessWidget {
           childCount: items.length,
           (_, i) => LinkTile(
             id: items[i].id,
-            text: items[i].imageUrl,
+            info: items[i].imageUrl,
             discoverType: DiscoverType.staff,
             child: Column(
               children: [

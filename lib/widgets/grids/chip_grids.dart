@@ -39,9 +39,8 @@ class _ChipGrid extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onClear,
                   child: Container(
-                    height: Consts.iconSmall,
-                    width: Consts.iconSmall,
-                    margin: Consts.padding,
+                    height: Consts.iconBig,
+                    width: Consts.iconBig,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Theme.of(context).colorScheme.surfaceVariant,

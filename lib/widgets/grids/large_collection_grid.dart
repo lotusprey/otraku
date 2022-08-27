@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/collection/entry.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/constants/score_format.dart';
@@ -27,14 +27,17 @@ class LargeCollectionGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        (_, i) => _Tile(items[i], scoreFormat, updateProgress),
-        childCount: items.length,
-      ),
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 350,
-        height: _TILE_HEIGHT,
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate(
+          (_, i) => _Tile(items[i], scoreFormat, updateProgress),
+          childCount: items.length,
+        ),
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: 350,
+          height: _TILE_HEIGHT,
+        ),
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:otraku/character/character_models.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/discover/discover_providers.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/media/media_item.dart';
@@ -89,9 +90,7 @@ class _TopBar extends StatelessWidget {
           items: [
             SearchFilterField(
               title: Convert.clarifyEnum(type.name)!,
-              provider: type != DiscoverType.review
-                  ? discoverSearchFilterProvider
-                  : null,
+              enabled: type != DiscoverType.review,
             ),
             if (type == DiscoverType.anime || type == DiscoverType.manga)
               TopBarIcon(
@@ -100,7 +99,7 @@ class _TopBar extends StatelessWidget {
                 onTap: () {
                   final ofAnime = type == DiscoverType.anime;
                   final notifier = ref.read(
-                    discoverMediaFilterProvider(ofAnime).notifier,
+                    discoverFilterProvider(ofAnime).notifier,
                   );
 
                   showSheet(

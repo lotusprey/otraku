@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:otraku/collection/entry.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/entry_item.dart';
 import 'package:otraku/constants/media_status.dart';
 import 'package:otraku/utils/api.dart';

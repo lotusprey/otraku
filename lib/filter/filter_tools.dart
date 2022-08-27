@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -101,14 +103,25 @@ class ListPresenceDropDown extends StatelessWidget {
 /// Openable search field that connects to [provider].
 /// `null` state means that the field is closed.
 class SearchFilterField extends StatelessWidget {
-  const SearchFilterField({required this.title, required this.provider});
+  const SearchFilterField({
+    required this.title,
+    this.enabled = true,
+    this.tag,
+  });
 
   final String title;
-  final AutoDisposeStateProvider<String?>? provider;
+
+  /// `null` would mean this is responsible for
+  /// the discover tab and not for a collection.
+  final CollectionTag? tag;
+
+  /// The discover tab may want to disable the
+  /// search option for certain [DiscoverType] modes.
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
-    if (provider == null)
+    if (!enabled)
       return Expanded(
         child: Text(
           title,
@@ -122,7 +135,7 @@ class SearchFilterField extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) {
-        final value = ref.watch(provider!);
+        final value = ref.watch(searchProvider(tag));
 
         return Expanded(
           child: Row(
@@ -140,7 +153,8 @@ class SearchFilterField extends StatelessWidget {
                 TopBarIcon(
                   tooltip: 'Search',
                   icon: Ionicons.search_outline,
-                  onTap: () => ref.read(provider!.notifier).state = '',
+                  onTap: () =>
+                      ref.read(searchProvider(tag).notifier).state = '',
                 ),
               ] else
                 Expanded(
@@ -148,84 +162,16 @@ class SearchFilterField extends StatelessWidget {
                     value: value,
                     hint: title,
                     onChange: (val) => debounce.run(
-                      () => ref.read(provider!.notifier).state = val,
+                      () => ref.read(searchProvider(tag).notifier).state = val,
                     ),
-                    onHide: () => ref.read(provider!.notifier).state = null,
+                    onHide: () =>
+                        ref.read(searchProvider(tag).notifier).state = null,
                   ),
                 ),
             ],
           ),
         );
       },
-    );
-  }
-}
-
-// TODO deprecate
-class MediaSearchField extends StatefulWidget {
-  MediaSearchField({
-    required this.title,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String title;
-  final String? value;
-
-  /// If `null`, search mode cannot be turned on; [value] & [hint] are ignored.
-  final void Function(String?)? onChanged;
-
-  @override
-  _MediaSearchFieldState createState() => _MediaSearchFieldState();
-}
-
-class _MediaSearchFieldState extends State<MediaSearchField> {
-  String? _value;
-
-  @override
-  void initState() {
-    super.initState();
-    _value = widget.value;
-  }
-
-  @override
-  void didUpdateWidget(covariant MediaSearchField oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _value = widget.value;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          if (_value == null || widget.onChanged == null) ...[
-            Expanded(
-              child: Text(
-                widget.title,
-                style: Theme.of(context).textTheme.headline1,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-            if (widget.onChanged != null)
-              TopBarIcon(
-                tooltip: 'Search',
-                icon: Ionicons.search_outline,
-                onTap: () => widget.onChanged?.call(''),
-              ),
-          ] else
-            Expanded(
-              child: SearchField(
-                value: _value!,
-                hint: widget.title,
-                onChange: (val) => widget.onChanged?.call(val),
-                onHide: () => widget.onChanged?.call(null),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }

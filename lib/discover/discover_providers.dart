@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/filter/filter_models.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/media/media_item.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
@@ -45,37 +46,28 @@ final discoverTypeProvider = StateProvider.autoDispose(
   (ref) => Settings().defaultDiscoverType,
 );
 
-final discoverMediaFilterProvider = StateProvider.autoDispose.family(
-  (ref, bool ofAnime) => DiscoverFilter(ofAnime),
-);
-
-final discoverSearchFilterProvider =
-    StateProvider.autoDispose<String?>((ref) => null);
-
-final birthdayFilterProvider = StateProvider.autoDispose((ref) => false);
-
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
 
 final discoverAnimeProvider = StateNotifierProvider.autoDispose<
     DiscoverMediaNotifier, AsyncValue<Pagination<MediaItem>>>(
   (ref) => DiscoverMediaNotifier(
-    ref.watch(discoverMediaFilterProvider(true)),
-    ref.watch(discoverSearchFilterProvider.select(_searchSelector)),
+    ref.watch(discoverFilterProvider(true)),
+    ref.watch(searchProvider(null).select(_searchSelector)),
   ),
 );
 
 final discoverMangaProvider = StateNotifierProvider.autoDispose<
     DiscoverMediaNotifier, AsyncValue<Pagination<MediaItem>>>(
   (ref) => DiscoverMediaNotifier(
-    ref.watch(discoverMediaFilterProvider(false)),
-    ref.watch(discoverSearchFilterProvider.select(_searchSelector)),
+    ref.watch(discoverFilterProvider(false)),
+    ref.watch(searchProvider(null).select(_searchSelector)),
   ),
 );
 
 final discoverCharacterProvider = StateNotifierProvider.autoDispose<
     DiscoverCharacterNotifier, AsyncValue<Pagination<CharacterItem>>>(
   (ref) => DiscoverCharacterNotifier(
-    ref.watch(discoverSearchFilterProvider.select(_searchSelector)),
+    ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(birthdayFilterProvider),
   ),
 );
@@ -83,7 +75,7 @@ final discoverCharacterProvider = StateNotifierProvider.autoDispose<
 final discoverStaffProvider = StateNotifierProvider.autoDispose<
     DiscoverStaffNotifier, AsyncValue<Pagination<StaffItem>>>(
   (ref) => DiscoverStaffNotifier(
-    ref.watch(discoverSearchFilterProvider.select(_searchSelector)),
+    ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(birthdayFilterProvider),
   ),
 );
@@ -91,14 +83,14 @@ final discoverStaffProvider = StateNotifierProvider.autoDispose<
 final discoverStudioProvider = StateNotifierProvider.autoDispose<
     DiscoverStudioNotifier, AsyncValue<Pagination<StudioItem>>>(
   (ref) => DiscoverStudioNotifier(
-    ref.watch(discoverSearchFilterProvider.select(_searchSelector)),
+    ref.watch(searchProvider(null).select(_searchSelector)),
   ),
 );
 
 final discoverUserProvider = StateNotifierProvider.autoDispose<
     DiscoverUserNotifier, AsyncValue<Pagination<UserItem>>>(
   (ref) => DiscoverUserNotifier(
-    ref.watch(discoverSearchFilterProvider.select(_searchSelector)),
+    ref.watch(searchProvider(null).select(_searchSelector)),
   ),
 );
 

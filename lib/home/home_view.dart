@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_providers.dart';
-import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/collection/collection_providers.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/discover/discover_providers.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/tag/tag_provider.dart';
@@ -14,7 +16,7 @@ import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/discover/discover_view.dart';
-import 'package:otraku/views/collection_view.dart';
+import 'package:otraku/collection/collection_view.dart';
 import 'package:otraku/views/inbox_view.dart';
 import 'package:otraku/user/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
@@ -40,31 +42,20 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView> {
   late final _ctrl = PaginationController(loadMore: _scrollListener);
-
   late final ProgressController progressCtrl;
-  late final CollectionController animeCtrl;
-  late final CollectionController mangaCtrl;
+  late final animeEntriesTag = CollectionTag(widget.id, true);
+  late final mangaEntriesTag = CollectionTag(widget.id, false);
 
   @override
   void initState() {
     super.initState();
     progressCtrl = Get.put(ProgressController());
-    animeCtrl = Get.put(
-      CollectionController(widget.id, true),
-      tag: '${widget.id}true',
-    );
-    mangaCtrl = Get.put(
-      CollectionController(widget.id, false),
-      tag: '${widget.id}false',
-    );
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
     Get.delete<ProgressController>();
-    Get.delete<CollectionController>(tag: '${widget.id}true');
-    Get.delete<CollectionController>(tag: '${widget.id}false');
     super.dispose();
   }
 
@@ -78,6 +69,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
     ref.watch(tagsProvider.select((_) => null));
     ref.watch(activitiesProvider(null).select((_) => null));
     ref.watch(userProvider(widget.id).select((_) => null));
+    ref.watch(entriesProvider(animeEntriesTag).select((_) => null));
+    ref.watch(entriesProvider(mangaEntriesTag).select((_) => null));
     final discoverType = ref.watch(discoverTypeProvider);
     switch (discoverType) {
       case DiscoverType.anime:
@@ -121,28 +114,30 @@ class _HomeViewState extends ConsumerState<HomeView> {
           onSame: (i) {
             switch (i) {
               case HomeView.ANIME_LIST:
-                if (_ctrl.position.pixels > 0)
+                if (_ctrl.position.pixels > 0) {
                   _ctrl.scrollToTop();
-                else
-                  animeCtrl.search == null
-                      ? animeCtrl.search = ''
-                      : animeCtrl.search = null;
+                } else {
+                  ref
+                      .read(searchProvider(animeEntriesTag).notifier)
+                      .update((s) => s == null ? '' : null);
+                }
                 return;
               case HomeView.MANGA_LIST:
-                if (_ctrl.position.pixels > 0)
+                if (_ctrl.position.pixels > 0) {
                   _ctrl.scrollToTop();
-                else
-                  mangaCtrl.search == null
-                      ? mangaCtrl.search = ''
-                      : mangaCtrl.search = null;
+                } else {
+                  ref
+                      .read(searchProvider(mangaEntriesTag).notifier)
+                      .update((s) => s == null ? '' : null);
+                }
                 return;
               case HomeView.DISCOVER:
                 if (_ctrl.position.pixels > 0) {
                   _ctrl.scrollToTop();
                 } else {
-                  ref.read(discoverSearchFilterProvider.notifier).update(
-                        (s) => s == null ? '' : null,
-                      );
+                  ref
+                      .read(searchProvider(null).notifier)
+                      .update((s) => s == null ? '' : null);
                 }
                 return;
               default:
@@ -158,12 +153,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
             InboxView(_ctrl),
             CollectionSubView(
               scrollCtrl: _ctrl,
-              ctrlTag: '${widget.id}true',
+              tag: CollectionTag(widget.id, true),
               key: Key(true.toString()),
             ),
             CollectionSubView(
               scrollCtrl: _ctrl,
-              ctrlTag: '${widget.id}false',
+              tag: CollectionTag(widget.id, false),
               key: Key(false.toString()),
             ),
             DiscoverView(_ctrl),
@@ -186,19 +181,25 @@ class _HomeViewState extends ConsumerState<HomeView> {
   Future<bool> _onWillPop(BuildContext context) async {
     final notifier = ref.read(homeProvider);
     if (notifier.homeTab == HomeView.DISCOVER) {
-      final notifier = ref.read(discoverSearchFilterProvider.notifier);
+      final notifier = ref.read(searchProvider(null).notifier);
       if (notifier.state != null) {
         notifier.state = null;
         return Future.value(false);
       }
     }
-    if (notifier.homeTab == HomeView.ANIME_LIST && animeCtrl.search != null) {
-      animeCtrl.search = null;
-      return Future.value(false);
+    if (notifier.homeTab == HomeView.ANIME_LIST) {
+      final notifier = ref.read(searchProvider(animeEntriesTag).notifier);
+      if (notifier.state != null) {
+        notifier.state = null;
+        return Future.value(false);
+      }
     }
-    if (notifier.homeTab == HomeView.MANGA_LIST && mangaCtrl.search != null) {
-      mangaCtrl.search = null;
-      return Future.value(false);
+    if (notifier.homeTab == HomeView.MANGA_LIST) {
+      final notifier = ref.read(searchProvider(mangaEntriesTag).notifier);
+      if (notifier.state != null) {
+        notifier.state = null;
+        return Future.value(false);
+      }
     }
 
     if (!Settings().confirmExit) return Future.value(true);

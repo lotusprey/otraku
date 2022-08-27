@@ -6,6 +6,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/edit/edit_view.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/home/home_view.dart';
 import 'package:otraku/widgets/link_tile.dart';
@@ -151,11 +152,11 @@ class MediaInfoView extends StatelessWidget {
                 items: info.genres,
                 onTap: (i) {
                   ref.read(discoverTypeProvider.notifier).state = info.type;
-                  ref.read(discoverSearchFilterProvider.notifier).state = null;
+                  ref.read(searchProvider(null).notifier).state = null;
 
                   final ofAnime = info.type == DiscoverType.anime;
                   final notifier = ref.read(
-                    discoverMediaFilterProvider(ofAnime).notifier,
+                    discoverFilterProvider(ofAnime).notifier,
                   );
                   final filter = notifier.state.clear();
                   filter.genreIn.add(info.genres[i]);
@@ -414,11 +415,11 @@ class __TagsState extends State<_Tags> {
             final ref = widget.ref;
             final info = widget.ctrl.model!.info;
             ref.read(discoverTypeProvider.notifier).state = info.type;
-            ref.read(discoverSearchFilterProvider.notifier).state = null;
+            ref.read(searchProvider(null).notifier).state = null;
 
             final ofAnime = info.type == DiscoverType.anime;
             final notifier = ref.read(
-              discoverMediaFilterProvider(ofAnime).notifier,
+              discoverFilterProvider(ofAnime).notifier,
             );
             final filter = notifier.state.clear();
             filter.tagIn.add(tags[i].name);
@@ -497,11 +498,11 @@ class __TagsState extends State<_Tags> {
               final ref = widget.ref;
               final info = widget.ctrl.model!.info;
               ref.read(discoverTypeProvider.notifier).state = info.type;
-              ref.read(discoverSearchFilterProvider.notifier).state = null;
+              ref.read(searchProvider(null).notifier).state = null;
 
               final ofAnime = info.type == DiscoverType.anime;
               final notifier = ref.read(
-                discoverMediaFilterProvider(ofAnime).notifier,
+                discoverFilterProvider(ofAnime).notifier,
               );
               final filter = notifier.state.clear();
               filter.tagIn.add(tags[i].name);

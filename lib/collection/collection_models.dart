@@ -1,24 +1,39 @@
 import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/collection/entry.dart';
+import 'package:otraku/utils/convert.dart';
+import 'package:otraku/utils/settings.dart';
+
+/// Used as an argument for a [collectionProvider] `family` instance.
+class CollectionTag {
+  CollectionTag(this.userId, this.ofAnime);
+
+  final int userId;
+  final bool ofAnime;
+
+  @override
+  int get hashCode => '$userId$ofAnime'.hashCode;
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+}
 
 class EntryList {
   EntryList._({
     required this.name,
-    required this.isCustomList,
     required this.entries,
     required this.status,
     required this.splitCompletedListFormat,
   });
 
   factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
+    final status = !map['isCustomList'] && map['status'] != null
+        ? EntryStatus.values.byName(map['status'])
+        : null;
+
     return EntryList._(
       name: map['name'],
-      isCustomList: map['isCustomList'] ?? false,
-      status: !map['isCustomList'] && map['status'] != null
-          ? EntryStatus.values.byName(map['status'])
-          : null,
+      status: status,
       splitCompletedListFormat:
-          splitCompleted && !map['isCustomList'] && map['status'] == 'COMPLETED'
+          splitCompleted && status == EntryStatus.COMPLETED
               ? map['entries'][0]['media']['format']
               : null,
       entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
@@ -26,10 +41,18 @@ class EntryList {
   }
 
   final String name;
-  final EntryStatus? status;
-  final bool isCustomList;
-  final String? splitCompletedListFormat;
   final List<Entry> entries;
+
+  /// The [EntryStatus] of the [entries] in this list.
+  /// If `null`, this is a custom list.
+  final EntryStatus? status;
+
+  /// If the user's "completed" list is split by format and this is one of the
+  /// resulting lists, this holds the corresponding [AnimeFormat] or
+  /// [MangaFormat]. Parsing the `String` is unnecessary for now.
+  /// The value is `null`, if the list doesn't fulfill the
+  /// aforementioned conditions.
+  final String? splitCompletedListFormat;
 
   void removeByMediaId(int id) {
     for (int i = 0; i < entries.length; i++)
@@ -39,7 +62,7 @@ class EntryList {
       }
   }
 
-  void insertSorted(Entry item, EntrySort? s) {
+  void insertSorted(Entry item, EntrySort s) {
     final compare = _compareFn(s);
     for (int i = 0; i < entries.length; i++)
       if (compare(item, entries[i]) <= 0) {
@@ -49,9 +72,9 @@ class EntryList {
     entries.add(item);
   }
 
-  void sort(final EntrySort? s) => entries.sort(_compareFn(s));
+  void sort(EntrySort s) => entries.sort(_compareFn(s));
 
-  int Function(Entry, Entry) _compareFn(final EntrySort? s) {
+  int Function(Entry, Entry) _compareFn(EntrySort s) {
     switch (s) {
       case EntrySort.TITLE:
         return (a, b) =>
@@ -282,4 +305,107 @@ class EntryList {
         return (_, __) => 0;
     }
   }
+}
+
+class Entry {
+  Entry._({
+    required this.mediaId,
+    required this.titles,
+    required this.imageUrl,
+    required this.format,
+    required this.status,
+    required this.entryStatus,
+    required this.nextEpisode,
+    required this.airingAt,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.country,
+    required this.genres,
+    required this.tags,
+    required this.progress,
+    required this.progressMax,
+    required this.progressVolumes,
+    required this.progressVolumesMax,
+    required this.repeat,
+    required this.score,
+    required this.notes,
+    required this.releaseStart,
+    required this.releaseEnd,
+    required this.watchStart,
+    required this.watchEnd,
+  });
+
+  factory Entry(Map<String, dynamic> map) {
+    final titles = <String>[map['media']['title']['userPreferred']];
+    if (map['media']['title']['english'] != null)
+      titles.add(map['media']['title']['english']);
+    if (map['media']['title']['romaji'] != null)
+      titles.add(map['media']['title']['romaji']);
+    if (map['media']['title']['native'] != null)
+      titles.add(map['media']['title']['native']);
+
+    final tags = <int>[];
+    for (final t in map['media']['tags']) tags.add(t['id']);
+
+    return Entry._(
+      mediaId: map['media']['id'],
+      titles: titles,
+      imageUrl: map['media']['coverImage'][Settings().imageQuality],
+      format: map['media']['format'],
+      status: map['media']['status'],
+      entryStatus: EntryStatus.values.byName(map['status']),
+      nextEpisode: map['media']['nextAiringEpisode']?['episode'],
+      airingAt: map['media']['nextAiringEpisode']?['airingAt'],
+      createdAt: map['createdAt'],
+      updatedAt: map['updatedAt'],
+      country: map['media']['countryOfOrigin'],
+      genres: List.from(map['media']['genres'] ?? [], growable: false),
+      tags: tags,
+      progress: map['progress'] ?? 0,
+      progressMax: map['media']['episodes'] ?? map['media']['chapters'],
+      progressVolumes: map['progressVolumes'] ?? 0,
+      progressVolumesMax: map['media']['volumes'],
+      repeat: map['repeat'] ?? 0,
+      score: map['score'].toDouble() ?? 0.0,
+      notes: map['notes'],
+      releaseStart: Convert.mapToMillis(map['media']['startDate']),
+      releaseEnd: Convert.mapToMillis(map['media']['endDate']),
+      watchStart: Convert.mapToMillis(map['startedAt']),
+      watchEnd: Convert.mapToMillis(map['completedAt']),
+    );
+  }
+
+  final int mediaId;
+  final List<String> titles;
+  final String imageUrl;
+  final String? format;
+  final String? status;
+  final EntryStatus? entryStatus;
+  final int? nextEpisode;
+  final int? airingAt;
+  final int? createdAt;
+  final int? updatedAt;
+  final String? country;
+  final List<String> genres;
+  final List<int> tags;
+  int progress;
+  final int? progressMax;
+  final int progressVolumes;
+  final int? progressVolumesMax;
+  int repeat;
+  double score;
+  String? notes;
+  int? releaseStart;
+  int? releaseEnd;
+  int? watchStart;
+  int? watchEnd;
+}
+
+enum EntryStatus {
+  CURRENT,
+  PLANNING,
+  COMPLETED,
+  DROPPED,
+  PAUSED,
+  REPEATING,
 }

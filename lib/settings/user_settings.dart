@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/collection/entry.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/constants/entry_sort.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/notifications/notification_model.dart';

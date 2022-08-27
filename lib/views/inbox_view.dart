@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activities_view.dart';
 import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/collection/collection_providers.dart';
 import 'package:otraku/collection/entry_item.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/collection/entry.dart';
-import 'package:otraku/controllers/collection_controller.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/edit/edit_providers.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/controllers/progress_controller.dart';
@@ -163,75 +164,83 @@ class _ProgressView extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(left: 10, right: 10),
-      child: GetBuilder<ProgressController>(
-        builder: (ctrl) {
-          if (ctrl.releasingAnime.isEmpty &&
-              ctrl.otherAnime.isEmpty &&
-              ctrl.releasingManga.isEmpty &&
-              ctrl.otherManga.isEmpty) {
-            if (ctrl.isLoading) return const Center(child: Loader());
+      child: Consumer(
+        builder: (context, ref, _) {
+          return GetBuilder<ProgressController>(
+            builder: (ctrl) {
+              if (ctrl.releasingAnime.isEmpty &&
+                  ctrl.otherAnime.isEmpty &&
+                  ctrl.releasingManga.isEmpty &&
+                  ctrl.otherManga.isEmpty) {
+                if (ctrl.isLoading) return const Center(child: Loader());
 
-            return const Text('You aren\'t watching/reading anything');
-          }
+                return const Text('You aren\'t watching/reading anything');
+              }
 
-          return CustomScrollView(
-            physics: Consts.physics,
-            controller: scrollCtrl,
-            slivers: [
-              SliverRefreshControl(
-                onRefresh: () => ctrl.fetch(),
-                canRefresh: () => !ctrl.isLoading,
-              ),
-              if (ctrl.releasingAnime.isNotEmpty) ...[
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: titlePadding,
-                    child: Text('Releasing Anime', style: titleStyle),
+              return CustomScrollView(
+                physics: Consts.physics,
+                controller: scrollCtrl,
+                slivers: [
+                  SliverRefreshControl(
+                    onRefresh: () => ctrl.fetch(),
+                    canRefresh: () => !ctrl.isLoading,
                   ),
-                ),
-                MinimalCollectionGrid(
-                  items: ctrl.releasingAnime,
-                  updateProgress: (e) => _updateProgress(context, true, e),
-                ),
-              ],
-              if (ctrl.otherAnime.isNotEmpty) ...[
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: titlePadding,
-                    child: Text('Other Anime', style: titleStyle),
-                  ),
-                ),
-                MinimalCollectionGrid(
-                  items: ctrl.otherAnime,
-                  updateProgress: (e) => _updateProgress(context, true, e),
-                ),
-              ],
-              if (ctrl.releasingManga.isNotEmpty) ...[
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: titlePadding,
-                    child: Text('Releasing Manga', style: titleStyle),
-                  ),
-                ),
-                MinimalCollectionGrid(
-                  items: ctrl.releasingManga,
-                  updateProgress: (e) => _updateProgress(context, false, e),
-                ),
-              ],
-              if (ctrl.otherManga.isNotEmpty) ...[
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: titlePadding,
-                    child: Text('Other Manga', style: titleStyle),
-                  ),
-                ),
-                MinimalCollectionGrid(
-                  items: ctrl.otherManga,
-                  updateProgress: (e) => _updateProgress(context, false, e),
-                ),
-              ],
-              const SliverFooter(),
-            ],
+                  if (ctrl.releasingAnime.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: titlePadding,
+                        child: Text('Releasing Anime', style: titleStyle),
+                      ),
+                    ),
+                    MinimalCollectionGrid(
+                      items: ctrl.releasingAnime,
+                      updateProgress: (e) =>
+                          _updateProgress(context, ref, true, e),
+                    ),
+                  ],
+                  if (ctrl.otherAnime.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: titlePadding,
+                        child: Text('Other Anime', style: titleStyle),
+                      ),
+                    ),
+                    MinimalCollectionGrid(
+                      items: ctrl.otherAnime,
+                      updateProgress: (e) =>
+                          _updateProgress(context, ref, true, e),
+                    ),
+                  ],
+                  if (ctrl.releasingManga.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: titlePadding,
+                        child: Text('Releasing Manga', style: titleStyle),
+                      ),
+                    ),
+                    MinimalCollectionGrid(
+                      items: ctrl.releasingManga,
+                      updateProgress: (e) =>
+                          _updateProgress(context, ref, false, e),
+                    ),
+                  ],
+                  if (ctrl.otherManga.isNotEmpty) ...[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: titlePadding,
+                        child: Text('Other Manga', style: titleStyle),
+                      ),
+                    ),
+                    MinimalCollectionGrid(
+                      items: ctrl.otherManga,
+                      updateProgress: (e) =>
+                          _updateProgress(context, ref, false, e),
+                    ),
+                  ],
+                  const SliverFooter(),
+                ],
+              );
+            },
           );
         },
       ),
@@ -240,6 +249,7 @@ class _ProgressView extends StatelessWidget {
 
   Future<void> _updateProgress(
     BuildContext context,
+    WidgetRef ref,
     bool ofAnime,
     EntryItem e,
   ) async {
@@ -255,13 +265,14 @@ class _ProgressView extends StatelessWidget {
       return;
     }
 
-    Get.find<CollectionController>(tag: '${Settings().id}$ofAnime')
-        .updateProgress(
-      e.mediaId,
-      e.progress,
-      result,
-      EntryStatus.CURRENT,
-      null,
-    );
+    final tag = CollectionTag(Settings().id!, ofAnime);
+    ref.read(collectionProvider(tag)).updateProgress(
+          mediaId: e.mediaId,
+          progress: e.progress,
+          customLists: result,
+          listStatus: EntryStatus.CURRENT,
+          format: null,
+          sort: ref.read(collectionFilterProvider(tag)).sort,
+        );
   }
 }

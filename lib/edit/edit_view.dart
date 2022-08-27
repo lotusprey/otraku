@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/collection/entry.dart';
+import 'package:otraku/collection/collection_providers.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
+import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/settings/user_settings.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
@@ -114,7 +115,7 @@ class __ButtonsState extends State<_Buttons> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (__, ref, _) => BottomBarDualButtonRow(
+      builder: (context, ref, __) => BottomBarDualButtonRow(
         primary: _loading
             ? null
             : BottomBarButton(
@@ -143,12 +144,13 @@ class __ButtonsState extends State<_Buttons> {
                   widget.callback?.call(newEdit);
 
                   final isAnime = newEdit.type == 'ANIME';
-
-                  final entry = await Get.find<CollectionController>(
-                    tag: isAnime
-                        ? '${Settings().id}true'
-                        : '${Settings().id}false',
-                  ).updateEntry(widget.oldEdit, newEdit);
+                  final tag = CollectionTag(Settings().id!, isAnime);
+                  final entry =
+                      await ref.read(collectionProvider(tag)).updateEntry(
+                            widget.oldEdit,
+                            newEdit,
+                            ref.read(collectionFilterProvider(tag)).sort,
+                          );
                   if (entry == null) return;
 
                   if (widget.oldEdit.status == null)
@@ -187,11 +189,11 @@ class __ButtonsState extends State<_Buttons> {
                           return;
                         }
 
-                        Get.find<CollectionController>(
-                          tag: oldEdit.type == 'ANIME'
-                              ? '${Settings().id}true'
-                              : '${Settings().id}false',
-                        ).removeEntry(oldEdit);
+                        final tag = CollectionTag(
+                          Settings().id!,
+                          oldEdit.type == 'ANIME',
+                        );
+                        ref.read(collectionProvider(tag)).removeEntry(oldEdit);
 
                         if (oldEdit.status == EntryStatus.CURRENT)
                           Get.find<ProgressController>()

@@ -1,4 +1,4 @@
-import 'package:otraku/collection/entry.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/utils/settings.dart';
 
 class EntryItem {

@@ -13,7 +13,7 @@ import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';

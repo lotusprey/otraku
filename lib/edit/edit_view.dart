@@ -10,7 +10,7 @@ import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';

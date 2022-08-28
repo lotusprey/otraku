@@ -1,5 +1,5 @@
 import 'package:otraku/collection/collection_models.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 
 class Edit {

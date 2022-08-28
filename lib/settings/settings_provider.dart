@@ -12,14 +12,13 @@ final userSettingsProvider =
 );
 
 class UserSettingsNotifier extends StateNotifier<UserSettings> {
-  UserSettingsNotifier() : super(UserSettings._()) {
+  UserSettingsNotifier() : super(UserSettings.empty()) {
     _init();
   }
 
   Future<void> _init() async {
     try {
       final data = await Api.get(GqlQuery.settings);
-      if (data.isEmpty) return;
       state = UserSettings(data['Viewer']);
     } catch (_) {}
   }
@@ -27,7 +26,6 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
   Future<void> update(UserSettings other) async {
     try {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());
-      if (data.isEmpty) return;
       state = UserSettings(data['UpdateUser']);
     } catch (_) {}
   }
@@ -39,23 +37,23 @@ class UserSettingsNotifier extends StateNotifier<UserSettings> {
 /// But to apply those edits, the [UserSettingsNotifier] should be used.
 class UserSettings {
   UserSettings._({
-    this.notificationCount = 0,
-    this.scoreFormat = ScoreFormat.POINT_10,
-    this.defaultSort = EntrySort.TITLE,
-    this.titleLanguage = 'ROMAJI',
-    this.staffNameLanguage = 'ROMAJI_WESTERN',
-    this.activityMergeTime = 720,
-    this.splitCompletedAnime = false,
-    this.splitCompletedManga = false,
-    this.displayAdultContent = false,
-    this.airingNotifications = true,
-    this.advancedScoringEnabled = false,
-    this.restrictMessagesToFollowing = false,
-    this.advancedScores = const [],
-    this.animeCustomLists = const [],
-    this.mangaCustomLists = const [],
-    this.disabledListActivity = const {},
-    this.notificationOptions = const {},
+    required this.notificationCount,
+    required this.scoreFormat,
+    required this.defaultSort,
+    required this.titleLanguage,
+    required this.staffNameLanguage,
+    required this.activityMergeTime,
+    required this.splitCompletedAnime,
+    required this.splitCompletedManga,
+    required this.displayAdultContent,
+    required this.airingNotifications,
+    required this.advancedScoringEnabled,
+    required this.restrictMessagesToFollowing,
+    required this.advancedScores,
+    required this.animeCustomLists,
+    required this.mangaCustomLists,
+    required this.disabledListActivity,
+    required this.notificationOptions,
   });
 
   factory UserSettings(Map<String, dynamic> map) => UserSettings._(
@@ -102,6 +100,26 @@ class UserSettings {
           key: (n) => NotificationType.values.byName(n['type']),
           value: (n) => n['enabled'],
         ),
+      );
+
+  factory UserSettings.empty() => UserSettings._(
+        notificationCount: 0,
+        scoreFormat: ScoreFormat.POINT_10,
+        defaultSort: EntrySort.TITLE,
+        titleLanguage: 'ROMAJI',
+        staffNameLanguage: 'ROMAJI_WESTERN',
+        activityMergeTime: 720,
+        splitCompletedAnime: false,
+        splitCompletedManga: false,
+        displayAdultContent: false,
+        airingNotifications: true,
+        advancedScoringEnabled: false,
+        restrictMessagesToFollowing: false,
+        advancedScores: [],
+        animeCustomLists: [],
+        mangaCustomLists: [],
+        disabledListActivity: {},
+        notificationOptions: {},
       );
 
   ScoreFormat scoreFormat;

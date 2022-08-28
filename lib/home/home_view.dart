@@ -10,7 +10,7 @@ import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';

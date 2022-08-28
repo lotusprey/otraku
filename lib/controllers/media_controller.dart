@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/models/media_model.dart';

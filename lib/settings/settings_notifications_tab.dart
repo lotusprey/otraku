@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/notifications/notification_model.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';

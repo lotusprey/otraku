@@ -7,7 +7,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class CustomSliverHeader extends StatelessWidget {
-  CustomSliverHeader({
+  const CustomSliverHeader({
     required this.title,
     required this.image,
     required this.banner,
@@ -36,8 +36,9 @@ class CustomSliverHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double sidePadding = 10;
-    if (maxWidth != null && MediaQuery.of(context).size.width > maxWidth! + 20)
+    if (maxWidth != null && MediaQuery.of(context).size.width > maxWidth! + 20) {
       sidePadding = (MediaQuery.of(context).size.width - maxWidth!) / 2;
+    }
 
     final imageWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.30
@@ -130,7 +131,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
           children: [
             FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
-              stretchModes: [StretchMode.zoomBackground],
+              stretchModes: const [StretchMode.zoomBackground],
               background: Column(
                 children: [
                   Expanded(
@@ -294,7 +295,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
 class IconShade extends StatelessWidget {
   final Widget child;
-  IconShade(this.child);
+  const IconShade(this.child);
 
   @override
   Widget build(BuildContext context) {

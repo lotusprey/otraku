@@ -29,7 +29,7 @@ import 'package:otraku/widgets/overlays/toast.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
-  EditView(
+  const EditView(
     this.mediaId, {
     this.edit,
     this.callback,
@@ -48,8 +48,9 @@ class EditView extends StatelessWidget {
         builder: (context, ref, _) {
           final notifier = ref.watch(editProvider.notifier);
 
-          if (notifier.state.mediaId < 0)
+          if (notifier.state.mediaId < 0) {
             notifier.update((_) => edit!.copy(complete));
+          }
 
           return _build(edit!);
         },
@@ -64,8 +65,9 @@ class EditView extends StatelessWidget {
           currentEditProvider(mediaId),
           (_, state) => state.whenOrNull(
             data: (data) {
-              if (notifier.state.mediaId < 0)
+              if (notifier.state.mediaId < 0) {
                 notifier.update((_) => data.copy(complete));
+              }
             },
             error: (err, _) {
               Navigator.pop(context);
@@ -99,7 +101,7 @@ class EditView extends StatelessWidget {
 }
 
 class _Buttons extends StatefulWidget {
-  _Buttons(this.mediaId, this.oldEdit, this.callback);
+  const _Buttons(this.mediaId, this.oldEdit, this.callback);
 
   final int mediaId;
   final Edit oldEdit;
@@ -126,16 +128,20 @@ class __ButtonsState extends State<_Buttons> {
                   setState(() => _loading = true);
 
                   final result = await updateEntry(newEdit);
-                  Navigator.pop(context);
+                  if (mounted) {
+                    Navigator.pop(context);
+                  }
 
                   if (result is! int) {
-                    showPopUp(
-                      context,
-                      ConfirmationDialog(
-                        title: 'Could not update entry',
-                        content: result.toString(),
-                      ),
-                    );
+                    if (mounted) {
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not update entry',
+                          content: result.toString(),
+                        ),
+                      );
+                    }
                     return;
                   }
 
@@ -153,10 +159,11 @@ class __ButtonsState extends State<_Buttons> {
                           );
                   if (entry == null) return;
 
-                  if (widget.oldEdit.status == null)
+                  if (widget.oldEdit.status == null) {
                     Get.find<ProgressController>().add(entry, isAnime);
-                  else
+                  } else {
                     Get.find<ProgressController>().updateEntry(entry, isAnime);
+                  }
                 },
               ),
         secondary: widget.oldEdit.entryId == null
@@ -195,9 +202,10 @@ class __ButtonsState extends State<_Buttons> {
                         );
                         ref.read(collectionProvider(tag)).removeEntry(oldEdit);
 
-                        if (oldEdit.status == EntryStatus.CURRENT)
+                        if (oldEdit.status == EntryStatus.CURRENT) {
                           Get.find<ProgressController>()
                               .remove(oldEdit.mediaId);
+                        }
 
                         widget.callback?.call(oldEdit.emptyCopy());
                       });
@@ -211,7 +219,7 @@ class __ButtonsState extends State<_Buttons> {
 }
 
 class _EditView extends StatelessWidget {
-  _EditView(this.scrollCtrl, this.oldEdit);
+  const _EditView(this.scrollCtrl, this.oldEdit);
 
   final ScrollController scrollCtrl;
   final Edit oldEdit;
@@ -448,8 +456,9 @@ class _EditView extends StatelessWidget {
 
         if (!settings.advancedScoringEnabled ||
             settings.scoreFormat != ScoreFormat.POINT_100 &&
-                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL)
+                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL) {
           return const SliverToBoxAdapter(child: SizedBox());
+        }
 
         final scores = ref.watch(editProvider.notifier).state.advancedScores;
 
@@ -467,17 +476,19 @@ class _EditView extends StatelessWidget {
 
                     int count = 0;
                     double avg = 0;
-                    for (final v in scores.values)
+                    for (final v in scores.values) {
                       if (v > 0) {
                         avg += v;
                         count++;
                       }
+                    }
 
                     if (count > 0) avg /= count;
 
                     final notifier = ref.read(editProvider.notifier);
-                    if (notifier.state.score != avg)
+                    if (notifier.state.score != avg) {
                       notifier.update((s) => s.copyWith(score: avg));
+                    }
                   },
                 ),
               ),
@@ -571,7 +582,7 @@ class _Label extends StatelessWidget {
 }
 
 class _FieldGrid extends StatelessWidget {
-  _FieldGrid({required this.minWidth, required this.children});
+  const _FieldGrid({required this.minWidth, required this.children});
 
   final List<Widget> children;
   final double minWidth;
@@ -589,7 +600,7 @@ class _FieldGrid extends StatelessWidget {
 }
 
 class _CheckBoxGrid extends StatelessWidget {
-  _CheckBoxGrid(this.map, this.onChanged);
+  const _CheckBoxGrid(this.map, this.onChanged);
 
   final Map<String, bool> map;
   final Function(String, bool) onChanged;

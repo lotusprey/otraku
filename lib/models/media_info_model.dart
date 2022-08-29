@@ -83,7 +83,7 @@ class MediaInfoModel {
       int time = map['duration'];
       int hours = time ~/ 60;
       int minutes = time % 60;
-      duration = (hours != 0 ? '$hours hours, ' : '') + '$minutes mins';
+      duration = '${hours != 0 ? '$hours hours, ' : ''}$minutes mins';
     }
 
     String? season;
@@ -132,15 +132,20 @@ class MediaInfoModel {
 
     if (map['studios'] != null) {
       final List<dynamic> companies = map['studios']['edges'];
-      for (final company in companies)
-        if (company['isMain'])
+      for (final company in companies) {
+        if (company['isMain']) {
           model.studios[company['node']['name']] = company['node']['id'];
-        else
+        } else {
           model.producers[company['node']['name']] = company['node']['id'];
+        }
+      }
     }
 
-    if (map['tags'] != null)
-      for (final tag in map['tags']) model.tags.add(Tag(tag));
+    if (map['tags'] != null) {
+      for (final tag in map['tags']) {
+        model.tags.add(Tag(tag));
+      }
+    }
 
     return model;
   }

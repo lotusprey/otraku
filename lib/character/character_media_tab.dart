@@ -16,7 +16,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CharacterAnimeTab extends StatelessWidget {
-  CharacterAnimeTab(this.id, this.scrollCtrl);
+  const CharacterAnimeTab(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -38,7 +38,7 @@ class CharacterAnimeTab extends StatelessWidget {
                 ref.listen<AsyncValue>(
                   characterMediaProvider(id).select((s) => s.anime),
                   (_, s) {
-                    if (s.hasError)
+                    if (s.hasError) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
@@ -46,6 +46,7 @@ class CharacterAnimeTab extends StatelessWidget {
                           content: s.error.toString(),
                         ),
                       );
+                    }
                   },
                 );
 
@@ -100,7 +101,7 @@ class CharacterAnimeTab extends StatelessWidget {
 }
 
 class CharacterMangaTab extends StatelessWidget {
-  CharacterMangaTab(this.id, this.scrollCtrl);
+  const CharacterMangaTab(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -122,7 +123,7 @@ class CharacterMangaTab extends StatelessWidget {
                 ref.listen<AsyncValue>(
                   characterMediaProvider(id).select((s) => s.manga),
                   (_, s) {
-                    if (s.hasError)
+                    if (s.hasError) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
@@ -130,6 +131,7 @@ class CharacterMangaTab extends StatelessWidget {
                           content: s.error.toString(),
                         ),
                       );
+                    }
                   },
                 );
 
@@ -225,7 +227,7 @@ class _LanguageButton extends StatelessWidget {
 }
 
 class _FilterButton extends StatelessWidget {
-  _FilterButton(this.id);
+  const _FilterButton(this.id);
 
   final int id;
 

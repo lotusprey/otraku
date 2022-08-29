@@ -73,7 +73,7 @@ class Theming with ChangeNotifier {
           style: ElevatedButton.styleFrom(
             primary: scheme.primary,
             onPrimary: scheme.onPrimary,
-            textStyle: TextStyle(fontWeight: FontWeight.w500),
+            textStyle: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ),
         typography: Typography.material2014(),

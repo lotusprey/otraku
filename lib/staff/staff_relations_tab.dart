@@ -15,7 +15,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StaffCharactersTab extends StatelessWidget {
-  StaffCharactersTab(this.id, this.scrollCtrl);
+  const StaffCharactersTab(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -37,7 +37,7 @@ class StaffCharactersTab extends StatelessWidget {
                 ref.listen<AsyncValue>(
                   staffRelationProvider(id).select((s) => s.characters),
                   (_, s) {
-                    if (s.hasError)
+                    if (s.hasError) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
@@ -45,6 +45,7 @@ class StaffCharactersTab extends StatelessWidget {
                           content: s.error.toString(),
                         ),
                       );
+                    }
                   },
                 );
 
@@ -93,7 +94,7 @@ class StaffCharactersTab extends StatelessWidget {
 }
 
 class StaffRolesTab extends StatelessWidget {
-  StaffRolesTab(this.id, this.scrollCtrl);
+  const StaffRolesTab(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -115,7 +116,7 @@ class StaffRolesTab extends StatelessWidget {
                 ref.listen<AsyncValue>(
                   staffRelationProvider(id).select((s) => s.roles),
                   (_, s) {
-                    if (s.hasError)
+                    if (s.hasError) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
@@ -123,6 +124,7 @@ class StaffRolesTab extends StatelessWidget {
                           content: s.error.toString(),
                         ),
                       );
+                    }
                   },
                 );
 
@@ -170,7 +172,7 @@ class StaffRolesTab extends StatelessWidget {
 }
 
 class _FilterButton extends StatelessWidget {
-  _FilterButton(this.id);
+  const _FilterButton(this.id);
 
   final int id;
 

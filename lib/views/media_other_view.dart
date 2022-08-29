@@ -14,7 +14,7 @@ import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class MediaOtherView extends StatelessWidget {
-  MediaOtherView(this.ctrl);
+  const MediaOtherView(this.ctrl);
 
   final MediaController ctrl;
 
@@ -75,16 +75,17 @@ class MediaOtherView extends StatelessWidget {
 }
 
 class _RelationsGrid extends StatelessWidget {
-  _RelationsGrid(this.items);
+  const _RelationsGrid(this.items);
 
   final List<RelatedMediaModel> items;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
+    if (items.isEmpty) {
       return const SliverFillRemaining(
         child: Center(child: Text('No Relations')),
       );
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
@@ -167,17 +168,18 @@ class _RelationsGrid extends StatelessWidget {
 }
 
 class _RecommendationsGrid extends StatelessWidget {
-  _RecommendationsGrid(this.items, this.rate);
+  const _RecommendationsGrid(this.items, this.rate);
 
   final List<RecommendedModel> items;
   final Future<bool> Function(int, bool?) rate;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
+    if (items.isEmpty) {
       return const SliverFillRemaining(
         child: Center(child: Text('No Recommendations')),
       );
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
@@ -240,7 +242,7 @@ class _RecommendationsGrid extends StatelessWidget {
 }
 
 class _Rating extends StatefulWidget {
-  _Rating(this.model, this.rate);
+  const _Rating(this.model, this.rate);
 
   final RecommendedModel model;
   final Future<bool> Function(int, bool?) rate;
@@ -278,11 +280,12 @@ class __RatingState extends State<_Rating> {
             });
 
             widget.rate(widget.model.id, widget.model.userRating).then((ok) {
-              if (!ok)
+              if (!ok) {
                 setState(() {
                   widget.model.rating = oldRating;
                   widget.model.userRating = oldUserRating;
                 });
+              }
             });
           },
           child: Icon(
@@ -319,11 +322,12 @@ class __RatingState extends State<_Rating> {
             });
 
             widget.rate(widget.model.id, widget.model.userRating).then((ok) {
-              if (!ok)
+              if (!ok) {
                 setState(() {
                   widget.model.rating = oldRating;
                   widget.model.userRating = oldUserRating;
                 });
+              }
             });
           },
           child: Icon(

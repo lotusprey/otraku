@@ -19,7 +19,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaInfoView extends StatelessWidget {
-  MediaInfoView(this.ctrl);
+  const MediaInfoView(this.ctrl);
 
   final MediaController ctrl;
 
@@ -63,11 +63,12 @@ class MediaInfoView extends StatelessWidget {
       info.countryOfOrigin,
     ];
 
-    for (int i = infoData.length - 1; i >= 0; i--)
+    for (int i = infoData.length - 1; i >= 0; i--) {
       if (infoData[i] == null) {
         infoData.removeAt(i);
         infoTitles.removeAt(i);
       }
+    }
 
     final scrollCtrl = context
         .findAncestorStateOfType<NestedScrollViewState>()!
@@ -221,7 +222,7 @@ class MediaInfoView extends StatelessWidget {
 }
 
 class _EditButton extends StatefulWidget {
-  _EditButton(this.ctrl);
+  const _EditButton(this.ctrl);
 
   final MediaController ctrl;
 
@@ -251,7 +252,7 @@ class __EditButtonState extends State<_EditButton> {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  _FavoriteButton(this.ctrl);
+  const _FavoriteButton(this.ctrl);
 
   final MediaController ctrl;
 
@@ -290,7 +291,7 @@ class _Section extends StatelessWidget {
 }
 
 class _ScrollCards extends StatelessWidget {
-  _ScrollCards({
+  const _ScrollCards({
     required this.title,
     required this.items,
     required this.onTap,
@@ -342,7 +343,7 @@ class _ScrollCards extends StatelessWidget {
 }
 
 class _Titles extends StatelessWidget {
-  _Titles(this.titles);
+  const _Titles(this.titles);
 
   final List<String> titles;
 
@@ -379,7 +380,7 @@ class _Titles extends StatelessWidget {
 }
 
 class _Tags extends StatefulWidget {
-  _Tags(this.ctrl, this.ref);
+  const _Tags(this.ctrl, this.ref);
 
   final MediaController ctrl;
   final WidgetRef ref;
@@ -394,11 +395,12 @@ class __TagsState extends State<_Tags> {
   @override
   void initState() {
     super.initState();
-    for (final t in widget.ctrl.model!.info.tags)
+    for (final t in widget.ctrl.model!.info.tags) {
       if (t.isSpoiler) {
         _hasSpoilers = true;
         break;
       }
+    }
   }
 
   @override
@@ -471,7 +473,7 @@ class __TagsState extends State<_Tags> {
       delegate = SliverChildBuilderDelegate(
         childCount: tags.length + 1,
         (_, i) {
-          if (i == tags.length)
+          if (i == tags.length) {
             return ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).colorScheme.surface,
@@ -489,8 +491,9 @@ class __TagsState extends State<_Tags> {
                     ? Ionicons.eye_off_outline
                     : Ionicons.eye_outline,
               ),
-              label: Text('Spoilers'),
+              label: const Text('Spoilers'),
             );
+          }
 
           return GestureDetector(
             behavior: HitTestBehavior.opaque,

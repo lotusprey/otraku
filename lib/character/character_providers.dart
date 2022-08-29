@@ -168,7 +168,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
         type: DiscoverType.anime,
       ));
 
-      if (a['voiceActors'] != null)
+      if (a['voiceActors'] != null) {
         for (final va in a['voiceActors']) {
           final l = Convert.clarifyEnum(va['languageV2']);
           if (l == null) continue;
@@ -191,6 +191,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
             type: DiscoverType.staff,
           ));
         }
+      }
     }
 
     value = value.append(items, data['pageInfo']['hasNextPage']);
@@ -202,7 +203,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
     if (value == null) return;
 
     final items = <Relation>[];
-    for (final m in data['edges'])
+    for (final m in data['edges']) {
       items.add(Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
@@ -210,6 +211,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
         subtitle: Convert.clarifyEnum(m['characterRole']),
         type: DiscoverType.manga,
       ));
+    }
 
     value = value.append(items, data['pageInfo']['hasNextPage']);
     _manga = AsyncValue.data(value);

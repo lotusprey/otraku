@@ -14,7 +14,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReviewView extends StatelessWidget {
-  ReviewView(this.id, this.bannerUrl);
+  const ReviewView(this.id, this.bannerUrl);
 
   final int id;
   final String? bannerUrl;
@@ -279,7 +279,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class _RateButtons extends StatefulWidget {
-  _RateButtons(this.id);
+  const _RateButtons(this.id);
 
   final int id;
 

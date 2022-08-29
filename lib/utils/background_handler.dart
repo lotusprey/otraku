@@ -35,12 +35,13 @@ class BackgroundHandler {
 
     await Workmanager().initialize(_fetch);
 
-    if (Platform.isAndroid)
+    if (Platform.isAndroid) {
       Workmanager().registerPeriodicTask(
         '0',
         'notifications',
         constraints: Constraints(networkType: NetworkType.connected),
       );
+    }
   }
 
   // Should be called if the user logs out of an account.
@@ -70,7 +71,7 @@ class BackgroundHandler {
     if (uri.pathSegments[0] == RouteArg.thread) {
       showPopUp(
         context,
-        ConfirmationDialog(title: 'Sorry! Forum is not yet supported!'),
+        const ConfirmationDialog(title: 'Sorry! Forum is not yet supported!'),
       );
       return;
     }

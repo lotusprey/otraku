@@ -55,20 +55,22 @@ class EntryList {
   final String? splitCompletedListFormat;
 
   void removeByMediaId(int id) {
-    for (int i = 0; i < entries.length; i++)
+    for (int i = 0; i < entries.length; i++) {
       if (id == entries[i].mediaId) {
         entries.removeAt(i);
         return;
       }
+    }
   }
 
   void insertSorted(Entry item, EntrySort s) {
     final compare = _compareFn(s);
-    for (int i = 0; i < entries.length; i++)
+    for (int i = 0; i < entries.length; i++) {
       if (compare(item, entries[i]) <= 0) {
         entries.insert(i, item);
         return;
       }
+    }
     entries.add(item);
   }
 
@@ -144,10 +146,11 @@ class EntryList {
       case EntrySort.AIRING_AT:
         return (a, b) {
           if (a.airingAt == null) {
-            if (b.airingAt == null)
+            if (b.airingAt == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return 1;
           }
 
@@ -160,10 +163,11 @@ class EntryList {
       case EntrySort.AIRING_AT_DESC:
         return (a, b) {
           if (b.airingAt == null) {
-            if (a.airingAt == null)
+            if (a.airingAt == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return -1;
           }
 
@@ -176,10 +180,11 @@ class EntryList {
       case EntrySort.STARTED_RELEASING:
         return (a, b) {
           if (a.releaseStart == null) {
-            if (b.releaseStart == null)
+            if (b.releaseStart == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return 1;
           }
 
@@ -192,10 +197,11 @@ class EntryList {
       case EntrySort.STARTED_RELEASING_DESC:
         return (a, b) {
           if (b.releaseStart == null) {
-            if (a.releaseStart == null)
+            if (a.releaseStart == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return -1;
           }
 
@@ -208,10 +214,11 @@ class EntryList {
       case EntrySort.ENDED_RELEASING:
         return (a, b) {
           if (a.releaseEnd == null) {
-            if (b.releaseEnd == null)
+            if (b.releaseEnd == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return 1;
           }
 
@@ -224,10 +231,11 @@ class EntryList {
       case EntrySort.ENDED_RELEASING_DESC:
         return (a, b) {
           if (b.releaseEnd == null) {
-            if (a.releaseEnd == null)
+            if (a.releaseEnd == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return -1;
           }
 
@@ -240,10 +248,11 @@ class EntryList {
       case EntrySort.STARTED_WATCHING:
         return (a, b) {
           if (a.watchStart == null) {
-            if (b.watchStart == null)
+            if (b.watchStart == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return 1;
           }
 
@@ -256,10 +265,11 @@ class EntryList {
       case EntrySort.STARTED_WATCHING_DESC:
         return (a, b) {
           if (b.watchStart == null) {
-            if (a.watchStart == null)
+            if (a.watchStart == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return -1;
           }
 
@@ -272,10 +282,11 @@ class EntryList {
       case EntrySort.ENDED_WATCHING:
         return (a, b) {
           if (a.watchEnd == null) {
-            if (b.watchEnd == null)
+            if (b.watchEnd == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return 1;
           }
 
@@ -288,10 +299,11 @@ class EntryList {
       case EntrySort.ENDED_WATCHING_DESC:
         return (a, b) {
           if (b.watchEnd == null) {
-            if (a.watchEnd == null)
+            if (a.watchEnd == null) {
               return a.titles[0]
                   .toUpperCase()
                   .compareTo(b.titles[0].toUpperCase());
+            }
             return -1;
           }
 
@@ -337,15 +349,20 @@ class Entry {
 
   factory Entry(Map<String, dynamic> map) {
     final titles = <String>[map['media']['title']['userPreferred']];
-    if (map['media']['title']['english'] != null)
+    if (map['media']['title']['english'] != null) {
       titles.add(map['media']['title']['english']);
-    if (map['media']['title']['romaji'] != null)
+    }
+    if (map['media']['title']['romaji'] != null) {
       titles.add(map['media']['title']['romaji']);
-    if (map['media']['title']['native'] != null)
+    }
+    if (map['media']['title']['native'] != null) {
       titles.add(map['media']['title']['native']);
+    }
 
     final tags = <int>[];
-    for (final t in map['media']['tags']) tags.add(t['id']);
+    for (final t in map['media']['tags']) {
+      tags.add(t['id']);
+    }
 
     return Entry._(
       mediaId: map['media']['id'],

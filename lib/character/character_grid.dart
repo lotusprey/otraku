@@ -7,7 +7,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class CharacterGrid extends StatelessWidget {
-  CharacterGrid(this.items);
+  const CharacterGrid(this.items);
 
   final List<CharacterItem> items;
 

@@ -13,7 +13,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReviewsView extends ConsumerStatefulWidget {
-  ReviewsView(this.id);
+  const ReviewsView(this.id);
 
   final int id;
 

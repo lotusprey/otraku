@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class FadeImage extends StatelessWidget {
-  FadeImage(
+  const FadeImage(
     this.imageUrl, {
     this.fit = BoxFit.cover,
     this.width = double.infinity,

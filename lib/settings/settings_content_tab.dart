@@ -12,7 +12,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsContentTab extends StatelessWidget {
-  SettingsContentTab(this.scrollCtrl, this.settings, this.shouldUpdate);
+  const SettingsContentTab(this.scrollCtrl, this.settings, this.shouldUpdate);
 
   final ScrollController scrollCtrl;
   final UserSettings settings;
@@ -194,7 +194,7 @@ class SettingsContentTab extends StatelessWidget {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverToBoxAdapter(
+          const SliverToBoxAdapter(
             child: Text('Disable List Activity Creation of:'),
           ),
           SliverGrid(

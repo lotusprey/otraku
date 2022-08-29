@@ -150,7 +150,7 @@ class StaffRelationNotifier extends ChangeNotifier {
     if (value == null) return;
 
     final items = <Relation>[];
-    for (final s in data['edges'])
+    for (final s in data['edges']) {
       items.add(Relation(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
@@ -160,6 +160,7 @@ class StaffRelationNotifier extends ChangeNotifier {
             ? DiscoverType.anime
             : DiscoverType.manga,
       ));
+    }
 
     value = value.append(items, data['pageInfo']['hasNextPage']);
     _roles = AsyncValue.data(value);

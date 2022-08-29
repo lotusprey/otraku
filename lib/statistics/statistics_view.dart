@@ -108,7 +108,7 @@ class _StatisticsViewState extends State<StatisticsView> {
 }
 
 class _StatisticsView extends StatelessWidget {
-  _StatisticsView({
+  const _StatisticsView({
     required this.statistics,
     required this.ofAnime,
     required this.scrollCtrl,
@@ -248,7 +248,7 @@ class _Details extends StatelessWidget {
 }
 
 class _BarChart extends StatefulWidget {
-  _BarChart({
+  const _BarChart({
     required this.statistics,
     required this.title,
     required this.initialTab,
@@ -282,12 +282,13 @@ class _BarChartState extends State<_BarChart> {
   @override
   Widget build(BuildContext context) {
     late List<num> values;
-    if (_tab == 0)
+    if (_tab == 0) {
       values = widget.statistics.map((s) => s.count).toList();
-    else if (_tab == 1)
+    } else if (_tab == 1) {
       values = widget.statistics.map((s) => s.amount).toList();
-    else
+    } else {
       values = widget.statistics.map((s) => s.meanScore).toList();
+    }
 
     return BarChart(
       title: widget.title,
@@ -314,7 +315,7 @@ class _BarChartState extends State<_BarChart> {
 }
 
 class _PieChart extends StatelessWidget {
-  _PieChart(this.title, this.stats);
+  const _PieChart(this.title, this.stats);
 
   final String title;
   final List<TypeStatistics> stats;

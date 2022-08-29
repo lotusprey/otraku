@@ -18,8 +18,9 @@ class RelationGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
+    if (items.isEmpty) {
       return SliverFillRemaining(child: Center(child: Text(placeholder)));
+    }
 
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
@@ -37,7 +38,7 @@ class RelationGrid extends StatelessWidget {
 }
 
 class _RelationTile extends StatelessWidget {
-  _RelationTile(this.item, this.connection);
+  const _RelationTile(this.item, this.connection);
 
   final Relation item;
   final Relation? connection;
@@ -45,7 +46,7 @@ class _RelationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final Widget centerContent;
-    if (connection != null)
+    if (connection != null) {
       centerContent = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,7 +107,7 @@ class _RelationTile extends StatelessWidget {
           ),
         ],
       );
-    else
+    } else {
       centerContent = LinkTile(
         id: item.id,
         discoverType: item.type,
@@ -126,6 +127,7 @@ class _RelationTile extends StatelessWidget {
           ],
         ),
       );
+    }
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -139,8 +141,8 @@ class _RelationTile extends StatelessWidget {
             discoverType: item.type,
             info: item.imageUrl,
             child: ClipRRect(
-              child: FadeImage(item.imageUrl, width: 80),
               borderRadius: Consts.borderRadiusMin,
+              child: FadeImage(item.imageUrl, width: 80),
             ),
           ),
           Expanded(
@@ -152,8 +154,8 @@ class _RelationTile extends StatelessWidget {
               discoverType: connection!.type,
               info: connection!.imageUrl,
               child: ClipRRect(
-                child: FadeImage(connection!.imageUrl, width: 80),
                 borderRadius: Consts.borderRadiusMin,
+                child: FadeImage(connection!.imageUrl, width: 80),
               ),
             ),
         ],

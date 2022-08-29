@@ -24,8 +24,9 @@ class _ThemePreviewState extends State<ThemePreview> {
   @override
   Widget build(BuildContext context) {
     final colorSchemeMap = <String, int>{};
-    for (int i = 0; i < Theming.schemes.length; i++)
+    for (int i = 0; i < Theming.schemes.length; i++) {
       colorSchemeMap[Theming.schemes.keys.elementAt(i)] = i;
+    }
 
     return SliverToBoxAdapter(
       child: Padding(

@@ -36,8 +36,9 @@ class Staff {
 
   factory Staff(Map<String, dynamic> map) {
     final altNames = List<String>.from(map['name']['alternative'] ?? []);
-    if (map['name']['native'] != null)
+    if (map['name']['native'] != null) {
       altNames.insert(0, map['name']['native'].toString());
+    }
 
     final yearsActive = map['yearsActive'] as List?;
 
@@ -53,7 +54,7 @@ class Staff {
       homeTown: map['homeTown'],
       gender: map['gender'],
       age: map['age']?.toString(),
-      startYear: yearsActive != null && yearsActive.length > 0
+      startYear: yearsActive != null && yearsActive.isNotEmpty
           ? yearsActive[0].toString()
           : null,
       endYear: yearsActive != null && yearsActive.length > 1

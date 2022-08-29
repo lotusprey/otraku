@@ -5,7 +5,7 @@ import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class StudioGrid extends StatelessWidget {
-  StudioGrid(this.items);
+  const StudioGrid(this.items);
 
   final List<StudioItem> items;
 

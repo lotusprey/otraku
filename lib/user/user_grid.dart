@@ -7,7 +7,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class UserGrid extends StatelessWidget {
-  UserGrid(this.items);
+  const UserGrid(this.items);
 
   final List<UserItem> items;
 
@@ -30,7 +30,7 @@ class UserGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  _Tile(this.item);
+  const _Tile(this.item);
 
   final UserItem item;
 

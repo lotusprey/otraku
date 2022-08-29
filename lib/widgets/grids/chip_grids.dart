@@ -10,7 +10,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class _ChipGrid extends StatelessWidget {
-  _ChipGrid({
+  const _ChipGrid({
     required this.title,
     required this.placeholder,
     required this.children,
@@ -33,7 +33,7 @@ class _ChipGrid extends StatelessWidget {
           children: [
             Text(title, style: Theme.of(context).textTheme.subtitle1),
             const Spacer(),
-            if (onClear != null && children.length > 0)
+            if (onClear != null && children.isNotEmpty)
               Tooltip(
                 message: 'Clear',
                 child: GestureDetector(
@@ -78,7 +78,7 @@ class _ChipGrid extends StatelessWidget {
 }
 
 class ChipGrid extends StatefulWidget {
-  ChipGrid({
+  const ChipGrid({
     required this.title,
     required this.placeholder,
     required this.names,
@@ -91,19 +91,20 @@ class ChipGrid extends StatefulWidget {
   final Future<void> Function(List<String>) onEdit;
 
   @override
-  _ChipGridState createState() => _ChipGridState();
+  ChipGridState createState() => ChipGridState();
 }
 
-class _ChipGridState extends State<ChipGrid> {
+class ChipGridState extends State<ChipGrid> {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
-    for (int i = 0; i < widget.names.length; i++)
+    for (int i = 0; i < widget.names.length; i++) {
       children.add(ChipField(
         key: Key(widget.names[i]),
         name: Convert.clarifyEnum(widget.names[i])!,
         onRemoved: () => setState(() => widget.names.removeAt(i)),
       ));
+    }
 
     return _ChipGrid(
       title: widget.title,
@@ -121,27 +122,28 @@ class ChipNamingGrid extends StatefulWidget {
   final String placeholder;
   final List<String> names;
 
-  ChipNamingGrid({
+  const ChipNamingGrid({
     required this.title,
     required this.placeholder,
     required this.names,
   });
 
   @override
-  _ChipNamingGridState createState() => _ChipNamingGridState();
+  ChipNamingGridState createState() => ChipNamingGridState();
 }
 
-class _ChipNamingGridState extends State<ChipNamingGrid> {
+class ChipNamingGridState extends State<ChipNamingGrid> {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
-    for (int i = 0; i < widget.names.length; i++)
+    for (int i = 0; i < widget.names.length; i++) {
       children.add(ChipNamingField(
         key: Key(widget.names[i]),
         name: widget.names[i],
         onChanged: (n) => setState(() => widget.names[i] = n),
         onRemoved: () => setState(() => widget.names.removeAt(i)),
       ));
+    }
 
     return _ChipGrid(
       title: widget.title,
@@ -153,8 +155,9 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
           context,
           InputDialog(initial: name, onChanged: (n) => name = n),
         ).then((_) {
-          if (name.isNotEmpty && !widget.names.contains(name))
+          if (name.isNotEmpty && !widget.names.contains(name)) {
             setState(() => widget.names.add(name));
+          }
         });
       },
     );
@@ -162,7 +165,7 @@ class _ChipNamingGridState extends State<ChipNamingGrid> {
 }
 
 class ChipTagGrid extends StatefulWidget {
-  ChipTagGrid({
+  const ChipTagGrid({
     required this.inclusiveGenres,
     required this.exclusiveGenres,
     required this.inclusiveTags,
@@ -181,10 +184,10 @@ class ChipTagGrid extends StatefulWidget {
   final List<int>? tagIdNotIn;
 
   @override
-  _ChipTagGridState createState() => _ChipTagGridState();
+  ChipTagGridState createState() => ChipTagGridState();
 }
 
-class _ChipTagGridState extends State<ChipTagGrid> {
+class ChipTagGridState extends State<ChipTagGrid> {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];

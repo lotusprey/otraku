@@ -40,8 +40,9 @@ class NotificationsNotifier extends ChangeNotifier {
       });
 
       _unreadCount = 0;
-      if (filter.index < 1)
+      if (filter.index < 1) {
         _unreadCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
+      }
 
       final items = <SiteNotification>[];
       for (final n in data['Page']['notifications']) {

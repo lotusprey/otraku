@@ -10,7 +10,7 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MinimalCollectionGrid extends StatelessWidget {
-  MinimalCollectionGrid({required this.items, required this.updateProgress});
+  const MinimalCollectionGrid({required this.items, required this.updateProgress});
 
   final List<EntryItem> items;
   final void Function(EntryItem) updateProgress;
@@ -71,7 +71,7 @@ class MinimalCollectionGrid extends StatelessWidget {
 }
 
 class _IncrementButton extends StatefulWidget {
-  _IncrementButton(this.item, this.updateProgress);
+  const _IncrementButton(this.item, this.updateProgress);
 
   final EntryItem item;
   final void Function(EntryItem) updateProgress;
@@ -85,7 +85,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
   Widget build(BuildContext context) {
     final model = widget.item;
 
-    if (model.progress == model.progressMax)
+    if (model.progress == model.progressMax) {
       return Tooltip(
         message: 'Progress',
         child: SizedBox(
@@ -98,6 +98,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           ),
         ),
       );
+    }
 
     final warning =
         model.nextEpisode != null && model.progress + 1 < model.nextEpisode!;
@@ -105,7 +106,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
     return TextButton(
       style: TextButton.styleFrom(
         minimumSize: const Size(0, 30),
-        padding: EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         primary: warning ? Theme.of(context).colorScheme.error : null,
       ),
@@ -114,8 +115,9 @@ class _IncrementButtonState extends State<_IncrementButton> {
             model.progress < model.progressMax! - 1) {
           setState(() => model.progress++);
           widget.updateProgress(model);
-        } else
+        } else {
           showSheet(context, EditView(model.mediaId, complete: true));
+        }
       },
       child: Tooltip(
         message: 'Increment Progress',
@@ -124,7 +126,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           children: [
             Text(
               '${model.progress}/${model.progressMax ?? "?"}',
-              style: TextStyle(fontSize: Consts.fontSmall),
+              style: const TextStyle(fontSize: Consts.fontSmall),
             ),
             const SizedBox(width: 3),
             const Icon(Ionicons.add_outline, size: Consts.iconSmall),

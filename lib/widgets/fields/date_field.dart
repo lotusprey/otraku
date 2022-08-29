@@ -3,16 +3,16 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 
 class DateField extends StatefulWidget {
-  DateField({required this.date, required this.onChanged});
+  const DateField({required this.date, required this.onChanged});
 
   final DateTime? date;
   final Function(DateTime?) onChanged;
 
   @override
-  _DateFieldState createState() => _DateFieldState();
+  DateFieldState createState() => DateFieldState();
 }
 
-class _DateFieldState extends State<DateField> {
+class DateFieldState extends State<DateField> {
   DateTime? _date;
 
   Widget _picker(DateTime? initialDate) {

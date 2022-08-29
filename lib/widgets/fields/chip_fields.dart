@@ -3,7 +3,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 
 // A static chip.
 class ChipField extends StatelessWidget {
-  ChipField({required this.name, required this.onRemoved, super.key});
+  const ChipField({required this.name, required this.onRemoved, super.key});
 
   final String name;
   final void Function() onRemoved;
@@ -19,7 +19,7 @@ class ChipField extends StatelessWidget {
 
 // A chip that switches state when tapped.
 class ChipToggleField extends StatefulWidget {
-  ChipToggleField({
+  const ChipToggleField({
     required this.name,
     required this.onRemoved,
     required this.onChanged,
@@ -33,10 +33,10 @@ class ChipToggleField extends StatefulWidget {
   final bool initial;
 
   @override
-  _ChipToggleFieldState createState() => _ChipToggleFieldState();
+  ChipToggleFieldState createState() => ChipToggleFieldState();
 }
 
-class _ChipToggleFieldState extends State<ChipToggleField> {
+class ChipToggleFieldState extends State<ChipToggleField> {
   late bool _on;
 
   @override
@@ -65,7 +65,7 @@ class _ChipToggleFieldState extends State<ChipToggleField> {
 }
 
 class ChipOptionField extends StatelessWidget {
-  ChipOptionField({
+  const ChipOptionField({
     required this.name,
     required this.selected,
     required this.onTap,
@@ -98,7 +98,7 @@ class ChipOptionField extends StatelessWidget {
 // A chip that can be renamed when tapped. It's a statelessWidget, because the
 // state is managed by it's parent (likely ChipNamingGrid).
 class ChipNamingField extends StatelessWidget {
-  ChipNamingField({
+  const ChipNamingField({
     required this.name,
     required this.onRemoved,
     required this.onChanged,

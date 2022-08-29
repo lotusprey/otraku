@@ -92,7 +92,7 @@ class FavoritesNotifier extends ChangeNotifier {
       return data['User']['favourites'];
     });
 
-    if (type == null || type == FavoriteType.anime)
+    if (type == null || type == FavoriteType.anime) {
       _anime = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['anime'];
@@ -101,15 +101,18 @@ class FavoritesNotifier extends ChangeNotifier {
         if (_animeCount == 0) _animeCount = map['pageInfo']['total'] ?? 0;
 
         final items = <MediaItem>[];
-        for (final a in map['nodes']) items.add(MediaItem(a));
+        for (final a in map['nodes']) {
+          items.add(MediaItem(a));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.manga)
+    if (type == null || type == FavoriteType.manga) {
       _manga = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['manga'];
@@ -118,33 +121,40 @@ class FavoritesNotifier extends ChangeNotifier {
         if (_mangaCount == 0) _mangaCount = map['pageInfo']['total'] ?? 0;
 
         final items = <MediaItem>[];
-        for (final m in map['nodes']) items.add(MediaItem(m));
+        for (final m in map['nodes']) {
+          items.add(MediaItem(m));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.characters)
+    if (type == null || type == FavoriteType.characters) {
       _characters = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['characters'];
         final value = _characters.valueOrNull ?? Pagination();
 
-        if (_characterCount == 0)
+        if (_characterCount == 0) {
           _characterCount = map['pageInfo']['total'] ?? 0;
+        }
 
         final items = <CharacterItem>[];
-        for (final c in map['nodes']) items.add(CharacterItem(c));
+        for (final c in map['nodes']) {
+          items.add(CharacterItem(c));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.staff)
+    if (type == null || type == FavoriteType.staff) {
       _staff = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['staff'];
@@ -153,15 +163,18 @@ class FavoritesNotifier extends ChangeNotifier {
         if (_staffCount == 0) _staffCount = map['pageInfo']['total'] ?? 0;
 
         final items = <StaffItem>[];
-        for (final s in map['nodes']) items.add(StaffItem(s));
+        for (final s in map['nodes']) {
+          items.add(StaffItem(s));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.studios)
+    if (type == null || type == FavoriteType.studios) {
       _studios = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['studios'];
@@ -170,13 +183,16 @@ class FavoritesNotifier extends ChangeNotifier {
         if (_studioCount == 0) _studioCount = map['pageInfo']['total'] ?? 0;
 
         final items = <StudioItem>[];
-        for (final s in map['nodes']) items.add(StudioItem(s));
+        for (final s in map['nodes']) {
+          items.add(StudioItem(s));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
     notifyListeners();
   }

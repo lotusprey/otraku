@@ -6,7 +6,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
-  SettingsAboutTab(this.scrollCtrl);
+  const SettingsAboutTab(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 
@@ -50,7 +50,7 @@ class SettingsAboutTab extends StatelessWidget {
             width: 200,
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.logo_discord),
-              label: Text('Discord'),
+              label: const Text('Discord'),
               onPressed: () =>
                   Toast.launch(context, 'https://discord.gg/YN2QWVbFef'),
             ),
@@ -62,7 +62,7 @@ class SettingsAboutTab extends StatelessWidget {
             width: 200,
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.logo_github),
-              label: Text('Source Code'),
+              label: const Text('Source Code'),
               onPressed: () =>
                   Toast.launch(context, 'https://github.com/lotusgate/otraku'),
             ),
@@ -74,7 +74,7 @@ class SettingsAboutTab extends StatelessWidget {
             width: 200,
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.cash_outline),
-              label: Text('Donate'),
+              label: const Text('Donate'),
               onPressed: () =>
                   Toast.launch(context, 'https://ko-fi.com/lotusgate'),
             ),
@@ -86,7 +86,7 @@ class SettingsAboutTab extends StatelessWidget {
             width: 200,
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.finger_print),
-              label: Text('Privacy Policy'),
+              label: const Text('Privacy Policy'),
               onPressed: () => Toast.launch(
                 context,
                 'https://sites.google.com/view/otraku/privacy-policy',
@@ -100,7 +100,7 @@ class SettingsAboutTab extends StatelessWidget {
             width: 200,
             child: ElevatedButton.icon(
               icon: const Icon(Ionicons.log_out_outline),
-              label: Text('Accounts'),
+              label: const Text('Accounts'),
               onPressed: Api.logOut,
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).colorScheme.error,

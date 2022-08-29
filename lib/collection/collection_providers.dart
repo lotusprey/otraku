@@ -28,59 +28,67 @@ final entriesProvider = Provider.autoDispose.family(
     for (final entry in list.entries) {
       if (search.isNotEmpty) {
         bool contains = false;
-        for (final title in entry.titles)
+        for (final title in entry.titles) {
           if (title.toLowerCase().contains(search)) {
             contains = true;
             break;
           }
+        }
         if (!contains) continue;
       }
 
       if (filter.country != null && entry.country != filter.country) continue;
 
-      if (filter.formats.isNotEmpty && !filter.formats.contains(entry.format))
+      if (filter.formats.isNotEmpty && !filter.formats.contains(entry.format)) {
         continue;
+      }
 
-      if (filter.statuses.isNotEmpty && !filter.statuses.contains(entry.status))
+      if (filter.statuses.isNotEmpty &&
+          !filter.statuses.contains(entry.status)) {
         continue;
+      }
 
       if (filter.genreIn.isNotEmpty) {
         bool isIn = true;
-        for (final genre in filter.genreIn)
+        for (final genre in filter.genreIn) {
           if (!entry.genres.contains(genre)) {
             isIn = false;
             break;
           }
+        }
         if (!isIn) continue;
       }
 
       if (filter.genreNotIn.isNotEmpty) {
         bool isIn = false;
-        for (final genre in filter.genreNotIn)
+        for (final genre in filter.genreNotIn) {
           if (entry.genres.contains(genre)) {
             isIn = true;
             break;
           }
+        }
         if (isIn) continue;
       }
 
       if (filter.tagIdIn.isNotEmpty) {
         bool isIn = true;
-        for (final tagId in filter.tagIdIn)
+        for (final tagId in filter.tagIdIn) {
           if (!entry.tags.contains(tagId)) {
             isIn = false;
             break;
           }
+        }
         if (!isIn) continue;
       }
 
       if (filter.tagIdNotIn.isNotEmpty) {
         bool isIn = false;
-        for (final tagId in filter.tagIdNotIn)
+        for (final tagId in filter.tagIdNotIn) {
           if (entry.tags.contains(tagId)) {
             isIn = true;
             break;
           }
+        }
         if (isIn) continue;
       }
 
@@ -110,7 +118,9 @@ class CollectionNotifier extends ChangeNotifier {
   set sort(EntrySort val) {
     if (_sort == val) return;
     _sort = val;
-    for (final l in lists) l.sort(val);
+    for (final l in lists) {
+      l.sort(val);
+    }
   }
 
   set index(int val) {
@@ -151,7 +161,9 @@ class CollectionNotifier extends ChangeNotifier {
           lists.add(EntryList(l, splitCompleted));
         }
 
-        for (final l in maps) lists.add(EntryList(l, splitCompleted));
+        for (final l in maps) {
+          lists.add(EntryList(l, splitCompleted));
+        }
         return lists;
       },
     );
@@ -187,29 +199,34 @@ class CollectionNotifier extends ChangeNotifier {
         .toList();
 
     // Remove from old status list.
-    if (oldEdit.status != null && !oldEdit.hiddenFromStatusLists)
-      for (final list in lists)
+    if (oldEdit.status != null && !oldEdit.hiddenFromStatusLists) {
+      for (final list in lists) {
         if (oldEdit.status == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
           list.removeByMediaId(entry.mediaId);
           break;
         }
+      }
+    }
 
     // Remove from old custom lists.
-    if (oldCustomLists.isNotEmpty)
-      for (final list in lists)
-        for (int i = 0; i < oldCustomLists.length; i++)
+    if (oldCustomLists.isNotEmpty) {
+      for (final list in lists) {
+        for (int i = 0; i < oldCustomLists.length; i++) {
           if (oldCustomLists[i] == list.name.toLowerCase()) {
             list.removeByMediaId(entry.mediaId);
             oldCustomLists.removeAt(i);
             break;
           }
+        }
+      }
+    }
 
     // Add to new status list.
     if (!newEdit.hiddenFromStatusLists) {
       bool added = false;
-      for (final list in lists)
+      for (final list in lists) {
         if (entry.entryStatus == list.status &&
             (list.splitCompletedListFormat == null ||
                 list.splitCompletedListFormat == entry.format)) {
@@ -217,6 +234,7 @@ class CollectionNotifier extends ChangeNotifier {
           added = true;
           break;
         }
+      }
       if (!added) {
         _fetch();
         return entry;
@@ -225,13 +243,15 @@ class CollectionNotifier extends ChangeNotifier {
 
     // Add to new custom lists.
     if (newCustomLists.isNotEmpty) {
-      for (final list in lists)
-        for (int i = 0; i < newCustomLists.length; i++)
+      for (final list in lists) {
+        for (int i = 0; i < newCustomLists.length; i++) {
           if (newCustomLists[i] == list.name.toLowerCase()) {
             list.insertSorted(entry, sort);
             newCustomLists.removeAt(i);
             break;
           }
+        }
+      }
       if (newCustomLists.isNotEmpty) {
         _fetch();
         return entry;
@@ -239,11 +259,12 @@ class CollectionNotifier extends ChangeNotifier {
     }
 
     // Remove empty lists.
-    for (int i = 0; i < lists.length; i++)
+    for (int i = 0; i < lists.length; i++) {
       if (lists[i].entries.isEmpty) {
         if (i <= _index && _index != 0) _index--;
         lists.removeAt(i--);
       }
+    }
 
     notifyListeners();
     return entry;
@@ -273,32 +294,37 @@ class CollectionNotifier extends ChangeNotifier {
           (list.splitCompletedListFormat != null &&
               list.splitCompletedListFormat != format)) continue;
 
-      for (final entry in list.entries)
+      for (final entry in list.entries) {
         if (entry.mediaId == mediaId) {
           entry.progress = progress;
           break;
         }
+      }
 
       if (mustSort) list.sort(sort);
       break;
     }
 
     // Update custom lists.
-    if (customLists.isNotEmpty)
-      for (final list in lists)
-        for (int i = 0; i < customLists.length; i++)
+    if (customLists.isNotEmpty) {
+      for (final list in lists) {
+        for (int i = 0; i < customLists.length; i++) {
           if (list.status == null &&
               customLists[i] == list.name.toLowerCase()) {
-            for (final entry in list.entries)
+            for (final entry in list.entries) {
               if (entry.mediaId == mediaId) {
                 entry.progress = progress;
                 break;
               }
+            }
 
             if (mustSort) list.sort(sort);
             customLists.removeAt(i);
             break;
           }
+        }
+      }
+    }
   }
 
   Future<void> removeEntry(Edit edit) async {
@@ -309,27 +335,34 @@ class CollectionNotifier extends ChangeNotifier {
         .toList();
 
     // Remove from status list.
-    if (!edit.hiddenFromStatusLists)
-      for (final list in lists)
-        if (list.status != null && list.status == edit.status)
+    if (!edit.hiddenFromStatusLists) {
+      for (final list in lists) {
+        if (list.status != null && list.status == edit.status) {
           list.removeByMediaId(edit.mediaId);
+        }
+      }
+    }
 
     // Remove from custom lists.
-    if (customLists.isNotEmpty)
-      for (final list in lists)
-        for (int i = 0; i < customLists.length; i++)
+    if (customLists.isNotEmpty) {
+      for (final list in lists) {
+        for (int i = 0; i < customLists.length; i++) {
           if (customLists[i] == list.name.toLowerCase()) {
             list.removeByMediaId(edit.mediaId);
             customLists.removeAt(i);
             break;
           }
+        }
+      }
+    }
 
     // Remove empty lists.
-    for (int i = 0; i < lists.length; i++)
+    for (int i = 0; i < lists.length; i++) {
       if (lists[i].entries.isEmpty) {
         if (i <= _index && _index != 0) _index--;
         lists.removeAt(i--);
       }
+    }
 
     notifyListeners();
   }

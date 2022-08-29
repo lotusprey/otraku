@@ -7,7 +7,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
-  ReviewGrid(this.items);
+  const ReviewGrid(this.items);
 
   final List<ReviewItem> items;
 
@@ -30,7 +30,7 @@ class ReviewGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  _Tile(this.item);
+  const _Tile(this.item);
 
   final ReviewItem item;
 
@@ -52,7 +52,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Consts.radiusMin),
+                  borderRadius: const BorderRadius.vertical(top: Consts.radiusMin),
                   child: Hero(
                     tag: item.id,
                     child: FadeImage(item.bannerUrl!),
@@ -96,7 +96,7 @@ class _Tile extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.thumbs_up_down_outlined,
                                   size: Consts.iconSmall,
                                 ),

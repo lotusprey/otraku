@@ -13,7 +13,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class CharacterInfoTab extends StatelessWidget {
-  CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+  const CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
 
   final int id;
   final String? imageUrl;
@@ -62,7 +62,7 @@ class CharacterInfoTab extends StatelessWidget {
 }
 
 class _TabContent extends StatelessWidget {
-  _TabContent({
+  const _TabContent({
     required this.id,
     required this.data,
     required this.imageUrl,
@@ -146,7 +146,7 @@ class _TabContent extends StatelessWidget {
       ),
     );
 
-    const space = const SliverToBoxAdapter(child: SizedBox(height: 10));
+    const space = SliverToBoxAdapter(child: SizedBox(height: 10));
 
     return PageLayout(
       floatingBar: FloatingBar(
@@ -188,12 +188,12 @@ class _TabContent extends StatelessWidget {
                   if (data!.description.isNotEmpty)
                     SliverToBoxAdapter(
                       child: Container(
-                        child: HtmlContent(data!.description),
                         padding: Consts.padding,
                         decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: Consts.borderRadiusMin,
                         ),
+                        child: HtmlContent(data!.description),
                       ),
                     ),
                 ] else
@@ -213,7 +213,7 @@ class _TabContent extends StatelessWidget {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  _FavoriteButton(this.data);
+  const _FavoriteButton(this.data);
 
   final Character data;
 
@@ -244,7 +244,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 }
 
 class _InfoTile extends StatelessWidget {
-  _InfoTile(this.title, this.subtitle);
+  const _InfoTile(this.title, this.subtitle);
 
   final String title;
   final String subtitle;

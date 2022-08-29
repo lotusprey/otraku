@@ -7,7 +7,7 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class StaffGrid extends StatelessWidget {
-  StaffGrid(this.items);
+  const StaffGrid(this.items);
 
   final List<StaffItem> items;
 

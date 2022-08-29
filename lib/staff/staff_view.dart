@@ -11,7 +11,7 @@ import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class StaffView extends ConsumerStatefulWidget {
-  StaffView(this.id, this.imageUrl);
+  const StaffView(this.id, this.imageUrl);
 
   final int id;
   final String? imageUrl;
@@ -46,7 +46,7 @@ class _StaffViewState extends ConsumerState<StaffView> {
     ref.listen<AsyncValue>(
       staffProvider(widget.id),
       (_, s) {
-        if (s.hasError)
+        if (s.hasError) {
           showPopUp(
             context,
             ConfirmationDialog(
@@ -54,6 +54,7 @@ class _StaffViewState extends ConsumerState<StaffView> {
               content: s.error.toString(),
             ),
           );
+        }
       },
     );
 

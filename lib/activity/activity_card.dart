@@ -148,7 +148,7 @@ class _ActivityMediaBox extends StatelessWidget {
       discoverType:
           activityMedia.isAnime ? DiscoverType.anime : DiscoverType.manga,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 108),
+        constraints: const BoxConstraints(maxHeight: 108),
         child: Row(
           children: [
             ClipRRect(

@@ -13,7 +13,7 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MediaPeopleView extends StatelessWidget {
-  MediaPeopleView(this.ctrl);
+  const MediaPeopleView(this.ctrl);
 
   final MediaController ctrl;
 
@@ -105,7 +105,7 @@ class MediaPeopleView extends StatelessWidget {
 }
 
 class _LanguageButton extends StatelessWidget {
-  _LanguageButton(this.id, this.scrollCtrl);
+  const _LanguageButton(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -118,11 +118,12 @@ class _LanguageButton extends StatelessWidget {
       builder: (ctrl) {
         if (ctrl.languages.length < 2) return const SizedBox();
 
-        if (ctrl.peopleTabToggled)
+        if (ctrl.peopleTabToggled) {
           return const SizedBox(
             width: actionButtonSize,
             height: actionButtonSize,
           );
+        }
 
         return ActionButton(
           tooltip: 'Language',

@@ -15,7 +15,7 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/settings/theme_preview.dart';
 
 class SettingsAppTab extends StatelessWidget {
-  SettingsAppTab(this.scrollCtrl);
+  const SettingsAppTab(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 

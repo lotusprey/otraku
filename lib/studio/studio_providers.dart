@@ -77,7 +77,9 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
         filter.sort != MediaSort.START_DATE_DESC &&
         filter.sort != MediaSort.END_DATE &&
         filter.sort != MediaSort.END_DATE_DESC) {
-      for (final m in data['nodes']) items.add(MediaItem(m));
+      for (final m in data['nodes']) {
+        items.add(MediaItem(m));
+      }
     } else {
       final key = filter.sort == MediaSort.START_DATE ||
               filter.sort == MediaSort.START_DATE_DESC
@@ -88,11 +90,12 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
 
       for (final m in data['nodes']) {
         var category = m[key]?['year']?.toString();
-        if (category == null) category = Convert.clarifyEnum(m['status']);
-        if (category == null) category = 'Unknown';
+        category ??= Convert.clarifyEnum(m['status']);
+        category ??= 'Unknown';
 
-        if (s.categories.isEmpty || s.categories.keys.last != category)
+        if (s.categories.isEmpty || s.categories.keys.last != category) {
           s.categories[category] = index;
+        }
 
         items.add(MediaItem(m));
 

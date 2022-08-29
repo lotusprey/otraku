@@ -92,7 +92,7 @@ class Settings {
 
   // Should be called before use.
   static Future<void> init() async {
-    if (_didInit) return Future.value(true);
+    if (_didInit) return;
     _didInit = true;
 
     WidgetsFlutterBinding.ensureInitialized();

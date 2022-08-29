@@ -14,10 +14,10 @@ class CheckBoxField extends StatefulWidget {
   final void Function(bool) onChanged;
 
   @override
-  _CheckBoxFieldState createState() => _CheckBoxFieldState();
+  CheckBoxFieldState createState() => CheckBoxFieldState();
 }
 
-class _CheckBoxFieldState extends State<CheckBoxField> {
+class CheckBoxFieldState extends State<CheckBoxField> {
   late bool _on;
 
   @override
@@ -92,10 +92,10 @@ class CheckBoxTriField extends StatefulWidget {
   final void Function(int) onChanged;
 
   @override
-  _CheckBoxTriFieldState createState() => _CheckBoxTriFieldState();
+  CheckBoxTriFieldState createState() => CheckBoxTriFieldState();
 }
 
-class _CheckBoxTriFieldState extends State<CheckBoxTriField> {
+class CheckBoxTriFieldState extends State<CheckBoxTriField> {
   late int _state;
 
   @override

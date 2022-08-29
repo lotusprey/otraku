@@ -18,7 +18,7 @@ class MediaStatsModel {
 
     // The key is the text and the value signals
     // if the rank is about rating or popularity.
-    if (map['rankings'] != null)
+    if (map['rankings'] != null) {
       for (final rank in map['rankings']) {
         final String when = (rank['allTime'] ?? false)
             ? 'Ever'
@@ -35,23 +35,26 @@ class MediaStatsModel {
           model.rankTypes.add(false);
         }
       }
+    }
 
     if (map['stats'] != null) {
-      if (map['stats']['scoreDistribution'] != null)
+      if (map['stats']['scoreDistribution'] != null) {
         for (final s in map['stats']['scoreDistribution']) {
           model.scoreNames.add(s['score']);
           model.scoreValues.add(s['amount']);
         }
+      }
 
-      if (map['stats']['statusDistribution'] != null)
+      if (map['stats']['statusDistribution'] != null) {
         for (final s in map['stats']['statusDistribution']) {
           int index = -1;
-          for (int i = 0; i < model.statusValues.length; i++)
+          for (int i = 0; i < model.statusValues.length; i++) {
             if (model.statusValues[i] < s['amount']) {
               model.statusValues.insert(i, s['amount']);
               index = i;
               break;
             }
+          }
 
           if (index < 0) {
             index = model.statusValues.length;
@@ -66,6 +69,7 @@ class MediaStatsModel {
             ),
           );
         }
+      }
     }
 
     return model;

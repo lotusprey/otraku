@@ -7,14 +7,15 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class MediaGrid extends StatelessWidget {
-  MediaGrid(this.items);
+  const MediaGrid(this.items);
 
   final List<MediaItem> items;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
+    if (items.isEmpty) {
       return const SliverFillRemaining(child: Center(child: Text('No Media')));
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(vertical: 10),

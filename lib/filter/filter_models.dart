@@ -16,7 +16,7 @@ abstract class ApplicableMediaFilter<T extends ApplicableMediaFilter<T>> {
 }
 
 class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
-  CollectionFilter(super._ofAnime);
+  CollectionFilter(super.ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -48,7 +48,7 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
 }
 
 class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
-  DiscoverFilter(super._ofAnime);
+  DiscoverFilter(super.ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];

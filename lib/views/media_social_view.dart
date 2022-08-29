@@ -16,7 +16,7 @@ import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class MediaSocialView extends StatelessWidget {
-  MediaSocialView(this.ctrl);
+  const MediaSocialView(this.ctrl);
 
   final MediaController ctrl;
 
@@ -81,17 +81,18 @@ class MediaSocialView extends StatelessWidget {
 }
 
 class _ReviewGrid extends StatelessWidget {
-  _ReviewGrid(this.items, this.bannerUrl);
+  const _ReviewGrid(this.items, this.bannerUrl);
 
   final List<RelatedReviewModel> items;
   final String? bannerUrl;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
+    if (items.isEmpty) {
       return const SliverFillRemaining(
         child: Center(child: Text('No reviews')),
       );
+    }
 
     return SliverPadding(
       padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
@@ -157,7 +158,7 @@ class _ReviewGrid extends StatelessWidget {
 }
 
 class _Ranks extends StatelessWidget {
-  _Ranks(this.rankTexts, this.rankTypes);
+  const _Ranks(this.rankTexts, this.rankTypes);
 
   final List<String> rankTexts;
   final List<bool> rankTypes;
@@ -203,7 +204,7 @@ class _Ranks extends StatelessWidget {
 }
 
 class _Scores extends StatelessWidget {
-  _Scores(this.scoreNames, this.scoreValues);
+  const _Scores(this.scoreNames, this.scoreValues);
 
   final List<int> scoreNames;
   final List<int> scoreValues;
@@ -219,7 +220,7 @@ class _Scores extends StatelessWidget {
 }
 
 class _Statuses extends StatelessWidget {
-  _Statuses(this.statusNames, this.statusValues);
+  const _Statuses(this.statusNames, this.statusValues);
 
   final List<String> statusNames;
   final List<int> statusValues;

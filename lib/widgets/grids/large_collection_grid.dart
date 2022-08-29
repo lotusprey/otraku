@@ -15,7 +15,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 const _TILE_HEIGHT = 140.0;
 
 class LargeCollectionGrid extends StatelessWidget {
-  LargeCollectionGrid({
+  const LargeCollectionGrid({
     required this.items,
     required this.scoreFormat,
     required this.updateProgress,
@@ -44,7 +44,7 @@ class LargeCollectionGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  _Tile(this.model, this.scoreFormat, this.updateProgress);
+  const _Tile(this.model, this.scoreFormat, this.updateProgress);
 
   final Entry model;
   final ScoreFormat scoreFormat;
@@ -91,7 +91,7 @@ class _Tile extends StatelessWidget {
 /// The content is a [StatefulWidget], as it
 /// needs to update when the progress increments.
 class _TileContent extends StatefulWidget {
-  _TileContent(this.model, this.scoreFormat, this.updateProgress);
+  const _TileContent(this.model, this.scoreFormat, this.updateProgress);
 
   final Entry model;
   final ScoreFormat scoreFormat;
@@ -107,11 +107,13 @@ class __TileContentState extends State<_TileContent> {
     final model = widget.model;
 
     double progressPercent = 0;
-    if (model.progressMax != null)
+    if (model.progressMax != null) {
       progressPercent = model.progress / model.progressMax!;
-    else if (model.nextEpisode != null)
+    } else if (model.nextEpisode != null) {
       progressPercent = model.progress / (model.nextEpisode! - 1);
-    else if (model.progress > 0) progressPercent = 1;
+    } else if (model.progress > 0) {
+      progressPercent = 1;
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -210,18 +212,20 @@ class __TileContentState extends State<_TileContent> {
   List<TextSpan> _buildDetails() {
     final ts = <TextSpan>[];
 
-    if (widget.model.format != null)
+    if (widget.model.format != null) {
       ts.add(TextSpan(text: Convert.clarifyEnum(widget.model.format)));
+    }
 
-    if (widget.model.airingAt != null)
+    if (widget.model.airingAt != null) {
       ts.add(TextSpan(
         text: '${ts.isEmpty ? "" : ' • '}'
             'Ep ${widget.model.nextEpisode} in '
             '${Convert.timeUntilTimestamp(widget.model.airingAt)}',
       ));
+    }
 
     if (widget.model.nextEpisode != null &&
-        widget.model.nextEpisode! - 1 > widget.model.progress)
+        widget.model.nextEpisode! - 1 > widget.model.progress) {
       ts.add(TextSpan(
         text: '${ts.isEmpty ? "" : ' • '}'
             '${widget.model.nextEpisode! - 1 - widget.model.progress} ep behind',
@@ -230,6 +234,7 @@ class __TileContentState extends State<_TileContent> {
             .bodyText1
             ?.copyWith(fontSize: Consts.fontSmall),
       ));
+    }
 
     return ts;
   }
@@ -239,14 +244,16 @@ class __TileContentState extends State<_TileContent> {
 
     switch (widget.scoreFormat) {
       case ScoreFormat.POINT_3:
-        if (widget.model.score == 3)
+        if (widget.model.score == 3) {
           return const Icon(
             Icons.sentiment_very_satisfied,
             size: Consts.iconSmall,
           );
+        }
 
-        if (widget.model.score == 2)
+        if (widget.model.score == 2) {
           return const Icon(Icons.sentiment_neutral, size: Consts.iconSmall);
+        }
 
         return const Icon(
           Icons.sentiment_very_dissatisfied,
@@ -302,8 +309,9 @@ class __TileContentState extends State<_TileContent> {
       style: Theme.of(context).textTheme.subtitle2,
     );
 
-    if (widget.updateProgress == null || model.progress == model.progressMax)
+    if (widget.updateProgress == null || model.progress == model.progressMax) {
       return Tooltip(message: 'Progress', child: text);
+    }
 
     return TextButton(
       style: TextButton.styleFrom(
@@ -317,8 +325,9 @@ class __TileContentState extends State<_TileContent> {
             model.progress < model.progressMax! - 1) {
           setState(() => model.progress++);
           widget.updateProgress!(model);
-        } else
+        } else {
           showSheet(context, EditView(model.mediaId, complete: true));
+        }
       },
       child: Tooltip(
         message: 'Increment Progress',

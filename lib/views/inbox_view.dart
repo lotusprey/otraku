@@ -27,7 +27,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class InboxView extends StatelessWidget {
-  InboxView(this.scrollCtrl);
+  const InboxView(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 
@@ -44,12 +44,13 @@ class InboxView extends StatelessWidget {
           Navigator.pushNamed(context, RouteArg.notifications);
         };
 
-        if (count < 1)
+        if (count < 1) {
           return TopBarIcon(
             tooltip: 'Notifications',
             icon: Ionicons.notifications_outline,
             onTap: openNotifications,
           );
+        }
 
         return Padding(
           padding: const EdgeInsets.only(right: 10),
@@ -152,11 +153,16 @@ class InboxView extends StatelessWidget {
   }
 }
 
-class _ProgressView extends StatelessWidget {
-  _ProgressView(this.scrollCtrl);
+class _ProgressView extends StatefulWidget {
+  const _ProgressView(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 
+  @override
+  State<_ProgressView> createState() => _ProgressViewState();
+}
+
+class _ProgressViewState extends State<_ProgressView> {
   @override
   Widget build(BuildContext context) {
     const titlePadding = EdgeInsets.symmetric(vertical: 10);
@@ -179,7 +185,7 @@ class _ProgressView extends StatelessWidget {
 
               return CustomScrollView(
                 physics: Consts.physics,
-                controller: scrollCtrl,
+                controller: widget.scrollCtrl,
                 slivers: [
                   SliverRefreshControl(
                     onRefresh: () => ctrl.fetch(),
@@ -194,8 +200,7 @@ class _ProgressView extends StatelessWidget {
                     ),
                     MinimalCollectionGrid(
                       items: ctrl.releasingAnime,
-                      updateProgress: (e) =>
-                          _updateProgress(context, ref, true, e),
+                      updateProgress: (e) => _updateProgress(ref, true, e),
                     ),
                   ],
                   if (ctrl.otherAnime.isNotEmpty) ...[
@@ -207,8 +212,7 @@ class _ProgressView extends StatelessWidget {
                     ),
                     MinimalCollectionGrid(
                       items: ctrl.otherAnime,
-                      updateProgress: (e) =>
-                          _updateProgress(context, ref, true, e),
+                      updateProgress: (e) => _updateProgress(ref, true, e),
                     ),
                   ],
                   if (ctrl.releasingManga.isNotEmpty) ...[
@@ -220,8 +224,7 @@ class _ProgressView extends StatelessWidget {
                     ),
                     MinimalCollectionGrid(
                       items: ctrl.releasingManga,
-                      updateProgress: (e) =>
-                          _updateProgress(context, ref, false, e),
+                      updateProgress: (e) => _updateProgress(ref, false, e),
                     ),
                   ],
                   if (ctrl.otherManga.isNotEmpty) ...[
@@ -233,8 +236,7 @@ class _ProgressView extends StatelessWidget {
                     ),
                     MinimalCollectionGrid(
                       items: ctrl.otherManga,
-                      updateProgress: (e) =>
-                          _updateProgress(context, ref, false, e),
+                      updateProgress: (e) => _updateProgress(ref, false, e),
                     ),
                   ],
                   const SliverFooter(),
@@ -248,20 +250,21 @@ class _ProgressView extends StatelessWidget {
   }
 
   Future<void> _updateProgress(
-    BuildContext context,
     WidgetRef ref,
     bool ofAnime,
     EntryItem e,
   ) async {
     final result = await updateProgress(e.mediaId, e.progress);
     if (result is! List<String>) {
-      showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Could not update progress',
-          content: result.toString(),
-        ),
-      );
+      if (mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not update progress',
+            content: result.toString(),
+          ),
+        );
+      }
       return;
     }
 

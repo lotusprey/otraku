@@ -76,10 +76,10 @@ class ShimmerItem extends StatefulWidget {
   final Widget child;
 
   @override
-  _ShimmerItemState createState() => _ShimmerItemState();
+  ShimmerItemState createState() => ShimmerItemState();
 }
 
-class _ShimmerItemState extends State<ShimmerItem> {
+class ShimmerItemState extends State<ShimmerItem> {
   Listenable? _anim;
 
   void _update() => setState(() {});
@@ -108,11 +108,11 @@ class _ShimmerItemState extends State<ShimmerItem> {
     final offset = shimmer.getOffset(context.findRenderObject() as RenderBox);
 
     return ShaderMask(
-      child: widget.child,
       blendMode: BlendMode.srcATop,
       shaderCallback: (bounds) => shimmer.gradient.createShader(
         Rect.fromLTWH(-offset.dx, -offset.dy, size.width, size.height),
       ),
+      child: widget.child,
     );
   }
 }

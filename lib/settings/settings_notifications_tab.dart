@@ -8,7 +8,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsNotificationsTab extends StatelessWidget {
-  SettingsNotificationsTab(this.scrollCtrl, this.settings, this.shouldUpdate);
+  const SettingsNotificationsTab(this.scrollCtrl, this.settings, this.shouldUpdate);
 
   final ScrollController scrollCtrl;
   final UserSettings settings;
@@ -17,28 +17,28 @@ class SettingsNotificationsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final widgets = <Widget>[];
-    widgets.add(_Title('Users'));
+    widgets.add(const _Title('Users'));
     widgets.add(_Grid(
       from: 0,
       to: 1,
       options: settings.notificationOptions,
       onChanged: shouldUpdate,
     ));
-    widgets.add(_Title('Activities'));
+    widgets.add(const _Title('Activities'));
     widgets.add(_Grid(
       from: 1,
       to: 7,
       options: settings.notificationOptions,
       onChanged: shouldUpdate,
     ));
-    widgets.add(_Title('Forum'));
+    widgets.add(const _Title('Forum'));
     widgets.add(_Grid(
       from: 7,
       to: 12,
       options: settings.notificationOptions,
       onChanged: shouldUpdate,
     ));
-    widgets.add(_Title('Media'));
+    widgets.add(const _Title('Media'));
     widgets.add(_Grid(
       from: 12,
       to: 16,
@@ -47,7 +47,7 @@ class SettingsNotificationsTab extends StatelessWidget {
     ));
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
@@ -77,7 +77,7 @@ class _Title extends StatelessWidget {
 }
 
 class _Grid extends StatelessWidget {
-  _Grid({
+  const _Grid({
     required this.from,
     required this.to,
     required this.options,

@@ -15,8 +15,9 @@ class MediaModel {
 
   factory MediaModel(Map<String, dynamic> map, UserSettings settings) {
     final other = <RelatedMediaModel>[];
-    for (final relation in map['relations']['edges'])
+    for (final relation in map['relations']['edges']) {
       if (relation['node'] != null) other.add(RelatedMediaModel(relation));
+    }
 
     return MediaModel._(
       info: MediaInfoModel(map),
@@ -65,8 +66,9 @@ class MediaModel {
 
   void addRecommendations(Map<String, dynamic> map) {
     final items = <RecommendedModel>[];
-    for (final rec in map['recommendations']['nodes'])
+    for (final rec in map['recommendations']['nodes']) {
       if (rec['mediaRecommendation'] != null) items.add(RecommendedModel(rec));
+    }
 
     recommendations.append(
       items,
@@ -85,7 +87,7 @@ class MediaModel {
         type: DiscoverType.character,
       ));
 
-      if (c['voiceActors'] != null)
+      if (c['voiceActors'] != null) {
         for (final va in c['voiceActors']) {
           final l = Convert.clarifyEnum(va['languageV2']);
           if (l == null) continue;
@@ -110,6 +112,7 @@ class MediaModel {
             type: DiscoverType.staff,
           ));
         }
+      }
     }
 
     characters.append(items, map['characters']['pageInfo']['hasNextPage']);
@@ -117,7 +120,7 @@ class MediaModel {
 
   void addStaff(Map<String, dynamic> map) {
     final items = <Relation>[];
-    for (final connection in map['staff']['edges'])
+    for (final connection in map['staff']['edges']) {
       items.add(Relation(
         id: connection['node']['id'],
         title: connection['node']['name']['userPreferred'],
@@ -125,16 +128,18 @@ class MediaModel {
         subtitle: connection['role'],
         type: DiscoverType.staff,
       ));
+    }
 
     staff.append(items, map['staff']['pageInfo']['hasNextPage']);
   }
 
   void addReviews(Map<String, dynamic> map) {
     final items = <RelatedReviewModel>[];
-    for (final r in map['reviews']['nodes'])
+    for (final r in map['reviews']['nodes']) {
       try {
         items.add(RelatedReviewModel(r));
       } catch (_) {}
+    }
 
     reviews.append(items, map['reviews']['pageInfo']['hasNextPage']);
   }

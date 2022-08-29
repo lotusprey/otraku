@@ -90,16 +90,8 @@ class UserSettings {
         mangaCustomLists: List<String>.from(
           map['mediaListOptions']['mangaList']['customLists'] ?? [],
         ),
-        disabledListActivity: Map.fromIterable(
-          map['options']['disabledListActivity'],
-          key: (n) => EntryStatus.values.byName(n['type']),
-          value: (n) => n['disabled'],
-        ),
-        notificationOptions: Map.fromIterable(
-          map['options']['notificationOptions'],
-          key: (n) => NotificationType.values.byName(n['type']),
-          value: (n) => n['enabled'],
-        ),
+        disabledListActivity: { for (var n in map['options']['disabledListActivity']) EntryStatus.values.byName(n['type']) : n['disabled'] },
+        notificationOptions: { for (var n in map['options']['notificationOptions']) NotificationType.values.byName(n['type']) : n['enabled'] },
       );
 
   factory UserSettings.empty() => UserSettings._(

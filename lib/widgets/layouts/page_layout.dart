@@ -55,8 +55,9 @@ class PageLayoutState extends State<PageLayout> {
     if (_didCalculateOffsets) return;
     _didCalculateOffsets = true;
 
-    if (widget.topBar != null)
+    if (widget.topBar != null) {
       _topOffset += widget.topBar!.preferredSize.height;
+    }
 
     if (widget.bottomBar != null) _bottomOffset += Consts.tapTargetSize;
 

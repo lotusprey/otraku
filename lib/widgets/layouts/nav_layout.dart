@@ -4,7 +4,7 @@ import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 
 class NavLayout extends StatelessWidget {
-  NavLayout({
+  const NavLayout({
     required this.child,
     this.navRow,
     this.floating,
@@ -35,7 +35,7 @@ class NavLayout extends StatelessWidget {
     Widget body = child;
 
     /// If there is a [navRow], swiping between tabs is possible.
-    if (navRow != null)
+    if (navRow != null) {
       body = DragDetector(
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
@@ -49,6 +49,7 @@ class NavLayout extends StatelessWidget {
           navRow?.switchTab(goRight);
         },
       );
+    }
 
     return Scaffold(
       extendBody: true,
@@ -80,7 +81,7 @@ class NavLayout extends StatelessWidget {
 /// The [NavLayout] should be able to switch the tab
 /// by swiping. In that case, it will call [switchTab].
 abstract class NavRow extends StatelessWidget {
-  NavRow({required this.onChanged, required this.index});
+  const NavRow({required this.onChanged, required this.index});
 
   final void Function(int) onChanged;
   final int index;
@@ -100,7 +101,7 @@ abstract class NavRow extends StatelessWidget {
 /// A [NavRow] with tabs, represented as icons. If the screen is
 /// wide enough, next to the icon will be the name of the tab.
 class NavIconRow extends NavRow {
-  NavIconRow({
+  const NavIconRow({
     required this.items,
     required this.onSame,
     required super.index,
@@ -119,11 +120,12 @@ class NavIconRow extends NavRow {
   @override
   Widget build(BuildContext context) {
     // Navigation bar item width.
-    late final width;
-    if (MediaQuery.of(context).size.width > items.length * 130)
+    late final double width;
+    if (MediaQuery.of(context).size.width > items.length * 130) {
       width = 130.0;
-    else
+    } else {
       width = 50.0;
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -13,10 +13,10 @@ class PopUpAnimation extends StatefulWidget {
   const PopUpAnimation(this.child);
 
   @override
-  _PopUpAnimationState createState() => _PopUpAnimationState();
+  PopUpAnimationState createState() => PopUpAnimationState();
 }
 
-class _PopUpAnimationState extends State<PopUpAnimation>
+class PopUpAnimationState extends State<PopUpAnimation>
     with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _anim;
@@ -50,7 +50,7 @@ class InputDialog extends StatelessWidget {
   final String initial;
   final void Function(String) onChanged;
 
-  InputDialog({required this.initial, required this.onChanged});
+  const InputDialog({required this.initial, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class InputDialog extends StatelessWidget {
           style: Theme.of(context).textTheme.headline1,
           decoration: const InputDecoration(
             filled: false,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10),
           ),
           keyboardType: TextInputType.name,
           initialValue: initial,

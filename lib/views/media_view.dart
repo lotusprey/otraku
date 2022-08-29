@@ -16,7 +16,7 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/media/media_header.dart';
 
 class MediaView extends StatelessWidget {
-  MediaView(this.id, this.coverUrl);
+  const MediaView(this.id, this.coverUrl);
 
   final int id;
   final String? coverUrl;
@@ -33,7 +33,7 @@ class MediaView extends StatelessWidget {
 }
 
 class _MediaView extends ConsumerStatefulWidget {
-  _MediaView(this.id, this.coverUrl, this.ctrl);
+  const _MediaView(this.id, this.coverUrl, this.ctrl);
 
   final int id;
   final String? coverUrl;
@@ -114,7 +114,7 @@ class __MediaViewState extends ConsumerState<_MediaView> {
 }
 
 class _MediaSubView extends StatefulWidget {
-  _MediaSubView(this.id, this.ctrl, this.tab, this.onChanged);
+  const _MediaSubView(this.id, this.ctrl, this.tab, this.onChanged);
 
   final int id;
   final MediaController ctrl;
@@ -132,7 +132,7 @@ class _MediaSubView extends StatefulWidget {
 class __MediaSubViewState extends State<_MediaSubView> {
   bool _didInit = false;
   double _lastMaxExtent = 0;
-  late final _scrollCtrl;
+  late final ScrollController _scrollCtrl;
 
   void _listener() {
     final pos = _scrollCtrl.positions.last;

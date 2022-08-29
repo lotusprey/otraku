@@ -5,7 +5,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
 class FloatingBar extends StatefulWidget {
-  FloatingBar({
+  const FloatingBar({
     required this.scrollCtrl,
     required this.children,
     this.centered = false,
@@ -16,10 +16,10 @@ class FloatingBar extends StatefulWidget {
   final bool centered;
 
   @override
-  _FloatingBarState createState() => _FloatingBarState();
+  FloatingBarState createState() => FloatingBarState();
 }
 
-class _FloatingBarState extends State<FloatingBar>
+class FloatingBarState extends State<FloatingBar>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationCtrl;
   late final Animation<Offset> _slideAnimation;
@@ -108,7 +108,7 @@ const actionButtonSize = 56.0;
 
 /// An [FloatingActionButton] implementation.
 class ActionButton extends StatelessWidget {
-  ActionButton({
+  const ActionButton({
     required this.icon,
     required this.tooltip,
     required this.onTap,
@@ -166,7 +166,7 @@ class ActionButton extends StatelessWidget {
 
 // Detects swiping and animates the icon switching.
 class _DraggableIcon extends StatefulWidget {
-  _DraggableIcon({
+  const _DraggableIcon({
     required this.icon,
     required this.onSwipe,
   });

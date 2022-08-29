@@ -107,7 +107,7 @@ class _SegmentSwitcherState extends State<SegmentSwitcher> {
 }
 
 class CompactSegmentSwitcher extends StatefulWidget {
-  CompactSegmentSwitcher({
+  const CompactSegmentSwitcher({
     required this.items,
     required this.current,
     required this.onChanged,

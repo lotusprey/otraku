@@ -3,7 +3,7 @@ import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 
 class DropDownField<T> extends StatefulWidget {
-  DropDownField({
+  const DropDownField({
     required this.title,
     required this.value,
     required this.items,
@@ -18,10 +18,10 @@ class DropDownField<T> extends StatefulWidget {
   final String hint;
 
   @override
-  _DropDownFieldState<T> createState() => _DropDownFieldState<T>();
+  DropDownFieldState<T> createState() => DropDownFieldState<T>();
 }
 
-class _DropDownFieldState<T> extends State<DropDownField<T>> {
+class DropDownFieldState<T> extends State<DropDownField<T>> {
   late T _value;
 
   @override
@@ -39,7 +39,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
   @override
   Widget build(BuildContext context) {
     final items = <DropdownMenuItem<T>>[];
-    for (final key in widget.items.keys)
+    for (final key in widget.items.keys) {
       items.add(DropdownMenuItem(
         value: widget.items[key],
         child: Text(
@@ -49,6 +49,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
               : Theme.of(context).textTheme.bodyText1,
         ),
       ));
+    }
 
     return LabeledField(
       label: widget.title,

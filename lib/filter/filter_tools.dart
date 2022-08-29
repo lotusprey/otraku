@@ -10,7 +10,7 @@ import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 
 class SortDropDown<T extends Enum> extends StatelessWidget {
-  SortDropDown(this.values, this.index, this.onChange);
+  const SortDropDown(this.values, this.index, this.onChange);
 
   final List<T> values;
   final int Function() index;
@@ -38,7 +38,7 @@ class SortDropDown<T extends Enum> extends StatelessWidget {
 }
 
 class OrderDropDown<T extends Enum> extends StatelessWidget {
-  OrderDropDown(this.values, this.index, this.onChange);
+  const OrderDropDown(this.values, this.index, this.onChange);
 
   final List<T> values;
   final int Function() index;
@@ -64,7 +64,7 @@ class OrderDropDown<T extends Enum> extends StatelessWidget {
 }
 
 class CountryDropDown extends StatelessWidget {
-  CountryDropDown(this.value, this.onChanged);
+  const CountryDropDown(this.value, this.onChanged);
 
   final String? value;
   final void Function(String?) onChanged;
@@ -72,7 +72,9 @@ class CountryDropDown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final countries = <String, String?>{'All': null};
-    for (final e in Convert.countryCodes.entries) countries[e.value] = e.key;
+    for (final e in Convert.countryCodes.entries) {
+      countries[e.value] = e.key;
+    }
 
     return DropDownField<String?>(
       title: 'Country',
@@ -84,7 +86,7 @@ class CountryDropDown extends StatelessWidget {
 }
 
 class ListPresenceDropDown extends StatelessWidget {
-  ListPresenceDropDown({required this.value, required this.onChanged});
+  const ListPresenceDropDown({required this.value, required this.onChanged});
 
   final bool? value;
   final void Function(bool?) onChanged;
@@ -121,7 +123,7 @@ class SearchFilterField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!enabled)
+    if (!enabled) {
       return Expanded(
         child: Text(
           title,
@@ -130,6 +132,7 @@ class SearchFilterField extends StatelessWidget {
           style: Theme.of(context).textTheme.headline1,
         ),
       );
+    }
 
     final debounce = Debounce();
 

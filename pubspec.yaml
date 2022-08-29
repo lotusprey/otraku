@@ -30,6 +30,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_launcher_icons: ^0.10.0
+  flutter_lints: ^2.0.1
 
 flutter_icons:
   ios: true

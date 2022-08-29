@@ -63,8 +63,9 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
       ),
     ),
   ).then((_) {
-    if (changed)
+    if (changed) {
       ref.read(activityFilterProvider(id).notifier).update(typeIn, onFollowing);
+    }
   });
 }
 

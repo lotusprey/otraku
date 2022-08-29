@@ -121,7 +121,9 @@ class DiscoverMediaNotifier
       });
 
       final items = <MediaItem>[];
-      for (final m in data['Page']['media']) items.add(MediaItem(m));
+      for (final m in data['Page']['media']) {
+        items.add(MediaItem(m));
+      }
 
       return value.append(
         items,
@@ -152,7 +154,9 @@ class DiscoverCharacterNotifier
       });
 
       final items = <CharacterItem>[];
-      for (final c in data['Page']['characters']) items.add(CharacterItem(c));
+      for (final c in data['Page']['characters']) {
+        items.add(CharacterItem(c));
+      }
 
       return value.append(
         items,
@@ -183,7 +187,9 @@ class DiscoverStaffNotifier
       });
 
       final items = <StaffItem>[];
-      for (final s in data['Page']['staff']) items.add(StaffItem(s));
+      for (final s in data['Page']['staff']) {
+        items.add(StaffItem(s));
+      }
 
       return value.append(
         items,
@@ -211,7 +217,9 @@ class DiscoverStudioNotifier
       });
 
       final items = <StudioItem>[];
-      for (final s in data['Page']['studios']) items.add(StudioItem(s));
+      for (final s in data['Page']['studios']) {
+        items.add(StudioItem(s));
+      }
 
       return value.append(
         items,
@@ -239,7 +247,9 @@ class DiscoverUserNotifier
       });
 
       final items = <UserItem>[];
-      for (final u in data['Page']['users']) items.add(UserItem(u));
+      for (final u in data['Page']['users']) {
+        items.add(UserItem(u));
+      }
 
       return value.append(
         items,
@@ -267,7 +277,9 @@ class DiscoverReviewNotifier
       });
 
       final items = <ReviewItem>[];
-      for (final r in data['Page']['reviews']) items.add(ReviewItem(r));
+      for (final r in data['Page']['reviews']) {
+        items.add(ReviewItem(r));
+      }
 
       return value.append(
         items,

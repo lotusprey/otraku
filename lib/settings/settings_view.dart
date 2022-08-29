@@ -32,6 +32,7 @@ class _SettingsViewState extends State<SettingsView> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     const pageNames = ['App', 'Content', 'Notifications', 'About'];
 
@@ -66,8 +67,9 @@ class _SettingsViewState extends State<SettingsView> {
 
         return WillPopScope(
           onWillPop: () {
-            if (_shouldUpdate)
+            if (_shouldUpdate) {
               ref.read(userSettingsProvider.notifier).update(settings);
+            }
             return Future.value(true);
           },
           child: PageLayout(
@@ -84,9 +86,9 @@ class _SettingsViewState extends State<SettingsView> {
               },
             ),
             child: DirectPageView(
-              children: tabs,
               current: _tabIndex,
               onChanged: (i) => setState(() => _tabIndex = i),
+              children: tabs,
             ),
           ),
         );

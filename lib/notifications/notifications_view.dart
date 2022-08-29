@@ -80,7 +80,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     final tiles = <Widget>[];
                     for (int i = 0;
                         i < NotificationFilterType.values.length;
-                        i++)
+                        i++) {
                       tiles.add(Text(
                         NotificationFilterType.values.elementAt(i).text,
                         style: i != notifier.state.index
@@ -89,6 +89,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                       ));
+                    }
 
                     return DynamicGradientDragSheet(
                       children: tiles,
@@ -163,7 +164,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 }
 
 class _NotificationItem extends StatelessWidget {
-  _NotificationItem(this.notification, this.unread);
+  const _NotificationItem(this.notification, this.unread);
 
   final SiteNotification notification;
   final bool unread;
@@ -193,14 +194,15 @@ class _NotificationItem extends StatelessWidget {
                   ),
                   onLongPress: () {
                     if (notification.discoverType == DiscoverType.anime ||
-                        notification.discoverType == DiscoverType.manga)
+                        notification.discoverType == DiscoverType.manga) {
                       showSheet(context, EditView(notification.headId!));
+                    }
                   },
                   child: ClipRRect(
-                    child: FadeImage(notification.imageUrl!, width: 70),
-                    borderRadius: BorderRadius.horizontal(
+                    borderRadius: const BorderRadius.horizontal(
                       left: Consts.radiusMin,
                     ),
+                    child: FadeImage(notification.imageUrl!, width: 70),
                   ),
                 ),
               Flexible(
@@ -261,8 +263,9 @@ class _NotificationItem extends StatelessWidget {
                   },
                   onLongPress: () {
                     if (notification.discoverType == DiscoverType.anime ||
-                        notification.discoverType == DiscoverType.manga)
+                        notification.discoverType == DiscoverType.manga) {
                       showSheet(context, EditView(notification.headId!));
+                    }
                   },
                   child: Padding(
                     padding: Consts.padding,
@@ -317,7 +320,7 @@ class _NotificationItem extends StatelessWidget {
 }
 
 class _NotificationDialog extends StatelessWidget {
-  _NotificationDialog(this.item);
+  const _NotificationDialog(this.item);
 
   final SiteNotification item;
 

@@ -9,7 +9,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaHeader extends StatelessWidget {
-  MediaHeader({required this.ctrl, required this.imageUrl});
+  const MediaHeader({required this.ctrl, required this.imageUrl});
 
   final MediaController ctrl;
   final String? imageUrl;
@@ -22,24 +22,28 @@ class MediaHeader extends StatelessWidget {
     if (info != null) {
       if (info.isAdult) textRailItems['Adult'] = true;
 
-      if (info.format != null)
+      if (info.format != null) {
         textRailItems[Convert.clarifyEnum(info.format)!] = false;
+      }
 
       final status = ctrl.model?.edit.status;
-      if (status != null)
+      if (status != null) {
         textRailItems[Convert.adaptListStatus(
           status,
           info.type == DiscoverType.anime,
         )] = false;
+      }
 
-      if (info.airingAt != null)
+      if (info.airingAt != null) {
         textRailItems['Ep ${info.nextEpisode} in '
             '${Convert.timeUntilTimestamp(info.airingAt)}'] = true;
+      }
 
       if (status != null) {
         final progress = ctrl.model?.edit.progress ?? 0;
-        if (info.nextEpisode != null && info.nextEpisode! - 1 > progress)
+        if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
           textRailItems['${info.nextEpisode! - 1 - progress} ep behind'] = true;
+        }
       }
     }
 

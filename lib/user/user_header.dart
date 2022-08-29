@@ -11,7 +11,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class UserHeader extends StatelessWidget {
-  UserHeader({
+  const UserHeader({
     required this.id,
     required this.user,
     required this.isMe,
@@ -83,7 +83,7 @@ class UserHeader extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      if (user!.modRoles.isNotEmpty)
+                      if (user!.modRoles.isNotEmpty) {
                         showPopUp(
                           context,
                           TextDialog(
@@ -91,6 +91,7 @@ class UserHeader extends StatelessWidget {
                             text: user!.modRoles.join(', '),
                           ),
                         );
+                      }
                     },
                     child: TextRail(textRailItems),
                   ),
@@ -102,7 +103,7 @@ class UserHeader extends StatelessWidget {
 }
 
 class _FollowButton extends StatefulWidget {
-  _FollowButton(this.user);
+  const _FollowButton(this.user);
 
   final User user;
 

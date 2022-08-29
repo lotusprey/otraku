@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/constants/consts.dart';
 
 class SearchField extends StatefulWidget {
-  SearchField({
+  const SearchField({
     required this.hint,
     required this.onChange,
     required this.value,
@@ -82,8 +82,9 @@ class _SearchFieldState extends State<SearchField> {
       ),
       onChanged: (val) {
         widget.onChange(val);
-        if (_empty != _ctrl.text.isEmpty)
+        if (_empty != _ctrl.text.isEmpty) {
           setState(() => _empty = _ctrl.text.isEmpty);
+        }
       },
     );
   }

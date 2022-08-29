@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 
 class BarChart extends StatelessWidget {
-  BarChart({
+  const BarChart({
     required this.title,
     required this.names,
     required this.values,
@@ -22,7 +22,9 @@ class BarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     double maxHeight = 190.0;
     num maxValue = 0;
-    for (final v in values) if (maxValue < v) maxValue = v;
+    for (final v in values) {
+      if (maxValue < v) maxValue = v;
+    }
     maxHeight /= maxValue;
 
     return Column(
@@ -76,7 +78,7 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  PieChart({required this.title, required this.names, required this.values})
+  const PieChart({required this.title, required this.names, required this.values})
       : assert(names.length == values.length);
 
   final String title;
@@ -183,7 +185,9 @@ class _PieLines extends CustomPainter {
       ..strokeWidth = 2;
 
     double total = 0.0;
-    for (final c in categories) total += c;
+    for (final c in categories) {
+      total += c;
+    }
 
     final radius = math.min(size.width, size.height) / 2;
     final center = Offset(radius, radius);

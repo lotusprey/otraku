@@ -72,7 +72,9 @@ class FriendsNotifier extends ChangeNotifier {
       }
 
       final items = <UserItem>[];
-      for (final u in data[key][key]) items.add(UserItem(u));
+      for (final u in data[key][key]) {
+        items.add(UserItem(u));
+      }
 
       return value.append(
         items,

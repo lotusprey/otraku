@@ -16,10 +16,10 @@ class AuthView extends StatefulWidget {
   const AuthView();
 
   @override
-  _AuthViewState createState() => _AuthViewState();
+  AuthViewState createState() => AuthViewState();
 }
 
-class _AuthViewState extends State<AuthView> {
+class AuthViewState extends State<AuthView> {
   StreamSubscription<String>? _sub;
   bool _loading = false;
 
@@ -55,7 +55,7 @@ class _AuthViewState extends State<AuthView> {
         setState(() => _loading = false);
         showPopUp(
           context,
-          ConfirmationDialog(
+          const ConfirmationDialog(
             content: 'Needed data is missing',
             title: 'Faulty response',
           ),
@@ -70,7 +70,7 @@ class _AuthViewState extends State<AuthView> {
         setState(() => _loading = false);
         showPopUp(
           context,
-          ConfirmationDialog(
+          const ConfirmationDialog(
             content: 'Could not parse data',
             title: 'Faulty response',
           ),

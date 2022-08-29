@@ -21,12 +21,18 @@ class UserStatistics {
     final statuses = <TypeStatistics>[];
     final countries = <TypeStatistics>[];
 
-    for (final s in map['scores'])
+    for (final s in map['scores']) {
       scores.add(AmountStatistics(s, 'score', ofAnime));
-    for (final l in map['lengths'])
+    }
+    for (final l in map['lengths']) {
       lengths.add(AmountStatistics(l, 'length', ofAnime));
-    for (final f in map['formats']) formats.add(TypeStatistics(f, 'format'));
-    for (final s in map['statuses']) statuses.add(TypeStatistics(s, 'status'));
+    }
+    for (final f in map['formats']) {
+      formats.add(TypeStatistics(f, 'format'));
+    }
+    for (final s in map['statuses']) {
+      statuses.add(TypeStatistics(s, 'status'));
+    }
     for (final c in map['countries']) {
       c['country'] = Convert.countryCodes[c['country']];
       countries.add(TypeStatistics(c, 'country'));

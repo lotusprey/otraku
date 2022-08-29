@@ -40,22 +40,25 @@ class ProgressController extends GetxController {
         );
 
         if (isAnime) {
-          if (status == MediaStatus.RELEASING)
+          if (status == MediaStatus.RELEASING) {
             releasingAnime.add(model);
-          else
+          } else {
             otherAnime.add(model);
+          }
         } else {
-          if (status == MediaStatus.RELEASING)
+          if (status == MediaStatus.RELEASING) {
             releasingManga.add(model);
-          else
+          } else {
             otherManga.add(model);
+          }
         }
       }
 
-      if (data['Page']['pageInfo']['hasNextPage'] ?? false)
+      if (data['Page']['pageInfo']['hasNextPage'] ?? false) {
         nextPage++;
-      else
+      } else {
         nextPage = 0;
+      }
 
       _isLoading = false;
       update();
@@ -63,30 +66,34 @@ class ProgressController extends GetxController {
   }
 
   void remove(int mediaId) {
-    for (int i = 0; i < releasingAnime.length; i++)
+    for (int i = 0; i < releasingAnime.length; i++) {
       if (releasingAnime[i].mediaId == mediaId) {
         releasingAnime.removeAt(i);
         update();
         return;
       }
-    for (int i = 0; i < otherAnime.length; i++)
+    }
+    for (int i = 0; i < otherAnime.length; i++) {
       if (otherAnime[i].mediaId == mediaId) {
         otherAnime.removeAt(i);
         update();
         return;
       }
-    for (int i = 0; i < releasingManga.length; i++)
+    }
+    for (int i = 0; i < releasingManga.length; i++) {
       if (releasingManga[i].mediaId == mediaId) {
         releasingManga.removeAt(i);
         update();
         return;
       }
-    for (int i = 0; i < otherManga.length; i++)
+    }
+    for (int i = 0; i < otherManga.length; i++) {
       if (otherManga[i].mediaId == mediaId) {
         otherManga.removeAt(i);
         update();
         return;
       }
+    }
   }
 
   void add(Entry entry, bool isAnime) {
@@ -98,15 +105,17 @@ class ProgressController extends GetxController {
     final item = EntryItem.fromEntry(entry);
 
     if (isAnime) {
-      if (status == MediaStatus.RELEASING)
+      if (status == MediaStatus.RELEASING) {
         releasingAnime.add(item);
-      else
+      } else {
         otherAnime.add(item);
+      }
     } else {
-      if (status == MediaStatus.RELEASING)
+      if (status == MediaStatus.RELEASING) {
         releasingManga.add(item);
-      else
+      } else {
         otherManga.add(item);
+      }
     }
   }
 
@@ -117,55 +126,63 @@ class ProgressController extends GetxController {
     }
 
     if (isAnime) {
-      for (int i = 0; i < releasingAnime.length; i++)
+      for (int i = 0; i < releasingAnime.length; i++) {
         if (releasingAnime[i].mediaId == entry.mediaId) {
           releasingAnime[i] = EntryItem.fromEntry(entry);
           update();
           return;
         }
-      for (int i = 0; i < otherAnime.length; i++)
+      }
+      for (int i = 0; i < otherAnime.length; i++) {
         if (otherAnime[i].mediaId == entry.mediaId) {
           otherAnime[i] = EntryItem.fromEntry(entry);
           update();
           return;
         }
+      }
     } else {
-      for (int i = 0; i < releasingManga.length; i++)
+      for (int i = 0; i < releasingManga.length; i++) {
         if (releasingManga[i].mediaId == entry.mediaId) {
           releasingManga[i] = EntryItem.fromEntry(entry);
           update();
           return;
         }
-      for (int i = 0; i < otherManga.length; i++)
+      }
+      for (int i = 0; i < otherManga.length; i++) {
         if (otherManga[i].mediaId == entry.mediaId) {
           otherManga[i] = EntryItem.fromEntry(entry);
           update();
           return;
         }
+      }
     }
   }
 
   void incrementProgress(int mediaId, int progress) {
-    for (int i = 0; i < releasingAnime.length; i++)
+    for (int i = 0; i < releasingAnime.length; i++) {
       if (releasingAnime[i].mediaId == mediaId) {
         releasingAnime[i].progress = progress;
         return;
       }
-    for (int i = 0; i < otherAnime.length; i++)
+    }
+    for (int i = 0; i < otherAnime.length; i++) {
       if (otherAnime[i].mediaId == mediaId) {
         otherAnime[i].progress = progress;
         return;
       }
-    for (int i = 0; i < releasingManga.length; i++)
+    }
+    for (int i = 0; i < releasingManga.length; i++) {
       if (releasingManga[i].mediaId == mediaId) {
         releasingManga[i].progress = progress;
         return;
       }
-    for (int i = 0; i < otherManga.length; i++)
+    }
+    for (int i = 0; i < otherManga.length; i++) {
       if (otherManga[i].mediaId == mediaId) {
         otherManga[i].progress = progress;
         return;
       }
+    }
   }
 
   @override

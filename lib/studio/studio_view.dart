@@ -21,7 +21,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class StudioView extends ConsumerStatefulWidget {
-  StudioView(this.id, this.name);
+  const StudioView(this.id, this.name);
 
   final int id;
   final String? name;
@@ -77,7 +77,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
             ref.listen<AsyncValue>(
               studioProvider(widget.id),
               (_, s) {
-                if (s.hasError)
+                if (s.hasError) {
                   showPopUp(
                     context,
                     ConfirmationDialog(
@@ -85,6 +85,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                       content: s.error.toString(),
                     ),
                   );
+                }
               },
             );
 
@@ -185,7 +186,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  _FavoriteButton(this.data);
+  const _FavoriteButton(this.data);
 
   final Studio data;
 
@@ -216,7 +217,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 }
 
 class _FilterButton extends StatelessWidget {
-  _FilterButton(this.id);
+  const _FilterButton(this.id);
 
   final int id;
 

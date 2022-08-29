@@ -186,7 +186,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     final reply = ActivityReply.maybe(map);
     if (reply == null) return;
 
-    for (int i = 0; i < value.replies.items.length; i++)
+    for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == reply.id) {
         value.replies.items[i] = reply;
         state = AsyncData(ActivityState(
@@ -199,6 +199,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
         ));
         return;
       }
+    }
   }
 
   /// Removes an already deleted reply.
@@ -206,7 +207,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.replies.items.length; i++)
+    for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == replyId) {
         value.replies.items.removeAt(i);
         value.activity.replyCount--;
@@ -221,6 +222,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
         ));
         return;
       }
+    }
   }
 }
 
@@ -290,7 +292,7 @@ class ActivitiesNotifier
     final activity = Activity.maybe(map, viewerId);
     if (activity == null) return;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
         state = AsyncData(Pagination.from(
@@ -300,6 +302,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 
   /// Updates an existing activity with another one.
@@ -307,7 +310,7 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
         state = AsyncData(Pagination.from(
@@ -317,6 +320,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 
   /// Removes an already deleted activity.
@@ -324,7 +328,7 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activityId) {
         value.items.removeAt(i);
         state = AsyncData(Pagination.from(
@@ -334,6 +338,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 
   /// Updates an already pinned/unpinned activity.
@@ -341,12 +346,13 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activityId) {
         // If the activity was pinned, and there had already
         // been a pinned activity, unpin the old one.
-        if (value.items[i].isPinned && value.items[0].isPinned && i > 0)
+        if (value.items[i].isPinned && value.items[0].isPinned && i > 0) {
           value.items[0].isPinned = false;
+        }
 
         state = AsyncData(Pagination.from(
           items: value.items,
@@ -355,6 +361,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 }
 

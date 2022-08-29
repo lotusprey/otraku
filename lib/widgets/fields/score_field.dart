@@ -37,7 +37,7 @@ class ScoreField extends StatelessWidget {
 }
 
 class _SmileyScorePicker extends StatelessWidget {
-  _SmileyScorePicker(this.score, this.onChanged);
+  const _SmileyScorePicker(this.score, this.onChanged);
 
   final double score;
   final void Function(double) onChanged;
@@ -73,7 +73,7 @@ class _SmileyScorePicker extends StatelessWidget {
 }
 
 class _StarScorePicker extends StatelessWidget {
-  _StarScorePicker(this.score, this.onChanged);
+  const _StarScorePicker(this.score, this.onChanged);
 
   final double score;
   final void Function(double) onChanged;
@@ -111,7 +111,7 @@ class _StarScorePicker extends StatelessWidget {
 }
 
 class _TenScorePicker extends StatelessWidget {
-  _TenScorePicker(this.score, this.onChanged);
+  const _TenScorePicker(this.score, this.onChanged);
 
   final double score;
   final void Function(double) onChanged;
@@ -136,7 +136,7 @@ class _TenScorePicker extends StatelessWidget {
 }
 
 class _TenDecimalScorePicker extends StatelessWidget {
-  _TenDecimalScorePicker(this.score, this.onChanged);
+  const _TenDecimalScorePicker(this.score, this.onChanged);
 
   final double score;
   final void Function(double) onChanged;
@@ -161,7 +161,7 @@ class _TenDecimalScorePicker extends StatelessWidget {
 }
 
 class _HundredScorePicker extends StatelessWidget {
-  _HundredScorePicker(this.score, this.onChanged);
+  const _HundredScorePicker(this.score, this.onChanged);
 
   final double score;
   final void Function(double) onChanged;

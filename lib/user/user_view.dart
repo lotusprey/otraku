@@ -183,7 +183,7 @@ class UserSubView extends StatelessWidget {
               ),
             ));
 
-            if (data.description.isNotEmpty)
+            if (data.description.isNotEmpty) {
               items.add(SliverToBoxAdapter(
                 child: Container(
                   margin: padding,
@@ -195,6 +195,7 @@ class UserSubView extends StatelessWidget {
                   child: HtmlContent(data.description),
                 ),
               ));
+            }
           },
         );
         items.add(const SliverFooter());
@@ -208,7 +209,7 @@ class UserSubView extends StatelessWidget {
 }
 
 class _Button extends StatelessWidget {
-  _Button(this.icon, this.title, this.onTap);
+  const _Button(this.icon, this.title, this.onTap);
 
   final IconData icon;
   final String title;

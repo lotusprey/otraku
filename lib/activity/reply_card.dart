@@ -15,7 +15,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
-  ReplyCard(this.activityId, this.reply);
+  const ReplyCard(this.activityId, this.reply);
 
   final int activityId;
   final ActivityReply reply;
@@ -150,7 +150,7 @@ class ReplyCard extends StatelessWidget {
 }
 
 class _ReplyLikeButton extends StatefulWidget {
-  _ReplyLikeButton(this.reply);
+  const _ReplyLikeButton(this.reply);
 
   final ActivityReply reply;
 

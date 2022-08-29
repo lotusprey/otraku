@@ -28,7 +28,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/pagination_view.dart';
 
 class DiscoverView extends ConsumerWidget {
-  DiscoverView(this.scrollCtrl);
+  const DiscoverView(this.scrollCtrl);
 
   final PaginationController scrollCtrl;
 
@@ -63,9 +63,9 @@ class DiscoverView extends ConsumerWidget {
     };
 
     return PageLayout(
-      topBar: PreferredSize(
-        preferredSize: const Size.fromHeight(Consts.tapTargetSize),
-        child: const _TopBar(),
+      topBar: const PreferredSize(
+        preferredSize: Size.fromHeight(Consts.tapTargetSize),
+        child: _TopBar(),
       ),
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
@@ -203,19 +203,21 @@ class _ActionButton extends StatelessWidget {
             final notifier = ref.read(discoverTypeProvider.notifier);
 
             if (goRight) {
-              if (type.index < DiscoverType.values.length - 1)
+              if (type.index < DiscoverType.values.length - 1) {
                 notifier.state = DiscoverType.values.elementAt(
                   type.index + 1,
                 );
-              else
+              } else {
                 notifier.state = DiscoverType.values.first;
+              }
             } else {
-              if (type.index > 0)
+              if (type.index > 0) {
                 notifier.state = DiscoverType.values.elementAt(
                   type.index - 1,
                 );
-              else
+              } else {
                 notifier.state = DiscoverType.values.last;
+              }
             }
 
             return type.icon;
@@ -227,7 +229,7 @@ class _ActionButton extends StatelessWidget {
 }
 
 class _BirthdayFilter extends StatelessWidget {
-  _BirthdayFilter(this.ref);
+  const _BirthdayFilter(this.ref);
 
   final WidgetRef ref;
 
@@ -245,7 +247,7 @@ class _BirthdayFilter extends StatelessWidget {
 }
 
 class _Grid extends StatelessWidget {
-  _Grid(this.scrollCtrl, this.onRefresh);
+  const _Grid(this.scrollCtrl, this.onRefresh);
 
   final ScrollController scrollCtrl;
   final Future<void> Function() onRefresh;

@@ -5,7 +5,7 @@ import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class LinkTile extends StatelessWidget {
-  LinkTile({
+  const LinkTile({
     required this.id,
     required this.info,
     required this.discoverType,
@@ -65,8 +65,9 @@ class LinkTile extends StatelessWidget {
       ),
       onLongPress: () {
         if (discoverType == DiscoverType.anime ||
-            discoverType == DiscoverType.manga)
+            discoverType == DiscoverType.manga) {
           showSheet(context, EditView(id));
+        }
       },
       child: child,
     );

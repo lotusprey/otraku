@@ -46,7 +46,7 @@ class RouteArg {
       case settings:
         return MaterialPageRoute(builder: (_) => const SettingsView());
       case notifications:
-        return MaterialPageRoute(builder: (_) => NotificationsView());
+        return MaterialPageRoute(builder: (_) => const NotificationsView());
       case collection:
         if (arg?.id == null || arg?.variant == null) return _unknown;
         return MaterialPageRoute(

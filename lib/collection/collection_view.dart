@@ -23,7 +23,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CollectionView extends StatefulWidget {
-  CollectionView(this.userId, this.ofAnime);
+  const CollectionView(this.userId, this.ofAnime);
 
   final int userId;
   final bool ofAnime;
@@ -61,7 +61,7 @@ class _CollectionViewState extends State<CollectionView> {
 }
 
 class CollectionSubView extends StatelessWidget {
-  CollectionSubView({required this.tag, required this.scrollCtrl, super.key});
+  const CollectionSubView({required this.tag, required this.scrollCtrl, super.key});
 
   final CollectionTag tag;
   final ScrollController scrollCtrl;
@@ -102,7 +102,7 @@ class CollectionSubView extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  _TopBar(this.tag, this.canPop);
+  const _TopBar(this.tag, this.canPop);
 
   final CollectionTag tag;
   final bool canPop;
@@ -175,8 +175,9 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        if (ref.watch(collectionProvider(tag).select((s) => s.lists.isEmpty)))
+        if (ref.watch(collectionProvider(tag).select((s) => s.lists.isEmpty))) {
           return const SizedBox();
+        }
 
         return ActionButton(
           tooltip: 'Lists',
@@ -219,15 +220,17 @@ class _ActionButton extends StatelessWidget {
             final notifier = ref.read(collectionProvider(tag));
 
             if (goRight) {
-              if (notifier.index < notifier.lists.length - 1)
+              if (notifier.index < notifier.lists.length - 1) {
                 notifier.index++;
-              else
+              } else {
                 notifier.index = 0;
+              }
             } else {
-              if (notifier.index > 0)
+              if (notifier.index > 0) {
                 notifier.index--;
-              else
+              } else {
                 notifier.index = notifier.lists.length - 1;
+              }
             }
 
             return null;
@@ -238,17 +241,22 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
-class _Content extends StatelessWidget {
-  _Content(this.tag);
+class _Content extends StatefulWidget {
+  const _Content(this.tag);
 
   final CollectionTag tag;
 
+  @override
+  State<_Content> createState() => _ContentState();
+}
+
+class _ContentState extends State<_Content> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
-          collectionProvider(tag).select((s) => s.state),
+          collectionProvider(widget.tag).select((s) => s.state),
           (_, s) => s.whenOrNull(
             error: (error, _) => showPopUp(
               context,
@@ -260,29 +268,33 @@ class _Content extends StatelessWidget {
           ),
         );
 
-        final notifier = ref.watch(collectionProvider(tag));
-        if (notifier.state.isLoading)
+        final notifier = ref.watch(collectionProvider(widget.tag));
+        if (notifier.state.isLoading) {
           return const SliverFillRemaining(child: Center(child: Loader()));
+        }
 
-        final entries = ref.watch(entriesProvider(tag));
-        if (entries.isEmpty)
+        final entries = ref.watch(entriesProvider(widget.tag));
+        if (entries.isEmpty) {
           return const SliverFillRemaining(
             child: Center(child: Text('No results')),
           );
+        }
 
         void Function(Entry)? update;
-        if (tag.userId == Settings().id)
+        if (widget.tag.userId == Settings().id) {
           update = (e) async {
             final result = await updateProgress(e.mediaId, e.progress);
 
             if (result is! List<String>) {
-              showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Could not update progress',
-                  content: result.toString(),
-                ),
-              );
+              if (mounted) {
+                showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Could not update progress',
+                    content: result.toString(),
+                  ),
+                );
+              }
               return;
             }
 
@@ -292,12 +304,13 @@ class _Content extends StatelessWidget {
               customLists: result,
               listStatus: e.entryStatus,
               format: e.format,
-              sort: ref.read(collectionFilterProvider(tag)).sort,
+              sort: ref.read(collectionFilterProvider(widget.tag)).sort,
             );
 
             Get.find<ProgressController>()
                 .incrementProgress(e.mediaId, e.progress);
           };
+        }
 
         return LargeCollectionGrid(
           items: entries,

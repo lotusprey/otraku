@@ -6,7 +6,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class HtmlContent extends StatelessWidget {
-  HtmlContent(this.text);
+  const HtmlContent(this.text);
 
   final String text;
 
@@ -37,16 +37,18 @@ class HtmlContent extends StatelessWidget {
             element.localName == 'h2' ||
             element.localName == 'h3') styles['font-size'] = '20px';
 
-        if (element.localName == 'b' || element.localName == 'strong')
+        if (element.localName == 'b' || element.localName == 'strong') {
           styles['font-weight'] = '500';
+        }
 
-        if (element.localName == 'i' || element.localName == 'em')
+        if (element.localName == 'i' || element.localName == 'em') {
           styles['font-style'] = 'italic';
+        }
 
         return styles;
       },
       customWidgetBuilder: (element) {
-        if (element.localName == 'hr')
+        if (element.localName == 'hr') {
           return Container(
             height: 5,
             width: double.infinity,
@@ -56,6 +58,7 @@ class HtmlContent extends StatelessWidget {
               borderRadius: Consts.borderRadiusMin,
             ),
           );
+        }
 
         return null;
       },

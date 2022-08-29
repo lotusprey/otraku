@@ -3,7 +3,7 @@ import 'package:otraku/constants/consts.dart';
 
 // A text field that grows to up to 10 lines, if necessary.
 class GrowableTextField extends StatefulWidget {
-  GrowableTextField({
+  const GrowableTextField({
     required this.text,
     required this.onChanged,
   });
@@ -12,10 +12,10 @@ class GrowableTextField extends StatefulWidget {
   final void Function(String) onChanged;
 
   @override
-  _GrowableTextFieldState createState() => _GrowableTextFieldState();
+  GrowableTextFieldState createState() => GrowableTextFieldState();
 }
 
-class _GrowableTextFieldState extends State<GrowableTextField> {
+class GrowableTextFieldState extends State<GrowableTextField> {
   late final _ctrl = TextEditingController(text: widget.text);
 
   @override

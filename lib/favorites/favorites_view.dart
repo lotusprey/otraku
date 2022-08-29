@@ -95,7 +95,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
 }
 
 class _AnimeTab extends StatelessWidget {
-  _AnimeTab(this.id, this._ctrl, this.refreshControl);
+  const _AnimeTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -146,7 +146,7 @@ class _AnimeTab extends StatelessWidget {
 }
 
 class _MangaTab extends StatelessWidget {
-  _MangaTab(this.id, this._ctrl, this.refreshControl);
+  const _MangaTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -197,7 +197,7 @@ class _MangaTab extends StatelessWidget {
 }
 
 class _CharactersTab extends StatelessWidget {
-  _CharactersTab(this.id, this._ctrl, this.refreshControl);
+  const _CharactersTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -248,7 +248,7 @@ class _CharactersTab extends StatelessWidget {
 }
 
 class _StaffTab extends StatelessWidget {
-  _StaffTab(this.id, this._ctrl, this.refreshControl);
+  const _StaffTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -299,7 +299,7 @@ class _StaffTab extends StatelessWidget {
 }
 
 class _StudiosTab extends StatelessWidget {
-  _StudiosTab(this.id, this._ctrl, this.refreshControl);
+  const _StudiosTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;

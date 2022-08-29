@@ -8,15 +8,17 @@ import 'package:otraku/utils/theming.dart';
 Future<void> main() async {
   await Settings.init();
   BackgroundHandler.init();
-  runApp(ProviderScope(child: App()));
+  runApp(const ProviderScope(child: App()));
 }
 
 class App extends StatefulWidget {
+  const App();
+
   @override
-  _AppState createState() => _AppState();
+  AppState createState() => AppState();
 }
 
-class _AppState extends State<App> {
+class AppState extends State<App> {
   @override
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -81,7 +81,9 @@ class ReviewsNotifier extends ChangeNotifier {
       _count = data['Page']['pageInfo']?['total'] ?? 0;
 
       final items = <ReviewItem>[];
-      for (final r in data['Page']['reviews']) items.add(ReviewItem(r));
+      for (final r in data['Page']['reviews']) {
+        items.add(ReviewItem(r));
+      }
 
       return value.append(
         items,

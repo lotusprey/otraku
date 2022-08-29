@@ -26,7 +26,7 @@ abstract class Api {
   ) async {
     if (account < 0 || account > 1) return;
 
-    await FlutterSecureStorage().write(
+    await const FlutterSecureStorage().write(
       key: account == 0 ? _TOKEN_0 : _TOKEN_1,
       value: token,
     );
@@ -55,7 +55,7 @@ abstract class Api {
       }
 
       // Try to acquire the token from the storage.
-      _accessToken = await FlutterSecureStorage()
+      _accessToken = await const FlutterSecureStorage()
           .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
 
       if (_accessToken == null) return false;
@@ -88,7 +88,7 @@ abstract class Api {
   static Future<void> removeAccount(int account) async {
     Settings().setIdOf(account, null);
     Settings().setExpirationOf(account, null);
-    await FlutterSecureStorage()
+    await const FlutterSecureStorage()
         .delete(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
   }
 
@@ -111,10 +111,11 @@ abstract class Api {
 
     final Map<String, dynamic> body = json.decode(response.body);
 
-    if (body.containsKey('errors'))
+    if (body.containsKey('errors')) {
       throw StateError(
         (body['errors'] as List).map((e) => e['message'].toString()).join(),
       );
+    }
 
     return body['data'];
   }

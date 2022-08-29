@@ -37,8 +37,9 @@ class Character {
 
   factory Character(Map<String, dynamic> map) {
     final altNames = List<String>.from(map['name']['alternative'] ?? []);
-    if (map['name']['native'] != null)
+    if (map['name']['native'] != null) {
       altNames.insert(0, map['name']['native'].toString());
+    }
 
     final altNamesSpoilers = List<String>.from(
       map['name']['alternativeSpoiler'] ?? [],

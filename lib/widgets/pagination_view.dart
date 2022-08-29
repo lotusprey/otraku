@@ -13,7 +13,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 /// [dateType] is a lowercase word for the data being handled (e.g. "reviews").
 /// [onData] should return a sliver widget.
 class PaginationView<T> extends StatelessWidget {
-  PaginationView({
+  const PaginationView({
     required this.provider,
     required this.scrollCtrl,
     required this.onRefresh,
@@ -58,10 +58,11 @@ class PaginationView<T> extends StatelessWidget {
               data: (data) {
                 hasNext = data.hasNext;
 
-                if (data.items.isEmpty)
+                if (data.items.isEmpty) {
                   return SliverFillRemaining(
                     child: Center(child: Text('No $dataType')),
                   );
+                }
 
                 return onData(data);
               },

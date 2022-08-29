@@ -151,7 +151,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
 }
 
 class _TopBar extends StatelessWidget {
-  _TopBar(this.activity);
+  const _TopBar(this.activity);
 
   final Activity activity;
 

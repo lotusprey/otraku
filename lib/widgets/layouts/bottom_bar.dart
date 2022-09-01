@@ -153,7 +153,7 @@ class BottomBarButton extends StatelessWidget {
         icon: Icon(icon),
         onPressed: onTap,
         style: TextButton.styleFrom(
-          primary: warning ? Theme.of(context).colorScheme.error : null,
+          foregroundColor: warning ? Theme.of(context).colorScheme.error : null,
         ),
       ),
     );

@@ -220,7 +220,7 @@ class _Button extends StatelessWidget {
     return TextButton(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        primary: Theme.of(context).colorScheme.onBackground,
+        foregroundColor: Theme.of(context).colorScheme.onBackground,
       ),
       child: Row(
         children: [

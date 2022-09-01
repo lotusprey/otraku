@@ -103,8 +103,8 @@ class SettingsAboutTab extends StatelessWidget {
               label: const Text('Accounts'),
               onPressed: Api.logOut,
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).colorScheme.error,
-                onPrimary: Theme.of(context).colorScheme.onError,
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
               ),
             ),
           ),

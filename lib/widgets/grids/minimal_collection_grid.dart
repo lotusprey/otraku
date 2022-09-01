@@ -10,7 +10,8 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class MinimalCollectionGrid extends StatelessWidget {
-  const MinimalCollectionGrid({required this.items, required this.updateProgress});
+  const MinimalCollectionGrid(
+      {required this.items, required this.updateProgress});
 
   final List<EntryItem> items;
   final void Function(EntryItem) updateProgress;
@@ -108,7 +109,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
         minimumSize: const Size(0, 30),
         padding: const EdgeInsets.symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        primary: warning ? Theme.of(context).colorScheme.error : null,
+        foregroundColor: warning ? Theme.of(context).colorScheme.error : null,
       ),
       onPressed: () {
         if (model.progressMax == null ||

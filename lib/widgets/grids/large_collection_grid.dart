@@ -318,7 +318,7 @@ class __TileContentState extends State<_TileContent> {
         minimumSize: const Size(0, 30),
         padding: const EdgeInsets.only(left: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        primary: Theme.of(context).colorScheme.surfaceVariant,
+        foregroundColor: Theme.of(context).colorScheme.surfaceVariant,
       ),
       onPressed: () {
         if (model.progressMax == null ||

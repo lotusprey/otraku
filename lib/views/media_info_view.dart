@@ -476,8 +476,8 @@ class __TagsState extends State<_Tags> {
           if (i == tags.length) {
             return ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).colorScheme.surface,
-                onPrimary: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                foregroundColor: Theme.of(context).colorScheme.primary,
                 shape: const RoundedRectangleBorder(
                   borderRadius: Consts.borderRadiusMin,
                 ),

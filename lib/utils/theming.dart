@@ -71,8 +71,8 @@ class Theming with ChangeNotifier {
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            primary: scheme.primary,
-            onPrimary: scheme.onPrimary,
+            backgroundColor: scheme.primary,
+            foregroundColor: scheme.onPrimary,
             textStyle: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ),

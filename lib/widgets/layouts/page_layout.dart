@@ -152,12 +152,12 @@ class TopBarIcon extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.onTap,
-    this.colour,
+    this.color,
   });
 
   final IconData icon;
   final String tooltip;
-  final Color? colour;
+  final Color? color;
   final void Function() onTap;
 
   @override
@@ -166,8 +166,7 @@ class TopBarIcon extends StatelessWidget {
       icon: Icon(icon),
       tooltip: tooltip,
       onPressed: onTap,
-      iconSize: Consts.iconBig,
-      color: colour ?? Theme.of(context).colorScheme.onBackground,
+      color: color ?? Theme.of(context).colorScheme.onBackground,
       constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
       padding: Consts.padding,
     );

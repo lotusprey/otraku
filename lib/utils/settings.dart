@@ -8,12 +8,12 @@ import 'package:otraku/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 // Local settings.
-class Settings {
+class Settings extends ChangeNotifier {
   Settings._(
     this._account,
     this._themeMode,
-    this._lightTheme,
-    this._darkTheme,
+    this._theme,
+    this._pureBlackDarkTheme,
     this._defaultHomeTab,
     this._defaultDiscoverType,
     this._defaultAnimeSort,
@@ -37,8 +37,8 @@ class Settings {
     return Settings._(
       _box.get(_ACCOUNT),
       ThemeMode.values[(_box.get(_THEME_MODE) ?? 0)],
-      _box.get(_LIGHT_THEME) ?? 0,
-      _box.get(_DARK_THEME) ?? 0,
+      _box.get(_THEME),
+      _box.get(_PURE_BLACK_DARK_THEME) ?? false,
       _box.get(_DEFAULT_HOME_TAB) ?? 0,
       DiscoverType.values[_box.get(_DEFAULT_DISCOVER_TYPE) ?? 0],
       EntrySort.values[_box.get(_DEFAULT_ANIME_SORT) ?? 0],
@@ -67,8 +67,8 @@ class Settings {
   static const _SETTINGS = 'settings';
 
   static const _THEME_MODE = 'themeMode';
-  static const _LIGHT_THEME = 'theme1';
-  static const _DARK_THEME = 'theme2';
+  static const _THEME = 'theme';
+  static const _PURE_BLACK_DARK_THEME = 'pureBlackDarkTheme';
   static const _DEFAULT_HOME_TAB = 'defaultHomeTab';
   static const _DEFAULT_DISCOVER_TYPE = 'defaultExplorable';
   static const _DEFAULT_ANIME_SORT = 'defaultAnimeSort';
@@ -108,8 +108,8 @@ class Settings {
 
   int? _account;
   ThemeMode _themeMode;
-  int _lightTheme;
-  int _darkTheme;
+  int? _theme;
+  bool _pureBlackDarkTheme;
   int _defaultHomeTab;
   DiscoverType _defaultDiscoverType;
   EntrySort _defaultAnimeSort;
@@ -131,8 +131,8 @@ class Settings {
 
   int? get selectedAccount => _account;
   ThemeMode get themeMode => _themeMode;
-  int get lightTheme => _lightTheme;
-  int get darkTheme => _darkTheme;
+  int? get theme => _theme;
+  bool get pureBlackDarkTheme => _pureBlackDarkTheme;
   int get defaultHomeTab => _defaultHomeTab;
   DiscoverType get defaultDiscoverType => _defaultDiscoverType;
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
@@ -186,22 +186,31 @@ class Settings {
   set themeMode(ThemeMode v) {
     if (v == _themeMode) return;
     _themeMode = v;
-    Theming().refresh();
     _box.put(_THEME_MODE, v.index);
+    notifyListeners();
   }
 
-  set lightTheme(int v) {
-    if (v < 0 || v >= Theming.schemes.length || v == _lightTheme) return;
-    _lightTheme = v;
-    Theming().refresh();
-    _box.put(_LIGHT_THEME, v);
+  set theme(int? v) {
+    if (v == _theme) return;
+
+    if (v == null) {
+      _theme = null;
+      _box.delete(_THEME);
+      notifyListeners();
+      return;
+    }
+
+    if (v < 0 || v >= ColorSeed.values.length) return;
+    _theme = v;
+    _box.put(_THEME, v);
+    notifyListeners();
   }
 
-  set darkTheme(int v) {
-    if (v < 0 || v >= Theming.schemes.length || v == _darkTheme) return;
-    _darkTheme = v;
-    Theming().refresh();
-    _box.put(_DARK_THEME, v);
+  set pureBlackDarkTheme(bool v) {
+    if (_pureBlackDarkTheme == v) return;
+    _pureBlackDarkTheme = v;
+    _box.put(_PURE_BLACK_DARK_THEME, v);
+    notifyListeners();
   }
 
   set defaultHomeTab(int v) {

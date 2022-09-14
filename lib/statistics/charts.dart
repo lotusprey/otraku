@@ -78,7 +78,8 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  const PieChart({required this.title, required this.names, required this.values})
+  const PieChart(
+      {required this.title, required this.names, required this.values})
       : assert(names.length == values.length);
 
   final String title;
@@ -103,8 +104,8 @@ class PieChart extends StatelessWidget {
               end: Alignment.centerRight,
               stops: const [0, 1],
               colors: [
-                Theme.of(context).colorScheme.surface.withOpacity(0.3),
-                Theme.of(context).colorScheme.surface,
+                Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
+                Theme.of(context).colorScheme.surfaceVariant.withAlpha(100),
               ],
             ),
           ),
@@ -132,7 +133,7 @@ class PieChart extends StatelessWidget {
                     ),
                     child: CustomPaint(
                       foregroundPainter: _PieLines(
-                        Theme.of(context).colorScheme.surface,
+                        Theme.of(context).colorScheme.background,
                         values,
                       ),
                     ),

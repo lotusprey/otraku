@@ -25,7 +25,7 @@ class Toast {
           ),
           padding: Consts.padding,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: Consts.borderRadiusMin,
             boxShadow: [
               BoxShadow(

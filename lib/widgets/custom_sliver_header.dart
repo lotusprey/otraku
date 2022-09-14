@@ -36,7 +36,8 @@ class CustomSliverHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double sidePadding = 10;
-    if (maxWidth != null && MediaQuery.of(context).size.width > maxWidth! + 20) {
+    if (maxWidth != null &&
+        MediaQuery.of(context).size.width > maxWidth! + 20) {
       sidePadding = (MediaQuery.of(context).size.width - maxWidth!) / 2;
     }
 
@@ -113,7 +114,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         boxShadow: [
           BoxShadow(
             blurRadius: 5,
@@ -184,7 +185,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                         height: imageHeight,
                         width: imageWidth,
                         color: complexImage
-                            ? Theme.of(context).colorScheme.surface
+                            ? Theme.of(context).colorScheme.surfaceVariant
                             : null,
                         child: image != null
                             ? GestureDetector(

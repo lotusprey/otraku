@@ -25,11 +25,7 @@ class MinimalCollectionGrid extends StatelessWidget {
         rawHWRatio: Consts.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
-        (_, i) => DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.borderRadiusMin,
-          ),
+        (_, i) => Card(
           child: LinkTile(
             id: items[i].mediaId,
             discoverType: DiscoverType.anime,
@@ -42,7 +38,7 @@ class MinimalCollectionGrid extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: Container(
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Theme.of(context).colorScheme.surfaceVariant,
                         child: FadeImage(items[i].imageUrl),
                       ),
                     ),

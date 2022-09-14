@@ -50,7 +50,7 @@ class MediaOtherView extends StatelessWidget {
                 handle:
                     NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               ),
-              _RelationsGrid(ctrl.model!.otherMedia),
+              _RelatedGrid(ctrl.model!.otherMedia),
               const SliverFooter(),
             ],
           ),
@@ -74,8 +74,8 @@ class MediaOtherView extends StatelessWidget {
   }
 }
 
-class _RelationsGrid extends StatelessWidget {
-  const _RelationsGrid(this.items);
+class _RelatedGrid extends StatelessWidget {
+  const _RelatedGrid(this.items);
 
   final List<RelatedMediaModel> items;
 
@@ -112,11 +112,7 @@ class _RelationsGrid extends StatelessWidget {
               id: items[i].id,
               info: items[i].imageUrl,
               discoverType: items[i].type,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: Consts.borderRadiusMin,
-                ),
+              child: Card(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -125,7 +121,7 @@ class _RelationsGrid extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: Consts.borderRadiusMin,
                         child: Container(
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
                           child: FadeImage(
                             items[i].imageUrl,
                             width: 100 / Consts.coverHtoWRatio,
@@ -191,11 +187,7 @@ class _RecommendationsGrid extends StatelessWidget {
         ),
         delegate: SliverChildBuilderDelegate(
           childCount: items.length,
-          (context, i) => DecoratedBox(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: Consts.borderRadiusMin,
-            ),
+          (context, i) => Card(
             child: LinkTile(
               id: items[i].id,
               discoverType: items[i].type,
@@ -208,14 +200,14 @@ class _RecommendationsGrid extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: Consts.borderRadiusMin,
                         child: Container(
-                          color: Theme.of(context).colorScheme.surface,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
                           child: FadeImage(items[i].imageUrl!),
                         ),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.only(top: 5, left: 5, right: 5),
                     child: SizedBox(
                       height: 35,
                       child: Text(
@@ -227,8 +219,7 @@ class _RecommendationsGrid extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.only(left: 5, right: 5, bottom: 5),
+                    padding: const EdgeInsets.only(left: 5, right: 5),
                     child: _Rating(items[i], rate),
                   ),
                 ],
@@ -254,91 +245,112 @@ class _Rating extends StatefulWidget {
 class __RatingState extends State<_Rating> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        GestureDetector(
-          onTap: () {
-            final oldRating = widget.model.rating;
-            final oldUserRating = widget.model.userRating;
+    return SizedBox(
+      height: 30,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Tooltip(
+            message: 'Agree',
+            child: InkResponse(
+              onTap: () {
+                final oldRating = widget.model.rating;
+                final oldUserRating = widget.model.userRating;
 
-            setState(() {
-              switch (widget.model.userRating) {
-                case true:
-                  widget.model.rating--;
-                  widget.model.userRating = null;
-                  break;
-                case false:
-                  widget.model.rating += 2;
-                  widget.model.userRating = true;
-                  break;
-                case null:
-                  widget.model.rating++;
-                  widget.model.userRating = true;
-                  break;
-              }
-            });
-
-            widget.rate(widget.model.id, widget.model.userRating).then((ok) {
-              if (!ok) {
                 setState(() {
-                  widget.model.rating = oldRating;
-                  widget.model.userRating = oldUserRating;
+                  switch (widget.model.userRating) {
+                    case true:
+                      widget.model.rating--;
+                      widget.model.userRating = null;
+                      break;
+                    case false:
+                      widget.model.rating += 2;
+                      widget.model.userRating = true;
+                      break;
+                    case null:
+                      widget.model.rating++;
+                      widget.model.userRating = true;
+                      break;
+                  }
                 });
-              }
-            });
-          },
-          child: Icon(
-            Icons.thumb_up_outlined,
-            size: Consts.iconSmall,
-            color: widget.model.userRating == true
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.onBackground,
+
+                widget
+                    .rate(widget.model.id, widget.model.userRating)
+                    .then((ok) {
+                  if (!ok) {
+                    setState(() {
+                      widget.model.rating = oldRating;
+                      widget.model.userRating = oldUserRating;
+                    });
+                  }
+                });
+              },
+              child: widget.model.userRating == true
+                  ? Icon(
+                      Icons.thumb_up,
+                      size: Consts.iconSmall,
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  : Icon(
+                      Icons.thumb_up_outlined,
+                      size: Consts.iconSmall,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+            ),
           ),
-        ),
-        const SizedBox(width: 5),
-        Text(widget.model.rating.toString(), overflow: TextOverflow.fade),
-        const SizedBox(width: 5),
-        GestureDetector(
-          onTap: () {
-            final oldRating = widget.model.rating;
-            final oldUserRating = widget.model.userRating;
+          const SizedBox(width: 5),
+          Text(widget.model.rating.toString(), overflow: TextOverflow.fade),
+          const SizedBox(width: 5),
+          Tooltip(
+            message: 'Disagree',
+            child: InkResponse(
+              onTap: () {
+                final oldRating = widget.model.rating;
+                final oldUserRating = widget.model.userRating;
 
-            setState(() {
-              switch (widget.model.userRating) {
-                case true:
-                  widget.model.rating -= 2;
-                  widget.model.userRating = false;
-                  break;
-                case false:
-                  widget.model.rating++;
-                  widget.model.userRating = null;
-                  break;
-                case null:
-                  widget.model.rating--;
-                  widget.model.userRating = false;
-                  break;
-              }
-            });
-
-            widget.rate(widget.model.id, widget.model.userRating).then((ok) {
-              if (!ok) {
                 setState(() {
-                  widget.model.rating = oldRating;
-                  widget.model.userRating = oldUserRating;
+                  switch (widget.model.userRating) {
+                    case true:
+                      widget.model.rating -= 2;
+                      widget.model.userRating = false;
+                      break;
+                    case false:
+                      widget.model.rating++;
+                      widget.model.userRating = null;
+                      break;
+                    case null:
+                      widget.model.rating--;
+                      widget.model.userRating = false;
+                      break;
+                  }
                 });
-              }
-            });
-          },
-          child: Icon(
-            Icons.thumb_down_outlined,
-            size: Consts.iconSmall,
-            color: widget.model.userRating == false
-                ? Theme.of(context).colorScheme.error
-                : Theme.of(context).colorScheme.onBackground,
+
+                widget
+                    .rate(widget.model.id, widget.model.userRating)
+                    .then((ok) {
+                  if (!ok) {
+                    setState(() {
+                      widget.model.rating = oldRating;
+                      widget.model.userRating = oldUserRating;
+                    });
+                  }
+                });
+              },
+              child: widget.model.userRating == false
+                  ? Icon(
+                      Icons.thumb_down,
+                      size: Consts.iconSmall,
+                      color: Theme.of(context).colorScheme.error,
+                    )
+                  : Icon(
+                      Icons.thumb_down_outlined,
+                      size: Consts.iconSmall,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

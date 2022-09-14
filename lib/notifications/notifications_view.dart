@@ -179,7 +179,7 @@ class _NotificationItem extends StatelessWidget {
           height: 90,
           decoration: BoxDecoration(
             borderRadius: Consts.borderRadiusMin,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceVariant,
           ),
           child: Row(
             children: [

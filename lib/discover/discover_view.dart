@@ -240,7 +240,7 @@ class _BirthdayFilter extends StatelessWidget {
     return TopBarIcon(
       icon: Icons.cake_outlined,
       tooltip: 'Birthday Filter',
-      colour: value ? Theme.of(context).colorScheme.primary : null,
+      color: value ? Theme.of(context).colorScheme.primary : null,
       onTap: () => ref.read(birthdayFilterProvider.notifier).state = !value,
     );
   }

@@ -3,7 +3,6 @@ import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/media/media_item.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/utils/api.dart';
-import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/pagination.dart';
 
@@ -90,10 +89,9 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
 
       for (final m in data['nodes']) {
         var category = m[key]?['year']?.toString();
-        category ??= Convert.clarifyEnum(m['status']);
-        category ??= 'Unknown';
+        category ??= 'Unfinished';
 
-        if (s.categories.isEmpty || s.categories.keys.last != category) {
+        if (s.categories.isEmpty || !s.categories.containsKey(category)) {
           s.categories[category] = index;
         }
 

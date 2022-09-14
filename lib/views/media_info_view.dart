@@ -28,7 +28,6 @@ class MediaInfoView extends StatelessWidget {
     final info = ctrl.model!.info;
 
     final infoTitles = [
-      'Format',
       'Status',
       'Episodes',
       'Duration',
@@ -46,7 +45,6 @@ class MediaInfoView extends StatelessWidget {
     ];
 
     final infoData = [
-      info.format,
       info.status,
       info.episodes,
       info.duration,
@@ -91,16 +89,14 @@ class MediaInfoView extends StatelessWidget {
                 child: Padding(
                   padding: Consts.padding,
                   child: GestureDetector(
-                    child: Container(
-                      padding: Consts.padding,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: Consts.borderRadiusMin,
-                      ),
-                      child: Text(
-                        info.description,
-                        maxLines: 4,
-                        overflow: TextOverflow.fade,
+                    child: Card(
+                      child: Padding(
+                        padding: Consts.padding,
+                        child: Text(
+                          info.description,
+                          maxLines: 4,
+                          overflow: TextOverflow.fade,
+                        ),
                       ),
                     ),
                     onTap: () => showPopUp(
@@ -121,26 +117,24 @@ class MediaInfoView extends StatelessWidget {
                   minWidth: 130,
                 ),
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: Consts.borderRadiusMin,
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          infoTitles[i],
-                          maxLines: 1,
-                          style: Theme.of(context).textTheme.subtitle1,
-                        ),
-                        Text(infoData[i].toString(), maxLines: 1),
-                      ],
+                  (context, i) => Card(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            infoTitles[i],
+                            maxLines: 1,
+                            style: Theme.of(context).textTheme.subtitle1,
+                          ),
+                          Text(infoData[i].toString(), maxLines: 1),
+                        ],
+                      ),
                     ),
                   ),
                   childCount: infoData.length,
@@ -323,14 +317,12 @@ class _ScrollCards extends StatelessWidget {
                 itemBuilder: (_, index) => GestureDetector(
                   onTap: () => onTap(index),
                   onLongPress: () => Toast.copy(context, items[index]),
-                  child: Container(
+                  child: Card(
                     margin: const EdgeInsets.only(right: 10),
-                    padding: Consts.padding,
-                    decoration: BoxDecoration(
-                      borderRadius: Consts.borderRadiusMin,
-                      color: Theme.of(context).colorScheme.surface,
+                    child: Padding(
+                      padding: Consts.padding,
+                      child: Text(items[index]),
                     ),
-                    child: Text(items[index]),
                   ),
                 ),
               ),
@@ -357,12 +349,8 @@ class _Titles extends StatelessWidget {
             height: Consts.tapTargetSize + 10,
             child: GestureDetector(
               onTap: () => Toast.copy(context, titles[i]),
-              child: Container(
+              child: Card(
                 margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  borderRadius: Consts.borderRadiusMin,
-                  color: Theme.of(context).colorScheme.surface,
-                ),
                 child: SingleChildScrollView(
                   padding: Consts.padding,
                   scrollDirection: Axis.horizontal,
@@ -411,92 +399,9 @@ class __TagsState extends State<_Tags> {
       final tags = widget.ctrl.model!.info.tags;
 
       delegate = SliverChildBuilderDelegate(
-        (_, i) => GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            final ref = widget.ref;
-            final info = widget.ctrl.model!.info;
-            ref.read(discoverTypeProvider.notifier).state = info.type;
-            ref.read(searchProvider(null).notifier).state = null;
-
-            final ofAnime = info.type == DiscoverType.anime;
-            final notifier = ref.read(
-              discoverFilterProvider(ofAnime).notifier,
-            );
-            final filter = notifier.state.clear();
-            filter.tagIn.add(tags[i].name);
-            notifier.state = filter;
-
-            ref.read(homeProvider).homeTab = HomeView.DISCOVER;
-            Navigator.popUntil(context, (r) => r.isFirst);
-          },
-          onLongPress: () => showPopUp(
-            context,
-            TextDialog(title: tags[i].name, text: tags[i].desciption),
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              borderRadius: Consts.borderRadiusMin,
-              color: Theme.of(context).colorScheme.surface,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    tags[i].name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  '${tags[i].rank} %',
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-              ],
-            ),
-          ),
-        ),
-        childCount: tags.length,
-      );
-    } else {
-      final tags = widget.ctrl.showSpoilerTags
-          ? widget.ctrl.model!.info.tags
-          : widget.ctrl.model!.info.tags.where((t) => !t.isSpoiler).toList();
-
-      final spoilerStyle = Theme.of(context)
-          .textTheme
-          .bodyText2!
-          .copyWith(color: Theme.of(context).colorScheme.error);
-
-      delegate = SliverChildBuilderDelegate(
-        childCount: tags.length + 1,
-        (_, i) {
-          if (i == tags.length) {
-            return ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.surface,
-                foregroundColor: Theme.of(context).colorScheme.primary,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: Consts.borderRadiusMin,
-                ),
-              ),
-              onPressed: () => setState(
-                () =>
-                    widget.ctrl.showSpoilerTags = !widget.ctrl.showSpoilerTags,
-              ),
-              icon: Icon(
-                widget.ctrl.showSpoilerTags
-                    ? Ionicons.eye_off_outline
-                    : Ionicons.eye_outline,
-              ),
-              label: const Text('Spoilers'),
-            );
-          }
-
-          return GestureDetector(
-            behavior: HitTestBehavior.opaque,
+        (_, i) => Card(
+          clipBehavior: Clip.hardEdge,
+          child: InkResponse(
             onTap: () {
               final ref = widget.ref;
               final info = widget.ctrl.model!.info;
@@ -518,12 +423,8 @@ class __TagsState extends State<_Tags> {
               context,
               TextDialog(title: tags[i].name, text: tags[i].desciption),
             ),
-            child: Container(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                borderRadius: Consts.borderRadiusMin,
-                color: Theme.of(context).colorScheme.surface,
-              ),
               child: Row(
                 children: [
                   Expanded(
@@ -531,7 +432,6 @@ class __TagsState extends State<_Tags> {
                       tags[i].name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: tags[i].isSpoiler ? spoilerStyle : null,
                     ),
                   ),
                   const SizedBox(width: 5),
@@ -540,6 +440,93 @@ class __TagsState extends State<_Tags> {
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ],
+              ),
+            ),
+          ),
+        ),
+        childCount: tags.length,
+      );
+    } else {
+      final tags = widget.ctrl.showSpoilerTags
+          ? widget.ctrl.model!.info.tags
+          : widget.ctrl.model!.info.tags.where((t) => !t.isSpoiler).toList();
+
+      final spoilerStyle = Theme.of(context)
+          .textTheme
+          .bodyText2!
+          .copyWith(color: Theme.of(context).colorScheme.error);
+
+      delegate = SliverChildBuilderDelegate(
+        childCount: tags.length + 1,
+        (_, i) {
+          if (i == tags.length) {
+            return ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: Consts.borderRadiusMin,
+                ),
+              ),
+              onPressed: () => setState(
+                () =>
+                    widget.ctrl.showSpoilerTags = !widget.ctrl.showSpoilerTags,
+              ),
+              icon: Icon(
+                widget.ctrl.showSpoilerTags
+                    ? Ionicons.eye_off_outline
+                    : Ionicons.eye_outline,
+              ),
+              label: const Text('Spoilers'),
+            );
+          }
+
+          return Card(
+            clipBehavior: Clip.hardEdge,
+            child: InkResponse(
+              onTap: () {
+                final ref = widget.ref;
+                final info = widget.ctrl.model!.info;
+                ref.read(discoverTypeProvider.notifier).state = info.type;
+                ref.read(searchProvider(null).notifier).state = null;
+
+                final ofAnime = info.type == DiscoverType.anime;
+                final notifier = ref.read(
+                  discoverFilterProvider(ofAnime).notifier,
+                );
+                final filter = notifier.state.clear();
+                filter.tagIn.add(tags[i].name);
+                notifier.state = filter;
+
+                ref.read(homeProvider).homeTab = HomeView.DISCOVER;
+                Navigator.popUntil(context, (r) => r.isFirst);
+              },
+              onLongPress: () => showPopUp(
+                context,
+                TextDialog(title: tags[i].name, text: tags[i].desciption),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        tags[i].name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: tags[i].isSpoiler ? spoilerStyle : null,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '${tags[i].rank} %',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                  ],
+                ),
               ),
             ),
           );

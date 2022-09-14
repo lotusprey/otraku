@@ -53,28 +53,26 @@ class DropDownFieldState<T> extends State<DropDownField<T>> {
 
     return LabeledField(
       label: widget.title,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.borderRadiusMin,
-        ),
-        child: DropdownButton<T>(
-          value: _value,
-          items: items,
-          onChanged: (val) {
-            final v = val as T;
-            setState(() => _value = v);
-            widget.onChanged(v);
-          },
-          hint: Text(
-            widget.hint,
-            style: Theme.of(context).textTheme.subtitle1,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: DropdownButton<T>(
+            value: _value,
+            items: items,
+            onChanged: (val) {
+              final v = val as T;
+              setState(() => _value = v);
+              widget.onChanged(v);
+            },
+            hint: Text(
+              widget.hint,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            dropdownColor: Theme.of(context).colorScheme.surfaceVariant,
+            borderRadius: Consts.borderRadiusMax,
+            underline: const SizedBox(),
+            isExpanded: true,
           ),
-          iconEnabledColor: Theme.of(context).colorScheme.surfaceVariant,
-          dropdownColor: Theme.of(context).colorScheme.surface,
-          underline: const SizedBox(),
-          isExpanded: true,
         ),
       ),
     );

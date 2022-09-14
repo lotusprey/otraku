@@ -185,14 +185,12 @@ class UserSubView extends StatelessWidget {
 
             if (data.description.isNotEmpty) {
               items.add(SliverToBoxAdapter(
-                child: Container(
+                child: Card(
                   margin: padding,
-                  padding: Consts.padding,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: Consts.borderRadiusMin,
+                  child: Padding(
+                    padding: Consts.padding,
+                    child: HtmlContent(data.description),
                   ),
-                  child: HtmlContent(data.description),
                 ),
               ));
             }

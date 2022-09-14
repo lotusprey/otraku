@@ -34,29 +34,14 @@ class _ChipGrid extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.subtitle1),
             const Spacer(),
             if (onClear != null && children.isNotEmpty)
-              Tooltip(
-                message: 'Clear',
-                child: GestureDetector(
-                  onTap: onClear,
-                  child: Container(
-                    height: Consts.iconBig,
-                    width: Consts.iconBig,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.surfaceVariant,
-                    ),
-                    child: Icon(
-                      Icons.close,
-                      color: Theme.of(context).colorScheme.background,
-                      size: Consts.iconSmall,
-                    ),
-                  ),
-                ),
+              TopBarIcon(
+                tooltip: 'Clear',
+                icon: Icons.close,
+                onTap: onClear!,
               ),
             TopBarIcon(
               tooltip: 'Edit',
               icon: Ionicons.add_circle_outline,
-              colour: Theme.of(context).colorScheme.surfaceVariant,
               onTap: onEdit,
             ),
           ],

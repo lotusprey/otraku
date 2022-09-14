@@ -19,13 +19,15 @@ class GrowableTextFieldState extends State<GrowableTextField> {
   late final _ctrl = TextEditingController(text: widget.text);
 
   @override
-  Widget build(BuildContext context) => TextField(
-        minLines: 1,
-        maxLines: 10,
-        style: Theme.of(context).textTheme.bodyText2,
-        decoration: const InputDecoration(contentPadding: Consts.padding),
-        controller: _ctrl,
-        onChanged: (text) => widget.onChanged(text),
+  Widget build(BuildContext context) => Card(
+        child: TextField(
+          minLines: 1,
+          maxLines: 10,
+          style: Theme.of(context).textTheme.bodyText2,
+          decoration: const InputDecoration(contentPadding: Consts.padding),
+          controller: _ctrl,
+          onChanged: (text) => widget.onChanged(text),
+        ),
       );
 
   @override

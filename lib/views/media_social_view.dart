@@ -134,17 +134,17 @@ class _ReviewGrid extends StatelessWidget {
                   id: items[i].reviewId,
                   info: bannerUrl,
                   discoverType: DiscoverType.review,
-                  child: Container(
-                    width: double.infinity,
-                    padding: Consts.padding,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: Consts.borderRadiusMin,
-                    ),
-                    child: Text(
-                      items[i].summary,
-                      style: Theme.of(context).textTheme.subtitle1,
-                      overflow: TextOverflow.fade,
+                  child: Card(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Padding(
+                        padding: Consts.padding,
+                        child: Text(
+                          items[i].summary,
+                          style: Theme.of(context).textTheme.subtitle1,
+                          overflow: TextOverflow.fade,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -173,27 +173,25 @@ class _Ranks extends StatelessWidget {
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
-          (_, i) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: Consts.borderRadiusMin,
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                const SizedBox(width: 5),
-                Expanded(
-                  child: Text(
-                    rankTexts[i],
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+          (_, i) => Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(
+                children: [
+                  Icon(
+                    rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      rankTexts[i],
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           childCount: rankTexts.length,

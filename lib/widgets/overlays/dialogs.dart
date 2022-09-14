@@ -5,12 +5,12 @@ import 'package:otraku/widgets/html_content.dart';
 Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
       context: context,
       builder: (context) => PopUpAnimation(child),
-      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
     );
 
 class PopUpAnimation extends StatefulWidget {
-  final Widget child;
   const PopUpAnimation(this.child);
+
+  final Widget child;
 
   @override
   PopUpAnimationState createState() => PopUpAnimationState();
@@ -47,10 +47,10 @@ class PopUpAnimationState extends State<PopUpAnimation>
 }
 
 class InputDialog extends StatelessWidget {
+  const InputDialog({required this.initial, required this.onChanged});
+
   final String initial;
   final void Function(String) onChanged;
-
-  const InputDialog({required this.initial, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +83,9 @@ class InputDialog extends StatelessWidget {
 
 // A basic container for a dialog.
 class DialogBox extends StatelessWidget {
-  final Widget child;
   const DialogBox(this.child);
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -140,10 +141,10 @@ class ConfirmationDialog extends StatelessWidget {
 }
 
 class ImageDialog extends StatelessWidget {
+  const ImageDialog(this.url, [this.fit = BoxFit.cover]);
+
   final String url;
   final BoxFit fit;
-
-  const ImageDialog(this.url, [this.fit = BoxFit.cover]);
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +156,7 @@ class ImageDialog extends StatelessWidget {
         borderRadius: Consts.borderRadiusMin,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceVariant,
           ),
           child: Image.network(url, fit: fit),
         ),
@@ -165,9 +166,10 @@ class ImageDialog extends StatelessWidget {
 }
 
 class TextDialog extends StatelessWidget {
+  const TextDialog({required this.title, required this.text});
+
   final String title;
   final String text;
-  const TextDialog({required this.title, required this.text});
 
   @override
   Widget build(BuildContext context) =>
@@ -175,9 +177,10 @@ class TextDialog extends StatelessWidget {
 }
 
 class HtmlDialog extends StatelessWidget {
+  const HtmlDialog({required this.title, required this.text});
+
   final String title;
   final String text;
-  const HtmlDialog({required this.title, required this.text});
 
   @override
   Widget build(BuildContext context) =>
@@ -185,49 +188,41 @@ class HtmlDialog extends StatelessWidget {
 }
 
 class _DialogColumn extends StatelessWidget {
-  final String title;
-  final Widget child;
-  final bool expand;
-
   const _DialogColumn({
     required this.title,
     required this.child,
     required this.expand,
   });
 
+  final String title;
+  final Widget child;
+  final bool expand;
+
   @override
   Widget build(BuildContext context) {
     return DialogBox(
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(top: Consts.radiusMin),
-              color: Theme.of(context).colorScheme.background,
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(title, style: Theme.of(context).textTheme.headline2),
             ),
-            padding: Consts.padding,
-            child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-          ),
-          Flexible(
-            fit: expand ? FlexFit.tight : FlexFit.loose,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius:
-                    const BorderRadius.vertical(bottom: Consts.radiusMin),
-                color: Theme.of(context).colorScheme.surface,
-              ),
+            const Divider(height: 2, thickness: 2),
+            Flexible(
+              fit: expand ? FlexFit.tight : FlexFit.loose,
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: Consts.padding,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: child,
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

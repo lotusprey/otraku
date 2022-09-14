@@ -155,7 +155,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceVariant,
       ),
       child: FlexibleSpaceBar.createSettings(
         minExtent: minExtent,

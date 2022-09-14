@@ -44,8 +44,17 @@ class SettingsAppTab extends StatelessWidget {
             ),
           ),
         ),
-        const ThemePreview(isDark: false),
-        const ThemePreview(isDark: true),
+        const ThemePreview(),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: CheckBoxField(
+              title: 'Pure Black Dark Theme',
+              initial: Settings().pureBlackDarkTheme,
+              onChanged: (v) => Settings().pureBlackDarkTheme = v,
+            ),
+          ),
+        ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           sliver: SliverGrid(

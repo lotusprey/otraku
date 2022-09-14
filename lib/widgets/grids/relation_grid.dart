@@ -129,11 +129,7 @@ class _RelationTile extends StatelessWidget {
       );
     }
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: Consts.borderRadiusMin,
-        color: Theme.of(context).colorScheme.surface,
-      ),
+    return Card(
       child: Row(
         children: [
           LinkTile(

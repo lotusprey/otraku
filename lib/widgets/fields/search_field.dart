@@ -48,10 +48,11 @@ class _SearchFieldState extends State<SearchField> {
       controller: _ctrl,
       autofocus: widget.onHide != null,
       style: Theme.of(context).textTheme.bodyText2,
-      cursorColor: Theme.of(context).colorScheme.primary,
       decoration: InputDecoration(
         isDense: false,
         hintText: widget.hint,
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceVariant,
         contentPadding: const EdgeInsets.only(left: 15),
         constraints: const BoxConstraints(minHeight: 35, maxHeight: 35),
         suffixIcon: !_empty
@@ -60,7 +61,6 @@ class _SearchFieldState extends State<SearchField> {
                 iconSize: Consts.iconSmall,
                 icon: const Icon(Icons.close_rounded),
                 color: Theme.of(context).colorScheme.onBackground,
-                splashColor: Colors.transparent,
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
                   _ctrl.clear();
@@ -74,7 +74,6 @@ class _SearchFieldState extends State<SearchField> {
                     iconSize: Consts.iconSmall,
                     icon: const Icon(Ionicons.chevron_forward_outline),
                     color: Theme.of(context).colorScheme.onBackground,
-                    splashColor: Colors.transparent,
                     padding: const EdgeInsets.all(0),
                     onPressed: widget.onHide,
                   )

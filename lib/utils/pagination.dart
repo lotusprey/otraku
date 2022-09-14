@@ -1,11 +1,11 @@
 class Pagination<T> {
-  const Pagination._({
+  Pagination._({
     required this.items,
     required this.hasNext,
     required this.next,
   });
 
-  factory Pagination() => const Pagination._(items: [], hasNext: true, next: 1);
+  factory Pagination() => Pagination._(items: [], hasNext: true, next: 1);
 
   factory Pagination.from({
     required List<T> items,

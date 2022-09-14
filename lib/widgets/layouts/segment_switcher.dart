@@ -69,10 +69,7 @@ class _SegmentSwitcherState extends State<SegmentSwitcher> {
               boxShadow: [
                 BoxShadow(
                   blurRadius: 5,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surfaceVariant
-                      .withAlpha(100),
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                 ),
               ],
             ),
@@ -164,30 +161,28 @@ class _CompactSegmentSwitcherState extends State<CompactSegmentSwitcher> {
         final itemWidth = constraints.maxWidth / widget.items.length;
 
         return Center(
-          child: Container(
+          child: SizedBox(
             height: 35,
             width: constraints.maxWidth,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: Consts.borderRadiusMax,
-            ),
-            child: Stack(
-              children: [
-                AnimatedPositioned(
-                  left: itemWidth * _index,
-                  curve: Curves.easeOutCubic,
-                  duration: const Duration(milliseconds: 300),
-                  child: Container(
-                    height: 35,
-                    width: itemWidth,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: Consts.borderRadiusMax,
+            child: Card(
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    left: itemWidth * _index,
+                    curve: Curves.easeOutCubic,
+                    duration: const Duration(milliseconds: 300),
+                    child: Container(
+                      height: 35,
+                      width: itemWidth,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: Consts.borderRadiusMax,
+                      ),
                     ),
                   ),
-                ),
-                itemRow,
-              ],
+                  itemRow,
+                ],
+              ),
             ),
           ),
         );

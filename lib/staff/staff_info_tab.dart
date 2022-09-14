@@ -100,7 +100,7 @@ class _TabContent extends StatelessWidget {
                 child: Container(
                   width: imageWidth,
                   height: imageHeight,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   child: GestureDetector(
                     child: FadeImage(imageUrl),
                     onTap: () => showPopUp(context, ImageDialog(imageUrl)),
@@ -180,13 +180,11 @@ class _TabContent extends StatelessWidget {
                   space,
                   if (data!.description.isNotEmpty)
                     SliverToBoxAdapter(
-                      child: Container(
-                        padding: Consts.padding,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: Consts.borderRadiusMin,
+                      child: Card(
+                        child: Padding(
+                          padding: Consts.padding,
+                          child: HtmlContent(data!.description),
                         ),
-                        child: HtmlContent(data!.description),
                       ),
                     ),
                 ] else
@@ -244,26 +242,24 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: Consts.borderRadiusMin,
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            maxLines: 1,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          Text(subtitle, maxLines: 1),
-        ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 5,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            Text(subtitle, maxLines: 1),
+          ],
+        ),
       ),
     );
   }

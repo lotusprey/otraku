@@ -40,11 +40,7 @@ class _Tile extends StatelessWidget {
       id: item.id,
       info: item.bannerUrl,
       discoverType: DiscoverType.review,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.borderRadiusMin,
-        ),
+      child: Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -52,7 +48,8 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Consts.radiusMin),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Consts.radiusMin),
                   child: Hero(
                     tag: item.id,
                     child: FadeImage(item.bannerUrl!),

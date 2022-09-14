@@ -130,7 +130,7 @@ class AuthViewState extends State<AuthView> {
               Container(
                 padding: Consts.padding,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Row(
@@ -181,7 +181,7 @@ class AuthViewState extends State<AuthView> {
               Container(
                 padding: Consts.padding,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: Consts.borderRadiusMin,
                 ),
                 child: Row(

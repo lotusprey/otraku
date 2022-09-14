@@ -52,11 +52,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.borderRadiusMin,
-      ),
+    return Card(
       child: LinkTile(
         id: model.mediaId,
         discoverType: DiscoverType.anime,
@@ -70,14 +66,14 @@ class _Tile extends StatelessWidget {
                 borderRadius: Consts.borderRadiusMin,
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   child: FadeImage(model.imageUrl),
                 ),
               ),
             ),
             Expanded(
               child: Padding(
-                padding: Consts.padding,
+                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
                 child: _TileContent(model, scoreFormat, updateProgress),
               ),
             ),
@@ -91,9 +87,9 @@ class _Tile extends StatelessWidget {
 /// The content is a [StatefulWidget], as it
 /// needs to update when the progress increments.
 class _TileContent extends StatefulWidget {
-  const _TileContent(this.model, this.scoreFormat, this.updateProgress);
+  const _TileContent(this.item, this.scoreFormat, this.updateProgress);
 
-  final Entry model;
+  final Entry item;
   final ScoreFormat scoreFormat;
   final void Function(Entry)? updateProgress;
 
@@ -104,14 +100,14 @@ class _TileContent extends StatefulWidget {
 class __TileContentState extends State<_TileContent> {
   @override
   Widget build(BuildContext context) {
-    final model = widget.model;
+    final item = widget.item;
 
     double progressPercent = 0;
-    if (model.progressMax != null) {
-      progressPercent = model.progress / model.progressMax!;
-    } else if (model.nextEpisode != null) {
-      progressPercent = model.progress / (model.nextEpisode! - 1);
-    } else if (model.progress > 0) {
+    if (item.progressMax != null) {
+      progressPercent = item.progress / item.progressMax!;
+    } else if (item.nextEpisode != null) {
+      progressPercent = item.progress / (item.nextEpisode! - 1);
+    } else if (item.progress > 0) {
       progressPercent = 1;
     }
 
@@ -126,7 +122,7 @@ class __TileContentState extends State<_TileContent> {
             children: [
               Flexible(
                 child: Text(
-                  widget.model.titles[0],
+                  widget.item.titles[0],
                   overflow: TextOverflow.fade,
                 ),
               ),
@@ -147,8 +143,8 @@ class __TileContentState extends State<_TileContent> {
             borderRadius: Consts.borderRadiusMin,
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).colorScheme.surfaceVariant,
-                Theme.of(context).colorScheme.surfaceVariant,
+                Theme.of(context).colorScheme.onSurfaceVariant,
+                Theme.of(context).colorScheme.onSurfaceVariant,
                 Theme.of(context).colorScheme.background,
                 Theme.of(context).colorScheme.background,
               ],
@@ -160,20 +156,16 @@ class __TileContentState extends State<_TileContent> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Tooltip(message: 'Score', child: _buildScore(context)),
-            if (widget.model.repeat > 0)
+            if (widget.item.repeat > 0)
               Tooltip(
                 message: 'Repeats',
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(width: 5),
-                    const Icon(
-                      Ionicons.repeat,
-                      size: Consts.iconSmall,
-                    ),
+                    const Icon(Ionicons.repeat, size: Consts.iconSmall),
                     const SizedBox(width: 3),
                     Text(
-                      widget.model.repeat.toString(),
+                      widget.item.repeat.toString(),
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                   ],
@@ -181,22 +173,21 @@ class __TileContentState extends State<_TileContent> {
               )
             else
               const SizedBox(),
-            if (widget.model.notes != null)
-              IconButton(
-                tooltip: 'Comment',
-                constraints: const BoxConstraints(
-                  maxHeight: Consts.iconSmall + 10,
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                icon: const Icon(
-                  Ionicons.chatbox,
-                  size: Consts.iconSmall,
-                ),
-                onPressed: () => showPopUp(
-                  context,
-                  TextDialog(
-                    title: 'Comment',
-                    text: widget.model.notes!,
+            if (widget.item.notes != null)
+              SizedBox(
+                height: 40,
+                child: Tooltip(
+                  message: 'Comment',
+                  child: InkResponse(
+                    radius: 10,
+                    child: const Icon(Ionicons.chatbox, size: Consts.iconSmall),
+                    onTap: () => showPopUp(
+                      context,
+                      TextDialog(
+                        title: 'Comment',
+                        text: widget.item.notes!,
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -212,23 +203,23 @@ class __TileContentState extends State<_TileContent> {
   List<TextSpan> _buildDetails() {
     final ts = <TextSpan>[];
 
-    if (widget.model.format != null) {
-      ts.add(TextSpan(text: Convert.clarifyEnum(widget.model.format)));
+    if (widget.item.format != null) {
+      ts.add(TextSpan(text: Convert.clarifyEnum(widget.item.format)));
     }
 
-    if (widget.model.airingAt != null) {
+    if (widget.item.airingAt != null) {
       ts.add(TextSpan(
         text: '${ts.isEmpty ? "" : ' • '}'
-            'Ep ${widget.model.nextEpisode} in '
-            '${Convert.timeUntilTimestamp(widget.model.airingAt)}',
+            'Ep ${widget.item.nextEpisode} in '
+            '${Convert.timeUntilTimestamp(widget.item.airingAt)}',
       ));
     }
 
-    if (widget.model.nextEpisode != null &&
-        widget.model.nextEpisode! - 1 > widget.model.progress) {
+    if (widget.item.nextEpisode != null &&
+        widget.item.nextEpisode! - 1 > widget.item.progress) {
       ts.add(TextSpan(
         text: '${ts.isEmpty ? "" : ' • '}'
-            '${widget.model.nextEpisode! - 1 - widget.model.progress} ep behind',
+            '${widget.item.nextEpisode! - 1 - widget.item.progress} ep behind',
         style: Theme.of(context)
             .textTheme
             .bodyText1
@@ -240,18 +231,18 @@ class __TileContentState extends State<_TileContent> {
   }
 
   Widget _buildScore(BuildContext context) {
-    if (widget.model.score == 0) return const SizedBox();
+    if (widget.item.score == 0) return const SizedBox();
 
     switch (widget.scoreFormat) {
       case ScoreFormat.POINT_3:
-        if (widget.model.score == 3) {
+        if (widget.item.score == 3) {
           return const Icon(
             Icons.sentiment_very_satisfied,
             size: Consts.iconSmall,
           );
         }
 
-        if (widget.model.score == 2) {
+        if (widget.item.score == 2) {
           return const Icon(Icons.sentiment_neutral, size: Consts.iconSmall);
         }
 
@@ -266,7 +257,7 @@ class __TileContentState extends State<_TileContent> {
             const Icon(Icons.star_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
-              widget.model.score.toStringAsFixed(0),
+              widget.item.score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.subtitle2,
             ),
           ],
@@ -278,8 +269,8 @@ class __TileContentState extends State<_TileContent> {
             const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
-              widget.model.score.toStringAsFixed(
-                widget.model.score.truncate() == widget.model.score ? 0 : 1,
+              widget.item.score.toStringAsFixed(
+                widget.item.score.truncate() == widget.item.score ? 0 : 1,
               ),
               style: Theme.of(context).textTheme.subtitle2,
             ),
@@ -292,7 +283,7 @@ class __TileContentState extends State<_TileContent> {
             const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
-              widget.model.score.toStringAsFixed(0),
+              widget.item.score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.subtitle2,
             ),
           ],
@@ -301,32 +292,31 @@ class __TileContentState extends State<_TileContent> {
   }
 
   Widget _buildProgressButton() {
-    final model = widget.model;
+    final item = widget.item;
     final text = Text(
-      model.progress == model.progressMax
-          ? model.progress.toString()
-          : '${model.progress}/${model.progressMax ?? "?"}',
+      item.progress == item.progressMax
+          ? item.progress.toString()
+          : '${item.progress}/${item.progressMax ?? "?"}',
       style: Theme.of(context).textTheme.subtitle2,
     );
 
-    if (widget.updateProgress == null || model.progress == model.progressMax) {
+    if (widget.updateProgress == null || item.progress == item.progressMax) {
       return Tooltip(message: 'Progress', child: text);
     }
 
     return TextButton(
       style: TextButton.styleFrom(
-        minimumSize: const Size(0, 30),
+        minimumSize: const Size(0, 40),
         padding: const EdgeInsets.only(left: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        foregroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
       onPressed: () {
-        if (model.progressMax == null ||
-            model.progress < model.progressMax! - 1) {
-          setState(() => model.progress++);
-          widget.updateProgress!(model);
+        if (item.progressMax == null || item.progress < item.progressMax! - 1) {
+          setState(() => item.progress++);
+          widget.updateProgress!(item);
         } else {
-          showSheet(context, EditView(model.mediaId, complete: true));
+          showSheet(context, EditView(item.mediaId, complete: true));
         }
       },
       child: Tooltip(

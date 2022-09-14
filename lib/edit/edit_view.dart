@@ -22,7 +22,7 @@ import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
-import 'package:otraku/widgets/fields/score_field.dart';
+import 'package:otraku/edit/score_field.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';

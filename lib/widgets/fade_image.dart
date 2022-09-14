@@ -28,7 +28,7 @@ class FadeImage extends StatelessWidget {
         fadeOutDuration: const Duration(milliseconds: 300),
         placeholder: _transparentImage,
         imageErrorBuilder: (_, err, stackTrace) =>
-            const SizedBox(height: 5, width: 5),
+            const Center(child: Icon(Icons.close_outlined)),
       );
 
   static final Uint8List _transparentImage = Uint8List.fromList(<int>[

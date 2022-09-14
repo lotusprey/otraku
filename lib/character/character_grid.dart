@@ -35,7 +35,7 @@ class CharacterGrid extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: Container(
-                        color: Theme.of(context).colorScheme.surface,
+                        color: Theme.of(context).colorScheme.surfaceVariant,
                         child: FadeImage(items[i].imageUrl),
                       ),
                     ),

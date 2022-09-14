@@ -69,7 +69,7 @@ class BottomBarIconTabs extends StatelessWidget {
                     Icon(
                       items.values.elementAt(i),
                       color: i != current
-                          ? Theme.of(context).colorScheme.surfaceVariant
+                          ? Theme.of(context).colorScheme.onSurfaceVariant
                           : Theme.of(context).colorScheme.primary,
                     ),
                     if (width > 50) ...[

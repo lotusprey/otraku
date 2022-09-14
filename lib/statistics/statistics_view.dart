@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
 import 'package:otraku/statistics/user_statistics.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
@@ -222,25 +221,24 @@ class _Details extends StatelessWidget {
         minWidth: 190,
         height: 50,
       ),
-      itemBuilder: (context, i) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          borderRadius: Consts.borderRadiusMin,
-          color: Theme.of(context).colorScheme.surface,
-        ),
-        child: Row(
-          children: [
-            Icon(icons[i], color: Theme.of(context).colorScheme.onSurface),
-            const SizedBox(width: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
-                Text(subtitles[i].toString()),
-              ],
-            ),
-          ],
+      itemBuilder: (context, i) => Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Icon(icons[i],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              const SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
+                  Text(subtitles[i].toString()),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

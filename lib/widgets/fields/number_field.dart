@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/constants/consts.dart';
 
 class NumberField extends StatefulWidget {
   const NumberField({required this.onChanged, this.initial = 0, this.maxValue});
@@ -44,16 +43,17 @@ class NumberFieldState extends State<NumberField> {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.borderRadiusMin,
-        ),
+  Widget build(BuildContext context) => Card(
         child: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.remove),
-              onPressed: () => _validateInput(_ctrl.text, -1),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                tooltip: 'Decrement',
+                icon: const Icon(Icons.remove),
+                onPressed: () => _validateInput(_ctrl.text, -1),
+                padding: const EdgeInsets.all(0),
+              ),
             ),
             Expanded(
               child: TextField(
@@ -71,9 +71,14 @@ class NumberFieldState extends State<NumberField> {
                 onChanged: _validateInput,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => _validateInput(_ctrl.text, 1),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                tooltip: 'Increment',
+                icon: const Icon(Icons.add),
+                onPressed: () => _validateInput(_ctrl.text, 1),
+                padding: const EdgeInsets.all(0),
+              ),
             ),
           ],
         ),

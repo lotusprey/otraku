@@ -200,7 +200,7 @@ class Settings extends ChangeNotifier {
       return;
     }
 
-    if (v < 0 || v >= ColorSeed.values.length) return;
+    if (v < 0 || v >= colorSeeds.length) return;
     _theme = v;
     _box.put(_THEME, v);
     notifyListeners();

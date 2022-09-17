@@ -8,7 +8,6 @@ import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
-import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -52,7 +51,7 @@ class MediaPeopleView extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         centered: true,
         children: [
-          SegmentSwitcher(
+          ActionTabSwitcher(
             items: const ['Characters', 'Staff'],
             current: ctrl.peopleTabToggled ? 1 : 0,
             onChanged: (i) {

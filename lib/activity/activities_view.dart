@@ -51,7 +51,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
             ],
           ),
           if (onFollowing != null)
-            CompactSegmentSwitcher(
+            SegmentSwitcher(
               items: const ['Following', 'Global'],
               current: onFollowing! ? 0 : 1,
               onChanged: (val) {

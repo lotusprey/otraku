@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/debounce.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -102,6 +103,19 @@ class ListPresenceDropDown extends StatelessWidget {
   }
 }
 
+/// After [_delay] time has passed, since the last [run] call, call [callback].
+/// E.g. do a search query after the user stops typing.
+class _Debounce {
+  static const _delay = Duration(milliseconds: 600);
+
+  Timer? _timer;
+
+  void run(void Function() callback) {
+    _timer?.cancel();
+    _timer = Timer(_delay, callback);
+  }
+}
+
 /// Openable search field that connects to [provider].
 /// `null` state means that the field is closed.
 class SearchFilterField extends StatelessWidget {
@@ -134,7 +148,7 @@ class SearchFilterField extends StatelessWidget {
       );
     }
 
-    final debounce = Debounce();
+    final debounce = _Debounce();
 
     return Consumer(
       builder: (context, ref, _) {

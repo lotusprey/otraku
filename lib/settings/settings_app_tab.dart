@@ -36,7 +36,7 @@ class SettingsAppTab extends StatelessWidget {
         SliverPadding(
           padding: Consts.padding,
           sliver: SliverToBoxAdapter(
-            child: CompactSegmentSwitcher(
+            child: SegmentSwitcher(
               current: Settings().themeMode.index,
               items: const ['System', 'Light', 'Dark'],
               onChanged: (i) =>

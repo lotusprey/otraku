@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/constants/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -99,6 +100,111 @@ class FloatingBarState extends State<FloatingBar>
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ActionTabSwitcher extends StatefulWidget {
+  const ActionTabSwitcher({
+    required this.items,
+    required this.current,
+    required this.onChanged,
+  });
+
+  final int current;
+  final List<String> items;
+  final void Function(int) onChanged;
+
+  @override
+  State<ActionTabSwitcher> createState() => _ActionTabSwitcherState();
+}
+
+class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
+  late int _index = widget.current;
+
+  @override
+  void didUpdateWidget(covariant ActionTabSwitcher oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _index = widget.current;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final itemRow = Row(
+      children: [
+        for (int i = 0; i < widget.items.length; i++)
+          Flexible(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: Consts.borderRadiusMax,
+                child: Center(
+                  child: Text(
+                    widget.items[i],
+                    overflow: TextOverflow.ellipsis,
+                    style: i != _index
+                        ? Theme.of(context).textTheme.headline2
+                        : Theme.of(context).textTheme.headline2?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                  ),
+                ),
+                onTap: () {
+                  if (_index == i) return;
+                  setState(() => _index = i);
+                  widget.onChanged(i);
+                },
+              ),
+            ),
+          ),
+      ],
+    );
+
+    return Flexible(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double itemWidth = (constraints.maxWidth - 20) / widget.items.length;
+          if (itemWidth > 150) itemWidth = 150;
+
+          return Container(
+            height: Consts.tapTargetSize,
+            width: itemWidth * widget.items.length,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.background,
+              borderRadius: Consts.borderRadiusMax,
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 5,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                ),
+              ],
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                AnimatedPositioned(
+                  left: itemWidth * _index,
+                  curve: Curves.easeOutCubic,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    width: itemWidth,
+                    height: Consts.tapTargetSize,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: Consts.borderRadiusMax,
+                      border: Border.all(
+                        width: 5,
+                        color: Theme.of(context).colorScheme.background,
+                      ),
+                    ),
+                  ),
+                ),
+                itemRow,
+              ],
+            ),
+          );
+        },
       ),
     );
   }

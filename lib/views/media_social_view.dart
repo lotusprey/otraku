@@ -12,7 +12,6 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
-import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class MediaSocialView extends StatelessWidget {
@@ -33,7 +32,7 @@ class MediaSocialView extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         centered: true,
         children: [
-          SegmentSwitcher(
+          ActionTabSwitcher(
             items: const ['Reviews', 'Stats'],
             current: ctrl.socialTabToggled ? 1 : 0,
             onChanged: (i) {

@@ -10,7 +10,6 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
-import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class MediaOtherView extends StatelessWidget {
@@ -29,7 +28,7 @@ class MediaOtherView extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         centered: true,
         children: [
-          SegmentSwitcher(
+          ActionTabSwitcher(
             items: const ['Related', 'Recommended'],
             current: ctrl.otherTabToggled ? 1 : 0,
             onChanged: (i) {

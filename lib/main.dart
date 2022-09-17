@@ -66,11 +66,11 @@ class AppState extends State<App> {
               darkScheme = darkDynamic!;
             } else {
               theme ??= 0;
-              if (theme >= ColorSeed.values.length) {
-                theme = ColorSeed.values.length - 1;
+              if (theme >= colorSeeds.length) {
+                theme = colorSeeds.length - 1;
               }
 
-              final seed = ColorSeed.values.elementAt(theme);
+              final seed = colorSeeds.values.elementAt(theme);
               lightScheme = seed.scheme(Brightness.light);
               darkScheme = seed
                   .scheme(Brightness.dark)

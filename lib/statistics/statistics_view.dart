@@ -292,7 +292,7 @@ class _BarChartState extends State<_BarChart> {
       title: widget.title,
       action: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: CompactSegmentSwitcher(
+        child: SegmentSwitcher(
           items: [
             'Titles',
             widget.ofAnime ? 'Hours' : 'Chapters',

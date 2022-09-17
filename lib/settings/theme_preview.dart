@@ -38,11 +38,11 @@ class _ThemePreviewState extends State<ThemePreview> {
                 ? Colors.black
                 : null;
 
-        for (int i = 0; i < ColorSeed.values.length; i++) {
-          final seed = ColorSeed.values.elementAt(i);
+        for (int i = 0; i < colorSeeds.length; i++) {
+          final e = colorSeeds.entries.elementAt(i);
           children.add(_ThemeCard(
-            name: seed.name,
-            scheme: seed.scheme(brightness).copyWith(background: background),
+            name: e.key,
+            scheme: e.value.scheme(brightness).copyWith(background: background),
             active: Settings().theme == i,
             onTap: () => setState(() => Settings().theme = i),
           ));

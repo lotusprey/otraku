@@ -21,7 +21,6 @@ import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
-import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -117,7 +116,7 @@ class InboxView extends StatelessWidget {
                   ),
                 ),
               ),
-              SegmentSwitcher(
+              ActionTabSwitcher(
                 current: notifier.inboxOnFeed ? 1 : 0,
                 onChanged: (i) => ref.read(homeProvider).inboxOnFeed = i == 1,
                 items: const ['Progress', 'Feed'],

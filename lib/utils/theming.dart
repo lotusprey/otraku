@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
 
-enum ColorSeed {
-  Navy(Color(0xFF45A0F2)),
-  Mint(Color(0xFF2AB8B8)),
-  Lavender(Color(0xFFB4ABF5)),
-  Caramel(Color(0xFFF78204)),
-  Forest(Color(0xFF00FFA9)),
-  Wine(Color(0xFF894771));
-
+class ColorSeed {
   const ColorSeed(this.seed);
 
   final Color seed;
@@ -16,6 +9,15 @@ enum ColorSeed {
   ColorScheme scheme(Brightness brightness) =>
       ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
 }
+
+const colorSeeds = {
+  'Navy': ColorSeed(Color(0xFF45A0F2)),
+  'Mint': ColorSeed(Color(0xFF2AB8B8)),
+  'Lavender': ColorSeed(Color(0xFFB4ABF5)),
+  'Caramel': ColorSeed(Color(0xFFF78204)),
+  'Forest': ColorSeed(Color(0xFF00FFA9)),
+  'Wine': ColorSeed(Color(0xFF894771)),
+};
 
 ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
       useMaterial3: true,

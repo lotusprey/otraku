@@ -140,7 +140,7 @@ class _CompositionView extends StatelessWidget {
             top: 10,
             left: 10,
             right: 10,
-            child: CompactSegmentSwitcher(
+            child: SegmentSwitcher(
               current: i,
               items: const ['Compose', 'Preview'],
               onChanged: (val) => tab.value = val,

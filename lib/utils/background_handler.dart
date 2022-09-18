@@ -12,7 +12,6 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
-// TODO test
 final _notificationPlugin = FlutterLocalNotificationsPlugin();
 
 class BackgroundHandler {

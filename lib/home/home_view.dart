@@ -61,8 +61,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    // If the app was launched by a notification, push an appropriate page.
-    BackgroundHandler.checkIfLaunchedByNotification();
+    BackgroundHandler.handleNotificationLaunch();
 
     // Keep important providers alive.
     ref.watch(userSettingsProvider.select((_) => null));

@@ -12,6 +12,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
 
+// TODO test
 final _notificationPlugin = FlutterLocalNotificationsPlugin();
 
 class BackgroundHandler {
@@ -27,10 +28,9 @@ class BackgroundHandler {
     _notificationPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('notification_icon'),
-        iOS: IOSInitializationSettings(),
-        macOS: MacOSInitializationSettings(),
+        iOS: DarwinInitializationSettings(),
       ),
-      onSelectNotification: (payload) async => _handleNotification(payload),
+      onDidReceiveNotificationResponse: _handleNotification,
     );
 
     await Workmanager().initialize(_fetch);
@@ -44,22 +44,28 @@ class BackgroundHandler {
     }
   }
 
-  // Should be called if the user logs out of an account.
+  /// Should be called, for example, when the user logs out of an account.
   static void clearNotifications() => _notificationPlugin.cancelAll();
 
-  static void checkIfLaunchedByNotification() {
+  /// If the app was launched by a notification, handle it.
+  static void handleNotificationLaunch() {
     if (_didCheckLaunch) return;
     _didCheckLaunch = true;
 
-    _notificationPlugin
-        .getNotificationAppLaunchDetails()
-        .then((launchDetails) => _handleNotification(launchDetails?.payload));
+    _notificationPlugin.getNotificationAppLaunchDetails().then(
+      (launchDetails) {
+        if (launchDetails?.notificationResponse != null) {
+          _handleNotification(launchDetails!.notificationResponse!);
+        }
+      },
+    );
   }
 
-  static void _handleNotification(String? link) {
-    if (link == null) return;
+  /// Pushes a different page, depeding on the notification that was pressed.
+  static void _handleNotification(NotificationResponse response) {
+    if (response.payload == null) return;
 
-    final uri = Uri.parse(link);
+    final uri = Uri.parse(response.payload!);
     if (uri.pathSegments.length < 2) return;
 
     final id = int.tryParse(uri.pathSegments[1]) ?? -1;

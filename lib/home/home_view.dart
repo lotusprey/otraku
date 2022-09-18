@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_providers.dart';
-import 'package:otraku/controllers/progress_controller.dart';
+import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
@@ -42,20 +41,12 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView> {
   late final _ctrl = PaginationController(loadMore: _scrollListener);
-  late final ProgressController progressCtrl;
   late final animeEntriesTag = CollectionTag(widget.id, true);
   late final mangaEntriesTag = CollectionTag(widget.id, false);
 
   @override
-  void initState() {
-    super.initState();
-    progressCtrl = Get.put(ProgressController());
-  }
-
-  @override
   void dispose() {
     _ctrl.dispose();
-    Get.delete<ProgressController>();
     super.dispose();
   }
 
@@ -66,6 +57,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     // Keep important providers alive.
     ref.watch(userSettingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
+    ref.watch(progressProvider.select((_) => null));
     ref.watch(activitiesProvider(null).select((_) => null));
     ref.watch(userProvider(widget.id).select((_) => null));
     ref.watch(entriesProvider(animeEntriesTag).select((_) => null));

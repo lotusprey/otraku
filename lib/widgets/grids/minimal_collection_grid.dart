@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/collection/entry_item.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_view.dart';
@@ -13,8 +13,8 @@ class MinimalCollectionGrid extends StatelessWidget {
   const MinimalCollectionGrid(
       {required this.items, required this.updateProgress});
 
-  final List<EntryItem> items;
-  final void Function(EntryItem) updateProgress;
+  final List<Entry> items;
+  final void Function(Entry) updateProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class MinimalCollectionGrid extends StatelessWidget {
                   child: SizedBox(
                     height: 35,
                     child: Text(
-                      items[i].title,
+                      items[i].titles[0],
                       overflow: TextOverflow.fade,
                       maxLines: 2,
                       style: Theme.of(context).textTheme.bodyText2,
@@ -70,8 +70,8 @@ class MinimalCollectionGrid extends StatelessWidget {
 class _IncrementButton extends StatefulWidget {
   const _IncrementButton(this.item, this.updateProgress);
 
-  final EntryItem item;
-  final void Function(EntryItem) updateProgress;
+  final Entry item;
+  final void Function(Entry) updateProgress;
 
   @override
   State<_IncrementButton> createState() => _IncrementButtonState();

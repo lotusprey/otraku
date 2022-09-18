@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_providers.dart';
 import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
@@ -128,9 +127,6 @@ class __ButtonsState extends State<_Buttons> {
                   setState(() => _loading = true);
 
                   final result = await updateEntry(newEdit);
-                  if (mounted) {
-                    Navigator.pop(context);
-                  }
 
                   if (result is! int) {
                     if (mounted) {
@@ -160,9 +156,13 @@ class __ButtonsState extends State<_Buttons> {
                   if (entry == null) return;
 
                   if (widget.oldEdit.status == null) {
-                    Get.find<ProgressController>().add(entry, isAnime);
+                    ref.read(progressProvider).add(entry, isAnime);
                   } else {
-                    Get.find<ProgressController>().updateEntry(entry, isAnime);
+                    ref.read(progressProvider).update(entry);
+                  }
+
+                  if (mounted) {
+                    Navigator.pop(context);
                   }
                 },
               ),
@@ -203,8 +203,7 @@ class __ButtonsState extends State<_Buttons> {
                         ref.read(collectionProvider(tag)).removeEntry(oldEdit);
 
                         if (oldEdit.status == EntryStatus.CURRENT) {
-                          Get.find<ProgressController>()
-                              .remove(oldEdit.mediaId);
+                          ref.read(progressProvider).remove(oldEdit.mediaId);
                         }
 
                         widget.callback?.call(oldEdit.emptyCopy());

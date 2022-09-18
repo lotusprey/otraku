@@ -2,12 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_providers.dart';
+import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/progress_controller.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
@@ -61,7 +60,8 @@ class _CollectionViewState extends State<CollectionView> {
 }
 
 class CollectionSubView extends StatelessWidget {
-  const CollectionSubView({required this.tag, required this.scrollCtrl, super.key});
+  const CollectionSubView(
+      {required this.tag, required this.scrollCtrl, super.key});
 
   final CollectionTag tag;
   final ScrollController scrollCtrl;
@@ -298,17 +298,16 @@ class _ContentState extends State<_Content> {
               return;
             }
 
-            notifier.updateProgress(
-              mediaId: e.mediaId,
-              progress: e.progress,
-              customLists: result,
-              listStatus: e.entryStatus,
-              format: e.format,
-              sort: ref.read(collectionFilterProvider(widget.tag)).sort,
-            );
+            ref.read(collectionProvider(widget.tag)).updateProgress(
+                  mediaId: e.mediaId,
+                  progress: e.progress,
+                  customLists: result,
+                  listStatus: e.entryStatus,
+                  format: e.format,
+                  sort: ref.read(collectionFilterProvider(widget.tag)).sort,
+                );
 
-            Get.find<ProgressController>()
-                .incrementProgress(e.mediaId, e.progress);
+            ref.read(progressProvider).incrementProgress(e.mediaId, e.progress);
           };
         }
 

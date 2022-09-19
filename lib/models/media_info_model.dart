@@ -80,10 +80,11 @@ class MediaInfoModel {
   factory MediaInfoModel(Map<String, dynamic> map) {
     String? duration;
     if (map['duration'] != null) {
-      int time = map['duration'];
-      int hours = time ~/ 60;
-      int minutes = time % 60;
-      duration = '${hours != 0 ? '$hours hours, ' : ''}$minutes mins';
+      final time = map['duration'];
+      final hours = time ~/ 60;
+      final minutes = time % 60;
+      duration =
+          '${hours != 0 ? '$hours hours ' : ''}${minutes != 0 ? '$minutes mins' : ''}';
     }
 
     String? season;

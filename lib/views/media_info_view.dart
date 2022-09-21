@@ -183,28 +183,23 @@ class MediaInfoView extends StatelessWidget {
                   discoverType: DiscoverType.studio,
                 ),
               ),
-            if (info.hashtag != null) ...[
-              const _Section('Hashtag'),
-              _Titles([info.hashtag!]),
-            ],
-            if (info.romajiTitle != null) ...[
-              const _Section('Romaji'),
-              _Titles([info.romajiTitle!]),
-            ],
-            if (info.englishTitle != null) ...[
-              const _Section('English'),
-              _Titles([info.englishTitle!]),
-            ],
-            if (info.nativeTitle != null) ...[
-              const _Section('Native'),
-              _Titles([info.nativeTitle!]),
-            ],
-            if (info.synonyms.isNotEmpty) ...[
-              const _Section('Synonyms'),
-              _Titles(info.synonyms),
-            ],
+            if (info.hashtag != null) _Title('Hashtag', info.hashtag!),
+            if (info.romajiTitle != null) _Title('Romaji', info.romajiTitle!),
+            if (info.englishTitle != null)
+              _Title('English', info.englishTitle!),
+            if (info.nativeTitle != null) _Title('Native', info.nativeTitle!),
+            if (info.synonyms.isNotEmpty)
+              _Title('Synonyms', info.synonyms.join(', ')),
             if (info.tags.isNotEmpty) ...[
-              const _Section('Tags'),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'Tags',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                ),
+              ),
               _Tags(ctrl, ref),
             ],
             const SliverFooter(),
@@ -268,22 +263,6 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
   }
 }
 
-class _Section extends StatelessWidget {
-  const _Section(this.title);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Text(title),
-      ),
-    );
-  }
-}
-
 class _ScrollCards extends StatelessWidget {
   const _ScrollCards({
     required this.title,
@@ -305,7 +284,7 @@ class _ScrollCards extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-              child: Text(title),
+              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
             ),
             SizedBox(
               height: 40,
@@ -334,33 +313,40 @@ class _ScrollCards extends StatelessWidget {
   }
 }
 
-class _Titles extends StatelessWidget {
-  const _Titles(this.titles);
+class _Title extends StatelessWidget {
+  const _Title(this.label, this.title);
 
-  final List<String> titles;
+  final String label;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (_, i) => SizedBox(
-            height: Consts.tapTargetSize + 10,
-            child: GestureDetector(
-              onTap: () => Toast.copy(context, titles[i]),
-              child: Card(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: SingleChildScrollView(
-                  padding: Consts.padding,
-                  scrollDirection: Axis.horizontal,
-                  physics: Consts.physics,
-                  child: Center(child: Text(titles[i])),
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: 90,
+              child: Text(label, style: Theme.of(context).textTheme.subtitle1),
+            ),
+            Flexible(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => Toast.copy(context, title),
+                child: Text(
+                  title,
+                  maxLines: null,
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                 ),
               ),
             ),
-          ),
-          childCount: titles.length,
+          ],
         ),
       ),
     );

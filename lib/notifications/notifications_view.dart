@@ -164,9 +164,9 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem(this.notification, this.unread);
+  const _NotificationItem(this.item, this.unread);
 
-  final SiteNotification notification;
+  final SiteNotification item;
   final bool unread;
 
   @override
@@ -175,143 +175,138 @@ class _NotificationItem extends StatelessWidget {
       height: 100,
       child: Align(
         alignment: Alignment.topCenter,
-        child: Container(
+        child: SizedBox(
           height: 90,
-          decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMin,
-            color: Theme.of(context).colorScheme.surfaceVariant,
-          ),
-          child: Row(
-            children: [
-              if (notification.imageUrl != null && notification.headId != null)
-                GestureDetector(
-                  onTap: () => LinkTile.openView(
-                    context: context,
-                    id: notification.headId!,
-                    imageUrl: notification.imageUrl,
-                    discoverType:
-                        notification.discoverType ?? DiscoverType.user,
-                  ),
-                  onLongPress: () {
-                    if (notification.discoverType == DiscoverType.anime ||
-                        notification.discoverType == DiscoverType.manga) {
-                      showSheet(context, EditView(notification.headId!));
-                    }
-                  },
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Consts.radiusMin,
+          child: Card(
+            child: Row(
+              children: [
+                if (item.imageUrl != null && item.headId != null)
+                  GestureDetector(
+                    onTap: () => LinkTile.openView(
+                      context: context,
+                      id: item.headId!,
+                      imageUrl: item.imageUrl,
+                      discoverType: item.discoverType ?? DiscoverType.user,
                     ),
-                    child: FadeImage(notification.imageUrl!, width: 70),
+                    onLongPress: () {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
+                        showSheet(context, EditView(item.headId!));
+                      }
+                    },
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Consts.radiusMin,
+                      ),
+                      child: FadeImage(item.imageUrl!, width: 70),
+                    ),
                   ),
-                ),
-              Flexible(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    switch (notification.type) {
-                      case NotificationType.ACTIVITY_LIKE:
-                      case NotificationType.ACTIVITY_MENTION:
-                      case NotificationType.ACTIVITY_MESSAGE:
-                      case NotificationType.ACTIVITY_REPLY:
-                      case NotificationType.ACTIVITY_REPLY_LIKE:
-                      case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                        Navigator.pushNamed(
-                          context,
-                          RouteArg.activity,
-                          arguments: RouteArg(id: notification.bodyId),
-                        );
-                        return;
-                      case NotificationType.FOLLOWING:
-                        LinkTile.openView(
-                          context: context,
-                          id: notification.headId!,
-                          imageUrl: notification.imageUrl,
-                          discoverType: DiscoverType.user,
-                        );
-                        return;
-                      case NotificationType.AIRING:
-                      case NotificationType.RELATED_MEDIA_ADDITION:
-                        LinkTile.openView(
-                          context: context,
-                          id: notification.bodyId!,
-                          imageUrl: notification.imageUrl,
-                          discoverType: notification.discoverType!,
-                        );
-                        return;
-                      case NotificationType.MEDIA_DATA_CHANGE:
-                      case NotificationType.MEDIA_MERGE:
-                      case NotificationType.MEDIA_DELETION:
-                        showPopUp(context, _NotificationDialog(notification));
-                        return;
-                      default:
-                        showPopUp(
-                          context,
-                          ConfirmationDialog(
-                            title: 'Forum is not yet supported',
-                            content: 'Open in browser?',
-                            mainAction: 'Open Browser',
-                            secondaryAction: 'Cancel',
-                            onConfirm: () => Toast.launch(
-                              context,
-                              'https://anilist.co/forum/thread/${notification.bodyId}',
+                Flexible(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      switch (item.type) {
+                        case NotificationType.ACTIVITY_LIKE:
+                        case NotificationType.ACTIVITY_MENTION:
+                        case NotificationType.ACTIVITY_MESSAGE:
+                        case NotificationType.ACTIVITY_REPLY:
+                        case NotificationType.ACTIVITY_REPLY_LIKE:
+                        case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
+                          Navigator.pushNamed(
+                            context,
+                            RouteArg.activity,
+                            arguments: RouteArg(id: item.bodyId),
+                          );
+                          return;
+                        case NotificationType.FOLLOWING:
+                          LinkTile.openView(
+                            context: context,
+                            id: item.headId!,
+                            imageUrl: item.imageUrl,
+                            discoverType: DiscoverType.user,
+                          );
+                          return;
+                        case NotificationType.AIRING:
+                        case NotificationType.RELATED_MEDIA_ADDITION:
+                          LinkTile.openView(
+                            context: context,
+                            id: item.bodyId!,
+                            imageUrl: item.imageUrl,
+                            discoverType: item.discoverType!,
+                          );
+                          return;
+                        case NotificationType.MEDIA_DATA_CHANGE:
+                        case NotificationType.MEDIA_MERGE:
+                        case NotificationType.MEDIA_DELETION:
+                          showPopUp(context, _NotificationDialog(item));
+                          return;
+                        default:
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Forum is not yet supported',
+                              content: 'Open in browser?',
+                              mainAction: 'Open Browser',
+                              secondaryAction: 'Cancel',
+                              onConfirm: () => Toast.launch(
+                                context,
+                                'https://anilist.co/forum/thread/${item.bodyId}',
+                              ),
+                            ),
+                          );
+                          return;
+                      }
+                    },
+                    onLongPress: () {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
+                        showSheet(context, EditView(item.headId!));
+                      }
+                    },
+                    child: Padding(
+                      padding: Consts.padding,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          RichText(
+                            maxLines: 3,
+                            overflow: TextOverflow.fade,
+                            text: TextSpan(
+                              children: [
+                                for (int i = 0; i < item.texts.length; i++)
+                                  TextSpan(
+                                    text: item.texts[i],
+                                    style: (i % 2 == 0) ==
+                                            item.markTextOnEvenIndex
+                                        ? Theme.of(context).textTheme.bodyText1
+                                        : Theme.of(context).textTheme.bodyText2,
+                                  ),
+                              ],
                             ),
                           ),
-                        );
-                        return;
-                    }
-                  },
-                  onLongPress: () {
-                    if (notification.discoverType == DiscoverType.anime ||
-                        notification.discoverType == DiscoverType.manga) {
-                      showSheet(context, EditView(notification.headId!));
-                    }
-                  },
-                  child: Padding(
-                    padding: Consts.padding,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        RichText(
-                          maxLines: 3,
-                          overflow: TextOverflow.fade,
-                          text: TextSpan(
-                            children: [
-                              for (int i = 0;
-                                  i < notification.texts.length;
-                                  i++)
-                                TextSpan(
-                                  text: notification.texts[i],
-                                  style: (i % 2 == 0) ==
-                                          notification.markTextOnEvenIndex
-                                      ? Theme.of(context).textTheme.bodyText1
-                                      : Theme.of(context).textTheme.bodyText2,
-                                ),
-                            ],
+                          Text(
+                            item.timestamp,
+                            style: Theme.of(context).textTheme.subtitle2,
                           ),
-                        ),
-                        Text(
-                          notification.timestamp,
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (unread)
-                Container(
-                  width: 10,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: const BorderRadius.horizontal(
-                      right: Consts.radiusMin,
+                if (unread)
+                  Container(
+                    width: 10,
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Consts.radiusMin,
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

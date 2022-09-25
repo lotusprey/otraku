@@ -9,6 +9,7 @@ import 'package:otraku/widgets/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:otraku/widgets/text_rail.dart';
 
 class UserHeader extends StatelessWidget {
   const UserHeader({
@@ -93,7 +94,10 @@ class UserHeader extends StatelessWidget {
                         );
                       }
                     },
-                    child: TextRail(textRailItems),
+                    child: TextRail(
+                      textRailItems,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
                   ),
               ]
             : [],

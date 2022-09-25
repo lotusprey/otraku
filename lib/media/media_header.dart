@@ -7,6 +7,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:otraku/widgets/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {
   const MediaHeader({required this.ctrl, required this.imageUrl});
@@ -89,7 +90,11 @@ class MediaHeader extends StatelessWidget {
                     overflow: TextOverflow.fade,
                   ),
                 ),
-                if (textRailItems.isNotEmpty) TextRail(textRailItems),
+                if (textRailItems.isNotEmpty)
+                  TextRail(
+                    textRailItems,
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
               ]
             : [],
       ),

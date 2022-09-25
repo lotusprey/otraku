@@ -11,6 +11,7 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/text_rail.dart';
 
 const _TILE_HEIGHT = 140.0;
 
@@ -111,6 +112,20 @@ class __TileContentState extends State<_TileContent> {
       progressPercent = 1;
     }
 
+    final textRailItems = <String, bool>{};
+    if (widget.item.format != null) {
+      textRailItems[Convert.clarifyEnum(widget.item.format)!] = false;
+    }
+    if (widget.item.airingAt != null) {
+      textRailItems['Ep ${widget.item.nextEpisode} in '
+          '${Convert.timeUntilTimestamp(widget.item.airingAt)}'] = false;
+    }
+    if (widget.item.nextEpisode != null &&
+        widget.item.nextEpisode! - 1 > widget.item.progress) {
+      textRailItems['${widget.item.nextEpisode! - 1 - widget.item.progress}'
+          ' ep behind'] = true;
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,12 +142,7 @@ class __TileContentState extends State<_TileContent> {
                 ),
               ),
               const SizedBox(height: 5),
-              RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.subtitle2,
-                  children: _buildDetails(),
-                ),
-              ),
+              TextRail(textRailItems),
             ],
           ),
         ),
@@ -198,36 +208,6 @@ class __TileContentState extends State<_TileContent> {
         ),
       ],
     );
-  }
-
-  List<TextSpan> _buildDetails() {
-    final ts = <TextSpan>[];
-
-    if (widget.item.format != null) {
-      ts.add(TextSpan(text: Convert.clarifyEnum(widget.item.format)));
-    }
-
-    if (widget.item.airingAt != null) {
-      ts.add(TextSpan(
-        text: '${ts.isEmpty ? "" : ' • '}'
-            'Ep ${widget.item.nextEpisode} in '
-            '${Convert.timeUntilTimestamp(widget.item.airingAt)}',
-      ));
-    }
-
-    if (widget.item.nextEpisode != null &&
-        widget.item.nextEpisode! - 1 > widget.item.progress) {
-      ts.add(TextSpan(
-        text: '${ts.isEmpty ? "" : ' • '}'
-            '${widget.item.nextEpisode! - 1 - widget.item.progress} ep behind',
-        style: Theme.of(context)
-            .textTheme
-            .bodyText1
-            ?.copyWith(fontSize: Consts.fontSmall),
-      ));
-    }
-
-    return ts;
   }
 
   Widget _buildScore(BuildContext context) {

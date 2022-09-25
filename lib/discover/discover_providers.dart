@@ -3,7 +3,6 @@ import 'package:otraku/character/character_models.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_providers.dart';
-import 'package:otraku/media/media_item.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
 import 'package:otraku/staff/staff_models.dart';
@@ -49,7 +48,7 @@ final discoverTypeProvider = StateProvider.autoDispose(
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
 
 final discoverAnimeProvider = StateNotifierProvider.autoDispose<
-    DiscoverMediaNotifier, AsyncValue<Pagination<MediaItem>>>(
+    DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
   (ref) => DiscoverMediaNotifier(
     ref.watch(discoverFilterProvider(true)),
     ref.watch(searchProvider(null).select(_searchSelector)),
@@ -57,7 +56,7 @@ final discoverAnimeProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverMangaProvider = StateNotifierProvider.autoDispose<
-    DiscoverMediaNotifier, AsyncValue<Pagination<MediaItem>>>(
+    DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
   (ref) => DiscoverMediaNotifier(
     ref.watch(discoverFilterProvider(false)),
     ref.watch(searchProvider(null).select(_searchSelector)),
@@ -100,7 +99,7 @@ final discoverReviewProvider = StateNotifierProvider.autoDispose<
 );
 
 class DiscoverMediaNotifier
-    extends StateNotifier<AsyncValue<Pagination<MediaItem>>> {
+    extends StateNotifier<AsyncValue<Pagination<DiscoverMediaItem>>> {
   DiscoverMediaNotifier(this.filter, this.search)
       : super(const AsyncValue.loading()) {
     fetch();
@@ -120,9 +119,9 @@ class DiscoverMediaNotifier
         ...filter.toMap(),
       });
 
-      final items = <MediaItem>[];
+      final items = <DiscoverMediaItem>[];
       for (final m in data['Page']['media']) {
-        items.add(MediaItem(m));
+        items.add(DiscoverMediaItem(m));
       }
 
       return value.append(

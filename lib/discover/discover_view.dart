@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/character/character_grid.dart';
 import 'package:otraku/character/character_models.dart';
+import 'package:otraku/discover/discover_media_grid.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
-import 'package:otraku/media/media_grid.dart';
-import 'package:otraku/media/media_item.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
 import 'package:otraku/staff/staff_grid.dart';
@@ -260,20 +259,20 @@ class _Grid extends StatelessWidget {
 
         switch (type) {
           case DiscoverType.anime:
-            return PaginationView<MediaItem>(
+            return PaginationView<DiscoverMediaItem>(
               provider: discoverAnimeProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'anime',
-              onData: (data) => MediaGrid(data.items),
+              onData: (data) => DiscoverMediaGrid(data.items),
             );
           case DiscoverType.manga:
-            return PaginationView<MediaItem>(
+            return PaginationView<DiscoverMediaItem>(
               provider: discoverMangaProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'manga',
-              onData: (data) => MediaGrid(data.items),
+              onData: (data) => DiscoverMediaGrid(data.items),
             );
           case DiscoverType.character:
             return PaginationView<CharacterItem>(

@@ -169,7 +169,17 @@ abstract class GqlQuery {
         genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
         onList: $onList, startDate_greater: $startDate_greater, startDate_lesser: $startDate_lesser,
         countryOfOrigin: $countryOfOrigin, source: $source, season: $season, sort: $sort) {
-          id type title {userPreferred} coverImage {extraLarge large medium}
+          id
+          type
+          title {userPreferred}
+          coverImage {extraLarge large medium}
+          format
+          status(version: 2)
+          averageScore
+          popularity
+          startDate {year}
+          isAdult
+          mediaListEntry {status}
         }
       }
     }

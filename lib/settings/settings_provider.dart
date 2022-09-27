@@ -82,16 +82,22 @@ class UserSettings {
         restrictMessagesToFollowing:
             map['options']['restrictMessagesToFollowing'] ?? false,
         advancedScores: List<String>.from(
-          map['mediaListOptions']['animeList']['advancedScoring'] ?? [],
+          map['mediaListOptions']['animeList']['advancedScoring'] ?? <String>[],
         ),
         animeCustomLists: List<String>.from(
-          map['mediaListOptions']['animeList']['customLists'] ?? [],
+          map['mediaListOptions']['animeList']['customLists'] ?? <String>[],
         ),
         mangaCustomLists: List<String>.from(
-          map['mediaListOptions']['mangaList']['customLists'] ?? [],
+          map['mediaListOptions']['mangaList']['customLists'] ?? <String>[],
         ),
-        disabledListActivity: { for (var n in map['options']['disabledListActivity']) EntryStatus.values.byName(n['type']) : n['disabled'] },
-        notificationOptions: { for (var n in map['options']['notificationOptions']) NotificationType.values.byName(n['type']) : n['enabled'] },
+        disabledListActivity: {
+          for (var n in map['options']['disabledListActivity'])
+            EntryStatus.values.byName(n['type']): n['disabled']
+        },
+        notificationOptions: {
+          for (var n in map['options']['notificationOptions'])
+            NotificationType.values.byName(n['type']): n['enabled']
+        },
       );
 
   factory UserSettings.empty() => UserSettings._(

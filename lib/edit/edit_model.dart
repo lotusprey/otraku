@@ -189,8 +189,8 @@ class Edit {
         score: score ?? this.score,
         repeat: repeat ?? this.repeat,
         notes: notes ?? this.notes,
-        startedAt: startedAt?.call() ?? this.startedAt,
-        completedAt: completedAt?.call() ?? this.completedAt,
+        startedAt: startedAt != null ? startedAt() : this.startedAt,
+        completedAt: completedAt != null ? completedAt() : this.completedAt,
         private: private ?? this.private,
         hiddenFromStatusLists:
             hiddenFromStatusLists ?? this.hiddenFromStatusLists,

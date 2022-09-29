@@ -10,6 +10,7 @@ class LinkTile extends StatelessWidget {
     required this.info,
     required this.discoverType,
     required this.child,
+    super.key,
   });
 
   final DiscoverType discoverType;

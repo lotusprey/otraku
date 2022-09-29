@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/models/relation.dart';
+import 'package:otraku/utils/relation.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
@@ -146,6 +146,7 @@ class _RelationTile extends StatelessWidget {
           ),
           if (connection != null)
             LinkTile(
+              key: ValueKey(connection!.id),
               id: connection!.id,
               discoverType: connection!.type,
               info: connection!.imageUrl,

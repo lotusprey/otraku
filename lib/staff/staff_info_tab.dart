@@ -219,14 +219,10 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
       icon: widget.data.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: widget.data.isFavorite ? 'Unfavourite' : 'Favourite',
       onTap: () {
-        setState(
-          () => widget.data.isFavorite = !widget.data.isFavorite,
-        );
+        setState(() => widget.data.isFavorite = !widget.data.isFavorite);
         toggleFavoriteStaff(widget.data.id).then((ok) {
           if (!ok) {
-            setState(
-              () => widget.data.isFavorite = !widget.data.isFavorite,
-            );
+            setState(() => widget.data.isFavorite = !widget.data.isFavorite);
           }
         });
       },

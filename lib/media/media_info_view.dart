@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/discover/discover_providers.dart';
@@ -9,6 +8,8 @@ import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/home/home_view.dart';
+import 'package:otraku/media/media_models.dart';
+import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -19,13 +20,13 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class MediaInfoView extends StatelessWidget {
-  const MediaInfoView(this.ctrl);
+  const MediaInfoView(this.media);
 
-  final MediaController ctrl;
+  final Media media;
 
   @override
   Widget build(BuildContext context) {
-    final info = ctrl.model!.info;
+    final info = media.info;
 
     final infoTitles = [
       'Status',
@@ -76,7 +77,7 @@ class MediaInfoView extends StatelessWidget {
       builder: (context, ref, _) => PageLayout(
         floatingBar: FloatingBar(
           scrollCtrl: scrollCtrl,
-          children: [_EditButton(ctrl), _FavoriteButton(ctrl)],
+          children: [_EditButton(media), _FavoriteButton(info)],
         ),
         child: CustomScrollView(
           controller: scrollCtrl,
@@ -193,14 +194,14 @@ class MediaInfoView extends StatelessWidget {
             if (info.tags.isNotEmpty) ...[
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: Text(
                     'Tags',
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                 ),
               ),
-              _Tags(ctrl, ref),
+              _Tags(info, ref),
             ],
             const SliverFooter(),
           ],
@@ -211,9 +212,9 @@ class MediaInfoView extends StatelessWidget {
 }
 
 class _EditButton extends StatefulWidget {
-  const _EditButton(this.ctrl);
+  const _EditButton(this.media);
 
-  final MediaController ctrl;
+  final Media media;
 
   @override
   State<_EditButton> createState() => __EditButtonState();
@@ -222,18 +223,16 @@ class _EditButton extends StatefulWidget {
 class __EditButtonState extends State<_EditButton> {
   @override
   Widget build(BuildContext context) {
-    if (widget.ctrl.model == null) return const SizedBox();
-    final model = widget.ctrl.model!;
-
+    final media = widget.media;
     return ActionButton(
-      icon: model.edit.status == null ? Icons.add : Icons.edit_outlined,
-      tooltip: model.edit.status == null ? 'Add' : 'Edit',
+      icon: media.edit.status == null ? Icons.add : Icons.edit_outlined,
+      tooltip: media.edit.status == null ? 'Add' : 'Edit',
       onTap: () => showSheet(
         context,
         EditView(
-          model.info.id,
-          edit: model.edit,
-          callback: (edit) => setState(() => model.edit = edit),
+          media.info.id,
+          edit: media.edit,
+          callback: (edit) => setState(() => media.edit = edit),
         ),
       ),
     );
@@ -241,9 +240,9 @@ class __EditButtonState extends State<_EditButton> {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  const _FavoriteButton(this.ctrl);
+  const _FavoriteButton(this.info);
 
-  final MediaController ctrl;
+  final MediaInfo info;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -252,13 +251,20 @@ class _FavoriteButton extends StatefulWidget {
 class __FavoriteButtonState extends State<_FavoriteButton> {
   @override
   Widget build(BuildContext context) {
-    if (widget.ctrl.model == null) return const SizedBox();
-    final model = widget.ctrl.model!;
-
     return ActionButton(
-      icon: model.info.isFavourite ? Icons.favorite : Icons.favorite_border,
-      tooltip: model.info.isFavourite ? 'Unfavourite' : 'Favourite',
-      onTap: () => widget.ctrl.toggleFavourite().then((_) => setState(() {})),
+      icon: widget.info.isFavorite ? Icons.favorite : Icons.favorite_border,
+      tooltip: widget.info.isFavorite ? 'Unfavourite' : 'Favourite',
+      onTap: () {
+        setState(() => widget.info.isFavorite = !widget.info.isFavorite);
+        toggleFavoriteMedia(
+          widget.info.id,
+          widget.info.type == DiscoverType.anime,
+        ).then((ok) {
+          if (!ok) {
+            setState(() => widget.info.isFavorite = !widget.info.isFavorite);
+          }
+        });
+      },
     );
   }
 }
@@ -354,9 +360,9 @@ class _Title extends StatelessWidget {
 }
 
 class _Tags extends StatefulWidget {
-  const _Tags(this.ctrl, this.ref);
+  const _Tags(this.info, this.ref);
 
-  final MediaController ctrl;
+  final MediaInfo info;
   final WidgetRef ref;
 
   @override
@@ -364,14 +370,14 @@ class _Tags extends StatefulWidget {
 }
 
 class __TagsState extends State<_Tags> {
-  bool _hasSpoilers = false;
+  bool? _showSpoilers;
 
   @override
   void initState() {
     super.initState();
-    for (final t in widget.ctrl.model!.info.tags) {
+    for (final t in widget.info.tags) {
       if (t.isSpoiler) {
-        _hasSpoilers = true;
+        _showSpoilers = false;
         break;
       }
     }
@@ -381,20 +387,20 @@ class __TagsState extends State<_Tags> {
   Widget build(BuildContext context) {
     late SliverChildBuilderDelegate delegate;
 
-    if (!_hasSpoilers) {
-      final tags = widget.ctrl.model!.info.tags;
+    if (_showSpoilers == null) {
+      final tags = widget.info.tags;
 
       delegate = SliverChildBuilderDelegate(
+        childCount: tags.length,
         (_, i) => Card(
           clipBehavior: Clip.hardEdge,
           child: InkResponse(
             onTap: () {
               final ref = widget.ref;
-              final info = widget.ctrl.model!.info;
-              ref.read(discoverTypeProvider.notifier).state = info.type;
+              ref.read(discoverTypeProvider.notifier).state = widget.info.type;
               ref.read(searchProvider(null).notifier).state = null;
 
-              final ofAnime = info.type == DiscoverType.anime;
+              final ofAnime = widget.info.type == DiscoverType.anime;
               final notifier = ref.read(
                 discoverFilterProvider(ofAnime).notifier,
               );
@@ -430,12 +436,11 @@ class __TagsState extends State<_Tags> {
             ),
           ),
         ),
-        childCount: tags.length,
       );
     } else {
-      final tags = widget.ctrl.showSpoilerTags
-          ? widget.ctrl.model!.info.tags
-          : widget.ctrl.model!.info.tags.where((t) => !t.isSpoiler).toList();
+      final tags = _showSpoilers!
+          ? widget.info.tags
+          : widget.info.tags.where((t) => !t.isSpoiler).toList();
 
       final spoilerStyle = Theme.of(context)
           .textTheme
@@ -454,12 +459,9 @@ class __TagsState extends State<_Tags> {
                   borderRadius: Consts.borderRadiusMin,
                 ),
               ),
-              onPressed: () => setState(
-                () =>
-                    widget.ctrl.showSpoilerTags = !widget.ctrl.showSpoilerTags,
-              ),
+              onPressed: () => setState(() => _showSpoilers = !_showSpoilers!),
               icon: Icon(
-                widget.ctrl.showSpoilerTags
+                _showSpoilers!
                     ? Ionicons.eye_off_outline
                     : Ionicons.eye_outline,
               ),
@@ -472,11 +474,11 @@ class __TagsState extends State<_Tags> {
             child: InkResponse(
               onTap: () {
                 final ref = widget.ref;
-                final info = widget.ctrl.model!.info;
-                ref.read(discoverTypeProvider.notifier).state = info.type;
+                ref.read(discoverTypeProvider.notifier).state =
+                    widget.info.type;
                 ref.read(searchProvider(null).notifier).state = null;
 
-                final ofAnime = info.type == DiscoverType.anime;
+                final ofAnime = widget.info.type == DiscoverType.anime;
                 final notifier = ref.read(
                   discoverFilterProvider(ofAnime).notifier,
                 );

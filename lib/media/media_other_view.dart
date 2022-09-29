@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/models/recommended_model.dart';
-import 'package:otraku/models/related_media_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/media_controller.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/media/media_models.dart';
+import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
@@ -13,9 +12,12 @@ import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class MediaOtherView extends StatelessWidget {
-  const MediaOtherView(this.ctrl);
+  const MediaOtherView(this.id, this.related, this.tabToggled, this.toggleTab);
 
-  final MediaController ctrl;
+  final int id;
+  final List<RelatedMedia> related;
+  final bool tabToggled;
+  final void Function(bool) toggleTab;
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +32,14 @@ class MediaOtherView extends StatelessWidget {
         children: [
           ActionTabSwitcher(
             items: const ['Related', 'Recommended'],
-            current: ctrl.otherTabToggled ? 1 : 0,
-            onChanged: (i) {
-              scrollCtrl.scrollToTop();
-              ctrl.otherTabToggled = i == 1;
-            },
+            current: tabToggled ? 1 : 0,
+            onChanged: (i) => toggleTab(i == 1),
           ),
         ],
       ),
       child: DirectPageView(
         onChanged: null,
-        current: ctrl.otherTabToggled ? 1 : 0,
+        current: tabToggled ? 1 : 0,
         children: [
           CustomScrollView(
             controller: scrollCtrl,
@@ -49,23 +48,32 @@ class MediaOtherView extends StatelessWidget {
                 handle:
                     NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               ),
-              _RelatedGrid(ctrl.model!.otherMedia),
+              _RelatedGrid(related),
               const SliverFooter(),
             ],
           ),
-          CustomScrollView(
-            controller: scrollCtrl,
-            slivers: [
-              SliverOverlapInjector(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              ),
-              _RecommendationsGrid(
-                ctrl.model!.recommendations.items,
-                ctrl.rateRecommendation,
-              ),
-              SliverFooter(loading: ctrl.model!.recommendations.hasNextPage),
-            ],
+          Consumer(
+            child: SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+            builder: (context, ref, overlapInjector) {
+              return ref
+                  .watch(mediaContentProvider(id).select((s) => s.recommended))
+                  .when(
+                    loading: () => const Center(child: Loader()),
+                    error: (_, __) => const Center(
+                      child: Text('Could not load recommendations'),
+                    ),
+                    data: (data) => CustomScrollView(
+                      controller: scrollCtrl,
+                      slivers: [
+                        overlapInjector!,
+                        _RecommendationsGrid(id, data.items),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    ),
+                  );
+            },
           ),
         ],
       ),
@@ -76,7 +84,7 @@ class MediaOtherView extends StatelessWidget {
 class _RelatedGrid extends StatelessWidget {
   const _RelatedGrid(this.items);
 
-  final List<RelatedMediaModel> items;
+  final List<RelatedMedia> items;
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +105,11 @@ class _RelatedGrid extends StatelessWidget {
           childCount: items.length,
           (context, i) {
             final details = <TextSpan>[
-              TextSpan(
-                text: items[i].relationType,
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
+              if (items[i].relationType != null)
+                TextSpan(
+                  text: items[i].relationType,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
               if (items[i].format != null)
                 TextSpan(text: ' • ${items[i].format!}'),
               if (items[i].status != null)
@@ -163,10 +172,10 @@ class _RelatedGrid extends StatelessWidget {
 }
 
 class _RecommendationsGrid extends StatelessWidget {
-  const _RecommendationsGrid(this.items, this.rate);
+  const _RecommendationsGrid(this.mediaId, this.items);
 
-  final List<RecommendedModel> items;
-  final Future<bool> Function(int, bool?) rate;
+  final int mediaId;
+  final List<Recommendation> items;
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +228,7 @@ class _RecommendationsGrid extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 5, right: 5),
-                    child: _Rating(items[i], rate),
+                    child: _Rating(mediaId, items[i]),
                   ),
                 ],
               ),
@@ -232,10 +241,10 @@ class _RecommendationsGrid extends StatelessWidget {
 }
 
 class _Rating extends StatefulWidget {
-  const _Rating(this.model, this.rate);
+  const _Rating(this.mediaId, this.item);
 
-  final RecommendedModel model;
-  final Future<bool> Function(int, bool?) rate;
+  final int mediaId;
+  final Recommendation item;
 
   @override
   State<_Rating> createState() => __RatingState();
@@ -253,38 +262,40 @@ class __RatingState extends State<_Rating> {
             message: 'Agree',
             child: InkResponse(
               onTap: () {
-                final oldRating = widget.model.rating;
-                final oldUserRating = widget.model.userRating;
+                final oldRating = widget.item.rating;
+                final oldUserRating = widget.item.userRating;
 
                 setState(() {
-                  switch (widget.model.userRating) {
+                  switch (widget.item.userRating) {
                     case true:
-                      widget.model.rating--;
-                      widget.model.userRating = null;
+                      widget.item.rating--;
+                      widget.item.userRating = null;
                       break;
                     case false:
-                      widget.model.rating += 2;
-                      widget.model.userRating = true;
+                      widget.item.rating += 2;
+                      widget.item.userRating = true;
                       break;
                     case null:
-                      widget.model.rating++;
-                      widget.model.userRating = true;
+                      widget.item.rating++;
+                      widget.item.userRating = true;
                       break;
                   }
                 });
 
-                widget
-                    .rate(widget.model.id, widget.model.userRating)
-                    .then((ok) {
+                rateRecommendation(
+                  widget.mediaId,
+                  widget.item.id,
+                  widget.item.userRating,
+                ).then((ok) {
                   if (!ok) {
                     setState(() {
-                      widget.model.rating = oldRating;
-                      widget.model.userRating = oldUserRating;
+                      widget.item.rating = oldRating;
+                      widget.item.userRating = oldUserRating;
                     });
                   }
                 });
               },
-              child: widget.model.userRating == true
+              child: widget.item.userRating == true
                   ? Icon(
                       Icons.thumb_up,
                       size: Consts.iconSmall,
@@ -298,44 +309,46 @@ class __RatingState extends State<_Rating> {
             ),
           ),
           const SizedBox(width: 5),
-          Text(widget.model.rating.toString(), overflow: TextOverflow.fade),
+          Text(widget.item.rating.toString(), overflow: TextOverflow.fade),
           const SizedBox(width: 5),
           Tooltip(
             message: 'Disagree',
             child: InkResponse(
               onTap: () {
-                final oldRating = widget.model.rating;
-                final oldUserRating = widget.model.userRating;
+                final oldRating = widget.item.rating;
+                final oldUserRating = widget.item.userRating;
 
                 setState(() {
-                  switch (widget.model.userRating) {
+                  switch (widget.item.userRating) {
                     case true:
-                      widget.model.rating -= 2;
-                      widget.model.userRating = false;
+                      widget.item.rating -= 2;
+                      widget.item.userRating = false;
                       break;
                     case false:
-                      widget.model.rating++;
-                      widget.model.userRating = null;
+                      widget.item.rating++;
+                      widget.item.userRating = null;
                       break;
                     case null:
-                      widget.model.rating--;
-                      widget.model.userRating = false;
+                      widget.item.rating--;
+                      widget.item.userRating = false;
                       break;
                   }
                 });
 
-                widget
-                    .rate(widget.model.id, widget.model.userRating)
-                    .then((ok) {
+                rateRecommendation(
+                  widget.mediaId,
+                  widget.item.id,
+                  widget.item.userRating,
+                ).then((ok) {
                   if (!ok) {
                     setState(() {
-                      widget.model.rating = oldRating;
-                      widget.model.userRating = oldUserRating;
+                      widget.item.rating = oldRating;
+                      widget.item.userRating = oldUserRating;
                     });
                   }
                 });
               },
-              child: widget.model.userRating == false
+              child: widget.item.userRating == false
                   ? Icon(
                       Icons.thumb_down,
                       size: Consts.iconSmall,

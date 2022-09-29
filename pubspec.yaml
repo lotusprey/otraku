@@ -15,9 +15,6 @@ dependencies:
   # State management.
   flutter_riverpod: ^2.0.0-dev.9
 
-  # Soon to be completely replaced by riverpod.
-  get: ^4.6.5
-
   # Fetches data.
   http: ^0.13.5
 
@@ -31,10 +28,10 @@ dependencies:
   flutter_secure_storage: ^6.0.0
 
   # Opens links in browser
-  url_launcher: ^6.1.5
+  url_launcher: ^6.1.6
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
-  app_links: ^3.2.0
+  app_links: ^3.3.0
 
   # Registers background tasks to fetch notifications.
   workmanager: ^0.5.0

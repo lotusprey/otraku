@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/models/related_review_model.dart';
+import 'package:otraku/media/media_models.dart';
+import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/media_controller.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -15,17 +15,19 @@ import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class MediaSocialView extends StatelessWidget {
-  const MediaSocialView(this.ctrl);
+  const MediaSocialView(this.id, this.media, this.tabToggled, this.toggleTab);
 
-  final MediaController ctrl;
+  final int id;
+  final Media media;
+  final bool tabToggled;
+  final void Function(bool) toggleTab;
 
   @override
   Widget build(BuildContext context) {
-    final model = ctrl.model!;
-
     final scrollCtrl = context
         .findAncestorStateOfType<NestedScrollViewState>()!
         .innerController;
+    final stats = media.stats;
 
     return PageLayout(
       floatingBar: FloatingBar(
@@ -34,28 +36,37 @@ class MediaSocialView extends StatelessWidget {
         children: [
           ActionTabSwitcher(
             items: const ['Reviews', 'Stats'],
-            current: ctrl.socialTabToggled ? 1 : 0,
-            onChanged: (i) {
-              scrollCtrl.scrollToTop();
-              ctrl.socialTabToggled = i == 1;
-            },
+            current: tabToggled ? 1 : 0,
+            onChanged: (i) => toggleTab(i == 1),
           ),
         ],
       ),
       child: DirectPageView(
         onChanged: null,
-        current: ctrl.socialTabToggled ? 1 : 0,
+        current: tabToggled ? 1 : 0,
         children: [
-          CustomScrollView(
-            controller: scrollCtrl,
-            slivers: [
-              SliverOverlapInjector(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              ),
-              _ReviewGrid(model.reviews.items, model.info.banner),
-              SliverFooter(loading: model.reviews.hasNextPage),
-            ],
+          Consumer(
+            child: SliverOverlapInjector(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            ),
+            builder: (context, ref, overlapInjector) {
+              return ref
+                  .watch(mediaContentProvider(id).select((s) => s.reviews))
+                  .when(
+                    loading: () => const Center(child: Loader()),
+                    error: (_, __) => const Center(
+                      child: Text('Could not load reviews'),
+                    ),
+                    data: (data) => CustomScrollView(
+                      controller: scrollCtrl,
+                      slivers: [
+                        overlapInjector!,
+                        _ReviewGrid(data.items, media.info.banner),
+                        SliverFooter(loading: data.hasNext),
+                      ],
+                    ),
+                  );
+            },
           ),
           CustomScrollView(
             controller: scrollCtrl,
@@ -64,12 +75,12 @@ class MediaSocialView extends StatelessWidget {
                 handle:
                     NestedScrollView.sliverOverlapAbsorberHandleFor(context),
               ),
-              if (model.stats.rankTexts.isNotEmpty)
-                _Ranks(model.stats.rankTexts, model.stats.rankTypes),
-              if (model.stats.scoreNames.isNotEmpty)
-                _Scores(model.stats.scoreNames, model.stats.scoreValues),
-              if (model.stats.statusNames.isNotEmpty)
-                _Statuses(model.stats.statusNames, model.stats.statusValues),
+              if (stats.rankTexts.isNotEmpty)
+                _Ranks(stats.rankTexts, stats.rankTypes),
+              if (stats.scoreNames.isNotEmpty)
+                _Scores(stats.scoreNames, stats.scoreValues),
+              if (stats.statusNames.isNotEmpty)
+                _Statuses(stats.statusNames, stats.statusValues),
               const SliverFooter(),
             ],
           ),
@@ -82,7 +93,7 @@ class MediaSocialView extends StatelessWidget {
 class _ReviewGrid extends StatelessWidget {
   const _ReviewGrid(this.items, this.bannerUrl);
 
-  final List<RelatedReviewModel> items;
+  final List<RelatedReview> items;
   final String? bannerUrl;
 
   @override

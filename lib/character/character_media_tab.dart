@@ -5,7 +5,7 @@ import 'package:otraku/character/character_providers.dart';
 import 'package:otraku/constants/consts.dart';
 import 'package:otraku/constants/media_sort.dart';
 import 'package:otraku/filter/filter_tools.dart';
-import 'package:otraku/models/relation.dart';
+import 'package:otraku/utils/relation.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';

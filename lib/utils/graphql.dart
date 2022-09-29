@@ -65,17 +65,15 @@ abstract class GqlQuery {
   static const media = r'''
     query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
         $withRecommendations: Boolean = false, $withCharacters: Boolean = false,
-        $withStaff: Boolean = false, $withReviews: Boolean = false,
-        $recommendationPage: Int = 1, $characterPage: Int = 1,
-        $staffPage: Int = 1, $reviewPage: Int = 1) {
+        $withStaff: Boolean = false, $withReviews: Boolean = false, $page: Int = 1) {
       Media(id: $id) {
-        ...main @include(if: $withMain)
         mediaListEntry @include(if: $withMain) {...entry}
+        ...main @include(if: $withMain)
         ...details @include(if: $withDetails)
         ...recommendations @include (if: $withRecommendations)
-        ...reviews @include(if: $withReviews)
         ...characters @include(if: $withCharacters)
         ...staff @include(if: $withStaff)
+        ...reviews @include(if: $withReviews)
       }
     }
     fragment details on Media {
@@ -112,7 +110,7 @@ abstract class GqlQuery {
       }
     }
     fragment recommendations on Media {
-      recommendations(page: $recommendationPage, sort: [RATING_DESC]) {
+      recommendations(page: $page, sort: [RATING_DESC]) {
         pageInfo {hasNextPage}
         nodes {
           rating
@@ -127,7 +125,7 @@ abstract class GqlQuery {
       }
     }
     fragment characters on Media {
-      characters(page: $characterPage, sort: [ROLE, ID]) {
+      characters(page: $page, sort: [ROLE, ID]) {
         pageInfo {hasNextPage}
         edges {
           role
@@ -137,20 +135,20 @@ abstract class GqlQuery {
       }
     }
     fragment staff on Media {
-      staff(page: $staffPage) {
+      staff(page: $page) {
         pageInfo {hasNextPage}
         edges {role node {id name {userPreferred} image {large}}}
       }
     }
     fragment reviews on Media {
-      reviews(sort: RATING_DESC, page: $reviewPage) {
+      reviews(sort: RATING_DESC, page: $page) {
         pageInfo {hasNextPage}
         nodes {
           id
           summary
           rating
           ratingAmount
-          user {id name avatar{large}}
+          user {id name avatar {large}}
         }
       }
     }

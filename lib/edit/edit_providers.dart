@@ -50,7 +50,7 @@ Future<Object?> removeEntry(int entryId) async {
 
 final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(
   (ref, id) async {
-    final data = await Api.get(GqlQuery.media, {'id': id, 'withMain': true});
+    final data = await Api.get(GqlQuery.entry, {'mediaId': id});
     return Edit(data['Media'], ref.watch(userSettingsProvider));
   },
 );

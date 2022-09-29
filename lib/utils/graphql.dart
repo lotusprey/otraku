@@ -28,8 +28,8 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
-  static const entry = r'''
-    query Entry($userId: Int, $mediaId: Int) {
+  static const collectionEntry = r'''
+    query CollectionEntry($userId: Int, $mediaId: Int) {
       MediaList(userId: $userId, mediaId: $mediaId) {
         status
         progress
@@ -154,6 +154,33 @@ abstract class GqlQuery {
     }
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+
+  static const entry = r'''
+    query Entry($mediaId: Int) {
+      Media(id: $mediaId) {
+        id
+        type
+        episodes
+        chapters
+        volumes
+        mediaListEntry {
+          id
+          status
+          progress
+          progressVolumes
+          repeat
+          notes
+          startedAt {year month day}
+          completedAt {year month day}
+          score
+          advancedScores
+          private
+          hiddenFromStatusLists
+          customLists
+        }
+      }
+    }
+  ''';
 
   static const medias = r'''
     query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],

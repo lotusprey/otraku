@@ -180,7 +180,7 @@ class CollectionNotifier extends ChangeNotifier {
     late final Entry entry;
     try {
       final data = await Api.get(
-        GqlQuery.entry,
+        GqlQuery.collectionEntry,
         {'userId': tag.userId, 'mediaId': newEdit.mediaId},
       );
       entry = Entry(data['MediaList']);

@@ -15,8 +15,8 @@ import 'package:otraku/widgets/text_rail.dart';
 
 const _TILE_HEIGHT = 140.0;
 
-class LargeCollectionGrid extends StatelessWidget {
-  const LargeCollectionGrid({
+class CollectionGrid extends StatelessWidget {
+  const CollectionGrid({
     required this.items,
     required this.scoreFormat,
     required this.updateProgress,

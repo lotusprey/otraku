@@ -24,10 +24,7 @@ class CharacterInfoTab extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final refreshControl = SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(characterProvider(id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(characterProvider(id)),
         );
 
         return ref.watch(characterProvider(id)).when(

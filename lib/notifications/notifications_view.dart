@@ -105,10 +105,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       ),
       child: Consumer(
         child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(notificationsProvider);
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(notificationsProvider),
         ),
         builder: (context, ref, refreshControl) {
           ref.listen<NotificationsNotifier>(

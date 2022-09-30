@@ -24,10 +24,7 @@ class StaffInfoTab extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final refreshControl = SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(staffProvider(id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(staffProvider(id)),
         );
 
         return ref.watch(staffProvider(id)).when(

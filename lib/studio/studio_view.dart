@@ -50,10 +50,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
   @override
   Widget build(BuildContext context) {
     final refreshControl = SliverRefreshControl(
-      onRefresh: () {
-        ref.invalidate(staffProvider(widget.id));
-        return Future.value();
-      },
+      onRefresh: () => ref.invalidate(staffProvider(widget.id)),
     );
 
     final studio = ref.watch(

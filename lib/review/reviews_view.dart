@@ -91,10 +91,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
       ),
       child: Consumer(
         child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(reviewsProvider(widget.id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(reviewsProvider(widget.id)),
         ),
         builder: (context, ref, refreshControl) {
           ref.listen<ReviewsNotifier>(

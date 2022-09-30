@@ -47,10 +47,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
     );
 
     final refreshControl = SliverRefreshControl(
-      onRefresh: () {
-        ref.invalidate(friendsProvider(widget.id));
-        return Future.value();
-      },
+      onRefresh: () => ref.invalidate(friendsProvider(widget.id)),
     );
 
     return PageLayout(

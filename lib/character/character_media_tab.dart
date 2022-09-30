@@ -51,10 +51,7 @@ class CharacterAnimeTab extends StatelessWidget {
                 );
 
                 final refreshControl = SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(characterMediaProvider(id));
-                    return Future.value();
-                  },
+                  onRefresh: () => ref.invalidate(characterMediaProvider(id)),
                 );
 
                 return ref.watch(characterMediaProvider(id)).anime.when(
@@ -136,10 +133,7 @@ class CharacterMangaTab extends StatelessWidget {
                 );
 
                 final refreshControl = SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(characterMediaProvider(id));
-                    return Future.value();
-                  },
+                  onRefresh: () => ref.invalidate(characterMediaProvider(id)),
                 );
 
                 return ref.watch(characterMediaProvider(id)).manga.when(

@@ -16,7 +16,7 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/discover/discover_view.dart';
 import 'package:otraku/collection/collection_view.dart';
-import 'package:otraku/views/inbox_view.dart';
+import 'package:otraku/feed/feed_view.dart';
 import 'package:otraku/user/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
@@ -141,7 +141,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           current: notifier.homeTab,
           onChanged: (i) => ref.read(homeProvider).homeTab = i,
           children: [
-            InboxView(_ctrl),
+            FeedView(_ctrl),
             CollectionSubView(
               scrollCtrl: _ctrl,
               tag: CollectionTag(widget.id, true),

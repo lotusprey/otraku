@@ -76,10 +76,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
       ),
       child: Consumer(
         child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(activityProvider(widget.id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(activityProvider(widget.id)),
         ),
         builder: (context, ref, refreshControl) {
           ref.listen<AsyncValue>(

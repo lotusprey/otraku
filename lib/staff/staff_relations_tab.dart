@@ -50,10 +50,7 @@ class StaffCharactersTab extends StatelessWidget {
                 );
 
                 final refreshControl = SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(staffRelationProvider(id));
-                    return Future.value();
-                  },
+                  onRefresh: () => ref.invalidate(staffRelationProvider(id)),
                 );
 
                 final notifier = ref.watch(staffRelationProvider(id));
@@ -129,10 +126,7 @@ class StaffRolesTab extends StatelessWidget {
                 );
 
                 final refreshControl = SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(staffRelationProvider(id));
-                    return Future.value();
-                  },
+                  onRefresh: () => ref.invalidate(staffRelationProvider(id)),
                 );
 
                 return ref.watch(staffRelationProvider(id)).roles.when(

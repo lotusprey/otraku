@@ -10,6 +10,7 @@ import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/text_rail.dart';
 
 class MediaOtherView extends StatelessWidget {
   const MediaOtherView(this.id, this.related, this.tabToggled, this.toggleTab);
@@ -104,17 +105,11 @@ class _RelatedGrid extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           childCount: items.length,
           (context, i) {
-            final details = <TextSpan>[
-              if (items[i].relationType != null)
-                TextSpan(
-                  text: items[i].relationType,
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-              if (items[i].format != null)
-                TextSpan(text: ' • ${items[i].format!}'),
-              if (items[i].status != null)
-                TextSpan(text: ' • ${items[i].status!}'),
-            ];
+            final details = <String, bool>{
+              if (items[i].relationType != null) items[i].relationType!: true,
+              if (items[i].format != null) items[i].format!: false,
+              if (items[i].status != null) items[i].status!: false,
+            };
 
             return LinkTile(
               id: items[i].id,
@@ -150,11 +145,9 @@ class _RelatedGrid extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 5),
-                            RichText(
-                              text: TextSpan(
-                                style: Theme.of(context).textTheme.subtitle1,
-                                children: details,
-                              ),
+                            TextRail(
+                              details,
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ],
                         ),

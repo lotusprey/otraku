@@ -3,28 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activities_view.dart';
 import 'package:otraku/activity/activity_providers.dart';
-import 'package:otraku/collection/collection_providers.dart';
-import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/collection/collection_models.dart';
-import 'package:otraku/edit/edit_providers.dart';
-import 'package:otraku/filter/filter_providers.dart';
+import 'package:otraku/feed/progress_tab.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/grids/minimal_collection_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
-import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-class InboxView extends StatelessWidget {
-  const InboxView(this.scrollCtrl);
+class FeedView extends StatelessWidget {
+  const FeedView(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 
@@ -140,130 +132,12 @@ class InboxView extends StatelessWidget {
             onChanged: null,
             current: notifier.inboxOnFeed ? 1 : 0,
             children: [
-              _ProgressView(scrollCtrl),
+              ProgressTab(scrollCtrl),
               ActivitiesSubView(null, scrollCtrl),
             ],
           ),
         );
       },
     );
-  }
-}
-
-class _ProgressView extends StatefulWidget {
-  const _ProgressView(this.scrollCtrl);
-
-  final ScrollController scrollCtrl;
-
-  @override
-  State<_ProgressView> createState() => _ProgressViewState();
-}
-
-class _ProgressViewState extends State<_ProgressView> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: Consumer(
-        builder: (context, ref, _) {
-          ref.listen<AsyncValue>(
-            progressProvider.select((s) => s.state),
-            (_, s) => s.whenOrNull(
-              error: (error, _) => showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Could not load current media',
-                  content: error.toString(),
-                ),
-              ),
-            ),
-          );
-
-          const titles = [
-            'Releasing Anime',
-            'Other Anime',
-            'Releasing Manga',
-            'Other Manga',
-          ];
-          final children = <Widget>[];
-
-          ref.watch(progressProvider.select((s) => s.state)).when(
-                error: (_, __) => children.add(
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Could not load current media')),
-                  ),
-                ),
-                loading: () => children.add(
-                  const SliverFillRemaining(child: Center(child: Loader())),
-                ),
-                data: (data) {
-                  for (int i = 0; i < data.lists.length; i++) {
-                    if (data.lists[i].isEmpty) continue;
-
-                    children.add(
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            titles[i],
-                            style: Theme.of(context).textTheme.headline2,
-                          ),
-                        ),
-                      ),
-                    );
-
-                    children.add(
-                      MinimalCollectionGrid(
-                        items: data.lists[i],
-                        updateProgress: (e) => _updateProgress(ref, e, i < 2),
-                      ),
-                    );
-                  }
-                },
-              );
-
-          return CustomScrollView(
-            physics: Consts.physics,
-            controller: widget.scrollCtrl,
-            slivers: [
-              SliverRefreshControl(
-                onRefresh: () {
-                  ref.invalidate(progressProvider);
-                  return Future.value();
-                },
-              ),
-              ...children,
-              const SliverFooter(),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Future<void> _updateProgress(WidgetRef ref, Entry e, bool ofAnime) async {
-    final result = await updateProgress(e.mediaId, e.progress);
-    if (result is! List<String>) {
-      if (mounted) {
-        showPopUp(
-          context,
-          ConfirmationDialog(
-            title: 'Could not update progress',
-            content: result.toString(),
-          ),
-        );
-      }
-      return;
-    }
-
-    final tag = CollectionTag(Settings().id!, ofAnime);
-    ref.read(collectionProvider(tag)).updateProgress(
-          mediaId: e.mediaId,
-          progress: e.progress,
-          customLists: result,
-          listStatus: EntryStatus.CURRENT,
-          format: null,
-          sort: ref.read(collectionFilterProvider(tag)).sort,
-        );
   }
 }

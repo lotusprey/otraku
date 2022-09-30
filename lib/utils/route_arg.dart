@@ -4,7 +4,7 @@ import 'package:otraku/activity/activity_view.dart';
 import 'package:otraku/collection/collection_view.dart';
 import 'package:otraku/favorites/favorites_view.dart';
 import 'package:otraku/studio/studio_view.dart';
-import 'package:otraku/views/auth_view.dart';
+import 'package:otraku/auth/auth_view.dart';
 import 'package:otraku/character/character_view.dart';
 import 'package:otraku/user/friends_view.dart';
 import 'package:otraku/home/home_view.dart';

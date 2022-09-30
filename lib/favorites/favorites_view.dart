@@ -43,10 +43,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
     );
 
     final refreshControl = SliverRefreshControl(
-      onRefresh: () {
-        ref.invalidate(favoritesProvider(widget.id));
-        return Future.value();
-      },
+      onRefresh: () => ref.invalidate(favoritesProvider(widget.id)),
     );
 
     return PageLayout(

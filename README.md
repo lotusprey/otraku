@@ -6,7 +6,7 @@ An unofficial AniList app.
 </p>
 
 <p align='center'>
-<a href='https://play.google.com/store/apps/details?id=com.otraku.app'>Google Play</a> • <a href='https://sites.google.com/view/otraku/privacy-policy'>Privacy Policy</a>
+<a href='https://play.google.com/store/apps/details?id=com.otraku.app'>Google Play</a> • <a href='https://apt.izzysoft.de/fdroid/index/apk/com.otraku.app'>IzzyOnDroid (F-Droid)</a> • <a href='https://sites.google.com/view/otraku/privacy-policy'>Privacy Policy</a>
 </p>
 <p align='center'>
 The iOS .ipa and the android .apk are bundled with each Github release.

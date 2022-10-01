@@ -20,8 +20,8 @@ abstract class Convert {
         );
       } else {
         parsedRunes.add(c);
-    }
       }
+    }
 
     return String.fromCharCodes(parsedRunes);
   }

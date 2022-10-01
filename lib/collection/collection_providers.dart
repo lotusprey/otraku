@@ -36,7 +36,9 @@ final entriesProvider = Provider.autoDispose.family(
         if (!contains) continue;
       }
 
-      if (filter.country != null && entry.country != filter.country) continue;
+      if (filter.country != null && entry.country != filter.country!.code) {
+        continue;
+      }
 
       if (filter.formats.isNotEmpty && !filter.formats.contains(entry.format)) {
         continue;

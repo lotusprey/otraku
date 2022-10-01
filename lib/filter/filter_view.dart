@@ -8,6 +8,7 @@ import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/utils/consts.dart';
+import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
@@ -98,16 +99,15 @@ class CollectionFilterView extends StatelessWidget {
                 () => filter.sort.index,
                 (EntrySort val) => filter.sort = val,
               ),
-              CountryDropDown(filter.country, (val) => filter.country = val),
             ],
           ),
           const SizedBox(height: 10),
-          ChipMultiSelector(
+          ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
             selected: filter.statuses,
           ),
-          ChipMultiSelector(
+          ChipEnumMultiSelector(
             title: 'Formats',
             options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
@@ -129,6 +129,15 @@ class CollectionFilterView extends StatelessWidget {
                     ),
                   ),
             ),
+          ),
+          ChipSelector(
+            title: 'Country',
+            options: OriginCountry.values
+                .map((v) => Convert.clarifyEnum(v.name)!)
+                .toList(),
+            selected: filter.country?.index,
+            onChanged: (val) => filter.country =
+                val == null ? null : OriginCountry.values.elementAt(val),
           ),
         ],
       ),
@@ -170,27 +179,24 @@ class DiscoverFilterView extends StatelessWidget {
                 () => filter.sort.index,
                 (MediaSort val) => filter.sort = val,
               ),
-              CountryDropDown(filter.country, (val) => filter.country = val),
-              ListPresenceDropDown(
-                value: filter.onList,
-                onChanged: (val) => filter.onList = val,
-              ),
             ],
           ),
           const SizedBox(height: 10),
-          ChipMultiSelector(
+          ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
             selected: filter.statuses,
           ),
-          ChipMultiSelector(
+          ChipEnumMultiSelector(
             title: 'Formats',
             options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
           ChipSelector(
             title: 'Season',
-            options: MediaSeason.values,
+            options: MediaSeason.values
+                .map((v) => Convert.clarifyEnum(v.name)!)
+                .toList(),
             selected: filter.season?.index,
             onChanged: (selected) => filter.season = selected != null
                 ? MediaSeason.values.elementAt(selected)
@@ -219,6 +225,34 @@ class DiscoverFilterView extends StatelessWidget {
                     ),
                   ),
             ),
+          ),
+          ChipSelector(
+            title: 'Country',
+            options: OriginCountry.values
+                .map((v) => Convert.clarifyEnum(v.name)!)
+                .toList(),
+            selected: filter.country?.index,
+            onChanged: (val) => filter.country =
+                val == null ? null : OriginCountry.values.elementAt(val),
+          ),
+          ChipEnumMultiSelector(
+            title: 'Sources',
+            options: MediaSource.values,
+            selected: filter.sources,
+          ),
+          ChipSelector(
+            title: 'List Presence',
+            options: const ['On List', 'Not on List'],
+            selected: filter.onList == null
+                ? null
+                : filter.onList!
+                    ? 0
+                    : 1,
+            onChanged: (val) => filter.onList = val == null
+                ? null
+                : val == 0
+                    ? true
+                    : false,
           ),
         ],
       ),

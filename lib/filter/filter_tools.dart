@@ -64,45 +64,6 @@ class OrderDropDown<T extends Enum> extends StatelessWidget {
   }
 }
 
-class CountryDropDown extends StatelessWidget {
-  const CountryDropDown(this.value, this.onChanged);
-
-  final String? value;
-  final void Function(String?) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final countries = <String, String?>{'All': null};
-    for (final e in Convert.countryCodes.entries) {
-      countries[e.value] = e.key;
-    }
-
-    return DropDownField<String?>(
-      title: 'Country',
-      value: value,
-      items: countries,
-      onChanged: onChanged,
-    );
-  }
-}
-
-class ListPresenceDropDown extends StatelessWidget {
-  const ListPresenceDropDown({required this.value, required this.onChanged});
-
-  final bool? value;
-  final void Function(bool?) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropDownField<bool?>(
-      title: 'List Filter',
-      value: value,
-      items: const {'Everything': null, 'On List': true, 'Not On List': false},
-      onChanged: onChanged,
-    );
-  }
-}
-
 /// After [_delay] time has passed, since the last [run] call, call [callback].
 /// E.g. do a search query after the user stops typing.
 class _Debounce {

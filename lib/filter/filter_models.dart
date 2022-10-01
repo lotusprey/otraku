@@ -27,7 +27,7 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   final tagIdNotIn = <int>[];
   late EntrySort sort =
       _ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
-  String? country;
+  OriginCountry? country;
 
   @override
   CollectionFilter copy() => CollectionFilter(_ofAnime)
@@ -55,11 +55,12 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
   final genreNotIn = <String>[];
   final tagIn = <String>[];
   final tagNotIn = <String>[];
+  final sources = <String>[];
   MediaSort sort = Settings().defaultDiscoverSort;
   MediaSeason? season;
   int? startYearFrom;
   int? startYearTo;
-  String? country;
+  OriginCountry? country;
   bool? onList;
 
   set ofAnime(bool val) {
@@ -75,6 +76,7 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
     ..genreNotIn.addAll(genreNotIn)
     ..tagIn.addAll(tagIn)
     ..tagNotIn.addAll(tagNotIn)
+    ..sources.addAll(sources)
     ..sort = sort
     ..season = season
     ..startYearFrom = startYearFrom
@@ -93,10 +95,11 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
         if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
         if (tagIn.isNotEmpty) 'tag_in': tagIn,
         if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
+        if (sources.isNotEmpty) 'sources': sources,
         if (season != null) 'season': season!.name,
         if (startYearFrom != null) 'startFrom': '${startYearFrom}0000',
         if (startYearTo != null) 'startTo': '${startYearTo}9999',
-        if (country != null) 'countryOfOrigin': country,
+        if (country != null) 'countryOfOrigin': country!.code,
         if (onList != null) 'onList': onList,
       };
 }

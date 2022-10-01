@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_constants.dart';
@@ -10,8 +11,6 @@ import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/studio/studio_providers.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -240,45 +239,70 @@ class _FilterButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 4,
-                builder: (context, scrollCtrl) => GridView(
+                initialHeight: Consts.tapTargetSize * 5,
+                builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,
                   ),
-                  gridDelegate:
-                      const SliverGridDelegateWithMinWidthAndFixedHeight(
-                    minWidth: 155,
-                    height: 75,
-                  ),
                   children: [
-                    SortDropDown(
-                      MediaSort.values,
-                      () => filter.sort.index,
-                      (MediaSort val) => filter = filter.copyWith(sort: val),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: SizedBox(
+                            height: 70,
+                            child: SortDropDown(
+                              MediaSort.values,
+                              () => filter.sort.index,
+                              (MediaSort val) =>
+                                  filter = filter.copyWith(sort: val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: SizedBox(
+                            height: 70,
+                            child: OrderDropDown(
+                              MediaSort.values,
+                              () => filter.sort.index,
+                              (MediaSort val) =>
+                                  filter = filter.copyWith(sort: val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
                     ),
-                    OrderDropDown(
-                      MediaSort.values,
-                      () => filter.sort.index,
-                      (MediaSort val) => filter = filter.copyWith(sort: val),
+                    const SizedBox(height: 10),
+                    ChipSelector(
+                      title: 'List Presence',
+                      options: const ['On List', 'Not on List'],
+                      selected: filter.onList == null
+                          ? null
+                          : filter.onList!
+                              ? 0
+                              : 1,
+                      onChanged: (val) => filter = filter.copyWith(onList: () {
+                        if (val == null) return null;
+                        return val == 0 ? true : false;
+                      }),
                     ),
-                    ListPresenceDropDown(
-                      value: filter.onList,
-                      onChanged: (val) =>
-                          filter = filter.copyWith(onList: () => val),
-                    ),
-                    DropDownField<bool?>(
+                    ChipSelector(
                       title: 'Main Studio',
-                      value: filter.isMain,
-                      items: const {
-                        'Doesn\'t matter': null,
-                        'Is Main': true,
-                        'Is Not Main': false,
-                      },
-                      onChanged: (val) =>
-                          filter = filter.copyWith(isMain: () => val),
+                      options: const ['Is Main', 'Is Not Main'],
+                      selected: filter.isMain == null
+                          ? null
+                          : filter.isMain!
+                              ? 0
+                              : 1,
+                      onChanged: (val) => filter = filter.copyWith(isMain: () {
+                        if (val == null) return null;
+                        return val == 0 ? true : false;
+                      }),
                     ),
                   ],
                 ),

@@ -37,6 +37,44 @@ enum ScoreFormat {
   POINT_3,
 }
 
+enum MediaSource {
+  ORIGINAL,
+  MANGA,
+  LIGHT_NOVEL,
+  VISUAL_NOVEL,
+  VIDEO_GAME,
+  OTHER,
+  NOVEL,
+  DOUJINSHI,
+  ANIME,
+  WEB_NOVEL,
+  LIVE_ACTION,
+  GAME,
+  COMIC,
+  MULTIMEDIA_PROJECT,
+  PICTURE_BOOK,
+}
+
+enum OriginCountry {
+  JAPAN,
+  CHINA,
+  SOUTH_KOREA,
+  TAIWAN;
+
+  String get code {
+    switch (this) {
+      case OriginCountry.JAPAN:
+        return 'JP';
+      case OriginCountry.CHINA:
+        return 'CN';
+      case OriginCountry.SOUTH_KOREA:
+        return 'KR';
+      case OriginCountry.TAIWAN:
+        return 'TW';
+    }
+  }
+}
+
 enum MediaSort {
   ID,
   ID_DESC,

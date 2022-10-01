@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/convert.dart';
 
 /// A horizontal list of chips, where only one can be selected at a time.
-class ChipSelector<T extends Enum> extends StatefulWidget {
+class ChipSelector extends StatefulWidget {
   const ChipSelector({
     required this.title,
     required this.options,
@@ -11,7 +11,7 @@ class ChipSelector<T extends Enum> extends StatefulWidget {
   });
 
   final String title;
-  final List<T> options;
+  final List<String> options;
   final int? selected;
   final void Function(int?) onChanged;
 
@@ -20,16 +20,12 @@ class ChipSelector<T extends Enum> extends StatefulWidget {
 }
 
 class _ChipSelectorState extends State<ChipSelector> {
-  final _options = <String>[];
   int? _selected;
 
   @override
   void initState() {
     super.initState();
     _selected = widget.selected;
-    for (final o in widget.options) {
-      _options.add(Convert.clarifyEnum(o.name)!);
-    }
   }
 
   @override
@@ -42,7 +38,7 @@ class _ChipSelectorState extends State<ChipSelector> {
   Widget build(BuildContext context) {
     return _Layout(
       title: widget.title,
-      options: _options,
+      options: widget.options,
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 10),
         child: FilterChip(
@@ -50,7 +46,7 @@ class _ChipSelectorState extends State<ChipSelector> {
           labelStyle: TextStyle(
             color: Theme.of(context).colorScheme.onSecondaryContainer,
           ),
-          label: Text(_options[index]),
+          label: Text(widget.options[index]),
           selected: index == _selected,
           onSelected: (selected) {
             setState(
@@ -66,8 +62,8 @@ class _ChipSelectorState extends State<ChipSelector> {
 
 /// A horizontal list of chips, where multiple can be selected at a time.
 /// Note: The state mutates [selected] directly.
-class ChipMultiSelector<T extends Enum> extends StatefulWidget {
-  const ChipMultiSelector({
+class ChipEnumMultiSelector<T extends Enum> extends StatefulWidget {
+  const ChipEnumMultiSelector({
     required this.title,
     required this.options,
     required this.selected,
@@ -78,10 +74,10 @@ class ChipMultiSelector<T extends Enum> extends StatefulWidget {
   final List<String> selected;
 
   @override
-  State<ChipMultiSelector> createState() => _ChipMultiSelectorState();
+  State<ChipEnumMultiSelector> createState() => _ChipEnumMultiSelectorState();
 }
 
-class _ChipMultiSelectorState extends State<ChipMultiSelector> {
+class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
   final _options = <String>[];
   final _values = <String>[];
 

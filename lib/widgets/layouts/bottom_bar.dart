@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 

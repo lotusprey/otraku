@@ -1,4 +1,65 @@
-// Used for sorting the entries of a collection.
+enum MediaStatus {
+  FINISHED,
+  RELEASING,
+  HIATUS,
+  NOT_YET_RELEASED,
+  CANCELLED,
+}
+
+enum AnimeFormat {
+  TV,
+  TV_SHORT,
+  MOVIE,
+  SPECIAL,
+  OVA,
+  ONA,
+  MUSIC,
+}
+
+enum MangaFormat {
+  MANGA,
+  NOVEL,
+  ONE_SHOT,
+}
+
+enum MediaSeason {
+  WINTER,
+  SPRING,
+  SUMMER,
+  FALL,
+}
+
+enum ScoreFormat {
+  POINT_100,
+  POINT_10_DECIMAL,
+  POINT_10,
+  POINT_5,
+  POINT_3,
+}
+
+enum MediaSort {
+  ID,
+  ID_DESC,
+  TRENDING,
+  TRENDING_DESC,
+  POPULARITY,
+  POPULARITY_DESC,
+  FAVOURITES,
+  FAVOURITES_DESC,
+  SCORE,
+  SCORE_DESC,
+  START_DATE,
+  START_DATE_DESC,
+  END_DATE,
+  END_DATE_DESC,
+  TITLE_ROMAJI,
+  TITLE_ROMAJI_DESC,
+  TITLE_ENGLISH,
+  TITLE_ENGLISH_DESC,
+  TITLE_NATIVE,
+  TITLE_NATIVE_DESC,
+}
+
 enum EntrySort {
   TITLE,
   TITLE_DESC,

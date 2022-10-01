@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 
 class BarChart extends StatelessWidget {
   const BarChart({

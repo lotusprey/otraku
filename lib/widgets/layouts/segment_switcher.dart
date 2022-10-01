@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 
 class SegmentSwitcher extends StatefulWidget {
   const SegmentSwitcher({

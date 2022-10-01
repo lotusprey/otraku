@@ -7,7 +7,7 @@ import 'package:otraku/activity/activity_card.dart';
 import 'package:otraku/activity/reply_card.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/settings.dart';

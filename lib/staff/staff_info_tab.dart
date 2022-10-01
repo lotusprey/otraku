@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/widgets/fade_image.dart';

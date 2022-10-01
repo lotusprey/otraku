@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/collection/collection_models.dart';
-import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/edit/edit_buttons.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';

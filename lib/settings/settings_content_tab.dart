@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/score_format.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';

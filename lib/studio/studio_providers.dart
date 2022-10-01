@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/media/media_item.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/utils/api.dart';

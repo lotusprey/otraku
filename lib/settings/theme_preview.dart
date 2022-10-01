@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/settings.dart';
 import 'package:otraku/utils/theming.dart';

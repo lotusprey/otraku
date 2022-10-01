@@ -1,10 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/collection/collection_models.dart';
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/filter/filter_providers.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 

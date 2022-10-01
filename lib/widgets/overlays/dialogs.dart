@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/html_content.dart';
 
 Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(

@@ -6,7 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_providers.dart';
 import 'package:otraku/collection/progress_provider.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';

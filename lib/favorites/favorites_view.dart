@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/character/character_grid.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/favorites/favorites_provider.dart';
 import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/staff/staff_grid.dart';

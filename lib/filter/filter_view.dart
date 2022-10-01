@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/anime_format.dart';
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/tag/tag_provider.dart';
-import 'package:otraku/utils/convert.dart';
-import 'package:otraku/constants/manga_format.dart';
-import 'package:otraku/constants/media_status.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
@@ -80,15 +76,11 @@ class CollectionFilterView extends StatelessWidget {
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(
-          left: 10,
-          right: 10,
-          top: 20,
-          bottom: 60,
-        ),
+        padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
           GridView(
             shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 140,
@@ -108,31 +100,34 @@ class CollectionFilterView extends StatelessWidget {
               CountryDropDown(filter.country, (val) => filter.country = val),
             ],
           ),
-          EnumChipGrid(
+          const SizedBox(height: 10),
+          ChipMultiSelector(
             title: 'Statuses',
-            enumValues: MediaStatus.values,
+            options: MediaStatus.values,
             selected: filter.statuses,
           ),
-          EnumChipGrid(
+          ChipMultiSelector(
             title: 'Formats',
-            enumValues:
-                filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
-          Consumer(
-            builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                  loading: () => const Loader(),
-                  error: (_, __) => const Text('Could not load tags'),
-                  data: (tags) => ChipTagGrid(
-                    inclusiveGenres: filter.genreIn,
-                    exclusiveGenres: filter.genreNotIn,
-                    inclusiveTags: filter.tagIn,
-                    exclusiveTags: filter.tagNotIn,
-                    tags: tags,
-                    tagIdIn: filter.tagIdIn,
-                    tagIdNotIn: filter.tagIdNotIn,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                    loading: () => const Loader(),
+                    error: (_, __) => const Text('Could not load tags'),
+                    data: (tags) => ChipTagGrid(
+                      inclusiveGenres: filter.genreIn,
+                      exclusiveGenres: filter.genreNotIn,
+                      inclusiveTags: filter.tagIn,
+                      exclusiveTags: filter.tagNotIn,
+                      tags: tags,
+                      tagIdIn: filter.tagIdIn,
+                      tagIdNotIn: filter.tagIdNotIn,
+                    ),
                   ),
-                ),
+            ),
           ),
         ],
       ),
@@ -153,11 +148,11 @@ class DiscoverFilterView extends StatelessWidget {
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding:
-            const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 60),
+        padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
           GridView(
             shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 140,
@@ -181,94 +176,41 @@ class DiscoverFilterView extends StatelessWidget {
               ),
             ],
           ),
-          EnumChipGrid(
+          const SizedBox(height: 10),
+          ChipMultiSelector(
             title: 'Statuses',
-            enumValues: MediaStatus.values,
+            options: MediaStatus.values,
             selected: filter.statuses,
           ),
-          EnumChipGrid(
+          ChipMultiSelector(
             title: 'Formats',
-            enumValues:
-                filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
-          Consumer(
-            builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                  loading: () => const Loader(),
-                  error: (_, __) => const Text('Could not load tags'),
-                  data: (tags) => ChipTagGrid(
-                    inclusiveGenres: filter.genreIn,
-                    exclusiveGenres: filter.genreNotIn,
-                    inclusiveTags: filter.tagIn,
-                    exclusiveTags: filter.tagNotIn,
+          ChipSelector(
+            title: 'Season',
+            options: MediaSeason.values,
+            selected: filter.season?.index,
+            onChanged: (selected) => filter.season = selected != null
+                ? MediaSeason.values.elementAt(selected)
+                : null,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                    loading: () => const Loader(),
+                    error: (_, __) => const Text('Could not load tags'),
+                    data: (tags) => ChipTagGrid(
+                      inclusiveGenres: filter.genreIn,
+                      exclusiveGenres: filter.genreNotIn,
+                      inclusiveTags: filter.tagIn,
+                      exclusiveTags: filter.tagNotIn,
+                    ),
                   ),
-                ),
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class EnumChipGrid<T extends Enum> extends StatelessWidget {
-  const EnumChipGrid({
-    required this.title,
-    required this.enumValues,
-    required this.selected,
-  });
-
-  final String title;
-  final List<T> enumValues;
-  final List<String> selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final options = <String>[];
-    final values = <String>[];
-    for (final v in enumValues) {
-      values.add(v.name);
-      options.add(Convert.clarifyEnum(values.last)!);
-    }
-
-    return ChipGrid(
-      title: title,
-      placeholder: title.toLowerCase(),
-      names: selected,
-      onEdit: (selected) => showSheet(
-        context,
-        _SelectionSheet(options: options, values: values, selected: selected),
-      ),
-    );
-  }
-}
-
-class _SelectionSheet<T> extends StatelessWidget {
-  const _SelectionSheet({
-    required this.options,
-    required this.values,
-    required this.selected,
-  });
-
-  final List<String> options;
-  final List<T> values;
-  final List<T> selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return OpaqueSheet(
-      initialHeight: options.length * Consts.tapTargetSize + 20,
-      builder: (context, scrollCtrl) => ListView.builder(
-        controller: scrollCtrl,
-        padding: Consts.padding,
-        itemCount: options.length,
-        itemExtent: Consts.tapTargetSize,
-        itemBuilder: (_, index) => CheckBoxField(
-          title: options[index],
-          initial: selected.contains(values[index]),
-          onChanged: (val) => val
-              ? selected.add(values[index])
-              : selected.remove(values[index]),
-        ),
       ),
     );
   }

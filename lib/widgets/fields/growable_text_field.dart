@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 
 // A text field that grows to up to 10 lines, if necessary.
 class GrowableTextField extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:otraku/character/character_grid.dart';
 import 'package:otraku/character/character_models.dart';
 import 'package:otraku/discover/discover_media_grid.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';

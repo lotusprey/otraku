@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/score_format.dart';
 import 'package:otraku/edit/edit_providers.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/settings/settings_provider.dart';
 
 // Score picker.

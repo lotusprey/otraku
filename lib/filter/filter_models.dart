@@ -1,5 +1,4 @@
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/settings.dart';
 
 abstract class ApplicableMediaFilter<T extends ApplicableMediaFilter<T>> {
@@ -57,6 +56,7 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
   final tagIn = <String>[];
   final tagNotIn = <String>[];
   MediaSort sort = Settings().defaultDiscoverSort;
+  MediaSeason? season;
   String? country;
   bool? onList;
 
@@ -74,24 +74,23 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
     ..tagIn.addAll(tagIn)
     ..tagNotIn.addAll(tagNotIn)
     ..sort = sort
+    ..season = season
     ..country = country
     ..onList = onList;
 
   @override
   DiscoverFilter clear() => DiscoverFilter(_ofAnime);
 
-  Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{'sort': sort.name};
-
-    if (statuses.isNotEmpty) map['status_in'] = statuses;
-    if (formats.isNotEmpty) map['format_in'] = formats;
-    if (genreIn.isNotEmpty) map['genre_in'] = genreIn;
-    if (genreNotIn.isNotEmpty) map['genre_not_in'] = genreNotIn;
-    if (tagIn.isNotEmpty) map['tag_in'] = tagIn;
-    if (tagNotIn.isNotEmpty) map['tag_not_in'] = tagNotIn;
-    if (country != null) map['countryOfOrigin'] = country;
-    if (onList != null) map['onList'] = onList;
-
-    return map;
-  }
+  Map<String, dynamic> toMap() => {
+        'sort': sort.name,
+        if (statuses.isNotEmpty) 'status_in': statuses,
+        if (formats.isNotEmpty) 'format_in': formats,
+        if (genreIn.isNotEmpty) 'genre_in': genreIn,
+        if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
+        if (tagIn.isNotEmpty) 'tag_in': tagIn,
+        if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
+        if (season != null) 'season': season!.name,
+        if (country != null) 'countryOfOrigin': country,
+        if (onList != null) 'onList': onList,
+      };
 }

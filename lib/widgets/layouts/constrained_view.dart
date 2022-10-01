@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 
 /// Horizontally constrains [child] into the center.
 class ConstrainedView extends StatelessWidget {

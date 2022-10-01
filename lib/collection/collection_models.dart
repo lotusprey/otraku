@@ -1,4 +1,4 @@
-import 'package:otraku/constants/entry_sort.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 

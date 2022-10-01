@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/filter/year_picker.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/tag/tag_provider.dart';
@@ -194,6 +195,15 @@ class DiscoverFilterView extends StatelessWidget {
             onChanged: (selected) => filter.season = selected != null
                 ? MediaSeason.values.elementAt(selected)
                 : null,
+          ),
+          YearRangePicker(
+            title: 'Start Year',
+            from: filter.startYearFrom,
+            to: filter.startYearTo,
+            onChanged: (from, to) {
+              filter.startYearFrom = from;
+              filter.startYearTo = to;
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),

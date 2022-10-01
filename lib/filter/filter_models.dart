@@ -57,6 +57,8 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
   final tagNotIn = <String>[];
   MediaSort sort = Settings().defaultDiscoverSort;
   MediaSeason? season;
+  int? startYearFrom;
+  int? startYearTo;
   String? country;
   bool? onList;
 
@@ -75,6 +77,8 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
     ..tagNotIn.addAll(tagNotIn)
     ..sort = sort
     ..season = season
+    ..startYearFrom = startYearFrom
+    ..startYearTo = startYearTo
     ..country = country
     ..onList = onList;
 
@@ -90,6 +94,8 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
         if (tagIn.isNotEmpty) 'tag_in': tagIn,
         if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
         if (season != null) 'season': season!.name,
+        if (startYearFrom != null) 'startFrom': '${startYearFrom}0000',
+        if (startYearTo != null) 'startTo': '${startYearTo}9999',
         if (country != null) 'countryOfOrigin': country,
         if (onList != null) 'onList': onList,
       };

@@ -5,7 +5,6 @@ import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/widgets/fields/chip_fields.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -34,15 +33,25 @@ class _ChipGrid extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.subtitle1),
             const Spacer(),
             if (onClear != null && children.isNotEmpty)
-              TopBarIcon(
-                tooltip: 'Clear',
-                icon: Icons.close,
-                onTap: onClear!,
+              SizedBox(
+                height: 35,
+                child: IconButton(
+                  icon: const Icon(Ionicons.close_outline),
+                  tooltip: 'Close',
+                  onPressed: onClear!,
+                  color: Theme.of(context).colorScheme.onBackground,
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
               ),
-            TopBarIcon(
-              tooltip: 'Edit',
-              icon: Ionicons.add_circle_outline,
-              onTap: onEdit,
+            SizedBox(
+              height: 35,
+              child: IconButton(
+                icon: const Icon(Ionicons.add_circle_outline),
+                tooltip: 'Edit',
+                onPressed: onEdit,
+                color: Theme.of(context).colorScheme.onBackground,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+              ),
             ),
           ],
         ),

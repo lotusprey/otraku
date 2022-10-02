@@ -136,7 +136,7 @@ class _Layout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           child: Text(title, style: Theme.of(context).textTheme.subtitle1),
         ),
         SizedBox(
@@ -148,7 +148,6 @@ class _Layout extends StatelessWidget {
             itemBuilder: itemBuilder,
           ),
         ),
-        const SizedBox(height: 10),
       ],
     );
   }

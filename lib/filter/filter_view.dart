@@ -112,6 +112,7 @@ class CollectionFilterView extends StatelessWidget {
             options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
+          const Divider(indent: 15, endIndent: 15),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Consumer(
@@ -130,6 +131,7 @@ class CollectionFilterView extends StatelessWidget {
                   ),
             ),
           ),
+          const Divider(indent: 15, endIndent: 15),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
@@ -202,6 +204,7 @@ class DiscoverFilterView extends StatelessWidget {
                 ? MediaSeason.values.elementAt(selected)
                 : null,
           ),
+          const Divider(indent: 15, endIndent: 15),
           YearRangePicker(
             title: 'Start Year',
             from: filter.startYearFrom,
@@ -226,6 +229,7 @@ class DiscoverFilterView extends StatelessWidget {
                   ),
             ),
           ),
+          const Divider(indent: 15, endIndent: 15),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values

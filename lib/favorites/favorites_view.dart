@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/character/character_grid.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/favorites/favorites_provider.dart';
-import 'package:otraku/media/media_grid.dart';
-import 'package:otraku/staff/staff_grid.dart';
 import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -131,7 +129,7 @@ class _AnimeTab extends StatelessWidget {
                   controller: _ctrl,
                   slivers: [
                     refreshControl,
-                    MediaGrid(data.items),
+                    TileItemGrid(data.items),
                     SliverFooter(loading: data.hasNext),
                   ],
                 ),
@@ -182,7 +180,7 @@ class _MangaTab extends StatelessWidget {
                   controller: _ctrl,
                   slivers: [
                     refreshControl,
-                    MediaGrid(data.items),
+                    TileItemGrid(data.items),
                     SliverFooter(loading: data.hasNext),
                   ],
                 ),
@@ -233,7 +231,7 @@ class _CharactersTab extends StatelessWidget {
                   controller: _ctrl,
                   slivers: [
                     refreshControl,
-                    CharacterGrid(data.items),
+                    TileItemGrid(data.items),
                     SliverFooter(loading: data.hasNext),
                   ],
                 ),
@@ -284,7 +282,7 @@ class _StaffTab extends StatelessWidget {
                   controller: _ctrl,
                   slivers: [
                     refreshControl,
-                    StaffGrid(data.items),
+                    TileItemGrid(data.items),
                     SliverFooter(loading: data.hasNext),
                   ],
                 ),

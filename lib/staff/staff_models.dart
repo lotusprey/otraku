@@ -1,19 +1,14 @@
+import 'package:otraku/common/tile_item.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
 
-class StaffItem {
-  StaffItem._({required this.id, required this.name, required this.imageUrl});
-
-  factory StaffItem(Map<String, dynamic> map) => StaffItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-      );
-
-  final int id;
-  final String name;
-  final String imageUrl;
-}
+TileItem staffItem(Map<String, dynamic> map) => TileItem(
+      id: map['id'],
+      type: DiscoverType.staff,
+      title: map['name']['userPreferred'],
+      imageUrl: map['image']['large'],
+    );
 
 class Staff {
   Staff._({

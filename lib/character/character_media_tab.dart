@@ -6,7 +6,7 @@ import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_constants.dart';
-import 'package:otraku/utils/relation.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';

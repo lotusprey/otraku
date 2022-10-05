@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/utils/relation.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';

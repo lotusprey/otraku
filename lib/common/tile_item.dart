@@ -1,17 +1,15 @@
 import 'package:otraku/discover/discover_models.dart';
 
-class Relation {
-  Relation({
+class TileItem {
+  const TileItem({
     required this.id,
+    required this.type,
     required this.title,
     required this.imageUrl,
-    required this.type,
-    this.subtitle,
   });
 
   final int id;
+  final DiscoverType type;
   final String title;
   final String imageUrl;
-  final DiscoverType type;
-  final String? subtitle;
 }

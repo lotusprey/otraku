@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
 
@@ -25,11 +26,12 @@ enum DiscoverType {
   IconData get icon => _icons[this]!;
 }
 
-class DiscoverMediaItem {
+class DiscoverMediaItem extends TileItem {
   DiscoverMediaItem._({
-    required this.mediaId,
-    required this.title,
-    required this.imageUrl,
+    required super.id,
+    required super.type,
+    required super.title,
+    required super.imageUrl,
     required this.format,
     required this.releaseStatus,
     required this.listStatus,
@@ -40,7 +42,8 @@ class DiscoverMediaItem {
   });
 
   factory DiscoverMediaItem(Map<String, dynamic> map) => DiscoverMediaItem._(
-        mediaId: map['id'],
+        id: map['id'],
+        type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
         title: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Settings().imageQuality],
         format: Convert.clarifyEnum(map['format']),
@@ -52,9 +55,6 @@ class DiscoverMediaItem {
         isAdult: map['isAdult'] ?? false,
       );
 
-  final int mediaId;
-  final String title;
-  final String imageUrl;
   final String? format;
   final String? releaseStatus;
   final String? listStatus;

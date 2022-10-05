@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
+import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_providers.dart';
@@ -10,7 +11,7 @@ import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 import 'package:otraku/utils/settings.dart';
 
 /// Fetches another page on the discover tab, depending on the selected type.
@@ -64,7 +65,7 @@ final discoverMangaProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverCharacterProvider = StateNotifierProvider.autoDispose<
-    DiscoverCharacterNotifier, AsyncValue<Pagination<CharacterItem>>>(
+    DiscoverCharacterNotifier, AsyncValue<Pagination<TileItem>>>(
   (ref) => DiscoverCharacterNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(birthdayFilterProvider),
@@ -72,7 +73,7 @@ final discoverCharacterProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverStaffProvider = StateNotifierProvider.autoDispose<
-    DiscoverStaffNotifier, AsyncValue<Pagination<StaffItem>>>(
+    DiscoverStaffNotifier, AsyncValue<Pagination<TileItem>>>(
   (ref) => DiscoverStaffNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(birthdayFilterProvider),
@@ -133,7 +134,7 @@ class DiscoverMediaNotifier
 }
 
 class DiscoverCharacterNotifier
-    extends StateNotifier<AsyncValue<Pagination<CharacterItem>>> {
+    extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
   DiscoverCharacterNotifier(this.search, this.isBirthday)
       : super(const AsyncValue.loading()) {
     fetch();
@@ -152,9 +153,9 @@ class DiscoverCharacterNotifier
         if (isBirthday) 'isBirthday': true,
       });
 
-      final items = <CharacterItem>[];
+      final items = <TileItem>[];
       for (final c in data['Page']['characters']) {
-        items.add(CharacterItem(c));
+        items.add(characterItem(c));
       }
 
       return value.append(
@@ -166,7 +167,7 @@ class DiscoverCharacterNotifier
 }
 
 class DiscoverStaffNotifier
-    extends StateNotifier<AsyncValue<Pagination<StaffItem>>> {
+    extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
   DiscoverStaffNotifier(this.search, this.isBirthday)
       : super(const AsyncValue.loading()) {
     fetch();
@@ -185,9 +186,9 @@ class DiscoverStaffNotifier
         if (isBirthday) 'isBirthday': true,
       });
 
-      final items = <StaffItem>[];
+      final items = <TileItem>[];
       for (final s in data['Page']['staff']) {
-        items.add(StaffItem(s));
+        items.add(staffItem(s));
       }
 
       return value.append(

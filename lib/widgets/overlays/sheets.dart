@@ -112,12 +112,13 @@ class DynamicGradientDragSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final requiredHeight = children.length * Consts.tapTargetSize + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
-    if (height > 0.9) height = 0.9;
+    if (height > 0.6) height = 0.6;
 
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: height,
       minChildSize: height < 0.25 ? height : 0.25,
+      maxChildSize: 0.9,
       builder: (context, scrollCtrl) => Container(
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(

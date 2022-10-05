@@ -1,5 +1,5 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 import 'package:otraku/utils/settings.dart';
 
 class ActivityState {

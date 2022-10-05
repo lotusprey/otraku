@@ -1,9 +1,17 @@
 import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/settings.dart';
+
+TileItem mediaItem(Map<String, dynamic> map) => TileItem(
+      id: map['id'],
+      type: DiscoverType.anime,
+      title: map['title']['userPreferred'],
+      imageUrl: map['coverImage'][Settings().imageQuality],
+    );
 
 class Media {
   Media(this.edit, this.info, this.stats, this.relations);

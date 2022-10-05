@@ -50,7 +50,7 @@ class Composition {
     this.additionalId,
     this.isPrivate,
   ]) {
-    /// Remove the "paragraph" tags from the html.
+    /// Remove the paragraph "<p></p>" and new line "<br/>" tags from the html.
     text = text.replaceAll(_paragraphRegex, '');
   }
 
@@ -69,7 +69,7 @@ class Composition {
           id == null ? false : null,
         );
 
-  static final _paragraphRegex = RegExp(r'\</?p\>');
+  static final _paragraphRegex = RegExp(r'(\</?p\>|<br ?/>)');
 
   /// When creating a new item, [id] should be `null`.
   /// When updating, [id] should be the item id.

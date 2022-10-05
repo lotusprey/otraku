@@ -53,13 +53,13 @@ class _Tile extends StatelessWidget {
 
     return Card(
       child: LinkTile(
-        id: item.mediaId,
+        id: item.id,
         discoverType: DiscoverType.anime,
         info: item.imageUrl,
         child: Row(
           children: [
             Hero(
-              tag: item.mediaId,
+              tag: item.id,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
                 child: Container(

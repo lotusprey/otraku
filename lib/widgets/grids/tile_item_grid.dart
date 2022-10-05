@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
-class StaffGrid extends StatelessWidget {
-  const StaffGrid(this.items);
+class TileItemGrid extends StatelessWidget {
+  const TileItemGrid(this.items);
 
-  final List<StaffItem> items;
+  final List<TileItem> items;
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      return const SliverFillRemaining(child: Center(child: Text('No Media')));
+    }
+
     return SliverPadding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       sliver: SliverGrid(
@@ -26,7 +30,7 @@ class StaffGrid extends StatelessWidget {
           (_, i) => LinkTile(
             id: items[i].id,
             info: items[i].imageUrl,
-            discoverType: DiscoverType.staff,
+            discoverType: DiscoverType.anime,
             child: Column(
               children: [
                 Expanded(
@@ -45,7 +49,7 @@ class StaffGrid extends StatelessWidget {
                 SizedBox(
                   height: 35,
                   child: Text(
-                    items[i].name,
+                    items[i].title,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     style: Theme.of(context).textTheme.bodyText2,

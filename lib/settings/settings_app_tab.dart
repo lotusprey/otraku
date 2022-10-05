@@ -148,6 +148,11 @@ class SettingsAppTab extends StatelessWidget {
                 initial: Settings().confirmExit,
                 onChanged: (val) => Settings().confirmExit = val,
               ),
+              CheckBoxField(
+                title: 'Compact Discover Grid',
+                initial: Settings().compactDiscoverGrid,
+                onChanged: (val) => Settings().compactDiscoverGrid = val,
+              ),
             ]),
           ),
         ),

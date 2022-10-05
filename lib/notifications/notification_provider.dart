@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/notifications/notification_model.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 

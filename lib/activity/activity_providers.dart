@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 import 'package:otraku/utils/settings.dart';
 
 /// Toggles an activity like and returns an error if unsuccessful.

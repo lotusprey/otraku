@@ -5,12 +5,12 @@ import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_constants.dart';
-import 'package:otraku/media/media_grid.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/studio/studio_providers.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -155,11 +155,11 @@ class _StudioViewState extends ConsumerState<StudioView> {
                             : data.media.items.length;
 
                         items.add(
-                          MediaGrid(data.media.items.sublist(beg, end)),
+                          TileItemGrid(data.media.items.sublist(beg, end)),
                         );
                       }
                     } else {
-                      items.add(MediaGrid(data.media.items));
+                      items.add(TileItemGrid(data.media.items));
                     }
 
                     return CustomScrollView(

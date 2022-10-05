@@ -20,13 +20,7 @@ class ChipSelector extends StatefulWidget {
 }
 
 class _ChipSelectorState extends State<ChipSelector> {
-  int? _selected;
-
-  @override
-  void initState() {
-    super.initState();
-    _selected = widget.selected;
-  }
+  late int? _selected = widget.selected;
 
   @override
   void didUpdateWidget(covariant ChipSelector oldWidget) {

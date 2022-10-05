@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/media/media_providers.dart';
-import 'package:otraku/utils/relation.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';

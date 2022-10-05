@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/character/character_grid.dart';
-import 'package:otraku/character/character_models.dart';
+import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_media_grid.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/consts.dart';
@@ -11,8 +10,6 @@ import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
-import 'package:otraku/staff/staff_grid.dart';
-import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/user/user_grid.dart';
@@ -20,6 +17,8 @@ import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/review/review_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/settings.dart';
+import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/filter/filter_tools.dart';
@@ -264,7 +263,9 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'anime',
-              onData: (data) => DiscoverMediaGrid(data.items),
+              onData: (data) => Settings().compactDiscoverGrid
+                  ? TileItemGrid(data.items)
+                  : DiscoverMediaGrid(data.items),
             );
           case DiscoverType.manga:
             return PaginationView<DiscoverMediaItem>(
@@ -272,23 +273,25 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'manga',
-              onData: (data) => DiscoverMediaGrid(data.items),
+              onData: (data) => Settings().compactDiscoverGrid
+                  ? TileItemGrid(data.items)
+                  : DiscoverMediaGrid(data.items),
             );
           case DiscoverType.character:
-            return PaginationView<CharacterItem>(
+            return PaginationView<TileItem>(
               provider: discoverCharacterProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'characters',
-              onData: (data) => CharacterGrid(data.items),
+              onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.staff:
-            return PaginationView<StaffItem>(
+            return PaginationView<TileItem>(
               provider: discoverStaffProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'staff',
-              onData: (data) => StaffGrid(data.items),
+              onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.studio:
             return PaginationView<StudioItem>(

@@ -139,6 +139,11 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
               color: Colors.transparent,
               child: InkWell(
                 borderRadius: Consts.borderRadiusMax,
+                onTap: () {
+                  if (_index == i) return;
+                  setState(() => _index = i);
+                  widget.onChanged(i);
+                },
                 child: Center(
                   child: Text(
                     widget.items[i],
@@ -150,11 +155,6 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
                             ),
                   ),
                 ),
-                onTap: () {
-                  if (_index == i) return;
-                  setState(() => _index = i);
-                  widget.onChanged(i);
-                },
               ),
             ),
           ),

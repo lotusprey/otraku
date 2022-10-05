@@ -24,6 +24,7 @@ class Settings extends ChangeNotifier {
     this._analogueClock,
     this._inboxOnFeed,
     this._feedOnFollowing,
+    this._compactDiscoverGrid,
     this._feedActivityFilters,
     this._lastNotificationId,
     this._id0,
@@ -50,6 +51,7 @@ class Settings extends ChangeNotifier {
       _box.get(_ANALOGUE_CLOCK) ?? false,
       _box.get(_INBOX_ON_FEED) ?? true,
       _box.get(_FEED_ON_FOLLOWING) ?? false,
+      _box.get(_COMPACT_DISCOVER_GRID) ?? false,
       _box.get(_FEED_ACTIVITY_FILTERS) ?? [0, 1, 2],
       _box.get(_LAST_NOTIFICATION_ID) ?? -1,
       _box.get(_ID_0),
@@ -79,6 +81,7 @@ class Settings extends ChangeNotifier {
   static const _ANALOGUE_CLOCK = 'analogueClock';
   static const _INBOX_ON_FEED = 'inboxOnFeed';
   static const _FEED_ON_FOLLOWING = 'feedOnFollowing';
+  static const _COMPACT_DISCOVER_GRID = 'compactDiscoverGrid';
   static const _FEED_ACTIVITY_FILTERS = 'feedActivityFilters';
   static const _LAST_NOTIFICATION_ID = 'lastNotificationId';
   static const _ID_0 = 'id0';
@@ -120,6 +123,7 @@ class Settings extends ChangeNotifier {
   bool _analogueClock;
   bool _inboxOnFeed;
   bool _feedOnFollowing;
+  bool _compactDiscoverGrid;
   List<int> _feedActivityFilters;
   int _lastNotificationId;
 
@@ -143,6 +147,7 @@ class Settings extends ChangeNotifier {
   bool get analogueClock => _analogueClock;
   bool get inboxOnFeed => _inboxOnFeed;
   bool get feedOnFollowing => _feedOnFollowing;
+  bool get compactDiscoverGrid => _compactDiscoverGrid;
   List<int> get feedActivityFilters => _feedActivityFilters;
   int get lastNotificationId => _lastNotificationId;
 
@@ -267,6 +272,11 @@ class Settings extends ChangeNotifier {
   set feedOnFollowing(bool v) {
     _feedOnFollowing = v;
     _box.put(_FEED_ON_FOLLOWING, v);
+  }
+
+  set compactDiscoverGrid(bool v) {
+    _compactDiscoverGrid = v;
+    _box.put(_COMPACT_DISCOVER_GRID, v);
   }
 
   set feedActivityFilters(List<int> v) {

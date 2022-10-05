@@ -31,8 +31,8 @@ class _SegmentSwitcherState extends State<SegmentSwitcher> {
       children: [
         for (int i = 0; i < widget.items.length; i++)
           Flexible(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+            child: InkWell(
+              borderRadius: Consts.borderRadiusMax,
               onTap: () {
                 if (_index == i) return;
                 setState(() => _index = i);
@@ -63,6 +63,9 @@ class _SegmentSwitcherState extends State<SegmentSwitcher> {
             height: 35,
             width: constraints.maxWidth,
             child: Card(
+              shape: const RoundedRectangleBorder(
+                borderRadius: Consts.borderRadiusMax,
+              ),
               child: Stack(
                 children: [
                   AnimatedPositioned(

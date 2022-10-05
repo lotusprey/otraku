@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/media/media_models.dart';
-import 'package:otraku/utils/relation.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 
 Future<bool> toggleFavoriteMedia(int id, bool isAnime) async {
   try {

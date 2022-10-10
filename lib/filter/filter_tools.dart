@@ -77,8 +77,7 @@ class _Debounce {
   }
 }
 
-/// Openable search field that connects to [provider].
-/// `null` state means that the field is closed.
+/// Openable search field that connects to a collection or the discover tab.
 class SearchFilterField extends StatelessWidget {
   const SearchFilterField({
     required this.title,
@@ -139,9 +138,18 @@ class SearchFilterField extends StatelessWidget {
                   child: SearchField(
                     value: value,
                     hint: title,
-                    onChange: (val) => debounce.run(
-                      () => ref.read(searchProvider(tag).notifier).state = val,
-                    ),
+                    onChange: (val) {
+                      if (val.isEmpty) {
+                        ref.read(searchProvider(tag).notifier).state = '';
+                        return;
+                      }
+
+                      debounce.run(
+                        () {
+                          ref.read(searchProvider(tag).notifier).state = val;
+                        },
+                      );
+                    },
                     onHide: () =>
                         ref.read(searchProvider(tag).notifier).state = null,
                   ),

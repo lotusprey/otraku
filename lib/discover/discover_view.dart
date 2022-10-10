@@ -17,7 +17,7 @@ import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/review/review_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -263,7 +263,7 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'anime',
-              onData: (data) => Settings().compactDiscoverGrid
+              onData: (data) => Options().compactDiscoverGrid
                   ? TileItemGrid(data.items)
                   : DiscoverMediaGrid(data.items),
             );
@@ -273,7 +273,7 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'manga',
-              onData: (data) => Settings().compactDiscoverGrid
+              onData: (data) => Options().compactDiscoverGrid
                   ? TileItemGrid(data.items)
                   : DiscoverMediaGrid(data.items),
             );

@@ -7,7 +7,7 @@ import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Favorite/Unfavorite staff. Returns `true` if successful.
 Future<bool> toggleFavoriteStaff(int staffId) async {
@@ -119,7 +119,7 @@ class StaffRelationNotifier extends ChangeNotifier {
       final media = Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Settings().imageQuality],
+        imageUrl: m['node']['coverImage'][Options().imageQuality],
         subtitle: Convert.clarifyEnum(m['node']['format']),
         type: m['node']['type'] == 'ANIME'
             ? DiscoverType.anime
@@ -154,7 +154,7 @@ class StaffRelationNotifier extends ChangeNotifier {
       items.add(Relation(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
-        imageUrl: s['node']['coverImage'][Settings().imageQuality],
+        imageUrl: s['node']['coverImage'][Options().imageQuality],
         subtitle: s['staffRole'],
         type: s['node']['type'] == 'ANIME'
             ? DiscoverType.anime

@@ -1,5 +1,5 @@
 import 'package:otraku/media/media_constants.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 abstract class ApplicableMediaFilter<T extends ApplicableMediaFilter<T>> {
   ApplicableMediaFilter(this._ofAnime);
@@ -26,7 +26,7 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   final tagIdIn = <int>[];
   final tagIdNotIn = <int>[];
   late EntrySort sort =
-      _ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
+      _ofAnime ? Options().defaultAnimeSort : Options().defaultMangaSort;
   OriginCountry? country;
 
   @override
@@ -56,7 +56,7 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
   final tagIn = <String>[];
   final tagNotIn = <String>[];
   final sources = <String>[];
-  MediaSort sort = Settings().defaultDiscoverSort;
+  MediaSort sort = Options().defaultDiscoverSort;
   MediaSeason? season;
   int? startYearFrom;
   int? startYearTo;

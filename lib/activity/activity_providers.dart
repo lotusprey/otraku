@@ -3,7 +3,7 @@ import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Toggles an activity like and returns an error if unsuccessful.
 Future<Object?> toggleActivityLike(Activity activity) async {
@@ -79,7 +79,7 @@ Future<Object?> deleteActivityReply(int replyId) async {
 
 final activityProvider = StateNotifierProvider.autoDispose
     .family<ActivityNotifier, AsyncValue<ActivityState>, int>(
-  (ref, userId) => ActivityNotifier(userId, Settings().id!),
+  (ref, userId) => ActivityNotifier(userId, Options().id!),
 );
 
 final activityFilterProvider = StateNotifierProvider.autoDispose
@@ -89,8 +89,8 @@ final activityFilterProvider = StateNotifierProvider.autoDispose
     bool? onFollowing;
 
     if (userId == null) {
-      onFollowing = Settings().feedOnFollowing;
-      typeIn = Settings()
+      onFollowing = Options().feedOnFollowing;
+      typeIn = Options()
           .feedActivityFilters
           .map((e) => ActivityType.values.elementAt(e))
           .toList();
@@ -104,7 +104,7 @@ final activitiesProvider = StateNotifierProvider.autoDispose
     .family<ActivitiesNotifier, AsyncValue<Pagination<Activity>>, int?>(
   (ref, userId) => ActivitiesNotifier(
     userId: userId,
-    viewerId: Settings().id!,
+    viewerId: Options().id!,
     filter: ref.watch(activityFilterProvider(userId)),
   ),
 );
@@ -375,7 +375,7 @@ class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
         : ActivityFilter(typeIn, onFollowing ?? state.onFollowing);
 
     if (onFollowing == null) return;
-    Settings().feedActivityFilters = typeIn.map((e) => e.index).toList();
-    Settings().feedOnFollowing = onFollowing;
+    Options().feedActivityFilters = typeIn.map((e) => e.index).toList();
+    Options().feedOnFollowing = onFollowing;
   }
 }

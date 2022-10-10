@@ -11,7 +11,7 @@ import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -73,7 +73,7 @@ class CollectionSubView extends StatelessWidget {
         return PageLayout(
           topBar: PreferredSize(
             preferredSize: const Size.fromHeight(Consts.tapTargetSize),
-            child: _TopBar(tag, tag.userId != Settings().id),
+            child: _TopBar(tag, tag.userId != Options().id),
           ),
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
@@ -278,7 +278,7 @@ class _ContentState extends State<_Content> {
         }
 
         void Function(Entry)? update;
-        if (widget.tag.userId == Settings().id) {
+        if (widget.tag.userId == Options().id) {
           update = (e) async {
             final result = await updateProgress(e.mediaId, e.progress);
 

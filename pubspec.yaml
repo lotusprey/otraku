@@ -40,7 +40,7 @@ dependencies:
   dynamic_color: ^1.5.4
 
   # Shows device notifications.
-  flutter_local_notifications: ^12.0.0
+  flutter_local_notifications: ^12.0.1+1
 
   # Translates html into flutter widgets.
   flutter_widget_from_html_core: ^0.8.5+3

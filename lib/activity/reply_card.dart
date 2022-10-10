@@ -7,7 +7,7 @@ import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -64,7 +64,7 @@ class ReplyCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.subtitle2,
                     ),
                     const Spacer(),
-                    if (reply.user.id == Settings().id) ...[
+                    if (reply.user.id == Options().id) ...[
                       Consumer(
                         builder: (context, ref, _) => SizedBox(
                           height: 40,

@@ -5,7 +5,7 @@ import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_providers.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/settings/settings_app_tab.dart';
 import 'package:otraku/settings/settings_content_tab.dart';
 import 'package:otraku/settings/settings_notifications_tab.dart';
@@ -41,7 +41,7 @@ class _SettingsViewState extends State<SettingsView> {
         final settings = ref.watch(userSettingsProvider).copy();
 
         ref.listen<UserSettings>(userSettingsProvider, (prev, next) {
-          final id = Settings().id!;
+          final id = Options().id!;
 
           if (prev?.scoreFormat != next.scoreFormat ||
               prev?.titleLanguage != next.titleLanguage) {

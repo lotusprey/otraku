@@ -5,7 +5,7 @@ import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/user/user_header.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -66,7 +66,7 @@ class UserSubView extends StatelessWidget {
             items.add(UserHeader(
               id: id,
               user: null,
-              isMe: id == Settings().id,
+              isMe: id == Options().id,
               imageUrl: avatarUrl,
             ));
             items.add(
@@ -77,7 +77,7 @@ class UserSubView extends StatelessWidget {
             items.add(UserHeader(
               id: id,
               user: null,
-              isMe: id == Settings().id,
+              isMe: id == Options().id,
               imageUrl: avatarUrl,
             ));
             items.add(
@@ -88,7 +88,7 @@ class UserSubView extends StatelessWidget {
             items.add(UserHeader(
               id: id,
               user: data,
-              isMe: id == Settings().id,
+              isMe: id == Options().id,
               imageUrl: avatarUrl,
             ));
 
@@ -105,7 +105,7 @@ class UserSubView extends StatelessWidget {
                     _Button(
                       Ionicons.film,
                       'Anime',
-                      () => id == Settings().id
+                      () => id == Options().id
                           ? ref.read(homeProvider).homeTab = HomeView.ANIME_LIST
                           : Navigator.pushNamed(
                               context,
@@ -116,7 +116,7 @@ class UserSubView extends StatelessWidget {
                     _Button(
                       Ionicons.bookmark,
                       'Manga',
-                      () => id == Settings().id
+                      () => id == Options().id
                           ? ref.read(homeProvider).homeTab = HomeView.MANGA_LIST
                           : Navigator.pushNamed(
                               context,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/drag_detector.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 
@@ -72,7 +72,7 @@ class FloatingBarState extends State<FloatingBar>
   Widget build(BuildContext context) {
     if (!_visible) return const SizedBox();
 
-    final children = Settings().leftHanded
+    final children = Options().leftHanded
         ? widget.children
         : widget.children.reversed.toList();
 
@@ -89,7 +89,7 @@ class FloatingBarState extends State<FloatingBar>
           child: Row(
             mainAxisAlignment: widget.centered
                 ? MainAxisAlignment.center
-                : Settings().leftHanded
+                : Options().leftHanded
                     ? MainAxisAlignment.start
                     : MainAxisAlignment.end,
             children: [

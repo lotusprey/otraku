@@ -4,10 +4,10 @@ import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 final progressProvider = ChangeNotifierProvider.autoDispose(
-  (ref) => ProgressNotifier(Settings().id!),
+  (ref) => ProgressNotifier(Options().id!),
 );
 
 class ProgressNotifier extends ChangeNotifier {
@@ -27,11 +27,10 @@ class ProgressNotifier extends ChangeNotifier {
       final value = _state.valueOrNull ?? ProgressState();
 
       _state = await AsyncValue.guard(() async {
-        final data = await Api.request(GqlQuery.progressMedia, {
+        final data = await Api.get(GqlQuery.progressMedia, {
           'userId': userId,
           'page': _nextPage,
         });
-        if (data == null) return value;
 
         for (final m in data['Page']['mediaList']) {
           final e = Entry(m);

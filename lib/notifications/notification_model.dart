@@ -1,6 +1,6 @@
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 enum NotificationFilterType {
   all,
@@ -266,7 +266,7 @@ class SiteNotification {
             type: NotificationType.RELATED_MEDIA_ADDITION,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality],
             texts: [
               map['media']['title']['userPreferred'],
               ' was added to the site',
@@ -282,7 +282,7 @@ class SiteNotification {
             id: map['id'],
             type: NotificationType.MEDIA_DATA_CHANGE,
             headId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality],
             details: map['reason'],
             texts: [
               map['media']['title']['userPreferred'],
@@ -305,7 +305,7 @@ class SiteNotification {
             id: map['id'],
             type: NotificationType.MEDIA_MERGE,
             headId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality],
             details: map['reason'],
             texts: [
               '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',
@@ -335,7 +335,7 @@ class SiteNotification {
             type: NotificationType.AIRING,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality],
             texts: [
               'Episode ',
               map['episode'].toString(),

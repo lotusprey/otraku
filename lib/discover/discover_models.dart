@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 enum DiscoverType {
   anime,
@@ -45,7 +45,7 @@ class DiscoverMediaItem extends TileItem {
         id: map['id'],
         type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
         title: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][Settings().imageQuality],
+        imageUrl: map['coverImage'][Options().imageQuality],
         format: Convert.clarifyEnum(map['format']),
         releaseStatus: Convert.clarifyEnum(map['status']),
         listStatus: Convert.clarifyEnum(map['mediaListEntry']?['status']),

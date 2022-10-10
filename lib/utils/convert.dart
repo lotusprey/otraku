@@ -1,5 +1,5 @@
 import 'package:otraku/collection/collection_models.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 abstract class Convert {
   /// Code points of some characters.
@@ -96,7 +96,7 @@ abstract class Convert {
     if (seconds == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
 
-    if (Settings().analogueClock) {
+    if (Options().analogueClock) {
       final overflows = date.hour > 12;
       return '${_weekDays[date.weekday - 1]}, ${date.day} '
           '${_months[date.month]} ${date.year}, '

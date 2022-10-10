@@ -12,7 +12,7 @@ import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Fetches another page on the discover tab, depending on the selected type.
 void discoverLoadMore(WidgetRef ref) {
@@ -43,7 +43,7 @@ void discoverLoadMore(WidgetRef ref) {
 }
 
 final discoverTypeProvider = StateProvider.autoDispose(
-  (ref) => Settings().defaultDiscoverType,
+  (ref) => Options().defaultDiscoverType,
 );
 
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;

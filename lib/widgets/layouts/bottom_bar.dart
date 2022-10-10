@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 /// A bottom app bar implementation that uses a blurred, translucent background.
@@ -115,7 +115,7 @@ class BottomBarDualButtonRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            if (Settings().leftHanded) ...[
+            if (Options().leftHanded) ...[
               primary,
               secondary,
             ] else ...[

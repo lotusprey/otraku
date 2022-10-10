@@ -7,7 +7,7 @@ import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -333,7 +333,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           if (activity.isOwned) ...[
             if (activity.type == ActivityType.TEXT ||
                 activity.type == ActivityType.MESSAGE &&
-                    activity.agent.id == Settings().id)
+                    activity.agent.id == Options().id)
               FixedGradientSheetTile(
                 text: 'Edit',
                 icon: Icons.edit_outlined,

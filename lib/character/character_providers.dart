@@ -7,7 +7,7 @@ import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
 Future<bool> toggleFavoriteCharacter(int characterId) async {
@@ -163,7 +163,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
       items.add(Relation(
         id: a['node']['id'],
         title: a['node']['title']['userPreferred'],
-        imageUrl: a['node']['coverImage'][Settings().imageQuality],
+        imageUrl: a['node']['coverImage'][Options().imageQuality],
         subtitle: Convert.clarifyEnum(a['characterRole']),
         type: DiscoverType.anime,
       ));
@@ -207,7 +207,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
       items.add(Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Settings().imageQuality],
+        imageUrl: m['node']['coverImage'][Options().imageQuality],
         subtitle: Convert.clarifyEnum(m['characterRole']),
         type: DiscoverType.manga,
       ));

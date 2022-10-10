@@ -9,7 +9,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -103,17 +103,17 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
         scrollCtrl: _ctrl,
         children: [
           ActionButton(
-            tooltip: widget.id == Settings().id ? 'New Post' : 'New Message',
+            tooltip: widget.id == Options().id ? 'New Post' : 'New Message',
             icon: Icons.edit_outlined,
             onTap: () => showSheet(
               context,
               CompositionView(
-                composition: widget.id == Settings().id
+                composition: widget.id == Options().id
                     ? Composition.status(null, '')
                     : Composition.message(null, '', widget.id),
                 onDone: (map) => ref
                     .read(activitiesProvider(widget.id).notifier)
-                    .insertActivity(map, Settings().id!),
+                    .insertActivity(map, Options().id!),
               ),
             ),
           ),
@@ -161,7 +161,7 @@ class ActivitiesSubView extends StatelessWidget {
                         .read(activitiesProvider(id).notifier)
                         .remove(data.items[i].id),
                     onChanged: null,
-                    onPinned: id == Settings().id
+                    onPinned: id == Options().id
                         ? () => ref
                             .read(activitiesProvider(id).notifier)
                             .togglePin(data.items[i].id)

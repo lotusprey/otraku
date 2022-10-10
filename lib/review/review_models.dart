@@ -1,5 +1,5 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 class ReviewItem {
   ReviewItem._({
@@ -55,7 +55,7 @@ class Review {
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage'][Settings().imageQuality],
+        mediaCover: map['media']['coverImage'][Options().imageQuality],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',

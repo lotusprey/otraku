@@ -9,7 +9,7 @@ import 'package:otraku/feed/progress_tab.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
@@ -102,7 +102,7 @@ class FeedView extends StatelessWidget {
                     composition: Composition.status(null, ''),
                     onDone: (map) => ref
                         .read(activitiesProvider(null).notifier)
-                        .insertActivity(map, Settings().id!),
+                        .insertActivity(map, Options().id!),
                   ),
                 ),
               ),

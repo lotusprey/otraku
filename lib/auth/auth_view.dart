@@ -4,7 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -32,11 +32,11 @@ class AuthViewState extends State<AuthView> {
         return;
       }
 
-      Settings().selectedAccount = account;
+      Options().selectedAccount = account;
       Navigator.pushReplacementNamed(
         context,
         RouteArg.home,
-        arguments: RouteArg(id: Settings().idOf(account)),
+        arguments: RouteArg(id: Options().idOf(account)),
       );
     });
   }
@@ -94,9 +94,9 @@ class AuthViewState extends State<AuthView> {
   @override
   void initState() {
     super.initState();
-    if (Settings().selectedAccount == null) return;
+    if (Options().account == null) return;
     _loading = true;
-    _verify(Settings().selectedAccount!);
+    _verify(Options().account!);
   }
 
   @override
@@ -109,8 +109,8 @@ class AuthViewState extends State<AuthView> {
   Widget build(BuildContext context) {
     if (_loading) return const Scaffold(body: Center(child: Loader()));
 
-    final available0 = Settings().isAvailableAccount(0);
-    final available1 = Settings().isAvailableAccount(1);
+    final available0 = Options().isAvailableAccount(0);
+    final available1 = Options().isAvailableAccount(1);
 
     return Scaffold(
       body: Container(
@@ -146,7 +146,7 @@ class AuthViewState extends State<AuthView> {
                         if (available0) ...[
                           const SizedBox(height: 5),
                           Text(
-                            Settings().idOf(0)?.toString() ?? '',
+                            Options().idOf(0)?.toString() ?? '',
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ],
@@ -197,7 +197,7 @@ class AuthViewState extends State<AuthView> {
                         if (available1) ...[
                           const SizedBox(height: 5),
                           Text(
-                            Settings().idOf(1)?.toString() ?? '',
+                            Options().idOf(1)?.toString() ?? '',
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ],

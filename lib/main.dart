@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/theming.dart';
 
 Future<void> main() async {
-  await Settings.init();
+  await Options.init();
   BackgroundHandler.init();
   runApp(const ProviderScope(child: App()));
 }
@@ -26,12 +26,12 @@ class AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    Settings().addListener(() => setState(() {}));
+    Options().addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    Settings().dispose();
+    Options().dispose();
     super.dispose();
   }
 
@@ -41,7 +41,7 @@ class AppState extends State<App> {
           builder: (lightDynamic, darkDynamic) {
             ColorScheme lightScheme;
             ColorScheme darkScheme;
-            var theme = Settings().theme;
+            var theme = Options().theme;
 
             /// The system schemes must be cached, so
             /// they can later be used in the settings.
@@ -49,7 +49,7 @@ class AppState extends State<App> {
             final hasDynamic = lightDynamic != null && darkDynamic != null;
 
             final darkBackground =
-                Settings().pureBlackDarkTheme ? Colors.black : null;
+                Options().pureBlackDarkTheme ? Colors.black : null;
 
             if (hasDynamic) {
               lightDynamic = lightDynamic.harmonized();
@@ -77,7 +77,7 @@ class AppState extends State<App> {
                   .copyWith(background: darkBackground);
             }
 
-            final mode = Settings().themeMode;
+            final mode = Options().themeMode;
             final platform =
                 SchedulerBinding.instance.window.platformBrightness;
             final isDark = mode == ThemeMode.system

@@ -3,7 +3,7 @@ import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/home/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
@@ -36,10 +36,10 @@ class SettingsAppTab extends StatelessWidget {
           padding: Consts.padding,
           sliver: SliverToBoxAdapter(
             child: SegmentSwitcher(
-              current: Settings().themeMode.index,
+              current: Options().themeMode.index,
               items: const ['System', 'Light', 'Dark'],
               onChanged: (i) =>
-                  Settings().themeMode = ThemeMode.values.elementAt(i),
+                  Options().themeMode = ThemeMode.values.elementAt(i),
             ),
           ),
         ),
@@ -49,8 +49,8 @@ class SettingsAppTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: CheckBoxField(
               title: 'Pure Black Dark Theme',
-              initial: Settings().pureBlackDarkTheme,
-              onChanged: (v) => Settings().pureBlackDarkTheme = v,
+              initial: Options().pureBlackDarkTheme,
+              onChanged: (v) => Options().pureBlackDarkTheme = v,
             ),
           ),
         ),
@@ -64,7 +64,7 @@ class SettingsAppTab extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               DropDownField<int>(
                 title: 'Startup Page',
-                value: Settings().defaultHomeTab,
+                value: Options().defaultHomeTab,
                 items: const {
                   'Feed': HomeView.INBOX,
                   'Anime': HomeView.ANIME_LIST,
@@ -72,53 +72,53 @@ class SettingsAppTab extends StatelessWidget {
                   'Discover': HomeView.DISCOVER,
                   'Profile': HomeView.USER,
                 },
-                onChanged: (val) => Settings().defaultHomeTab = val,
+                onChanged: (val) => Options().defaultHomeTab = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',
-                value: Settings().defaultAnimeSort,
+                value: Options().defaultAnimeSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultAnimeSort = val,
+                onChanged: (val) => Options().defaultAnimeSort = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Manga Sort',
-                value: Settings().defaultMangaSort,
+                value: Options().defaultMangaSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultMangaSort = val,
+                onChanged: (val) => Options().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
                 title: 'Default Discover Sort',
-                value: Settings().defaultDiscoverSort,
+                value: Options().defaultDiscoverSort,
                 items: Map.fromIterable(
                   MediaSort.values,
                   key: (v) => Convert.clarifyEnum((v as MediaSort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultDiscoverSort = val,
+                onChanged: (val) => Options().defaultDiscoverSort = val,
               ),
               DropDownField<DiscoverType>(
                 title: 'Default Discover Type',
-                value: Settings().defaultDiscoverType,
+                value: Options().defaultDiscoverType,
                 items: Map.fromIterable(
                   DiscoverType.values,
                   key: (v) => Convert.clarifyEnum((v as DiscoverType).name)!,
                 ),
-                onChanged: (val) => Settings().defaultDiscoverType = val,
+                onChanged: (val) => Options().defaultDiscoverType = val,
               ),
               DropDownField<String>(
                 title: 'Image Quality',
-                value: Settings().imageQuality,
+                value: Options().imageQuality,
                 items: const {
                   'Very High': 'extraLarge',
                   'High': 'large',
                   'Medium': 'medium',
                 },
-                onChanged: (val) => Settings().imageQuality = val,
+                onChanged: (val) => Options().imageQuality = val,
               ),
             ]),
           ),
@@ -135,23 +135,23 @@ class SettingsAppTab extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(
                 title: 'Left-Handed Mode',
-                initial: Settings().leftHanded,
-                onChanged: (val) => Settings().leftHanded = val,
+                initial: Options().leftHanded,
+                onChanged: (val) => Options().leftHanded = val,
               ),
               CheckBoxField(
                 title: '12 Hour Clock',
-                initial: Settings().analogueClock,
-                onChanged: (val) => Settings().analogueClock = val,
+                initial: Options().analogueClock,
+                onChanged: (val) => Options().analogueClock = val,
               ),
               CheckBoxField(
                 title: 'Confirm Exit',
-                initial: Settings().confirmExit,
-                onChanged: (val) => Settings().confirmExit = val,
+                initial: Options().confirmExit,
+                onChanged: (val) => Options().confirmExit = val,
               ),
               CheckBoxField(
                 title: 'Compact Discover Grid',
-                initial: Settings().compactDiscoverGrid,
-                onChanged: (val) => Settings().compactDiscoverGrid = val,
+                initial: Options().compactDiscoverGrid,
+                onChanged: (val) => Options().compactDiscoverGrid = val,
               ),
             ]),
           ),

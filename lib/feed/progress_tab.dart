@@ -6,7 +6,7 @@ import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/feed/minimal_collection_grid.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -114,7 +114,7 @@ class _ProgressTabState extends State<ProgressTab> {
       return;
     }
 
-    final tag = CollectionTag(Settings().id!, ofAnime);
+    final tag = CollectionTag(Options().id!, ofAnime);
     ref.read(collectionProvider(tag)).updateProgress(
           mediaId: e.mediaId,
           progress: e.progress,

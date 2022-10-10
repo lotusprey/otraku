@@ -1,6 +1,6 @@
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Used as an argument for a [collectionProvider] `family` instance.
 class CollectionTag {
@@ -367,7 +367,7 @@ class Entry {
     return Entry._(
       mediaId: map['media']['id'],
       titles: titles,
-      imageUrl: map['media']['coverImage'][Settings().imageQuality],
+      imageUrl: map['media']['coverImage'][Options().imageQuality],
       format: map['media']['format'],
       status: map['media']['status'],
       entryStatus: EntryStatus.values.byName(map['status']),

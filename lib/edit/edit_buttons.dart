@@ -7,7 +7,7 @@ import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -58,7 +58,7 @@ class _EditButtonsState extends State<EditButtons> {
                   widget.callback?.call(newEdit);
 
                   final isAnime = newEdit.type == 'ANIME';
-                  final tag = CollectionTag(Settings().id!, isAnime);
+                  final tag = CollectionTag(Options().id!, isAnime);
                   final entry =
                       await ref.read(collectionProvider(tag)).updateEntry(
                             widget.oldEdit,
@@ -109,7 +109,7 @@ class _EditButtonsState extends State<EditButtons> {
                         }
 
                         final tag = CollectionTag(
-                          Settings().id!,
+                          Options().id!,
                           oldEdit.type == 'ANIME',
                         );
                         ref.read(collectionProvider(tag)).removeEntry(oldEdit);

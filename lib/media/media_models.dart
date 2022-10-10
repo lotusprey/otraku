@@ -4,13 +4,13 @@ import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
       type: DiscoverType.anime,
       title: map['title']['userPreferred'],
-      imageUrl: map['coverImage'][Settings().imageQuality],
+      imageUrl: map['coverImage'][Options().imageQuality],
     );
 
 class Media {
@@ -36,7 +36,7 @@ class RelatedMedia {
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][Settings().imageQuality],
+        imageUrl: map['node']['coverImage'][Options().imageQuality],
         relationType: Convert.clarifyEnum(map['relationType']),
         format: Convert.clarifyEnum(map['node']['format']),
         status: Convert.clarifyEnum(map['node']['status']),
@@ -76,7 +76,7 @@ class Recommendation {
       title: map['mediaRecommendation']['title']['userPreferred'],
       type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
-          [Settings().imageQuality],
+          [Options().imageQuality],
     );
   }
 
@@ -221,7 +221,7 @@ class MediaInfo {
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
       description: Convert.clearHtml(map['description']),
-      cover: map['coverImage'][Settings().imageQuality],
+      cover: map['coverImage'][Options().imageQuality],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       format: Convert.clarifyEnum(map['format']),

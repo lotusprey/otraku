@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/home/home_provider.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/theming.dart';
 
 class ThemePreview extends StatefulWidget {
@@ -28,13 +28,13 @@ class _ThemePreviewState extends State<ThemePreview> {
           children.add(_ThemeCard(
             name: 'System',
             scheme: system,
-            active: Settings().theme == null,
-            onTap: () => setState(() => Settings().theme = null),
+            active: Options().theme == null,
+            onTap: () => setState(() => Options().theme = null),
           ));
         }
 
         final background =
-            brightness == Brightness.dark && Settings().pureBlackDarkTheme
+            brightness == Brightness.dark && Options().pureBlackDarkTheme
                 ? Colors.black
                 : null;
 
@@ -43,8 +43,8 @@ class _ThemePreviewState extends State<ThemePreview> {
           children.add(_ThemeCard(
             name: e.key,
             scheme: e.value.scheme(brightness).copyWith(background: background),
-            active: Settings().theme == i,
-            onTap: () => setState(() => Settings().theme = i),
+            active: Options().theme == i,
+            onTap: () => setState(() => Options().theme = i),
           ));
         }
 

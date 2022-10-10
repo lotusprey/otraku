@@ -162,13 +162,16 @@ class TopBarIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(icon),
-      tooltip: tooltip,
-      onPressed: onTap,
-      color: color ?? Theme.of(context).colorScheme.onBackground,
-      constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
-      padding: Consts.padding,
+    return SizedBox(
+      width: 45,
+      height: 45,
+      child: IconButton(
+        icon: Icon(icon),
+        tooltip: tooltip,
+        onPressed: onTap,
+        color: color ?? Theme.of(context).colorScheme.onBackground,
+        padding: Consts.padding,
+      ),
     );
   }
 }

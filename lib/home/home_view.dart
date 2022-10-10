@@ -13,7 +13,7 @@ import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/discover/discover_view.dart';
 import 'package:otraku/collection/collection_view.dart';
 import 'package:otraku/feed/feed_view.dart';
@@ -53,6 +53,33 @@ class _HomeViewState extends ConsumerState<HomeView> {
   @override
   Widget build(BuildContext context) {
     BackgroundHandler.handleNotificationLaunch();
+
+    if (Options().lastVersionCode != versionCode) {
+      BackgroundHandler.checkPermission().then((hasPermission) {
+        if (!hasPermission && mounted) {
+          showPopUp(
+            context,
+            ConfirmationDialog(
+              title: 'Allow notifications?',
+              secondaryAction: 'No',
+              onConfirm: () => BackgroundHandler.requestPermission().then(
+                (success) {
+                  if (!success && mounted) {
+                    showPopUp(
+                      context,
+                      const ConfirmationDialog(
+                        title: 'Could not acquire permission',
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          );
+        }
+        Options().updateVersionCode();
+      });
+    }
 
     // Keep important providers alive.
     ref.watch(userSettingsProvider.select((_) => null));
@@ -193,7 +220,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
       }
     }
 
-    if (!Settings().confirmExit) return Future.value(true);
+    if (!Options().confirmExit) return Future.value(true);
 
     bool ok = false;
     await showPopUp(

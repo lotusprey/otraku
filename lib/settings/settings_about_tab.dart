@@ -107,7 +107,7 @@ class SettingsAboutTab extends StatelessWidget {
   Widget _buildBackgroundWorkInfo(BuildContext context) {
     final time = Options().lastBackgroundWork!.millisecondsSinceEpoch;
     return Text(
-      'Performed a notification check on ${Convert.millisToStr((time / 1000).truncate())}.',
+      'Performed a notification check around ${Convert.millisToStr((time / 1000).truncate())}.',
       textAlign: TextAlign.center,
       style: Theme.of(context).textTheme.subtitle1,
     );

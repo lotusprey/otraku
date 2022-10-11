@@ -4,9 +4,80 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/filter/filter_view.dart';
-import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+
+class ChipOptionField extends StatelessWidget {
+  const ChipOptionField({
+    required this.name,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String name;
+  final bool selected;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Chip(
+        label: Text(name),
+        labelStyle: selected
+            ? Theme.of(context).textTheme.button
+            : Theme.of(context).textTheme.bodyText2,
+        backgroundColor: selected
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.onSecondary,
+        side: selected
+            ? BorderSide(color: Theme.of(context).colorScheme.primary)
+            : BorderSide(color: Theme.of(context).colorScheme.onBackground),
+      ),
+    );
+  }
+}
+
+/// An input chip that can switch between positive/negative state.
+class _InputChip extends StatefulWidget {
+  const _InputChip({
+    required super.key,
+    required this.text,
+    required this.positive,
+    required this.onChanged,
+    required this.onDeleted,
+  });
+
+  final String text;
+  final bool positive;
+  final void Function(bool) onChanged;
+  final void Function() onDeleted;
+
+  @override
+  State<_InputChip> createState() => __InputChipState();
+}
+
+class __InputChipState extends State<_InputChip> {
+  late bool _positive = widget.positive;
+
+  @override
+  Widget build(BuildContext context) {
+    return InputChip(
+      label: Text(widget.text),
+      labelStyle: TextStyle(
+        color: Theme.of(context).colorScheme.onSecondaryContainer,
+      ),
+      backgroundColor: _positive
+          ? Theme.of(context).colorScheme.primaryContainer
+          : Theme.of(context).colorScheme.errorContainer,
+      onDeleted: widget.onDeleted,
+      onPressed: () {
+        setState(() => _positive = !_positive);
+        widget.onChanged(_positive);
+      },
+    );
+  }
+}
 
 class _ChipGrid extends StatelessWidget {
   const _ChipGrid({
@@ -71,45 +142,6 @@ class _ChipGrid extends StatelessWidget {
   }
 }
 
-class ChipGrid extends StatefulWidget {
-  const ChipGrid({
-    required this.title,
-    required this.placeholder,
-    required this.names,
-    required this.onEdit,
-  });
-
-  final String title;
-  final String placeholder;
-  final List<String> names;
-  final Future<void> Function(List<String>) onEdit;
-
-  @override
-  ChipGridState createState() => ChipGridState();
-}
-
-class ChipGridState extends State<ChipGrid> {
-  @override
-  Widget build(BuildContext context) {
-    final children = <Widget>[];
-    for (int i = 0; i < widget.names.length; i++) {
-      children.add(ChipField(
-        key: Key(widget.names[i]),
-        name: Convert.clarifyEnum(widget.names[i])!,
-        onRemoved: () => setState(() => widget.names.removeAt(i)),
-      ));
-    }
-
-    return _ChipGrid(
-      title: widget.title,
-      placeholder: widget.placeholder,
-      children: children,
-      onEdit: () => widget.onEdit(widget.names).then((_) => setState(() {})),
-      onClear: () => setState(() => widget.names.clear()),
-    );
-  }
-}
-
 // The names can get modified. On every change onChanged gets called.
 class ChipNamingGrid extends StatefulWidget {
   final String title;
@@ -131,11 +163,21 @@ class ChipNamingGridState extends State<ChipNamingGrid> {
   Widget build(BuildContext context) {
     final children = <Widget>[];
     for (int i = 0; i < widget.names.length; i++) {
-      children.add(ChipNamingField(
+      children.add(InputChip(
         key: Key(widget.names[i]),
-        name: widget.names[i],
-        onChanged: (n) => setState(() => widget.names[i] = n),
-        onRemoved: () => setState(() => widget.names.removeAt(i)),
+        label: Text(widget.names[i]),
+        labelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
+        ),
+        onDeleted: () => setState(() => widget.names.removeAt(i)),
+        onPressed: () => showPopUp(
+          context,
+          InputDialog(
+            initial: widget.names[i],
+            onChanged: (name) =>
+                name.isNotEmpty ? setState(() => widget.names[i] = name) : null,
+          ),
+        ),
       ));
     }
 
@@ -188,45 +230,45 @@ class ChipTagGridState extends State<ChipTagGrid> {
 
     for (int i = 0; i < widget.inclusiveGenres.length; i++) {
       final name = widget.inclusiveGenres[i];
-      children.add(ChipToggleField(
+      children.add(_InputChip(
         key: Key(widget.inclusiveGenres[i]),
-        name: Convert.clarifyEnum(name)!,
-        initial: true,
+        text: Convert.clarifyEnum(name)!,
+        positive: true,
         onChanged: (positive) => _toggleGenre(name, positive),
-        onRemoved: () => setState(() => widget.inclusiveGenres.remove(name)),
+        onDeleted: () => setState(() => widget.inclusiveGenres.remove(name)),
       ));
     }
 
     for (int i = 0; i < widget.inclusiveTags.length; i++) {
       final name = widget.inclusiveTags[i];
-      children.add(ChipToggleField(
+      children.add(_InputChip(
         key: Key(widget.inclusiveTags[i]),
-        name: Convert.clarifyEnum(name)!,
-        initial: true,
+        text: Convert.clarifyEnum(name)!,
+        positive: true,
         onChanged: (positive) => _toggleTag(name, positive),
-        onRemoved: () => setState(() => widget.inclusiveTags.remove(name)),
+        onDeleted: () => setState(() => widget.inclusiveTags.remove(name)),
       ));
     }
 
     for (int i = 0; i < widget.exclusiveGenres.length; i++) {
       final name = widget.exclusiveGenres[i];
-      children.add(ChipToggleField(
+      children.add(_InputChip(
         key: Key(widget.exclusiveGenres[i]),
-        name: Convert.clarifyEnum(name)!,
-        initial: false,
+        text: Convert.clarifyEnum(name)!,
+        positive: false,
         onChanged: (positive) => _toggleGenre(name, positive),
-        onRemoved: () => setState(() => widget.exclusiveGenres.remove(name)),
+        onDeleted: () => setState(() => widget.exclusiveGenres.remove(name)),
       ));
     }
 
     for (int i = 0; i < widget.exclusiveTags.length; i++) {
       final name = widget.exclusiveTags[i];
-      children.add(ChipToggleField(
+      children.add(_InputChip(
         key: Key(widget.exclusiveTags[i]),
-        name: Convert.clarifyEnum(name)!,
-        initial: false,
+        text: Convert.clarifyEnum(name)!,
+        positive: false,
         onChanged: (positive) => _toggleTag(name, positive),
-        onRemoved: () => setState(() => widget.exclusiveTags.remove(name)),
+        onDeleted: () => setState(() => widget.exclusiveTags.remove(name)),
       ));
     }
 

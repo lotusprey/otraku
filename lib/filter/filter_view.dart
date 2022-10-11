@@ -10,7 +10,6 @@ import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
-import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';

@@ -71,6 +71,8 @@ class _Debounce {
 
   Timer? _timer;
 
+  void cancel() => _timer?.cancel();
+
   void run(void Function() callback) {
     _timer?.cancel();
     _timer = Timer(_delay, callback);
@@ -78,7 +80,7 @@ class _Debounce {
 }
 
 /// Openable search field that connects to a collection or the discover tab.
-class SearchFilterField extends StatelessWidget {
+class SearchFilterField extends StatefulWidget {
   const SearchFilterField({
     required this.title,
     this.enabled = true,
@@ -96,11 +98,24 @@ class SearchFilterField extends StatelessWidget {
   final bool enabled;
 
   @override
+  State<SearchFilterField> createState() => _SearchFilterFieldState();
+}
+
+class _SearchFilterFieldState extends State<SearchFilterField> {
+  final _debounce = _Debounce();
+
+  @override
+  void dispose() {
+    _debounce.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (!enabled) {
+    if (!widget.enabled) {
       return Expanded(
         child: Text(
-          title,
+          widget.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.headline1,
@@ -108,11 +123,16 @@ class SearchFilterField extends StatelessWidget {
       );
     }
 
-    final debounce = _Debounce();
-
     return Consumer(
       builder: (context, ref, _) {
-        final value = ref.watch(searchProvider(tag));
+        ref.listen<String?>(
+          searchProvider(widget.tag),
+          (_, s) {
+            if (s == null) _debounce.cancel();
+          },
+        );
+
+        final value = ref.watch(searchProvider(widget.tag));
 
         return Expanded(
           child: Row(
@@ -121,7 +141,7 @@ class SearchFilterField extends StatelessWidget {
               if (value == null) ...[
                 Expanded(
                   child: Text(
-                    title,
+                    widget.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.headline1,
@@ -131,27 +151,30 @@ class SearchFilterField extends StatelessWidget {
                   tooltip: 'Search',
                   icon: Ionicons.search_outline,
                   onTap: () =>
-                      ref.read(searchProvider(tag).notifier).state = '',
+                      ref.read(searchProvider(widget.tag).notifier).state = '',
                 ),
               ] else
                 Expanded(
                   child: SearchField(
                     value: value,
-                    hint: title,
+                    hint: widget.title,
                     onChange: (val) {
                       if (val.isEmpty) {
-                        ref.read(searchProvider(tag).notifier).state = '';
+                        ref.read(searchProvider(widget.tag).notifier).state =
+                            '';
                         return;
                       }
 
-                      debounce.run(
+                      _debounce.run(
                         () {
-                          ref.read(searchProvider(tag).notifier).state = val;
+                          ref.read(searchProvider(widget.tag).notifier).state =
+                              val;
                         },
                       );
                     },
-                    onHide: () =>
-                        ref.read(searchProvider(tag).notifier).state = null,
+                    onHide: () => ref
+                        .read(searchProvider(widget.tag).notifier)
+                        .state = null,
                   ),
                 ),
             ],

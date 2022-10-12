@@ -110,13 +110,13 @@ class SettingsAppTab extends StatelessWidget {
                 ),
                 onChanged: (val) => Options().defaultDiscoverType = val,
               ),
-              DropDownField<String>(
+              DropDownField<ImageQuality>(
                 title: 'Image Quality',
                 value: Options().imageQuality,
                 items: const {
-                  'Very High': 'extraLarge',
-                  'High': 'large',
-                  'Medium': 'medium',
+                  'Very High': ImageQuality.VeryHigh,
+                  'High': ImageQuality.High,
+                  'Medium': ImageQuality.Medium,
                 },
                 onChanged: (val) => Options().imageQuality = val,
               ),

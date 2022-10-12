@@ -40,7 +40,14 @@ enum _ProfileKey {
 }
 
 /// Available image qualities.
-const _imageQualities = ['medium', 'large', 'extraLarge'];
+enum ImageQuality {
+  VeryHigh('extraLarge'),
+  High('large'),
+  Medium('medium');
+
+  const ImageQuality(this.value);
+  final String value;
+}
 
 /// Hive box keys.
 const _optionsBoxKey = 'options';
@@ -100,9 +107,10 @@ class Options extends ChangeNotifier {
       discoverSort = MediaSort.TRENDING_DESC.index;
     }
 
-    int imageQuality = _optionBox.get(_OptionKey.imageQuality.name) ?? 1;
-    if (imageQuality < 0 || imageQuality >= _imageQualities.length) {
-      imageQuality = 1;
+    int imageQualityIndex = _optionBox.get(_OptionKey.imageQuality.name) ?? 1;
+    if (imageQualityIndex < 0 ||
+        imageQualityIndex >= ImageQuality.values.length) {
+      imageQualityIndex = 1;
     }
 
     return Options._(
@@ -114,7 +122,7 @@ class Options extends ChangeNotifier {
       EntrySort.values[animeSort],
       EntrySort.values[mangaSort],
       MediaSort.values[discoverSort],
-      _imageQualities[imageQuality],
+      ImageQuality.values.elementAt(imageQualityIndex),
       _optionBox.get(_OptionKey.confirmExit.name) ?? false,
       _optionBox.get(_OptionKey.leftHanded.name) ?? false,
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
@@ -181,7 +189,7 @@ class Options extends ChangeNotifier {
   EntrySort _defaultAnimeSort;
   EntrySort _defaultMangaSort;
   MediaSort _defaultDiscoverSort;
-  String _imageQuality;
+  ImageQuality _imageQuality;
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
@@ -203,7 +211,7 @@ class Options extends ChangeNotifier {
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
   EntrySort get defaultMangaSort => _defaultMangaSort;
   MediaSort get defaultDiscoverSort => _defaultDiscoverSort;
-  String get imageQuality => _imageQuality;
+  ImageQuality get imageQuality => _imageQuality;
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
@@ -311,10 +319,9 @@ class Options extends ChangeNotifier {
     _optionBox.put(_OptionKey.defaultDiscoverSort.name, v.index);
   }
 
-  set imageQuality(String v) {
-    if (!_imageQualities.contains(v)) return;
+  set imageQuality(ImageQuality v) {
     _imageQuality = v;
-    _optionBox.put(_OptionKey.imageQuality.name, v);
+    _optionBox.put(_OptionKey.imageQuality.name, v.index);
   }
 
   set confirmExit(bool v) {

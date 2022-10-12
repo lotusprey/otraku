@@ -367,7 +367,7 @@ class Entry {
     return Entry._(
       mediaId: map['media']['id'],
       titles: titles,
-      imageUrl: map['media']['coverImage'][Options().imageQuality],
+      imageUrl: map['media']['coverImage'][Options().imageQuality.value],
       format: map['media']['format'],
       status: map['media']['status'],
       entryStatus: EntryStatus.values.byName(map['status']),

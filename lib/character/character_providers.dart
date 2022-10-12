@@ -163,7 +163,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
       items.add(Relation(
         id: a['node']['id'],
         title: a['node']['title']['userPreferred'],
-        imageUrl: a['node']['coverImage'][Options().imageQuality],
+        imageUrl: a['node']['coverImage'][Options().imageQuality.value],
         subtitle: Convert.clarifyEnum(a['characterRole']),
         type: DiscoverType.anime,
       ));
@@ -207,7 +207,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
       items.add(Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Options().imageQuality],
+        imageUrl: m['node']['coverImage'][Options().imageQuality.value],
         subtitle: Convert.clarifyEnum(m['characterRole']),
         type: DiscoverType.manga,
       ));

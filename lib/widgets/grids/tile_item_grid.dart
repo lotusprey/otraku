@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
@@ -30,7 +29,7 @@ class TileItemGrid extends StatelessWidget {
           (_, i) => LinkTile(
             id: items[i].id,
             info: items[i].imageUrl,
-            discoverType: DiscoverType.anime,
+            discoverType: items[i].type,
             child: Column(
               children: [
                 Expanded(

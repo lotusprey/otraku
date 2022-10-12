@@ -23,7 +23,7 @@ class ProgressNotifier extends ChangeNotifier {
   AsyncValue<ProgressState> get state => _state;
 
   Future<void> _fetch() async {
-    while (_hasNextPage) {
+    while (_hasNextPage && !_state.hasError) {
       final value = _state.valueOrNull ?? ProgressState();
 
       _state = await AsyncValue.guard(() async {

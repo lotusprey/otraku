@@ -55,7 +55,7 @@ class Review {
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage'][Options().imageQuality],
+        mediaCover: map['media']['coverImage'][Options().imageQuality.value],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',

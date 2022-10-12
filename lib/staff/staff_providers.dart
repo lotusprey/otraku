@@ -119,7 +119,7 @@ class StaffRelationNotifier extends ChangeNotifier {
       final media = Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Options().imageQuality],
+        imageUrl: m['node']['coverImage'][Options().imageQuality.value],
         subtitle: Convert.clarifyEnum(m['node']['format']),
         type: m['node']['type'] == 'ANIME'
             ? DiscoverType.anime
@@ -154,7 +154,7 @@ class StaffRelationNotifier extends ChangeNotifier {
       items.add(Relation(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
-        imageUrl: s['node']['coverImage'][Options().imageQuality],
+        imageUrl: s['node']['coverImage'][Options().imageQuality.value],
         subtitle: s['staffRole'],
         type: s['node']['type'] == 'ANIME'
             ? DiscoverType.anime

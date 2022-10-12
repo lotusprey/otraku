@@ -10,7 +10,7 @@ TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
       type: DiscoverType.anime,
       title: map['title']['userPreferred'],
-      imageUrl: map['coverImage'][Options().imageQuality],
+      imageUrl: map['coverImage'][Options().imageQuality.value],
     );
 
 class Media {
@@ -36,7 +36,7 @@ class RelatedMedia {
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][Options().imageQuality],
+        imageUrl: map['node']['coverImage'][Options().imageQuality.value],
         relationType: Convert.clarifyEnum(map['relationType']),
         format: Convert.clarifyEnum(map['node']['format']),
         status: Convert.clarifyEnum(map['node']['status']),
@@ -76,7 +76,7 @@ class Recommendation {
       title: map['mediaRecommendation']['title']['userPreferred'],
       type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
-          [Options().imageQuality],
+          [Options().imageQuality.value],
     );
   }
 
@@ -221,7 +221,7 @@ class MediaInfo {
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
       description: Convert.clearHtml(map['description']),
-      cover: map['coverImage'][Options().imageQuality],
+      cover: map['coverImage'][Options().imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       format: Convert.clarifyEnum(map['format']),

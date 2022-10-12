@@ -181,7 +181,7 @@ class ActivityMedia {
   factory ActivityMedia(Map<String, dynamic> map) => ActivityMedia._(
         id: map['media']['id'],
         title: map['media']['title']['userPreferred'],
-        imageUrl: map['media']['coverImage'][Options().imageQuality],
+        imageUrl: map['media']['coverImage'][Options().imageQuality.value],
         format: Convert.clarifyEnum(map['media']['format']),
         isAnime: map['type'] == 'ANIME_LIST',
       );

@@ -45,7 +45,7 @@ class DiscoverMediaItem extends TileItem {
         id: map['id'],
         type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
         title: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][Options().imageQuality],
+        imageUrl: map['coverImage'][Options().imageQuality.value],
         format: Convert.clarifyEnum(map['format']),
         releaseStatus: Convert.clarifyEnum(map['status']),
         listStatus: Convert.clarifyEnum(map['mediaListEntry']?['status']),

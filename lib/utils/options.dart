@@ -96,14 +96,14 @@ class Options extends ChangeNotifier {
     }
 
     int animeSort = _optionBox.get(_OptionKey.defaultAnimeSort.name) ?? 0;
-    if (animeSort < 0 || animeSort >= ThemeMode.values.length) animeSort = 0;
+    if (animeSort < 0 || animeSort >= EntrySort.values.length) animeSort = 0;
 
     int mangaSort = _optionBox.get(_OptionKey.defaultMangaSort.name) ?? 0;
-    if (mangaSort < 0 || mangaSort >= ThemeMode.values.length) mangaSort = 0;
+    if (mangaSort < 0 || mangaSort >= EntrySort.values.length) mangaSort = 0;
 
     int discoverSort = _optionBox.get(_OptionKey.defaultDiscoverSort.name) ??
         MediaSort.TRENDING_DESC.index;
-    if (discoverSort < 0 || discoverSort >= ThemeMode.values.length) {
+    if (discoverSort < 0 || discoverSort >= MediaSort.values.length) {
       discoverSort = MediaSort.TRENDING_DESC.index;
     }
 

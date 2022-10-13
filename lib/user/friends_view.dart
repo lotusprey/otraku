@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/user/friends_provider.dart';
 import 'package:otraku/user/user_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
@@ -47,10 +47,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
     );
 
     final refreshControl = SliverRefreshControl(
-      onRefresh: () {
-        ref.invalidate(friendsProvider(widget.id));
-        return Future.value();
-      },
+      onRefresh: () => ref.invalidate(friendsProvider(widget.id)),
     );
 
     return PageLayout(

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
-import 'package:otraku/views/home_view.dart';
+import 'package:otraku/utils/options.dart';
+import 'package:otraku/home/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/settings/theme_preview.dart';
 
 class SettingsAppTab extends StatelessWidget {
-  SettingsAppTab(this.scrollCtrl);
+  const SettingsAppTab(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 
@@ -24,10 +24,36 @@ class SettingsAppTab extends StatelessWidget {
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: PageLayout.of(context).topOffset + 10),
+          child: SizedBox(height: PageLayout.of(context).topOffset),
         ),
-        const ThemePreview(isDark: false),
-        const ThemePreview(isDark: true),
+        SliverPadding(
+          padding: const EdgeInsets.only(left: 10, top: 10),
+          sliver: SliverToBoxAdapter(
+            child: Text('Theme', style: Theme.of(context).textTheme.subtitle1),
+          ),
+        ),
+        SliverPadding(
+          padding: Consts.padding,
+          sliver: SliverToBoxAdapter(
+            child: SegmentSwitcher(
+              current: Options().themeMode.index,
+              items: const ['System', 'Light', 'Dark'],
+              onChanged: (i) =>
+                  Options().themeMode = ThemeMode.values.elementAt(i),
+            ),
+          ),
+        ),
+        const ThemePreview(),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: CheckBoxField(
+              title: 'Pure Black Dark Theme',
+              initial: Options().pureBlackDarkTheme,
+              onChanged: (v) => Options().pureBlackDarkTheme = v,
+            ),
+          ),
+        ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           sliver: SliverGrid(
@@ -36,73 +62,63 @@ class SettingsAppTab extends StatelessWidget {
               height: 75,
             ),
             delegate: SliverChildListDelegate.fixed([
-              DropDownField<ThemeMode>(
-                title: 'Theme Mode',
-                value: Settings().themeMode,
-                items: const {
-                  'Auto': ThemeMode.system,
-                  'Light': ThemeMode.light,
-                  'Dark': ThemeMode.dark,
-                },
-                onChanged: (val) => Settings().themeMode = val,
-              ),
               DropDownField<int>(
                 title: 'Startup Page',
-                value: Settings().defaultHomeTab,
+                value: Options().defaultHomeTab,
                 items: const {
                   'Feed': HomeView.INBOX,
-                  'Anime List': HomeView.ANIME_LIST,
-                  'Manga List': HomeView.MANGA_LIST,
-                  'Explore': HomeView.EXPLORE,
+                  'Anime': HomeView.ANIME_LIST,
+                  'Manga': HomeView.MANGA_LIST,
+                  'Discover': HomeView.DISCOVER,
                   'Profile': HomeView.USER,
                 },
-                onChanged: (val) => Settings().defaultHomeTab = val,
+                onChanged: (val) => Options().defaultHomeTab = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',
-                value: Settings().defaultAnimeSort,
+                value: Options().defaultAnimeSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultAnimeSort = val,
+                onChanged: (val) => Options().defaultAnimeSort = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Manga Sort',
-                value: Settings().defaultMangaSort,
+                value: Options().defaultMangaSort,
                 items: Map.fromIterable(
                   EntrySort.values,
                   key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultMangaSort = val,
+                onChanged: (val) => Options().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
-                title: 'Default Explore Sort',
-                value: Settings().defaultExploreSort,
+                title: 'Default Discover Sort',
+                value: Options().defaultDiscoverSort,
                 items: Map.fromIterable(
                   MediaSort.values,
                   key: (v) => Convert.clarifyEnum((v as MediaSort).name)!,
                 ),
-                onChanged: (val) => Settings().defaultExploreSort = val,
+                onChanged: (val) => Options().defaultDiscoverSort = val,
               ),
-              DropDownField<Explorable>(
-                title: 'Default Explorable',
-                value: Settings().defaultExplorable,
+              DropDownField<DiscoverType>(
+                title: 'Default Discover Type',
+                value: Options().defaultDiscoverType,
                 items: Map.fromIterable(
-                  Explorable.values,
-                  key: (v) => Convert.clarifyEnum((v as Explorable).name)!,
+                  DiscoverType.values,
+                  key: (v) => Convert.clarifyEnum((v as DiscoverType).name)!,
                 ),
-                onChanged: (val) => Settings().defaultExplorable = val,
+                onChanged: (val) => Options().defaultDiscoverType = val,
               ),
-              DropDownField<String>(
+              DropDownField<ImageQuality>(
                 title: 'Image Quality',
-                value: Settings().imageQuality,
+                value: Options().imageQuality,
                 items: const {
-                  'Very High': 'extraLarge',
-                  'High': 'large',
-                  'Medium': 'medium',
+                  'Very High': ImageQuality.VeryHigh,
+                  'High': ImageQuality.High,
+                  'Medium': ImageQuality.Medium,
                 },
-                onChanged: (val) => Settings().imageQuality = val,
+                onChanged: (val) => Options().imageQuality = val,
               ),
             ]),
           ),
@@ -119,18 +135,23 @@ class SettingsAppTab extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               CheckBoxField(
                 title: 'Left-Handed Mode',
-                initial: Settings().leftHanded,
-                onChanged: (val) => Settings().leftHanded = val,
+                initial: Options().leftHanded,
+                onChanged: (val) => Options().leftHanded = val,
               ),
               CheckBoxField(
                 title: '12 Hour Clock',
-                initial: Settings().analogueClock,
-                onChanged: (val) => Settings().analogueClock = val,
+                initial: Options().analogueClock,
+                onChanged: (val) => Options().analogueClock = val,
               ),
               CheckBoxField(
                 title: 'Confirm Exit',
-                initial: Settings().confirmExit,
-                onChanged: (val) => Settings().confirmExit = val,
+                initial: Options().confirmExit,
+                onChanged: (val) => Options().confirmExit = val,
+              ),
+              CheckBoxField(
+                title: 'Compact Discover Grid',
+                initial: Options().compactDiscoverGrid,
+                onChanged: (val) => Options().compactDiscoverGrid = val,
               ),
             ]),
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Toast {
@@ -25,7 +25,7 @@ class Toast {
           ),
           padding: Consts.padding,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: Consts.borderRadiusMin,
             boxShadow: [
               BoxShadow(

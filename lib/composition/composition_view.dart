@@ -12,7 +12,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class CompositionView extends StatefulWidget {
-  CompositionView({required this.composition, required this.onDone});
+  const CompositionView({required this.composition, required this.onDone});
 
   final Composition composition;
 
@@ -86,7 +86,7 @@ class _CompositionViewState extends State<CompositionView> {
 
 /// A view with 2 tabs - one for editing and one for an html preview.
 class _CompositionView extends StatelessWidget {
-  _CompositionView({
+  const _CompositionView({
     required this.tab,
     required this.focus,
     required this.textCtrl,
@@ -131,7 +131,7 @@ class _CompositionView extends StatelessWidget {
                 controller: scrollCtrl,
                 child: Padding(
                   padding: padding,
-                  child: HtmlContent(textCtrl.text),
+                  child: HtmlContent('<p>${textCtrl.text}</p>'),
                 ),
               ),
             ],
@@ -140,7 +140,7 @@ class _CompositionView extends StatelessWidget {
             top: 10,
             left: 10,
             right: 10,
-            child: CompactSegmentSwitcher(
+            child: SegmentSwitcher(
               current: i,
               items: const ['Compose', 'Preview'],
               onChanged: (val) => tab.value = val,
@@ -247,7 +247,7 @@ class _ButtonRowState extends State<_ButtonRow> {
 
 /// Encloses the current text selection in a given tag.
 class _FormatButton extends StatelessWidget {
-  _FormatButton({
+  const _FormatButton({
     required this.tag,
     required this.name,
     required this.icon,
@@ -287,7 +287,7 @@ class _FormatButton extends StatelessWidget {
 
 /// Controls whether a message will be created as private or public.
 class _PrivateButton extends StatefulWidget {
-  _PrivateButton(this.isPrivate, this.onChanged);
+  const _PrivateButton(this.isPrivate, this.onChanged);
 
   final bool isPrivate;
   final void Function(bool) onChanged;

@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 
 final reviewProvider = StateNotifierProvider.autoDispose
     .family<ReviewNotifier, AsyncValue<Review>, int>(
   (ref, id) => ReviewNotifier(id),
 );
 
-final reviewSortProvider = StateProvider.autoDispose.family<ReviewSort, int>(
+final reviewSortProvider = StateProvider.autoDispose.family<ReviewSort, int?>(
   (ref, _) => ReviewSort.CREATED_AT_DESC,
 );
 
@@ -81,7 +81,9 @@ class ReviewsNotifier extends ChangeNotifier {
       _count = data['Page']['pageInfo']?['total'] ?? 0;
 
       final items = <ReviewItem>[];
-      for (final r in data['Page']['reviews']) items.add(ReviewItem(r));
+      for (final r in data['Page']['reviews']) {
+        items.add(ReviewItem(r));
+      }
 
       return value.append(
         items,

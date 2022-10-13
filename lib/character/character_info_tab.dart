@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
 import 'package:otraku/character/character_providers.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
@@ -13,7 +13,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class CharacterInfoTab extends StatelessWidget {
-  CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+  const CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
 
   final int id;
   final String? imageUrl;
@@ -24,10 +24,7 @@ class CharacterInfoTab extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final refreshControl = SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(characterProvider(id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(characterProvider(id)),
         );
 
         return ref.watch(characterProvider(id)).when(
@@ -62,7 +59,7 @@ class CharacterInfoTab extends StatelessWidget {
 }
 
 class _TabContent extends StatelessWidget {
-  _TabContent({
+  const _TabContent({
     required this.id,
     required this.data,
     required this.imageUrl,
@@ -100,7 +97,7 @@ class _TabContent extends StatelessWidget {
                 child: Container(
                   width: imageWidth,
                   height: imageHeight,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   child: GestureDetector(
                     child: FadeImage(imageUrl),
                     onTap: () => showPopUp(context, ImageDialog(imageUrl)),
@@ -146,7 +143,7 @@ class _TabContent extends StatelessWidget {
       ),
     );
 
-    const space = const SliverToBoxAdapter(child: SizedBox(height: 10));
+    const space = SliverToBoxAdapter(child: SizedBox(height: 10));
 
     return PageLayout(
       floatingBar: FloatingBar(
@@ -187,12 +184,10 @@ class _TabContent extends StatelessWidget {
                   space,
                   if (data!.description.isNotEmpty)
                     SliverToBoxAdapter(
-                      child: Container(
-                        child: HtmlContent(data!.description),
-                        padding: Consts.padding,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: Consts.borderRadiusMin,
+                      child: Card(
+                        child: Padding(
+                          padding: Consts.padding,
+                          child: HtmlContent(data!.description),
                         ),
                       ),
                     ),
@@ -213,7 +208,7 @@ class _TabContent extends StatelessWidget {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  _FavoriteButton(this.data);
+  const _FavoriteButton(this.data);
 
   final Character data;
 
@@ -244,33 +239,31 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 }
 
 class _InfoTile extends StatelessWidget {
-  _InfoTile(this.title, this.subtitle);
+  const _InfoTile(this.title, this.subtitle);
 
   final String title;
   final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: Consts.borderRadiusMin,
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            maxLines: 1,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          Text(subtitle, maxLines: 1),
-        ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 5,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            Text(subtitle, maxLines: 1),
+          ],
+        ),
       ),
     );
   }

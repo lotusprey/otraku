@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/user/user_models.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class UserGrid extends StatelessWidget {
-  UserGrid(this.items);
+  const UserGrid(this.items);
 
   final List<UserItem> items;
 
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: Consts.padding,
+      padding: const EdgeInsets.symmetric(vertical: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
           minWidth: 100,
@@ -30,16 +30,16 @@ class UserGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  _Tile(this.item);
+  const _Tile(this.item);
 
   final UserItem item;
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
+    return LinkTile(
       id: item.id,
-      text: item.imageUrl,
-      explorable: Explorable.user,
+      info: item.imageUrl,
+      discoverType: DiscoverType.user,
       child: Column(
         children: [
           Expanded(

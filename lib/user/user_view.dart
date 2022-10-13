@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/home_controller.dart';
+import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/user/user_header.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
-import 'package:otraku/views/home_view.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/home/home_view.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -67,7 +66,7 @@ class UserSubView extends StatelessWidget {
             items.add(UserHeader(
               id: id,
               user: null,
-              isMe: id == Settings().id,
+              isMe: id == Options().id,
               imageUrl: avatarUrl,
             ));
             items.add(
@@ -78,7 +77,7 @@ class UserSubView extends StatelessWidget {
             items.add(UserHeader(
               id: id,
               user: null,
-              isMe: id == Settings().id,
+              isMe: id == Options().id,
               imageUrl: avatarUrl,
             ));
             items.add(
@@ -89,7 +88,7 @@ class UserSubView extends StatelessWidget {
             items.add(UserHeader(
               id: id,
               user: data,
-              isMe: id == Settings().id,
+              isMe: id == Options().id,
               imageUrl: avatarUrl,
             ));
 
@@ -106,9 +105,8 @@ class UserSubView extends StatelessWidget {
                     _Button(
                       Ionicons.film,
                       'Anime',
-                      () => id == Settings().id
-                          ? Get.find<HomeController>().homeTab =
-                              HomeView.ANIME_LIST
+                      () => id == Options().id
+                          ? ref.read(homeProvider).homeTab = HomeView.ANIME_LIST
                           : Navigator.pushNamed(
                               context,
                               RouteArg.collection,
@@ -118,9 +116,8 @@ class UserSubView extends StatelessWidget {
                     _Button(
                       Ionicons.bookmark,
                       'Manga',
-                      () => id == Settings().id
-                          ? Get.find<HomeController>().homeTab =
-                              HomeView.MANGA_LIST
+                      () => id == Options().id
+                          ? ref.read(homeProvider).homeTab = HomeView.MANGA_LIST
                           : Navigator.pushNamed(
                               context,
                               RouteArg.collection,
@@ -186,18 +183,17 @@ class UserSubView extends StatelessWidget {
               ),
             ));
 
-            if (data.description.isNotEmpty)
+            if (data.description.isNotEmpty) {
               items.add(SliverToBoxAdapter(
-                child: Container(
+                child: Card(
                   margin: padding,
-                  padding: Consts.padding,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: Consts.borderRadiusMin,
+                  child: Padding(
+                    padding: Consts.padding,
+                    child: HtmlContent(data.description),
                   ),
-                  child: HtmlContent(data.description),
                 ),
               ));
+            }
           },
         );
         items.add(const SliverFooter());
@@ -211,7 +207,7 @@ class UserSubView extends StatelessWidget {
 }
 
 class _Button extends StatelessWidget {
-  _Button(this.icon, this.title, this.onTap);
+  const _Button(this.icon, this.title, this.onTap);
 
   final IconData icon;
   final String title;
@@ -222,7 +218,7 @@ class _Button extends StatelessWidget {
     return TextButton(
       onPressed: onTap,
       style: TextButton.styleFrom(
-        primary: Theme.of(context).colorScheme.onBackground,
+        foregroundColor: Theme.of(context).colorScheme.onBackground,
       ),
       child: Row(
         children: [

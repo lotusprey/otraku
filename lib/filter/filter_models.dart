@@ -1,6 +1,5 @@
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/media/media_constants.dart';
+import 'package:otraku/utils/options.dart';
 
 abstract class ApplicableMediaFilter<T extends ApplicableMediaFilter<T>> {
   ApplicableMediaFilter(this._ofAnime);
@@ -16,7 +15,7 @@ abstract class ApplicableMediaFilter<T extends ApplicableMediaFilter<T>> {
 }
 
 class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
-  CollectionFilter(super._ofAnime);
+  CollectionFilter(super.ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -27,8 +26,8 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   final tagIdIn = <int>[];
   final tagIdNotIn = <int>[];
   late EntrySort sort =
-      _ofAnime ? Settings().defaultAnimeSort : Settings().defaultMangaSort;
-  String? country;
+      _ofAnime ? Options().defaultAnimeSort : Options().defaultMangaSort;
+  OriginCountry? country;
 
   @override
   CollectionFilter copy() => CollectionFilter(_ofAnime)
@@ -47,8 +46,8 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   CollectionFilter clear() => CollectionFilter(_ofAnime);
 }
 
-class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
-  ExploreFilter(super._ofAnime);
+class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
+  DiscoverFilter(super.ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -56,8 +55,12 @@ class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
   final genreNotIn = <String>[];
   final tagIn = <String>[];
   final tagNotIn = <String>[];
-  MediaSort sort = Settings().defaultExploreSort;
-  String? country;
+  final sources = <String>[];
+  MediaSort sort = Options().defaultDiscoverSort;
+  MediaSeason? season;
+  int? startYearFrom;
+  int? startYearTo;
+  OriginCountry? country;
   bool? onList;
 
   set ofAnime(bool val) {
@@ -66,32 +69,37 @@ class ExploreFilter extends ApplicableMediaFilter<ExploreFilter> {
   }
 
   @override
-  ExploreFilter copy() => ExploreFilter(_ofAnime)
+  DiscoverFilter copy() => DiscoverFilter(_ofAnime)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)
     ..genreNotIn.addAll(genreNotIn)
     ..tagIn.addAll(tagIn)
     ..tagNotIn.addAll(tagNotIn)
+    ..sources.addAll(sources)
     ..sort = sort
+    ..season = season
+    ..startYearFrom = startYearFrom
+    ..startYearTo = startYearTo
     ..country = country
     ..onList = onList;
 
   @override
-  ExploreFilter clear() => ExploreFilter(_ofAnime);
+  DiscoverFilter clear() => DiscoverFilter(_ofAnime);
 
-  Map<String, dynamic> toMap() {
-    final map = <String, dynamic>{'sort': sort.name};
-
-    if (statuses.isNotEmpty) map['status_in'] = statuses;
-    if (formats.isNotEmpty) map['format_in'] = formats;
-    if (genreIn.isNotEmpty) map['genre_in'] = genreIn;
-    if (genreNotIn.isNotEmpty) map['genre_not_in'] = genreNotIn;
-    if (tagIn.isNotEmpty) map['tag_in'] = tagIn;
-    if (tagNotIn.isNotEmpty) map['tag_not_in'] = tagNotIn;
-    if (country != null) map['countryOfOrigin'] = country;
-    if (onList != null) map['onList'] = onList;
-
-    return map;
-  }
+  Map<String, dynamic> toMap() => {
+        'sort': sort.name,
+        if (statuses.isNotEmpty) 'status_in': statuses,
+        if (formats.isNotEmpty) 'format_in': formats,
+        if (genreIn.isNotEmpty) 'genre_in': genreIn,
+        if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
+        if (tagIn.isNotEmpty) 'tag_in': tagIn,
+        if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
+        if (sources.isNotEmpty) 'sources': sources,
+        if (season != null) 'season': season!.name,
+        if (startYearFrom != null) 'startFrom': '${startYearFrom}0000',
+        if (startYearTo != null) 'startTo': '${startYearTo}9999',
+        if (country != null) 'countryOfOrigin': country!.code,
+        if (onList != null) 'onList': onList,
+      };
 }

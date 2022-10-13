@@ -1,5 +1,5 @@
-import 'package:otraku/collection/entry.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/utils/options.dart';
 
 abstract class Convert {
   /// Code points of some characters.
@@ -13,14 +13,15 @@ abstract class Convert {
   static String parseEmojis(String source) {
     final runes = source.runes.toList();
     final parsedRunes = <int>[];
-    for (final c in runes)
-      if (c > 0xFFFF)
-        // Prepend "&#", append ";" and represent symbol code as digits.
+    for (final c in runes) {
+      if (c > 0xFFFF) {
         parsedRunes.addAll(
           [_ampersand, _hashtag, ...c.toString().codeUnits, _semicolon],
         );
-      else
+      } else {
         parsedRunes.add(c);
+      }
+    }
 
     return String.fromCharCodes(parsedRunes);
   }
@@ -40,8 +41,9 @@ abstract class Convert {
   static String adaptListStatus(EntryStatus status, bool isAnime) {
     if (status == EntryStatus.CURRENT) return isAnime ? 'Watching' : 'Reading';
 
-    if (status == EntryStatus.REPEATING)
+    if (status == EntryStatus.REPEATING) {
       return isAnime ? 'Rewatching' : 'Rereading';
+    }
 
     final str = status.name;
     return str[0] + str.substring(1).toLowerCase();
@@ -77,8 +79,9 @@ abstract class Convert {
 
   /// Converts a map (representing a date) to DateTime.
   static DateTime? mapToDateTime(Map<String, dynamic> map) {
-    if (map['year'] == null || map['month'] == null || map['day'] == null)
+    if (map['year'] == null || map['month'] == null || map['day'] == null) {
       return null;
+    }
     return DateTime(map['year'], map['month'], map['day']);
   }
 
@@ -93,7 +96,7 @@ abstract class Convert {
     if (seconds == null) return '';
     final date = DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
 
-    if (Settings().analogueClock) {
+    if (Options().analogueClock) {
       final overflows = date.hour > 12;
       return '${_weekDays[date.weekday - 1]}, ${date.day} '
           '${_months[date.month]} ${date.year}, '

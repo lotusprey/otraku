@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/filter/chip_selector.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
-import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -15,7 +15,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StaffCharactersTab extends StatelessWidget {
-  StaffCharactersTab(this.id, this.scrollCtrl);
+  const StaffCharactersTab(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -37,7 +37,7 @@ class StaffCharactersTab extends StatelessWidget {
                 ref.listen<AsyncValue>(
                   staffRelationProvider(id).select((s) => s.characters),
                   (_, s) {
-                    if (s.hasError)
+                    if (s.hasError) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
@@ -45,14 +45,12 @@ class StaffCharactersTab extends StatelessWidget {
                           content: s.error.toString(),
                         ),
                       );
+                    }
                   },
                 );
 
                 final refreshControl = SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(staffRelationProvider(id));
-                    return Future.value();
-                  },
+                  onRefresh: () => ref.invalidate(staffRelationProvider(id)),
                 );
 
                 final notifier = ref.watch(staffRelationProvider(id));
@@ -93,7 +91,7 @@ class StaffCharactersTab extends StatelessWidget {
 }
 
 class StaffRolesTab extends StatelessWidget {
-  StaffRolesTab(this.id, this.scrollCtrl);
+  const StaffRolesTab(this.id, this.scrollCtrl);
 
   final int id;
   final ScrollController scrollCtrl;
@@ -115,7 +113,7 @@ class StaffRolesTab extends StatelessWidget {
                 ref.listen<AsyncValue>(
                   staffRelationProvider(id).select((s) => s.roles),
                   (_, s) {
-                    if (s.hasError)
+                    if (s.hasError) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
@@ -123,14 +121,12 @@ class StaffRolesTab extends StatelessWidget {
                           content: s.error.toString(),
                         ),
                       );
+                    }
                   },
                 );
 
                 final refreshControl = SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(staffRelationProvider(id));
-                    return Future.value();
-                  },
+                  onRefresh: () => ref.invalidate(staffRelationProvider(id)),
                 );
 
                 return ref.watch(staffRelationProvider(id)).roles.when(
@@ -170,7 +166,7 @@ class StaffRolesTab extends StatelessWidget {
 }
 
 class _FilterButton extends StatelessWidget {
-  _FilterButton(this.id);
+  const _FilterButton(this.id);
 
   final int id;
 
@@ -197,33 +193,53 @@ class _FilterButton extends StatelessWidget {
               context,
               OpaqueSheet(
                 initialHeight: Consts.tapTargetSize * 4,
-                builder: (context, scrollCtrl) => GridView(
+                builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Consts.physics,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 20,
-                  ),
-                  gridDelegate:
-                      const SliverGridDelegateWithMinWidthAndFixedHeight(
-                    minWidth: 155,
-                    height: 75,
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    SortDropDown(
-                      MediaSort.values,
-                      () => filter.sort.index,
-                      (MediaSort val) => filter = filter.copyWith(sort: val),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: SizedBox(
+                            height: 70,
+                            child: SortDropDown(
+                              MediaSort.values,
+                              () => filter.sort.index,
+                              (MediaSort val) =>
+                                  filter = filter.copyWith(sort: val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: SizedBox(
+                            height: 70,
+                            child: OrderDropDown(
+                              MediaSort.values,
+                              () => filter.sort.index,
+                              (MediaSort val) =>
+                                  filter = filter.copyWith(sort: val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
                     ),
-                    OrderDropDown(
-                      MediaSort.values,
-                      () => filter.sort.index,
-                      (MediaSort val) => filter = filter.copyWith(sort: val),
-                    ),
-                    ListPresenceDropDown(
-                      value: filter.onList,
-                      onChanged: (val) =>
-                          filter = filter.copyWith(onList: () => val),
+                    const SizedBox(height: 10),
+                    ChipSelector(
+                      title: 'List Presence',
+                      options: const ['On List', 'Not on List'],
+                      selected: filter.onList == null
+                          ? null
+                          : filter.onList!
+                              ? 0
+                              : 1,
+                      onChanged: (val) => filter = filter.copyWith(onList: () {
+                        if (val == null) return null;
+                        return val == 0 ? true : false;
+                      }),
                     ),
                   ],
                 ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
@@ -13,7 +13,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReviewsView extends ConsumerStatefulWidget {
-  ReviewsView(this.id);
+  const ReviewsView(this.id);
 
   final int id;
 
@@ -91,10 +91,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
       ),
       child: Consumer(
         child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(reviewsProvider(widget.id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(reviewsProvider(widget.id)),
         ),
         builder: (context, ref, refreshControl) {
           ref.listen<ReviewsNotifier>(

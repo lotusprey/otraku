@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 
 class PageLayout extends StatefulWidget {
@@ -12,7 +12,7 @@ class PageLayout extends StatefulWidget {
   });
 
   final Widget child;
-  final TopBar? topBar;
+  final PreferredSizeWidget? topBar;
   final FloatingBar? floatingBar;
   final Widget? bottomBar;
 
@@ -55,7 +55,10 @@ class PageLayoutState extends State<PageLayout> {
     if (_didCalculateOffsets) return;
     _didCalculateOffsets = true;
 
-    if (widget.topBar != null) _topOffset += Consts.tapTargetSize;
+    if (widget.topBar != null) {
+      _topOffset += widget.topBar!.preferredSize.height;
+    }
+
     if (widget.bottomBar != null) _bottomOffset += Consts.tapTargetSize;
 
     final pageLayout = context.findAncestorStateOfType<PageLayoutState>();
@@ -149,24 +152,26 @@ class TopBarIcon extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.onTap,
-    this.colour,
+    this.color,
   });
 
   final IconData icon;
   final String tooltip;
-  final Color? colour;
+  final Color? color;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(icon),
-      tooltip: tooltip,
-      onPressed: onTap,
-      iconSize: Consts.iconBig,
-      color: colour ?? Theme.of(context).colorScheme.onBackground,
-      constraints: const BoxConstraints(maxWidth: 45, maxHeight: 45),
-      padding: Consts.padding,
+    return SizedBox(
+      width: 45,
+      height: 45,
+      child: IconButton(
+        icon: Icon(icon),
+        tooltip: tooltip,
+        onPressed: onTap,
+        color: color ?? Theme.of(context).colorScheme.onBackground,
+        padding: Consts.padding,
+      ),
     );
   }
 }

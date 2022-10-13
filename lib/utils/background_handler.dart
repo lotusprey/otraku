@@ -7,7 +7,7 @@ import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:workmanager/workmanager.dart';
@@ -27,38 +27,62 @@ class BackgroundHandler {
     _notificationPlugin.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('notification_icon'),
-        iOS: IOSInitializationSettings(),
-        macOS: MacOSInitializationSettings(),
+        iOS: DarwinInitializationSettings(),
       ),
-      onSelectNotification: (payload) async => _handleNotification(payload),
+      onDidReceiveNotificationResponse: _handleNotification,
     );
 
     await Workmanager().initialize(_fetch);
 
-    if (Platform.isAndroid)
+    if (Platform.isAndroid) {
       Workmanager().registerPeriodicTask(
         '0',
         'notifications',
         constraints: Constraints(networkType: NetworkType.connected),
       );
+    }
   }
 
-  // Should be called if the user logs out of an account.
+  /// Check if the app has permission to send notifications.
+  static Future<bool> checkPermission() async {
+    final android = _notificationPlugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android == null) return true;
+
+    return await android.areNotificationsEnabled() ?? true;
+  }
+
+  /// Request permission to send notifications.
+  static Future<bool> requestPermission() async {
+    final android = _notificationPlugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android == null) return true;
+
+    return await android.requestPermission() ?? true;
+  }
+
+  /// Should be called, for example, when the user logs out of an account.
   static void clearNotifications() => _notificationPlugin.cancelAll();
 
-  static void checkIfLaunchedByNotification() {
+  /// If the app was launched by a notification, handle it.
+  static void handleNotificationLaunch() {
     if (_didCheckLaunch) return;
     _didCheckLaunch = true;
 
-    _notificationPlugin
-        .getNotificationAppLaunchDetails()
-        .then((launchDetails) => _handleNotification(launchDetails?.payload));
+    _notificationPlugin.getNotificationAppLaunchDetails().then(
+      (launchDetails) {
+        if (launchDetails?.notificationResponse != null) {
+          _handleNotification(launchDetails!.notificationResponse!);
+        }
+      },
+    );
   }
 
-  static void _handleNotification(String? link) {
-    if (link == null) return;
+  /// Pushes a different page, depeding on the notification that was pressed.
+  static void _handleNotification(NotificationResponse response) {
+    if (response.payload == null) return;
 
-    final uri = Uri.parse(link);
+    final uri = Uri.parse(response.payload!);
     if (uri.pathSegments.length < 2) return;
 
     final id = int.tryParse(uri.pathSegments[1]) ?? -1;
@@ -70,7 +94,7 @@ class BackgroundHandler {
     if (uri.pathSegments[0] == RouteArg.thread) {
       showPopUp(
         context,
-        ConfirmationDialog(title: 'Sorry! Forum is not yet supported!'),
+        const ConfirmationDialog(title: 'Sorry! Forum is not yet supported!'),
       );
       return;
     }
@@ -83,30 +107,36 @@ class BackgroundHandler {
   }
 }
 
+@pragma('vm:entry-point')
 void _fetch() => Workmanager().executeTask((_, __) async {
       DartPluginRegistrant.ensureInitialized();
 
       // Initialise local settings.
-      await Settings.init();
-      if (Settings().selectedAccount == null) return true;
+      await Options.init();
+      if (Options().account == null) return true;
+      Options().lastBackgroundWork = DateTime.now();
 
       // Log in.
       if (!Api.loggedIn()) {
-        final ok = await Api.logIn(Settings().selectedAccount!);
+        final ok = await Api.logIn(Options().account!);
         if (!ok) return true;
       }
 
       // Get new notifications.
-      final data =
-          await Api.request(GqlQuery.notifications, {'withCount': true});
+      Map<String, dynamic> data;
+      try {
+        data = await Api.get(GqlQuery.notifications, const {'withCount': true});
+      } catch (_) {
+        return true;
+      }
 
-      int count = data?['Viewer']?['unreadNotificationCount'] ?? 0;
-      final ns = data?['Page']?['notifications'] ?? [];
+      int count = data['Viewer']?['unreadNotificationCount'] ?? 0;
+      final ns = data['Page']?['notifications'] ?? [];
       if (count > ns.length) count = ns.length;
       if (count == 0) return true;
 
-      final last = Settings().lastNotificationId;
-      Settings().lastNotificationId = ns[0]['id'];
+      final last = Options().lastNotificationId;
+      Options().lastNotificationId = ns[0]?['id'] ?? -1;
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {

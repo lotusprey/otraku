@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/notifications/notification_provider.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -17,6 +18,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/overlays/toast.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {
   const NotificationsView();
@@ -78,7 +80,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     final tiles = <Widget>[];
                     for (int i = 0;
                         i < NotificationFilterType.values.length;
-                        i++)
+                        i++) {
                       tiles.add(Text(
                         NotificationFilterType.values.elementAt(i).text,
                         style: i != notifier.state.index
@@ -87,6 +89,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                       ));
+                    }
 
                     return DynamicGradientDragSheet(
                       children: tiles,
@@ -102,10 +105,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       ),
       child: Consumer(
         child: SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(notificationsProvider);
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(notificationsProvider),
         ),
         builder: (context, ref, refreshControl) {
           ref.listen<NotificationsNotifier>(
@@ -130,29 +130,27 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return CustomScrollView(
-                physics: Consts.physics,
-                controller: _ctrl,
-                slivers: [
-                  refreshControl!,
-                  SliverPadding(
-                    padding: const EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      top: 10,
-                    ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, i) => _NotificationWidget(
-                          data.items[i],
-                          i < notifier.unreadCount,
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl!,
+                    SliverPadding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, i) => _NotificationItem(
+                            data.items[i],
+                            i < notifier.unreadCount,
+                          ),
+                          childCount: data.items.length,
                         ),
-                        childCount: data.items.length,
                       ),
                     ),
-                  ),
-                  SliverFooter(loading: data.hasNext),
-                ],
+                    SliverFooter(loading: data.hasNext),
+                  ],
+                ),
               );
             },
           );
@@ -162,10 +160,10 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   }
 }
 
-class _NotificationWidget extends StatelessWidget {
-  _NotificationWidget(this.notification, this.unread);
+class _NotificationItem extends StatelessWidget {
+  const _NotificationItem(this.item, this.unread);
 
-  final SiteNotification notification;
+  final SiteNotification item;
   final bool unread;
 
   @override
@@ -174,133 +172,138 @@ class _NotificationWidget extends StatelessWidget {
       height: 100,
       child: Align(
         alignment: Alignment.topCenter,
-        child: Container(
+        child: SizedBox(
           height: 90,
-          decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMin,
-            color: Theme.of(context).colorScheme.surface,
-          ),
-          child: Row(
-            children: [
-              if (notification.imageUrl != null && notification.headId != null)
-                GestureDetector(
-                  onTap: () => ExploreIndexer.openView(
-                    ctx: context,
-                    id: notification.headId!,
-                    imageUrl: notification.imageUrl,
-                    explorable: notification.explorable ?? Explorable.user,
-                  ),
-                  onLongPress: () {
-                    if (notification.explorable == Explorable.anime ||
-                        notification.explorable == Explorable.manga)
-                      showSheet(context, EditView(notification.headId!));
-                  },
-                  child: ClipRRect(
-                    child: FadeImage(notification.imageUrl!, width: 70),
-                    borderRadius: BorderRadius.horizontal(
-                      left: Consts.radiusMin,
+          child: Card(
+            child: Row(
+              children: [
+                if (item.imageUrl != null && item.headId != null)
+                  GestureDetector(
+                    onTap: () => LinkTile.openView(
+                      context: context,
+                      id: item.headId!,
+                      imageUrl: item.imageUrl,
+                      discoverType: item.discoverType ?? DiscoverType.user,
+                    ),
+                    onLongPress: () {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
+                        showSheet(context, EditView(item.headId!));
+                      }
+                    },
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Consts.radiusMin,
+                      ),
+                      child: FadeImage(item.imageUrl!, width: 70),
                     ),
                   ),
-                ),
-              Flexible(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    switch (notification.type) {
-                      case NotificationType.ACTIVITY_LIKE:
-                      case NotificationType.ACTIVITY_MENTION:
-                      case NotificationType.ACTIVITY_MESSAGE:
-                      case NotificationType.ACTIVITY_REPLY:
-                      case NotificationType.ACTIVITY_REPLY_LIKE:
-                      case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                        Navigator.pushNamed(
-                          context,
-                          RouteArg.activity,
-                          arguments: RouteArg(id: notification.bodyId),
-                        );
-                        return;
-                      case NotificationType.FOLLOWING:
-                        ExploreIndexer.openView(
-                          ctx: context,
-                          id: notification.headId!,
-                          imageUrl: notification.imageUrl,
-                          explorable: Explorable.user,
-                        );
-                        return;
-                      case NotificationType.AIRING:
-                      case NotificationType.RELATED_MEDIA_ADDITION:
-                        ExploreIndexer.openView(
-                          ctx: context,
-                          id: notification.bodyId!,
-                          imageUrl: notification.imageUrl,
-                          explorable: notification.explorable!,
-                        );
-                        return;
-                      case NotificationType.MEDIA_DATA_CHANGE:
-                      case NotificationType.MEDIA_MERGE:
-                      case NotificationType.MEDIA_DELETION:
-                        showPopUp(context, _NotificationDialog(notification));
-                        return;
-                      default:
-                        showPopUp(
-                          context,
-                          const ConfirmationDialog(
-                            title: 'Forum is not yet supported',
+                Flexible(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      switch (item.type) {
+                        case NotificationType.ACTIVITY_LIKE:
+                        case NotificationType.ACTIVITY_MENTION:
+                        case NotificationType.ACTIVITY_MESSAGE:
+                        case NotificationType.ACTIVITY_REPLY:
+                        case NotificationType.ACTIVITY_REPLY_LIKE:
+                        case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
+                          Navigator.pushNamed(
+                            context,
+                            RouteArg.activity,
+                            arguments: RouteArg(id: item.bodyId),
+                          );
+                          return;
+                        case NotificationType.FOLLOWING:
+                          LinkTile.openView(
+                            context: context,
+                            id: item.headId!,
+                            imageUrl: item.imageUrl,
+                            discoverType: DiscoverType.user,
+                          );
+                          return;
+                        case NotificationType.AIRING:
+                        case NotificationType.RELATED_MEDIA_ADDITION:
+                          LinkTile.openView(
+                            context: context,
+                            id: item.bodyId!,
+                            imageUrl: item.imageUrl,
+                            discoverType: item.discoverType!,
+                          );
+                          return;
+                        case NotificationType.MEDIA_DATA_CHANGE:
+                        case NotificationType.MEDIA_MERGE:
+                        case NotificationType.MEDIA_DELETION:
+                          showPopUp(context, _NotificationDialog(item));
+                          return;
+                        default:
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Forum is not yet supported',
+                              content: 'Open in browser?',
+                              mainAction: 'Open Browser',
+                              secondaryAction: 'Cancel',
+                              onConfirm: () => Toast.launch(
+                                context,
+                                'https://anilist.co/forum/thread/${item.bodyId}',
+                              ),
+                            ),
+                          );
+                          return;
+                      }
+                    },
+                    onLongPress: () {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
+                        showSheet(context, EditView(item.headId!));
+                      }
+                    },
+                    child: Padding(
+                      padding: Consts.padding,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          RichText(
+                            maxLines: 3,
+                            overflow: TextOverflow.fade,
+                            text: TextSpan(
+                              children: [
+                                for (int i = 0; i < item.texts.length; i++)
+                                  TextSpan(
+                                    text: item.texts[i],
+                                    style: (i % 2 == 0) ==
+                                            item.markTextOnEvenIndex
+                                        ? Theme.of(context).textTheme.bodyText1
+                                        : Theme.of(context).textTheme.bodyText2,
+                                  ),
+                              ],
+                            ),
                           ),
-                        );
-                        return;
-                    }
-                  },
-                  onLongPress: () {
-                    if (notification.explorable == Explorable.anime ||
-                        notification.explorable == Explorable.manga)
-                      showSheet(context, EditView(notification.headId!));
-                  },
-                  child: Padding(
-                    padding: Consts.padding,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        RichText(
-                          maxLines: 3,
-                          overflow: TextOverflow.fade,
-                          text: TextSpan(
-                            children: [
-                              for (int i = 0;
-                                  i < notification.texts.length;
-                                  i++)
-                                TextSpan(
-                                  text: notification.texts[i],
-                                  style: (i % 2 == 0) ==
-                                          notification.markTextOnEvenIndex
-                                      ? Theme.of(context).textTheme.bodyText1
-                                      : Theme.of(context).textTheme.bodyText2,
-                                ),
-                            ],
+                          Text(
+                            item.timestamp,
+                            style: Theme.of(context).textTheme.subtitle2,
                           ),
-                        ),
-                        Text(
-                          notification.timestamp,
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (unread)
-                Container(
-                  width: 10,
-                  height: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    borderRadius: const BorderRadius.horizontal(
-                      right: Consts.radiusMin,
+                if (unread)
+                  Container(
+                    width: 10,
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Consts.radiusMin,
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -309,7 +312,7 @@ class _NotificationWidget extends StatelessWidget {
 }
 
 class _NotificationDialog extends StatelessWidget {
-  _NotificationDialog(this.item);
+  const _NotificationDialog(this.item);
 
   final SiteNotification item;
 

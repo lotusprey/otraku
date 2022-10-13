@@ -16,29 +16,20 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
-  static const currentMedia = r'''
-    query CurrentMedia($userId: Int, $page: Int = 1) {
+  static const progressMedia = r'''
+    query ProgressMedia($userId: Int, $page: Int = 1) {
       Page(page: $page) {
         pageInfo {hasNextPage}
         mediaList(userId: $userId, status: CURRENT, sort: UPDATED_TIME_DESC) {
-          mediaId
-          progress
-          media {
-            type
-            episodes
-            chapters
-            status(version: 2)
-            nextAiringEpisode {episode}
-            title {userPreferred}
-            coverImage {extraLarge large medium}
-          }
+          ...entry media {...main}
         }
       }
     }
-  ''';
+  '''
+      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
-  static const entry = r'''
-    query Entry($userId: Int, $mediaId: Int) {
+  static const collectionEntry = r'''
+    query CollectionEntry($userId: Int, $mediaId: Int) {
       MediaList(userId: $userId, mediaId: $mediaId) {
         status
         progress
@@ -74,17 +65,15 @@ abstract class GqlQuery {
   static const media = r'''
     query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
         $withRecommendations: Boolean = false, $withCharacters: Boolean = false,
-        $withStaff: Boolean = false, $withReviews: Boolean = false,
-        $recommendationPage: Int = 1, $characterPage: Int = 1,
-        $staffPage: Int = 1, $reviewPage: Int = 1) {
+        $withStaff: Boolean = false, $withReviews: Boolean = false, $page: Int = 1) {
       Media(id: $id) {
-        ...main @include(if: $withMain)
         mediaListEntry @include(if: $withMain) {...entry}
+        ...main @include(if: $withMain)
         ...details @include(if: $withDetails)
         ...recommendations @include (if: $withRecommendations)
-        ...reviews @include(if: $withReviews)
         ...characters @include(if: $withCharacters)
         ...staff @include(if: $withStaff)
+        ...reviews @include(if: $withReviews)
       }
     }
     fragment details on Media {
@@ -121,7 +110,7 @@ abstract class GqlQuery {
       }
     }
     fragment recommendations on Media {
-      recommendations(page: $recommendationPage, sort: [RATING_DESC]) {
+      recommendations(page: $page, sort: [RATING_DESC]) {
         pageInfo {hasNextPage}
         nodes {
           rating
@@ -136,7 +125,7 @@ abstract class GqlQuery {
       }
     }
     fragment characters on Media {
-      characters(page: $characterPage, sort: [ROLE, ID]) {
+      characters(page: $page, sort: [ROLE, ID]) {
         pageInfo {hasNextPage}
         edges {
           role
@@ -146,39 +135,76 @@ abstract class GqlQuery {
       }
     }
     fragment staff on Media {
-      staff(page: $staffPage) {
+      staff(page: $page) {
         pageInfo {hasNextPage}
         edges {role node {id name {userPreferred} image {large}}}
       }
     }
     fragment reviews on Media {
-      reviews(sort: RATING_DESC, page: $reviewPage) {
+      reviews(sort: RATING_DESC, page: $page) {
         pageInfo {hasNextPage}
         nodes {
           id
           summary
           rating
           ratingAmount
-          user {id name avatar{large}}
+          user {id name avatar {large}}
         }
       }
     }
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
+  static const entry = r'''
+    query Entry($mediaId: Int) {
+      Media(id: $mediaId) {
+        id
+        type
+        episodes
+        chapters
+        volumes
+        mediaListEntry {
+          id
+          status
+          progress
+          progressVolumes
+          repeat
+          notes
+          startedAt {year month day}
+          completedAt {year month day}
+          score
+          advancedScores
+          private
+          hiddenFromStatusLists
+          customLists
+        }
+      }
+    }
+  ''';
+
   static const medias = r'''
     query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
         $format_in: [MediaFormat], $genre_in: [String], $genre_not_in: [String],
-        $tag_in: [String], $tag_not_in: [String], $onList: Boolean, $startDate_greater: FuzzyDateInt, 
-        $startDate_lesser: FuzzyDateInt, $countryOfOrigin: CountryCode, $source: MediaSource, 
-        $season: MediaSeason, $sort: [MediaSort]) {
+        $tag_in: [String], $tag_not_in: [String], $onList: Boolean, $startFrom: FuzzyDateInt,
+        $startTo: FuzzyDateInt, $countryOfOrigin: CountryCode, $season: MediaSeason,
+        $sources: [MediaSource], $sort: [MediaSort]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
         media(type: $type, search: $search, status_in: $status_in, format_in: $format_in,
         genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
-        onList: $onList, startDate_greater: $startDate_greater, startDate_lesser: $startDate_lesser,
-        countryOfOrigin: $countryOfOrigin, source: $source, season: $season, sort: $sort) {
-          id type title {userPreferred} coverImage {extraLarge large medium}
+        onList: $onList, startDate_greater: $startFrom, startDate_lesser: $startTo,
+        countryOfOrigin: $countryOfOrigin, season: $season, source_in: $sources, sort: $sort) {
+          id
+          type
+          title {userPreferred}
+          coverImage {extraLarge large medium}
+          format
+          status(version: 2)
+          averageScore
+          popularity
+          startDate {year}
+          isAdult
+          mediaListEntry {status}
         }
       }
     }

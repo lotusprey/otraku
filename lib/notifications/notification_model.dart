@@ -1,6 +1,6 @@
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/options.dart';
 
 enum NotificationFilterType {
   all,
@@ -74,7 +74,7 @@ class SiteNotification {
     this.bodyId,
     this.details,
     this.imageUrl,
-    this.explorable,
+    this.discoverType,
   })  : assert((headId == null) == (imageUrl == null)),
         assert(details == null || bodyId == null);
 
@@ -87,7 +87,7 @@ class SiteNotification {
   final int? bodyId;
   final String? details;
   final String? imageUrl;
-  final Explorable? explorable;
+  final DiscoverType? discoverType;
 
   static SiteNotification? maybe(Map<String, dynamic> map) {
     try {
@@ -102,7 +102,7 @@ class SiteNotification {
             texts: [map['user']['name'], ' followed you.'],
             markTextOnEvenIndex: true,
             timestamp: Convert.millisToStr(map['createdAt']),
-            explorable: Explorable.user,
+            discoverType: DiscoverType.user,
           );
         case 'ACTIVITY_MESSAGE':
           return SiteNotification._(
@@ -236,7 +236,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [
               map['user']['name'],
-              ' like your thread ',
+              ' liked your thread ',
               if (map['thread'] != null) map['thread']['title'],
             ],
             markTextOnEvenIndex: true,
@@ -266,23 +266,23 @@ class SiteNotification {
             type: NotificationType.RELATED_MEDIA_ADDITION,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
             texts: [
               map['media']['title']['userPreferred'],
               ' was added to the site',
             ],
             markTextOnEvenIndex: true,
             timestamp: Convert.millisToStr(map['createdAt']),
-            explorable: map['media']['type'] == 'ANIME'
-                ? Explorable.anime
-                : Explorable.manga,
+            discoverType: map['media']['type'] == 'ANIME'
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_DATA_CHANGE':
           return SiteNotification._(
             id: map['id'],
             type: NotificationType.MEDIA_DATA_CHANGE,
             headId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
             details: map['reason'],
             texts: [
               map['media']['title']['userPreferred'],
@@ -290,9 +290,9 @@ class SiteNotification {
             ],
             markTextOnEvenIndex: true,
             timestamp: Convert.millisToStr(map['createdAt']),
-            explorable: map['media']['type'] == 'ANIME'
-                ? Explorable.anime
-                : Explorable.manga,
+            discoverType: map['media']['type'] == 'ANIME'
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_MERGE':
           final titles = List<String>.from(
@@ -305,7 +305,7 @@ class SiteNotification {
             id: map['id'],
             type: NotificationType.MEDIA_MERGE,
             headId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
             details: map['reason'],
             texts: [
               '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',
@@ -313,9 +313,9 @@ class SiteNotification {
             ],
             markTextOnEvenIndex: false,
             timestamp: Convert.millisToStr(map['createdAt']),
-            explorable: map['media']['type'] == 'ANIME'
-                ? Explorable.anime
-                : Explorable.manga,
+            discoverType: map['media']['type'] == 'ANIME'
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_DELETION':
           return SiteNotification._(
@@ -335,7 +335,7 @@ class SiteNotification {
             type: NotificationType.AIRING,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Settings().imageQuality],
+            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
             texts: [
               'Episode ',
               map['episode'].toString(),
@@ -345,9 +345,9 @@ class SiteNotification {
             ],
             markTextOnEvenIndex: false,
             timestamp: Convert.millisToStr(map['createdAt']),
-            explorable: map['media']['type'] == 'ANIME'
-                ? Explorable.anime
-                : Explorable.manga,
+            discoverType: map['media']['type'] == 'ANIME'
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         default:
           return null;

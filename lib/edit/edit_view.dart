@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:otraku/controllers/collection_controller.dart';
-import 'package:otraku/collection/entry.dart';
-import 'package:otraku/constants/score_format.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/controllers/progress_controller.dart';
+import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/edit/edit_buttons.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/media/media_constants.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/settings.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/date_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/growable_text_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 import 'package:otraku/widgets/fields/number_field.dart';
-import 'package:otraku/widgets/fields/score_field.dart';
+import 'package:otraku/edit/score_field.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
-  EditView(
+  const EditView(
     this.mediaId, {
     this.edit,
     this.callback,
@@ -47,8 +42,9 @@ class EditView extends StatelessWidget {
         builder: (context, ref, _) {
           final notifier = ref.watch(editProvider.notifier);
 
-          if (notifier.state.mediaId < 0)
+          if (notifier.state.mediaId < 0) {
             notifier.update((_) => edit!.copy(complete));
+          }
 
           return _build(edit!);
         },
@@ -63,8 +59,9 @@ class EditView extends StatelessWidget {
           currentEditProvider(mediaId),
           (_, state) => state.whenOrNull(
             data: (data) {
-              if (notifier.state.mediaId < 0)
+              if (notifier.state.mediaId < 0) {
                 notifier.update((_) => data.copy(complete));
+              }
             },
             error: (err, _) {
               Navigator.pop(context);
@@ -91,125 +88,14 @@ class EditView extends StatelessWidget {
 
   Widget _build(Edit oldEdit) {
     return OpaqueSheetView(
-      buttons: _Buttons(mediaId, oldEdit, callback),
+      buttons: EditButtons(mediaId, oldEdit, callback),
       builder: (context, scrollCtrl) => _EditView(scrollCtrl, oldEdit),
     );
   }
 }
 
-class _Buttons extends StatefulWidget {
-  _Buttons(this.mediaId, this.oldEdit, this.callback);
-
-  final int mediaId;
-  final Edit oldEdit;
-  final void Function(Edit)? callback;
-
-  @override
-  State<_Buttons> createState() => __ButtonsState();
-}
-
-class __ButtonsState extends State<_Buttons> {
-  bool _loading = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (__, ref, _) => BottomBarDualButtonRow(
-        primary: _loading
-            ? null
-            : BottomBarButton(
-                text: 'Save',
-                icon: Ionicons.save_outline,
-                onTap: () async {
-                  final newEdit = ref.read(editProvider);
-                  setState(() => _loading = true);
-
-                  final result = await updateEntry(newEdit);
-                  Navigator.pop(context);
-
-                  if (result is! int) {
-                    showPopUp(
-                      context,
-                      ConfirmationDialog(
-                        title: 'Could not update entry',
-                        content: result.toString(),
-                      ),
-                    );
-                    return;
-                  }
-
-                  newEdit.entryId = result;
-                  if (newEdit.entryId == null) return;
-                  widget.callback?.call(newEdit);
-
-                  final isAnime = newEdit.type == 'ANIME';
-
-                  final entry = await Get.find<CollectionController>(
-                    tag: isAnime
-                        ? '${Settings().id}true'
-                        : '${Settings().id}false',
-                  ).updateEntry(widget.oldEdit, newEdit);
-                  if (entry == null) return;
-
-                  if (widget.oldEdit.status == null)
-                    Get.find<ProgressController>().add(entry, isAnime);
-                  else
-                    Get.find<ProgressController>().updateEntry(entry, isAnime);
-                },
-              ),
-        secondary: widget.oldEdit.entryId == null
-            ? null
-            : BottomBarButton(
-                text: 'Remove',
-                icon: Ionicons.trash_bin_outline,
-                warning: true,
-                onTap: () => showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Remove entry?',
-                    mainAction: 'Yes',
-                    secondaryAction: 'No',
-                    onConfirm: () {
-                      setState(() => _loading = true);
-
-                      final oldEdit = widget.oldEdit;
-                      removeEntry(oldEdit.entryId!).then((err) {
-                        Navigator.pop(context);
-
-                        if (err != null) {
-                          showPopUp(
-                            context,
-                            ConfirmationDialog(
-                              title: 'Could not remove entry',
-                              content: err.toString(),
-                            ),
-                          );
-                          return;
-                        }
-
-                        Get.find<CollectionController>(
-                          tag: oldEdit.type == 'ANIME'
-                              ? '${Settings().id}true'
-                              : '${Settings().id}false',
-                        ).removeEntry(oldEdit);
-
-                        if (oldEdit.status == EntryStatus.CURRENT)
-                          Get.find<ProgressController>()
-                              .remove(oldEdit.mediaId);
-
-                        widget.callback?.call(oldEdit.emptyCopy());
-                      });
-                    },
-                  ),
-                ),
-              ),
-      ),
-    );
-  }
-}
-
 class _EditView extends StatelessWidget {
-  _EditView(this.scrollCtrl, this.oldEdit);
+  const _EditView(this.scrollCtrl, this.oldEdit);
 
   final ScrollController scrollCtrl;
   final Edit oldEdit;
@@ -446,8 +332,9 @@ class _EditView extends StatelessWidget {
 
         if (!settings.advancedScoringEnabled ||
             settings.scoreFormat != ScoreFormat.POINT_100 &&
-                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL)
+                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL) {
           return const SliverToBoxAdapter(child: SizedBox());
+        }
 
         final scores = ref.watch(editProvider.notifier).state.advancedScores;
 
@@ -465,17 +352,19 @@ class _EditView extends StatelessWidget {
 
                     int count = 0;
                     double avg = 0;
-                    for (final v in scores.values)
+                    for (final v in scores.values) {
                       if (v > 0) {
                         avg += v;
                         count++;
                       }
+                    }
 
                     if (count > 0) avg /= count;
 
                     final notifier = ref.read(editProvider.notifier);
-                    if (notifier.state.score != avg)
+                    if (notifier.state.score != avg) {
                       notifier.update((s) => s.copyWith(score: avg));
+                    }
                   },
                 ),
               ),
@@ -569,7 +458,7 @@ class _Label extends StatelessWidget {
 }
 
 class _FieldGrid extends StatelessWidget {
-  _FieldGrid({required this.minWidth, required this.children});
+  const _FieldGrid({required this.minWidth, required this.children});
 
   final List<Widget> children;
   final double minWidth;
@@ -587,7 +476,7 @@ class _FieldGrid extends StatelessWidget {
 }
 
 class _CheckBoxGrid extends StatelessWidget {
-  _CheckBoxGrid(this.map, this.onChanged);
+  const _CheckBoxGrid(this.map, this.onChanged);
 
   final Map<String, bool> map;
   final Function(String, bool) onChanged;

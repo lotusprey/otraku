@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/edit/edit_model.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
@@ -29,8 +29,9 @@ Future<Object> updateProgress(int mediaId, int progress) async {
     if (entries == null) return <String>[];
 
     final customLists = <String>[];
-    for (final e in entries)
+    for (final e in entries) {
       if (e.value) customLists.add(e.key.toString().toLowerCase());
+    }
     return customLists;
   } catch (e) {
     return e;
@@ -49,7 +50,7 @@ Future<Object?> removeEntry(int entryId) async {
 
 final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(
   (ref, id) async {
-    final data = await Api.get(GqlQuery.media, {'id': id, 'withMain': true});
+    final data = await Api.get(GqlQuery.entry, {'mediaId': id});
     return Edit(data['Media'], ref.watch(userSettingsProvider));
   },
 );

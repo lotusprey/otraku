@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/character/character_grid.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/favorites/favorites_provider.dart';
-import 'package:otraku/media/media_grid.dart';
-import 'package:otraku/staff/staff_grid.dart';
 import 'package:otraku/studio/studio_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -42,10 +41,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
     );
 
     final refreshControl = SliverRefreshControl(
-      onRefresh: () {
-        ref.invalidate(favoritesProvider(widget.id));
-        return Future.value();
-      },
+      onRefresh: () => ref.invalidate(favoritesProvider(widget.id)),
     );
 
     return PageLayout(
@@ -94,7 +90,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
 }
 
 class _AnimeTab extends StatelessWidget {
-  _AnimeTab(this.id, this._ctrl, this.refreshControl);
+  const _AnimeTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -127,22 +123,15 @@ class _AnimeTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: Consts.layoutBig),
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl,
-                        MediaGrid(data.items),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    TileItemGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -152,7 +141,7 @@ class _AnimeTab extends StatelessWidget {
 }
 
 class _MangaTab extends StatelessWidget {
-  _MangaTab(this.id, this._ctrl, this.refreshControl);
+  const _MangaTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -185,22 +174,15 @@ class _MangaTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: ConstrainedBox(
-                    constraints:
-                        const BoxConstraints(maxWidth: Consts.layoutBig),
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl,
-                        MediaGrid(data.items),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    TileItemGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -210,7 +192,7 @@ class _MangaTab extends StatelessWidget {
 }
 
 class _CharactersTab extends StatelessWidget {
-  _CharactersTab(this.id, this._ctrl, this.refreshControl);
+  const _CharactersTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -243,18 +225,15 @@ class _CharactersTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      CharacterGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    TileItemGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -264,7 +243,7 @@ class _CharactersTab extends StatelessWidget {
 }
 
 class _StaffTab extends StatelessWidget {
-  _StaffTab(this.id, this._ctrl, this.refreshControl);
+  const _StaffTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -297,18 +276,15 @@ class _StaffTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      StaffGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    TileItemGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });
@@ -318,7 +294,7 @@ class _StaffTab extends StatelessWidget {
 }
 
 class _StudiosTab extends StatelessWidget {
-  _StudiosTab(this.id, this._ctrl, this.refreshControl);
+  const _StudiosTab(this.id, this._ctrl, this.refreshControl);
 
   final int id;
   final PaginationController _ctrl;
@@ -351,18 +327,15 @@ class _StudiosTab extends StatelessWidget {
             data: (data) {
               if (data.items.isEmpty) return empty;
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl,
-                      StudioGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: _ctrl,
+                  slivers: [
+                    refreshControl,
+                    StudioGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });

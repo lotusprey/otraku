@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class CustomSliverHeader extends StatelessWidget {
-  CustomSliverHeader({
+  const CustomSliverHeader({
     required this.title,
     required this.image,
     required this.banner,
@@ -36,8 +36,10 @@ class CustomSliverHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double sidePadding = 10;
-    if (maxWidth != null && MediaQuery.of(context).size.width > maxWidth! + 20)
+    if (maxWidth != null &&
+        MediaQuery.of(context).size.width > maxWidth! + 20) {
       sidePadding = (MediaQuery.of(context).size.width - maxWidth!) / 2;
+    }
 
     final imageWidth = MediaQuery.of(context).size.width < 430.0
         ? MediaQuery.of(context).size.width * 0.30
@@ -112,7 +114,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         boxShadow: [
           BoxShadow(
             blurRadius: 5,
@@ -130,7 +132,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
           children: [
             FlexibleSpaceBar(
               collapseMode: CollapseMode.pin,
-              stretchModes: [StretchMode.zoomBackground],
+              stretchModes: const [StretchMode.zoomBackground],
               background: Column(
                 children: [
                   Expanded(
@@ -183,7 +185,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                         height: imageHeight,
                         width: imageWidth,
                         color: complexImage
-                            ? Theme.of(context).colorScheme.surface
+                            ? Theme.of(context).colorScheme.surfaceVariant
                             : null,
                         child: image != null
                             ? GestureDetector(
@@ -294,7 +296,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
 class IconShade extends StatelessWidget {
   final Widget child;
-  IconShade(this.child);
+  const IconShade(this.child);
 
   @override
   Widget build(BuildContext context) {
@@ -310,40 +312,6 @@ class IconShade extends StatelessWidget {
         ],
       ),
       child: child,
-    );
-  }
-}
-
-class TextRail extends StatelessWidget {
-  const TextRail(this.items);
-
-  final Map<String, bool> items;
-
-  @override
-  Widget build(BuildContext context) {
-    const spacing = TextSpan(text: ' • ');
-
-    return RichText(
-      text: TextSpan(
-        style: Theme.of(context).textTheme.subtitle1,
-        children: [
-          for (int i = 0; i < items.length - 1; i++) ...[
-            TextSpan(
-              text: items.keys.elementAt(i),
-              style: items.values.elementAt(i)
-                  ? Theme.of(context).textTheme.bodyText1
-                  : null,
-            ),
-            spacing,
-          ],
-          TextSpan(
-            text: items.keys.last,
-            style: items.values.last
-                ? Theme.of(context).textTheme.bodyText1
-                : null,
-          ),
-        ],
-      ),
     );
   }
 }

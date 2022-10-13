@@ -2,12 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
-import 'package:otraku/media/media_item.dart';
+import 'package:otraku/common/tile_item.dart';
+import 'package:otraku/media/media_models.dart';
 import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 
 final favoritesProvider =
     ChangeNotifierProvider.autoDispose.family<FavoritesNotifier, int>(
@@ -27,10 +28,10 @@ class FavoritesNotifier extends ChangeNotifier {
   int _characterCount = 0;
   int _staffCount = 0;
   int _studioCount = 0;
-  var _anime = const AsyncValue<Pagination<MediaItem>>.loading();
-  var _manga = const AsyncValue<Pagination<MediaItem>>.loading();
-  var _characters = const AsyncValue<Pagination<CharacterItem>>.loading();
-  var _staff = const AsyncValue<Pagination<StaffItem>>.loading();
+  var _anime = const AsyncValue<Pagination<TileItem>>.loading();
+  var _manga = const AsyncValue<Pagination<TileItem>>.loading();
+  var _characters = const AsyncValue<Pagination<TileItem>>.loading();
+  var _staff = const AsyncValue<Pagination<TileItem>>.loading();
   var _studios = const AsyncValue<Pagination<StudioItem>>.loading();
 
   int getCount(FavoriteType type) {
@@ -49,10 +50,10 @@ class FavoritesNotifier extends ChangeNotifier {
     }
   }
 
-  AsyncValue<Pagination<MediaItem>> get anime => _anime;
-  AsyncValue<Pagination<MediaItem>> get manga => _manga;
-  AsyncValue<Pagination<CharacterItem>> get characters => _characters;
-  AsyncValue<Pagination<StaffItem>> get staff => _staff;
+  AsyncValue<Pagination<TileItem>> get anime => _anime;
+  AsyncValue<Pagination<TileItem>> get manga => _manga;
+  AsyncValue<Pagination<TileItem>> get characters => _characters;
+  AsyncValue<Pagination<TileItem>> get staff => _staff;
   AsyncValue<Pagination<StudioItem>> get studios => _studios;
 
   Future<void> fetch() async {
@@ -92,7 +93,7 @@ class FavoritesNotifier extends ChangeNotifier {
       return data['User']['favourites'];
     });
 
-    if (type == null || type == FavoriteType.anime)
+    if (type == null || type == FavoriteType.anime) {
       _anime = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['anime'];
@@ -100,16 +101,19 @@ class FavoritesNotifier extends ChangeNotifier {
 
         if (_animeCount == 0) _animeCount = map['pageInfo']['total'] ?? 0;
 
-        final items = <MediaItem>[];
-        for (final a in map['nodes']) items.add(MediaItem(a));
+        final items = <TileItem>[];
+        for (final a in map['nodes']) {
+          items.add(mediaItem(a));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.manga)
+    if (type == null || type == FavoriteType.manga) {
       _manga = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['manga'];
@@ -117,34 +121,41 @@ class FavoritesNotifier extends ChangeNotifier {
 
         if (_mangaCount == 0) _mangaCount = map['pageInfo']['total'] ?? 0;
 
-        final items = <MediaItem>[];
-        for (final m in map['nodes']) items.add(MediaItem(m));
+        final items = <TileItem>[];
+        for (final m in map['nodes']) {
+          items.add(mediaItem(m));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.characters)
+    if (type == null || type == FavoriteType.characters) {
       _characters = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['characters'];
         final value = _characters.valueOrNull ?? Pagination();
 
-        if (_characterCount == 0)
+        if (_characterCount == 0) {
           _characterCount = map['pageInfo']['total'] ?? 0;
+        }
 
-        final items = <CharacterItem>[];
-        for (final c in map['nodes']) items.add(CharacterItem(c));
+        final items = <TileItem>[];
+        for (final c in map['nodes']) {
+          items.add(characterItem(c));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.staff)
+    if (type == null || type == FavoriteType.staff) {
       _staff = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['staff'];
@@ -152,16 +163,19 @@ class FavoritesNotifier extends ChangeNotifier {
 
         if (_staffCount == 0) _staffCount = map['pageInfo']['total'] ?? 0;
 
-        final items = <StaffItem>[];
-        for (final s in map['nodes']) items.add(StaffItem(s));
+        final items = <TileItem>[];
+        for (final s in map['nodes']) {
+          items.add(staffItem(s));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
-    if (type == null || type == FavoriteType.studios)
+    if (type == null || type == FavoriteType.studios) {
       _studios = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['studios'];
@@ -170,13 +184,16 @@ class FavoritesNotifier extends ChangeNotifier {
         if (_studioCount == 0) _studioCount = map['pageInfo']['total'] ?? 0;
 
         final items = <StudioItem>[];
-        for (final s in map['nodes']) items.add(StudioItem(s));
+        for (final s in map['nodes']) {
+          items.add(StudioItem(s));
+        }
 
         return Future.value(value.append(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
       });
+    }
 
     notifyListeners();
   }

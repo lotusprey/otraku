@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
-import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/relation.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/common/pagination.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
 Future<bool> toggleFavoriteCharacter(int characterId) async {
@@ -163,12 +163,12 @@ class CharacterMediaNotifier extends ChangeNotifier {
       items.add(Relation(
         id: a['node']['id'],
         title: a['node']['title']['userPreferred'],
-        imageUrl: a['node']['coverImage'][Settings().imageQuality],
+        imageUrl: a['node']['coverImage'][Options().imageQuality.value],
         subtitle: Convert.clarifyEnum(a['characterRole']),
-        type: Explorable.anime,
+        type: DiscoverType.anime,
       ));
 
-      if (a['voiceActors'] != null)
+      if (a['voiceActors'] != null) {
         for (final va in a['voiceActors']) {
           final l = Convert.clarifyEnum(va['languageV2']);
           if (l == null) continue;
@@ -188,9 +188,10 @@ class CharacterMediaNotifier extends ChangeNotifier {
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
             subtitle: l,
-            type: Explorable.staff,
+            type: DiscoverType.staff,
           ));
         }
+      }
     }
 
     value = value.append(items, data['pageInfo']['hasNextPage']);
@@ -202,14 +203,15 @@ class CharacterMediaNotifier extends ChangeNotifier {
     if (value == null) return;
 
     final items = <Relation>[];
-    for (final m in data['edges'])
+    for (final m in data['edges']) {
       items.add(Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Settings().imageQuality],
+        imageUrl: m['node']['coverImage'][Options().imageQuality.value],
         subtitle: Convert.clarifyEnum(m['characterRole']),
-        type: Explorable.manga,
+        type: DiscoverType.manga,
       ));
+    }
 
     value = value.append(items, data['pageInfo']['hasNextPage']);
     _manga = AsyncValue.data(value);

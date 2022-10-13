@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 /// Used to open [DraggableScrollableSheet].
@@ -15,7 +15,7 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class OpaqueSheet extends StatelessWidget {
-  OpaqueSheet({required this.builder, this.initialHeight});
+  const OpaqueSheet({required this.builder, this.initialHeight});
 
   final Widget Function(BuildContext, ScrollController) builder;
   final double? initialHeight;
@@ -37,18 +37,17 @@ class OpaqueSheet extends StatelessWidget {
         initialChildSize: initialSize,
         minChildSize: initialSize < 0.25 ? initialSize : 0.25,
         builder: (context, scrollCtrl) {
-          if (sheet == null)
-            sheet = Center(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Consts.radiusMax),
-                ),
-                child: builder(context, scrollCtrl),
+          sheet ??= Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius:
+                    const BorderRadius.vertical(top: Consts.radiusMax),
               ),
-            );
+              child: builder(context, scrollCtrl),
+            ),
+          );
 
           return sheet!;
         },
@@ -60,7 +59,7 @@ class OpaqueSheet extends StatelessWidget {
 /// A wide implementation of [DraggableScrollableSheet]
 /// with a lane of buttons at the bottom.
 class OpaqueSheetView extends StatelessWidget {
-  OpaqueSheetView({required this.builder, this.buttons});
+  const OpaqueSheetView({required this.builder, this.buttons});
 
   final Widget Function(BuildContext, ScrollController) builder;
   final Widget? buttons;
@@ -75,7 +74,7 @@ class OpaqueSheetView extends StatelessWidget {
         expand: false,
         maxChildSize: 0.9,
         builder: (context, scrollCtrl) {
-          if (sheet == null) sheet = _sheetBody(context, scrollCtrl);
+          sheet ??= _sheetBody(context, scrollCtrl);
           return sheet!;
         },
       ),
@@ -104,7 +103,7 @@ class OpaqueSheetView extends StatelessWidget {
 /// An implementation of [DraggableScrollableSheet] with
 /// gradient background that builds its children dynamically.
 class DynamicGradientDragSheet extends StatelessWidget {
-  DynamicGradientDragSheet({required this.children, required this.onTap});
+  const DynamicGradientDragSheet({required this.children, required this.onTap});
 
   final List<Widget> children;
   final void Function(int) onTap;
@@ -113,12 +112,13 @@ class DynamicGradientDragSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final requiredHeight = children.length * Consts.tapTargetSize + 50;
     double height = requiredHeight / MediaQuery.of(context).size.height;
-    if (height > 0.9) height = 0.9;
+    if (height > 0.6) height = 0.6;
 
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: height,
       minChildSize: height < 0.25 ? height : 0.25,
+      maxChildSize: 0.9,
       builder: (context, scrollCtrl) => Container(
         alignment: Alignment.bottomCenter,
         decoration: BoxDecoration(
@@ -163,7 +163,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
 /// An implementation of [DraggableScrollableSheet]
 /// with gradient background and fixed children.
 class FixedGradientDragSheet extends StatelessWidget {
-  FixedGradientDragSheet({required this.children});
+  const FixedGradientDragSheet({required this.children});
 
   // A version with the given buttons, along with copy/open link buttons.
   factory FixedGradientDragSheet.link(
@@ -235,7 +235,7 @@ class FixedGradientDragSheet extends StatelessWidget {
 
 /// Sometimes used by [FixedGradientDragSheet].
 class FixedGradientSheetTile extends StatelessWidget {
-  FixedGradientSheetTile({
+  const FixedGradientSheetTile({
     required this.text,
     required this.onTap,
     required this.icon,

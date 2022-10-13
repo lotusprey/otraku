@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/fields/labeled_field.dart';
 
 class DropDownField<T> extends StatefulWidget {
-  DropDownField({
+  const DropDownField({
     required this.title,
     required this.value,
     required this.items,
@@ -18,10 +18,10 @@ class DropDownField<T> extends StatefulWidget {
   final String hint;
 
   @override
-  _DropDownFieldState<T> createState() => _DropDownFieldState<T>();
+  DropDownFieldState<T> createState() => DropDownFieldState<T>();
 }
 
-class _DropDownFieldState<T> extends State<DropDownField<T>> {
+class DropDownFieldState<T> extends State<DropDownField<T>> {
   late T _value;
 
   @override
@@ -39,7 +39,7 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
   @override
   Widget build(BuildContext context) {
     final items = <DropdownMenuItem<T>>[];
-    for (final key in widget.items.keys)
+    for (final key in widget.items.keys) {
       items.add(DropdownMenuItem(
         value: widget.items[key],
         child: Text(
@@ -49,31 +49,30 @@ class _DropDownFieldState<T> extends State<DropDownField<T>> {
               : Theme.of(context).textTheme.bodyText1,
         ),
       ));
+    }
 
     return LabeledField(
       label: widget.title,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.borderRadiusMin,
-        ),
-        child: DropdownButton<T>(
-          value: _value,
-          items: items,
-          onChanged: (val) {
-            final v = val as T;
-            setState(() => _value = v);
-            widget.onChanged(v);
-          },
-          hint: Text(
-            widget.hint,
-            style: Theme.of(context).textTheme.subtitle1,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: DropdownButton<T>(
+            value: _value,
+            items: items,
+            onChanged: (val) {
+              final v = val as T;
+              setState(() => _value = v);
+              widget.onChanged(v);
+            },
+            hint: Text(
+              widget.hint,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            dropdownColor: Theme.of(context).colorScheme.surfaceVariant,
+            borderRadius: Consts.borderRadiusMax,
+            underline: const SizedBox(),
+            isExpanded: true,
           ),
-          iconEnabledColor: Theme.of(context).colorScheme.surfaceVariant,
-          dropdownColor: Theme.of(context).colorScheme.surface,
-          underline: const SizedBox(),
-          isExpanded: true,
         ),
       ),
     );

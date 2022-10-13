@@ -2,8 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/common/pagination.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Toggles an activity like and returns an error if unsuccessful.
 Future<Object?> toggleActivityLike(Activity activity) async {
@@ -79,7 +79,7 @@ Future<Object?> deleteActivityReply(int replyId) async {
 
 final activityProvider = StateNotifierProvider.autoDispose
     .family<ActivityNotifier, AsyncValue<ActivityState>, int>(
-  (ref, userId) => ActivityNotifier(userId, Settings().id!),
+  (ref, userId) => ActivityNotifier(userId, Options().id!),
 );
 
 final activityFilterProvider = StateNotifierProvider.autoDispose
@@ -89,8 +89,8 @@ final activityFilterProvider = StateNotifierProvider.autoDispose
     bool? onFollowing;
 
     if (userId == null) {
-      onFollowing = Settings().feedOnFollowing;
-      typeIn = Settings()
+      onFollowing = Options().feedOnFollowing;
+      typeIn = Options()
           .feedActivityFilters
           .map((e) => ActivityType.values.elementAt(e))
           .toList();
@@ -104,7 +104,7 @@ final activitiesProvider = StateNotifierProvider.autoDispose
     .family<ActivitiesNotifier, AsyncValue<Pagination<Activity>>, int?>(
   (ref, userId) => ActivitiesNotifier(
     userId: userId,
-    viewerId: Settings().id!,
+    viewerId: Options().id!,
     filter: ref.watch(activityFilterProvider(userId)),
   ),
 );
@@ -186,7 +186,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     final reply = ActivityReply.maybe(map);
     if (reply == null) return;
 
-    for (int i = 0; i < value.replies.items.length; i++)
+    for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == reply.id) {
         value.replies.items[i] = reply;
         state = AsyncData(ActivityState(
@@ -199,6 +199,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
         ));
         return;
       }
+    }
   }
 
   /// Removes an already deleted reply.
@@ -206,7 +207,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.replies.items.length; i++)
+    for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == replyId) {
         value.replies.items.removeAt(i);
         value.activity.replyCount--;
@@ -221,6 +222,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
         ));
         return;
       }
+    }
   }
 }
 
@@ -290,7 +292,7 @@ class ActivitiesNotifier
     final activity = Activity.maybe(map, viewerId);
     if (activity == null) return;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
         state = AsyncData(Pagination.from(
@@ -300,6 +302,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 
   /// Updates an existing activity with another one.
@@ -307,7 +310,7 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
         state = AsyncData(Pagination.from(
@@ -317,6 +320,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 
   /// Removes an already deleted activity.
@@ -324,7 +328,7 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activityId) {
         value.items.removeAt(i);
         state = AsyncData(Pagination.from(
@@ -334,6 +338,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 
   /// Updates an already pinned/unpinned activity.
@@ -341,12 +346,13 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    for (int i = 0; i < value.items.length; i++)
+    for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activityId) {
         // If the activity was pinned, and there had already
         // been a pinned activity, unpin the old one.
-        if (value.items[i].isPinned && value.items[0].isPinned && i > 0)
+        if (value.items[i].isPinned && value.items[0].isPinned && i > 0) {
           value.items[0].isPinned = false;
+        }
 
         state = AsyncData(Pagination.from(
           items: value.items,
@@ -355,6 +361,7 @@ class ActivitiesNotifier
         ));
         return;
       }
+    }
   }
 }
 
@@ -367,7 +374,8 @@ class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
         ? ActivityFilter(typeIn, null)
         : ActivityFilter(typeIn, onFollowing ?? state.onFollowing);
 
-    Settings().feedActivityFilters = typeIn.map((e) => e.index).toList();
-    if (onFollowing != null) Settings().feedOnFollowing = onFollowing;
+    if (onFollowing == null) return;
+    Options().feedActivityFilters = typeIn.map((e) => e.index).toList();
+    Options().feedOnFollowing = onFollowing;
   }
 }

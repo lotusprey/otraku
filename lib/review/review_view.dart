@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/review/review_providers.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -14,7 +14,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReviewView extends StatelessWidget {
-  ReviewView(this.id, this.bannerUrl);
+  const ReviewView(this.id, this.bannerUrl);
 
   final int id;
   final String? bannerUrl;
@@ -49,11 +49,11 @@ class ReviewView extends StatelessWidget {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate.fixed([
                       GestureDetector(
-                        onTap: () => ExploreIndexer.openView(
-                          ctx: context,
+                        onTap: () => LinkTile.openView(
+                          context: context,
                           id: data.mediaId,
                           imageUrl: data.mediaCover,
-                          explorable: Explorable.anime,
+                          discoverType: DiscoverType.anime,
                         ),
                         child: Text(
                           data.mediaTitle,
@@ -63,11 +63,11 @@ class ReviewView extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
                       GestureDetector(
-                        onTap: () => ExploreIndexer.openView(
-                          ctx: context,
+                        onTap: () => LinkTile.openView(
+                          context: context,
                           id: data.userId,
                           imageUrl: data.userAvatar,
-                          explorable: Explorable.user,
+                          discoverType: DiscoverType.user,
                         ),
                         child: RichText(
                           textAlign: TextAlign.center,
@@ -155,7 +155,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surfaceVariant,
       ),
       child: FlexibleSpaceBar.createSettings(
         minExtent: minExtent,
@@ -279,7 +279,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
 }
 
 class _RateButtons extends StatefulWidget {
-  _RateButtons(this.id);
+  const _RateButtons(this.id);
 
   final int id;
 

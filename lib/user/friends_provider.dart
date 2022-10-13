@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/pagination.dart';
 
 final friendsProvider =
     ChangeNotifierProvider.autoDispose.family<FriendsNotifier, int>(
@@ -72,7 +72,9 @@ class FriendsNotifier extends ChangeNotifier {
       }
 
       final items = <UserItem>[];
-      for (final u in data[key][key]) items.add(UserItem(u));
+      for (final u in data[key][key]) {
+        items.add(UserItem(u));
+      }
 
       return value.append(
         items,

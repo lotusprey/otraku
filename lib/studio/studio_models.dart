@@ -1,6 +1,6 @@
-import 'package:otraku/constants/media_sort.dart';
-import 'package:otraku/media/media_item.dart';
-import 'package:otraku/utils/pagination.dart';
+import 'package:otraku/common/tile_item.dart';
+import 'package:otraku/media/media_constants.dart';
+import 'package:otraku/common/pagination.dart';
 
 class StudioItem {
   StudioItem._({required this.id, required this.name});
@@ -37,7 +37,7 @@ class StudioState {
   StudioState(this.studio, this.media, this.categories);
 
   final Studio studio;
-  final Pagination<MediaItem> media;
+  final Pagination<TileItem> media;
 
   /// If the items in [media] are sorted by date, [categories] will represent
   /// each time category (e.g. "2022") and the index of the first item in
@@ -46,7 +46,7 @@ class StudioState {
   /// If the items in [media] aren't sorted by date, [categories] must be empty.
   final Map<String, int> categories;
 
-  StudioState copyWith(Pagination<MediaItem> media) =>
+  StudioState copyWith(Pagination<TileItem> media) =>
       StudioState(studio, media, categories);
 }
 

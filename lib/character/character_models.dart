@@ -1,23 +1,14 @@
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/common/tile_item.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
 
-class CharacterItem {
-  CharacterItem._({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-  });
-
-  factory CharacterItem(Map<String, dynamic> map) => CharacterItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-      );
-
-  final int id;
-  final String name;
-  final String imageUrl;
-}
+TileItem characterItem(Map<String, dynamic> map) => TileItem(
+      id: map['id'],
+      type: DiscoverType.character,
+      title: map['name']['userPreferred'],
+      imageUrl: map['image']['large'],
+    );
 
 class Character {
   Character._({
@@ -37,8 +28,9 @@ class Character {
 
   factory Character(Map<String, dynamic> map) {
     final altNames = List<String>.from(map['name']['alternative'] ?? []);
-    if (map['name']['native'] != null)
+    if (map['name']['native'] != null) {
       altNames.insert(0, map['name']['native'].toString());
+    }
 
     final altNamesSpoilers = List<String>.from(
       map['name']['alternativeSpoiler'] ?? [],

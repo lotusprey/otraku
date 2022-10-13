@@ -1,6 +1,6 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/common/pagination.dart';
+import 'package:otraku/utils/options.dart';
 
 class ActivityState {
   ActivityState(this.activity, this.replies);
@@ -181,7 +181,7 @@ class ActivityMedia {
   factory ActivityMedia(Map<String, dynamic> map) => ActivityMedia._(
         id: map['media']['id'],
         title: map['media']['title']['userPreferred'],
-        imageUrl: map['media']['coverImage'][Settings().imageQuality],
+        imageUrl: map['media']['coverImage'][Options().imageQuality.value],
         format: Convert.clarifyEnum(map['media']['format']),
         isAnime: map['type'] == 'ANIME_LIST',
       );

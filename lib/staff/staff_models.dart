@@ -1,19 +1,14 @@
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/common/tile_item.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
 
-class StaffItem {
-  StaffItem._({required this.id, required this.name, required this.imageUrl});
-
-  factory StaffItem(Map<String, dynamic> map) => StaffItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-      );
-
-  final int id;
-  final String name;
-  final String imageUrl;
-}
+TileItem staffItem(Map<String, dynamic> map) => TileItem(
+      id: map['id'],
+      type: DiscoverType.staff,
+      title: map['name']['userPreferred'],
+      imageUrl: map['image']['large'],
+    );
 
 class Staff {
   Staff._({
@@ -36,8 +31,9 @@ class Staff {
 
   factory Staff(Map<String, dynamic> map) {
     final altNames = List<String>.from(map['name']['alternative'] ?? []);
-    if (map['name']['native'] != null)
+    if (map['name']['native'] != null) {
       altNames.insert(0, map['name']['native'].toString());
+    }
 
     final yearsActive = map['yearsActive'] as List?;
 
@@ -53,7 +49,7 @@ class Staff {
       homeTown: map['homeTown'],
       gender: map['gender'],
       age: map['age']?.toString(),
-      startYear: yearsActive != null && yearsActive.length > 0
+      startYear: yearsActive != null && yearsActive.isNotEmpty
           ? yearsActive[0].toString()
           : null,
       endYear: yearsActive != null && yearsActive.length > 1

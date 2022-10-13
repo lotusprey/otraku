@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/models/relation.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/common/relation.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
@@ -18,8 +18,9 @@ class RelationGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty)
+    if (items.isEmpty) {
       return SliverFillRemaining(child: Center(child: Text(placeholder)));
+    }
 
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
@@ -37,7 +38,7 @@ class RelationGrid extends StatelessWidget {
 }
 
 class _RelationTile extends StatelessWidget {
-  _RelationTile(this.item, this.connection);
+  const _RelationTile(this.item, this.connection);
 
   final Relation item;
   final Relation? connection;
@@ -45,16 +46,16 @@ class _RelationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late final Widget centerContent;
-    if (connection != null)
+    if (connection != null) {
       centerContent = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
-            child: ExploreIndexer(
+            child: LinkTile(
               id: item.id,
-              explorable: item.type,
-              text: item.imageUrl,
+              discoverType: item.type,
+              info: item.imageUrl,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,10 +79,10 @@ class _RelationTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 3),
-          ExploreIndexer(
+          LinkTile(
             id: connection!.id,
-            explorable: connection!.type,
-            text: connection!.imageUrl,
+            discoverType: connection!.type,
+            info: connection!.imageUrl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -106,11 +107,11 @@ class _RelationTile extends StatelessWidget {
           ),
         ],
       );
-    else
-      centerContent = ExploreIndexer(
+    } else {
+      centerContent = LinkTile(
         id: item.id,
-        explorable: item.type,
-        text: item.imageUrl,
+        discoverType: item.type,
+        info: item.imageUrl,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,34 +127,32 @@ class _RelationTile extends StatelessWidget {
           ],
         ),
       );
+    }
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: Consts.borderRadiusMin,
-        color: Theme.of(context).colorScheme.surface,
-      ),
+    return Card(
       child: Row(
         children: [
-          ExploreIndexer(
+          LinkTile(
             id: item.id,
-            explorable: item.type,
-            text: item.imageUrl,
+            discoverType: item.type,
+            info: item.imageUrl,
             child: ClipRRect(
-              child: FadeImage(item.imageUrl, width: 80),
               borderRadius: Consts.borderRadiusMin,
+              child: FadeImage(item.imageUrl, width: 80),
             ),
           ),
           Expanded(
             child: Padding(padding: Consts.padding, child: centerContent),
           ),
           if (connection != null)
-            ExploreIndexer(
+            LinkTile(
+              key: ValueKey(connection!.id),
               id: connection!.id,
-              explorable: connection!.type,
-              text: connection!.imageUrl,
+              discoverType: connection!.type,
+              info: connection!.imageUrl,
               child: ClipRRect(
-                child: FadeImage(connection!.imageUrl, width: 80),
                 borderRadius: Consts.borderRadiusMin,
+                child: FadeImage(connection!.imageUrl, width: 80),
               ),
             ),
         ],

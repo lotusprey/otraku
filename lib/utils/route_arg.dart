@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/activity/activities_view.dart';
 import 'package:otraku/activity/activity_view.dart';
+import 'package:otraku/collection/collection_view.dart';
 import 'package:otraku/favorites/favorites_view.dart';
 import 'package:otraku/studio/studio_view.dart';
-import 'package:otraku/views/auth_view.dart';
+import 'package:otraku/auth/auth_view.dart';
 import 'package:otraku/character/character_view.dart';
-import 'package:otraku/views/collection_view.dart';
 import 'package:otraku/user/friends_view.dart';
-import 'package:otraku/views/home_view.dart';
-import 'package:otraku/views/media_view.dart';
+import 'package:otraku/home/home_view.dart';
+import 'package:otraku/media/media_view.dart';
 import 'package:otraku/notifications/notifications_view.dart';
 import 'package:otraku/review/review_view.dart';
 import 'package:otraku/settings/settings_view.dart';
@@ -46,7 +46,7 @@ class RouteArg {
       case settings:
         return MaterialPageRoute(builder: (_) => const SettingsView());
       case notifications:
-        return MaterialPageRoute(builder: (_) => NotificationsView());
+        return MaterialPageRoute(builder: (_) => const NotificationsView());
       case collection:
         if (arg?.id == null || arg?.variant == null) return _unknown;
         return MaterialPageRoute(

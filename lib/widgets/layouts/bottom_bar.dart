@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 /// A bottom app bar implementation that uses a blurred, translucent background.
@@ -69,7 +69,7 @@ class BottomBarIconTabs extends StatelessWidget {
                     Icon(
                       items.values.elementAt(i),
                       color: i != current
-                          ? Theme.of(context).colorScheme.surfaceVariant
+                          ? Theme.of(context).colorScheme.onSurfaceVariant
                           : Theme.of(context).colorScheme.primary,
                     ),
                     if (width > 50) ...[
@@ -115,7 +115,7 @@ class BottomBarDualButtonRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Row(
           children: [
-            if (Settings().leftHanded) ...[
+            if (Options().leftHanded) ...[
               primary,
               secondary,
             ] else ...[
@@ -153,7 +153,7 @@ class BottomBarButton extends StatelessWidget {
         icon: Icon(icon),
         onPressed: onTap,
         style: TextButton.styleFrom(
-          primary: warning ? Theme.of(context).colorScheme.error : null,
+          foregroundColor: warning ? Theme.of(context).colorScheme.error : null,
         ),
       ),
     );

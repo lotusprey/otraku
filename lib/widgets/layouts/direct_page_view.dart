@@ -100,7 +100,6 @@ class _DirectPageViewState extends State<DirectPageView> {
   Widget build(BuildContext context) {
     return PageView(
       controller: _ctrl,
-      children: widget.children,
       physics: widget.onChanged == null
           ? const NeverScrollableScrollPhysics()
           : null,
@@ -108,6 +107,7 @@ class _DirectPageViewState extends State<DirectPageView> {
         if (_busy) return;
         widget.onChanged?.call(i);
       },
+      children: widget.children,
     );
   }
 }

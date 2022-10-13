@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class HtmlContent extends StatelessWidget {
+  const HtmlContent(this.text);
+
   final String text;
-  HtmlContent(this.text);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class HtmlContent extends StatelessWidget {
       onTapUrl: (url) => Toast.launch(context, url),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
-        icon: Icon(Icons.close),
+        icon: const Icon(Icons.close),
         color: Theme.of(context).colorScheme.error,
         onPressed: () => showPopUp(
           context,
@@ -30,20 +31,24 @@ class HtmlContent extends StatelessWidget {
       customStylesBuilder: (element) {
         final styles = <String, String>{};
 
+        if (element.localName == 'p') styles['white-space'] = 'pre';
+
         if (element.localName == 'h1' ||
             element.localName == 'h2' ||
             element.localName == 'h3') styles['font-size'] = '20px';
 
-        if (element.localName == 'b' || element.localName == 'strong')
+        if (element.localName == 'b' || element.localName == 'strong') {
           styles['font-weight'] = '500';
+        }
 
-        if (element.localName == 'i' || element.localName == 'em')
+        if (element.localName == 'i' || element.localName == 'em') {
           styles['font-style'] = 'italic';
+        }
 
         return styles;
       },
       customWidgetBuilder: (element) {
-        if (element.localName == 'hr')
+        if (element.localName == 'hr') {
           return Container(
             height: 5,
             width: double.infinity,
@@ -53,6 +58,7 @@ class HtmlContent extends StatelessWidget {
               borderRadius: Consts.borderRadiusMin,
             ),
           );
+        }
 
         return null;
       },

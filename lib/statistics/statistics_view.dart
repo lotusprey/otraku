@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
 import 'package:otraku/statistics/user_statistics.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
@@ -108,7 +107,7 @@ class _StatisticsViewState extends State<StatisticsView> {
 }
 
 class _StatisticsView extends StatelessWidget {
-  _StatisticsView({
+  const _StatisticsView({
     required this.statistics,
     required this.ofAnime,
     required this.scrollCtrl,
@@ -222,25 +221,24 @@ class _Details extends StatelessWidget {
         minWidth: 190,
         height: 50,
       ),
-      itemBuilder: (context, i) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          borderRadius: Consts.borderRadiusMin,
-          color: Theme.of(context).colorScheme.surface,
-        ),
-        child: Row(
-          children: [
-            Icon(icons[i], color: Theme.of(context).colorScheme.onSurface),
-            const SizedBox(width: 10),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
-                Text(subtitles[i].toString()),
-              ],
-            ),
-          ],
+      itemBuilder: (context, i) => Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Row(
+            children: [
+              Icon(icons[i],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              const SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
+                  Text(subtitles[i].toString()),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -248,7 +246,7 @@ class _Details extends StatelessWidget {
 }
 
 class _BarChart extends StatefulWidget {
-  _BarChart({
+  const _BarChart({
     required this.statistics,
     required this.title,
     required this.initialTab,
@@ -282,18 +280,19 @@ class _BarChartState extends State<_BarChart> {
   @override
   Widget build(BuildContext context) {
     late List<num> values;
-    if (_tab == 0)
+    if (_tab == 0) {
       values = widget.statistics.map((s) => s.count).toList();
-    else if (_tab == 1)
+    } else if (_tab == 1) {
       values = widget.statistics.map((s) => s.amount).toList();
-    else
+    } else {
       values = widget.statistics.map((s) => s.meanScore).toList();
+    }
 
     return BarChart(
       title: widget.title,
       action: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: CompactSegmentSwitcher(
+        child: SegmentSwitcher(
           items: [
             'Titles',
             widget.ofAnime ? 'Hours' : 'Chapters',
@@ -314,7 +313,7 @@ class _BarChartState extends State<_BarChart> {
 }
 
 class _PieChart extends StatelessWidget {
-  _PieChart(this.title, this.stats);
+  const _PieChart(this.title, this.stats);
 
   final String title;
   final List<TypeStatistics> stats;

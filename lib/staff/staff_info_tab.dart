@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/widgets/fade_image.dart';
@@ -13,7 +13,7 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class StaffInfoTab extends StatelessWidget {
-  StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+  const StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl);
 
   final int id;
   final String? imageUrl;
@@ -24,10 +24,7 @@ class StaffInfoTab extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final refreshControl = SliverRefreshControl(
-          onRefresh: () {
-            ref.invalidate(staffProvider(id));
-            return Future.value();
-          },
+          onRefresh: () => ref.invalidate(staffProvider(id)),
         );
 
         return ref.watch(staffProvider(id)).when(
@@ -62,7 +59,7 @@ class StaffInfoTab extends StatelessWidget {
 }
 
 class _TabContent extends StatelessWidget {
-  _TabContent({
+  const _TabContent({
     required this.id,
     required this.data,
     required this.imageUrl,
@@ -100,7 +97,7 @@ class _TabContent extends StatelessWidget {
                 child: Container(
                   width: imageWidth,
                   height: imageHeight,
-                  color: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   child: GestureDetector(
                     child: FadeImage(imageUrl),
                     onTap: () => showPopUp(context, ImageDialog(imageUrl)),
@@ -180,12 +177,10 @@ class _TabContent extends StatelessWidget {
                   space,
                   if (data!.description.isNotEmpty)
                     SliverToBoxAdapter(
-                      child: Container(
-                        child: HtmlContent(data!.description),
-                        padding: Consts.padding,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: Consts.borderRadiusMin,
+                      child: Card(
+                        child: Padding(
+                          padding: Consts.padding,
+                          child: HtmlContent(data!.description),
                         ),
                       ),
                     ),
@@ -206,7 +201,7 @@ class _TabContent extends StatelessWidget {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  _FavoriteButton(this.data);
+  const _FavoriteButton(this.data);
 
   final Staff data;
 
@@ -221,14 +216,10 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
       icon: widget.data.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: widget.data.isFavorite ? 'Unfavourite' : 'Favourite',
       onTap: () {
-        setState(
-          () => widget.data.isFavorite = !widget.data.isFavorite,
-        );
+        setState(() => widget.data.isFavorite = !widget.data.isFavorite);
         toggleFavoriteStaff(widget.data.id).then((ok) {
           if (!ok) {
-            setState(
-              () => widget.data.isFavorite = !widget.data.isFavorite,
-            );
+            setState(() => widget.data.isFavorite = !widget.data.isFavorite);
           }
         });
       },
@@ -237,33 +228,31 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 }
 
 class _InfoTile extends StatelessWidget {
-  _InfoTile(this.title, this.subtitle);
+  const _InfoTile(this.title, this.subtitle);
 
   final String title;
   final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: Consts.borderRadiusMin,
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            maxLines: 1,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-          Text(subtitle, maxLines: 1),
-        ],
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 5,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
+            Text(subtitle, maxLines: 1),
+          ],
+        ),
       ),
     );
   }

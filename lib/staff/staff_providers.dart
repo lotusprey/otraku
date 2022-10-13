@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/models/relation.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/utils/pagination.dart';
-import 'package:otraku/utils/settings.dart';
+import 'package:otraku/common/pagination.dart';
+import 'package:otraku/utils/options.dart';
 
 /// Favorite/Unfavorite staff. Returns `true` if successful.
 Future<bool> toggleFavoriteStaff(int staffId) async {
@@ -119,10 +119,11 @@ class StaffRelationNotifier extends ChangeNotifier {
       final media = Relation(
         id: m['node']['id'],
         title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Settings().imageQuality],
+        imageUrl: m['node']['coverImage'][Options().imageQuality.value],
         subtitle: Convert.clarifyEnum(m['node']['format']),
-        type:
-            m['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+        type: m['node']['type'] == 'ANIME'
+            ? DiscoverType.anime
+            : DiscoverType.manga,
       );
 
       for (final c in m['characters']) {
@@ -134,7 +135,7 @@ class StaffRelationNotifier extends ChangeNotifier {
           id: c['id'],
           title: c['name']['userPreferred'],
           imageUrl: c['image']['large'],
-          type: Explorable.character,
+          type: DiscoverType.character,
           subtitle: Convert.clarifyEnum(m['characterRole']),
         ));
       }
@@ -149,15 +150,17 @@ class StaffRelationNotifier extends ChangeNotifier {
     if (value == null) return;
 
     final items = <Relation>[];
-    for (final s in data['edges'])
+    for (final s in data['edges']) {
       items.add(Relation(
         id: s['node']['id'],
         title: s['node']['title']['userPreferred'],
-        imageUrl: s['node']['coverImage'][Settings().imageQuality],
+        imageUrl: s['node']['coverImage'][Options().imageQuality.value],
         subtitle: s['staffRole'],
-        type:
-            s['node']['type'] == 'ANIME' ? Explorable.anime : Explorable.manga,
+        type: s['node']['type'] == 'ANIME'
+            ? DiscoverType.anime
+            : DiscoverType.manga,
       ));
+    }
 
     value = value.append(items, data['pageInfo']['hasNextPage']);
     _roles = AsyncValue.data(value);

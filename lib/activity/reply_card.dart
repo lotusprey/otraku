@@ -5,17 +5,17 @@ import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/utils/options.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
-  ReplyCard(this.activityId, this.reply);
+  const ReplyCard(this.activityId, this.reply);
 
   final int activityId;
   final ActivityReply reply;
@@ -25,10 +25,10 @@ class ReplyCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ExploreIndexer(
+        LinkTile(
           id: reply.user.id,
-          text: reply.user.imageUrl,
-          explorable: Explorable.user,
+          info: reply.user.imageUrl,
+          discoverType: DiscoverType.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -46,48 +46,48 @@ class ReplyCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        Container(
+        Card(
           margin: const EdgeInsets.only(bottom: 10),
-          padding: Consts.padding,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: Consts.borderRadiusMin,
-          ),
-          child: Column(
-            children: [
-              UnconstrainedBox(
-                constrainedAxis: Axis.horizontal,
-                alignment: Alignment.topLeft,
-                child: HtmlContent(reply.text),
-              ),
-              const SizedBox(height: 5),
-              Row(
-                children: [
-                  Text(
-                    reply.createdAt,
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                  const Spacer(),
-                  if (reply.user.id == Settings().id)
-                    Consumer(
-                      builder: (context, ref, _) => IconButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        splashColor: Colors.transparent,
-                        tooltip: 'More',
-                        constraints: const BoxConstraints(
-                          maxHeight: Consts.iconSmall,
-                        ),
-                        icon: const Icon(
-                          Ionicons.ellipsis_horizontal,
-                          size: Consts.iconSmall,
-                        ),
-                        onPressed: () => _showMoreSheet(context, ref),
-                      ),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            child: Column(
+              children: [
+                UnconstrainedBox(
+                  constrainedAxis: Axis.horizontal,
+                  alignment: Alignment.topLeft,
+                  child: HtmlContent(reply.text),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      reply.createdAt,
+                      style: Theme.of(context).textTheme.subtitle2,
                     ),
-                  _ReplyLikeButton(reply),
-                ],
-              ),
-            ],
+                    const Spacer(),
+                    if (reply.user.id == Options().id) ...[
+                      Consumer(
+                        builder: (context, ref, _) => SizedBox(
+                          height: 40,
+                          child: Tooltip(
+                            message: 'More',
+                            child: InkResponse(
+                              radius: 10,
+                              onTap: () => _showMoreSheet(context, ref),
+                              child: const Icon(
+                                Ionicons.ellipsis_horizontal,
+                                size: Consts.iconSmall,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                    _ReplyLikeButton(reply),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -150,7 +150,7 @@ class ReplyCard extends StatelessWidget {
 }
 
 class _ReplyLikeButton extends StatefulWidget {
-  _ReplyLikeButton(this.reply);
+  const _ReplyLikeButton(this.reply);
 
   final ActivityReply reply;
 
@@ -161,31 +161,34 @@ class _ReplyLikeButton extends StatefulWidget {
 class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
   @override
   Widget build(BuildContext context) {
-    return Tooltip(
-      message: !widget.reply.isLiked ? 'Like' : 'Unlike',
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: _toggleLike,
-        child: Row(
-          children: [
-            Text(
-              widget.reply.likeCount.toString(),
-              style: !widget.reply.isLiked
-                  ? Theme.of(context).textTheme.subtitle2
-                  : Theme.of(context)
-                      .textTheme
-                      .subtitle2!
-                      .copyWith(color: Theme.of(context).colorScheme.error),
-            ),
-            const SizedBox(width: 5),
-            Icon(
-              Icons.favorite,
-              size: Consts.iconSmall,
-              color: widget.reply.isLiked
-                  ? Theme.of(context).colorScheme.error
-                  : null,
-            ),
-          ],
+    return SizedBox(
+      height: 40,
+      child: Tooltip(
+        message: !widget.reply.isLiked ? 'Like' : 'Unlike',
+        child: InkResponse(
+          radius: 10,
+          onTap: _toggleLike,
+          child: Row(
+            children: [
+              Text(
+                widget.reply.likeCount.toString(),
+                style: !widget.reply.isLiked
+                    ? Theme.of(context).textTheme.subtitle2
+                    : Theme.of(context)
+                        .textTheme
+                        .subtitle2!
+                        .copyWith(color: Theme.of(context).colorScheme.error),
+              ),
+              const SizedBox(width: 5),
+              Icon(
+                Icons.favorite,
+                size: Consts.iconSmall,
+                color: widget.reply.isLiked
+                    ? Theme.of(context).colorScheme.error
+                    : null,
+              ),
+            ],
+          ),
         ),
       ),
     );

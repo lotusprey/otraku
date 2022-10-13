@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/filter/chip_selector.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/filter/filter_tools.dart';
-import 'package:otraku/media/media_grid.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/studio/studio_providers.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/pagination_controller.dart';
-import 'package:otraku/widgets/fields/drop_down_field.dart';
-import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widgets/grids/tile_item_grid.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -20,7 +20,7 @@ import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class StudioView extends ConsumerStatefulWidget {
-  StudioView(this.id, this.name);
+  const StudioView(this.id, this.name);
 
   final int id;
   final String? name;
@@ -49,10 +49,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
   @override
   Widget build(BuildContext context) {
     final refreshControl = SliverRefreshControl(
-      onRefresh: () {
-        ref.invalidate(staffProvider(widget.id));
-        return Future.value();
-      },
+      onRefresh: () => ref.invalidate(staffProvider(widget.id)),
     );
 
     final studio = ref.watch(
@@ -70,123 +67,114 @@ class _StudioViewState extends ConsumerState<StudioView> {
           ],
         ],
       ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-            child: Consumer(
-              builder: (context, ref, _) {
-                ref.listen<AsyncValue>(
-                  studioProvider(widget.id),
-                  (_, s) {
-                    if (s.hasError)
-                      showPopUp(
-                        context,
-                        ConfirmationDialog(
-                          title: 'Could not load studio',
-                          content: s.error.toString(),
-                        ),
-                      );
-                  },
-                );
+      child: ConstrainedView(
+        child: Consumer(
+          builder: (context, ref, _) {
+            ref.listen<AsyncValue>(
+              studioProvider(widget.id),
+              (_, s) {
+                if (s.hasError) {
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Could not load studio',
+                      content: s.error.toString(),
+                    ),
+                  );
+                }
+              },
+            );
 
-                final name = studio?.name ?? widget.name;
-                final titleWidget = name != null
-                    ? SliverToBoxAdapter(
-                        child: GestureDetector(
-                          onTap: () => Toast.copy(context, name),
-                          child: Hero(
-                            tag: widget.id,
-                            child: Text(
-                              name,
-                              style: Theme.of(context).textTheme.headline1,
-                            ),
+            final name = studio?.name ?? widget.name;
+            final titleWidget = name != null
+                ? SliverToBoxAdapter(
+                    child: GestureDetector(
+                      onTap: () => Toast.copy(context, name),
+                      child: Hero(
+                        tag: widget.id,
+                        child: Text(
+                          name,
+                          style: Theme.of(context).textTheme.headline1,
+                        ),
+                      ),
+                    ),
+                  )
+                : null;
+
+            return ref.watch(studioProvider(widget.id)).unwrapPrevious().when(
+                  loading: () => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      if (titleWidget != null) titleWidget,
+                      const SliverFillRemaining(
+                        child: Center(child: Loader()),
+                      ),
+                    ],
+                  ),
+                  error: (_, __) => CustomScrollView(
+                    physics: Consts.physics,
+                    slivers: [
+                      refreshControl,
+                      if (titleWidget != null) titleWidget,
+                      const SliverFillRemaining(
+                        child: Center(child: Text('Could not load studio')),
+                      ),
+                    ],
+                  ),
+                  data: (data) {
+                    final items = <Widget>[
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 20),
+                          child: Text(
+                            '${data.studio.favorites.toString()} favourites',
+                            style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ),
                       )
-                    : null;
+                    ];
+                    final sort =
+                        ref.watch(studioFilterProvider(widget.id)).sort;
 
-                return ref
-                    .watch(studioProvider(widget.id))
-                    .unwrapPrevious()
-                    .when(
-                      loading: () => CustomScrollView(
-                        physics: Consts.physics,
-                        slivers: [
-                          refreshControl,
-                          if (titleWidget != null) titleWidget,
-                          const SliverFillRemaining(
-                            child: Center(child: Loader()),
+                    if (sort == MediaSort.START_DATE ||
+                        sort == MediaSort.START_DATE_DESC ||
+                        sort == MediaSort.END_DATE ||
+                        sort == MediaSort.END_DATE_DESC) {
+                      for (int i = 0; i < data.categories.length; i++) {
+                        items.add(SliverToBoxAdapter(
+                          child: Text(
+                            data.categories.keys.elementAt(i),
+                            style: Theme.of(context).textTheme.headline2,
                           ),
-                        ],
-                      ),
-                      error: (_, __) => CustomScrollView(
-                        physics: Consts.physics,
-                        slivers: [
-                          refreshControl,
-                          if (titleWidget != null) titleWidget,
-                          const SliverFillRemaining(
-                            child: Center(child: Text('Could not load studio')),
-                          ),
-                        ],
-                      ),
-                      data: (data) {
-                        final items = <Widget>[
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 10, bottom: 20),
-                              child: Text(
-                                '${data.studio.favorites.toString()} favourites',
-                                style: Theme.of(context).textTheme.subtitle1,
-                              ),
-                            ),
-                          )
-                        ];
-                        final sort =
-                            ref.watch(studioFilterProvider(widget.id)).sort;
+                        ));
 
-                        if (sort == MediaSort.START_DATE ||
-                            sort == MediaSort.START_DATE_DESC ||
-                            sort == MediaSort.END_DATE ||
-                            sort == MediaSort.END_DATE_DESC) {
-                          for (int i = 0; i < data.categories.length; i++) {
-                            items.add(SliverToBoxAdapter(
-                              child: Text(
-                                data.categories.keys.elementAt(i),
-                                style: Theme.of(context).textTheme.headline2,
-                              ),
-                            ));
+                        final beg = data.categories.values.elementAt(i);
+                        final end = i < data.categories.length - 1
+                            ? data.categories.values.elementAt(i + 1)
+                            : data.media.items.length;
 
-                            final beg = data.categories.values.elementAt(i);
-                            final end = i < data.categories.length - 1
-                                ? data.categories.values.elementAt(i + 1)
-                                : data.media.items.length;
-
-                            items.add(
-                              MediaGrid(data.media.items.sublist(beg, end)),
-                            );
-                          }
-                        } else {
-                          items.add(MediaGrid(data.media.items));
-                        }
-
-                        return CustomScrollView(
-                          physics: Consts.physics,
-                          controller: _ctrl,
-                          slivers: [
-                            refreshControl,
-                            titleWidget!,
-                            ...items,
-                            SliverFooter(loading: data.media.hasNext),
-                          ],
+                        items.add(
+                          TileItemGrid(data.media.items.sublist(beg, end)),
                         );
-                      },
+                      }
+                    } else {
+                      items.add(TileItemGrid(data.media.items));
+                    }
+
+                    return CustomScrollView(
+                      physics: Consts.physics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl,
+                        titleWidget!,
+                        ...items,
+                        SliverFooter(loading: data.media.hasNext),
+                      ],
                     );
-              },
-            ),
-          ),
+                  },
+                );
+          },
         ),
       ),
     );
@@ -194,7 +182,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  _FavoriteButton(this.data);
+  const _FavoriteButton(this.data);
 
   final Studio data;
 
@@ -225,7 +213,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 }
 
 class _FilterButton extends StatelessWidget {
-  _FilterButton(this.id);
+  const _FilterButton(this.id);
 
   final int id;
 
@@ -251,45 +239,70 @@ class _FilterButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 4,
-                builder: (context, scrollCtrl) => GridView(
+                initialHeight: Consts.tapTargetSize * 5,
+                builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,
                   ),
-                  gridDelegate:
-                      const SliverGridDelegateWithMinWidthAndFixedHeight(
-                    minWidth: 155,
-                    height: 75,
-                  ),
                   children: [
-                    SortDropDown(
-                      MediaSort.values,
-                      () => filter.sort.index,
-                      (MediaSort val) => filter = filter.copyWith(sort: val),
+                    Row(
+                      children: [
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: SizedBox(
+                            height: 70,
+                            child: SortDropDown(
+                              MediaSort.values,
+                              () => filter.sort.index,
+                              (MediaSort val) =>
+                                  filter = filter.copyWith(sort: val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: SizedBox(
+                            height: 70,
+                            child: OrderDropDown(
+                              MediaSort.values,
+                              () => filter.sort.index,
+                              (MediaSort val) =>
+                                  filter = filter.copyWith(sort: val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                      ],
                     ),
-                    OrderDropDown(
-                      MediaSort.values,
-                      () => filter.sort.index,
-                      (MediaSort val) => filter = filter.copyWith(sort: val),
+                    const SizedBox(height: 10),
+                    ChipSelector(
+                      title: 'List Presence',
+                      options: const ['On List', 'Not on List'],
+                      selected: filter.onList == null
+                          ? null
+                          : filter.onList!
+                              ? 0
+                              : 1,
+                      onChanged: (val) => filter = filter.copyWith(onList: () {
+                        if (val == null) return null;
+                        return val == 0 ? true : false;
+                      }),
                     ),
-                    ListPresenceDropDown(
-                      value: filter.onList,
-                      onChanged: (val) =>
-                          filter = filter.copyWith(onList: () => val),
-                    ),
-                    DropDownField<bool?>(
+                    ChipSelector(
                       title: 'Main Studio',
-                      value: filter.isMain,
-                      items: const {
-                        'Doesn\'t matter': null,
-                        'Is Main': true,
-                        'Is Not Main': false,
-                      },
-                      onChanged: (val) =>
-                          filter = filter.copyWith(isMain: () => val),
+                      options: const ['Is Main', 'Is Not Main'],
+                      selected: filter.isMain == null
+                          ? null
+                          : filter.isMain!
+                              ? 0
+                              : 1,
+                      onChanged: (val) => filter = filter.copyWith(isMain: () {
+                        if (val == null) return null;
+                        return val == 0 ? true : false;
+                      }),
                     ),
                   ],
                 ),

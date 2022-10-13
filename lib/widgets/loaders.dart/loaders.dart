@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/shimmer.dart';
 
@@ -14,17 +14,16 @@ class Loader extends StatelessWidget {
           height: 15,
           decoration: BoxDecoration(
             borderRadius: Consts.borderRadiusMin,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceVariant,
           ),
         ),
       ));
 }
 
 class SliverRefreshControl extends StatelessWidget {
-  const SliverRefreshControl({required this.onRefresh, this.canRefresh});
+  const SliverRefreshControl({required this.onRefresh});
 
-  final Future<void> Function() onRefresh;
-  final bool Function()? canRefresh;
+  final void Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +32,9 @@ class SliverRefreshControl extends StatelessWidget {
       sliver: CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
         refreshTriggerPullDistance: 160,
-        onRefresh: () async {
-          if (canRefresh?.call() ?? true) await onRefresh();
+        onRefresh: () {
+          onRefresh();
+          return Future.value();
         },
         builder: (
           _,

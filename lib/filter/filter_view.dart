@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/constants/entry_sort.dart';
-import 'package:otraku/constants/anime_format.dart';
-import 'package:otraku/constants/media_sort.dart';
+import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/filter/year_range_picker.dart';
+import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/tag/tag_provider.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/constants/manga_format.dart';
-import 'package:otraku/constants/media_status.dart';
-import 'package:otraku/constants/consts.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
-import 'package:otraku/widgets/fields/chip_fields.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
@@ -21,7 +18,7 @@ import 'package:otraku/widgets/grids/chip_grids.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class _FilterView<T extends ApplicableMediaFilter<T>> extends StatefulWidget {
-  _FilterView({
+  const _FilterView({
     required this.filter,
     required this.onChanged,
     required this.builder,
@@ -37,7 +34,7 @@ class _FilterView<T extends ApplicableMediaFilter<T>> extends StatefulWidget {
 
 class __FilterViewState<T extends ApplicableMediaFilter<T>>
     extends State<_FilterView<T>> {
-  late T _filter = widget.filter.copy();
+  late final T _filter = widget.filter.copy();
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +65,7 @@ class __FilterViewState<T extends ApplicableMediaFilter<T>>
 }
 
 class CollectionFilterView extends StatelessWidget {
-  CollectionFilterView({required this.filter, required this.onChanged});
+  const CollectionFilterView({required this.filter, required this.onChanged});
 
   final CollectionFilter filter;
   final void Function(CollectionFilter) onChanged;
@@ -80,15 +77,11 @@ class CollectionFilterView extends StatelessWidget {
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(
-          left: 10,
-          right: 10,
-          top: 20,
-          bottom: 60,
-        ),
+        padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
           GridView(
             shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 140,
@@ -105,34 +98,47 @@ class CollectionFilterView extends StatelessWidget {
                 () => filter.sort.index,
                 (EntrySort val) => filter.sort = val,
               ),
-              CountryDropDown(filter.country, (val) => filter.country = val),
             ],
           ),
-          EnumChipGrid(
+          const SizedBox(height: 10),
+          ChipEnumMultiSelector(
             title: 'Statuses',
-            enumValues: MediaStatus.values,
+            options: MediaStatus.values,
             selected: filter.statuses,
           ),
-          EnumChipGrid(
+          ChipEnumMultiSelector(
             title: 'Formats',
-            enumValues:
-                filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
-          Consumer(
-            builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                  loading: () => const Loader(),
-                  error: (_, __) => const Text('Could not load tags'),
-                  data: (tags) => ChipTagGrid(
-                    inclusiveGenres: filter.genreIn,
-                    exclusiveGenres: filter.genreNotIn,
-                    inclusiveTags: filter.tagIn,
-                    exclusiveTags: filter.tagNotIn,
-                    tags: tags,
-                    tagIdIn: filter.tagIdIn,
-                    tagIdNotIn: filter.tagIdNotIn,
+          const Divider(indent: 15, endIndent: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                    loading: () => const Loader(),
+                    error: (_, __) => const Text('Could not load tags'),
+                    data: (tags) => ChipTagGrid(
+                      inclusiveGenres: filter.genreIn,
+                      exclusiveGenres: filter.genreNotIn,
+                      inclusiveTags: filter.tagIn,
+                      exclusiveTags: filter.tagNotIn,
+                      tags: tags,
+                      tagIdIn: filter.tagIdIn,
+                      tagIdNotIn: filter.tagIdNotIn,
+                    ),
                   ),
-                ),
+            ),
+          ),
+          const Divider(indent: 15, endIndent: 15),
+          ChipSelector(
+            title: 'Country',
+            options: OriginCountry.values
+                .map((v) => Convert.clarifyEnum(v.name)!)
+                .toList(),
+            selected: filter.country?.index,
+            onChanged: (val) => filter.country =
+                val == null ? null : OriginCountry.values.elementAt(val),
           ),
         ],
       ),
@@ -140,24 +146,24 @@ class CollectionFilterView extends StatelessWidget {
   }
 }
 
-class ExploreFilterView extends StatelessWidget {
-  ExploreFilterView({required this.filter, required this.onChanged});
+class DiscoverFilterView extends StatelessWidget {
+  const DiscoverFilterView({required this.filter, required this.onChanged});
 
-  final ExploreFilter filter;
-  final void Function(ExploreFilter) onChanged;
+  final DiscoverFilter filter;
+  final void Function(DiscoverFilter) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return _FilterView<ExploreFilter>(
+    return _FilterView<DiscoverFilter>(
       filter: filter,
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding:
-            const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 60),
+        padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
           GridView(
             shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 140,
@@ -174,108 +180,92 @@ class ExploreFilterView extends StatelessWidget {
                 () => filter.sort.index,
                 (MediaSort val) => filter.sort = val,
               ),
-              CountryDropDown(filter.country, (val) => filter.country = val),
-              ListPresenceDropDown(
-                value: filter.onList,
-                onChanged: (val) => filter.onList = val,
-              ),
             ],
           ),
-          EnumChipGrid(
+          const SizedBox(height: 10),
+          ChipEnumMultiSelector(
             title: 'Statuses',
-            enumValues: MediaStatus.values,
+            options: MediaStatus.values,
             selected: filter.statuses,
           ),
-          EnumChipGrid(
+          ChipEnumMultiSelector(
             title: 'Formats',
-            enumValues:
-                filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
-          Consumer(
-            builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                  loading: () => const Loader(),
-                  error: (_, __) => const Text('Could not load tags'),
-                  data: (tags) => ChipTagGrid(
-                    inclusiveGenres: filter.genreIn,
-                    exclusiveGenres: filter.genreNotIn,
-                    inclusiveTags: filter.tagIn,
-                    exclusiveTags: filter.tagNotIn,
+          if (filter.ofAnime)
+            ChipSelector(
+              title: 'Season',
+              options: MediaSeason.values
+                  .map((v) => Convert.clarifyEnum(v.name)!)
+                  .toList(),
+              selected: filter.season?.index,
+              onChanged: (selected) => filter.season = selected != null
+                  ? MediaSeason.values.elementAt(selected)
+                  : null,
+            ),
+          const Divider(indent: 15, endIndent: 15),
+          YearRangePicker(
+            title: 'Start Year',
+            from: filter.startYearFrom,
+            to: filter.startYearTo,
+            onChanged: (from, to) {
+              filter.startYearFrom = from;
+              filter.startYearTo = to;
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Consumer(
+              builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                    loading: () => const Loader(),
+                    error: (_, __) => const Text('Could not load tags'),
+                    data: (tags) => ChipTagGrid(
+                      inclusiveGenres: filter.genreIn,
+                      exclusiveGenres: filter.genreNotIn,
+                      inclusiveTags: filter.tagIn,
+                      exclusiveTags: filter.tagNotIn,
+                    ),
                   ),
-                ),
+            ),
+          ),
+          const Divider(indent: 15, endIndent: 15),
+          ChipSelector(
+            title: 'Country',
+            options: OriginCountry.values
+                .map((v) => Convert.clarifyEnum(v.name)!)
+                .toList(),
+            selected: filter.country?.index,
+            onChanged: (val) => filter.country =
+                val == null ? null : OriginCountry.values.elementAt(val),
+          ),
+          ChipEnumMultiSelector(
+            title: 'Sources',
+            options: MediaSource.values,
+            selected: filter.sources,
+          ),
+          ChipSelector(
+            title: 'List Presence',
+            options: const ['On List', 'Not on List'],
+            selected: filter.onList == null
+                ? null
+                : filter.onList!
+                    ? 0
+                    : 1,
+            onChanged: (val) => filter.onList = val == null
+                ? null
+                : val == 0
+                    ? true
+                    : false,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class EnumChipGrid<T extends Enum> extends StatelessWidget {
-  const EnumChipGrid({
-    required this.title,
-    required this.enumValues,
-    required this.selected,
-  });
-
-  final String title;
-  final List<T> enumValues;
-  final List<String> selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final options = <String>[];
-    final values = <String>[];
-    for (final v in enumValues) {
-      values.add(v.name);
-      options.add(Convert.clarifyEnum(values.last)!);
-    }
-
-    return ChipGrid(
-      title: title,
-      placeholder: title.toLowerCase(),
-      names: selected,
-      onEdit: (selected) => showSheet(
-        context,
-        _SelectionSheet(options: options, values: values, selected: selected),
-      ),
-    );
-  }
-}
-
-class _SelectionSheet<T> extends StatelessWidget {
-  _SelectionSheet({
-    required this.options,
-    required this.values,
-    required this.selected,
-  });
-
-  final List<String> options;
-  final List<T> values;
-  final List<T> selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return OpaqueSheet(
-      initialHeight: options.length * Consts.tapTargetSize + 20,
-      builder: (context, scrollCtrl) => ListView.builder(
-        controller: scrollCtrl,
-        padding: Consts.padding,
-        itemCount: options.length,
-        itemExtent: Consts.tapTargetSize,
-        itemBuilder: (_, index) => CheckBoxField(
-          title: options[index],
-          initial: selected.contains(values[index]),
-          onChanged: (val) => val
-              ? selected.add(values[index])
-              : selected.remove(values[index]),
-        ),
       ),
     );
   }
 }
 
 class TagSheetBody extends ConsumerStatefulWidget {
-  TagSheetBody({
+  const TagSheetBody({
     required this.inclusiveGenres,
     required this.exclusiveGenres,
     required this.inclusiveTags,
@@ -290,10 +280,10 @@ class TagSheetBody extends ConsumerStatefulWidget {
   final ScrollController scrollCtrl;
 
   @override
-  _TagSheetBodyState createState() => _TagSheetBodyState();
+  TagSheetBodyState createState() => TagSheetBodyState();
 }
 
-class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
+class TagSheetBodyState extends ConsumerState<TagSheetBody> {
   late final TagGroup _tags;
   late final List<int> _categoryIndices;
   late final List<int> _itemIndices;
@@ -306,8 +296,9 @@ class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
     _tags = ref.read(tagsProvider).valueOrNull!;
     _itemIndices = [..._tags.categoryItems[_index]];
     _categoryIndices = [];
-    for (int i = 0; i < _tags.categoryNames.length; i++)
+    for (int i = 0; i < _tags.categoryNames.length; i++) {
       _categoryIndices.add(i);
+    }
   }
 
   @override
@@ -346,11 +337,11 @@ class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
                         ? -1
                         : 0,
                 onChanged: (state) {
-                  if (state == 0)
+                  if (state == 0) {
                     exclusive.remove(name);
-                  else if (state == 1)
+                  } else if (state == 1) {
                     inclusive.add(name);
-                  else {
+                  } else {
                     inclusive.remove(name);
                     exclusive.add(name);
                   }
@@ -385,14 +376,16 @@ class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
                         _itemIndices.clear();
 
                         categoryLoop:
-                        for (int i = 0; i < _tags.categoryNames.length; i++)
-                          for (final j in _tags.categoryItems[i])
+                        for (int i = 0; i < _tags.categoryNames.length; i++) {
+                          for (final j in _tags.categoryItems[i]) {
                             if (_tags.names[j]
                                 .toLowerCase()
                                 .contains(_filter)) {
                               _categoryIndices.add(i);
                               continue categoryLoop;
                             }
+                          }
+                        }
 
                         if (_categoryIndices.isEmpty) {
                           _index = 0;
@@ -400,13 +393,16 @@ class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
                           return;
                         }
 
-                        if (_index >= _categoryIndices.length)
+                        if (_index >= _categoryIndices.length) {
                           _index = _categoryIndices.length - 1;
+                        }
 
                         final itemsIndex = _categoryIndices[_index];
-                        for (final i in _tags.categoryItems[itemsIndex])
-                          if (_tags.names[i].toLowerCase().contains(_filter))
+                        for (final i in _tags.categoryItems[itemsIndex]) {
+                          if (_tags.names[i].toLowerCase().contains(_filter)) {
                             _itemIndices.add(i);
+                          }
+                        }
 
                         setState(() {});
                       },
@@ -430,10 +426,11 @@ class _TagSheetBodyState extends ConsumerState<TagSheetBody> {
                             _itemIndices.clear();
 
                             final itemsIndex = _categoryIndices[_index];
-                            for (final i in _tags.categoryItems[itemsIndex])
+                            for (final i in _tags.categoryItems[itemsIndex]) {
                               if (_tags.names[i]
                                   .toLowerCase()
                                   .contains(_filter)) _itemIndices.add(i);
+                            }
 
                             setState(() {});
                           },

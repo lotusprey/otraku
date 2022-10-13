@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/constants/consts.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -9,9 +9,10 @@ import 'package:otraku/widgets/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:otraku/widgets/text_rail.dart';
 
 class UserHeader extends StatelessWidget {
-  UserHeader({
+  const UserHeader({
     required this.id,
     required this.user,
     required this.isMe,
@@ -83,7 +84,7 @@ class UserHeader extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      if (user!.modRoles.isNotEmpty)
+                      if (user!.modRoles.isNotEmpty) {
                         showPopUp(
                           context,
                           TextDialog(
@@ -91,8 +92,12 @@ class UserHeader extends StatelessWidget {
                             text: user!.modRoles.join(', '),
                           ),
                         );
+                      }
                     },
-                    child: TextRail(textRailItems),
+                    child: TextRail(
+                      textRailItems,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
                   ),
               ]
             : [],
@@ -102,7 +107,7 @@ class UserHeader extends StatelessWidget {
 }
 
 class _FollowButton extends StatefulWidget {
-  _FollowButton(this.user);
+  const _FollowButton(this.user);
 
   final User user;
 

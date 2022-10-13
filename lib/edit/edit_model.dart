@@ -1,5 +1,5 @@
-import 'package:otraku/collection/entry.dart';
-import 'package:otraku/settings/user_settings.dart';
+import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 
 class Edit {
@@ -28,24 +28,33 @@ class Edit {
   factory Edit(Map<String, dynamic> map, UserSettings settings) {
     final customLists = <String, bool>{};
     if (map['mediaListEntry']?['customLists'] != null) {
-      for (final e in map['mediaListEntry']['customLists'].entries)
+      for (final e in map['mediaListEntry']['customLists'].entries) {
         customLists[e.key] = e.value;
+      }
     } else {
-      if (map['type'] == 'ANIME')
-        for (final c in settings.animeCustomLists) customLists[c] = false;
-      else
-        for (final c in settings.mangaCustomLists) customLists[c] = false;
+      if (map['type'] == 'ANIME') {
+        for (final c in settings.animeCustomLists) {
+          customLists[c] = false;
+        }
+      } else {
+        for (final c in settings.mangaCustomLists) {
+          customLists[c] = false;
+        }
+      }
     }
 
     final advancedScores = <String, double>{};
     if (map['mediaListEntry']?['advancedScores'] != null) {
-      for (final e in map['mediaListEntry']['advancedScores'].entries)
+      for (final e in map['mediaListEntry']['advancedScores'].entries) {
         advancedScores[e.key] = e.value.toDouble();
+      }
     } else if (settings.advancedScoringEnabled) {
-      for (final a in settings.advancedScores) advancedScores[a] = 0;
+      for (final a in settings.advancedScores) {
+        advancedScores[a] = 0;
+      }
     }
 
-    if (map['mediaListEntry'] == null)
+    if (map['mediaListEntry'] == null) {
       return Edit._(
         type: map['type'],
         mediaId: map['id'],
@@ -54,6 +63,7 @@ class Edit {
         customLists: customLists,
         advancedScores: advancedScores,
       );
+    }
 
     return Edit._(
       type: map['type'],
@@ -110,21 +120,23 @@ class Edit {
   /// [progressVolumes] and [completedAd] will be modified appropriately.
   Edit copy([complete = false]) {
     DateTime? startedAtCopy;
-    if (startedAt != null)
+    if (startedAt != null) {
       startedAtCopy = DateTime(
         startedAt!.year,
         startedAt!.month,
         startedAt!.day,
       );
+    }
     DateTime? completedAtCopy;
     if (complete) {
       completedAtCopy = DateTime.now();
-    } else if (completedAt != null)
+    } else if (completedAt != null) {
       completedAtCopy = DateTime(
         completedAt!.year,
         completedAt!.month,
         completedAt!.day,
       );
+    }
 
     return Edit._(
       mediaId: mediaId,
@@ -177,8 +189,8 @@ class Edit {
         score: score ?? this.score,
         repeat: repeat ?? this.repeat,
         notes: notes ?? this.notes,
-        startedAt: startedAt?.call() ?? this.startedAt,
-        completedAt: completedAt?.call() ?? this.completedAt,
+        startedAt: startedAt != null ? startedAt() : this.startedAt,
+        completedAt: completedAt != null ? completedAt() : this.completedAt,
         private: private ?? this.private,
         hiddenFromStatusLists:
             hiddenFromStatusLists ?? this.hiddenFromStatusLists,

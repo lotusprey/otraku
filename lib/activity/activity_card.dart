@@ -5,10 +5,10 @@ import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
-import 'package:otraku/constants/consts.dart';
-import 'package:otraku/constants/explorable.dart';
-import 'package:otraku/utils/settings.dart';
-import 'package:otraku/widgets/explore_indexer.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/utils/options.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -27,38 +27,35 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final body = Container(
-      padding: Consts.padding,
+    final body = Card(
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: Consts.borderRadiusMin,
-      ),
-      child: Column(
-        children: [
-          if (activity.media != null)
-            _ActivityMediaBox(activity.media!, activity.text)
-          else
-            UnconstrainedBox(
-              constrainedAxis: Axis.horizontal,
-              alignment: Alignment.topLeft,
-              child: HtmlContent(activity.text),
-            ),
-          const SizedBox(height: 5),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  activity.createdAt,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        child: Column(
+          children: [
+            if (activity.media != null)
+              _ActivityMediaBox(activity.media!, activity.text)
+            else
+              UnconstrainedBox(
+                constrainedAxis: Axis.horizontal,
+                alignment: Alignment.topLeft,
+                child: HtmlContent(activity.text),
               ),
-              footer,
-            ],
-          ),
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    activity.createdAt,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ),
+                footer,
+              ],
+            ),
+          ],
+        ),
       ),
     );
 
@@ -70,10 +67,10 @@ class ActivityCard extends StatelessWidget {
         Row(
           children: [
             Flexible(
-              child: ExploreIndexer(
+              child: LinkTile(
                 id: activity.agent.id,
-                text: activity.agent.imageUrl,
-                explorable: Explorable.user,
+                info: activity.agent.imageUrl,
+                discoverType: DiscoverType.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -107,10 +104,10 @@ class ActivityCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Icon(Icons.arrow_right_alt),
               ),
-              ExploreIndexer(
+              LinkTile(
                 id: activity.reciever!.id,
-                text: activity.reciever!.imageUrl,
-                explorable: Explorable.user,
+                info: activity.reciever!.imageUrl,
+                discoverType: DiscoverType.user,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
                   child: FadeImage(
@@ -142,12 +139,13 @@ class _ActivityMediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExploreIndexer(
+    return LinkTile(
       id: activityMedia.id,
-      text: activityMedia.imageUrl,
-      explorable: activityMedia.isAnime ? Explorable.anime : Explorable.manga,
+      info: activityMedia.imageUrl,
+      discoverType:
+          activityMedia.isAnime ? DiscoverType.anime : DiscoverType.manga,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: 108),
+        constraints: const BoxConstraints(maxHeight: 108),
         child: Row(
           children: [
             ClipRRect(
@@ -224,60 +222,68 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
     return Row(
       children: [
-        IconButton(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          constraints: const BoxConstraints(maxHeight: Consts.iconSmall),
-          splashColor: Colors.transparent,
-          tooltip: 'More',
-          icon: const Icon(
-            Ionicons.ellipsis_horizontal,
-            size: Consts.iconSmall,
-          ),
-          onPressed: _showMoreSheet,
-        ),
-        Tooltip(
-          message: 'Replies',
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: widget.onOpenReplies,
-            child: Row(
-              children: [
-                Text(
-                  activity.replyCount.toString(),
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-                const SizedBox(width: 5),
-                const Icon(Ionicons.chatbox, size: Consts.iconSmall),
-              ],
+        SizedBox(
+          height: 40,
+          child: Tooltip(
+            message: 'More',
+            child: InkResponse(
+              radius: 10,
+              onTap: _showMoreSheet,
+              child: const Icon(
+                Ionicons.ellipsis_horizontal,
+                size: Consts.iconSmall,
+              ),
             ),
           ),
         ),
         const SizedBox(width: 10),
-        Tooltip(
-          message: !activity.isLiked ? 'Like' : 'Unlike',
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: _toggleLike,
-            child: Row(
-              children: [
-                Text(
-                  activity.likeCount.toString(),
-                  style: !activity.isLiked
-                      ? Theme.of(context).textTheme.subtitle2
-                      : Theme.of(context)
-                          .textTheme
-                          .subtitle2!
-                          .copyWith(color: Theme.of(context).colorScheme.error),
-                ),
-                const SizedBox(width: 5),
-                Icon(
-                  Icons.favorite,
-                  size: Consts.iconSmall,
-                  color: activity.isLiked
-                      ? Theme.of(context).colorScheme.error
-                      : null,
-                ),
-              ],
+        SizedBox(
+          height: 40,
+          child: Tooltip(
+            message: 'Replies',
+            child: InkResponse(
+              radius: 10,
+              onTap: widget.onOpenReplies,
+              child: Row(
+                children: [
+                  Text(
+                    activity.replyCount.toString(),
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                  const SizedBox(width: 5),
+                  const Icon(Ionicons.chatbox, size: Consts.iconSmall),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        SizedBox(
+          height: 40,
+          child: Tooltip(
+            message: !activity.isLiked ? 'Like' : 'Unlike',
+            child: InkResponse(
+              radius: 10,
+              onTap: _toggleLike,
+              child: Row(
+                children: [
+                  Text(
+                    activity.likeCount.toString(),
+                    style: !activity.isLiked
+                        ? Theme.of(context).textTheme.subtitle2
+                        : Theme.of(context).textTheme.subtitle2!.copyWith(
+                            color: Theme.of(context).colorScheme.error),
+                  ),
+                  const SizedBox(width: 5),
+                  Icon(
+                    Icons.favorite,
+                    size: Consts.iconSmall,
+                    color: activity.isLiked
+                        ? Theme.of(context).colorScheme.error
+                        : null,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -327,7 +333,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           if (activity.isOwned) ...[
             if (activity.type == ActivityType.TEXT ||
                 activity.type == ActivityType.MESSAGE &&
-                    activity.agent.id == Settings().id)
+                    activity.agent.id == Options().id)
               FixedGradientSheetTile(
                 text: 'Edit',
                 icon: Icons.edit_outlined,

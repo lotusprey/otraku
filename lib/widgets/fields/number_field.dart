@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:otraku/constants/consts.dart';
 
 class NumberField extends StatefulWidget {
-  NumberField({required this.onChanged, this.initial = 0, this.maxValue});
+  const NumberField({required this.onChanged, this.initial = 0, this.maxValue});
 
   final num initial;
   final num? maxValue;
   final void Function(num) onChanged;
 
   @override
-  _NumberFieldState createState() => _NumberFieldState();
+  NumberFieldState createState() => NumberFieldState();
 }
 
-class _NumberFieldState extends State<NumberField> {
+class NumberFieldState extends State<NumberField> {
   late final TextEditingController _ctrl;
 
   @override
@@ -26,7 +25,7 @@ class _NumberFieldState extends State<NumberField> {
   void didUpdateWidget(covariant NumberField oldWidget) {
     super.didUpdateWidget(oldWidget);
     final text = widget.initial.toString();
-    if (text != _ctrl.text)
+    if (text != _ctrl.text) {
       _ctrl.value = TextEditingValue(
         text: text,
         selection: TextSelection(
@@ -34,6 +33,7 @@ class _NumberFieldState extends State<NumberField> {
           extentOffset: text.length,
         ),
       );
+    }
   }
 
   @override
@@ -43,16 +43,17 @@ class _NumberFieldState extends State<NumberField> {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: Consts.borderRadiusMin,
-        ),
+  Widget build(BuildContext context) => Card(
         child: Row(
           children: [
-            IconButton(
-              icon: const Icon(Icons.remove),
-              onPressed: () => _validateInput(_ctrl.text, -1),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                tooltip: 'Decrement',
+                icon: const Icon(Icons.remove),
+                onPressed: () => _validateInput(_ctrl.text, -1),
+                padding: const EdgeInsets.all(0),
+              ),
             ),
             Expanded(
               child: TextField(
@@ -65,14 +66,19 @@ class _NumberFieldState extends State<NumberField> {
                 style: Theme.of(context).textTheme.bodyText2,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.all(0),
+                  contentPadding: EdgeInsets.all(0),
                 ),
                 onChanged: _validateInput,
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () => _validateInput(_ctrl.text, 1),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                tooltip: 'Increment',
+                icon: const Icon(Icons.add),
+                onPressed: () => _validateInput(_ctrl.text, 1),
+                padding: const EdgeInsets.all(0),
+              ),
             ),
           ],
         ),
@@ -82,16 +88,16 @@ class _NumberFieldState extends State<NumberField> {
     num result;
     bool needCursorReset = true;
 
-    if (value.isEmpty)
+    if (value.isEmpty) {
       result = 0;
-    else {
+    } else {
       final number = num.parse(value) + add;
 
-      if (widget.maxValue != null && number > widget.maxValue!)
+      if (widget.maxValue != null && number > widget.maxValue!) {
         result = widget.maxValue!;
-      else if (number < 0)
+      } else if (number < 0) {
         result = 0;
-      else {
+      } else {
         result = number;
         if (add == 0 && int.tryParse(value) == null) needCursorReset = false;
       }

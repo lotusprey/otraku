@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const _minYear = 1970.0;
+const _minYear = 1950.0;
 
 class YearRangePicker extends StatefulWidget {
   const YearRangePicker({

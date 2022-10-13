@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_tools.dart';
-import 'package:otraku/filter/year_picker.dart';
+import 'package:otraku/filter/year_range_picker.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
 import 'package:otraku/tag/tag_provider.dart';
@@ -193,16 +193,17 @@ class DiscoverFilterView extends StatelessWidget {
             options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
             selected: filter.formats,
           ),
-          ChipSelector(
-            title: 'Season',
-            options: MediaSeason.values
-                .map((v) => Convert.clarifyEnum(v.name)!)
-                .toList(),
-            selected: filter.season?.index,
-            onChanged: (selected) => filter.season = selected != null
-                ? MediaSeason.values.elementAt(selected)
-                : null,
-          ),
+          if (filter.ofAnime)
+            ChipSelector(
+              title: 'Season',
+              options: MediaSeason.values
+                  .map((v) => Convert.clarifyEnum(v.name)!)
+                  .toList(),
+              selected: filter.season?.index,
+              onChanged: (selected) => filter.season = selected != null
+                  ? MediaSeason.values.elementAt(selected)
+                  : null,
+            ),
           const Divider(indent: 15, endIndent: 15),
           YearRangePicker(
             title: 'Start Year',

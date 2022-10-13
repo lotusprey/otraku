@@ -14,7 +14,9 @@ final collectionProvider = ChangeNotifierProvider.autoDispose.family(
 final entriesProvider = Provider.autoDispose.family(
   (ref, CollectionTag tag) {
     final collection = ref.watch(collectionProvider(tag));
-    if (!collection.state.hasValue) return const <Entry>[];
+    if (!collection.state.hasValue || collection.lists.isEmpty) {
+      return const <Entry>[];
+    }
 
     final filter = ref.watch(collectionFilterProvider(tag));
     final search = (ref.watch(searchProvider(tag)) ?? '').toLowerCase();

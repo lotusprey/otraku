@@ -23,16 +23,10 @@ class FavoritesView extends ConsumerStatefulWidget {
 }
 
 class _FavoritesViewState extends ConsumerState<FavoritesView> {
-  late final PaginationController _ctrl;
   FavoriteType _tab = FavoriteType.anime;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PaginationController(
-      loadMore: () => ref.read(favoritesProvider(widget.id)).fetch(),
-    );
-  }
+  late final _ctrl = PaginationController(
+    loadMore: () => ref.read(favoritesProvider(widget.id)).fetch(),
+  );
 
   @override
   Widget build(BuildContext context) {

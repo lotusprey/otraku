@@ -25,7 +25,7 @@ class StaffCharactersTab extends StatelessWidget {
     return PageLayout(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
-        children: [_FilterButton(id)],
+        children: [_FilterButton(id, false)],
       ),
       child: Center(
         child: Padding(
@@ -101,7 +101,7 @@ class StaffRolesTab extends StatelessWidget {
     return PageLayout(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
-        children: [_FilterButton(id)],
+        children: [_FilterButton(id, true)],
       ),
       child: Center(
         child: ConstrainedBox(
@@ -166,9 +166,10 @@ class StaffRolesTab extends StatelessWidget {
 }
 
 class _FilterButton extends StatelessWidget {
-  const _FilterButton(this.id);
+  const _FilterButton(this.id, this.full);
 
   final int id;
+  final bool full;
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +193,7 @@ class _FilterButton extends StatelessWidget {
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 4,
+                initialHeight: Consts.tapTargetSize * (full ? 5.5 : 4),
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Consts.physics,
@@ -227,6 +228,23 @@ class _FilterButton extends StatelessWidget {
                         const SizedBox(width: 10),
                       ],
                     ),
+                    if (full) ...[
+                      const SizedBox(height: 10),
+                      ChipSelector(
+                        title: 'Type',
+                        options: const ['Anime', 'Manga'],
+                        selected: filter.ofAnime == null
+                            ? null
+                            : filter.ofAnime!
+                                ? 0
+                                : 1,
+                        onChanged: (val) =>
+                            filter = filter.copyWith(ofAnime: () {
+                          if (val == null) return null;
+                          return val == 0 ? true : false;
+                        }),
+                      ),
+                    ],
                     const SizedBox(height: 10),
                     ChipSelector(
                       title: 'List Presence',

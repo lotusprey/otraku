@@ -46,7 +46,7 @@ class SettingsAppTab extends StatelessWidget {
         const ThemePreview(),
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             child: CheckBoxField(
               title: 'Pure Black Dark Theme',
               initial: Options().pureBlackDarkTheme,

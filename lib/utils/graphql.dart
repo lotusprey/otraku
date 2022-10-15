@@ -255,7 +255,7 @@ abstract class GqlQuery {
   ''';
 
   static const staff = r'''
-    query Staff($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
+    query Staff($id: Int, $sort: [MediaSort], $page: Int = 1, $type: MediaType, $onList: Boolean,
         $withInfo: Boolean = false, $withCharacters: Boolean = false, $withRoles: Boolean = false) {
       Staff(id: $id) {
         ...info @include(if: $withInfo)
@@ -277,7 +277,7 @@ abstract class GqlQuery {
             }
           }
         }
-        staffMedia(page: $page, sort: $sort, onList: $onList) @include(if: $withRoles) {
+        staffMedia(page: $page, sort: $sort, type: $type, onList: $onList) @include(if: $withRoles) {
           pageInfo {hasNextPage}
           edges {
             staffRole

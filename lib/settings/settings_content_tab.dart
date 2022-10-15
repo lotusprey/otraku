@@ -11,11 +11,11 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsContentTab extends StatelessWidget {
-  const SettingsContentTab(this.scrollCtrl, this.settings, this.shouldUpdate);
+  const SettingsContentTab(this.scrollCtrl, this.settings, this.scheduleUpdate);
 
   final ScrollController scrollCtrl;
   final UserSettings settings;
-  final void Function() shouldUpdate;
+  final void Function() scheduleUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class SettingsContentTab extends StatelessWidget {
                 initial: settings.restrictMessagesToFollowing,
                 onChanged: (val) {
                   settings.restrictMessagesToFollowing = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
             ),
@@ -65,7 +65,7 @@ class SettingsContentTab extends StatelessWidget {
                 },
                 onChanged: (String val) {
                   settings.titleLanguage = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
               DropDownField(
@@ -78,7 +78,7 @@ class SettingsContentTab extends StatelessWidget {
                 },
                 onChanged: (String val) {
                   settings.staffNameLanguage = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
               DropDownField(
@@ -101,7 +101,7 @@ class SettingsContentTab extends StatelessWidget {
                 },
                 onChanged: (int val) {
                   settings.activityMergeTime = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
             ]),
@@ -114,7 +114,7 @@ class SettingsContentTab extends StatelessWidget {
                 initial: settings.airingNotifications,
                 onChanged: (val) {
                   settings.airingNotifications = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
               CheckBoxField(
@@ -122,7 +122,7 @@ class SettingsContentTab extends StatelessWidget {
                 initial: settings.displayAdultContent,
                 onChanged: (val) {
                   settings.displayAdultContent = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
             ]),
@@ -139,7 +139,7 @@ class SettingsContentTab extends StatelessWidget {
                 ),
                 onChanged: (val) {
                   settings.scoreFormat = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
               DropDownField<EntrySort>(
@@ -151,7 +151,7 @@ class SettingsContentTab extends StatelessWidget {
                 ),
                 onChanged: (val) {
                   settings.defaultSort = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
             ]),
@@ -164,7 +164,7 @@ class SettingsContentTab extends StatelessWidget {
                 initial: settings.splitCompletedAnime,
                 onChanged: (val) {
                   settings.splitCompletedAnime = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
               CheckBoxField(
@@ -172,7 +172,7 @@ class SettingsContentTab extends StatelessWidget {
                 initial: settings.splitCompletedManga,
                 onChanged: (val) {
                   settings.splitCompletedManga = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
               CheckBoxField(
@@ -180,7 +180,7 @@ class SettingsContentTab extends StatelessWidget {
                 initial: settings.advancedScoringEnabled,
                 onChanged: (val) {
                   settings.advancedScoringEnabled = val;
-                  shouldUpdate();
+                  scheduleUpdate();
                 },
               ),
             ]),
@@ -190,6 +190,7 @@ class SettingsContentTab extends StatelessWidget {
               title: 'Advanced Scores',
               placeholder: 'advanced scores',
               names: settings.advancedScores,
+              onChanged: scheduleUpdate,
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
@@ -205,7 +206,7 @@ class SettingsContentTab extends StatelessWidget {
                   initial: e.value,
                   onChanged: (val) {
                     settings.disabledListActivity[e.key] = val;
-                    shouldUpdate();
+                    scheduleUpdate();
                   },
                 ),
             ]),

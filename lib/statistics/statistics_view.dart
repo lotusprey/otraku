@@ -269,13 +269,7 @@ class _BarChart extends StatefulWidget {
 }
 
 class _BarChartState extends State<_BarChart> {
-  int _tab = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _tab = widget.initialTab;
-  }
+  late int _tab = widget.initialTab;
 
   @override
   Widget build(BuildContext context) {

@@ -10,12 +10,12 @@ class SettingsNotificationsTab extends StatelessWidget {
   const SettingsNotificationsTab(
     this.scrollCtrl,
     this.settings,
-    this.shouldUpdate,
+    this.scheduleUpdate,
   );
 
   final ScrollController scrollCtrl;
   final UserSettings settings;
-  final void Function() shouldUpdate;
+  final void Function() scheduleUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class SettingsNotificationsTab extends StatelessWidget {
                   initial: e.value,
                   onChanged: (val) {
                     settings.notificationOptions[e.key] = val;
-                    shouldUpdate();
+                    scheduleUpdate();
                   },
                 );
               },

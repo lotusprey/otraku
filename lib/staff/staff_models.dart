@@ -78,14 +78,24 @@ class Staff {
 }
 
 class StaffFilter {
-  StaffFilter({this.sort = MediaSort.START_DATE_DESC, this.onList});
+  StaffFilter({
+    this.sort = MediaSort.START_DATE_DESC,
+    this.ofAnime,
+    this.onList,
+  });
 
   final MediaSort sort;
+  final bool? ofAnime;
   final bool? onList;
 
-  StaffFilter copyWith({MediaSort? sort, bool? Function()? onList}) =>
+  StaffFilter copyWith({
+    MediaSort? sort,
+    bool? Function()? ofAnime,
+    bool? Function()? onList,
+  }) =>
       StaffFilter(
         sort: sort ?? this.sort,
+        ofAnime: ofAnime == null ? this.ofAnime : ofAnime(),
         onList: onList == null ? this.onList : onList(),
       );
 }

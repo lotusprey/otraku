@@ -21,19 +21,13 @@ class CharacterView extends ConsumerStatefulWidget {
 }
 
 class _CharacterViewState extends ConsumerState<CharacterView> {
-  late final PaginationController _ctrl;
   int _tab = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PaginationController(loadMore: () {
-      if (_tab == 0) return;
-      _tab == 1
-          ? ref.read(characterMediaProvider(widget.id)).fetchPage(true)
-          : ref.read(characterMediaProvider(widget.id)).fetchPage(false);
-    });
-  }
+  late final _ctrl = PaginationController(loadMore: () {
+    if (_tab == 0) return;
+    _tab == 1
+        ? ref.read(characterMediaProvider(widget.id)).fetchPage(true)
+        : ref.read(characterMediaProvider(widget.id)).fetchPage(false);
+  });
 
   @override
   void dispose() {

@@ -30,15 +30,9 @@ class StudioView extends ConsumerStatefulWidget {
 }
 
 class _StudioViewState extends ConsumerState<StudioView> {
-  late final PaginationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PaginationController(loadMore: () {
-      ref.read(studioProvider(widget.id).notifier).fetchPage();
-    });
-  }
+  late final _ctrl = PaginationController(loadMore: () {
+    ref.read(studioProvider(widget.id).notifier).fetchPage();
+  });
 
   @override
   void dispose() {

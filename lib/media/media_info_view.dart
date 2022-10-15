@@ -293,9 +293,9 @@ class _ScrollCards extends StatelessWidget {
               child: Text(title, style: Theme.of(context).textTheme.subtitle1),
             ),
             SizedBox(
-              height: 40,
+              height: 42,
               child: ListView.builder(
-                padding: const EdgeInsets.only(left: 10),
+                padding: const EdgeInsets.only(left: 10, bottom: 2),
                 physics: Consts.physics,
                 scrollDirection: Axis.horizontal,
                 itemCount: items.length,

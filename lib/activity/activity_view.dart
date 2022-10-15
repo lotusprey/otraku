@@ -30,15 +30,9 @@ class ActivityView extends ConsumerStatefulWidget {
 }
 
 class _ActivityViewState extends ConsumerState<ActivityView> {
-  late final PaginationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PaginationController(
-      loadMore: () => ref.read(activityProvider(widget.id).notifier).fetch(),
-    );
-  }
+  late final _ctrl = PaginationController(
+    loadMore: () => ref.read(activityProvider(widget.id).notifier).fetch(),
+  );
 
   @override
   void dispose() {

@@ -22,15 +22,9 @@ class ReviewsView extends ConsumerStatefulWidget {
 }
 
 class _ReviewsViewState extends ConsumerState<ReviewsView> {
-  late final PaginationController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = PaginationController(
-      loadMore: () => ref.read(reviewsProvider(widget.id)).fetch(),
-    );
-  }
+  late final _ctrl = PaginationController(
+    loadMore: () => ref.read(reviewsProvider(widget.id)).fetch(),
+  );
 
   @override
   void dispose() {

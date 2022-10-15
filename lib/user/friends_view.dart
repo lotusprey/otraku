@@ -22,17 +22,10 @@ class FriendsView extends ConsumerStatefulWidget {
 }
 
 class _FriendsViewState extends ConsumerState<FriendsView> {
-  late final PaginationController _ctrl;
-  late bool _onFollowing;
-
-  @override
-  void initState() {
-    super.initState();
-    _onFollowing = widget.onFollowing;
-    _ctrl = PaginationController(
-      loadMore: () => ref.read(friendsProvider(widget.id).notifier).fetch(),
-    );
-  }
+  late bool _onFollowing = widget.onFollowing;
+  late final _ctrl = PaginationController(
+    loadMore: () => ref.read(friendsProvider(widget.id).notifier).fetch(),
+  );
 
   @override
   void dispose() {

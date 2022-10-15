@@ -144,15 +144,17 @@ class _ChipGrid extends StatelessWidget {
 
 // The names can get modified. On every change onChanged gets called.
 class ChipNamingGrid extends StatefulWidget {
-  final String title;
-  final String placeholder;
-  final List<String> names;
-
   const ChipNamingGrid({
     required this.title,
     required this.placeholder,
     required this.names,
+    required this.onChanged,
   });
+
+  final String title;
+  final String placeholder;
+  final List<String> names;
+  final void Function() onChanged;
 
   @override
   ChipNamingGridState createState() => ChipNamingGridState();
@@ -169,13 +171,20 @@ class ChipNamingGridState extends State<ChipNamingGrid> {
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSecondaryContainer,
         ),
-        onDeleted: () => setState(() => widget.names.removeAt(i)),
+        onDeleted: () {
+          setState(() => widget.names.removeAt(i));
+          widget.onChanged();
+        },
         onPressed: () => showPopUp(
           context,
           InputDialog(
             initial: widget.names[i],
-            onChanged: (name) =>
-                name.isNotEmpty ? setState(() => widget.names[i] = name) : null,
+            onChanged: (name) {
+              if (name.isNotEmpty) {
+                setState(() => widget.names[i] = name);
+                widget.onChanged();
+              }
+            },
           ),
         ),
       ));
@@ -193,6 +202,7 @@ class ChipNamingGridState extends State<ChipNamingGrid> {
         ).then((_) {
           if (name.isNotEmpty && !widget.names.contains(name)) {
             setState(() => widget.names.add(name));
+            widget.onChanged();
           }
         });
       },

@@ -49,27 +49,12 @@ class _ThemePreviewState extends State<ThemePreview> {
         }
 
         return SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, bottom: 5),
-                  child: Text(
-                    "Theme",
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ),
-                SizedBox(
-                  height: 190,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    children: children,
-                  ),
-                ),
-              ],
+          child: SizedBox(
+            height: 190,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              children: children,
             ),
           ),
         );

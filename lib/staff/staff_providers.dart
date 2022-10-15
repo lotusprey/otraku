@@ -58,8 +58,8 @@ class StaffRelationNotifier extends ChangeNotifier {
         'id': id,
         'withCharacters': true,
         'withRoles': true,
-        'onList': filter.onList,
         'sort': filter.sort.name,
+        if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
       });
       return data['Staff'];
     });
@@ -85,11 +85,12 @@ class StaffRelationNotifier extends ChangeNotifier {
     final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
       final data = await Api.get(GqlQuery.staff, {
         'id': id,
+        'page': value.next,
         'withCharacters': ofCharacters,
         'withRoles': !ofCharacters,
         'onList': filter.onList,
         'sort': filter.sort.name,
-        'page': value.next,
+        if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
       });
       return data['Staff'];
     });

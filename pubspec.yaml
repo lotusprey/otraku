@@ -34,7 +34,7 @@ dependencies:
   app_links: ^3.3.0
 
   # Registers background tasks to fetch notifications.
-  workmanager: ^0.5.0
+  workmanager: ^0.5.1
 
   # Gives access to platform theme and allows for easy theme interpolation.
   dynamic_color: ^1.5.4

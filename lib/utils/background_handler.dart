@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -109,8 +108,6 @@ class BackgroundHandler {
 
 @pragma('vm:entry-point')
 void _fetch() => Workmanager().executeTask((_, __) async {
-      DartPluginRegistrant.ensureInitialized();
-
       // Initialise local settings.
       await Options.init();
       if (Options().account == null) return true;

@@ -14,7 +14,7 @@ class SettingsContentTab extends StatelessWidget {
   const SettingsContentTab(this.scrollCtrl, this.settings, this.scheduleUpdate);
 
   final ScrollController scrollCtrl;
-  final UserSettings settings;
+  final Settings settings;
   final void Function() scheduleUpdate;
 
   @override

@@ -25,11 +25,11 @@ class FeedView extends StatelessWidget {
     final notificationIcon = Consumer(
       builder: (context, ref, child) {
         final count = ref.watch(
-          userSettingsProvider.select((s) => s.notificationCount),
+          settingsProvider.select((s) => s.unreadNotifications),
         );
 
         final openNotifications = () {
-          ref.read(userSettingsProvider.notifier).nullifyUnread();
+          ref.read(settingsProvider.notifier).nullifyUnread();
           Navigator.pushNamed(context, RouteArg.notifications);
         };
 

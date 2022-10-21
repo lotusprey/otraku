@@ -496,10 +496,10 @@ abstract class GqlQuery {
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
   static const settings = r'''
-    query Settings {
+    query Settings($withData: Boolean = true) {
       Viewer {
         unreadNotificationCount
-        ...userSettings
+        @include(if: $withData) ...userSettings
     }
   }
   '''

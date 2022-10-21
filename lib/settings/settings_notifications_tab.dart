@@ -14,7 +14,7 @@ class SettingsNotificationsTab extends StatelessWidget {
   );
 
   final ScrollController scrollCtrl;
-  final UserSettings settings;
+  final Settings settings;
   final void Function() scheduleUpdate;
 
   @override

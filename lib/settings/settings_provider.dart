@@ -5,38 +5,46 @@ import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
-final userSettingsProvider =
-    StateNotifierProvider<UserSettingsNotifier, UserSettings>(
-  (ref) => UserSettingsNotifier(),
+final settingsProvider = StateNotifierProvider<SettingsNotifier, Settings>(
+  (ref) => SettingsNotifier(),
 );
 
-class UserSettingsNotifier extends StateNotifier<UserSettings> {
-  UserSettingsNotifier() : super(UserSettings.empty()) {
+class SettingsNotifier extends StateNotifier<Settings> {
+  SettingsNotifier() : super(Settings.empty()) {
     _init();
   }
 
   Future<void> _init() async {
     try {
       final data = await Api.get(GqlQuery.settings);
-      state = UserSettings(data['Viewer']);
+      state = Settings(data['Viewer']);
     } catch (_) {}
   }
 
-  Future<void> update(UserSettings other) async {
+  Future<void> update(Settings other) async {
     try {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());
-      state = UserSettings(data['UpdateUser']);
+      state = Settings(data['UpdateUser']);
     } catch (_) {}
   }
 
-  void nullifyUnread() => state = state.copy();
+  Future<void> refreshUnread() async {
+    try {
+      final data = await Api.get(GqlQuery.settings, {'withData': false});
+      state = state.copy(
+        unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
+      );
+    } catch (_) {}
+  }
+
+  void nullifyUnread() => state = state.copy(unreadNotifications: 0);
 }
 
 /// Some fields are modifiable to allow for quick and simple edits.
-/// But to apply those edits, the [UserSettingsNotifier] should be used.
-class UserSettings {
-  UserSettings._({
-    required this.notificationCount,
+/// But to apply those edits, the [SettingsNotifier] should be used.
+class Settings {
+  Settings._({
+    required this.unreadNotifications,
     required this.scoreFormat,
     required this.defaultSort,
     required this.titleLanguage,
@@ -55,8 +63,8 @@ class UserSettings {
     required this.notificationOptions,
   });
 
-  factory UserSettings(Map<String, dynamic> map) => UserSettings._(
-        notificationCount: map['unreadNotificationCount'] ?? 0,
+  factory Settings(Map<String, dynamic> map) => Settings._(
+        unreadNotifications: map['unreadNotificationCount'] ?? 0,
         scoreFormat: ScoreFormat.values.byName(
           map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
         ),
@@ -99,8 +107,8 @@ class UserSettings {
         },
       );
 
-  factory UserSettings.empty() => UserSettings._(
-        notificationCount: 0,
+  factory Settings.empty() => Settings._(
+        unreadNotifications: 0,
         scoreFormat: ScoreFormat.POINT_10,
         defaultSort: EntrySort.TITLE,
         titleLanguage: 'ROMAJI',
@@ -130,15 +138,15 @@ class UserSettings {
   bool airingNotifications;
   bool advancedScoringEnabled;
   bool restrictMessagesToFollowing;
-  final int notificationCount;
+  final int unreadNotifications;
   final List<String> advancedScores;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
   final Map<EntryStatus, bool> disabledListActivity;
   final Map<NotificationType, bool> notificationOptions;
 
-  UserSettings copy({int notificationCount = 0}) => UserSettings._(
-        notificationCount: notificationCount,
+  Settings copy({int unreadNotifications = 0}) => Settings._(
+        unreadNotifications: unreadNotifications,
         scoreFormat: scoreFormat,
         defaultSort: defaultSort,
         titleLanguage: titleLanguage,

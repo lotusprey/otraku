@@ -22,7 +22,7 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  late final _settings = ref.read(userSettingsProvider).copy();
+  late final _settings = ref.read(settingsProvider).copy();
   final _ctrl = ScrollController();
   bool _shouldUpdate = false;
   int _tabIndex = 0;
@@ -37,7 +37,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget build(BuildContext context) {
     const pageNames = ['App', 'Content', 'Notifications', 'About'];
 
-    ref.listen<UserSettings>(userSettingsProvider, (prev, next) {
+    ref.listen<Settings>(settingsProvider, (prev, next) {
       final id = Options().id!;
 
       if (prev?.scoreFormat != next.scoreFormat ||
@@ -61,7 +61,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     return WillPopScope(
       onWillPop: () {
         if (_shouldUpdate) {
-          ref.read(userSettingsProvider.notifier).update(_settings);
+          ref.read(settingsProvider.notifier).update(_settings);
         }
         return Future.value(true);
       },

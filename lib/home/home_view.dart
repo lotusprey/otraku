@@ -82,7 +82,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
 
     // Keep important providers alive.
-    ref.watch(userSettingsProvider.select((_) => null));
+    ref.watch(settingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
     ref.watch(progressProvider.select((_) => null));
     ref.watch(activitiesProvider(null).select((_) => null));

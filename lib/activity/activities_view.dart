@@ -5,6 +5,7 @@ import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/activity/activity_card.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
+import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
@@ -139,6 +140,9 @@ class ActivitiesSubView extends StatelessWidget {
           dataType: 'activities',
           onRefresh: () {
             ref.invalidate(activitiesProvider(id));
+            if (id == null) {
+              ref.read(settingsProvider.notifier).refreshUnread();
+            }
             return Future.value();
           },
           onData: (data) => SliverPadding(

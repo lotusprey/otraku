@@ -328,7 +328,7 @@ class _EditView extends StatelessWidget {
 
     final advancedScoring = Consumer(
       builder: (context, ref, _) {
-        final settings = ref.watch(userSettingsProvider);
+        final settings = ref.watch(settingsProvider);
 
         if (!settings.advancedScoringEnabled ||
             settings.scoreFormat != ScoreFormat.POINT_100 &&

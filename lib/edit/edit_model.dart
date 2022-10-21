@@ -25,7 +25,7 @@ class Edit {
 
   factory Edit.temp() => Edit._(mediaId: -1);
 
-  factory Edit(Map<String, dynamic> map, UserSettings settings) {
+  factory Edit(Map<String, dynamic> map, Settings settings) {
     final customLists = <String, bool>{};
     if (map['mediaListEntry']?['customLists'] != null) {
       for (final e in map['mediaListEntry']['customLists'].entries) {

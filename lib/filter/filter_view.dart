@@ -258,6 +258,20 @@ class DiscoverFilterView extends StatelessWidget {
                     ? true
                     : false,
           ),
+          ChipSelector(
+            title: 'Age Restriction',
+            options: const ['Adult', 'Non-Adult'],
+            selected: filter.isAdult == null
+                ? null
+                : filter.isAdult!
+                    ? 0
+                    : 1,
+            onChanged: (val) => filter.isAdult = val == null
+                ? null
+                : val == 0
+                    ? true
+                    : false,
+          ),
         ],
       ),
     );

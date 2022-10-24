@@ -187,12 +187,12 @@ abstract class GqlQuery {
         $format_in: [MediaFormat], $genre_in: [String], $genre_not_in: [String],
         $tag_in: [String], $tag_not_in: [String], $onList: Boolean, $startFrom: FuzzyDateInt,
         $startTo: FuzzyDateInt, $countryOfOrigin: CountryCode, $season: MediaSeason,
-        $sources: [MediaSource], $sort: [MediaSort]) {
+        $sources: [MediaSource], $isAdult: Boolean, $sort: [MediaSort]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
         media(type: $type, search: $search, status_in: $status_in, format_in: $format_in,
         genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
-        onList: $onList, startDate_greater: $startFrom, startDate_lesser: $startTo,
+        onList: $onList, startDate_greater: $startFrom, startDate_lesser: $startTo, isAdult: $isAdult,
         countryOfOrigin: $countryOfOrigin, season: $season, source_in: $sources, sort: $sort) {
           id
           type

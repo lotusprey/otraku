@@ -518,7 +518,21 @@ abstract class GqlQuery {
             user {id name avatar {large}}
             createdAt
           }
+          ... on ActivityMentionNotification {
+            id
+            type
+            activityId
+            user {id name avatar {large}}
+            createdAt
+          }
           ... on ActivityMessageNotification {
+            id
+            type
+            activityId
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ActivityLikeNotification {
             id
             type
             activityId
@@ -532,53 +546,14 @@ abstract class GqlQuery {
             user {id name avatar {large}}
             createdAt
           }
-          ... on ActivityReplySubscribedNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentReplyNotification {
-            id
-            type
-            context
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityMentionNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentMentionNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentSubscribedNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityLikeNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
           ... on ActivityReplyLikeNotification {
+            id
+            type
+            activityId
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ActivityReplySubscribedNotification {
             id
             type
             activityId
@@ -588,16 +563,48 @@ abstract class GqlQuery {
           ... on ThreadLikeNotification {
             id
             type
-            thread {id title}
+            thread {id title siteUrl}
             user {id name avatar {large}}
             createdAt
           }
           ... on ThreadCommentLikeNotification {
             id
             type
-            commentId
             thread {title}
+            comment {siteUrl}
             user {id name avatar {large}}
+            createdAt
+          }
+          ... on ThreadCommentReplyNotification {
+            id
+            type
+            context
+            thread {title}
+            comment {siteUrl}
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ThreadCommentMentionNotification {
+            id
+            type
+            thread {title}
+            comment {siteUrl}
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ThreadCommentSubscribedNotification {
+            id
+            type
+            thread {title}
+            comment {siteUrl}
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on AiringNotification {
+            id
+            type
+            episode
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on RelatedMediaAdditionNotification {
@@ -626,13 +633,6 @@ abstract class GqlQuery {
             type
             reason
             deletedMediaTitle
-            createdAt
-          }
-          ... on AiringNotification {
-            id
-            type
-            episode
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
         }

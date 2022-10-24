@@ -237,18 +237,34 @@ class _NotificationItem extends StatelessWidget {
                         case NotificationType.MEDIA_DELETION:
                           showPopUp(context, _NotificationDialog(item));
                           return;
-                        default:
+                        case NotificationType.THREAD_LIKE:
+                        case NotificationType.THREAD_SUBSCRIBED:
+                        case NotificationType.THREAD_COMMENT_LIKE:
+                        case NotificationType.THREAD_COMMENT_REPLY:
+                        case NotificationType.THREAD_COMMENT_MENTION:
                           showPopUp(
                             context,
                             ConfirmationDialog(
                               title: 'Forum is not yet supported',
                               content: 'Open in browser?',
-                              mainAction: 'Open Browser',
+                              mainAction: 'Open',
                               secondaryAction: 'Cancel',
-                              onConfirm: () => Toast.launch(
-                                context,
-                                'https://anilist.co/forum/thread/${item.bodyId}',
-                              ),
+                              onConfirm: () {
+                                if (item.details == null) {
+                                  Toast.show(context, 'Invalid Link');
+                                  return;
+                                }
+                                Toast.launch(context, item.details!);
+                              },
+                            ),
+                          );
+                          return;
+                        default:
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Unknown action',
+                              content: item.type.name,
                             ),
                           );
                           return;

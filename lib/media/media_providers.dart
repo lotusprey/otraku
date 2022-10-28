@@ -135,10 +135,10 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _recommended = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _characters = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _staff = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _reviews = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _recommended = AsyncValue.error(data.error!, data.stackTrace!);
+      _characters = AsyncValue.error(data.error!, data.stackTrace!);
+      _staff = AsyncValue.error(data.error!, data.stackTrace!);
+      _reviews = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -168,7 +168,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _recommended = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _recommended = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -190,7 +190,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _characters = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _characters = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -212,7 +212,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _staff = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _staff = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -234,7 +234,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _reviews = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _reviews = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 

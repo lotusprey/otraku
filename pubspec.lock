@@ -173,7 +173,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "12.0.2"
+    version: "12.0.3"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -194,7 +194,7 @@ packages:
       name: flutter_riverpod
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0-dev.9"
+    version: "2.0.2"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -435,7 +435,7 @@ packages:
       name: riverpod
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0-dev.9"
+    version: "2.0.2"
   sky_engine:
     dependency: transitive
     description: flutter

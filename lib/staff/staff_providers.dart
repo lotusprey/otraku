@@ -66,8 +66,8 @@ class StaffRelationNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _characters = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _roles = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _characters = AsyncValue.error(data.error!, data.stackTrace!);
+      _roles = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -98,11 +98,8 @@ class StaffRelationNotifier extends ChangeNotifier {
 
     if (data.hasError) {
       ofCharacters
-          ? _characters = AsyncValue.error(
-              data.error!,
-              stackTrace: data.stackTrace,
-            )
-          : _roles = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+          ? _characters = AsyncValue.error(data.error!, data.stackTrace!)
+          : _roles = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 

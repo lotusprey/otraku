@@ -46,6 +46,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   @override
   void dispose() {
+    BackgroundHandler.clearNotifications();
     _ctrl.dispose();
     super.dispose();
   }
@@ -115,6 +116,12 @@ class _HomeViewState extends ConsumerState<HomeView> {
     }
 
     final notifier = ref.watch(homeProvider);
+
+    if (notifier.homeTab == HomeView.INBOX) {
+      ref.read(homeProvider).lazyLoadFeed(ref);
+    } else if (notifier.homeTab == HomeView.DISCOVER) {
+      ref.read(homeProvider).lazyLoadDiscover(ref);
+    }
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),

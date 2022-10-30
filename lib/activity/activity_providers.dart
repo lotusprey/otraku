@@ -233,7 +233,8 @@ class ActivitiesNotifier
     required this.viewerId,
     required this.filter,
   }) : super(const AsyncValue.loading()) {
-    fetch();
+    /// The home feed will be lazily-loaded by [homeProvider].
+    if (userId != null) fetch();
   }
 
   /// [userId] being `null` means that this notifier handles the home feed.

@@ -102,9 +102,7 @@ final discoverReviewProvider = StateNotifierProvider.autoDispose<
 class DiscoverMediaNotifier
     extends StateNotifier<AsyncValue<Pagination<DiscoverMediaItem>>> {
   DiscoverMediaNotifier(this.filter, this.search)
-      : super(const AsyncValue.loading()) {
-    fetch();
-  }
+      : super(const AsyncValue.loading());
 
   final DiscoverFilter filter;
   final String? search;
@@ -136,9 +134,7 @@ class DiscoverMediaNotifier
 class DiscoverCharacterNotifier
     extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
   DiscoverCharacterNotifier(this.search, this.isBirthday)
-      : super(const AsyncValue.loading()) {
-    fetch();
-  }
+      : super(const AsyncValue.loading());
 
   final String? search;
   final bool isBirthday;
@@ -169,9 +165,7 @@ class DiscoverCharacterNotifier
 class DiscoverStaffNotifier
     extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
   DiscoverStaffNotifier(this.search, this.isBirthday)
-      : super(const AsyncValue.loading()) {
-    fetch();
-  }
+      : super(const AsyncValue.loading());
 
   final String? search;
   final bool isBirthday;
@@ -201,9 +195,7 @@ class DiscoverStaffNotifier
 
 class DiscoverStudioNotifier
     extends StateNotifier<AsyncValue<Pagination<StudioItem>>> {
-  DiscoverStudioNotifier(this.search) : super(const AsyncValue.loading()) {
-    fetch();
-  }
+  DiscoverStudioNotifier(this.search) : super(const AsyncValue.loading());
 
   final String? search;
 
@@ -231,9 +223,7 @@ class DiscoverStudioNotifier
 
 class DiscoverUserNotifier
     extends StateNotifier<AsyncValue<Pagination<UserItem>>> {
-  DiscoverUserNotifier(this.search) : super(const AsyncValue.loading()) {
-    fetch();
-  }
+  DiscoverUserNotifier(this.search) : super(const AsyncValue.loading());
 
   final String? search;
 
@@ -261,9 +251,7 @@ class DiscoverUserNotifier
 
 class DiscoverReviewNotifier
     extends StateNotifier<AsyncValue<Pagination<ReviewItem>>> {
-  DiscoverReviewNotifier(this.sort) : super(const AsyncValue.loading()) {
-    fetch();
-  }
+  DiscoverReviewNotifier(this.sort) : super(const AsyncValue.loading());
 
   final ReviewSort sort;
 

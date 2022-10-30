@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
-import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 
@@ -80,7 +79,6 @@ abstract class Api {
   static Future<void> logOut() async {
     _accessToken = null;
     Options().selectedAccount = null;
-    BackgroundHandler.clearNotifications();
     final context = RouteArg.navKey.currentContext;
     if (context == null) return;
     Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);

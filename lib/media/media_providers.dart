@@ -41,11 +41,7 @@ Future<bool> rateRecommendation(int mediaId, int recId, bool? rating) async {
 
 final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
   (ref, mediaId) async {
-    var data = await Api.get(GqlQuery.media, {
-      'id': mediaId,
-      'withMain': true,
-      'withDetails': true,
-    });
+    var data = await Api.get(GqlQuery.media, {'id': mediaId, 'withInfo': true});
     data = data['Media'];
 
     final relatedMedia = <RelatedMedia>[];

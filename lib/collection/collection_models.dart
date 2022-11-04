@@ -336,8 +336,6 @@ class Entry {
     required this.tags,
     required this.progress,
     required this.progressMax,
-    required this.progressVolumes,
-    required this.progressVolumesMax,
     required this.repeat,
     required this.score,
     required this.notes,
@@ -380,8 +378,6 @@ class Entry {
       tags: tags,
       progress: map['progress'] ?? 0,
       progressMax: map['media']['episodes'] ?? map['media']['chapters'],
-      progressVolumes: map['progressVolumes'] ?? 0,
-      progressVolumesMax: map['media']['volumes'],
       repeat: map['repeat'] ?? 0,
       score: map['score'].toDouble() ?? 0.0,
       notes: map['notes'],
@@ -407,8 +403,6 @@ class Entry {
   final List<int> tags;
   int progress;
   final int? progressMax;
-  final int progressVolumes;
-  final int? progressVolumesMax;
   int repeat;
   double score;
   String? notes;

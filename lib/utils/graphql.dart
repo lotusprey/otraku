@@ -2,7 +2,7 @@ abstract class GqlQuery {
   static const collection = r'''
     query Collection($userId: Int, $type: MediaType) {
       MediaListCollection(userId: $userId, type: $type) {
-        lists {name isCustomList isSplitCompletedList status entries {...entry media {...main}}}
+        lists {name isCustomList isSplitCompletedList status entries {...collectionEntry}}
         user {
           mediaListOptions {
             rowOrder
@@ -14,72 +14,61 @@ abstract class GqlQuery {
       }
     }
   '''
-      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+      '${_GqlFragment.collectionEntry}';
 
   static const collectionPreview = r'''
     query CollectionPreview($userId: Int, $type: MediaType) {
       MediaListCollection(userId: $userId, type: $type, status_in: [CURRENT, REPEATING]) {
-        lists {isCustomList entries {...entry media {...main}}}
+        lists {isCustomList entries {...collectionEntry}}
         user {mediaListOptions {scoreFormat}}
       }
     }
   '''
-      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+      '${_GqlFragment.collectionEntry}';
 
-  static const collectionEntry = r'''
+  static const listEntry = r'''
     query CollectionEntry($userId: Int, $mediaId: Int) {
-      MediaList(userId: $userId, mediaId: $mediaId) {
-        status
-        progress
-        progressVolumes
-        score
-        repeat
-        notes
-        startedAt {year month day}
-        completedAt {year month day}
-        updatedAt
-        createdAt
-        media {
-          id
-          type
-          episodes
-          chapters
-          volumes
-          title {userPreferred english romaji native}
-          format
-          status(version: 2)
-          startDate {year month day}
-          endDate {year month day}
-          coverImage {extraLarge large medium}
-          nextAiringEpisode {episode airingAt}
-          countryOfOrigin
-          genres
-          tags {id}
-        }
-      }
+      MediaList(userId: $userId, mediaId: $mediaId) {...collectionEntry}
     }
-  ''';
+  '''
+      '${_GqlFragment.collectionEntry}';
 
   static const media = r'''
-    query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
-        $withRecommendations: Boolean = false, $withCharacters: Boolean = false,
-        $withStaff: Boolean = false, $withReviews: Boolean = false, $page: Int = 1) {
+    query Media($id: Int, $withInfo: Boolean = false, $withRecommendations: Boolean = false,
+        $withCharacters: Boolean = false, $withStaff: Boolean = false,
+        $withReviews: Boolean = false, $page: Int = 1) {
       Media(id: $id) {
-        mediaListEntry @include(if: $withMain) {...entry}
-        ...main @include(if: $withMain)
-        ...details @include(if: $withDetails)
+        mediaListEntry @include(if: $withInfo) {...entry}
+        ...info @include(if: $withInfo)
         ...recommendations @include (if: $withRecommendations)
         ...characters @include(if: $withCharacters)
         ...staff @include(if: $withStaff)
         ...reviews @include(if: $withReviews)
       }
     }
-    fragment details on Media {
+    fragment info on Media {
+      id
+      type
+      title {userPreferred english romaji native}
       synonyms
+      description
+      coverImage {extraLarge large medium}
       bannerImage
+      episodes
+      chapters
+      volumes
+      format
+      status(version: 2)
+      startDate {year month day}
+      endDate {year month day}
+      nextAiringEpisode {episode airingAt}
+      countryOfOrigin
+      genres
+      tags {id}
+      isAdult
+      hashtag
       isFavourite
       favourites
-      description
       duration
       season
       seasonYear
@@ -106,6 +95,23 @@ abstract class GqlQuery {
           }
         }
       }
+    }
+    fragment entry on MediaList {
+      id
+      status
+      progress
+      progressVolumes
+      score
+      repeat
+      notes
+      startedAt {year month day}
+      completedAt {year month day}
+      private
+      hiddenFromStatusLists
+      customLists
+      advancedScores
+      updatedAt
+      createdAt
     }
     fragment recommendations on Media {
       recommendations(page: $page, sort: [RATING_DESC]) {
@@ -150,8 +156,7 @@ abstract class GqlQuery {
         }
       }
     }
-  '''
-      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+  ''';
 
   static const entry = r'''
     query Entry($mediaId: Int) {
@@ -782,45 +787,32 @@ abstract class GqlMutation {
 }
 
 abstract class _GqlFragment {
-  static const mediaMain = r'''
-    fragment main on Media {
-      id
-      type
-      episodes
-      chapters
-      volumes
-      title {userPreferred english romaji native}
-      format
-      status(version: 2)
-      startDate {year month day}
-      endDate {year month day}
-      coverImage {extraLarge large medium}
-      nextAiringEpisode {episode airingAt}
-      countryOfOrigin
-      isAdult
-      hashtag
-      genres
-      tags {id}
-    }
-  ''';
-
-  static const entry = r'''
-    fragment entry on MediaList {
-      id
+  static const collectionEntry = r'''
+    fragment collectionEntry on MediaList {
       status
       progress
-      progressVolumes
       score
-      repeat
       notes
+      repeat
       startedAt {year month day}
       completedAt {year month day}
-      private
-      hiddenFromStatusLists
-      customLists
-      advancedScores
-      updatedAt
       createdAt
+      updatedAt
+      media {
+        id
+        title {userPreferred romaji english native}
+        coverImage {extraLarge large medium}
+        format
+        status
+        episodes
+        chapters
+        genres
+        tags {id}
+        nextAiringEpisode {episode airingAt}
+        startDate {year month day}
+        endDate {year month day}
+        countryOfOrigin
+      }
     }
   ''';
 

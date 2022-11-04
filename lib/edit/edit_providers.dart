@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/edit/edit_model.dart';
+import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
@@ -13,7 +14,7 @@ Future<Object> updateEntry(Edit edit, int userId) async {
     await Api.get(GqlMutation.updateEntry, edit.toMap());
 
     final data = await Api.get(
-      GqlQuery.collectionEntry,
+      GqlQuery.listEntry,
       {'userId': userId, 'mediaId': edit.mediaId},
     );
     return Entry(data['MediaList']);
@@ -55,11 +56,31 @@ Future<Object?> removeEntry(int entryId) async {
   }
 }
 
-final currentEditProvider = FutureProvider.autoDispose.family<Edit, int>(
-  (ref, id) async {
-    final data = await Api.get(GqlQuery.entry, {'mediaId': id});
+class EditTag {
+  const EditTag(this.id, [this.setComplete = false]);
+
+  final int id;
+  final bool setComplete;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  bool operator ==(Object other) => hashCode == other.hashCode;
+}
+
+final oldEditProvider = FutureProvider.autoDispose.family(
+  (ref, EditTag tag) async {
+    if (ref.exists(mediaProvider(tag.id))) {
+      return ref.watch(mediaProvider(tag.id)).value!.edit;
+    }
+
+    final data = await Api.get(GqlQuery.entry, {'mediaId': tag.id});
     return Edit(data['Media'], ref.watch(settingsProvider));
   },
 );
 
-final editProvider = StateProvider.autoDispose<Edit>((ref) => Edit.temp());
+final newEditProvider = StateProvider.autoDispose.family((ref, EditTag tag) {
+  final old = ref.watch(oldEditProvider(tag)).valueOrNull ?? Edit.temp();
+  return old.copy(tag.setComplete);
+});

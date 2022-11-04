@@ -116,9 +116,9 @@ class Edit {
         progressVolumesMax: progressVolumesMax,
       );
 
-  /// A deep copy. If [complete] is `true`, [status], [progress],
+  /// A deep copy. If [setComplete] is `true`, [status], [progress],
   /// [progressVolumes] and [completedAd] will be modified appropriately.
-  Edit copy([complete = false]) {
+  Edit copy([setComplete = false]) {
     DateTime? startedAtCopy;
     if (startedAt != null) {
       startedAtCopy = DateTime(
@@ -128,7 +128,7 @@ class Edit {
       );
     }
     DateTime? completedAtCopy;
-    if (complete) {
+    if (setComplete) {
       completedAtCopy = DateTime.now();
     } else if (completedAt != null) {
       completedAtCopy = DateTime(
@@ -142,10 +142,10 @@ class Edit {
       mediaId: mediaId,
       type: type,
       entryId: entryId,
-      status: complete ? EntryStatus.COMPLETED : status,
-      progress: complete && progressMax != null ? progressMax! : progress,
+      status: setComplete ? EntryStatus.COMPLETED : status,
+      progress: setComplete && progressMax != null ? progressMax! : progress,
       progressMax: progressMax,
-      progressVolumes: complete && progressVolumesMax != null
+      progressVolumes: setComplete && progressVolumesMax != null
           ? progressVolumesMax!
           : progressVolumes,
       progressVolumesMax: progressVolumesMax,

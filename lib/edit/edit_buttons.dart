@@ -13,9 +13,9 @@ import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class EditButtons extends StatefulWidget {
-  const EditButtons(this.mediaId, this.oldEdit, this.callback);
+  const EditButtons(this.tag, this.oldEdit, this.callback);
 
-  final int mediaId;
+  final EditTag tag;
   final Edit oldEdit;
   final void Function(Edit)? callback;
 
@@ -36,7 +36,8 @@ class _EditButtonsState extends State<EditButtons> {
                 text: 'Save',
                 icon: Ionicons.save_outline,
                 onTap: () async {
-                  final newEdit = ref.read(editProvider);
+                  final oldEdit = widget.oldEdit;
+                  final newEdit = ref.read(newEditProvider(widget.tag));
                   setState(() => _loading = true);
 
                   final entry = await updateEntry(newEdit, Options().id!);
@@ -60,20 +61,20 @@ class _EditButtonsState extends State<EditButtons> {
                   if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
                     await ref.read(collectionProvider(tag)).updateEntry(
                           entry,
-                          widget.oldEdit,
+                          oldEdit,
                           newEdit,
                           ref.read(collectionFilterProvider(tag)).sort,
                         );
                   } else if (newEdit.status == EntryStatus.CURRENT ||
                       newEdit.status == EntryStatus.REPEATING) {
-                    if (widget.oldEdit.status == EntryStatus.CURRENT ||
-                        widget.oldEdit.status == EntryStatus.REPEATING) {
+                    if (oldEdit.status == EntryStatus.CURRENT ||
+                        oldEdit.status == EntryStatus.REPEATING) {
                       ref.read(collectionPreviewProvider(tag)).update(entry);
                     } else {
                       ref.read(collectionPreviewProvider(tag)).add(entry);
                     }
-                  } else if (widget.oldEdit.status == EntryStatus.CURRENT ||
-                      widget.oldEdit.status == EntryStatus.REPEATING) {
+                  } else if (oldEdit.status == EntryStatus.CURRENT ||
+                      oldEdit.status == EntryStatus.REPEATING) {
                     ref
                         .read(collectionPreviewProvider(tag))
                         .remove(entry.mediaId);

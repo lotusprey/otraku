@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/notifications/notification_model.dart';
@@ -188,7 +189,7 @@ class _NotificationItem extends StatelessWidget {
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.anime ||
                           item.discoverType == DiscoverType.manga) {
-                        showSheet(context, EditView(item.headId!));
+                        showSheet(context, EditView(EditTag(item.headId!)));
                       }
                     },
                     child: ClipRRect(
@@ -273,7 +274,7 @@ class _NotificationItem extends StatelessWidget {
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.anime ||
                           item.discoverType == DiscoverType.manga) {
-                        showSheet(context, EditView(item.headId!));
+                        showSheet(context, EditView(EditTag(item.headId!)));
                       }
                     },
                     child: Padding(

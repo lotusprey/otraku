@@ -299,7 +299,7 @@ class __TileContentState extends State<_TileContent> {
       onPressed: () async {
         if (item.progressMax != null &&
             item.progress >= item.progressMax! - 1) {
-          showSheet(context, EditView(item.mediaId, complete: true));
+          showSheet(context, EditView(EditTag(item.mediaId, true)));
           return;
         }
 

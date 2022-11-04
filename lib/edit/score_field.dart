@@ -4,18 +4,21 @@ import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/settings/settings_provider.dart';
 
-// Score picker.
+/// Score picker.
 class ScoreField extends StatelessWidget {
-  const ScoreField();
+  const ScoreField(this.tag);
+
+  final EditTag tag;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final score = ref.watch(editProvider.select((s) => s.score));
+        final score = ref.watch(newEditProvider(tag).select((s) => s.score));
 
-        final onChanged = (v) =>
-            ref.read(editProvider.notifier).update((s) => s.copyWith(score: v));
+        final onChanged = (v) => ref
+            .read(newEditProvider(tag).notifier)
+            .update((s) => s.copyWith(score: v));
 
         switch (ref.watch(settingsProvider).scoreFormat) {
           case ScoreFormat.POINT_3:

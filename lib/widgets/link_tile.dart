@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -67,7 +68,7 @@ class LinkTile extends StatelessWidget {
       onLongPress: () {
         if (discoverType == DiscoverType.anime ||
             discoverType == DiscoverType.manga) {
-          showSheet(context, EditView(id));
+          showSheet(context, EditView(EditTag(id)));
         }
       },
       child: child,

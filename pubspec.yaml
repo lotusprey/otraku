@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.0.2
+  flutter_riverpod: ^2.1.1
 
   # Data fetching.
   http: ^0.13.5
@@ -43,7 +43,7 @@ dependencies:
   flutter_local_notifications: ^12.0.3
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.8.5+3
+  flutter_widget_from_html_core: ^0.9.0
 
   # An addition to the material icons.
   ionicons: ^0.2.1

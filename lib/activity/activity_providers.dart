@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/activity/activity_models.dart';
+import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
@@ -106,6 +107,8 @@ final activitiesProvider = StateNotifierProvider.autoDispose
     userId: userId,
     viewerId: Options().id!,
     filter: ref.watch(activityFilterProvider(userId)),
+    shouldLoad:
+        userId != null || ref.watch(homeProvider.select((s) => s.didLoadFeed)),
   ),
 );
 
@@ -232,9 +235,9 @@ class ActivitiesNotifier
     required this.userId,
     required this.viewerId,
     required this.filter,
+    required bool shouldLoad,
   }) : super(const AsyncValue.loading()) {
-    /// The home feed will be lazily-loaded by [homeProvider].
-    if (userId != null) fetch();
+    if (shouldLoad) fetch();
   }
 
   /// [userId] being `null` means that this notifier handles the home feed.

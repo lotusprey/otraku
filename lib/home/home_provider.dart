@@ -9,19 +9,8 @@ final homeProvider =
 
 class HomeNotifier extends ChangeNotifier {
   int _homeTab = Options().defaultHomeTab;
-  bool _inboxOnFeed = Options().inboxOnFeed;
-
-  /// The system schemes acquired asynchronously
-  /// from [DynamicColorBuilder] are cached.
-  ColorScheme? _systemLightScheme;
-  ColorScheme? _systemDarkScheme;
-
-  /// The discover and feed tab are loaded lazily.
-  var _didLoadDiscover = false;
-  var _didLoadFeed = false;
 
   int get homeTab => _homeTab;
-  bool get inboxOnFeed => _inboxOnFeed;
 
   set homeTab(int val) {
     if (_homeTab == val) return;
@@ -29,12 +18,10 @@ class HomeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  set inboxOnFeed(bool val) {
-    if (_inboxOnFeed == val) return;
-    _inboxOnFeed = val;
-    Options().inboxOnFeed = val;
-    notifyListeners();
-  }
+  /// The system schemes acquired asynchronously
+  /// from [DynamicColorBuilder] are cached.
+  ColorScheme? _systemLightScheme;
+  ColorScheme? _systemDarkScheme;
 
   ColorScheme? getSystemScheme(bool isDark) =>
       isDark ? _systemDarkScheme : _systemLightScheme;
@@ -44,17 +31,45 @@ class HomeNotifier extends ChangeNotifier {
     _systemDarkScheme = d;
   }
 
-  /// Load the discover tab, if it hasn't been loaded.
+  /// The discover and feed tab are loaded lazily, when they are first opened.
+  var _didLoadDiscover = false;
+  var _didLoadFeed = false;
+
+  bool get didLoadDiscover => _didLoadDiscover;
+  bool get didLoadFeed => _didLoadFeed;
+
   void lazyLoadDiscover(WidgetRef ref) {
     if (_didLoadDiscover) return;
     _didLoadDiscover = true;
     discoverLoadMore(ref);
   }
 
-  /// Load the feed tab, if it hasn't been loaded.
   void lazyLoadFeed(WidgetRef ref) {
     if (_didLoadFeed) return;
     _didLoadFeed = true;
     ref.read(activitiesProvider(null).notifier).fetch();
+  }
+
+  /// In preview mode, user's collections first load only current media.
+  /// The rest is loaded by a manual request from the user
+  /// and thus the collection "expands".
+  /// If preview mode is off, collections are auto-expanded
+  /// and immediately load everything.
+  var _didExpandAnimeCollection = !Options().animeCollectionPreview;
+  var _didExpandMangaCollection = !Options().mangaCollectionPreview;
+
+  bool didExpandCollection(bool ofAnime) =>
+      ofAnime ? _didExpandAnimeCollection : _didExpandMangaCollection;
+
+  void expandCollection(bool ofAnime) {
+    if (ofAnime) {
+      if (_didExpandAnimeCollection) return;
+      _didExpandAnimeCollection = true;
+      notifyListeners();
+    } else {
+      if (_didExpandMangaCollection) return;
+      _didExpandMangaCollection = true;
+      notifyListeners();
+    }
   }
 }

@@ -1,15 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
-/// Updates an entry and returns the entry id or an error if unsuccessful. This
-/// is useful, if the entry didn't exist up until now, i.e. there wasn't an id.
-Future<Object> updateEntry(Edit edit) async {
+/// Updates an entry with an edit and returns the entry, or an error
+/// if unsuccessful. There is an api bug in entry updating, which prevents
+/// certain data from being returned. This is why 2 requests are needed.
+Future<Object> updateEntry(Edit edit, int userId) async {
   try {
-    final data = await Api.get(GqlMutation.updateEntry, edit.toMap());
-    return data['SaveMediaListEntry']['id'];
+    await Api.get(GqlMutation.updateEntry, edit.toMap());
+
+    final data = await Api.get(
+      GqlQuery.collectionEntry,
+      {'userId': userId, 'mediaId': edit.mediaId},
+    );
+    return Entry(data['MediaList']);
   } catch (e) {
     return e;
   }

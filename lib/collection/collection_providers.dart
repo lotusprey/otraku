@@ -109,7 +109,7 @@ class CollectionNotifier extends ChangeNotifier {
 
   final CollectionTag tag;
   var _lists = const AsyncValue<List<EntryList>>.loading();
-  ScoreFormat _scoreFormat = ScoreFormat.POINT_100;
+  ScoreFormat _scoreFormat = ScoreFormat.POINT_10_DECIMAL;
   EntrySort? _sort;
   int _index = 0;
 
@@ -133,43 +133,40 @@ class CollectionNotifier extends ChangeNotifier {
   }
 
   Future<void> _fetch() async {
-    _lists = await AsyncValue.guard(
-      () async {
-        var data = await Api.get(
-          GqlQuery.collection,
-          {'userId': tag.userId, 'type': tag.ofAnime ? 'ANIME' : 'MANGA'},
-        );
+    _lists = await AsyncValue.guard(() async {
+      var data = await Api.get(
+        GqlQuery.collection,
+        {'userId': tag.userId, 'type': tag.ofAnime ? 'ANIME' : 'MANGA'},
+      );
 
-        data = data['MediaListCollection'];
-        final metaData = data['user']['mediaListOptions']
-            [tag.ofAnime ? 'animeList' : 'mangaList'];
+      data = data['MediaListCollection'];
+      final metaData = data['user']['mediaListOptions']
+          [tag.ofAnime ? 'animeList' : 'mangaList'];
 
-        final bool splitCompleted =
-            metaData['splitCompletedSectionByFormat'] ?? false;
+      final bool splitCompleted =
+          metaData['splitCompletedSectionByFormat'] ?? false;
 
-        _scoreFormat = ScoreFormat.values.byName(
-          data['user']?['mediaListOptions']?['scoreFormat'] ??
-              'POINT_10_DECIMAL',
-        );
+      _scoreFormat = ScoreFormat.values.byName(
+        data['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
+      );
 
-        final maps = data['lists'] as List<dynamic>;
-        final lists = <EntryList>[];
+      final maps = data['lists'] as List<dynamic>;
+      final lists = <EntryList>[];
 
-        for (final String section in metaData['sectionOrder']) {
-          final index = maps.indexWhere((l) => l['name'] == section);
-          if (index == -1) continue;
+      for (final String section in metaData['sectionOrder']) {
+        final index = maps.indexWhere((l) => l['name'] == section);
+        if (index == -1) continue;
 
-          final l = maps.removeAt(index);
+        final l = maps.removeAt(index);
 
-          lists.add(EntryList(l, splitCompleted));
-        }
+        lists.add(EntryList(l, splitCompleted));
+      }
 
-        for (final l in maps) {
-          lists.add(EntryList(l, splitCompleted));
-        }
-        return lists;
-      },
-    );
+      for (final l in maps) {
+        lists.add(EntryList(l, splitCompleted));
+      }
+      return lists;
+    });
 
     final ls = lists;
     if (ls.isNotEmpty && _index >= ls.length) _index = ls.length - 1;
@@ -177,30 +174,13 @@ class CollectionNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Fetch the new version of the [entry], replace
-  /// the old version in the lists and return [entry].
-  Future<Entry?> updateEntry(Edit oldEdit, Edit newEdit, EntrySort sort) async {
-    late final Entry entry;
-    try {
-      final data = await Api.get(
-        GqlQuery.collectionEntry,
-        {'userId': tag.userId, 'mediaId': newEdit.mediaId},
-      );
-      entry = Entry(data['MediaList']);
-    } catch (e) {
-      return null;
-    }
-
-    // Find from which custom lists to remove the item and in which to add it.
-    final oldCustomLists = oldEdit.customLists.entries
-        .where((e) => e.value)
-        .map((e) => e.key.toLowerCase())
-        .toList();
-    final newCustomLists = newEdit.customLists.entries
-        .where((e) => e.value)
-        .map((e) => e.key.toLowerCase())
-        .toList();
-
+  /// Update an existing entry, taking into account status and custom lists.
+  Future<Entry?> updateEntry(
+    Entry entry,
+    Edit oldEdit,
+    Edit newEdit,
+    EntrySort sort,
+  ) async {
     // Remove from old status list.
     if (oldEdit.status != null && !oldEdit.hiddenFromStatusLists) {
       for (final list in lists) {
@@ -209,19 +189,6 @@ class CollectionNotifier extends ChangeNotifier {
                 list.splitCompletedListFormat == entry.format)) {
           list.removeByMediaId(entry.mediaId);
           break;
-        }
-      }
-    }
-
-    // Remove from old custom lists.
-    if (oldCustomLists.isNotEmpty) {
-      for (final list in lists) {
-        for (int i = 0; i < oldCustomLists.length; i++) {
-          if (oldCustomLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(entry.mediaId);
-            oldCustomLists.removeAt(i);
-            break;
-          }
         }
       }
     }
@@ -243,6 +210,31 @@ class CollectionNotifier extends ChangeNotifier {
         return entry;
       }
     }
+
+    // Find from which custom lists to remove.
+    final oldCustomLists = oldEdit.customLists.entries
+        .where((e) => e.value)
+        .map((e) => e.key.toLowerCase())
+        .toList();
+
+    // Remove from old custom lists.
+    if (oldCustomLists.isNotEmpty) {
+      for (final list in lists) {
+        for (int i = 0; i < oldCustomLists.length; i++) {
+          if (oldCustomLists[i] == list.name.toLowerCase()) {
+            list.removeByMediaId(entry.mediaId);
+            oldCustomLists.removeAt(i);
+            break;
+          }
+        }
+      }
+    }
+
+    // Find in which custom lists to add.
+    final newCustomLists = newEdit.customLists.entries
+        .where((e) => e.value)
+        .map((e) => e.key.toLowerCase())
+        .toList();
 
     // Add to new custom lists.
     if (newCustomLists.isNotEmpty) {
@@ -273,8 +265,8 @@ class CollectionNotifier extends ChangeNotifier {
     return entry;
   }
 
-  /// When the progress of an entry is changed, this should be called
-  /// to reflect it into the database. When reaching the last episode,
+  /// Faster alternative to [updateEntry]. Should be used only when
+  /// the progress was incremented. When reaching the last episode,
   /// [updateEntry] should be called instead.
   Future<void> updateProgress({
     required int mediaId,
@@ -284,7 +276,6 @@ class CollectionNotifier extends ChangeNotifier {
     required String? format,
     required EntrySort sort,
   }) async {
-    final lists = this.lists;
     final mustSort = sort == EntrySort.PROGRESS ||
         sort == EntrySort.PROGRESS_DESC ||
         sort == EntrySort.UPDATED_AT ||

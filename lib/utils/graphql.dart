@@ -16,13 +16,11 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
 
-  static const progressMedia = r'''
-    query ProgressMedia($userId: Int, $page: Int = 1) {
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        mediaList(userId: $userId, status: CURRENT, sort: UPDATED_TIME_DESC) {
-          ...entry media {...main}
-        }
+  static const collectionPreview = r'''
+    query CollectionPreview($userId: Int, $type: MediaType) {
+      MediaListCollection(userId: $userId, type: $type, status_in: [CURRENT, REPEATING]) {
+        lists {isCustomList entries {...entry media {...main}}}
+        user {mediaListOptions {scoreFormat}}
       }
     }
   '''
@@ -652,10 +650,9 @@ abstract class GqlMutation {
         progress: $progress, progressVolumes: $progressVolumes, repeat: $repeat,
         private: $private, notes: $notes, hiddenFromStatusLists: $hiddenFromStatusLists,
         customLists: $customLists, startedAt: $startedAt, completedAt: $completedAt,
-        advancedScores: $advancedScores) {...entry}
+        advancedScores: $advancedScores) {id}
     }
-  '''
-      '${_GqlFragment.entry}';
+  ''';
 
   static const updateProgress = r'''
     mutation UpdateProgress($mediaId: Int, $progress: Int) {

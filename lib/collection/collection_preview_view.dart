@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
@@ -6,6 +8,7 @@ import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_preview_provider.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/consts.dart';
+import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
@@ -45,6 +48,7 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
         );
 
         Widget content;
+        bool notEmpty = false;
         final notifier = ref.watch(collectionPreviewProvider(widget.tag));
 
         if (notifier.state.isLoading) {
@@ -53,9 +57,10 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
           final entries = notifier.entries;
           if (entries.isEmpty) {
             content = const SliverFillRemaining(
-              child: Center(child: Text('No current media')),
+              child: Center(child: Text('No current/repeating media')),
             );
           } else {
+            notEmpty = true;
             content = CollectionGrid(
               items: entries,
               scoreFormat: notifier.scoreFormat,
@@ -65,14 +70,38 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
         }
 
         return PageLayout(
-          topBar: const TopBar(title: 'Current', canPop: false),
+          topBar: TopBar(
+            title: 'Current',
+            canPop: false,
+            items: [
+              if (notEmpty)
+                TopBarIcon(
+                  tooltip: 'Random',
+                  icon: Ionicons.shuffle_outline,
+                  onTap: () {
+                    final entries = ref.read(
+                      collectionPreviewProvider(widget.tag).select(
+                        (s) => s.entries,
+                      ),
+                    );
+                    final e = entries[Random().nextInt(entries.length)];
+
+                    Navigator.pushNamed(
+                      context,
+                      RouteArg.media,
+                      arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
+                    );
+                  },
+                ),
+            ],
+          ),
           floatingBar: FloatingBar(
             scrollCtrl: widget.scrollCtrl,
             children: [
-              FloatingActionButton.extended(
-                icon: const Icon(Ionicons.enter_outline),
-                label: const Text('Expand'),
-                onPressed: () =>
+              ExpandedActionButton(
+                title: 'Expand',
+                icon: Ionicons.enter_outline,
+                onTap: () =>
                     ref.read(homeProvider).expandCollection(widget.tag.ofAnime),
               ),
             ],

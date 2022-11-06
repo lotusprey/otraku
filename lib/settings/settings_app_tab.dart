@@ -12,6 +12,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/settings/theme_preview.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SettingsAppTab extends StatelessWidget {
   const SettingsAppTab(this.scrollCtrl);
@@ -154,6 +155,44 @@ class SettingsAppTab extends StatelessWidget {
                 onChanged: (val) => Options().compactDiscoverGrid = val,
               ),
             ]),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: ListTile(
+            title: const Text('Collection Previews'),
+            trailing: const Icon(Icons.chevron_right_outlined),
+            textColor: Theme.of(context).colorScheme.onBackground,
+            iconColor: Theme.of(context).colorScheme.onBackground,
+            visualDensity: VisualDensity.compact,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            onTap: () => showSheet(
+              context,
+              OpaqueSheet(
+                initialHeight: Consts.tapTargetSize * 2 + 150,
+                builder: (context, scrollCtrl) => ListView(
+                  controller: scrollCtrl,
+                  padding: Consts.padding,
+                  children: [
+                    CheckBoxField(
+                      title: 'Anime Collection Preview',
+                      initial: Options().animeCollectionPreview,
+                      onChanged: (v) => Options().animeCollectionPreview = v,
+                    ),
+                    CheckBoxField(
+                      title: 'Manga Collection Preview',
+                      initial: Options().mangaCollectionPreview,
+                      onChanged: (v) => Options().mangaCollectionPreview = v,
+                    ),
+                    const SizedBox(height: 5),
+                    const Text(
+                      'Collection previews only load your current and repeated '
+                      'media, which results in faster loading times. Disabling '
+                      'a preview means the whole collection will be loaded at once.',
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
         const SliverFooter(),

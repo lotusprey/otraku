@@ -40,10 +40,10 @@ dependencies:
   dynamic_color: ^1.5.4
 
   # Sending device notifications.
-  flutter_local_notifications: ^12.0.3
+  flutter_local_notifications: ^12.0.3+1
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.9.0
+  flutter_widget_from_html_core: ^0.9.0+1
 
   # An addition to the material icons.
   ionicons: ^0.2.1
@@ -52,7 +52,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons: ^0.11.0
   flutter_lints: ^2.0.1
 
 flutter_icons:

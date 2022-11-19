@@ -168,7 +168,7 @@ class SettingsAppTab extends StatelessWidget {
             onTap: () => showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 2 + 150,
+                initialHeight: Consts.tapTargetSize * 3 + 150,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   padding: Consts.padding,
@@ -184,10 +184,22 @@ class SettingsAppTab extends StatelessWidget {
                       onChanged: (v) => Options().mangaCollectionPreview = v,
                     ),
                     const SizedBox(height: 5),
-                    const Text(
+                    Text(
                       'Collection previews only load your current and repeated '
                       'media, which results in faster loading times. Disabling '
                       'a preview means the whole collection will be loaded at once.',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    CheckBoxField(
+                      title: 'Exclusive Airing Sort for Anime Preview',
+                      initial: Options().airingSortForPreview,
+                      onChanged: (v) => Options().airingSortForPreview = v,
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Anime collection preview will sort anime by '
+                      'airing time, instead of the default sort.',
+                      style: Theme.of(context).textTheme.subtitle1,
                     ),
                   ],
                 ),

@@ -4,6 +4,7 @@ import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
+import 'package:otraku/utils/options.dart';
 
 final collectionPreviewProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, CollectionTag tag) => CollectionPreviewNotifier(tag),
@@ -43,22 +44,11 @@ class CollectionPreviewNotifier extends ChangeNotifier {
         }
       }
 
-      items.sort((a, b) {
-        if (a.airingAt == null) {
-          if (b.airingAt == null) {
-            return a.titles[0]
-                .toUpperCase()
-                .compareTo(b.titles[0].toUpperCase());
-          }
-          return 1;
-        }
+      final sort = Options().airingSortForPreview
+          ? EntrySort.AIRING_AT
+          : Options().defaultAnimeSort;
 
-        if (b.airingAt == null) return -1;
-
-        final comparison = a.airingAt!.compareTo(b.airingAt!);
-        if (comparison != 0) return comparison;
-        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
-      });
+      items.sort(entryComparator(sort));
       return items;
     });
     notifyListeners();

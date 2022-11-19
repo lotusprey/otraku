@@ -22,6 +22,7 @@ enum _OptionKey {
   imageQuality,
   animeCollectionPreview,
   mangaCollectionPreview,
+  airingSortForPreview,
   confirmExit,
   leftHanded,
   analogueClock,
@@ -69,6 +70,7 @@ class Options extends ChangeNotifier {
     this._imageQuality,
     this._animeCollectionPreview,
     this._mangaCollectionPreview,
+    this._airingSortForPreview,
     this._confirmExit,
     this._leftHanded,
     this._analogueClock,
@@ -127,6 +129,7 @@ class Options extends ChangeNotifier {
       ImageQuality.values.elementAt(imageQualityIndex),
       _optionBox.get(_OptionKey.animeCollectionPreview.name) ?? true,
       _optionBox.get(_OptionKey.mangaCollectionPreview.name) ?? true,
+      _optionBox.get(_OptionKey.airingSortForPreview.name) ?? true,
       _optionBox.get(_OptionKey.confirmExit.name) ?? false,
       _optionBox.get(_OptionKey.leftHanded.name) ?? false,
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
@@ -195,6 +198,7 @@ class Options extends ChangeNotifier {
   ImageQuality _imageQuality;
   bool _animeCollectionPreview;
   bool _mangaCollectionPreview;
+  bool _airingSortForPreview;
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
@@ -218,6 +222,7 @@ class Options extends ChangeNotifier {
   ImageQuality get imageQuality => _imageQuality;
   bool get animeCollectionPreview => _animeCollectionPreview;
   bool get mangaCollectionPreview => _mangaCollectionPreview;
+  bool get airingSortForPreview => _airingSortForPreview;
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
@@ -337,6 +342,11 @@ class Options extends ChangeNotifier {
   set mangaCollectionPreview(bool v) {
     _mangaCollectionPreview = v;
     _optionBox.put(_OptionKey.mangaCollectionPreview.name, v);
+  }
+
+  set airingSortForPreview(bool v) {
+    _airingSortForPreview = v;
+    _optionBox.put(_OptionKey.airingSortForPreview.name, v);
   }
 
   set confirmExit(bool v) {

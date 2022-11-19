@@ -42,21 +42,19 @@ class UserHeader extends StatelessWidget {
       actions: [
         if (!isMe && user != null) _FollowButton(user!),
         if (user?.siteUrl != null)
-          IconShade(TopBarIcon(
+          TopBarShadowIcon(
             tooltip: 'More',
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
               context,
               FixedGradientDragSheet.link(context, user!.siteUrl!),
             ),
-          )),
+          ),
         if (isMe)
-          IconShade(
-            TopBarIcon(
-              tooltip: 'Settings',
-              icon: Ionicons.cog_outline,
-              onTap: () => Navigator.pushNamed(context, RouteArg.settings),
-            ),
+          TopBarShadowIcon(
+            tooltip: 'Settings',
+            icon: Ionicons.cog_outline,
+            onTap: () => Navigator.pushNamed(context, RouteArg.settings),
           ),
       ],
       child: Column(

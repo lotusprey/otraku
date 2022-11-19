@@ -238,8 +238,8 @@ class _BirthdayFilter extends StatelessWidget {
     return TopBarIcon(
       icon: Icons.cake_outlined,
       tooltip: 'Birthday Filter',
-      color: value ? Theme.of(context).colorScheme.primary : null,
       onTap: () => ref.read(birthdayFilterProvider.notifier).state = !value,
+      accented: value,
     );
   }
 }

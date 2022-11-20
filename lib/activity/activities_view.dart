@@ -141,7 +141,7 @@ class ActivitiesSubView extends StatelessWidget {
           onRefresh: () {
             ref.invalidate(activitiesProvider(id));
             if (id == null) {
-              ref.read(settingsProvider.notifier).refreshUnread();
+              ref.read(settingsProvider.notifier).refetchUnread();
             }
             return Future.value();
           },

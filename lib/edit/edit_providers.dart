@@ -76,7 +76,7 @@ final oldEditProvider = FutureProvider.autoDispose.family(
     }
 
     final data = await Api.get(GqlQuery.entry, {'mediaId': tag.id});
-    return Edit(data['Media'], ref.watch(settingsProvider));
+    return Edit(data['Media'], ref.watch(settingsProvider.notifier).value);
   },
 );
 

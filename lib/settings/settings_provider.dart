@@ -5,39 +5,50 @@ import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
-final settingsProvider = StateNotifierProvider<SettingsNotifier, Settings>(
+final settingsProvider =
+    StateNotifierProvider<SettingsNotifier, AsyncValue<Settings>>(
   (ref) => SettingsNotifier(),
 );
 
-class SettingsNotifier extends StateNotifier<Settings> {
-  SettingsNotifier() : super(Settings.empty()) {
-    _init();
+class SettingsNotifier extends StateNotifier<AsyncValue<Settings>> {
+  SettingsNotifier() : super(const AsyncValue.loading()) {
+    _fetch();
   }
 
-  Future<void> _init() async {
-    try {
+  /// Different parts of the app may need the settings at any moment,
+  /// so a default instance is provided while loading.
+  Settings get value => state.maybeWhen(
+        data: (data) => data,
+        orElse: () => Settings.empty(),
+      );
+
+  Future<void> _fetch() async {
+    state = await AsyncValue.guard(() async {
       final data = await Api.get(GqlQuery.settings);
-      state = Settings(data['Viewer']);
-    } catch (_) {}
+      return Settings(data['Viewer']);
+    });
   }
 
   Future<void> update(Settings other) async {
-    try {
+    state = await AsyncValue.guard(() async {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());
-      state = Settings(data['UpdateUser']);
-    } catch (_) {}
+      return Settings(data['UpdateUser']);
+    });
   }
 
-  Future<void> refreshUnread() async {
+  Future<void> refetchUnread() async {
     try {
       final data = await Api.get(GqlQuery.settings, {'withData': false});
-      state = state.copy(
-        unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
+      state = state.whenData(
+        (value) => value.copy(
+          unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
+        ),
       );
     } catch (_) {}
   }
 
-  void nullifyUnread() => state = state.copy(unreadNotifications: 0);
+  void clearUnread() =>
+      state = state.whenData((value) => value.copy(unreadNotifications: 0));
 }
 
 /// Some fields are modifiable to allow for quick and simple edits.

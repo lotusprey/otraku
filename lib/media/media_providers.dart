@@ -50,7 +50,7 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
     }
 
     return Media(
-      Edit(data, ref.watch(settingsProvider)),
+      Edit(data, ref.watch(settingsProvider.notifier).value),
       MediaInfo(data),
       MediaStats(data),
       relatedMedia,

@@ -259,7 +259,7 @@ class _ContentState extends State<_Content> {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Could not load collection',
+                title: 'Failed to load collection',
                 content: error.toString(),
               ),
             ),

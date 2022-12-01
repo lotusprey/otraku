@@ -101,7 +101,7 @@ class _AnimeTab extends StatelessWidget {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load anime',
+                  title: 'Failed to load anime',
                   content: error.toString(),
                 ),
               ),
@@ -109,13 +109,14 @@ class _AnimeTab extends StatelessWidget {
           },
         );
 
-        const empty = Center(child: Text('No Favourite Anime'));
-
-        return ref.watch(favoritesProvider(id)).anime.maybeWhen(
+        return ref.watch(favoritesProvider(id)).anime.when(
             loading: () => const Center(child: Loader()),
-            orElse: () => empty,
+            error: (_, __) =>
+                const Center(child: Text('Failed to load favourite anime')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No favourite anime'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(
@@ -152,7 +153,7 @@ class _MangaTab extends StatelessWidget {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load manga',
+                  title: 'Failed to load manga',
                   content: error.toString(),
                 ),
               ),
@@ -160,13 +161,14 @@ class _MangaTab extends StatelessWidget {
           },
         );
 
-        const empty = Center(child: Text('No Favourite Manga'));
-
-        return ref.watch(favoritesProvider(id)).manga.maybeWhen(
+        return ref.watch(favoritesProvider(id)).manga.when(
             loading: () => const Center(child: Loader()),
-            orElse: () => empty,
+            error: (_, __) =>
+                const Center(child: Text('Failed to load favourite manga')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No favourite manga'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(
@@ -203,7 +205,7 @@ class _CharactersTab extends StatelessWidget {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load characters',
+                  title: 'Failed to load characters',
                   content: error.toString(),
                 ),
               ),
@@ -211,13 +213,14 @@ class _CharactersTab extends StatelessWidget {
           },
         );
 
-        const empty = Center(child: Text('No Favourite Characters'));
-
-        return ref.watch(favoritesProvider(id)).characters.maybeWhen(
+        return ref.watch(favoritesProvider(id)).characters.when(
             loading: () => const Center(child: Loader()),
-            orElse: () => empty,
+            error: (_, __) => const Center(
+                child: Text('Failed to load favourite characters')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No favourite characters'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(
@@ -254,7 +257,7 @@ class _StaffTab extends StatelessWidget {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load staff',
+                  title: 'Failed to load staff',
                   content: error.toString(),
                 ),
               ),
@@ -262,13 +265,14 @@ class _StaffTab extends StatelessWidget {
           },
         );
 
-        const empty = Center(child: Text('No Favourite Staff'));
-
-        return ref.watch(favoritesProvider(id)).staff.maybeWhen(
+        return ref.watch(favoritesProvider(id)).staff.when(
             loading: () => const Center(child: Loader()),
-            orElse: () => empty,
+            error: (_, __) =>
+                const Center(child: Text('Failed to load favourite staff')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No favourite staff'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(
@@ -305,7 +309,7 @@ class _StudiosTab extends StatelessWidget {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load studios',
+                  title: 'Failed to load studios',
                   content: error.toString(),
                 ),
               ),
@@ -313,13 +317,14 @@ class _StudiosTab extends StatelessWidget {
           },
         );
 
-        const empty = Center(child: Text('No Favourite Studios'));
-
-        return ref.watch(favoritesProvider(id)).studios.maybeWhen(
+        return ref.watch(favoritesProvider(id)).studios.when(
             loading: () => const Center(child: Loader()),
-            orElse: () => empty,
+            error: (_, __) =>
+                const Center(child: Text('Failed to load favourite studios')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No favourite studios'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(

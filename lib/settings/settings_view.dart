@@ -59,7 +59,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
 
     const loadWidget = Center(child: Loader());
-    const errorWidget = Center(child: Text('Could not load settings'));
+    const errorWidget = Center(child: Text('Failed to load settings'));
 
     final tabs = [
       SettingsAppTab(_ctrl),

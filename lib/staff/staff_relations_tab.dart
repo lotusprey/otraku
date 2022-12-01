@@ -41,7 +41,7 @@ class StaffCharactersTab extends StatelessWidget {
                       showPopUp(
                         context,
                         ConfirmationDialog(
-                          title: 'Could not load characters',
+                          title: 'Failed to load characters',
                           content: s.error.toString(),
                         ),
                       );
@@ -61,7 +61,9 @@ class StaffCharactersTab extends StatelessWidget {
                     physics: Consts.physics,
                     slivers: [
                       refreshControl,
-                      const SliverFillRemaining(child: Text('No characters')),
+                      const SliverFillRemaining(
+                        child: Text('Failed to load characters'),
+                      ),
                     ],
                   ),
                   data: (data) {
@@ -117,7 +119,7 @@ class StaffRolesTab extends StatelessWidget {
                       showPopUp(
                         context,
                         ConfirmationDialog(
-                          title: 'Could not load roles',
+                          title: 'Failed to load roles',
                           content: s.error.toString(),
                         ),
                       );
@@ -135,7 +137,9 @@ class StaffRolesTab extends StatelessWidget {
                         physics: Consts.physics,
                         slivers: [
                           refreshControl,
-                          const SliverFillRemaining(child: Text('No roles')),
+                          const SliverFillRemaining(
+                            child: Text('Failed to load roles'),
+                          ),
                         ],
                       ),
                       data: (data) {

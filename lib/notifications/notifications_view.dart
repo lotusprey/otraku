@@ -115,21 +115,22 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load notifications',
+                  title: 'Failed to load notifications',
                   content: error.toString(),
                 ),
               ),
             ),
           );
 
-          const empty = Center(child: Text('No notifications'));
-
           final notifier = ref.watch(notificationsProvider);
-          return notifier.notifications.maybeWhen(
-            orElse: () => empty,
+          return notifier.notifications.when(
             loading: () => const Center(child: Loader()),
+            error: (_, __) =>
+                const Center(child: Text('Failed to load notifications')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No notifications'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(

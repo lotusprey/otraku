@@ -42,7 +42,7 @@ class CharacterAnimeTab extends StatelessWidget {
                       showPopUp(
                         context,
                         ConfirmationDialog(
-                          title: 'Could not load anime',
+                          title: 'Failed to load anime',
                           content: s.error.toString(),
                         ),
                       );
@@ -60,7 +60,9 @@ class CharacterAnimeTab extends StatelessWidget {
                         physics: Consts.physics,
                         slivers: [
                           refreshControl,
-                          const SliverFillRemaining(child: Text('No anime')),
+                          const SliverFillRemaining(
+                            child: Text('Failed to load anime'),
+                          ),
                         ],
                       ),
                       data: (data) {
@@ -124,7 +126,7 @@ class CharacterMangaTab extends StatelessWidget {
                       showPopUp(
                         context,
                         ConfirmationDialog(
-                          title: 'Could not load manga',
+                          title: 'Failed to load manga',
                           content: s.error.toString(),
                         ),
                       );
@@ -142,7 +144,9 @@ class CharacterMangaTab extends StatelessWidget {
                         physics: Consts.physics,
                         slivers: [
                           refreshControl,
-                          const SliverFillRemaining(child: Text('No manga')),
+                          const SliverFillRemaining(
+                            child: Text('Failed to load manga'),
+                          ),
                         ],
                       ),
                       data: (data) {

@@ -68,7 +68,7 @@ class _MediaViewState extends State<MediaView> {
                     showPopUp(
                       context,
                       ConfirmationDialog(
-                        title: 'Could not load media',
+                        title: 'Failed to load media',
                         content: s.error.toString(),
                       ),
                     );
@@ -78,7 +78,8 @@ class _MediaViewState extends State<MediaView> {
 
               return ref.watch(mediaProvider(widget.id)).when(
                     loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(child: Text('No data')),
+                    error: (_, __) =>
+                        const Center(child: Text('Failed to load media')),
                     data: (data) => _MediaView(
                       widget.id,
                       _tab,

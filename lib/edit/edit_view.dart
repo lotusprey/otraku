@@ -40,7 +40,7 @@ class EditView extends StatelessWidget {
               showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load edit sheet',
+                  title: 'Failed to load edit sheet',
                   content: err.toString(),
                 ),
               );

@@ -117,7 +117,7 @@ class CollectionFilterView extends StatelessWidget {
             child: Consumer(
               builder: (context, ref, _) => ref.watch(tagsProvider).when(
                     loading: () => const Loader(),
-                    error: (_, __) => const Text('Could not load tags'),
+                    error: (_, __) => const Text('Failed to load tags'),
                     data: (tags) => ChipTagGrid(
                       inclusiveGenres: filter.genreIn,
                       exclusiveGenres: filter.genreNotIn,
@@ -219,7 +219,7 @@ class DiscoverFilterView extends StatelessWidget {
             child: Consumer(
               builder: (context, ref, _) => ref.watch(tagsProvider).when(
                     loading: () => const Loader(),
-                    error: (_, __) => const Text('Could not load tags'),
+                    error: (_, __) => const Text('Failed to load tags'),
                     data: (tags) => ChipTagGrid(
                       inclusiveGenres: filter.genreIn,
                       exclusiveGenres: filter.genreNotIn,

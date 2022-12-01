@@ -46,16 +46,18 @@ class _StatisticsViewState extends State<StatisticsView> {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Could not load statistics',
+                title: 'Failed to load statistics',
                 content: error.toString(),
               ),
             ),
           ),
         );
 
-        return ref.watch(userProvider(widget.id)).maybeWhen(
-              orElse: () => const Center(child: Text('No statistics')),
+        return ref.watch(userProvider(widget.id)).when(
               loading: () => const Center(child: Loader()),
+              error: (_, __) => const Center(
+                child: Text('Failed to load statistics'),
+              ),
               data: (data) {
                 return DirectPageView(
                   current: _onAnime ? 0 : 1,

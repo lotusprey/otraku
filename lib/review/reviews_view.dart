@@ -94,20 +94,21 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load reviews',
+                  title: 'Failed to load reviews',
                   content: error.toString(),
                 ),
               ),
             ),
           );
 
-          const empty = Center(child: Text('No Reviews'));
-
-          return ref.watch(reviewsProvider(widget.id)).reviews.maybeWhen(
+          return ref.watch(reviewsProvider(widget.id)).reviews.when(
                 loading: () => const Center(child: Loader()),
-                orElse: () => empty,
+                error: (_, __) =>
+                    const Center(child: Text('Failed to load reviews')),
                 data: (data) {
-                  if (data.items.isEmpty) return empty;
+                  if (data.items.isEmpty) {
+                    return const Center(child: Text('No Reviews'));
+                  }
 
                   return Center(
                     child: ConstrainedBox(

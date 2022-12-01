@@ -40,7 +40,7 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Could not load collection preview',
+                title: 'Failed to load collection preview',
                 content: error.toString(),
               ),
             ),

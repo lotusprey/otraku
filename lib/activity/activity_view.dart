@@ -79,19 +79,17 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load activity',
+                  title: 'Failed to load activity',
                   content: error.toString(),
                 ),
               ),
             ),
           );
 
-          return ref
-              .watch(activityProvider(widget.id))
-              .unwrapPrevious()
-              .maybeWhen(
+          return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
                 loading: () => const Center(child: Loader()),
-                orElse: () => const Center(child: Text('No Activity')),
+                error: (_, __) =>
+                    const Center(child: Text('Failed to load activity')),
                 data: (data) {
                   return Padding(
                     padding: Consts.padding,

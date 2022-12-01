@@ -63,7 +63,7 @@ class MediaOtherView extends StatelessWidget {
                   .when(
                     loading: () => const Center(child: Loader()),
                     error: (_, __) => const Center(
-                      child: Text('Could not load recommendations'),
+                      child: Text('Failed to load recommendations'),
                     ),
                     data: (data) => CustomScrollView(
                       controller: scrollCtrl,

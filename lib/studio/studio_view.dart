@@ -71,7 +71,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   showPopUp(
                     context,
                     ConfirmationDialog(
-                      title: 'Could not load studio',
+                      title: 'Failed to load studio',
                       content: s.error.toString(),
                     ),
                   );
@@ -112,7 +112,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                       refreshControl,
                       if (titleWidget != null) titleWidget,
                       const SliverFillRemaining(
-                        child: Center(child: Text('Could not load studio')),
+                        child: Center(child: Text('Failed to load studio')),
                       ),
                     ],
                   ),

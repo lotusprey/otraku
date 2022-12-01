@@ -25,10 +25,10 @@ dependencies:
   path_provider: ^2.0.11
 
   # Secure storage for the access tokens.
-  flutter_secure_storage: ^6.0.0
+  flutter_secure_storage: ^6.1.0
 
   # Link opening in the browser.
-  url_launcher: ^6.1.6
+  url_launcher: ^6.1.7
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
   app_links: ^3.3.0
@@ -40,10 +40,10 @@ dependencies:
   dynamic_color: ^1.5.4
 
   # Sending device notifications.
-  flutter_local_notifications: ^12.0.3+1
+  flutter_local_notifications: ^12.0.4
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.9.0+1
+  flutter_widget_from_html_core: ^0.9.0+2
 
   # An addition to the material icons.
   ionicons: ^0.2.1

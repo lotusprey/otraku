@@ -4,7 +4,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
@@ -148,21 +147,19 @@ class MediaInfoView extends StatelessWidget {
                 title: 'Genres',
                 items: info.genres,
                 onTap: (i) {
-                  ref.read(discoverTypeProvider.notifier).state = info.type;
                   ref.read(searchProvider(null).notifier).state = null;
+                  final notifier = ref.read(discoverFilterProvider);
+                  notifier.type = info.type;
 
-                  final ofAnime = info.type == DiscoverType.anime;
-                  final notifier = ref.read(
-                    discoverFilterProvider(ofAnime).notifier,
-                  );
-                  final filter = notifier.state.clear();
+                  final filter = notifier.filter.clear();
                   filter.genreIn.add(info.genres[i]);
-                  notifier.state = filter;
+                  notifier.filter = filter;
 
                   ref.read(homeProvider).homeTab = HomeView.DISCOVER;
                   Navigator.popUntil(context, (r) => r.isFirst);
                 },
               ),
+            if (info.tags.isNotEmpty) _Tags(info, ref),
             if (info.studios.isNotEmpty)
               _ScrollCards(
                 title: 'Studios',
@@ -192,18 +189,6 @@ class MediaInfoView extends StatelessWidget {
             if (info.nativeTitle != null) _Title('Native', info.nativeTitle!),
             if (info.synonyms.isNotEmpty)
               _Title('Synonyms', info.synonyms.join(', ')),
-            if (info.tags.isNotEmpty) ...[
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                  child: Text(
-                    'Tags',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  ),
-                ),
-              ),
-              _Tags(info, ref),
-            ],
             const SliverFooter(),
           ],
         ),
@@ -366,7 +351,7 @@ class _Tags extends StatefulWidget {
   final WidgetRef ref;
 
   @override
-  __TagsState createState() => __TagsState();
+  State<_Tags> createState() => __TagsState();
 }
 
 class __TagsState extends State<_Tags> {
@@ -385,151 +370,86 @@ class __TagsState extends State<_Tags> {
 
   @override
   Widget build(BuildContext context) {
-    late SliverChildBuilderDelegate delegate;
+    final tags = _showSpoilers == null || _showSpoilers!
+        ? widget.info.tags
+        : widget.info.tags.where((t) => !t.isSpoiler).toList();
 
-    if (_showSpoilers == null) {
-      final tags = widget.info.tags;
+    final spoilerTextStyle = Theme.of(context)
+        .textTheme
+        .bodyText1
+        ?.copyWith(color: Theme.of(context).colorScheme.error);
 
-      delegate = SliverChildBuilderDelegate(
-        childCount: tags.length,
-        (_, i) => Card(
-          clipBehavior: Clip.hardEdge,
-          child: InkResponse(
-            onTap: () {
-              final ref = widget.ref;
-              ref.read(discoverTypeProvider.notifier).state = widget.info.type;
-              ref.read(searchProvider(null).notifier).state = null;
-
-              final ofAnime = widget.info.type == DiscoverType.anime;
-              final notifier = ref.read(
-                discoverFilterProvider(ofAnime).notifier,
-              );
-              final filter = notifier.state.clear();
-              filter.tagIn.add(tags[i].name);
-              notifier.state = filter;
-
-              ref.read(homeProvider).homeTab = HomeView.DISCOVER;
-              Navigator.popUntil(context, (r) => r.isFirst);
-            },
-            onLongPress: () => showPopUp(
-              context,
-              TextDialog(title: tags[i].name, text: tags[i].desciption),
+    return SliverToBoxAdapter(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Text('Tags', style: Theme.of(context).textTheme.subtitle1),
+                const Spacer(),
+                if (_showSpoilers != null)
+                  TopBarIcon(
+                    icon: _showSpoilers!
+                        ? Ionicons.eye_off_outline
+                        : Ionicons.eye_outline,
+                    tooltip: _showSpoilers! ? 'Hide Spoilers' : 'Show Spoilers',
+                    onTap: () =>
+                        setState(() => _showSpoilers = !_showSpoilers!),
+                  ),
+              ],
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      tags[i].name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(
+            height: 42,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(left: 10, bottom: 2),
+              itemCount: tags.length,
+              itemBuilder: (context, i) => GestureDetector(
+                onTap: () {
+                  final ref = widget.ref;
+                  ref.read(searchProvider(null).notifier).state = null;
+                  final notifier = ref.read(discoverFilterProvider);
+                  notifier.type = widget.info.type;
+
+                  final filter = notifier.filter.clear();
+                  filter.tagIn.add(tags[i].name);
+                  notifier.filter = filter;
+
+                  ref.read(homeProvider).homeTab = HomeView.DISCOVER;
+                  Navigator.popUntil(context, (r) => r.isFirst);
+                },
+                onLongPress: () => showPopUp(
+                  context,
+                  TextDialog(title: tags[i].name, text: tags[i].desciption),
+                ),
+                child: Card(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Padding(
+                    padding: Consts.padding,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          tags[i].name,
+                          style: tags[i].isSpoiler ? spoilerTextStyle : null,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${tags[i].rank}%',
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 5),
-                  Text(
-                    '${tags[i].rank} %',
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      );
-    } else {
-      final tags = _showSpoilers!
-          ? widget.info.tags
-          : widget.info.tags.where((t) => !t.isSpoiler).toList();
-
-      final spoilerStyle = Theme.of(context)
-          .textTheme
-          .bodyText2!
-          .copyWith(color: Theme.of(context).colorScheme.error);
-
-      delegate = SliverChildBuilderDelegate(
-        childCount: tags.length + 1,
-        (_, i) {
-          if (i == tags.length) {
-            return ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.error,
-                foregroundColor: Theme.of(context).colorScheme.onError,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: Consts.borderRadiusMin,
-                ),
-              ),
-              onPressed: () => setState(() => _showSpoilers = !_showSpoilers!),
-              icon: Icon(
-                _showSpoilers!
-                    ? Ionicons.eye_off_outline
-                    : Ionicons.eye_outline,
-              ),
-              label: const Text('Spoilers'),
-            );
-          }
-
-          return Card(
-            clipBehavior: Clip.hardEdge,
-            child: InkResponse(
-              onTap: () {
-                final ref = widget.ref;
-                ref.read(discoverTypeProvider.notifier).state =
-                    widget.info.type;
-                ref.read(searchProvider(null).notifier).state = null;
-
-                final ofAnime = widget.info.type == DiscoverType.anime;
-                final notifier = ref.read(
-                  discoverFilterProvider(ofAnime).notifier,
-                );
-                final filter = notifier.state.clear();
-                filter.tagIn.add(tags[i].name);
-                notifier.state = filter;
-
-                ref.read(homeProvider).homeTab = HomeView.DISCOVER;
-                Navigator.popUntil(context, (r) => r.isFirst);
-              },
-              onLongPress: () => showPopUp(
-                context,
-                TextDialog(title: tags[i].name, text: tags[i].desciption),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        tags[i].name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: tags[i].isSpoiler ? spoilerStyle : null,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      '${tags[i].rank} %',
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    }
-
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-      sliver: SliverGrid(
-        delegate: delegate,
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.tapTargetSize,
-          minWidth: 175,
-        ),
+          const SizedBox(height: 10),
+        ],
       ),
     );
   }

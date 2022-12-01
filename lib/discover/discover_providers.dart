@@ -13,12 +13,10 @@ import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
-import 'package:otraku/utils/options.dart';
 
 /// Fetches another page on the discover tab, depending on the selected type.
 void discoverLoadMore(WidgetRef ref) {
-  final type = ref.read(discoverTypeProvider);
-  switch (type) {
+  switch (ref.read(discoverFilterProvider).type) {
     case DiscoverType.anime:
       ref.read(discoverAnimeProvider.notifier).fetch();
       return;
@@ -43,35 +41,39 @@ void discoverLoadMore(WidgetRef ref) {
   }
 }
 
-final discoverTypeProvider = StateProvider.autoDispose(
-  (ref) => Options().defaultDiscoverType,
-);
-
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
 
 final discoverAnimeProvider = StateNotifierProvider.autoDispose<
     DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
-  (ref) => DiscoverMediaNotifier(
-    ref.watch(discoverFilterProvider(true)),
-    ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
+  (ref) {
+    final discoverFilter = ref.watch(discoverFilterProvider);
+    return DiscoverMediaNotifier(
+      discoverFilter.filter,
+      ref.watch(searchProvider(null).select(_searchSelector)),
+      discoverFilter.type == DiscoverType.anime &&
+          ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
+    );
+  },
 );
 
 final discoverMangaProvider = StateNotifierProvider.autoDispose<
     DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
-  (ref) => DiscoverMediaNotifier(
-    ref.watch(discoverFilterProvider(false)),
-    ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
+  (ref) {
+    final discoverFilter = ref.watch(discoverFilterProvider);
+    return DiscoverMediaNotifier(
+      discoverFilter.filter,
+      ref.watch(searchProvider(null).select(_searchSelector)),
+      discoverFilter.type == DiscoverType.manga &&
+          ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
+    );
+  },
 );
 
 final discoverCharacterProvider = StateNotifierProvider.autoDispose<
     DiscoverCharacterNotifier, AsyncValue<Pagination<TileItem>>>(
   (ref) => DiscoverCharacterNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(birthdayFilterProvider),
+    ref.watch(discoverFilterProvider.select((s) => s.birthday)),
     ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
   ),
 );
@@ -80,7 +82,7 @@ final discoverStaffProvider = StateNotifierProvider.autoDispose<
     DiscoverStaffNotifier, AsyncValue<Pagination<TileItem>>>(
   (ref) => DiscoverStaffNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(birthdayFilterProvider),
+    ref.watch(discoverFilterProvider.select((s) => s.birthday)),
     ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
   ),
 );

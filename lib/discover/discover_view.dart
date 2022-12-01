@@ -33,7 +33,7 @@ class DiscoverView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onRefresh = () {
-      final type = ref.read(discoverTypeProvider);
+      final type = ref.read(discoverFilterProvider).type;
       switch (type) {
         case DiscoverType.anime:
           ref.invalidate(discoverAnimeProvider);
@@ -81,7 +81,7 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final type = ref.watch(discoverTypeProvider);
+        final type = ref.watch(discoverFilterProvider.select((s) => s.type));
 
         return TopBar(
           canPop: false,
@@ -94,20 +94,14 @@ class _TopBar extends StatelessWidget {
               TopBarIcon(
                 tooltip: 'Filter',
                 icon: Ionicons.funnel_outline,
-                onTap: () {
-                  final ofAnime = type == DiscoverType.anime;
-                  final notifier = ref.read(
-                    discoverFilterProvider(ofAnime).notifier,
-                  );
-
-                  showSheet(
-                    context,
-                    DiscoverFilterView(
-                      filter: notifier.state,
-                      onChanged: (filter) => notifier.state = filter,
-                    ),
-                  );
-                },
+                onTap: () => showSheet(
+                  context,
+                  DiscoverFilterView(
+                    filter: ref.read(discoverFilterProvider).filter,
+                    onChanged: (filter) =>
+                        ref.read(discoverFilterProvider).filter = filter,
+                  ),
+                ),
               )
             else if (type == DiscoverType.character ||
                 type == DiscoverType.staff)
@@ -158,7 +152,7 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final type = ref.watch(discoverTypeProvider);
+        final type = ref.watch(discoverFilterProvider.select((s) => s.type));
 
         return ActionButton(
           tooltip: 'Types',
@@ -169,8 +163,10 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               DynamicGradientDragSheet(
-                onTap: (i) => ref.read(discoverTypeProvider.notifier).state =
-                    DiscoverType.values[i],
+                onTap: (i) {
+                  ref.read(discoverFilterProvider).type =
+                      DiscoverType.values[i];
+                },
                 children: [
                   for (int i = 0; i < DiscoverType.values.length; i++)
                     Row(
@@ -198,26 +194,23 @@ class _ActionButton extends StatelessWidget {
             );
           },
           onSwipe: (goRight) {
-            final notifier = ref.read(discoverTypeProvider.notifier);
+            var type = ref.read(discoverFilterProvider).type;
 
             if (goRight) {
               if (type.index < DiscoverType.values.length - 1) {
-                notifier.state = DiscoverType.values.elementAt(
-                  type.index + 1,
-                );
+                type = DiscoverType.values.elementAt(type.index + 1);
               } else {
-                notifier.state = DiscoverType.values.first;
+                type = DiscoverType.values.first;
               }
             } else {
               if (type.index > 0) {
-                notifier.state = DiscoverType.values.elementAt(
-                  type.index - 1,
-                );
+                type = DiscoverType.values.elementAt(type.index - 1);
               } else {
-                notifier.state = DiscoverType.values.last;
+                type = DiscoverType.values.last;
               }
             }
 
+            ref.read(discoverFilterProvider).type = type;
             return type.icon;
           },
         );
@@ -233,12 +226,12 @@ class _BirthdayFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final value = ref.watch(birthdayFilterProvider);
+    final value = ref.watch(discoverFilterProvider.select((s) => s.birthday));
 
     return TopBarIcon(
       icon: Icons.cake_outlined,
       tooltip: 'Birthday Filter',
-      onTap: () => ref.read(birthdayFilterProvider.notifier).state = !value,
+      onTap: () => ref.read(discoverFilterProvider).birthday = !value,
       accented: value,
     );
   }
@@ -254,7 +247,7 @@ class _Grid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final type = ref.watch(discoverTypeProvider);
+        final type = ref.watch(discoverFilterProvider.select((s) => s.type));
 
         switch (type) {
           case DiscoverType.anime:

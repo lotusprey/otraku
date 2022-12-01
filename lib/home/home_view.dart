@@ -88,7 +88,8 @@ class _HomeViewState extends ConsumerState<HomeView> {
     ref.watch(tagsProvider.select((_) => null));
     ref.watch(activitiesProvider(null).select((_) => null));
     ref.watch(userProvider(widget.id).select((_) => null));
-    final discoverType = ref.watch(discoverTypeProvider);
+    final discoverType =
+        ref.watch(discoverFilterProvider.select((s) => s.type));
     switch (discoverType) {
       case DiscoverType.anime:
         ref.watch(discoverAnimeProvider.select((_) => null));

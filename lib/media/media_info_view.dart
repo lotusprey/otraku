@@ -143,7 +143,7 @@ class MediaInfoView extends StatelessWidget {
               ),
             ),
             if (info.genres.isNotEmpty)
-              _ScrollCards(
+              _PlainScrollCards(
                 title: 'Genres',
                 items: info.genres,
                 onTap: (i) {
@@ -159,9 +159,9 @@ class MediaInfoView extends StatelessWidget {
                   Navigator.popUntil(context, (r) => r.isFirst);
                 },
               ),
-            if (info.tags.isNotEmpty) _Tags(info, ref),
+            if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
             if (info.studios.isNotEmpty)
-              _ScrollCards(
+              _PlainScrollCards(
                 title: 'Studios',
                 items: info.studios.keys.toList(),
                 onTap: (index) => LinkTile.openView(
@@ -172,7 +172,7 @@ class MediaInfoView extends StatelessWidget {
                 ),
               ),
             if (info.producers.isNotEmpty)
-              _ScrollCards(
+              _PlainScrollCards(
                 title: 'Producers',
                 items: info.producers.keys.toList(),
                 onTap: (i) => LinkTile.openView(
@@ -257,6 +257,69 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 class _ScrollCards extends StatelessWidget {
   const _ScrollCards({
     required this.title,
+    required this.itemCount,
+    required this.builder,
+    required this.onTap,
+    required this.onLongPress,
+    this.trailingAction,
+  });
+
+  final String title;
+  final int itemCount;
+  final Widget Function(BuildContext, int) builder;
+  final void Function(int) onTap;
+  final void Function(int) onLongPress;
+  final Widget? trailingAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  title,
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
+              const Spacer(),
+              if (trailingAction != null) trailingAction!,
+            ],
+          ),
+          if (trailingAction == null) const SizedBox(height: 10),
+          SizedBox(
+            height: 42,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(left: 10, bottom: 2),
+              itemCount: itemCount,
+              itemBuilder: (context, i) => GestureDetector(
+                onTap: () => onTap(i),
+                onLongPress: () => onLongPress(i),
+                child: Card(
+                  margin: const EdgeInsets.only(right: 10),
+                  child: Padding(
+                    padding: Consts.padding,
+                    child: builder(context, i),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlainScrollCards extends StatelessWidget {
+  const _PlainScrollCards({
+    required this.title,
     required this.items,
     required this.onTap,
   });
@@ -267,38 +330,93 @@ class _ScrollCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.only(bottom: 10),
-      sliver: SliverToBoxAdapter(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 5),
-              child: Text(title, style: Theme.of(context).textTheme.subtitle1),
-            ),
-            SizedBox(
-              height: 42,
-              child: ListView.builder(
-                padding: const EdgeInsets.only(left: 10, bottom: 2),
-                physics: Consts.physics,
-                scrollDirection: Axis.horizontal,
-                itemCount: items.length,
-                itemBuilder: (_, index) => GestureDetector(
-                  onTap: () => onTap(index),
-                  onLongPress: () => Toast.copy(context, items[index]),
-                  child: Card(
-                    margin: const EdgeInsets.only(right: 10),
-                    child: Padding(
-                      padding: Consts.padding,
-                      child: Text(items[index]),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+    return _ScrollCards(
+      title: title,
+      itemCount: items.length,
+      onTap: onTap,
+      onLongPress: (i) => Toast.copy(context, items[i]),
+      builder: (context, i) => Text(items[i]),
+    );
+  }
+}
+
+class _TagScrollCards extends StatefulWidget {
+  const _TagScrollCards(this.info, this.ref);
+
+  final MediaInfo info;
+  final WidgetRef ref;
+
+  @override
+  State<_TagScrollCards> createState() => _TagScrollCardsState();
+}
+
+class _TagScrollCardsState extends State<_TagScrollCards> {
+  bool? _showSpoilers;
+
+  @override
+  void initState() {
+    super.initState();
+    for (final t in widget.info.tags) {
+      if (t.isSpoiler) {
+        _showSpoilers = false;
+        break;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tags = _showSpoilers == null || _showSpoilers!
+        ? widget.info.tags
+        : widget.info.tags.where((t) => !t.isSpoiler).toList();
+
+    final spoilerTextStyle = Theme.of(context)
+        .textTheme
+        .bodyText1
+        ?.copyWith(color: Theme.of(context).colorScheme.error);
+
+    return _ScrollCards(
+      title: 'Tags',
+      itemCount: tags.length,
+      onTap: (i) {
+        final ref = widget.ref;
+        ref.read(searchProvider(null).notifier).state = null;
+        final notifier = ref.read(discoverFilterProvider);
+        notifier.type = widget.info.type;
+
+        final filter = notifier.filter.clear();
+        filter.tagIn.add(tags[i].name);
+        notifier.filter = filter;
+
+        ref.read(homeProvider).homeTab = HomeView.DISCOVER;
+        Navigator.popUntil(context, (r) => r.isFirst);
+      },
+      onLongPress: (i) => showPopUp(
+        context,
+        TextDialog(title: tags[i].name, text: tags[i].desciption),
+      ),
+      trailingAction: _showSpoilers != null
+          ? TopBarIcon(
+              icon: _showSpoilers!
+                  ? Ionicons.eye_off_outline
+                  : Ionicons.eye_outline,
+              tooltip: _showSpoilers! ? 'Hide Spoilers' : 'Show Spoilers',
+              onTap: () => setState(() => _showSpoilers = !_showSpoilers!),
+            )
+          : null,
+      builder: (context, i) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            tags[i].name,
+            style: tags[i].isSpoiler ? spoilerTextStyle : null,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            '${tags[i].rank}%',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ],
       ),
     );
   }
@@ -339,117 +457,6 @@ class _Title extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Tags extends StatefulWidget {
-  const _Tags(this.info, this.ref);
-
-  final MediaInfo info;
-  final WidgetRef ref;
-
-  @override
-  State<_Tags> createState() => __TagsState();
-}
-
-class __TagsState extends State<_Tags> {
-  bool? _showSpoilers;
-
-  @override
-  void initState() {
-    super.initState();
-    for (final t in widget.info.tags) {
-      if (t.isSpoiler) {
-        _showSpoilers = false;
-        break;
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final tags = _showSpoilers == null || _showSpoilers!
-        ? widget.info.tags
-        : widget.info.tags.where((t) => !t.isSpoiler).toList();
-
-    final spoilerTextStyle = Theme.of(context)
-        .textTheme
-        .bodyText1
-        ?.copyWith(color: Theme.of(context).colorScheme.error);
-
-    return SliverToBoxAdapter(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              children: [
-                Text('Tags', style: Theme.of(context).textTheme.subtitle1),
-                const Spacer(),
-                if (_showSpoilers != null)
-                  TopBarIcon(
-                    icon: _showSpoilers!
-                        ? Ionicons.eye_off_outline
-                        : Ionicons.eye_outline,
-                    tooltip: _showSpoilers! ? 'Hide Spoilers' : 'Show Spoilers',
-                    onTap: () =>
-                        setState(() => _showSpoilers = !_showSpoilers!),
-                  ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 42,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 10, bottom: 2),
-              itemCount: tags.length,
-              itemBuilder: (context, i) => GestureDetector(
-                onTap: () {
-                  final ref = widget.ref;
-                  ref.read(searchProvider(null).notifier).state = null;
-                  final notifier = ref.read(discoverFilterProvider);
-                  notifier.type = widget.info.type;
-
-                  final filter = notifier.filter.clear();
-                  filter.tagIn.add(tags[i].name);
-                  notifier.filter = filter;
-
-                  ref.read(homeProvider).homeTab = HomeView.DISCOVER;
-                  Navigator.popUntil(context, (r) => r.isFirst);
-                },
-                onLongPress: () => showPopUp(
-                  context,
-                  TextDialog(title: tags[i].name, text: tags[i].desciption),
-                ),
-                child: Card(
-                  margin: const EdgeInsets.only(right: 10),
-                  child: Padding(
-                    padding: Consts.padding,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          tags[i].name,
-                          style: tags[i].isSpoiler ? spoilerTextStyle : null,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          '${tags[i].rank}%',
-                          style: Theme.of(context).textTheme.subtitle1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
       ),
     );
   }

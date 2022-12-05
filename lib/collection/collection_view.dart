@@ -173,7 +173,9 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        if (ref.watch(collectionProvider(tag).select((s) => s.lists.isEmpty))) {
+        if (ref.watch(collectionProvider(tag).select(
+          (s) => s.lists.length < 2,
+        ))) {
           return const SizedBox();
         }
 

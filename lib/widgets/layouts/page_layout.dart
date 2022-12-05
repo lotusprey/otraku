@@ -20,6 +20,7 @@ class PageLayout extends StatefulWidget {
     final PageLayoutState? result =
         context.findAncestorStateOfType<PageLayoutState>();
     if (result != null) return result;
+
     throw FlutterError.fromParts(<DiagnosticsNode>[
       ErrorSummary(
         'PageLayout.of() called with a context that does not contain a PageLayout.',
@@ -35,7 +36,6 @@ class PageLayout extends StatefulWidget {
 class PageLayoutState extends State<PageLayout> {
   double _topOffset = 0;
   double _bottomOffset = 0;
-  bool _didCalculateOffsets = false;
 
   /// The offset from the top that this widget's children should avoid.
   /// It takes into consideration [viewPadding.top] of [MediaQueryData],
@@ -52,8 +52,8 @@ class PageLayoutState extends State<PageLayout> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_didCalculateOffsets) return;
-    _didCalculateOffsets = true;
+    _topOffset = 0;
+    _bottomOffset = 0;
 
     if (widget.topBar != null) {
       _topOffset += widget.topBar!.preferredSize.height;

@@ -27,12 +27,7 @@ class SettingsNotificationsTab extends StatelessWidget {
           SliverToBoxAdapter(
             child: SizedBox(height: PageLayout.of(context).topOffset),
           ),
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-              height: 40,
-              minWidth: 200,
-              mainAxisSpacing: 0,
-            ),
+          SliverList(
             delegate: SliverChildBuilderDelegate(
               childCount: settings.notificationOptions.length,
               (context, i) {

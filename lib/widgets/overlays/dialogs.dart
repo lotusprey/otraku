@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/html_content.dart';
 
 Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
@@ -140,25 +139,90 @@ class ConfirmationDialog extends StatelessWidget {
   }
 }
 
-class ImageDialog extends StatelessWidget {
-  const ImageDialog(this.url, [this.fit = BoxFit.cover]);
+class ImageDialog extends StatefulWidget {
+  const ImageDialog(this.url);
 
   final String url;
-  final BoxFit fit;
+
+  @override
+  State<ImageDialog> createState() => _ImageDialogState();
+}
+
+class _ImageDialogState extends State<ImageDialog>
+    with SingleTickerProviderStateMixin {
+  final _transformCtrl = TransformationController();
+  late final AnimationController _animationCtrl;
+  late final CurvedAnimation _curveWrapper;
+  Animation<Matrix4>? _animation;
+
+  /// Last place the user double-tapped on.
+  Offset? _lastOffset;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _curveWrapper = CurvedAnimation(
+      parent: _animationCtrl,
+      curve: Curves.easeOutExpo,
+    );
+  }
+
+  @override
+  void dispose() {
+    _transformCtrl.dispose();
+    _animationCtrl.dispose();
+    super.dispose();
+  }
+
+  void _updateState() => _transformCtrl.value = _animation!.value;
+
+  void _endAnimation() {
+    _animation?.removeListener(_updateState);
+    _animation = null;
+    _animationCtrl.reset();
+  }
+
+  void _animateMatrixTo(Matrix4 goal) {
+    _endAnimation();
+    _animation = Matrix4Tween(
+      begin: _transformCtrl.value,
+      end: goal,
+    ).animate(_curveWrapper);
+    _animation!.addListener(_updateState);
+    _animationCtrl.forward();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
-      shape: const RoundedRectangleBorder(borderRadius: Consts.borderRadiusMin),
       backgroundColor: Colors.transparent,
-      child: ClipRRect(
-        borderRadius: Consts.borderRadiusMin,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-          ),
-          child: Image.network(url, fit: fit),
+      insetPadding: const EdgeInsets.only(),
+      child: GestureDetector(
+        onDoubleTapDown: (details) => _lastOffset = details.localPosition,
+        onDoubleTap: () {
+          // If zoomed in, zoom out.
+          if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
+            _animateMatrixTo(Matrix4.identity());
+            return;
+          }
+
+          // Can't be null, but checking just in case.
+          if (_lastOffset == null) return;
+
+          // If zoomed out, zoom in towards the tapped spot.
+          final zoomed = _transformCtrl.value.clone();
+          zoomed.translate(-_lastOffset!.dx, -_lastOffset!.dy, 0);
+          zoomed.scale(2.0, 2.0, 1.0);
+          _animateMatrixTo(zoomed);
+        },
+        child: InteractiveViewer(
+          clipBehavior: Clip.none,
+          transformationController: _transformCtrl,
+          child: Image.network(widget.url),
         ),
       ),
     );

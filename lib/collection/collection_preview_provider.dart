@@ -44,9 +44,11 @@ class CollectionPreviewNotifier extends ChangeNotifier {
         }
       }
 
-      final sort = Options().airingSortForPreview
-          ? EntrySort.AIRING_AT
-          : Options().defaultAnimeSort;
+      final sort = tag.ofAnime
+          ? Options().airingSortForPreview
+              ? EntrySort.AIRING_AT
+              : Options().defaultAnimeSort
+          : Options().defaultMangaSort;
 
       items.sort(entryComparator(sort));
       return items;

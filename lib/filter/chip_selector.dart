@@ -8,24 +8,28 @@ class ChipSelector extends StatefulWidget {
     required this.options,
     required this.selected,
     required this.onChanged,
-  });
+    this.mustHaveSelected = false,
+  }) : assert(selected != null || !mustHaveSelected);
 
   final String title;
   final List<String> options;
   final int? selected;
   final void Function(int?) onChanged;
 
+  /// Whether it's allowed for [selected] to be `null`.
+  final bool mustHaveSelected;
+
   @override
   State<ChipSelector> createState() => _ChipSelectorState();
 }
 
 class _ChipSelectorState extends State<ChipSelector> {
-  late int? _selected = widget.selected;
+  late int? _current = widget.selected;
 
   @override
   void didUpdateWidget(covariant ChipSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _selected = widget.selected;
+    _current = widget.selected;
   }
 
   @override
@@ -41,12 +45,12 @@ class _ChipSelectorState extends State<ChipSelector> {
             color: Theme.of(context).colorScheme.onSecondaryContainer,
           ),
           label: Text(widget.options[index]),
-          selected: index == _selected,
+          selected: index == _current,
           onSelected: (selected) {
-            setState(
-              () => selected ? _selected = index : _selected = null,
-            );
-            widget.onChanged(_selected);
+            if (_current == index && widget.mustHaveSelected) return;
+
+            setState(() => selected ? _current = index : _current = null);
+            widget.onChanged(_current);
           },
         ),
       ),

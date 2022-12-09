@@ -5,64 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/filter/filter_providers.dart';
-import 'package:otraku/utils/convert.dart';
-import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-
-class SortDropDown<T extends Enum> extends StatelessWidget {
-  const SortDropDown(this.values, this.index, this.onChange);
-
-  final List<T> values;
-  final int Function() index;
-  final void Function(T) onChange;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = <String, int>{};
-    for (int i = 0; i < values.length; i += 2) {
-      final key = Convert.clarifyEnum(values[i].name)!;
-      items[key] = i ~/ 2;
-    }
-
-    return DropDownField<int>(
-      title: 'Sort',
-      value: index() ~/ 2,
-      items: items,
-      onChanged: (val) {
-        int i = val * 2;
-        if (index() % 2 != 0) i++;
-        onChange(values[i]);
-      },
-    );
-  }
-}
-
-class OrderDropDown<T extends Enum> extends StatelessWidget {
-  const OrderDropDown(this.values, this.index, this.onChange);
-
-  final List<T> values;
-  final int Function() index;
-  final void Function(T) onChange;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropDownField<bool>(
-      title: 'Order',
-      value: index() % 2 == 0,
-      items: const {'Ascending': true, 'Descending': false},
-      onChanged: (val) {
-        int i = index();
-        if (!val && i % 2 == 0) {
-          i++;
-        } else if (val && i % 2 != 0) {
-          i--;
-        }
-        onChange(values[i]);
-      },
-    );
-  }
-}
 
 /// After [_delay] time has passed, since the last [run] call, call [callback].
 /// E.g. do a search query after the user stops typing.

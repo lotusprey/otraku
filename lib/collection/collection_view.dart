@@ -15,7 +15,7 @@ import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/collection/collection_grid.dart';
-import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/filter/filter_search_field.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 

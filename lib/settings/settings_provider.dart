@@ -79,7 +79,7 @@ class Settings {
         scoreFormat: ScoreFormat.values.byName(
           map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
         ),
-        defaultSort: EntrySort.getEnum(
+        defaultSort: EntrySort.fromRowOrder(
           map['mediaListOptions']['rowOrder'] ?? 'TITLE',
         ),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
@@ -182,7 +182,7 @@ class Settings {
         'activityMergeTime': activityMergeTime,
         'displayAdultContent': displayAdultContent,
         'scoreFormat': scoreFormat.name,
-        'rowOrder': defaultSort.getString,
+        'rowOrder': defaultSort.toRowOrder(),
         'advancedScoring': advancedScores,
         'advancedScoringEnabled': advancedScoringEnabled,
         'splitCompletedAnime': splitCompletedAnime,

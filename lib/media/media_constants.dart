@@ -99,36 +99,50 @@ enum MediaSort {
 }
 
 enum EntrySort {
-  TITLE,
-  TITLE_DESC,
-  SCORE,
-  SCORE_DESC,
-  UPDATED_AT,
-  UPDATED_AT_DESC,
-  CREATED_AT,
-  CREATED_AT_DESC,
-  PROGRESS,
-  PROGRESS_DESC,
-  REPEAT,
-  REPEAT_DESC,
-  AIRING_AT,
-  AIRING_AT_DESC,
-  STARTED_RELEASING,
-  STARTED_RELEASING_DESC,
-  ENDED_RELEASING,
-  ENDED_RELEASING_DESC,
-  STARTED_WATCHING,
-  STARTED_WATCHING_DESC,
-  ENDED_WATCHING,
-  ENDED_WATCHING_DESC;
+  TITLE('Title'),
+  TITLE_DESC('Title Z-A'),
+  SCORE_DESC('Score'),
+  SCORE('Worst Score'),
+  UPDATED_AT_DESC('Last Updated'),
+  UPDATED_AT('Updated'),
+  ADDED_AT_DESC('Last Added'),
+  ADDED_AT('Added'),
+  AIRING_AT('Airing'),
+  AIRING_AT_DESC('Airing Last'),
+  PROGRESS_DESC('Most Progress'),
+  PROGRESS('Least Progress'),
+  REPEATED_DESC('Most Repeated'),
+  REPEATED('Least Repeated'),
+  RELEASE_START('Release Start'),
+  RELEASE_START_DESC('Last Release Start'),
+  RELEASE_END('Release End'),
+  RELEASE_END_DESC('Last Release End'),
+  STARTED_ON('Started'),
+  STARTED_ON_DESC('Last Started'),
+  COMPLETED_ON('Completed'),
+  COMPLETED_ON_DESC('Last Completed');
 
-  String get getString {
+  const EntrySort(this.label);
+
+  /// Human readable name.
+  final String label;
+
+  /// The API supports only few default sortings.
+  static const rowOrders = [
+    EntrySort.SCORE_DESC,
+    EntrySort.TITLE,
+    EntrySort.UPDATED_AT_DESC,
+    EntrySort.ADDED_AT_DESC,
+  ];
+
+  /// Format as an API row order.
+  String toRowOrder() {
     switch (this) {
       case EntrySort.SCORE_DESC:
         return 'score';
       case EntrySort.UPDATED_AT_DESC:
         return 'updatedAt';
-      case EntrySort.CREATED_AT_DESC:
+      case EntrySort.ADDED_AT_DESC:
         return 'id';
       case EntrySort.TITLE:
         return 'title';
@@ -137,32 +151,19 @@ enum EntrySort {
     }
   }
 
-  static EntrySort getEnum(String key) {
+  /// Translate API row order to general sorting.
+  static EntrySort fromRowOrder(String key) {
     switch (key) {
       case 'score':
         return EntrySort.SCORE_DESC;
       case 'updatedAt':
         return EntrySort.UPDATED_AT_DESC;
       case 'id':
-        return EntrySort.CREATED_AT_DESC;
+        return EntrySort.ADDED_AT_DESC;
       case 'title':
         return EntrySort.TITLE;
       default:
         return EntrySort.TITLE;
     }
   }
-
-  static const defaultEnums = [
-    EntrySort.TITLE,
-    EntrySort.SCORE_DESC,
-    EntrySort.UPDATED_AT_DESC,
-    EntrySort.CREATED_AT_DESC,
-  ];
-
-  static const defaultStrings = [
-    'Title',
-    'Score',
-    'Last Updated',
-    'Last Added',
-  ];
 }

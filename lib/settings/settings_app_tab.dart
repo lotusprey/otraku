@@ -78,19 +78,13 @@ class SettingsAppTab extends StatelessWidget {
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',
                 value: Options().defaultAnimeSort,
-                items: Map.fromIterable(
-                  EntrySort.values,
-                  key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
-                ),
+                items: Map.fromIterable(EntrySort.values, key: (s) => s.label),
                 onChanged: (val) => Options().defaultAnimeSort = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Manga Sort',
                 value: Options().defaultMangaSort,
-                items: Map.fromIterable(
-                  EntrySort.values,
-                  key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
-                ),
+                items: Map.fromIterable(EntrySort.values, key: (s) => s.label),
                 onChanged: (val) => Options().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
@@ -98,7 +92,7 @@ class SettingsAppTab extends StatelessWidget {
                 value: Options().defaultDiscoverSort,
                 items: Map.fromIterable(
                   MediaSort.values,
-                  key: (v) => Convert.clarifyEnum((v as MediaSort).name)!,
+                  key: (s) => Convert.clarifyEnum((s as MediaSort).name)!,
                 ),
                 onChanged: (val) => Options().defaultDiscoverSort = val,
               ),

@@ -145,9 +145,9 @@ class SettingsContentTab extends StatelessWidget {
               DropDownField<EntrySort>(
                 title: 'Default Site List Sort',
                 value: settings.defaultSort,
-                items: Map.fromIterables(
-                  EntrySort.defaultStrings,
-                  EntrySort.defaultEnums,
+                items: Map.fromIterable(
+                  EntrySort.rowOrders,
+                  key: (s) => s.label,
                 ),
                 onChanged: (val) {
                   settings.defaultSort = val;

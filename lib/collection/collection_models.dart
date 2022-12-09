@@ -108,13 +108,13 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.CREATED_AT:
+    case EntrySort.ADDED_AT:
       return (a, b) {
         final comparison = a.createdAt!.compareTo(b.createdAt!);
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.CREATED_AT_DESC:
+    case EntrySort.ADDED_AT_DESC:
       return (a, b) {
         final comparison = b.createdAt!.compareTo(a.createdAt!);
         if (comparison != 0) return comparison;
@@ -132,13 +132,13 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.REPEAT:
+    case EntrySort.REPEATED:
       return (a, b) {
         final comparison = a.repeat.compareTo(b.repeat);
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.REPEAT_DESC:
+    case EntrySort.REPEATED_DESC:
       return (a, b) {
         final comparison = b.repeat.compareTo(a.repeat);
         if (comparison != 0) return comparison;
@@ -178,7 +178,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.STARTED_RELEASING:
+    case EntrySort.RELEASE_START:
       return (a, b) {
         if (a.releaseStart == null) {
           if (b.releaseStart == null) {
@@ -195,7 +195,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.STARTED_RELEASING_DESC:
+    case EntrySort.RELEASE_START_DESC:
       return (a, b) {
         if (b.releaseStart == null) {
           if (a.releaseStart == null) {
@@ -212,7 +212,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.ENDED_RELEASING:
+    case EntrySort.RELEASE_END:
       return (a, b) {
         if (a.releaseEnd == null) {
           if (b.releaseEnd == null) {
@@ -229,7 +229,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.ENDED_RELEASING_DESC:
+    case EntrySort.RELEASE_END_DESC:
       return (a, b) {
         if (b.releaseEnd == null) {
           if (a.releaseEnd == null) {
@@ -246,7 +246,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.STARTED_WATCHING:
+    case EntrySort.STARTED_ON:
       return (a, b) {
         if (a.watchStart == null) {
           if (b.watchStart == null) {
@@ -263,7 +263,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.STARTED_WATCHING_DESC:
+    case EntrySort.STARTED_ON_DESC:
       return (a, b) {
         if (b.watchStart == null) {
           if (a.watchStart == null) {
@@ -280,7 +280,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.ENDED_WATCHING:
+    case EntrySort.COMPLETED_ON:
       return (a, b) {
         if (a.watchEnd == null) {
           if (b.watchEnd == null) {
@@ -297,7 +297,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.ENDED_WATCHING_DESC:
+    case EntrySort.COMPLETED_ON_DESC:
       return (a, b) {
         if (b.watchEnd == null) {
           if (a.watchEnd == null) {

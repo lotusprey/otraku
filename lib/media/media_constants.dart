@@ -56,46 +56,33 @@ enum MediaSource {
 }
 
 enum OriginCountry {
-  JAPAN,
-  CHINA,
-  SOUTH_KOREA,
-  TAIWAN;
+  JAPAN('JP'),
+  CHINA('CN'),
+  SOUTH_KOREA('KR'),
+  TAIWAN('TW');
 
-  String get code {
-    switch (this) {
-      case OriginCountry.JAPAN:
-        return 'JP';
-      case OriginCountry.CHINA:
-        return 'CN';
-      case OriginCountry.SOUTH_KOREA:
-        return 'KR';
-      case OriginCountry.TAIWAN:
-        return 'TW';
-    }
-  }
+  const OriginCountry(this.code);
+
+  final String code;
 }
 
 enum MediaSort {
-  ID,
-  ID_DESC,
-  TRENDING,
-  TRENDING_DESC,
-  POPULARITY,
-  POPULARITY_DESC,
-  FAVOURITES,
-  FAVOURITES_DESC,
-  SCORE,
-  SCORE_DESC,
-  START_DATE,
-  START_DATE_DESC,
-  END_DATE,
-  END_DATE_DESC,
-  TITLE_ROMAJI,
-  TITLE_ROMAJI_DESC,
-  TITLE_ENGLISH,
-  TITLE_ENGLISH_DESC,
-  TITLE_NATIVE,
-  TITLE_NATIVE_DESC,
+  TRENDING_DESC('Trending'),
+  POPULARITY_DESC('Popularity'),
+  SCORE_DESC('Score'),
+  SCORE('Worst Score'),
+  ID_DESC('Newest'),
+  ID('Oldest'),
+  FAVOURITES_DESC('Favourites'),
+  START_DATE_DESC('Released Latest'),
+  START_DATE('Released Earliest'),
+  TITLE_ROMAJI('Title Romaji'),
+  TITLE_ENGLISH('Title English'),
+  TITLE_NATIVE('Title Native');
+
+  const MediaSort(this.label);
+
+  final String label;
 }
 
 enum EntrySort {

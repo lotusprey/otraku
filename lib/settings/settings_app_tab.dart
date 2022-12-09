@@ -90,10 +90,7 @@ class SettingsAppTab extends StatelessWidget {
               DropDownField<MediaSort>(
                 title: 'Default Discover Sort',
                 value: Options().defaultDiscoverSort,
-                items: Map.fromIterable(
-                  MediaSort.values,
-                  key: (s) => Convert.clarifyEnum((s as MediaSort).name)!,
-                ),
+                items: Map.fromIterable(MediaSort.values, key: (s) => s.label),
                 onChanged: (val) => Options().defaultDiscoverSort = val,
               ),
               DropDownField<DiscoverType>(

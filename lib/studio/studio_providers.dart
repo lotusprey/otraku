@@ -74,9 +74,7 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
     final items = <TileItem>[];
 
     if (filter.sort != MediaSort.START_DATE &&
-        filter.sort != MediaSort.START_DATE_DESC &&
-        filter.sort != MediaSort.END_DATE &&
-        filter.sort != MediaSort.END_DATE_DESC) {
+        filter.sort != MediaSort.START_DATE_DESC) {
       for (final m in data['nodes']) {
         items.add(mediaItem(m));
       }

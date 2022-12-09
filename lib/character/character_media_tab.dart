@@ -4,7 +4,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/character/character_providers.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/convert.dart';
@@ -257,36 +256,15 @@ class _FilterButton extends StatelessWidget {
                   physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: SizedBox(
-                            height: 70,
-                            child: SortDropDown(
-                              MediaSort.values,
-                              () => filter.sort.index,
-                              (MediaSort val) =>
-                                  filter = filter.copyWith(sort: val),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: SizedBox(
-                            height: 70,
-                            child: OrderDropDown(
-                              MediaSort.values,
-                              () => filter.sort.index,
-                              (MediaSort val) =>
-                                  filter = filter.copyWith(sort: val),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                      ],
+                    ChipSelector(
+                      title: 'Sort',
+                      options: MediaSort.values.map((s) => s.label).toList(),
+                      selected: filter.sort.index,
+                      mustHaveSelected: true,
+                      onChanged: (i) => filter = filter.copyWith(
+                        sort: MediaSort.values.elementAt(i!),
+                      ),
                     ),
-                    const SizedBox(height: 10),
                     ChipSelector(
                       title: 'List Presence',
                       options: const ['On List', 'Not on List'],

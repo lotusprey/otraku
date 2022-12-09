@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/filter/filter_models.dart';
-import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/filter/year_range_picker.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
@@ -10,9 +9,7 @@ import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
-import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
-import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/chip_grids.dart';
@@ -147,28 +144,13 @@ class DiscoverFilterView extends StatelessWidget {
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
-          GridView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-              minWidth: 140,
-              height: 75,
-            ),
-            children: [
-              SortDropDown(
-                MediaSort.values,
-                () => filter.sort.index,
-                (MediaSort val) => filter.sort = val,
-              ),
-              OrderDropDown(
-                MediaSort.values,
-                () => filter.sort.index,
-                (MediaSort val) => filter.sort = val,
-              ),
-            ],
+          ChipSelector(
+            title: 'Sort',
+            options: MediaSort.values.map((s) => s.label).toList(),
+            selected: filter.sort.index,
+            mustHaveSelected: true,
+            onChanged: (i) => filter.sort = MediaSort.values.elementAt(i!),
           ),
-          const SizedBox(height: 10),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,

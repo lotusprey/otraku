@@ -96,12 +96,6 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.UPDATED_AT:
-      return (a, b) {
-        final comparison = a.updatedAt!.compareTo(b.updatedAt!);
-        if (comparison != 0) return comparison;
-        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
-      };
     case EntrySort.UPDATED_AT_DESC:
       return (a, b) {
         final comparison = b.updatedAt!.compareTo(a.updatedAt!);
@@ -161,24 +155,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.AIRING_AT_DESC:
-      return (a, b) {
-        if (b.airingAt == null) {
-          if (a.airingAt == null) {
-            return a.titles[0]
-                .toUpperCase()
-                .compareTo(b.titles[0].toUpperCase());
-          }
-          return -1;
-        }
-
-        if (a.airingAt == null) return 1;
-
-        final comparison = b.airingAt!.compareTo(a.airingAt!);
-        if (comparison != 0) return comparison;
-        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
-      };
-    case EntrySort.RELEASE_START:
+    case EntrySort.RELEASED_ON:
       return (a, b) {
         if (a.releaseStart == null) {
           if (b.releaseStart == null) {
@@ -195,7 +172,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.RELEASE_START_DESC:
+    case EntrySort.RELEASED_ON_DESC:
       return (a, b) {
         if (b.releaseStart == null) {
           if (a.releaseStart == null) {
@@ -209,40 +186,6 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (a.releaseStart == null) return 1;
 
         final comparison = b.releaseStart!.compareTo(a.releaseStart!);
-        if (comparison != 0) return comparison;
-        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
-      };
-    case EntrySort.RELEASE_END:
-      return (a, b) {
-        if (a.releaseEnd == null) {
-          if (b.releaseEnd == null) {
-            return a.titles[0]
-                .toUpperCase()
-                .compareTo(b.titles[0].toUpperCase());
-          }
-          return 1;
-        }
-
-        if (b.releaseEnd == null) return -1;
-
-        final comparison = a.releaseEnd!.compareTo(b.releaseEnd!);
-        if (comparison != 0) return comparison;
-        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
-      };
-    case EntrySort.RELEASE_END_DESC:
-      return (a, b) {
-        if (b.releaseEnd == null) {
-          if (a.releaseEnd == null) {
-            return a.titles[0]
-                .toUpperCase()
-                .compareTo(b.titles[0].toUpperCase());
-          }
-          return -1;
-        }
-
-        if (a.releaseEnd == null) return 1;
-
-        final comparison = b.releaseEnd!.compareTo(a.releaseEnd!);
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };

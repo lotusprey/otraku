@@ -91,23 +91,19 @@ enum EntrySort {
   SCORE_DESC('Score'),
   SCORE('Worst Score'),
   UPDATED_AT_DESC('Last Updated'),
-  UPDATED_AT('Updated'),
   ADDED_AT_DESC('Last Added'),
   ADDED_AT('Added'),
   AIRING_AT('Airing'),
-  AIRING_AT_DESC('Airing Last'),
-  PROGRESS_DESC('Most Progress'),
-  PROGRESS('Least Progress'),
-  REPEATED_DESC('Most Repeated'),
-  REPEATED('Least Repeated'),
-  RELEASE_START('Release Start'),
-  RELEASE_START_DESC('Last Release Start'),
-  RELEASE_END('Release End'),
-  RELEASE_END_DESC('Last Release End'),
   STARTED_ON('Started'),
   STARTED_ON_DESC('Last Started'),
   COMPLETED_ON('Completed'),
-  COMPLETED_ON_DESC('Last Completed');
+  COMPLETED_ON_DESC('Last Completed'),
+  RELEASED_ON('Release'),
+  RELEASED_ON_DESC('Last Release'),
+  PROGRESS_DESC('Most Progress'),
+  PROGRESS('Least Progress'),
+  REPEATED_DESC('Most Repeated'),
+  REPEATED('Least Repeated');
 
   const EntrySort(this.label);
 

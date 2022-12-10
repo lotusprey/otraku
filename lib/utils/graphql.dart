@@ -810,7 +810,6 @@ abstract class _GqlFragment {
         tags {id}
         nextAiringEpisode {episode airingAt}
         startDate {year month day}
-        endDate {year month day}
         countryOfOrigin
       }
     }

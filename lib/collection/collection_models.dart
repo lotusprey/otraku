@@ -283,7 +283,6 @@ class Entry {
     required this.score,
     required this.notes,
     required this.releaseStart,
-    required this.releaseEnd,
     required this.watchStart,
     required this.watchEnd,
   });
@@ -325,7 +324,6 @@ class Entry {
       score: map['score'].toDouble() ?? 0.0,
       notes: map['notes'],
       releaseStart: Convert.mapToMillis(map['media']['startDate']),
-      releaseEnd: Convert.mapToMillis(map['media']['endDate']),
       watchStart: Convert.mapToMillis(map['startedAt']),
       watchEnd: Convert.mapToMillis(map['completedAt']),
     );
@@ -350,7 +348,6 @@ class Entry {
   double score;
   String? notes;
   int? releaseStart;
-  int? releaseEnd;
   int? watchStart;
   int? watchEnd;
 }

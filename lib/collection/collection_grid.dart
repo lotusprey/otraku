@@ -50,9 +50,9 @@ class CollectionGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.model, this.scoreFormat, this.onProgressUpdate);
+  const _Tile(this.entry, this.scoreFormat, this.onProgressUpdate);
 
-  final Entry model;
+  final Entry entry;
   final ScoreFormat scoreFormat;
   final void Function(Entry, List<String>)? onProgressUpdate;
 
@@ -60,27 +60,28 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: LinkTile(
-        id: model.mediaId,
+        key: ValueKey(entry.mediaId),
+        id: entry.mediaId,
         discoverType: DiscoverType.anime,
-        info: model.imageUrl,
+        info: entry.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: model.mediaId,
+              tag: entry.mediaId,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: FadeImage(model.imageUrl),
+                  child: FadeImage(entry.imageUrl),
                 ),
               ),
             ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: _TileContent(model, scoreFormat, onProgressUpdate),
+                child: _TileContent(entry, scoreFormat, onProgressUpdate),
               ),
             ),
           ],

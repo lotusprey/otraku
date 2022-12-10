@@ -81,7 +81,7 @@ class _YearRangePickerState extends State<YearRangePicker> {
               values: RangeValues(_from, _to),
               min: _minYear,
               max: _maxYear,
-              divisions: (_maxYear - _minYear).truncate(),
+              divisions: (_maxYear - _minYear + 1).truncate(),
               onChanged: (range) {
                 setState(() {
                   _from = range.start;

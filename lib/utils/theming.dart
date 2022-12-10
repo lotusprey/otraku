@@ -102,6 +102,7 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         selectionHandleColor: scheme.primary,
         selectionColor: scheme.primary.withAlpha(50),
       ),
+      dividerTheme: const DividerThemeData(thickness: 1),
       dialogTheme: DialogTheme(
         backgroundColor: scheme.surface,
         titleTextStyle: TextStyle(

@@ -25,19 +25,19 @@ dependencies:
   path_provider: ^2.0.11
 
   # Secure storage for the access tokens.
-  flutter_secure_storage: ^6.1.0
+  flutter_secure_storage: ^7.0.0
 
-  # Link opening in the browser.
+  # Opening links in the browser.
   url_launcher: ^6.1.7
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
   app_links: ^3.3.0
 
-  # Background tasks for notification fetching.
-  workmanager: ^0.5.1
-
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.5.4
+
+  # Background tasks for notification fetching.
+  workmanager: ^0.5.1
 
   # Sending device notifications.
   flutter_local_notifications: ^12.0.4

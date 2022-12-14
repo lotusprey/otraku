@@ -278,7 +278,8 @@ class CollectionNotifier extends ChangeNotifier {
   }) async {
     final mustSort = sort == EntrySort.PROGRESS ||
         sort == EntrySort.PROGRESS_DESC ||
-        sort == EntrySort.UPDATED_AT_DESC;
+        sort == EntrySort.UPDATED ||
+        sort == EntrySort.UPDATED_DESC;
 
     // Update status list.
     for (final list in lists) {

@@ -88,22 +88,24 @@ enum MediaSort {
 enum EntrySort {
   TITLE('Title'),
   TITLE_DESC('Title Z-A'),
-  SCORE_DESC('Score'),
   SCORE('Worst Score'),
-  UPDATED_AT_DESC('Last Updated'),
-  ADDED_AT_DESC('Last Added'),
-  ADDED_AT('Added'),
-  AIRING_AT('Airing'),
+  SCORE_DESC('Best Score'),
+  UPDATED('Updated'),
+  UPDATED_DESC('Last Updated'),
+  ADDED('Added'),
+  ADDED_DESC('Last Added'),
+  AIRING('Airing'),
+  AIRING_DESC('Last Airing'),
   STARTED_ON('Started'),
   STARTED_ON_DESC('Last Started'),
   COMPLETED_ON('Completed'),
   COMPLETED_ON_DESC('Last Completed'),
   RELEASED_ON('Release'),
   RELEASED_ON_DESC('Last Release'),
-  PROGRESS_DESC('Most Progress'),
   PROGRESS('Least Progress'),
-  REPEATED_DESC('Most Repeated'),
-  REPEATED('Least Repeated');
+  PROGRESS_DESC('Most Progress'),
+  REPEATED('Least Repeated'),
+  REPEATED_DESC('Most Repeated');
 
   const EntrySort(this.label);
 
@@ -114,8 +116,8 @@ enum EntrySort {
   static const rowOrders = [
     EntrySort.SCORE_DESC,
     EntrySort.TITLE,
-    EntrySort.UPDATED_AT_DESC,
-    EntrySort.ADDED_AT_DESC,
+    EntrySort.UPDATED_DESC,
+    EntrySort.ADDED_DESC,
   ];
 
   /// Format as an API row order.
@@ -123,9 +125,9 @@ enum EntrySort {
     switch (this) {
       case EntrySort.SCORE_DESC:
         return 'score';
-      case EntrySort.UPDATED_AT_DESC:
+      case EntrySort.UPDATED_DESC:
         return 'updatedAt';
-      case EntrySort.ADDED_AT_DESC:
+      case EntrySort.ADDED_DESC:
         return 'id';
       case EntrySort.TITLE:
         return 'title';
@@ -140,9 +142,9 @@ enum EntrySort {
       case 'score':
         return EntrySort.SCORE_DESC;
       case 'updatedAt':
-        return EntrySort.UPDATED_AT_DESC;
+        return EntrySort.UPDATED_DESC;
       case 'id':
-        return EntrySort.ADDED_AT_DESC;
+        return EntrySort.ADDED_DESC;
       case 'title':
         return EntrySort.TITLE;
       default:

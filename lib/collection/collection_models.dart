@@ -96,19 +96,25 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.UPDATED_AT_DESC:
+    case EntrySort.UPDATED:
+      return (a, b) {
+        final comparison = a.updatedAt!.compareTo(b.updatedAt!);
+        if (comparison != 0) return comparison;
+        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
+      };
+    case EntrySort.UPDATED_DESC:
       return (a, b) {
         final comparison = b.updatedAt!.compareTo(a.updatedAt!);
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.ADDED_AT:
+    case EntrySort.ADDED:
       return (a, b) {
         final comparison = a.createdAt!.compareTo(b.createdAt!);
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.ADDED_AT_DESC:
+    case EntrySort.ADDED_DESC:
       return (a, b) {
         final comparison = b.createdAt!.compareTo(a.createdAt!);
         if (comparison != 0) return comparison;
@@ -138,7 +144,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    case EntrySort.AIRING_AT:
+    case EntrySort.AIRING:
       return (a, b) {
         if (a.airingAt == null) {
           if (b.airingAt == null) {
@@ -152,6 +158,23 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (b.airingAt == null) return -1;
 
         final comparison = a.airingAt!.compareTo(b.airingAt!);
+        if (comparison != 0) return comparison;
+        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
+      };
+    case EntrySort.AIRING_DESC:
+      return (a, b) {
+        if (b.airingAt == null) {
+          if (a.airingAt == null) {
+            return a.titles[0]
+                .toUpperCase()
+                .compareTo(b.titles[0].toUpperCase());
+          }
+          return -1;
+        }
+
+        if (a.airingAt == null) return 1;
+
+        final comparison = b.airingAt!.compareTo(a.airingAt!);
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
@@ -257,8 +280,6 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
-    default:
-      return (_, __) => 0;
   }
 }
 

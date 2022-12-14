@@ -77,13 +77,7 @@ class CollectionFilterView extends StatelessWidget {
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
-          ChipSelector(
-            title: 'Sort',
-            options: EntrySort.values.map((s) => s.label).toList(),
-            selected: filter.sort.index,
-            mustHaveSelected: true,
-            onChanged: (i) => filter.sort = EntrySort.values.elementAt(i!),
-          ),
+          _EntrySortChipSelector(filter.sort, (v) => filter.sort = v),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
@@ -241,6 +235,80 @@ class DiscoverFilterView extends StatelessWidget {
                     : false,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _EntrySortChipSelector extends StatefulWidget {
+  const _EntrySortChipSelector(this.current, this.onChanged);
+
+  final EntrySort current;
+  final void Function(EntrySort) onChanged;
+
+  @override
+  State<_EntrySortChipSelector> createState() => _EntrySortChipSelectorState();
+}
+
+class _EntrySortChipSelectorState extends State<_EntrySortChipSelector> {
+  late var _current = widget.current;
+  final _options = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < EntrySort.values.length; i += 2) {
+      _options.add(Convert.clarifyEnum(EntrySort.values.elementAt(i).name)!);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _EntrySortChipSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _current = widget.current;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = _current.index ~/ 2;
+    final descending = _current.index % 2 != 0;
+
+    return ChipSelectorLayout(
+      title: 'Sort',
+      options: _options,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: FilterChip(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          labelStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
+          label: Text(_options[index]),
+          showCheckmark: false,
+          avatar: selected == index
+              ? Icon(
+                  descending
+                      ? Icons.arrow_downward_rounded
+                      : Icons.arrow_upward_rounded,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                )
+              : null,
+          selected: selected == index,
+          onSelected: (_) {
+            setState(
+              () {
+                int i = index * 2;
+                if (selected == index) {
+                  if (!descending) i++;
+                } else {
+                  if (descending) i++;
+                }
+                _current = EntrySort.values.elementAt(i);
+              },
+            );
+            widget.onChanged(_current);
+          },
+        ),
       ),
     );
   }

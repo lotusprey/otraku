@@ -46,7 +46,7 @@ class CollectionPreviewNotifier extends ChangeNotifier {
 
       final sort = tag.ofAnime
           ? Options().airingSortForPreview
-              ? EntrySort.AIRING_AT
+              ? EntrySort.AIRING
               : Options().defaultAnimeSort
           : Options().defaultMangaSort;
 

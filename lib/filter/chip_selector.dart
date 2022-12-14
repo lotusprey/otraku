@@ -34,7 +34,7 @@ class _ChipSelectorState extends State<ChipSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return _Layout(
+    return ChipSelectorLayout(
       title: widget.title,
       options: widget.options,
       itemBuilder: (context, index) => Padding(
@@ -90,7 +90,7 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return _Layout(
+    return ChipSelectorLayout(
       title: widget.title,
       options: _options,
       itemBuilder: (context, index) => Padding(
@@ -116,8 +116,8 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
 }
 
 /// A common wrapper between the chip selectors.
-class _Layout extends StatelessWidget {
-  const _Layout({
+class ChipSelectorLayout extends StatelessWidget {
+  const ChipSelectorLayout({
     required this.title,
     required this.options,
     required this.itemBuilder,

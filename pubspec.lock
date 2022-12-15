@@ -201,7 +201,7 @@ packages:
       name: flutter_secure_storage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.0.0"
+    version: "7.0.1"
   flutter_secure_storage_linux:
     dependency: transitive
     description:

@@ -13,6 +13,7 @@ import 'package:otraku/settings/settings_about_tab.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView();
@@ -22,7 +23,7 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  late final _settings = ref.read(userSettingsProvider).copy();
+  late var _settings = ref.read(settingsProvider).whenData((v) => v.copy());
   final _ctrl = ScrollController();
   bool _shouldUpdate = false;
   int _tabIndex = 0;
@@ -37,31 +38,52 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget build(BuildContext context) {
     const pageNames = ['App', 'Content', 'Notifications', 'About'];
 
-    ref.listen<UserSettings>(userSettingsProvider, (prev, next) {
-      final id = Options().id!;
+    ref.listen<Settings?>(
+      settingsProvider.select((s) => s.valueOrNull),
+      (prev, next) {
+        if (next == null) return;
+        final id = Options().id!;
 
-      if (prev?.scoreFormat != next.scoreFormat ||
-          prev?.titleLanguage != next.titleLanguage) {
-        ref.invalidate(collectionProvider(CollectionTag(id, true)));
-        ref.invalidate(collectionProvider(CollectionTag(id, false)));
-      } else if (prev?.splitCompletedAnime != next.splitCompletedAnime) {
-        ref.invalidate(collectionProvider(CollectionTag(id, true)));
-      } else if (prev?.splitCompletedManga != next.splitCompletedManga) {
-        ref.invalidate(collectionProvider(CollectionTag(id, false)));
-      }
-    });
+        if (mounted) setState(() => _settings = AsyncValue.data(next.copy()));
+
+        if (prev?.scoreFormat != next.scoreFormat ||
+            prev?.titleLanguage != next.titleLanguage) {
+          ref.invalidate(collectionProvider(CollectionTag(id, true)));
+          ref.invalidate(collectionProvider(CollectionTag(id, false)));
+        } else if (prev?.splitCompletedAnime != next.splitCompletedAnime) {
+          ref.invalidate(collectionProvider(CollectionTag(id, true)));
+        } else if (prev?.splitCompletedManga != next.splitCompletedManga) {
+          ref.invalidate(collectionProvider(CollectionTag(id, false)));
+        }
+      },
+    );
+
+    const loadWidget = Center(child: Loader());
+    const errorWidget = Center(child: Text('Failed to load settings'));
 
     final tabs = [
       SettingsAppTab(_ctrl),
-      SettingsContentTab(_ctrl, _settings, () => _shouldUpdate = true),
-      SettingsNotificationsTab(_ctrl, _settings, () => _shouldUpdate = true),
+      if (_settings.hasError) ...[
+        errorWidget,
+        errorWidget,
+      ] else if (_settings.hasValue) ...[
+        SettingsContentTab(_ctrl, _settings.value!, () => _shouldUpdate = true),
+        SettingsNotificationsTab(
+          _ctrl,
+          _settings.value!,
+          () => _shouldUpdate = true,
+        ),
+      ] else ...[
+        loadWidget,
+        loadWidget,
+      ],
       SettingsAboutTab(_ctrl),
     ];
 
     return WillPopScope(
       onWillPop: () {
         if (_shouldUpdate) {
-          ref.read(userSettingsProvider.notifier).update(_settings);
+          ref.read(settingsProvider.notifier).update(_settings.value!);
         }
         return Future.value(true);
       },

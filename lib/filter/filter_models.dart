@@ -62,6 +62,7 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
   int? startYearTo;
   OriginCountry? country;
   bool? onList;
+  bool? isAdult;
 
   set ofAnime(bool val) {
     _ofAnime = val;
@@ -82,7 +83,8 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
     ..startYearFrom = startYearFrom
     ..startYearTo = startYearTo
     ..country = country
-    ..onList = onList;
+    ..onList = onList
+    ..isAdult = isAdult;
 
   @override
   DiscoverFilter clear() => DiscoverFilter(_ofAnime);
@@ -97,9 +99,10 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
         if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
         if (sources.isNotEmpty) 'sources': sources,
         if (season != null) 'season': season!.name,
-        if (startYearFrom != null) 'startFrom': '${startYearFrom}0000',
-        if (startYearTo != null) 'startTo': '${startYearTo}9999',
+        if (startYearFrom != null) 'startFrom': '${startYearFrom! - 1}9999',
+        if (startYearTo != null) 'startTo': '${startYearTo! + 1}0000',
         if (country != null) 'countryOfOrigin': country!.code,
         if (onList != null) 'onList': onList,
+        if (isAdult != null) 'isAdult': isAdult,
       };
 }

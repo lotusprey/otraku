@@ -81,6 +81,7 @@ class PageLayoutState extends State<PageLayout> {
       extendBody: true,
       extendBodyBehindAppBar: true,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      resizeToAvoidBottomInset: false,
     );
   }
 }
@@ -152,13 +153,13 @@ class TopBarIcon extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.onTap,
-    this.color,
+    this.accented = false,
   });
 
   final IconData icon;
   final String tooltip;
-  final Color? color;
   final void Function() onTap;
+  final bool accented;
 
   @override
   Widget build(BuildContext context) {
@@ -169,9 +170,39 @@ class TopBarIcon extends StatelessWidget {
         icon: Icon(icon),
         tooltip: tooltip,
         onPressed: onTap,
-        color: color ?? Theme.of(context).colorScheme.onBackground,
+        color: accented
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.onBackground,
         padding: Consts.padding,
       ),
     );
   }
+}
+
+/// A [TopBarIcon] casting a shadow. Used when the background is a banner.
+class TopBarShadowIcon extends StatelessWidget {
+  const TopBarShadowIcon({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final void Function() onTap;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.background,
+              blurRadius: 10,
+              spreadRadius: -10,
+            ),
+          ],
+        ),
+        child: TopBarIcon(icon: icon, tooltip: tooltip, onTap: onTap),
+      );
 }

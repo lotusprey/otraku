@@ -59,14 +59,15 @@ class StaffRelationNotifier extends ChangeNotifier {
         'withCharacters': true,
         'withRoles': true,
         'sort': filter.sort.name,
+        'onList': filter.onList,
         if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
       });
       return data['Staff'];
     });
 
     if (data.hasError) {
-      _characters = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _roles = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _characters = AsyncValue.error(data.error!, data.stackTrace!);
+      _roles = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -88,8 +89,8 @@ class StaffRelationNotifier extends ChangeNotifier {
         'page': value.next,
         'withCharacters': ofCharacters,
         'withRoles': !ofCharacters,
-        'onList': filter.onList,
         'sort': filter.sort.name,
+        'onList': filter.onList,
         if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
       });
       return data['Staff'];
@@ -97,11 +98,8 @@ class StaffRelationNotifier extends ChangeNotifier {
 
     if (data.hasError) {
       ofCharacters
-          ? _characters = AsyncValue.error(
-              data.error!,
-              stackTrace: data.stackTrace,
-            )
-          : _roles = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+          ? _characters = AsyncValue.error(data.error!, data.stackTrace!)
+          : _roles = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
-import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 
@@ -80,7 +79,6 @@ abstract class Api {
   static Future<void> logOut() async {
     _accessToken = null;
     Options().selectedAccount = null;
-    BackgroundHandler.clearNotifications();
     final context = RouteArg.navKey.currentContext;
     if (context == null) return;
     Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
@@ -101,24 +99,28 @@ abstract class Api {
     String query, [
     Map<String, dynamic> variables = const {},
   ]) async {
-    final response = await post(
-      _url,
-      body: json.encode({'query': query, 'variables': variables}),
-      headers: {
-        'Accept': 'application/json',
-        'Content-type': 'application/json',
-        'Authorization': 'Bearer $_accessToken',
-      },
-    ).timeout(const Duration(seconds: 10));
+    try {
+      final response = await post(
+        _url,
+        body: json.encode({'query': query, 'variables': variables}),
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json',
+          'Authorization': 'Bearer $_accessToken',
+        },
+      ).timeout(const Duration(seconds: 10));
 
-    final Map<String, dynamic> body = json.decode(response.body);
+      final Map<String, dynamic> body = json.decode(response.body);
 
-    if (body.containsKey('errors')) {
-      throw StateError(
-        (body['errors'] as List).map((e) => e['message'].toString()).join(),
-      );
+      if (body.containsKey('errors')) {
+        throw StateError(
+          (body['errors'] as List).map((e) => e['message'].toString()).join(),
+        );
+      }
+
+      return body['data'];
+    } on TimeoutException {
+      throw Exception('Request took too long');
     }
-
-    return body['data'];
   }
 }

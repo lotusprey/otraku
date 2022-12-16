@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/studio/studio_models.dart';
@@ -71,7 +70,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   showPopUp(
                     context,
                     ConfirmationDialog(
-                      title: 'Could not load studio',
+                      title: 'Failed to load studio',
                       content: s.error.toString(),
                     ),
                   );
@@ -112,7 +111,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                       refreshControl,
                       if (titleWidget != null) titleWidget,
                       const SliverFillRemaining(
-                        child: Center(child: Text('Could not load studio')),
+                        child: Center(child: Text('Failed to load studio')),
                       ),
                     ],
                   ),
@@ -132,9 +131,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                         ref.watch(studioFilterProvider(widget.id)).sort;
 
                     if (sort == MediaSort.START_DATE ||
-                        sort == MediaSort.START_DATE_DESC ||
-                        sort == MediaSort.END_DATE ||
-                        sort == MediaSort.END_DATE_DESC) {
+                        sort == MediaSort.START_DATE_DESC) {
                       for (int i = 0; i < data.categories.length; i++) {
                         items.add(SliverToBoxAdapter(
                           child: Text(
@@ -242,36 +239,15 @@ class _FilterButton extends StatelessWidget {
                     vertical: 20,
                   ),
                   children: [
-                    Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: SizedBox(
-                            height: 70,
-                            child: SortDropDown(
-                              MediaSort.values,
-                              () => filter.sort.index,
-                              (MediaSort val) =>
-                                  filter = filter.copyWith(sort: val),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: SizedBox(
-                            height: 70,
-                            child: OrderDropDown(
-                              MediaSort.values,
-                              () => filter.sort.index,
-                              (MediaSort val) =>
-                                  filter = filter.copyWith(sort: val),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                      ],
+                    ChipSelector(
+                      title: 'Sort',
+                      options: MediaSort.values.map((s) => s.label).toList(),
+                      selected: filter.sort.index,
+                      mustHaveSelected: true,
+                      onChanged: (i) => filter = filter.copyWith(
+                        sort: MediaSort.values.elementAt(i!),
+                      ),
                     ),
-                    const SizedBox(height: 10),
                     ChipSelector(
                       title: 'List Presence',
                       options: const ['On List', 'Not on List'],

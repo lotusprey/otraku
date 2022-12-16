@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/filter/filter_models.dart';
-import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/filter/year_range_picker.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/tag/tag_models.dart';
@@ -11,7 +10,6 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
-import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/grids/chip_grids.dart';
@@ -79,28 +77,7 @@ class CollectionFilterView extends StatelessWidget {
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
-          GridView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-              minWidth: 140,
-              height: 75,
-            ),
-            children: [
-              SortDropDown(
-                EntrySort.values,
-                () => filter.sort.index,
-                (EntrySort val) => filter.sort = val,
-              ),
-              OrderDropDown(
-                EntrySort.values,
-                () => filter.sort.index,
-                (EntrySort val) => filter.sort = val,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
+          _EntrySortChipSelector(filter.sort, (v) => filter.sort = v),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
@@ -117,7 +94,7 @@ class CollectionFilterView extends StatelessWidget {
             child: Consumer(
               builder: (context, ref, _) => ref.watch(tagsProvider).when(
                     loading: () => const Loader(),
-                    error: (_, __) => const Text('Could not load tags'),
+                    error: (_, __) => const Text('Failed to load tags'),
                     data: (tags) => ChipTagGrid(
                       inclusiveGenres: filter.genreIn,
                       exclusiveGenres: filter.genreNotIn,
@@ -161,28 +138,13 @@ class DiscoverFilterView extends StatelessWidget {
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20, bottom: 60),
         children: [
-          GridView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-              minWidth: 140,
-              height: 75,
-            ),
-            children: [
-              SortDropDown(
-                MediaSort.values,
-                () => filter.sort.index,
-                (MediaSort val) => filter.sort = val,
-              ),
-              OrderDropDown(
-                MediaSort.values,
-                () => filter.sort.index,
-                (MediaSort val) => filter.sort = val,
-              ),
-            ],
+          ChipSelector(
+            title: 'Sort',
+            options: MediaSort.values.map((s) => s.label).toList(),
+            selected: filter.sort.index,
+            mustHaveSelected: true,
+            onChanged: (i) => filter.sort = MediaSort.values.elementAt(i!),
           ),
-          const SizedBox(height: 10),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
@@ -219,7 +181,7 @@ class DiscoverFilterView extends StatelessWidget {
             child: Consumer(
               builder: (context, ref, _) => ref.watch(tagsProvider).when(
                     loading: () => const Loader(),
-                    error: (_, __) => const Text('Could not load tags'),
+                    error: (_, __) => const Text('Failed to load tags'),
                     data: (tags) => ChipTagGrid(
                       inclusiveGenres: filter.genreIn,
                       exclusiveGenres: filter.genreNotIn,
@@ -258,7 +220,95 @@ class DiscoverFilterView extends StatelessWidget {
                     ? true
                     : false,
           ),
+          ChipSelector(
+            title: 'Age Restriction',
+            options: const ['Adult', 'Non-Adult'],
+            selected: filter.isAdult == null
+                ? null
+                : filter.isAdult!
+                    ? 0
+                    : 1,
+            onChanged: (val) => filter.isAdult = val == null
+                ? null
+                : val == 0
+                    ? true
+                    : false,
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class _EntrySortChipSelector extends StatefulWidget {
+  const _EntrySortChipSelector(this.current, this.onChanged);
+
+  final EntrySort current;
+  final void Function(EntrySort) onChanged;
+
+  @override
+  State<_EntrySortChipSelector> createState() => _EntrySortChipSelectorState();
+}
+
+class _EntrySortChipSelectorState extends State<_EntrySortChipSelector> {
+  late var _current = widget.current;
+  final _options = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < EntrySort.values.length; i += 2) {
+      _options.add(Convert.clarifyEnum(EntrySort.values.elementAt(i).name)!);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _EntrySortChipSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _current = widget.current;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = _current.index ~/ 2;
+    final descending = _current.index % 2 != 0;
+
+    return ChipSelectorLayout(
+      title: 'Sort',
+      options: _options,
+      itemBuilder: (context, index) => Padding(
+        padding: const EdgeInsets.only(right: 10),
+        child: FilterChip(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          labelStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
+          label: Text(_options[index]),
+          showCheckmark: false,
+          avatar: selected == index
+              ? Icon(
+                  descending
+                      ? Icons.arrow_downward_rounded
+                      : Icons.arrow_upward_rounded,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                )
+              : null,
+          selected: selected == index,
+          onSelected: (_) {
+            setState(
+              () {
+                int i = index * 2;
+                if (selected == index) {
+                  if (!descending) i++;
+                } else {
+                  if (descending) i++;
+                }
+                _current = EntrySort.values.elementAt(i);
+              },
+            );
+            widget.onChanged(_current);
+          },
+        ),
       ),
     );
   }

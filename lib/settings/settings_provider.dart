@@ -5,38 +5,57 @@ import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
-final userSettingsProvider =
-    StateNotifierProvider<UserSettingsNotifier, UserSettings>(
-  (ref) => UserSettingsNotifier(),
+final settingsProvider =
+    StateNotifierProvider<SettingsNotifier, AsyncValue<Settings>>(
+  (ref) => SettingsNotifier(),
 );
 
-class UserSettingsNotifier extends StateNotifier<UserSettings> {
-  UserSettingsNotifier() : super(UserSettings.empty()) {
-    _init();
+class SettingsNotifier extends StateNotifier<AsyncValue<Settings>> {
+  SettingsNotifier() : super(const AsyncValue.loading()) {
+    _fetch();
   }
 
-  Future<void> _init() async {
-    try {
+  /// Different parts of the app may need the settings at any moment,
+  /// so a default instance is provided while loading.
+  Settings get value => state.maybeWhen(
+        data: (data) => data,
+        orElse: () => Settings.empty(),
+      );
+
+  Future<void> _fetch() async {
+    state = await AsyncValue.guard(() async {
       final data = await Api.get(GqlQuery.settings);
-      state = UserSettings(data['Viewer']);
-    } catch (_) {}
+      return Settings(data['Viewer']);
+    });
   }
 
-  Future<void> update(UserSettings other) async {
-    try {
+  Future<void> update(Settings other) async {
+    state = await AsyncValue.guard(() async {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());
-      state = UserSettings(data['UpdateUser']);
+      return Settings(data['UpdateUser']);
+    });
+  }
+
+  Future<void> refetchUnread() async {
+    try {
+      final data = await Api.get(GqlQuery.settings, {'withData': false});
+      state = state.whenData(
+        (value) => value.copy(
+          unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
+        ),
+      );
     } catch (_) {}
   }
 
-  void nullifyUnread() => state = state.copy();
+  void clearUnread() =>
+      state = state.whenData((value) => value.copy(unreadNotifications: 0));
 }
 
 /// Some fields are modifiable to allow for quick and simple edits.
-/// But to apply those edits, the [UserSettingsNotifier] should be used.
-class UserSettings {
-  UserSettings._({
-    required this.notificationCount,
+/// But to apply those edits, the [SettingsNotifier] should be used.
+class Settings {
+  Settings._({
+    required this.unreadNotifications,
     required this.scoreFormat,
     required this.defaultSort,
     required this.titleLanguage,
@@ -55,12 +74,12 @@ class UserSettings {
     required this.notificationOptions,
   });
 
-  factory UserSettings(Map<String, dynamic> map) => UserSettings._(
-        notificationCount: map['unreadNotificationCount'] ?? 0,
+  factory Settings(Map<String, dynamic> map) => Settings._(
+        unreadNotifications: map['unreadNotificationCount'] ?? 0,
         scoreFormat: ScoreFormat.values.byName(
           map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
         ),
-        defaultSort: EntrySort.getEnum(
+        defaultSort: EntrySort.fromRowOrder(
           map['mediaListOptions']['rowOrder'] ?? 'TITLE',
         ),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
@@ -99,8 +118,8 @@ class UserSettings {
         },
       );
 
-  factory UserSettings.empty() => UserSettings._(
-        notificationCount: 0,
+  factory Settings.empty() => Settings._(
+        unreadNotifications: 0,
         scoreFormat: ScoreFormat.POINT_10,
         defaultSort: EntrySort.TITLE,
         titleLanguage: 'ROMAJI',
@@ -130,15 +149,15 @@ class UserSettings {
   bool airingNotifications;
   bool advancedScoringEnabled;
   bool restrictMessagesToFollowing;
-  final int notificationCount;
+  final int unreadNotifications;
   final List<String> advancedScores;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
   final Map<EntryStatus, bool> disabledListActivity;
   final Map<NotificationType, bool> notificationOptions;
 
-  UserSettings copy({int notificationCount = 0}) => UserSettings._(
-        notificationCount: notificationCount,
+  Settings copy({int unreadNotifications = 0}) => Settings._(
+        unreadNotifications: unreadNotifications,
         scoreFormat: scoreFormat,
         defaultSort: defaultSort,
         titleLanguage: titleLanguage,
@@ -163,7 +182,7 @@ class UserSettings {
         'activityMergeTime': activityMergeTime,
         'displayAdultContent': displayAdultContent,
         'scoreFormat': scoreFormat.name,
-        'rowOrder': defaultSort.getString,
+        'rowOrder': defaultSort.toRowOrder(),
         'advancedScoring': advancedScores,
         'advancedScoringEnabled': advancedScoringEnabled,
         'splitCompletedAnime': splitCompletedAnime,

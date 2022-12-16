@@ -55,7 +55,7 @@ class MediaSocialView extends StatelessWidget {
                   .when(
                     loading: () => const Center(child: Loader()),
                     error: (_, __) => const Center(
-                      child: Text('Could not load reviews'),
+                      child: Text('Failed to load reviews'),
                     ),
                     data: (data) => CustomScrollView(
                       controller: scrollCtrl,

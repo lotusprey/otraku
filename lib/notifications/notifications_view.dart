@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/notifications/notification_model.dart';
@@ -114,21 +115,22 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load notifications',
+                  title: 'Failed to load notifications',
                   content: error.toString(),
                 ),
               ),
             ),
           );
 
-          const empty = Center(child: Text('No notifications'));
-
           final notifier = ref.watch(notificationsProvider);
-          return notifier.notifications.maybeWhen(
-            orElse: () => empty,
+          return notifier.notifications.when(
             loading: () => const Center(child: Loader()),
+            error: (_, __) =>
+                const Center(child: Text('Failed to load notifications')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No notifications'));
+              }
 
               return ConstrainedView(
                 child: CustomScrollView(
@@ -188,7 +190,7 @@ class _NotificationItem extends StatelessWidget {
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.anime ||
                           item.discoverType == DiscoverType.manga) {
-                        showSheet(context, EditView(item.headId!));
+                        showSheet(context, EditView(EditTag(item.headId!)));
                       }
                     },
                     child: ClipRRect(
@@ -237,18 +239,34 @@ class _NotificationItem extends StatelessWidget {
                         case NotificationType.MEDIA_DELETION:
                           showPopUp(context, _NotificationDialog(item));
                           return;
-                        default:
+                        case NotificationType.THREAD_LIKE:
+                        case NotificationType.THREAD_SUBSCRIBED:
+                        case NotificationType.THREAD_COMMENT_LIKE:
+                        case NotificationType.THREAD_COMMENT_REPLY:
+                        case NotificationType.THREAD_COMMENT_MENTION:
                           showPopUp(
                             context,
                             ConfirmationDialog(
                               title: 'Forum is not yet supported',
                               content: 'Open in browser?',
-                              mainAction: 'Open Browser',
+                              mainAction: 'Open',
                               secondaryAction: 'Cancel',
-                              onConfirm: () => Toast.launch(
-                                context,
-                                'https://anilist.co/forum/thread/${item.bodyId}',
-                              ),
+                              onConfirm: () {
+                                if (item.details == null) {
+                                  Toast.show(context, 'Invalid Link');
+                                  return;
+                                }
+                                Toast.launch(context, item.details!);
+                              },
+                            ),
+                          );
+                          return;
+                        default:
+                          showPopUp(
+                            context,
+                            ConfirmationDialog(
+                              title: 'Unknown action',
+                              content: item.type.name,
                             ),
                           );
                           return;
@@ -257,7 +275,7 @@ class _NotificationItem extends StatelessWidget {
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.anime ||
                           item.discoverType == DiscoverType.manga) {
-                        showSheet(context, EditView(item.headId!));
+                        showSheet(context, EditView(EditTag(item.headId!)));
                       }
                     },
                     child: Padding(

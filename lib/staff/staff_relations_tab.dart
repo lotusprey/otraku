@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/filter/filter_tools.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/utils/convert.dart';
@@ -41,7 +40,7 @@ class StaffCharactersTab extends StatelessWidget {
                       showPopUp(
                         context,
                         ConfirmationDialog(
-                          title: 'Could not load characters',
+                          title: 'Failed to load characters',
                           content: s.error.toString(),
                         ),
                       );
@@ -61,7 +60,9 @@ class StaffCharactersTab extends StatelessWidget {
                     physics: Consts.physics,
                     slivers: [
                       refreshControl,
-                      const SliverFillRemaining(child: Text('No characters')),
+                      const SliverFillRemaining(
+                        child: Text('Failed to load characters'),
+                      ),
                     ],
                   ),
                   data: (data) {
@@ -117,7 +118,7 @@ class StaffRolesTab extends StatelessWidget {
                       showPopUp(
                         context,
                         ConfirmationDialog(
-                          title: 'Could not load roles',
+                          title: 'Failed to load roles',
                           content: s.error.toString(),
                         ),
                       );
@@ -135,7 +136,9 @@ class StaffRolesTab extends StatelessWidget {
                         physics: Consts.physics,
                         slivers: [
                           refreshControl,
-                          const SliverFillRemaining(child: Text('No roles')),
+                          const SliverFillRemaining(
+                            child: Text('Failed to load roles'),
+                          ),
                         ],
                       ),
                       data: (data) {
@@ -199,37 +202,16 @@ class _FilterButton extends StatelessWidget {
                   physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    Row(
-                      children: [
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: SizedBox(
-                            height: 70,
-                            child: SortDropDown(
-                              MediaSort.values,
-                              () => filter.sort.index,
-                              (MediaSort val) =>
-                                  filter = filter.copyWith(sort: val),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          child: SizedBox(
-                            height: 70,
-                            child: OrderDropDown(
-                              MediaSort.values,
-                              () => filter.sort.index,
-                              (MediaSort val) =>
-                                  filter = filter.copyWith(sort: val),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                      ],
+                    ChipSelector(
+                      title: 'Sort',
+                      options: MediaSort.values.map((s) => s.label).toList(),
+                      selected: filter.sort.index,
+                      mustHaveSelected: true,
+                      onChanged: (i) => filter = filter.copyWith(
+                        sort: MediaSort.values.elementAt(i!),
+                      ),
                     ),
                     if (full) ...[
-                      const SizedBox(height: 10),
                       ChipSelector(
                         title: 'Type',
                         options: const ['Anime', 'Manga'],
@@ -244,8 +226,8 @@ class _FilterButton extends StatelessWidget {
                           return val == 0 ? true : false;
                         }),
                       ),
+                      const SizedBox(height: 10),
                     ],
-                    const SizedBox(height: 10),
                     ChipSelector(
                       title: 'List Presence',
                       options: const ['On List', 'Not on List'],

@@ -4,6 +4,7 @@ import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/filter/filter_models.dart';
 import 'package:otraku/filter/filter_providers.dart';
+import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
 import 'package:otraku/staff/staff_models.dart';
@@ -12,12 +13,10 @@ import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/pagination.dart';
-import 'package:otraku/utils/options.dart';
 
 /// Fetches another page on the discover tab, depending on the selected type.
 void discoverLoadMore(WidgetRef ref) {
-  final type = ref.read(discoverTypeProvider);
-  switch (type) {
+  switch (ref.read(discoverFilterProvider).type) {
     case DiscoverType.anime:
       ref.read(discoverAnimeProvider.notifier).fetch();
       return;
@@ -42,33 +41,40 @@ void discoverLoadMore(WidgetRef ref) {
   }
 }
 
-final discoverTypeProvider = StateProvider.autoDispose(
-  (ref) => Options().defaultDiscoverType,
-);
-
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
 
 final discoverAnimeProvider = StateNotifierProvider.autoDispose<
     DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
-  (ref) => DiscoverMediaNotifier(
-    ref.watch(discoverFilterProvider(true)),
-    ref.watch(searchProvider(null).select(_searchSelector)),
-  ),
+  (ref) {
+    final discoverFilter = ref.watch(discoverFilterProvider);
+    return DiscoverMediaNotifier(
+      discoverFilter.filter,
+      ref.watch(searchProvider(null).select(_searchSelector)),
+      discoverFilter.type == DiscoverType.anime &&
+          ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
+    );
+  },
 );
 
 final discoverMangaProvider = StateNotifierProvider.autoDispose<
     DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
-  (ref) => DiscoverMediaNotifier(
-    ref.watch(discoverFilterProvider(false)),
-    ref.watch(searchProvider(null).select(_searchSelector)),
-  ),
+  (ref) {
+    final discoverFilter = ref.watch(discoverFilterProvider);
+    return DiscoverMediaNotifier(
+      discoverFilter.filter,
+      ref.watch(searchProvider(null).select(_searchSelector)),
+      discoverFilter.type == DiscoverType.manga &&
+          ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
+    );
+  },
 );
 
 final discoverCharacterProvider = StateNotifierProvider.autoDispose<
     DiscoverCharacterNotifier, AsyncValue<Pagination<TileItem>>>(
   (ref) => DiscoverCharacterNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(birthdayFilterProvider),
+    ref.watch(discoverFilterProvider.select((s) => s.birthday)),
+    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
   ),
 );
 
@@ -76,7 +82,8 @@ final discoverStaffProvider = StateNotifierProvider.autoDispose<
     DiscoverStaffNotifier, AsyncValue<Pagination<TileItem>>>(
   (ref) => DiscoverStaffNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(birthdayFilterProvider),
+    ref.watch(discoverFilterProvider.select((s) => s.birthday)),
+    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
   ),
 );
 
@@ -84,6 +91,7 @@ final discoverStudioProvider = StateNotifierProvider.autoDispose<
     DiscoverStudioNotifier, AsyncValue<Pagination<StudioItem>>>(
   (ref) => DiscoverStudioNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
+    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
   ),
 );
 
@@ -91,19 +99,23 @@ final discoverUserProvider = StateNotifierProvider.autoDispose<
     DiscoverUserNotifier, AsyncValue<Pagination<UserItem>>>(
   (ref) => DiscoverUserNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
+    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
   ),
 );
 
 final discoverReviewProvider = StateNotifierProvider.autoDispose<
     DiscoverReviewNotifier, AsyncValue<Pagination<ReviewItem>>>(
-  (ref) => DiscoverReviewNotifier(ref.watch(reviewSortProvider(null))),
+  (ref) => DiscoverReviewNotifier(
+    ref.watch(reviewSortProvider(null)),
+    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
+  ),
 );
 
 class DiscoverMediaNotifier
     extends StateNotifier<AsyncValue<Pagination<DiscoverMediaItem>>> {
-  DiscoverMediaNotifier(this.filter, this.search)
+  DiscoverMediaNotifier(this.filter, this.search, bool shouldLoad)
       : super(const AsyncValue.loading()) {
-    fetch();
+    if (shouldLoad) fetch();
   }
 
   final DiscoverFilter filter;
@@ -135,9 +147,9 @@ class DiscoverMediaNotifier
 
 class DiscoverCharacterNotifier
     extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
-  DiscoverCharacterNotifier(this.search, this.isBirthday)
+  DiscoverCharacterNotifier(this.search, this.isBirthday, bool shouldLoad)
       : super(const AsyncValue.loading()) {
-    fetch();
+    if (shouldLoad) fetch();
   }
 
   final String? search;
@@ -168,9 +180,9 @@ class DiscoverCharacterNotifier
 
 class DiscoverStaffNotifier
     extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
-  DiscoverStaffNotifier(this.search, this.isBirthday)
+  DiscoverStaffNotifier(this.search, this.isBirthday, bool shouldLoad)
       : super(const AsyncValue.loading()) {
-    fetch();
+    if (shouldLoad) fetch();
   }
 
   final String? search;
@@ -201,8 +213,9 @@ class DiscoverStaffNotifier
 
 class DiscoverStudioNotifier
     extends StateNotifier<AsyncValue<Pagination<StudioItem>>> {
-  DiscoverStudioNotifier(this.search) : super(const AsyncValue.loading()) {
-    fetch();
+  DiscoverStudioNotifier(this.search, bool shouldLoad)
+      : super(const AsyncValue.loading()) {
+    if (shouldLoad) fetch();
   }
 
   final String? search;
@@ -231,8 +244,9 @@ class DiscoverStudioNotifier
 
 class DiscoverUserNotifier
     extends StateNotifier<AsyncValue<Pagination<UserItem>>> {
-  DiscoverUserNotifier(this.search) : super(const AsyncValue.loading()) {
-    fetch();
+  DiscoverUserNotifier(this.search, bool shouldLoad)
+      : super(const AsyncValue.loading()) {
+    if (shouldLoad) fetch();
   }
 
   final String? search;
@@ -261,8 +275,9 @@ class DiscoverUserNotifier
 
 class DiscoverReviewNotifier
     extends StateNotifier<AsyncValue<Pagination<ReviewItem>>> {
-  DiscoverReviewNotifier(this.sort) : super(const AsyncValue.loading()) {
-    fetch();
+  DiscoverReviewNotifier(this.sort, bool shouldLoad)
+      : super(const AsyncValue.loading()) {
+    if (shouldLoad) fetch();
   }
 
   final ReviewSort sort;

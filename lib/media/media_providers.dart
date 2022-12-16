@@ -41,11 +41,7 @@ Future<bool> rateRecommendation(int mediaId, int recId, bool? rating) async {
 
 final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
   (ref, mediaId) async {
-    var data = await Api.get(GqlQuery.media, {
-      'id': mediaId,
-      'withMain': true,
-      'withDetails': true,
-    });
+    var data = await Api.get(GqlQuery.media, {'id': mediaId, 'withInfo': true});
     data = data['Media'];
 
     final relatedMedia = <RelatedMedia>[];
@@ -54,7 +50,7 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
     }
 
     return Media(
-      Edit(data, ref.watch(userSettingsProvider)),
+      Edit(data, ref.watch(settingsProvider.notifier).value),
       MediaInfo(data),
       MediaStats(data),
       relatedMedia,
@@ -135,10 +131,10 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _recommended = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _characters = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _staff = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _reviews = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _recommended = AsyncValue.error(data.error!, data.stackTrace!);
+      _characters = AsyncValue.error(data.error!, data.stackTrace!);
+      _staff = AsyncValue.error(data.error!, data.stackTrace!);
+      _reviews = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -168,7 +164,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _recommended = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _recommended = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -190,7 +186,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _characters = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _characters = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -212,7 +208,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _staff = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _staff = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -234,7 +230,7 @@ class MediaContentNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _reviews = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _reviews = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 

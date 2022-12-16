@@ -241,12 +241,10 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               child: Row(
                 children: [
                   implyLeading
-                      ? IconShade(
-                          TopBarIcon(
-                            tooltip: 'Close',
-                            icon: Ionicons.chevron_back_outline,
-                            onTap: Navigator.of(context).pop,
-                          ),
+                      ? TopBarShadowIcon(
+                          tooltip: 'Close',
+                          icon: Ionicons.chevron_back_outline,
+                          onTap: Navigator.of(context).pop,
                         )
                       : const SizedBox(width: 10),
                   Expanded(
@@ -292,26 +290,4 @@ class _Delegate implements SliverPersistentHeaderDelegate {
 
   @override
   TickerProvider? get vsync => null;
-}
-
-class IconShade extends StatelessWidget {
-  final Widget child;
-  const IconShade(this.child);
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.background,
-            blurRadius: 10,
-            spreadRadius: -10,
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
 }

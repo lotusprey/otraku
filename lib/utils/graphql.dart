@@ -2,7 +2,7 @@ abstract class GqlQuery {
   static const collection = r'''
     query Collection($userId: Int, $type: MediaType) {
       MediaListCollection(userId: $userId, type: $type) {
-        lists {name isCustomList isSplitCompletedList status entries {...entry media {...main}}}
+        lists {name isCustomList isSplitCompletedList status entries {...collectionEntry}}
         user {
           mediaListOptions {
             rowOrder
@@ -14,74 +14,61 @@ abstract class GqlQuery {
       }
     }
   '''
-      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+      '${_GqlFragment.collectionEntry}';
 
-  static const progressMedia = r'''
-    query ProgressMedia($userId: Int, $page: Int = 1) {
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        mediaList(userId: $userId, status: CURRENT, sort: UPDATED_TIME_DESC) {
-          ...entry media {...main}
-        }
+  static const collectionPreview = r'''
+    query CollectionPreview($userId: Int, $type: MediaType) {
+      MediaListCollection(userId: $userId, type: $type, status_in: [CURRENT, REPEATING]) {
+        lists {isCustomList entries {...collectionEntry}}
+        user {mediaListOptions {scoreFormat}}
       }
     }
   '''
-      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+      '${_GqlFragment.collectionEntry}';
 
-  static const collectionEntry = r'''
+  static const listEntry = r'''
     query CollectionEntry($userId: Int, $mediaId: Int) {
-      MediaList(userId: $userId, mediaId: $mediaId) {
-        status
-        progress
-        progressVolumes
-        score
-        repeat
-        notes
-        startedAt {year month day}
-        completedAt {year month day}
-        updatedAt
-        createdAt
-        media {
-          id
-          type
-          episodes
-          chapters
-          volumes
-          title {userPreferred english romaji native}
-          format
-          status(version: 2)
-          startDate {year month day}
-          endDate {year month day}
-          coverImage {extraLarge large medium}
-          nextAiringEpisode {episode airingAt}
-          countryOfOrigin
-          genres
-          tags {id}
-        }
-      }
+      MediaList(userId: $userId, mediaId: $mediaId) {...collectionEntry}
     }
-  ''';
+  '''
+      '${_GqlFragment.collectionEntry}';
 
   static const media = r'''
-    query Media($id: Int, $withMain: Boolean = false, $withDetails: Boolean = false,
-        $withRecommendations: Boolean = false, $withCharacters: Boolean = false,
-        $withStaff: Boolean = false, $withReviews: Boolean = false, $page: Int = 1) {
+    query Media($id: Int, $withInfo: Boolean = false, $withRecommendations: Boolean = false,
+        $withCharacters: Boolean = false, $withStaff: Boolean = false,
+        $withReviews: Boolean = false, $page: Int = 1) {
       Media(id: $id) {
-        mediaListEntry @include(if: $withMain) {...entry}
-        ...main @include(if: $withMain)
-        ...details @include(if: $withDetails)
+        mediaListEntry @include(if: $withInfo) {...entry}
+        ...info @include(if: $withInfo)
         ...recommendations @include (if: $withRecommendations)
         ...characters @include(if: $withCharacters)
         ...staff @include(if: $withStaff)
         ...reviews @include(if: $withReviews)
       }
     }
-    fragment details on Media {
+    fragment info on Media {
+      id
+      type
+      title {userPreferred english romaji native}
       synonyms
+      description
+      coverImage {extraLarge large medium}
       bannerImage
+      episodes
+      chapters
+      volumes
+      format
+      status(version: 2)
+      startDate {year month day}
+      endDate {year month day}
+      nextAiringEpisode {episode airingAt}
+      countryOfOrigin
+      genres
+      tags {id}
+      isAdult
+      hashtag
       isFavourite
       favourites
-      description
       duration
       season
       seasonYear
@@ -108,6 +95,23 @@ abstract class GqlQuery {
           }
         }
       }
+    }
+    fragment entry on MediaList {
+      id
+      status
+      progress
+      progressVolumes
+      score
+      repeat
+      notes
+      startedAt {year month day}
+      completedAt {year month day}
+      private
+      hiddenFromStatusLists
+      customLists
+      advancedScores
+      updatedAt
+      createdAt
     }
     fragment recommendations on Media {
       recommendations(page: $page, sort: [RATING_DESC]) {
@@ -152,8 +156,7 @@ abstract class GqlQuery {
         }
       }
     }
-  '''
-      '${_GqlFragment.mediaMain}${_GqlFragment.entry}';
+  ''';
 
   static const entry = r'''
     query Entry($mediaId: Int) {
@@ -187,12 +190,12 @@ abstract class GqlQuery {
         $format_in: [MediaFormat], $genre_in: [String], $genre_not_in: [String],
         $tag_in: [String], $tag_not_in: [String], $onList: Boolean, $startFrom: FuzzyDateInt,
         $startTo: FuzzyDateInt, $countryOfOrigin: CountryCode, $season: MediaSeason,
-        $sources: [MediaSource], $sort: [MediaSort]) {
+        $sources: [MediaSource], $isAdult: Boolean, $sort: [MediaSort]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
         media(type: $type, search: $search, status_in: $status_in, format_in: $format_in,
         genre_in: $genre_in, genre_not_in: $genre_not_in, tag_in: $tag_in, tag_not_in: $tag_not_in, 
-        onList: $onList, startDate_greater: $startFrom, startDate_lesser: $startTo,
+        onList: $onList, startDate_greater: $startFrom, startDate_lesser: $startTo, isAdult: $isAdult,
         countryOfOrigin: $countryOfOrigin, season: $season, source_in: $sources, sort: $sort) {
           id
           type
@@ -496,10 +499,10 @@ abstract class GqlQuery {
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
   static const settings = r'''
-    query Settings {
+    query Settings($withData: Boolean = true) {
       Viewer {
         unreadNotificationCount
-        ...userSettings
+        @include(if: $withData) ...userSettings
     }
   }
   '''
@@ -518,7 +521,21 @@ abstract class GqlQuery {
             user {id name avatar {large}}
             createdAt
           }
+          ... on ActivityMentionNotification {
+            id
+            type
+            activityId
+            user {id name avatar {large}}
+            createdAt
+          }
           ... on ActivityMessageNotification {
+            id
+            type
+            activityId
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ActivityLikeNotification {
             id
             type
             activityId
@@ -532,53 +549,14 @@ abstract class GqlQuery {
             user {id name avatar {large}}
             createdAt
           }
-          ... on ActivityReplySubscribedNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentReplyNotification {
-            id
-            type
-            context
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityMentionNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentMentionNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ThreadCommentSubscribedNotification {
-            id
-            type
-            commentId
-            thread {title}
-            user {id name avatar {large}}
-            createdAt
-          }
-          ... on ActivityLikeNotification {
-            id
-            type
-            activityId
-            user {id name avatar {large}}
-            createdAt
-          }
           ... on ActivityReplyLikeNotification {
+            id
+            type
+            activityId
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ActivityReplySubscribedNotification {
             id
             type
             activityId
@@ -588,16 +566,48 @@ abstract class GqlQuery {
           ... on ThreadLikeNotification {
             id
             type
-            thread {id title}
+            thread {id title siteUrl}
             user {id name avatar {large}}
             createdAt
           }
           ... on ThreadCommentLikeNotification {
             id
             type
-            commentId
             thread {title}
+            comment {siteUrl}
             user {id name avatar {large}}
+            createdAt
+          }
+          ... on ThreadCommentReplyNotification {
+            id
+            type
+            context
+            thread {title}
+            comment {siteUrl}
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ThreadCommentMentionNotification {
+            id
+            type
+            thread {title}
+            comment {siteUrl}
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on ThreadCommentSubscribedNotification {
+            id
+            type
+            thread {title}
+            comment {siteUrl}
+            user {id name avatar {large}}
+            createdAt
+          }
+          ... on AiringNotification {
+            id
+            type
+            episode
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on RelatedMediaAdditionNotification {
@@ -628,13 +638,6 @@ abstract class GqlQuery {
             deletedMediaTitle
             createdAt
           }
-          ... on AiringNotification {
-            id
-            type
-            episode
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
-            createdAt
-          }
         }
       }
     }
@@ -652,10 +655,9 @@ abstract class GqlMutation {
         progress: $progress, progressVolumes: $progressVolumes, repeat: $repeat,
         private: $private, notes: $notes, hiddenFromStatusLists: $hiddenFromStatusLists,
         customLists: $customLists, startedAt: $startedAt, completedAt: $completedAt,
-        advancedScores: $advancedScores) {...entry}
+        advancedScores: $advancedScores) {id}
     }
-  '''
-      '${_GqlFragment.entry}';
+  ''';
 
   static const updateProgress = r'''
     mutation UpdateProgress($mediaId: Int, $progress: Int) {
@@ -785,45 +787,31 @@ abstract class GqlMutation {
 }
 
 abstract class _GqlFragment {
-  static const mediaMain = r'''
-    fragment main on Media {
-      id
-      type
-      episodes
-      chapters
-      volumes
-      title {userPreferred english romaji native}
-      format
-      status(version: 2)
-      startDate {year month day}
-      endDate {year month day}
-      coverImage {extraLarge large medium}
-      nextAiringEpisode {episode airingAt}
-      countryOfOrigin
-      isAdult
-      hashtag
-      genres
-      tags {id}
-    }
-  ''';
-
-  static const entry = r'''
-    fragment entry on MediaList {
-      id
+  static const collectionEntry = r'''
+    fragment collectionEntry on MediaList {
       status
       progress
-      progressVolumes
       score
-      repeat
       notes
+      repeat
       startedAt {year month day}
       completedAt {year month day}
-      private
-      hiddenFromStatusLists
-      customLists
-      advancedScores
-      updatedAt
       createdAt
+      updatedAt
+      media {
+        id
+        title {userPreferred romaji english native}
+        coverImage {extraLarge large medium}
+        format
+        status
+        episodes
+        chapters
+        genres
+        tags {id}
+        nextAiringEpisode {episode airingAt}
+        startDate {year month day}
+        countryOfOrigin
+      }
     }
   ''';
 

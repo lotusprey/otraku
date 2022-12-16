@@ -54,7 +54,7 @@ class MediaPeopleView extends StatelessWidget {
                   .when(
                     loading: () => const Center(child: Loader()),
                     error: (_, __) => const Center(
-                      child: Text('Could not load characters'),
+                      child: Text('Failed to load characters'),
                     ),
                     data: (data) => CustomScrollView(
                       controller: scrollCtrl,
@@ -84,7 +84,7 @@ class MediaPeopleView extends StatelessWidget {
                   .when(
                     loading: () => const Center(child: Loader()),
                     error: (_, __) => const Center(
-                      child: Text('Could not load staff'),
+                      child: Text('Failed to load staff'),
                     ),
                     data: (data) => CustomScrollView(
                       controller: scrollCtrl,

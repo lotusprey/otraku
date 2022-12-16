@@ -117,7 +117,7 @@ class _FriendTab extends StatelessWidget {
               error: (error, _) => showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load users',
+                  title: 'Failed to load users',
                   content: error.toString(),
                 ),
               ),
@@ -125,15 +125,15 @@ class _FriendTab extends StatelessWidget {
           },
         );
 
-        const empty = Center(child: Text('No Users'));
-
         final notifier = ref.watch(friendsProvider(id));
         final users = onFollowing ? notifier.following : notifier.followers;
-        return users.maybeWhen(
+        return users.when(
             loading: () => const Center(child: Loader()),
-            orElse: () => empty,
+            error: (_, __) => const Center(child: Text('Failed to load users')),
             data: (data) {
-              if (data.items.isEmpty) return empty;
+              if (data.items.isEmpty) {
+                return const Center(child: Text('No Users'));
+              }
 
               return Center(
                 child: ConstrainedBox(

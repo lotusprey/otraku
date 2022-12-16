@@ -60,14 +60,14 @@ class MediaHeader extends StatelessWidget {
                 maxWidth: null,
                 actions: [
                   if (info.siteUrl != null)
-                    IconShade(TopBarIcon(
+                    TopBarShadowIcon(
                       tooltip: 'More',
                       icon: Ionicons.ellipsis_horizontal,
                       onTap: () => showSheet(
                         context,
                         FixedGradientDragSheet.link(context, info.siteUrl!),
                       ),
-                    )),
+                    ),
                 ],
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

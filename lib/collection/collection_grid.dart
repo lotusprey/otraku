@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/consts.dart';
@@ -19,12 +20,16 @@ class CollectionGrid extends StatelessWidget {
   const CollectionGrid({
     required this.items,
     required this.scoreFormat,
-    required this.updateProgress,
+    required this.onProgressUpdate,
   });
 
   final List<Entry> items;
   final ScoreFormat scoreFormat;
-  final void Function(Entry)? updateProgress;
+
+  /// Called when a tile's progress gets incremented.
+  /// If `null` the increment button won't appear, so this
+  /// should only be `null` when viewing other users' collections.
+  final void Function(Entry, List<String>)? onProgressUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class CollectionGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(items[i], scoreFormat, updateProgress),
+          (_, i) => _Tile(items[i], scoreFormat, onProgressUpdate),
           childCount: items.length,
         ),
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
@@ -45,37 +50,38 @@ class CollectionGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.model, this.scoreFormat, this.updateProgress);
+  const _Tile(this.entry, this.scoreFormat, this.onProgressUpdate);
 
-  final Entry model;
+  final Entry entry;
   final ScoreFormat scoreFormat;
-  final void Function(Entry)? updateProgress;
+  final void Function(Entry, List<String>)? onProgressUpdate;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: LinkTile(
-        id: model.mediaId,
+        key: ValueKey(entry.mediaId),
+        id: entry.mediaId,
         discoverType: DiscoverType.anime,
-        info: model.imageUrl,
+        info: entry.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: model.mediaId,
+              tag: entry.mediaId,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: FadeImage(model.imageUrl),
+                  child: FadeImage(entry.imageUrl),
                 ),
               ),
             ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: _TileContent(model, scoreFormat, updateProgress),
+                child: _TileContent(entry, scoreFormat, onProgressUpdate),
               ),
             ),
           ],
@@ -88,11 +94,11 @@ class _Tile extends StatelessWidget {
 /// The content is a [StatefulWidget], as it
 /// needs to update when the progress increments.
 class _TileContent extends StatefulWidget {
-  const _TileContent(this.item, this.scoreFormat, this.updateProgress);
+  const _TileContent(this.item, this.scoreFormat, this.onProgressUpdate);
 
   final Entry item;
   final ScoreFormat scoreFormat;
-  final void Function(Entry)? updateProgress;
+  final void Function(Entry, List<String>)? onProgressUpdate;
 
   @override
   State<_TileContent> createState() => __TileContentState();
@@ -280,7 +286,7 @@ class __TileContentState extends State<_TileContent> {
       style: Theme.of(context).textTheme.subtitle2,
     );
 
-    if (widget.updateProgress == null || item.progress == item.progressMax) {
+    if (widget.onProgressUpdate == null || item.progress == item.progressMax) {
       return Tooltip(message: 'Progress', child: text);
     }
 
@@ -291,13 +297,30 @@ class __TileContentState extends State<_TileContent> {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
-      onPressed: () {
-        if (item.progressMax == null || item.progress < item.progressMax! - 1) {
-          setState(() => item.progress++);
-          widget.updateProgress!(item);
-        } else {
-          showSheet(context, EditView(item.mediaId, complete: true));
+      onPressed: () async {
+        if (item.progressMax != null &&
+            item.progress >= item.progressMax! - 1) {
+          showSheet(context, EditView(EditTag(item.mediaId, true)));
+          return;
         }
+
+        setState(() => item.progress++);
+        final result = await updateProgress(item.mediaId, item.progress);
+
+        if (result is! List<String>) {
+          if (mounted) {
+            showPopUp(
+              context,
+              ConfirmationDialog(
+                title: 'Could not update progress',
+                content: result.toString(),
+              ),
+            );
+          }
+          return;
+        }
+
+        widget.onProgressUpdate?.call(item, result);
       },
       child: Tooltip(
         message: 'Increment Progress',

@@ -9,7 +9,6 @@ import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/custom_sliver_header.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -215,12 +214,10 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
               height: minExtent,
               child: Row(
                 children: [
-                  IconShade(
-                    TopBarIcon(
-                      tooltip: 'Close',
-                      icon: Ionicons.chevron_back_outline,
-                      onTap: Navigator.of(context).pop,
-                    ),
+                  TopBarShadowIcon(
+                    tooltip: 'Close',
+                    icon: Ionicons.chevron_back_outline,
+                    onTap: Navigator.of(context).pop,
                   ),
                   if (title != null)
                     Expanded(
@@ -234,14 +231,12 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                   if (siteUrl != null)
-                    IconShade(
-                      TopBarIcon(
-                        tooltip: 'More',
-                        icon: Ionicons.ellipsis_horizontal,
-                        onTap: () => showSheet(
-                          context,
-                          FixedGradientDragSheet.link(context, siteUrl!),
-                        ),
+                    TopBarShadowIcon(
+                      tooltip: 'More',
+                      icon: Ionicons.ellipsis_horizontal,
+                      onTap: () => showSheet(
+                        context,
+                        FixedGradientDragSheet.link(context, siteUrl!),
                       ),
                     ),
                 ],

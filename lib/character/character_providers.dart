@@ -110,8 +110,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
     });
 
     if (data.hasError) {
-      _anime = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
-      _manga = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+      _anime = AsyncValue.error(data.error!, data.stackTrace!);
+      _manga = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 
@@ -143,8 +143,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
 
     if (data.hasError) {
       ofAnime
-          ? _anime = AsyncValue.error(data.error!, stackTrace: data.stackTrace)
-          : _manga = AsyncValue.error(data.error!, stackTrace: data.stackTrace);
+          ? _anime = AsyncValue.error(data.error!, data.stackTrace!)
+          : _manga = AsyncValue.error(data.error!, data.stackTrace!);
       return;
     }
 

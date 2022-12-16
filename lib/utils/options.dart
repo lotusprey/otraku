@@ -7,7 +7,7 @@ import 'package:otraku/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.2.1+5';
+const versionCode = '1.2.2+1';
 
 /// General options keys.
 enum _OptionKey {
@@ -20,11 +20,13 @@ enum _OptionKey {
   defaultMangaSort,
   defaultDiscoverSort,
   imageQuality,
+  animeCollectionPreview,
+  mangaCollectionPreview,
+  airingSortForPreview,
   confirmExit,
   leftHanded,
   analogueClock,
   compactDiscoverGrid,
-  inboxOnFeed,
   feedOnFollowing,
   feedActivityFilters,
   lastNotificationId,
@@ -66,10 +68,12 @@ class Options extends ChangeNotifier {
     this._defaultMangaSort,
     this._defaultDiscoverSort,
     this._imageQuality,
+    this._animeCollectionPreview,
+    this._mangaCollectionPreview,
+    this._airingSortForPreview,
     this._confirmExit,
     this._leftHanded,
     this._analogueClock,
-    this._inboxOnFeed,
     this._feedOnFollowing,
     this._compactDiscoverGrid,
     this._feedActivityFilters,
@@ -123,10 +127,12 @@ class Options extends ChangeNotifier {
       EntrySort.values[mangaSort],
       MediaSort.values[discoverSort],
       ImageQuality.values.elementAt(imageQualityIndex),
+      _optionBox.get(_OptionKey.animeCollectionPreview.name) ?? true,
+      _optionBox.get(_OptionKey.mangaCollectionPreview.name) ?? true,
+      _optionBox.get(_OptionKey.airingSortForPreview.name) ?? true,
       _optionBox.get(_OptionKey.confirmExit.name) ?? false,
       _optionBox.get(_OptionKey.leftHanded.name) ?? false,
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
-      _optionBox.get(_OptionKey.inboxOnFeed.name) ?? true,
       _optionBox.get(_OptionKey.feedOnFollowing.name) ?? false,
       _optionBox.get(_OptionKey.compactDiscoverGrid.name) ?? false,
       _optionBox.get(_OptionKey.feedActivityFilters.name) ?? [0, 1, 2],
@@ -190,11 +196,13 @@ class Options extends ChangeNotifier {
   EntrySort _defaultMangaSort;
   MediaSort _defaultDiscoverSort;
   ImageQuality _imageQuality;
+  bool _animeCollectionPreview;
+  bool _mangaCollectionPreview;
+  bool _airingSortForPreview;
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
   bool _compactDiscoverGrid;
-  bool _inboxOnFeed;
   bool _feedOnFollowing;
   List<int> _feedActivityFilters;
   int _lastNotificationId;
@@ -212,11 +220,13 @@ class Options extends ChangeNotifier {
   EntrySort get defaultMangaSort => _defaultMangaSort;
   MediaSort get defaultDiscoverSort => _defaultDiscoverSort;
   ImageQuality get imageQuality => _imageQuality;
+  bool get animeCollectionPreview => _animeCollectionPreview;
+  bool get mangaCollectionPreview => _mangaCollectionPreview;
+  bool get airingSortForPreview => _airingSortForPreview;
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
   bool get compactDiscoverGrid => _compactDiscoverGrid;
-  bool get inboxOnFeed => _inboxOnFeed;
   bool get feedOnFollowing => _feedOnFollowing;
   List<int> get feedActivityFilters => _feedActivityFilters;
   int get lastNotificationId => _lastNotificationId;
@@ -324,6 +334,21 @@ class Options extends ChangeNotifier {
     _optionBox.put(_OptionKey.imageQuality.name, v.index);
   }
 
+  set animeCollectionPreview(bool v) {
+    _animeCollectionPreview = v;
+    _optionBox.put(_OptionKey.animeCollectionPreview.name, v);
+  }
+
+  set mangaCollectionPreview(bool v) {
+    _mangaCollectionPreview = v;
+    _optionBox.put(_OptionKey.mangaCollectionPreview.name, v);
+  }
+
+  set airingSortForPreview(bool v) {
+    _airingSortForPreview = v;
+    _optionBox.put(_OptionKey.airingSortForPreview.name, v);
+  }
+
   set confirmExit(bool v) {
     _confirmExit = v;
     _optionBox.put(_OptionKey.confirmExit.name, v);
@@ -342,11 +367,6 @@ class Options extends ChangeNotifier {
   set compactDiscoverGrid(bool v) {
     _compactDiscoverGrid = v;
     _optionBox.put(_OptionKey.compactDiscoverGrid.name, v);
-  }
-
-  set inboxOnFeed(bool v) {
-    _inboxOnFeed = v;
-    _optionBox.put(_OptionKey.inboxOnFeed.name, v);
   }
 
   set feedOnFollowing(bool v) {

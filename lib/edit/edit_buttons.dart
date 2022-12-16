@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/collection/collection_preview_provider.dart';
 import 'package:otraku/collection/collection_providers.dart';
-import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/edit/edit_model.dart';
 import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
+import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class EditButtons extends StatefulWidget {
-  const EditButtons(this.mediaId, this.oldEdit, this.callback);
+  const EditButtons(this.tag, this.oldEdit, this.callback);
 
-  final int mediaId;
+  final EditTag tag;
   final Edit oldEdit;
   final void Function(Edit)? callback;
 
@@ -35,44 +36,51 @@ class _EditButtonsState extends State<EditButtons> {
                 text: 'Save',
                 icon: Ionicons.save_outline,
                 onTap: () async {
-                  final newEdit = ref.read(editProvider);
+                  final oldEdit = widget.oldEdit;
+                  final newEdit = ref.read(newEditProvider(widget.tag));
                   setState(() => _loading = true);
 
-                  final result = await updateEntry(newEdit);
+                  final entry = await updateEntry(newEdit, Options().id!);
 
-                  if (result is! int) {
+                  if (entry is! Entry) {
                     if (mounted) {
                       showPopUp(
                         context,
                         ConfirmationDialog(
                           title: 'Could not update entry',
-                          content: result.toString(),
+                          content: entry.toString(),
                         ),
                       );
                     }
                     return;
                   }
 
-                  newEdit.entryId = result;
-                  if (newEdit.entryId == null) return;
-                  widget.callback?.call(newEdit);
+                  final ofAnime = newEdit.type == 'ANIME';
+                  final tag = CollectionTag(Options().id!, ofAnime);
 
-                  final isAnime = newEdit.type == 'ANIME';
-                  final tag = CollectionTag(Options().id!, isAnime);
-                  final entry =
-                      await ref.read(collectionProvider(tag)).updateEntry(
-                            widget.oldEdit,
-                            newEdit,
-                            ref.read(collectionFilterProvider(tag)).sort,
-                          );
-                  if (entry == null) return;
-
-                  if (widget.oldEdit.status == null) {
-                    ref.read(progressProvider).add(entry, isAnime);
-                  } else {
-                    ref.read(progressProvider).update(entry);
+                  if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
+                    await ref.read(collectionProvider(tag)).updateEntry(
+                          entry,
+                          oldEdit,
+                          newEdit,
+                          ref.read(collectionFilterProvider(tag)).sort,
+                        );
+                  } else if (newEdit.status == EntryStatus.CURRENT ||
+                      newEdit.status == EntryStatus.REPEATING) {
+                    if (oldEdit.status == EntryStatus.CURRENT ||
+                        oldEdit.status == EntryStatus.REPEATING) {
+                      ref.read(collectionPreviewProvider(tag)).update(entry);
+                    } else {
+                      ref.read(collectionPreviewProvider(tag)).add(entry);
+                    }
+                  } else if (oldEdit.status == EntryStatus.CURRENT ||
+                      oldEdit.status == EntryStatus.REPEATING) {
+                    ref
+                        .read(collectionPreviewProvider(tag))
+                        .remove(entry.mediaId);
                   }
 
+                  widget.callback?.call(newEdit);
                   if (mounted) {
                     Navigator.pop(context);
                   }
@@ -90,11 +98,13 @@ class _EditButtonsState extends State<EditButtons> {
                     title: 'Remove entry?',
                     mainAction: 'Yes',
                     secondaryAction: 'No',
-                    onConfirm: () {
+                    onConfirm: () async {
                       setState(() => _loading = true);
 
                       final oldEdit = widget.oldEdit;
-                      removeEntry(oldEdit.entryId!).then((err) {
+                      final err = await removeEntry(oldEdit.entryId!);
+
+                      if (mounted) {
                         Navigator.pop(context);
 
                         if (err != null) {
@@ -107,19 +117,23 @@ class _EditButtonsState extends State<EditButtons> {
                           );
                           return;
                         }
+                      } else {
+                        if (err != null) return;
+                      }
 
-                        final tag = CollectionTag(
-                          Options().id!,
-                          oldEdit.type == 'ANIME',
-                        );
+                      final ofAnime = oldEdit.type == 'ANIME';
+                      final tag = CollectionTag(Options().id!, ofAnime);
+
+                      if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
                         ref.read(collectionProvider(tag)).removeEntry(oldEdit);
+                      } else if (oldEdit.status == EntryStatus.CURRENT ||
+                          oldEdit.status == EntryStatus.REPEATING) {
+                        ref
+                            .read(collectionPreviewProvider(tag))
+                            .remove(oldEdit.mediaId);
+                      }
 
-                        if (oldEdit.status == EntryStatus.CURRENT) {
-                          ref.read(progressProvider).remove(oldEdit.mediaId);
-                        }
-
-                        widget.callback?.call(oldEdit.emptyCopy());
-                      });
+                      widget.callback?.call(oldEdit.emptyCopy());
                     },
                   ),
                 ),

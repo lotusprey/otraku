@@ -44,7 +44,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           showPopUp(
             context,
             ConfirmationDialog(
-              title: 'Could not load character',
+              title: 'Failed to load character',
               content: s.error.toString(),
             ),
           );

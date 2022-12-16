@@ -14,7 +14,7 @@ class SettingsContentTab extends StatelessWidget {
   const SettingsContentTab(this.scrollCtrl, this.settings, this.scheduleUpdate);
 
   final ScrollController scrollCtrl;
-  final UserSettings settings;
+  final Settings settings;
   final void Function() scheduleUpdate;
 
   @override
@@ -145,9 +145,9 @@ class SettingsContentTab extends StatelessWidget {
               DropDownField<EntrySort>(
                 title: 'Default Site List Sort',
                 value: settings.defaultSort,
-                items: Map.fromIterables(
-                  EntrySort.defaultStrings,
-                  EntrySort.defaultEnums,
+                items: Map.fromIterable(
+                  EntrySort.rowOrders,
+                  key: (s) => s.label,
                 ),
                 onChanged: (val) {
                   settings.defaultSort = val;

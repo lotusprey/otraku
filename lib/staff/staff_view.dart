@@ -44,7 +44,7 @@ class _StaffViewState extends ConsumerState<StaffView> {
           showPopUp(
             context,
             ConfirmationDialog(
-              title: 'Could not load staff',
+              title: 'Failed to load staff',
               content: s.error.toString(),
             ),
           );

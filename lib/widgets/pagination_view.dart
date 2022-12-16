@@ -37,7 +37,7 @@ class PaginationView<T> extends StatelessWidget {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Could not load $dataType',
+                title: 'Failed to load $dataType',
                 content: error.toString(),
               ),
             ),
@@ -53,7 +53,7 @@ class PaginationView<T> extends StatelessWidget {
                 child: Center(child: Loader()),
               ),
               error: (_, __) => SliverFillRemaining(
-                child: Center(child: Text('No $dataType')),
+                child: Center(child: Text('Failed to load $dataType')),
               ),
               data: (data) {
                 hasNext = data.hasNext;

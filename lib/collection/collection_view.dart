@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_providers.dart';
-import 'package:otraku/collection/progress_provider.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -17,7 +15,7 @@ import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/collection/collection_grid.dart';
-import 'package:otraku/filter/filter_tools.dart';
+import 'package:otraku/filter/filter_search_field.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -60,8 +58,11 @@ class _CollectionViewState extends State<CollectionView> {
 }
 
 class CollectionSubView extends StatelessWidget {
-  const CollectionSubView(
-      {required this.tag, required this.scrollCtrl, super.key});
+  const CollectionSubView({
+    required this.tag,
+    required this.scrollCtrl,
+    super.key,
+  });
 
   final CollectionTag tag;
   final ScrollController scrollCtrl;
@@ -172,7 +173,9 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        if (ref.watch(collectionProvider(tag).select((s) => s.lists.isEmpty))) {
+        if (ref.watch(collectionProvider(tag).select(
+          (s) => s.lists.length < 2,
+        ))) {
           return const SizedBox();
         }
 
@@ -258,7 +261,7 @@ class _ContentState extends State<_Content> {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Could not load collection',
+                title: 'Failed to load collection',
                 content: error.toString(),
               ),
             ),
@@ -277,41 +280,24 @@ class _ContentState extends State<_Content> {
           );
         }
 
-        void Function(Entry)? update;
+        void Function(Entry, List<String>)? update;
         if (widget.tag.userId == Options().id) {
-          update = (e) async {
-            final result = await updateProgress(e.mediaId, e.progress);
-
-            if (result is! List<String>) {
-              if (mounted) {
-                showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Could not update progress',
-                    content: result.toString(),
-                  ),
-                );
-              }
-              return;
-            }
-
+          update = (entry, customLists) {
             ref.read(collectionProvider(widget.tag)).updateProgress(
-                  mediaId: e.mediaId,
-                  progress: e.progress,
-                  customLists: result,
-                  listStatus: e.entryStatus,
-                  format: e.format,
+                  mediaId: entry.mediaId,
+                  progress: entry.progress,
+                  customLists: customLists,
+                  listStatus: entry.entryStatus,
+                  format: entry.format,
                   sort: ref.read(collectionFilterProvider(widget.tag)).sort,
                 );
-
-            ref.read(progressProvider).incrementProgress(e.mediaId, e.progress);
           };
         }
 
         return CollectionGrid(
           items: entries,
           scoreFormat: notifier.scoreFormat,
-          updateProgress: update,
+          onProgressUpdate: update,
         );
       },
     );

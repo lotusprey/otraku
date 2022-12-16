@@ -5,14 +5,11 @@ import 'package:otraku/activity/activities_view.dart';
 import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
-import 'package:otraku/feed/progress_tab.dart';
-import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
-import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FeedView extends StatelessWidget {
@@ -25,11 +22,13 @@ class FeedView extends StatelessWidget {
     final notificationIcon = Consumer(
       builder: (context, ref, child) {
         final count = ref.watch(
-          userSettingsProvider.select((s) => s.notificationCount),
+          settingsProvider.select(
+            (s) => s.valueOrNull?.unreadNotifications ?? 0,
+          ),
         );
 
         final openNotifications = () {
-          ref.read(userSettingsProvider.notifier).nullifyUnread();
+          ref.read(settingsProvider.notifier).clearUnread();
           Navigator.pushNamed(context, RouteArg.notifications);
         };
 
@@ -87,8 +86,6 @@ class FeedView extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) {
-        final notifier = ref.watch(homeProvider);
-
         return PageLayout(
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
@@ -106,36 +103,21 @@ class FeedView extends StatelessWidget {
                   ),
                 ),
               ),
-              ActionTabSwitcher(
-                current: notifier.inboxOnFeed ? 1 : 0,
-                onChanged: (i) => ref.read(homeProvider).inboxOnFeed = i == 1,
-                items: const ['Progress', 'Feed'],
-              ),
             ],
           ),
           topBar: TopBar(
             canPop: false,
-            title: notifier.inboxOnFeed ? 'Feed' : 'Progress',
+            title: 'Feed',
             items: [
-              if (notifier.inboxOnFeed)
-                TopBarIcon(
-                  tooltip: 'Filter',
-                  icon: Ionicons.funnel_outline,
-                  onTap: () => showActivityFilterSheet(context, ref, null),
-                )
-              else
-                const SizedBox(width: 45),
+              TopBarIcon(
+                tooltip: 'Filter',
+                icon: Ionicons.funnel_outline,
+                onTap: () => showActivityFilterSheet(context, ref, null),
+              ),
               notificationIcon,
             ],
           ),
-          child: DirectPageView(
-            onChanged: null,
-            current: notifier.inboxOnFeed ? 1 : 0,
-            children: [
-              ProgressTab(scrollCtrl),
-              ActivitiesSubView(null, scrollCtrl),
-            ],
-          ),
+          child: ActivitiesSubView(null, scrollCtrl),
         );
       },
     );

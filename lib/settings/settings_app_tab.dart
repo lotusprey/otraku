@@ -12,6 +12,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/settings/theme_preview.dart';
+import 'package:otraku/widgets/overlays/sheets.dart';
 
 class SettingsAppTab extends StatelessWidget {
   const SettingsAppTab(this.scrollCtrl);
@@ -77,28 +78,19 @@ class SettingsAppTab extends StatelessWidget {
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',
                 value: Options().defaultAnimeSort,
-                items: Map.fromIterable(
-                  EntrySort.values,
-                  key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
-                ),
+                items: Map.fromIterable(EntrySort.values, key: (s) => s.label),
                 onChanged: (val) => Options().defaultAnimeSort = val,
               ),
               DropDownField<EntrySort>(
                 title: 'Default Manga Sort',
                 value: Options().defaultMangaSort,
-                items: Map.fromIterable(
-                  EntrySort.values,
-                  key: (v) => Convert.clarifyEnum((v as EntrySort).name)!,
-                ),
+                items: Map.fromIterable(EntrySort.values, key: (s) => s.label),
                 onChanged: (val) => Options().defaultMangaSort = val,
               ),
               DropDownField<MediaSort>(
                 title: 'Default Discover Sort',
                 value: Options().defaultDiscoverSort,
-                items: Map.fromIterable(
-                  MediaSort.values,
-                  key: (v) => Convert.clarifyEnum((v as MediaSort).name)!,
-                ),
+                items: Map.fromIterable(MediaSort.values, key: (s) => s.label),
                 onChanged: (val) => Options().defaultDiscoverSort = val,
               ),
               DropDownField<DiscoverType>(
@@ -154,6 +146,56 @@ class SettingsAppTab extends StatelessWidget {
                 onChanged: (val) => Options().compactDiscoverGrid = val,
               ),
             ]),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: ListTile(
+            title: const Text('Collection Previews'),
+            trailing: const Icon(Icons.chevron_right_outlined),
+            textColor: Theme.of(context).colorScheme.onBackground,
+            iconColor: Theme.of(context).colorScheme.onBackground,
+            visualDensity: VisualDensity.compact,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            onTap: () => showSheet(
+              context,
+              OpaqueSheet(
+                initialHeight: Consts.tapTargetSize * 3 + 150,
+                builder: (context, scrollCtrl) => ListView(
+                  controller: scrollCtrl,
+                  padding: Consts.padding,
+                  children: [
+                    CheckBoxField(
+                      title: 'Anime Collection Preview',
+                      initial: Options().animeCollectionPreview,
+                      onChanged: (v) => Options().animeCollectionPreview = v,
+                    ),
+                    CheckBoxField(
+                      title: 'Manga Collection Preview',
+                      initial: Options().mangaCollectionPreview,
+                      onChanged: (v) => Options().mangaCollectionPreview = v,
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Collection previews only load your current and repeated '
+                      'media, which results in faster loading times. Disabling '
+                      'a preview means the whole collection will be loaded at once.',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                    CheckBoxField(
+                      title: 'Exclusive Airing Sort for Anime Preview',
+                      initial: Options().airingSortForPreview,
+                      onChanged: (v) => Options().airingSortForPreview = v,
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Anime collection preview will sort anime by '
+                      'airing time, instead of the default sort.',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
         const SliverFooter(),

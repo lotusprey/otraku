@@ -23,52 +23,24 @@ import 'package:otraku/widgets/overlays/toast.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
-  const EditView(
-    this.mediaId, {
-    this.edit,
-    this.callback,
-    this.complete = false,
-  });
+  const EditView(this.tag, {this.callback});
 
-  final int mediaId;
-  final Edit? edit;
+  final EditTag tag;
   final void Function(Edit)? callback;
-  final bool complete;
 
   @override
   Widget build(BuildContext context) {
-    if (edit != null) {
-      return Consumer(
-        builder: (context, ref, _) {
-          final notifier = ref.watch(editProvider.notifier);
-
-          if (notifier.state.mediaId < 0) {
-            notifier.update((_) => edit!.copy(complete));
-          }
-
-          return _build(edit!);
-        },
-      );
-    }
-
     return Consumer(
       builder: (context, ref, _) {
-        final notifier = ref.watch(editProvider.notifier);
-
         ref.listen<AsyncValue<Edit>>(
-          currentEditProvider(mediaId),
-          (_, state) => state.whenOrNull(
-            data: (data) {
-              if (notifier.state.mediaId < 0) {
-                notifier.update((_) => data.copy(complete));
-              }
-            },
+          oldEditProvider(tag),
+          (_, s) => s.whenOrNull(
             error: (err, _) {
               Navigator.pop(context);
               showPopUp(
                 context,
                 ConfirmationDialog(
-                  title: 'Could not load edit sheet',
+                  title: 'Failed to load edit sheet',
                   content: err.toString(),
                 ),
               );
@@ -76,7 +48,7 @@ class EditView extends StatelessWidget {
           ),
         );
 
-        return ref.watch(currentEditProvider(mediaId)).maybeWhen(
+        return ref.watch(oldEditProvider(tag)).maybeWhen(
               data: (oldEdit) => _build(oldEdit),
               orElse: () => OpaqueSheetView(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
@@ -88,26 +60,29 @@ class EditView extends StatelessWidget {
 
   Widget _build(Edit oldEdit) {
     return OpaqueSheetView(
-      buttons: EditButtons(mediaId, oldEdit, callback),
-      builder: (context, scrollCtrl) => _EditView(scrollCtrl, oldEdit),
+      buttons: EditButtons(tag, oldEdit, callback),
+      builder: (context, scrollCtrl) => _EditView(scrollCtrl, tag, oldEdit),
     );
   }
 }
 
 class _EditView extends StatelessWidget {
-  const _EditView(this.scrollCtrl, this.oldEdit);
+  const _EditView(this.scrollCtrl, this.tag, this.oldEdit);
 
   final ScrollController scrollCtrl;
+  final EditTag tag;
   final Edit oldEdit;
 
   @override
   Widget build(BuildContext context) {
+    final provider = newEditProvider(tag);
+
     final tracking = _FieldGrid(
       minWidth: 140,
       children: [
         Consumer(
           builder: (context, ref, _) {
-            final status = ref.watch(editProvider.select((s) => s.status));
+            final status = ref.watch(provider.select((s) => s.status));
 
             return DropDownField<EntryStatus?>(
               hint: 'Add',
@@ -117,7 +92,7 @@ class _EditView extends StatelessWidget {
                 EntryStatus.values,
                 key: (v) => Convert.adaptListStatus(v, oldEdit.type == 'ANIME'),
               ),
-              onChanged: (status) => ref.read(editProvider.notifier).update(
+              onChanged: (status) => ref.read(provider.notifier).update(
                 (s) {
                   var startedAt = s.startedAt;
                   var completedAt = s.completedAt;
@@ -157,15 +132,13 @@ class _EditView extends StatelessWidget {
           label: 'Progress',
           child: Consumer(
             builder: (context, ref, _) {
-              final progress = ref.watch(
-                editProvider.select((s) => s.progress),
-              );
+              final progress = ref.watch(provider.select((s) => s.progress));
 
               return NumberField(
                 initial: progress,
                 maxValue: oldEdit.progressMax ?? 100000,
                 onChanged: (progress) {
-                  ref.read(editProvider.notifier).update((s) {
+                  ref.read(provider.notifier).update((s) {
                     var status = s.status;
                     var startedAt = s.startedAt;
                     var completedAt = s.completedAt;
@@ -221,9 +194,9 @@ class _EditView extends StatelessWidget {
           label: 'Repeat',
           child: Consumer(
             builder: (context, ref, _) => NumberField(
-              initial: ref.read(editProvider).repeat,
+              initial: ref.read(provider).repeat,
               onChanged: (repeat) => ref
-                  .read(editProvider.notifier)
+                  .read(provider.notifier)
                   .update((s) => s.copyWith(repeat: repeat.toInt())),
             ),
           ),
@@ -233,10 +206,10 @@ class _EditView extends StatelessWidget {
             label: 'Progress Volumes',
             child: Consumer(
               builder: (context, ref, _) => NumberField(
-                initial: ref.read(editProvider).progressVolumes,
+                initial: ref.read(provider).progressVolumes,
                 maxValue: oldEdit.progressVolumesMax ?? 100000,
                 onChanged: (progressVolumes) =>
-                    ref.read(editProvider.notifier).update(
+                    ref.read(provider.notifier).update(
                           (s) => s.copyWith(
                             progressVolumes: progressVolumes.toInt(),
                           ),
@@ -254,14 +227,12 @@ class _EditView extends StatelessWidget {
           label: 'Started',
           child: Consumer(
             builder: (context, ref, _) {
-              final startedAt = ref.watch(
-                editProvider.select((s) => s.startedAt),
-              );
+              final startedAt = ref.watch(provider.select((s) => s.startedAt));
 
               return DateField(
                 date: startedAt,
                 onChanged: (startedAt) {
-                  ref.read(editProvider.notifier).update((s) {
+                  ref.read(provider.notifier).update((s) {
                     var status = s.status;
 
                     if (startedAt != null &&
@@ -285,14 +256,13 @@ class _EditView extends StatelessWidget {
           label: 'Completed',
           child: Consumer(
             builder: (context, ref, _) {
-              final completedAt = ref.watch(
-                editProvider.select((s) => s.completedAt),
-              );
+              final completedAt =
+                  ref.watch(provider.select((s) => s.completedAt));
 
               return DateField(
                 date: completedAt,
                 onChanged: (completedAt) {
-                  ref.read(editProvider.notifier).update((s) {
+                  ref.read(provider.notifier).update((s) {
                     var status = s.status;
                     var progress = s.progress;
 
@@ -328,7 +298,7 @@ class _EditView extends StatelessWidget {
 
     final advancedScoring = Consumer(
       builder: (context, ref, _) {
-        final settings = ref.watch(userSettingsProvider);
+        final settings = ref.watch(settingsProvider.notifier).value;
 
         if (!settings.advancedScoringEnabled ||
             settings.scoreFormat != ScoreFormat.POINT_100 &&
@@ -336,7 +306,7 @@ class _EditView extends StatelessWidget {
           return const SliverToBoxAdapter(child: SizedBox());
         }
 
-        final scores = ref.watch(editProvider.notifier).state.advancedScores;
+        final scores = ref.watch(provider.notifier).state.advancedScores;
 
         return _FieldGrid(
           minWidth: 140,
@@ -361,7 +331,7 @@ class _EditView extends StatelessWidget {
 
                     if (count > 0) avg /= count;
 
-                    final notifier = ref.read(editProvider.notifier);
+                    final notifier = ref.read(provider.notifier);
                     if (notifier.state.score != avg) {
                       notifier.update((s) => s.copyWith(score: avg));
                     }
@@ -375,7 +345,7 @@ class _EditView extends StatelessWidget {
 
     final advancedSettings = Consumer(
       builder: (context, ref, _) {
-        final notifier = ref.watch(editProvider.notifier);
+        final notifier = ref.watch(provider.notifier);
 
         return _CheckBoxGrid(
           {
@@ -395,7 +365,7 @@ class _EditView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Consumer(
         builder: (context, ref, _) {
-          final notifier = ref.watch(editProvider.notifier);
+          final notifier = ref.watch(provider.notifier);
 
           return CustomScrollView(
             controller: scrollCtrl,
@@ -404,8 +374,8 @@ class _EditView extends StatelessWidget {
               space,
               tracking,
               space,
-              const SliverToBoxAdapter(
-                child: LabeledField(label: 'Score', child: ScoreField()),
+              SliverToBoxAdapter(
+                child: LabeledField(label: 'Score', child: ScoreField(tag)),
               ),
               space,
               SliverToBoxAdapter(

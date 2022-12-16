@@ -53,7 +53,7 @@ class UserSubView extends StatelessWidget {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Could not load user',
+                title: 'Failed to load user',
                 content: error.toString(),
               ),
             ),
@@ -61,8 +61,8 @@ class UserSubView extends StatelessWidget {
         );
 
         final items = <Widget>[];
-        ref.watch(userProvider(id)).maybeWhen(
-          orElse: () {
+        ref.watch(userProvider(id)).when(
+          error: (_, __) {
             items.add(UserHeader(
               id: id,
               user: null,
@@ -70,7 +70,9 @@ class UserSubView extends StatelessWidget {
               imageUrl: avatarUrl,
             ));
             items.add(
-              const SliverFillRemaining(child: Center(child: Text('No data'))),
+              const SliverFillRemaining(
+                child: Center(child: Text('Failed to load user')),
+              ),
             );
           },
           loading: () {

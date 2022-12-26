@@ -26,6 +26,13 @@ final entriesProvider = Provider.autoDispose.family(
     final entries = <Entry>[];
     final list = collection.lists[collection.index];
 
+    final releaseStartFrom = filter.startYearFrom != null
+        ? DateTime(filter.startYearFrom!).millisecondsSinceEpoch
+        : 0;
+    final releaseStartTo = filter.startYearTo != null
+        ? DateTime(filter.startYearTo! + 1).millisecondsSinceEpoch
+        : DateTime.now().add(const Duration(days: 900)).millisecondsSinceEpoch;
+
     for (final entry in list.entries) {
       if (search.isNotEmpty) {
         bool contains = false;
@@ -49,6 +56,11 @@ final entriesProvider = Provider.autoDispose.family(
       if (filter.statuses.isNotEmpty &&
           !filter.statuses.contains(entry.status)) {
         continue;
+      }
+
+      if (entry.releaseStart != null) {
+        if (releaseStartFrom > entry.releaseStart!) continue;
+        if (releaseStartTo < entry.releaseStart!) continue;
       }
 
       if (filter.genreIn.isNotEmpty) {

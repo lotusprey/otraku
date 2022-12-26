@@ -27,6 +27,8 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   final tagIdNotIn = <int>[];
   late EntrySort sort =
       _ofAnime ? Options().defaultAnimeSort : Options().defaultMangaSort;
+  int? startYearFrom;
+  int? startYearTo;
   OriginCountry? country;
 
   @override
@@ -40,6 +42,8 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
     ..tagIdIn.addAll(tagIdIn)
     ..tagIdNotIn.addAll(tagIdNotIn)
     ..sort = sort
+    ..startYearFrom = startYearFrom
+    ..startYearTo = startYearTo
     ..country = country;
 
   @override

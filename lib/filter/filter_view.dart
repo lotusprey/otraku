@@ -107,6 +107,15 @@ class CollectionFilterView extends StatelessWidget {
                   ),
             ),
           ),
+          YearRangePicker(
+            title: 'Start Year',
+            from: filter.startYearFrom,
+            to: filter.startYearTo,
+            onChanged: (from, to) {
+              filter.startYearFrom = from;
+              filter.startYearTo = to;
+            },
+          ),
           const Divider(indent: 15, endIndent: 15),
           ChipSelector(
             title: 'Country',
@@ -167,15 +176,6 @@ class DiscoverFilterView extends StatelessWidget {
                   : null,
             ),
           const Divider(indent: 15, endIndent: 15),
-          YearRangePicker(
-            title: 'Start Year',
-            from: filter.startYearFrom,
-            to: filter.startYearTo,
-            onChanged: (from, to) {
-              filter.startYearFrom = from;
-              filter.startYearTo = to;
-            },
-          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Consumer(
@@ -190,6 +190,15 @@ class DiscoverFilterView extends StatelessWidget {
                     ),
                   ),
             ),
+          ),
+          YearRangePicker(
+            title: 'Start Year',
+            from: filter.startYearFrom,
+            to: filter.startYearTo,
+            onChanged: (from, to) {
+              filter.startYearFrom = from;
+              filter.startYearTo = to;
+            },
           ),
           const Divider(indent: 15, endIndent: 15),
           ChipSelector(

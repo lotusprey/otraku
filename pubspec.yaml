@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.1.1
+  flutter_riverpod: ^2.1.3
 
   # Data fetching.
   http: ^0.13.5
@@ -40,7 +40,7 @@ dependencies:
   workmanager: ^0.5.1
 
   # Sending device notifications.
-  flutter_local_notifications: ^12.0.4
+  flutter_local_notifications: ^13.0.0
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.9.0+2

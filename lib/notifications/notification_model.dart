@@ -3,32 +3,17 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/options.dart';
 
 enum NotificationFilterType {
-  all,
-  replies,
-  activity,
-  forum,
-  airing,
-  follows,
-  media;
+  all('All'),
+  replies('Replies'),
+  activity('Activity'),
+  forum('Forum'),
+  airing('Airing'),
+  follows('Follows'),
+  media('Media');
 
-  String get text {
-    switch (this) {
-      case NotificationFilterType.all:
-        return 'All';
-      case NotificationFilterType.replies:
-        return 'Replies';
-      case NotificationFilterType.activity:
-        return 'Activity';
-      case NotificationFilterType.forum:
-        return 'Forum';
-      case NotificationFilterType.airing:
-        return 'Airing';
-      case NotificationFilterType.follows:
-        return 'Follows';
-      case NotificationFilterType.media:
-        return 'Media';
-    }
-  }
+  const NotificationFilterType(this.text);
+
+  final String text;
 
   List<String>? get vars {
     switch (this) {

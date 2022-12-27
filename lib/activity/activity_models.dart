@@ -194,28 +194,21 @@ class ActivityMedia {
 }
 
 enum ActivityType {
-  TEXT,
-  ANIME_LIST,
-  MANGA_LIST,
-  MESSAGE;
+  TEXT('Statuses'),
+  ANIME_LIST('Anime Progress'),
+  MANGA_LIST('Manga Progress'),
+  MESSAGE('Messages');
 
-  String get text {
-    switch (this) {
-      case ActivityType.TEXT:
-        return 'Statuses';
-      case ActivityType.ANIME_LIST:
-        return 'Anime Progress';
-      case ActivityType.MANGA_LIST:
-        return 'Manga Progress';
-      case ActivityType.MESSAGE:
-        return 'Messages';
-    }
-  }
+  const ActivityType(this.text);
+
+  final String text;
 }
 
 class ActivityFilter {
   const ActivityFilter(this.typeIn, this.onFollowing);
 
   final List<ActivityType> typeIn;
+
+  /// Not `null` only for the main feed. Switches between following/global.
   final bool? onFollowing;
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/settings/item_view_preview.dart';
+import 'package:otraku/filter/chip_selector.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
@@ -119,52 +119,31 @@ class SettingsAppTab extends StatelessWidget {
         const SliverToBoxAdapter(child: SizedBox(height: 5)),
         _SheetExpandButton(
           title: 'Grid Views',
-          initialSheetHeight: 400,
+          initialSheetHeight: 250,
           sheetContentBuilder: (context, scrollCtrl) => ListView(
             controller: scrollCtrl,
             padding: const EdgeInsets.symmetric(vertical: 10),
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'Discover View',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
+              ChipSelector(
+                title: 'Discover View',
+                options: const ['Detailed List', 'Simple Grid'],
+                selected: Options().discoverItemView,
+                onChanged: (val) => Options().discoverItemView = val!,
+                mustHaveSelected: true,
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: ItemViewPreview(
-                  current: Options().discoverItemView,
-                  onChanged: (val) => Options().discoverItemView = val,
-                ),
+              ChipSelector(
+                title: 'Collection View',
+                options: const ['Detailed List', 'Simple Grid'],
+                selected: Options().collectionItemView,
+                onChanged: (val) => Options().collectionItemView = val!,
+                mustHaveSelected: true,
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'Collection View',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: ItemViewPreview(
-                  current: Options().collectionItemView,
-                  onChanged: (val) => Options().collectionItemView = val,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'Collection Preview View',
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10, top: 5),
-                child: ItemViewPreview(
-                  current: Options().collectionPreviewItemView,
-                  onChanged: (val) => Options().collectionPreviewItemView = val,
-                ),
+              ChipSelector(
+                title: 'Collection Preview View',
+                options: const ['Detailed List', 'Simple Grid'],
+                selected: Options().collectionPreviewItemView,
+                onChanged: (val) => Options().collectionPreviewItemView = val!,
+                mustHaveSelected: true,
               ),
             ],
           ),

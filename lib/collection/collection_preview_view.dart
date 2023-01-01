@@ -3,11 +3,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/collection/collection_grid.dart';
 import 'package:otraku/collection/collection_list.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_preview_provider.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/consts.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -61,11 +63,17 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
             );
           } else {
             notEmpty = true;
-            content = CollectionList(
-              items: entries,
-              scoreFormat: notifier.scoreFormat,
-              onProgressUpdate: (_, __) {},
-            );
+            content = Options().collectionPreviewItemView == 0
+                ? CollectionList(
+                    items: entries,
+                    scoreFormat: notifier.scoreFormat,
+                    onProgressUpdate: (_, __) {},
+                  )
+                : CollectionGrid(
+                    items: entries,
+                    scoreFormat: notifier.scoreFormat,
+                    onProgressUpdate: (_, __) {},
+                  );
           }
         }
 

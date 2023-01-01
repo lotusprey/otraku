@@ -256,9 +256,9 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'anime',
-              onData: (data) => Options().compactDiscoverGrid
-                  ? TileItemGrid(data.items)
-                  : DiscoverMediaGrid(data.items),
+              onData: (data) => Options().discoverItemView == 0
+                  ? DiscoverMediaGrid(data.items)
+                  : TileItemGrid(data.items),
             );
           case DiscoverType.manga:
             return PaginationView<DiscoverMediaItem>(
@@ -266,9 +266,9 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               dataType: 'manga',
-              onData: (data) => Options().compactDiscoverGrid
-                  ? TileItemGrid(data.items)
-                  : DiscoverMediaGrid(data.items),
+              onData: (data) => Options().discoverItemView == 0
+                  ? DiscoverMediaGrid(data.items)
+                  : TileItemGrid(data.items),
             );
           case DiscoverType.character:
             return PaginationView<TileItem>(

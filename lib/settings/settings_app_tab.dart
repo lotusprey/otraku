@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/discover/discover_models.dart';
+import 'package:otraku/settings/item_view_preview.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
@@ -115,6 +116,97 @@ class SettingsAppTab extends StatelessWidget {
             ]),
           ),
         ),
+        const SliverToBoxAdapter(child: SizedBox(height: 5)),
+        _SheetExpandButton(
+          title: 'Grid Views',
+          initialSheetHeight: 400,
+          sheetContentBuilder: (context, scrollCtrl) => ListView(
+            controller: scrollCtrl,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  'Discover View',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 5),
+                child: ItemViewPreview(
+                  current: Options().discoverItemView,
+                  onChanged: (val) => Options().discoverItemView = val,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  'Collection View',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 5),
+                child: ItemViewPreview(
+                  current: Options().collectionItemView,
+                  onChanged: (val) => Options().collectionItemView = val,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  'Collection Preview View',
+                  style: Theme.of(context).textTheme.subtitle1,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10, top: 5),
+                child: ItemViewPreview(
+                  current: Options().collectionPreviewItemView,
+                  onChanged: (val) => Options().collectionPreviewItemView = val,
+                ),
+              ),
+            ],
+          ),
+        ),
+        _SheetExpandButton(
+          title: 'Collection Previews',
+          initialSheetHeight: Consts.tapTargetSize * 3 + 150,
+          sheetContentBuilder: (context, scrollCtrl) => ListView(
+            controller: scrollCtrl,
+            padding: Consts.padding,
+            children: [
+              CheckBoxField(
+                title: 'Anime Collection Preview',
+                initial: Options().animeCollectionPreview,
+                onChanged: (v) => Options().animeCollectionPreview = v,
+              ),
+              CheckBoxField(
+                title: 'Manga Collection Preview',
+                initial: Options().mangaCollectionPreview,
+                onChanged: (v) => Options().mangaCollectionPreview = v,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                'Collection previews only load your current and repeated '
+                'media, which results in faster loading times. Disabling '
+                'a preview means the whole collection will be loaded at once.',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              CheckBoxField(
+                title: 'Exclusive Airing Sort for Anime Preview',
+                initial: Options().airingSortForPreview,
+                onChanged: (v) => Options().airingSortForPreview = v,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                'Anime collection preview will sort anime by '
+                'airing time, instead of the default sort.',
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ],
+          ),
+        ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           sliver: SliverGrid(
@@ -140,66 +232,44 @@ class SettingsAppTab extends StatelessWidget {
                 initial: Options().confirmExit,
                 onChanged: (val) => Options().confirmExit = val,
               ),
-              CheckBoxField(
-                title: 'Compact Discover Grid',
-                initial: Options().compactDiscoverGrid,
-                onChanged: (val) => Options().compactDiscoverGrid = val,
-              ),
             ]),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: ListTile(
-            title: const Text('Collection Previews'),
-            trailing: const Icon(Icons.chevron_right_outlined),
-            textColor: Theme.of(context).colorScheme.onBackground,
-            iconColor: Theme.of(context).colorScheme.onBackground,
-            visualDensity: VisualDensity.compact,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-            onTap: () => showSheet(
-              context,
-              OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 3 + 150,
-                builder: (context, scrollCtrl) => ListView(
-                  controller: scrollCtrl,
-                  padding: Consts.padding,
-                  children: [
-                    CheckBoxField(
-                      title: 'Anime Collection Preview',
-                      initial: Options().animeCollectionPreview,
-                      onChanged: (v) => Options().animeCollectionPreview = v,
-                    ),
-                    CheckBoxField(
-                      title: 'Manga Collection Preview',
-                      initial: Options().mangaCollectionPreview,
-                      onChanged: (v) => Options().mangaCollectionPreview = v,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Collection previews only load your current and repeated '
-                      'media, which results in faster loading times. Disabling '
-                      'a preview means the whole collection will be loaded at once.',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                    CheckBoxField(
-                      title: 'Exclusive Airing Sort for Anime Preview',
-                      initial: Options().airingSortForPreview,
-                      onChanged: (v) => Options().airingSortForPreview = v,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'Anime collection preview will sort anime by '
-                      'airing time, instead of the default sort.',
-                      style: Theme.of(context).textTheme.subtitle1,
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ),
         ),
         const SliverFooter(),
       ],
+    );
+  }
+}
+
+class _SheetExpandButton extends StatelessWidget {
+  const _SheetExpandButton({
+    required this.title,
+    required this.initialSheetHeight,
+    required this.sheetContentBuilder,
+  });
+
+  final String title;
+  final double initialSheetHeight;
+  final Widget Function(BuildContext, ScrollController) sheetContentBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: ListTile(
+        title: Text(title),
+        trailing: const Icon(Icons.chevron_right_outlined),
+        textColor: Theme.of(context).colorScheme.onBackground,
+        iconColor: Theme.of(context).colorScheme.onBackground,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        visualDensity: VisualDensity.compact,
+        onTap: () => showSheet(
+          context,
+          OpaqueSheet(
+            builder: sheetContentBuilder,
+            initialHeight: initialSheetHeight,
+          ),
+        ),
+      ),
     );
   }
 }

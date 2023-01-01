@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/settings/visual_preview_card.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/options.dart';
@@ -23,13 +24,14 @@ class _ThemePreviewState extends State<ThemePreview> {
             .watch(homeProvider)
             .getSystemScheme(brightness == Brightness.dark);
 
-        final children = <_ThemeCard>[];
+        final children = <VisualPreviewCard>[];
         if (system != null) {
-          children.add(_ThemeCard(
+          children.add(VisualPreviewCard(
             name: 'System',
             scheme: system,
             active: Options().theme == null,
             onTap: () => setState(() => Options().theme = null),
+            child: _ThemeCardContent(system),
           ));
         }
 
@@ -40,11 +42,15 @@ class _ThemePreviewState extends State<ThemePreview> {
 
         for (int i = 0; i < colorSeeds.length; i++) {
           final e = colorSeeds.entries.elementAt(i);
-          children.add(_ThemeCard(
+          final scheme =
+              e.value.scheme(brightness).copyWith(background: background);
+
+          children.add(VisualPreviewCard(
             name: e.key,
-            scheme: e.value.scheme(brightness).copyWith(background: background),
+            scheme: scheme,
             active: Options().theme == i,
             onTap: () => setState(() => Options().theme = i),
+            child: _ThemeCardContent(scheme),
           ));
         }
 
@@ -63,151 +69,118 @@ class _ThemePreviewState extends State<ThemePreview> {
   }
 }
 
-class _ThemeCard extends StatelessWidget {
-  const _ThemeCard({
-    required this.name,
-    required this.scheme,
-    required this.active,
-    required this.onTap,
-  });
+class _ThemeCardContent extends StatelessWidget {
+  const _ThemeCardContent(this.scheme);
 
-  final String name;
-  final bool active;
   final ColorScheme scheme;
-  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
-    final borderWidth = active ? 3.0 : 1.0;
-    final borderColor = active ? scheme.primary : scheme.surfaceVariant;
-
-    return GestureDetector(
-      onTap: () => onTap(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
-        child: Column(
+    return Column(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 120,
-              height: 170,
+              height: 10,
+              width: 60,
+              decoration: BoxDecoration(
+                color: scheme.onBackground,
+                borderRadius: Consts.borderRadiusMax,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              height: 40,
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
-                color: scheme.background,
-                border: Border.all(color: borderColor, width: borderWidth),
+                color: scheme.surfaceVariant,
                 borderRadius: Consts.borderRadiusMin,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 10,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: scheme.onBackground,
-                          borderRadius: Consts.borderRadiusMax,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        height: 40,
-                        padding: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: scheme.surfaceVariant,
-                          borderRadius: Consts.borderRadiusMin,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 8,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                color: scheme.surfaceVariant,
-                                borderRadius: Consts.borderRadiusMax,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              height: 6,
-                              width: 110,
-                              decoration: BoxDecoration(
-                                color: scheme.onSurfaceVariant,
-                                borderRadius: Consts.borderRadiusMax,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 16,
-                        height: 16,
-                        margin: const EdgeInsets.only(right: 7, bottom: 7),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: scheme.primary,
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 6,
-                            height: 2,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: Consts.borderRadiusMin,
-                              color: scheme.onPrimary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: scheme.primary,
-                            shape: BoxShape.rectangle,
-                          ),
-                        ),
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceVariant,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceVariant,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ],
+                  Container(
+                    height: 8,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceVariant,
+                      borderRadius: Consts.borderRadiusMax,
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 5),
+                  Container(
+                    height: 6,
+                    width: 110,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurfaceVariant,
+                      borderRadius: Consts.borderRadiusMax,
+                    ),
+                  ),
                 ],
               ),
             ),
-            const Spacer(),
-            Text(name),
           ],
         ),
-      ),
+        const Spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              width: 16,
+              height: 16,
+              margin: const EdgeInsets.only(right: 7, bottom: 7),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: scheme.primary,
+              ),
+              child: Center(
+                child: Container(
+                  width: 6,
+                  height: 2,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: Consts.borderRadiusMin,
+                    color: scheme.onPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 15,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                height: 8,
+                width: 8,
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  shape: BoxShape.rectangle,
+                ),
+              ),
+              Container(
+                height: 8,
+                width: 8,
+                decoration: BoxDecoration(
+                  color: scheme.surfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Container(
+                height: 8,
+                width: 8,
+                decoration: BoxDecoration(
+                  color: scheme.surfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
     );
   }
 }

@@ -255,7 +255,7 @@ class ActivitiesNotifier
         if (userId != null) ...{
           'userId': userId,
         } else ...{
-          'userIdNot': Options().id,
+          if ((filter.onFollowing ?? false)) 'userIdNot': Options().id,
           'isFollowing': filter.onFollowing,
           'hasRepliesOrTypeText': (filter.onFollowing ?? true) ? null : true,
         },

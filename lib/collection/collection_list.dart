@@ -8,7 +8,6 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/fade_image.dart';
-import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -16,8 +15,8 @@ import 'package:otraku/widgets/text_rail.dart';
 
 const _TILE_HEIGHT = 140.0;
 
-class CollectionGrid extends StatelessWidget {
-  const CollectionGrid({
+class CollectionList extends StatelessWidget {
+  const CollectionList({
     required this.items,
     required this.scoreFormat,
     required this.onProgressUpdate,
@@ -35,15 +34,13 @@ class CollectionGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
+      sliver: SliverFixedExtentList(
         delegate: SliverChildBuilderDelegate(
           (_, i) => _Tile(items[i], scoreFormat, onProgressUpdate),
           childCount: items.length,
         ),
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 350,
-          height: _TILE_HEIGHT,
-        ),
+        // The added pixels are for the bottom margin.
+        itemExtent: _TILE_HEIGHT + 10,
       ),
     );
   }
@@ -59,6 +56,7 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 10),
       child: LinkTile(
         key: ValueKey(entry.mediaId),
         id: entry.mediaId,

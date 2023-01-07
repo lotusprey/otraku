@@ -94,7 +94,7 @@ class _Tile extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(
-                                  Icons.thumbs_up_down_outlined,
+                                  Icons.thumb_up_outlined,
                                   size: Consts.iconSmall,
                                 ),
                                 const SizedBox(height: 5),

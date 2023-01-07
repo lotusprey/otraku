@@ -40,7 +40,7 @@ class SettingsContentTab extends StatelessWidget {
         controller: scrollCtrl,
         slivers: [
           SliverPadding(
-            padding: EdgeInsets.only(top: PageLayout.of(context).topOffset),
+            padding: EdgeInsets.only(top: PageLayout.topPadding(context)),
             sliver: SliverToBoxAdapter(
               child: CheckBoxField(
                 title: 'Restrict Messages to Following',

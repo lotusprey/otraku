@@ -130,13 +130,11 @@ class _StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pageLayout = PageLayout.of(context);
-
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: pageLayout.topOffset + 10,
-        bottom: pageLayout.bottomOffset,
+        top: PageLayout.topPadding(context) + 10,
+        bottom: PageLayout.bottomPadding(context),
       ),
       children: [
         _Details(statistics, ofAnime),

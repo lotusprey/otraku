@@ -78,9 +78,9 @@ class FloatingBarState extends State<FloatingBar>
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 15,
-        right: 15,
-        bottom: PageLayout.of(context).bottomOffset + 20,
+        left: 16,
+        right: 16,
+        bottom: PageLayout.bottomPadding(context) + 16,
       ),
       child: SlideTransition(
         position: _slideAnimation,

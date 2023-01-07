@@ -26,7 +26,7 @@ class SettingsAppTab extends StatelessWidget {
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: PageLayout.of(context).topOffset),
+          child: SizedBox(height: PageLayout.topPadding(context)),
         ),
         SliverPadding(
           padding: const EdgeInsets.only(left: 10, top: 10),

@@ -24,7 +24,7 @@ class SettingsNotificationsTab extends StatelessWidget {
         controller: scrollCtrl,
         slivers: [
           SliverToBoxAdapter(
-            child: SizedBox(height: PageLayout.of(context).topOffset),
+            child: SizedBox(height: PageLayout.topPadding(context)),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(

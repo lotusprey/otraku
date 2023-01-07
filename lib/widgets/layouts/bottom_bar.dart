@@ -11,14 +11,14 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paddingBottom = MediaQuery.of(context).viewPadding.bottom;
-
     return ClipRect(
       child: BackdropFilter(
         filter: Consts.filter,
         child: Container(
-          height: paddingBottom + Consts.tapTargetSize,
-          padding: EdgeInsets.only(bottom: paddingBottom),
+          height: Consts.tapTargetSize,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewPadding.bottom,
+          ),
           color: Theme.of(context).bottomAppBarColor,
           child: Material(color: Colors.transparent, child: child),
         ),

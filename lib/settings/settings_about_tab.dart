@@ -14,8 +14,6 @@ class SettingsAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pageLayout = PageLayout.of(context);
-
     return Align(
       alignment: Alignment.center,
       child: SizedBox(
@@ -25,8 +23,8 @@ class SettingsAboutTab extends StatelessWidget {
           padding: EdgeInsets.only(
             left: 10,
             right: 10,
-            top: pageLayout.topOffset + 10,
-            bottom: pageLayout.bottomOffset + 10,
+            top: PageLayout.topPadding(context) + 10,
+            bottom: PageLayout.bottomPadding(context) + 10,
           ),
           children: [
             ClipRRect(

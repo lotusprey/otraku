@@ -80,10 +80,10 @@ class _MediaViewState extends State<MediaView> {
                     loading: () => const Center(child: Loader()),
                     error: (_, __) =>
                         const Center(child: Text('Failed to load media')),
-                    data: (data) => _MediaView(
+                    data: (media) => _MediaView(
                       widget.id,
                       _tab,
-                      data,
+                      media,
                       (i) => setState(() => _tab = i),
                     ),
                   );
@@ -157,7 +157,7 @@ class __MediaSubViewState extends ConsumerState<_MediaView> {
             : ref.read(mediaContentProvider(widget.id)).fetchCharacters();
         return;
       case 3:
-        if (_socialTabToggled) {
+        if (!_socialTabToggled) {
           ref.read(mediaContentProvider(widget.id)).fetchReviews();
         }
         return;

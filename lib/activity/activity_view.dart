@@ -11,6 +11,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/options.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';

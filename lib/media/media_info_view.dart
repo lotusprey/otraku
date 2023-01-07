@@ -10,6 +10,7 @@ import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/home/home_view.dart';
 import 'package:otraku/media/media_models.dart';
 import 'package:otraku/media/media_providers.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';

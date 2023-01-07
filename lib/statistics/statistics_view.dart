@@ -10,6 +10,7 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';

@@ -14,6 +14,7 @@ import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/collection/collection_list.dart';
 import 'package:otraku/filter/filter_search_field.dart';

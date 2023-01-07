@@ -15,6 +15,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/pagination_view.dart';
 

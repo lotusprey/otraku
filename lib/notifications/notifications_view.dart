@@ -11,6 +11,7 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/html_content.dart';

@@ -13,6 +13,7 @@ import 'package:otraku/settings/settings_about_tab.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsView extends ConsumerStatefulWidget {

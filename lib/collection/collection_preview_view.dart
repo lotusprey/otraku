@@ -14,6 +14,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 

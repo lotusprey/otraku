@@ -10,6 +10,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FeedView extends StatelessWidget {

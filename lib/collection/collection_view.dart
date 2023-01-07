@@ -74,9 +74,9 @@ class CollectionSubView extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return PageLayout(
-          topBar: PreferredSize(
-            preferredSize: const Size.fromHeight(Consts.tapTargetSize),
-            child: _TopBar(tag, tag.userId != Options().id),
+          topBar: TopBar(
+            canPop: tag.userId != Options().id,
+            trailing: [_TopBarContent(tag)],
           ),
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
@@ -101,65 +101,65 @@ class CollectionSubView extends StatelessWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
-  const _TopBar(this.tag, this.canPop);
+class _TopBarContent extends StatelessWidget {
+  const _TopBarContent(this.tag);
 
   final CollectionTag tag;
-  final bool canPop;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         final notifier = ref.watch(collectionProvider(tag));
-        if (notifier.lists.isEmpty) return TopBar(canPop: canPop);
+        if (notifier.lists.isEmpty) return const SizedBox();
 
         /// If [entriesProvider] returns an empty list,
         /// the random entry button shouldn't appear.
         final noResults =
             ref.watch(entriesProvider(tag).select((s) => s.isEmpty));
 
-        return TopBar(
-          canPop: canPop,
-          items: [
-            SearchFilterField(
-              title: notifier.lists[notifier.index].name,
-              tag: tag,
-            ),
-            if (noResults)
-              const SizedBox(width: 45)
-            else
-              TopBarIcon(
-                tooltip: 'Random',
-                icon: Ionicons.shuffle_outline,
-                onTap: () {
-                  final entries = ref.read(entriesProvider(tag));
-                  final e = entries[Random().nextInt(entries.length)];
+        return Expanded(
+          child: Row(
+            children: [
+              SearchFilterField(
+                title: notifier.lists[notifier.index].name,
+                tag: tag,
+              ),
+              if (noResults)
+                const SizedBox(width: 45)
+              else
+                TopBarIcon(
+                  tooltip: 'Random',
+                  icon: Ionicons.shuffle_outline,
+                  onTap: () {
+                    final entries = ref.read(entriesProvider(tag));
+                    final e = entries[Random().nextInt(entries.length)];
 
-                  Navigator.pushNamed(
+                    Navigator.pushNamed(
+                      context,
+                      RouteArg.media,
+                      arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
+                    );
+                  },
+                ),
+              TopBarIcon(
+                tooltip: 'Filter',
+                icon: Ionicons.funnel_outline,
+                onTap: () {
+                  final notifier =
+                      ref.read(collectionFilterProvider(tag).notifier);
+
+                  showSheet(
                     context,
-                    RouteArg.media,
-                    arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
+                    CollectionFilterView(
+                      filter: notifier.state,
+                      onChanged: (filter) => notifier.state = filter,
+                    ),
                   );
                 },
               ),
-            TopBarIcon(
-              tooltip: 'Filter',
-              icon: Ionicons.funnel_outline,
-              onTap: () {
-                final notifier =
-                    ref.read(collectionFilterProvider(tag).notifier);
-
-                showSheet(
-                  context,
-                  CollectionFilterView(
-                    filter: notifier.state,
-                    onChanged: (filter) => notifier.state = filter,
-                  ),
-                );
-              },
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

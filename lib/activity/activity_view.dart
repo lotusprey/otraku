@@ -47,9 +47,8 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
         activityProvider(widget.id).select((s) => s.valueOrNull?.activity));
 
     return PageLayout(
-      topBar: PreferredSize(
-        preferredSize: const Size.fromHeight(Consts.tapTargetSize),
-        child: activity == null ? const TopBar() : _TopBar(activity),
+      topBar: TopBar(
+        trailing: [if (activity != null) _TopBarContent(activity)],
       ),
       floatingBar: FloatingBar(
         scrollCtrl: _ctrl,
@@ -140,81 +139,77 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
   }
 }
 
-class _TopBar extends StatelessWidget {
-  const _TopBar(this.activity);
+class _TopBarContent extends StatelessWidget {
+  const _TopBarContent(this.activity);
 
   final Activity activity;
 
   @override
   Widget build(BuildContext context) {
-    return TopBar(
-      items: [
-        Expanded(
-          child: Row(
-            children: [
-              Flexible(
-                child: LinkTile(
-                  id: activity.agent.id,
-                  info: activity.agent.imageUrl,
-                  discoverType: DiscoverType.user,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Hero(
-                        tag: activity.agent.id,
-                        child: ClipRRect(
-                          borderRadius: Consts.borderRadiusMin,
-                          child: FadeImage(
-                            activity.agent.imageUrl,
-                            height: 40,
-                            width: 40,
-                          ),
-                        ),
+    return Expanded(
+      child: Row(
+        children: [
+          Flexible(
+            child: LinkTile(
+              id: activity.agent.id,
+              info: activity.agent.imageUrl,
+              discoverType: DiscoverType.user,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Hero(
+                    tag: activity.agent.id,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: FadeImage(
+                        activity.agent.imageUrl,
+                        height: 40,
+                        width: 40,
                       ),
-                      const SizedBox(width: 10),
-                      Flexible(
-                        child: Text(
-                          activity.agent.name,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (activity.reciever != null) ...[
-                if (activity.isPrivate)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Icon(Ionicons.eye_off_outline),
-                  ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Icon(Icons.arrow_right_alt),
-                ),
-                LinkTile(
-                  id: activity.reciever!.id,
-                  info: activity.reciever!.imageUrl,
-                  discoverType: DiscoverType.user,
-                  child: ClipRRect(
-                    borderRadius: Consts.borderRadiusMin,
-                    child: FadeImage(
-                      activity.reciever!.imageUrl,
-                      height: 40,
-                      width: 40,
                     ),
                   ),
-                ),
-              ] else if (activity.isPinned)
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(Icons.push_pin_outlined),
-                ),
-            ],
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Text(
+                      activity.agent.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ],
+          if (activity.reciever != null) ...[
+            if (activity.isPrivate)
+              const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: Icon(Ionicons.eye_off_outline),
+              ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Icon(Icons.arrow_right_alt),
+            ),
+            LinkTile(
+              id: activity.reciever!.id,
+              info: activity.reciever!.imageUrl,
+              discoverType: DiscoverType.user,
+              child: ClipRRect(
+                borderRadius: Consts.borderRadiusMin,
+                child: FadeImage(
+                  activity.reciever!.imageUrl,
+                  height: 40,
+                  width: 40,
+                ),
+              ),
+            ),
+          ] else if (activity.isPinned)
+            const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Icon(Icons.push_pin_outlined),
+            ),
+        ],
+      ),
     );
   }
 }

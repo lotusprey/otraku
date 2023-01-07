@@ -42,7 +42,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
     return PageLayout(
       topBar: TopBar(
         title: 'Reviews',
-        items: [
+        trailing: [
           if (count > 0)
             Padding(
               padding: const EdgeInsets.only(right: 10),

@@ -82,7 +82,7 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
           topBar: TopBar(
             title: 'Current',
             canPop: false,
-            items: [
+            trailing: [
               if (notEmpty)
                 TopBarIcon(
                   tooltip: 'Random',

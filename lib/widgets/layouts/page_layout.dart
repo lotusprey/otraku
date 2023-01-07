@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 
 class PageLayout extends StatefulWidget {
   const PageLayout({
@@ -11,7 +12,7 @@ class PageLayout extends StatefulWidget {
   });
 
   final Widget child;
-  final PreferredSizeWidget? topBar;
+  final TopBar? topBar;
   final FloatingBar? floatingBar;
   final Widget? bottomBar;
 

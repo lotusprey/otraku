@@ -4,7 +4,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_media_grid.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/filter/filter_view.dart';
@@ -62,10 +61,7 @@ class DiscoverView extends ConsumerWidget {
     };
 
     return PageLayout(
-      topBar: const PreferredSize(
-        preferredSize: Size.fromHeight(Consts.tapTargetSize),
-        child: _TopBar(),
-      ),
+      topBar: const TopBar(canPop: false, trailing: [_TopBarContent()]),
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: const [_ActionButton()],
@@ -75,8 +71,8 @@ class DiscoverView extends ConsumerWidget {
   }
 }
 
-class _TopBar extends StatelessWidget {
-  const _TopBar();
+class _TopBarContent extends StatelessWidget {
+  const _TopBarContent();
 
   @override
   Widget build(BuildContext context) {
@@ -84,62 +80,64 @@ class _TopBar extends StatelessWidget {
       builder: (context, ref, _) {
         final type = ref.watch(discoverFilterProvider.select((s) => s.type));
 
-        return TopBar(
-          canPop: false,
-          items: [
-            SearchFilterField(
-              title: Convert.clarifyEnum(type.name)!,
-              enabled: type != DiscoverType.review,
-            ),
-            if (type == DiscoverType.anime || type == DiscoverType.manga)
-              TopBarIcon(
-                tooltip: 'Filter',
-                icon: Ionicons.funnel_outline,
-                onTap: () => showSheet(
-                  context,
-                  DiscoverFilterView(
-                    filter: ref.read(discoverFilterProvider).filter,
-                    onChanged: (filter) =>
-                        ref.read(discoverFilterProvider).filter = filter,
-                  ),
-                ),
-              )
-            else if (type == DiscoverType.character ||
-                type == DiscoverType.staff)
-              _BirthdayFilter(ref)
-            else if (type == DiscoverType.review)
-              TopBarIcon(
-                tooltip: 'Sort',
-                icon: Ionicons.funnel_outline,
-                onTap: () {
-                  final notifier = ref.read(reviewSortProvider(null).notifier);
-                  final theme = Theme.of(context);
-
-                  showSheet(
+        return Expanded(
+          child: Row(
+            children: [
+              SearchFilterField(
+                title: Convert.clarifyEnum(type.name)!,
+                enabled: type != DiscoverType.review,
+              ),
+              if (type == DiscoverType.anime || type == DiscoverType.manga)
+                TopBarIcon(
+                  tooltip: 'Filter',
+                  icon: Ionicons.funnel_outline,
+                  onTap: () => showSheet(
                     context,
-                    DynamicGradientDragSheet(
-                      onTap: (i) =>
-                          notifier.state = ReviewSort.values.elementAt(i),
-                      children: [
-                        for (int i = 0; i < ReviewSort.values.length; i++)
-                          Text(
-                            ReviewSort.values.elementAt(i).text,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: i != notifier.state.index
-                                ? theme.textTheme.headline1
-                                : theme.textTheme.headline1?.copyWith(
-                                    color: theme.colorScheme.primary,
-                                  ),
-                          ),
-                      ],
+                    DiscoverFilterView(
+                      filter: ref.read(discoverFilterProvider).filter,
+                      onChanged: (filter) =>
+                          ref.read(discoverFilterProvider).filter = filter,
                     ),
-                  );
-                },
-              )
-            else
-              const SizedBox(width: 10),
-          ],
+                  ),
+                )
+              else if (type == DiscoverType.character ||
+                  type == DiscoverType.staff)
+                _BirthdayFilter(ref)
+              else if (type == DiscoverType.review)
+                TopBarIcon(
+                  tooltip: 'Sort',
+                  icon: Ionicons.funnel_outline,
+                  onTap: () {
+                    final notifier =
+                        ref.read(reviewSortProvider(null).notifier);
+                    final theme = Theme.of(context);
+
+                    showSheet(
+                      context,
+                      DynamicGradientDragSheet(
+                        onTap: (i) =>
+                            notifier.state = ReviewSort.values.elementAt(i),
+                        children: [
+                          for (int i = 0; i < ReviewSort.values.length; i++)
+                            Text(
+                              ReviewSort.values.elementAt(i).text,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: i != notifier.state.index
+                                  ? theme.textTheme.headline1
+                                  : theme.textTheme.headline1?.copyWith(
+                                      color: theme.colorScheme.primary,
+                                    ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                )
+              else
+                const SizedBox(width: 10),
+            ],
+          ),
         );
       },
     );

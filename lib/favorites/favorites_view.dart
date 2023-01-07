@@ -42,7 +42,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
     return PageLayout(
       topBar: TopBar(
         title: _tab.text,
-        items: [
+        trailing: [
           if (count > 0)
             Padding(
               padding: const EdgeInsets.only(right: 10),

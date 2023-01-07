@@ -3,14 +3,16 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/consts.dart';
 
 /// A top app bar implementation that uses a blurred, translucent background.
-/// [items] are the widgets that will appear on the top of it. If [canPop]
-/// is true, a button that can pop the page will be placed before [items].
+/// It has (in order):
+/// - A button to pop the page (if [canPop] is `true`).
+/// - The formatted [title] (if not `null`).
+/// - The [trailing] widgets (if the list is not empty).
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
-  const TopBar({this.items = const [], this.canPop = true, this.title});
+  const TopBar({this.trailing = const [], this.canPop = true, this.title});
 
   final bool canPop;
   final String? title;
-  final List<Widget> items;
+  final List<Widget> trailing;
 
   @override
   Size get preferredSize => const Size.fromHeight(Consts.tapTargetSize);
@@ -50,7 +52,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                             style: Theme.of(context).textTheme.headline1,
                           ),
                         ),
-                      ...items,
+                      ...trailing,
                     ],
                   ),
                 ),

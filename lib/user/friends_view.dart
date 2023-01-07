@@ -47,7 +47,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
     return PageLayout(
       topBar: TopBar(
         title: _onFollowing ? 'Following' : 'Followers',
-        items: [
+        trailing: [
           if (count > 0)
             Padding(
               padding: const EdgeInsets.only(right: 10),

@@ -13,6 +13,7 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
+// TODO repeating activities?
 class FeedView extends StatelessWidget {
   const FeedView(this.scrollCtrl);
 
@@ -109,7 +110,7 @@ class FeedView extends StatelessWidget {
           topBar: TopBar(
             canPop: false,
             title: 'Feed',
-            items: [
+            trailing: [
               TopBarIcon(
                 tooltip: 'Filter',
                 icon: Ionicons.funnel_outline,

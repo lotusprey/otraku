@@ -51,7 +51,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   Widget build(BuildContext context) {
     return PageLayout(
       topBar: TopBar(
-        items: [
+        trailing: [
           Expanded(
             child: Consumer(
               builder: (context, ref, _) => Text(

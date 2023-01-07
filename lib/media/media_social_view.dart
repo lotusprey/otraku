@@ -135,6 +135,13 @@ class _ReviewGrid extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(items[i].username),
+                    const Spacer(),
+                    const Icon(Icons.thumb_up_outlined, size: Consts.iconSmall),
+                    const SizedBox(width: 10),
+                    Text(
+                      items[i].rating,
+                      style: Theme.of(context).textTheme.subtitle1,
+                    ),
                   ],
                 ),
               ),

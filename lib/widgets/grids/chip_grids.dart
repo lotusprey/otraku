@@ -25,7 +25,10 @@ class ChipOptionField extends StatelessWidget {
       child: Chip(
         label: Text(name),
         labelStyle: selected
-            ? Theme.of(context).textTheme.button
+            ? Theme.of(context)
+                .textTheme
+                .bodyText2
+                ?.copyWith(color: Theme.of(context).colorScheme.background)
             : Theme.of(context).textTheme.bodyText2,
         backgroundColor: selected
             ? Theme.of(context).colorScheme.primary

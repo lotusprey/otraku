@@ -31,7 +31,8 @@ class SettingsAppTab extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.only(left: 10, top: 10),
           sliver: SliverToBoxAdapter(
-            child: Text('Theme', style: Theme.of(context).textTheme.subtitle1),
+            child:
+                Text('Theme', style: Theme.of(context).textTheme.labelMedium),
           ),
         ),
         SliverPadding(
@@ -170,7 +171,7 @@ class SettingsAppTab extends StatelessWidget {
                 'Collection previews only load your current and repeated '
                 'media, which results in faster loading times. Disabling '
                 'a preview means the whole collection will be loaded at once.',
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
               CheckBoxField(
                 title: 'Exclusive Airing Sort for Anime Preview',
@@ -181,7 +182,7 @@ class SettingsAppTab extends StatelessWidget {
               Text(
                 'Anime collection preview will sort anime by '
                 'airing time, instead of the default sort.',
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
             ],
           ),

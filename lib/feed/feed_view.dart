@@ -72,7 +72,7 @@ class FeedView extends StatelessWidget {
                     child: Center(
                       child: Text(
                         count.toString(),
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
                               color: Theme.of(context).colorScheme.background,
                             ),
                       ),

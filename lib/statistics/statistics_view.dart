@@ -234,7 +234,8 @@ class _Details extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
+                  Text(titles[i],
+                      style: Theme.of(context).textTheme.labelMedium),
                   Text(subtitles[i].toString()),
                 ],
               ),

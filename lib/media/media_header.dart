@@ -80,7 +80,7 @@ class MediaHeader extends StatelessWidget {
                         info.preferredTitle!,
                         maxLines: 8,
                         overflow: TextOverflow.fade,
-                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           shadows: [
                             Shadow(
                               blurRadius: 10,
@@ -92,7 +92,7 @@ class MediaHeader extends StatelessWidget {
                     ),
                     TextRail(
                       textRailItems,
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],
                 ),

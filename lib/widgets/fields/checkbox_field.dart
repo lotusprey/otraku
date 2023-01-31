@@ -68,7 +68,7 @@ class CheckBoxFieldState extends State<CheckBoxField> {
                 widget.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ],
@@ -148,7 +148,7 @@ class CheckBoxTriFieldState extends State<CheckBoxTriField> {
             Expanded(
               child: Text(
                 widget.title,
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ],

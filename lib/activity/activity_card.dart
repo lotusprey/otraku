@@ -48,7 +48,7 @@ class ActivityCard extends StatelessWidget {
                   child: Text(
                     activity.createdAt,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ),
                 footer,
@@ -166,11 +166,11 @@ class _ActivityMediaBox extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: text,
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                             TextSpan(
                               text: activityMedia.title,
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
                         ),
@@ -180,7 +180,7 @@ class _ActivityMediaBox extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(
                         activityMedia.format!,
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],
                   ],
@@ -248,7 +248,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 children: [
                   Text(
                     activity.replyCount.toString(),
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 5),
                   const Icon(Ionicons.chatbox, size: Consts.iconSmall),
@@ -270,8 +270,8 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   Text(
                     activity.likeCount.toString(),
                     style: !activity.isLiked
-                        ? Theme.of(context).textTheme.subtitle2
-                        : Theme.of(context).textTheme.subtitle2!.copyWith(
+                        ? Theme.of(context).textTheme.labelSmall
+                        : Theme.of(context).textTheme.labelSmall!.copyWith(
                             color: Theme.of(context).colorScheme.error),
                   ),
                   const SizedBox(width: 5),

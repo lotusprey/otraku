@@ -68,7 +68,7 @@ class UserHeader extends StatelessWidget {
                   child: Text(
                     user!.name,
                     overflow: TextOverflow.fade,
-                    style: Theme.of(context).textTheme.headline1!.copyWith(
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       shadows: [
                         Shadow(
                           color: Theme.of(context).colorScheme.background,
@@ -94,7 +94,7 @@ class UserHeader extends StatelessWidget {
                     },
                     child: TextRail(
                       textRailItems,
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
               ]

@@ -54,14 +54,15 @@ class _YearRangePickerState extends State<YearRangePicker> {
         children: [
           Row(
             children: [
-              Text(widget.title, style: Theme.of(context).textTheme.subtitle1),
+              Text(widget.title,
+                  style: Theme.of(context).textTheme.labelMedium),
               const Spacer(),
               SizedBox(
                 width: 50,
                 child: Text(
                   _from.truncate().toString(),
                   textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
               const Text(' - '),
@@ -70,7 +71,7 @@ class _YearRangePickerState extends State<YearRangePicker> {
                 child: Text(
                   _to.truncate().toString(),
                   textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
             ],

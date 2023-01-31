@@ -208,8 +208,8 @@ class _LanguageButton extends StatelessWidget {
                     Text(
                       languages.elementAt(i),
                       style: languages.elementAt(i) != language
-                          ? Theme.of(context).textTheme.headline1
-                          : Theme.of(context).textTheme.headline1?.copyWith(
+                          ? Theme.of(context).textTheme.titleLarge
+                          : Theme.of(context).textTheme.titleLarge?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                     ),

@@ -34,7 +34,7 @@ class Toast {
               ),
             ],
           ),
-          child: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
         ),
       ),
     );

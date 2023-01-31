@@ -19,7 +19,7 @@ class BottomBar extends StatelessWidget {
           margin: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewPadding.bottom,
           ),
-          color: Theme.of(context).bottomAppBarColor,
+          color: Theme.of(context).bottomAppBarTheme.color,
           child: Material(color: Colors.transparent, child: child),
         ),
       ),
@@ -77,8 +77,8 @@ class BottomBarIconTabs extends StatelessWidget {
                       Text(
                         items.keys.elementAt(i),
                         style: i != current
-                            ? Theme.of(context).textTheme.subtitle1
-                            : Theme.of(context).textTheme.bodyText1,
+                            ? Theme.of(context).textTheme.labelMedium
+                            : Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
                   ],

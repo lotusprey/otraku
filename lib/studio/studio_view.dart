@@ -88,7 +88,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                         tag: widget.id,
                         child: Text(
                           name,
-                          style: Theme.of(context).textTheme.headline1,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
                     ),
@@ -123,7 +123,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                           padding: const EdgeInsets.only(top: 10, bottom: 20),
                           child: Text(
                             '${data.studio.favorites.toString()} favourites',
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),
                       )
@@ -137,7 +137,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                         items.add(SliverToBoxAdapter(
                           child: Text(
                             data.categories.keys.elementAt(i),
-                            style: Theme.of(context).textTheme.headline2,
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
                         ));
 

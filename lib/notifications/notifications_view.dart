@@ -56,7 +56,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             child: Consumer(
               builder: (context, ref, _) => Text(
                 '${ref.watch(notificationFilterProvider).text} Notifications',
-                style: Theme.of(context).textTheme.headline1,
+                style: Theme.of(context).textTheme.titleLarge,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
@@ -86,8 +86,8 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                       tiles.add(Text(
                         NotificationFilterType.values.elementAt(i).text,
                         style: i != notifier.state.index
-                            ? Theme.of(context).textTheme.headline1
-                            : Theme.of(context).textTheme.headline1?.copyWith(
+                            ? Theme.of(context).textTheme.titleLarge
+                            : Theme.of(context).textTheme.titleLarge?.copyWith(
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                       ));
@@ -295,15 +295,17 @@ class _NotificationItem extends StatelessWidget {
                                     text: item.texts[i],
                                     style: (i % 2 == 0) ==
                                             item.markTextOnEvenIndex
-                                        ? Theme.of(context).textTheme.bodyText1
-                                        : Theme.of(context).textTheme.bodyText2,
+                                        ? Theme.of(context).textTheme.bodyLarge
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                   ),
                               ],
                             ),
                           ),
                           Text(
                             item.timestamp,
-                            style: Theme.of(context).textTheme.subtitle2,
+                            style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],
                       ),
@@ -345,8 +347,8 @@ class _NotificationDialog extends StatelessWidget {
             TextSpan(
               text: item.texts[i],
               style: (i % 2 == 0) == item.markTextOnEvenIndex
-                  ? Theme.of(context).textTheme.bodyText1
-                  : Theme.of(context).textTheme.bodyText2,
+                  ? Theme.of(context).textTheme.bodyLarge
+                  : Theme.of(context).textTheme.bodyMedium,
             ),
         ],
       ),

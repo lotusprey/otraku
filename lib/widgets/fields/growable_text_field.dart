@@ -23,7 +23,7 @@ class GrowableTextFieldState extends State<GrowableTextField> {
         child: TextField(
           minLines: 1,
           maxLines: 10,
-          style: Theme.of(context).textTheme.bodyText2,
+          style: Theme.of(context).textTheme.bodyMedium,
           decoration: const InputDecoration(contentPadding: Consts.padding),
           controller: _ctrl,
           onChanged: (text) => widget.onChanged(text),

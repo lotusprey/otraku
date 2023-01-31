@@ -48,7 +48,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
               padding: const EdgeInsets.only(right: 10),
               child: Text(
                 count.toString(),
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
         ],
@@ -73,8 +73,8 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: i != notifier.state.index
-                            ? Theme.of(context).textTheme.headline1
-                            : Theme.of(context).textTheme.headline1?.copyWith(
+                            ? Theme.of(context).textTheme.titleLarge
+                            : Theme.of(context).textTheme.titleLarge?.copyWith(
                                 color: Theme.of(context).colorScheme.primary),
                       ),
                   ],

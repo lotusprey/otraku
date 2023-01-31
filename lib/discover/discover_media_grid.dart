@@ -49,7 +49,7 @@ class _Tile extends StatelessWidget {
     if (item.listStatus != null) textRailItems[item.listStatus!] = true;
     if (item.isAdult) textRailItems['Adult'] = true;
 
-    final detailTextStyle = Theme.of(context).textTheme.subtitle2;
+    final detailTextStyle = Theme.of(context).textTheme.labelSmall;
 
     return Card(
       child: LinkTile(
@@ -90,7 +90,7 @@ class _Tile extends StatelessWidget {
                           const SizedBox(height: 5),
                           TextRail(
                             textRailItems,
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ),

@@ -27,9 +27,9 @@ class ChipOptionField extends StatelessWidget {
         labelStyle: selected
             ? Theme.of(context)
                 .textTheme
-                .bodyText2
+                .bodyMedium
                 ?.copyWith(color: Theme.of(context).colorScheme.background)
-            : Theme.of(context).textTheme.bodyText2,
+            : Theme.of(context).textTheme.bodyMedium,
         backgroundColor: selected
             ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.onSecondary,
@@ -68,8 +68,13 @@ class __InputChipState extends State<_InputChip> {
     return InputChip(
       label: Text(widget.text),
       labelStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onSecondaryContainer,
+        color: _positive
+            ? Theme.of(context).colorScheme.onPrimaryContainer
+            : Theme.of(context).colorScheme.onErrorContainer,
       ),
+      deleteIconColor: _positive
+          ? Theme.of(context).colorScheme.onPrimaryContainer
+          : Theme.of(context).colorScheme.onErrorContainer,
       backgroundColor: _positive
           ? Theme.of(context).colorScheme.primaryContainer
           : Theme.of(context).colorScheme.errorContainer,
@@ -104,7 +109,7 @@ class _ChipGrid extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(title, style: Theme.of(context).textTheme.subtitle1),
+            Text(title, style: Theme.of(context).textTheme.labelMedium),
             const Spacer(),
             if (onClear != null && children.isNotEmpty)
               SizedBox(
@@ -136,7 +141,7 @@ class _ChipGrid extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'No $placeholder',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
               ),

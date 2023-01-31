@@ -41,7 +41,7 @@ class SettingsAboutTab extends StatelessWidget {
               child: Text(
                 'Otraku - v.$versionCode',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             const Text(
@@ -107,7 +107,7 @@ class SettingsAboutTab extends StatelessWidget {
     return Text(
       'Performed a notification check around ${Convert.millisToStr((time / 1000).truncate())}.',
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.subtitle1,
+      style: Theme.of(context).textTheme.labelMedium,
     );
   }
 }

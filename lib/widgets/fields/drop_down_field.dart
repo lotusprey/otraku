@@ -45,8 +45,8 @@ class DropDownFieldState<T> extends State<DropDownField<T>> {
         child: Text(
           key,
           style: widget.items[key] != _value
-              ? Theme.of(context).textTheme.bodyText2
-              : Theme.of(context).textTheme.bodyText1,
+              ? Theme.of(context).textTheme.bodyMedium
+              : Theme.of(context).textTheme.bodyLarge,
         ),
       ));
     }
@@ -66,7 +66,7 @@ class DropDownFieldState<T> extends State<DropDownField<T>> {
             },
             hint: Text(
               widget.hint,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.labelMedium,
             ),
             dropdownColor: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: Consts.borderRadiusMax,

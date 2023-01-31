@@ -140,7 +140,7 @@ class _ReviewGrid extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       items[i].rating,
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],
                 ),
@@ -158,7 +158,7 @@ class _ReviewGrid extends StatelessWidget {
                         padding: Consts.padding,
                         child: Text(
                           items[i].summary,
-                          style: Theme.of(context).textTheme.subtitle1,
+                          style: Theme.of(context).textTheme.labelMedium,
                           overflow: TextOverflow.fade,
                         ),
                       ),

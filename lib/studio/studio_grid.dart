@@ -30,7 +30,7 @@ class StudioGrid extends StatelessWidget {
                 items[i].name,
                 maxLines: 2,
                 overflow: TextOverflow.fade,
-                style: Theme.of(context).textTheme.headline1,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
           ),

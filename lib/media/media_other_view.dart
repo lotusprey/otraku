@@ -147,7 +147,7 @@ class _RelatedGrid extends StatelessWidget {
                             const SizedBox(height: 5),
                             TextRail(
                               details,
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],
                         ),
@@ -215,7 +215,7 @@ class _RecommendationsGrid extends StatelessWidget {
                         items[i].title,
                         overflow: TextOverflow.fade,
                         maxLines: 2,
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                   ),

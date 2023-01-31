@@ -56,7 +56,7 @@ class ReviewView extends StatelessWidget {
                         ),
                         child: Text(
                           data.mediaTitle,
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.titleMedium,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -71,11 +71,11 @@ class ReviewView extends StatelessWidget {
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            style: Theme.of(context).textTheme.headline2,
+                            style: Theme.of(context).textTheme.titleMedium,
                             children: [
                               TextSpan(
                                 text: 'review by ',
-                                style: Theme.of(context).textTheme.subtitle1,
+                                style: Theme.of(context).textTheme.labelMedium,
                               ),
                               TextSpan(text: data.userName),
                             ],
@@ -86,7 +86,7 @@ class ReviewView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: Text(
                           data.summary,
-                          style: Theme.of(context).textTheme.subtitle1,
+                          style: Theme.of(context).textTheme.labelMedium,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -103,7 +103,7 @@ class ReviewView extends StatelessWidget {
                             '${data.score}/100',
                             style: Theme.of(context)
                                 .textTheme
-                                .bodyText2
+                                .bodyMedium
                                 ?.copyWith(
                                   color:
                                       Theme.of(context).colorScheme.onPrimary,
@@ -118,7 +118,7 @@ class ReviewView extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 10, top: 20),
                         child: Text(
                           data.createdAt,
-                          style: Theme.of(context).textTheme.subtitle1,
+                          style: Theme.of(context).textTheme.labelMedium,
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -225,7 +225,7 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
                         opacity: opacity,
                         child: Text(
                           title!,
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.titleMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -327,7 +327,7 @@ class _RateButtonsState extends State<_RateButtons> {
             ),
             Text(
               '${value.rating}/${value.totalRating} users liked this review',
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.labelMedium,
               textAlign: TextAlign.center,
             ),
           ],

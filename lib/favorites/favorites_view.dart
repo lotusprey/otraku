@@ -48,7 +48,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
               padding: const EdgeInsets.only(right: 10),
               child: Text(
                 count.toString(),
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
         ],

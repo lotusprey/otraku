@@ -24,7 +24,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         filter: Consts.filter,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarColor,
+            color: Theme.of(context).bottomAppBarTheme.color,
           ),
           child: Padding(
             padding: EdgeInsets.only(
@@ -49,7 +49,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                         Expanded(
                           child: Text(
                             title!,
-                            style: Theme.of(context).textTheme.headline1,
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ),
                       ...trailing,

@@ -258,7 +258,7 @@ class FixedGradientSheetTile extends StatelessWidget {
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.onBackground),
           const SizedBox(width: 10),
-          Text(text, style: Theme.of(context).textTheme.headline1),
+          Text(text, style: Theme.of(context).textTheme.titleLarge),
         ],
       ),
     );

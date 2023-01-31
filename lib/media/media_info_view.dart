@@ -132,7 +132,7 @@ class MediaInfoView extends StatelessWidget {
                           Text(
                             infoTitles[i],
                             maxLines: 1,
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           Text(infoData[i].toString(), maxLines: 1),
                         ],
@@ -284,7 +284,7 @@ class _ScrollCards extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
               const Spacer(),
@@ -373,7 +373,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
 
     final spoilerTextStyle = Theme.of(context)
         .textTheme
-        .bodyText1
+        .bodyLarge
         ?.copyWith(color: Theme.of(context).colorScheme.error);
 
     return _ScrollCards(
@@ -415,7 +415,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
           const SizedBox(width: 5),
           Text(
             '${tags[i].rank}%',
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.labelMedium,
           ),
         ],
       ),
@@ -440,7 +440,8 @@ class _Title extends StatelessWidget {
           children: [
             SizedBox(
               width: 90,
-              child: Text(label, style: Theme.of(context).textTheme.subtitle1),
+              child:
+                  Text(label, style: Theme.of(context).textTheme.labelMedium),
             ),
             Flexible(
               child: GestureDetector(
@@ -450,7 +451,7 @@ class _Title extends StatelessWidget {
                   title,
                   maxLines: null,
                   textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                 ),

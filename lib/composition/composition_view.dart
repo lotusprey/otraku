@@ -119,7 +119,7 @@ class _CompositionView extends StatelessWidget {
                   autofocus: true,
                   focusNode: focus,
                   controller: textCtrl,
-                  style: Theme.of(context).textTheme.bodyText2,
+                  style: Theme.of(context).textTheme.bodyMedium,
                   maxLines: null,
                   decoration: InputDecoration(
                     fillColor: Theme.of(context).colorScheme.background,

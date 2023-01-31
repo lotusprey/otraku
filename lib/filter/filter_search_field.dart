@@ -62,7 +62,7 @@ class _SearchFilterFieldState extends State<SearchFilterField> {
           widget.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.headline1,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
       );
     }
@@ -88,7 +88,7 @@ class _SearchFilterFieldState extends State<SearchFilterField> {
                     widget.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.headline1,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 TopBarIcon(

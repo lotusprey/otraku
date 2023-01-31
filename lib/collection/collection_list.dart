@@ -180,7 +180,7 @@ class __TileContentState extends State<_TileContent> {
                     const SizedBox(width: 3),
                     Text(
                       widget.item.repeat.toString(),
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],
                 ),
@@ -242,7 +242,7 @@ class __TileContentState extends State<_TileContent> {
             const SizedBox(width: 3),
             Text(
               widget.item.score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.subtitle2,
+              style: Theme.of(context).textTheme.labelSmall,
             ),
           ],
         );
@@ -256,7 +256,7 @@ class __TileContentState extends State<_TileContent> {
               widget.item.score.toStringAsFixed(
                 widget.item.score.truncate() == widget.item.score ? 0 : 1,
               ),
-              style: Theme.of(context).textTheme.subtitle2,
+              style: Theme.of(context).textTheme.labelSmall,
             ),
           ],
         );
@@ -268,7 +268,7 @@ class __TileContentState extends State<_TileContent> {
             const SizedBox(width: 3),
             Text(
               widget.item.score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.subtitle2,
+              style: Theme.of(context).textTheme.labelSmall,
             ),
           ],
         );
@@ -281,7 +281,7 @@ class __TileContentState extends State<_TileContent> {
       item.progress == item.progressMax
           ? item.progress.toString()
           : '${item.progress}/${item.progressMax ?? "?"}',
-      style: Theme.of(context).textTheme.subtitle2,
+      style: Theme.of(context).textTheme.labelSmall,
     );
 
     if (widget.onProgressUpdate == null || item.progress == item.progressMax) {

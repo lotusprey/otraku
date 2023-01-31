@@ -202,15 +202,15 @@ class _ActionButton extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: i != notifier.index
-                                ? theme.textTheme.headline1
-                                : theme.textTheme.headline1?.copyWith(
+                                ? theme.textTheme.titleLarge
+                                : theme.textTheme.titleLarge?.copyWith(
                                     color: theme.colorScheme.primary,
                                   ),
                           ),
                         ),
                         Text(
                           ' ${notifier.lists[i].entries.length}',
-                          style: theme.textTheme.headline3,
+                          style: theme.textTheme.titleSmall,
                         ),
                       ],
                     ),

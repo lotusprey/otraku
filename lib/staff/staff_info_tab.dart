@@ -116,7 +116,7 @@ class _TabContent extends StatelessWidget {
                     onTap: () => Toast.copy(context, data!.name),
                     child: Text(
                       data!.name,
-                      style: Theme.of(context).textTheme.headline1,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                   if (data!.altNames.isNotEmpty)
@@ -248,7 +248,7 @@ class _InfoTile extends StatelessWidget {
             Text(
               title,
               maxLines: 1,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.labelMedium,
             ),
             Text(subtitle, maxLines: 1),
           ],

@@ -69,7 +69,7 @@ class _Tile extends StatelessWidget {
                         alignment: Alignment.bottomLeft,
                         child: Text(
                           'Review of ${item.mediaTitle} by ${item.userName}',
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.titleMedium,
                           overflow: TextOverflow.fade,
                         ),
                       ),
@@ -82,7 +82,7 @@ class _Tile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               item.summary,
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.labelMedium,
                               overflow: TextOverflow.fade,
                             ),
                           ),
@@ -100,7 +100,8 @@ class _Tile extends StatelessWidget {
                                 const SizedBox(height: 5),
                                 Text(
                                   item.rating,
-                                  style: Theme.of(context).textTheme.subtitle1,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
                                 ),
                               ],
                             ),

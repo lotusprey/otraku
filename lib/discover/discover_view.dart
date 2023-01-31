@@ -124,8 +124,8 @@ class _TopBarContent extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: i != notifier.state.index
-                                  ? theme.textTheme.headline1
-                                  : theme.textTheme.headline1?.copyWith(
+                                  ? theme.textTheme.titleLarge
+                                  : theme.textTheme.titleLarge?.copyWith(
                                       color: theme.colorScheme.primary,
                                     ),
                             ),
@@ -181,8 +181,8 @@ class _ActionButton extends StatelessWidget {
                         Text(
                           Convert.clarifyEnum(DiscoverType.values[i].name)!,
                           style: i != type.index
-                              ? theme.textTheme.headline1
-                              : theme.textTheme.headline1?.copyWith(
+                              ? theme.textTheme.titleLarge
+                              : theme.textTheme.titleLarge?.copyWith(
                                   color: theme.colorScheme.primary,
                                 ),
                         ),

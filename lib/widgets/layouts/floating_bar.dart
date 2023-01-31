@@ -149,8 +149,8 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
                     widget.items[i],
                     overflow: TextOverflow.ellipsis,
                     style: i != _index
-                        ? Theme.of(context).textTheme.headline2
-                        : Theme.of(context).textTheme.headline2?.copyWith(
+                        ? Theme.of(context).textTheme.titleMedium
+                        : Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                   ),

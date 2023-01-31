@@ -141,8 +141,8 @@ class _LanguageButton extends StatelessWidget {
                   Text(
                     notifier.languages[i],
                     style: i != notifier.languageIndex
-                        ? Theme.of(context).textTheme.headline1
-                        : Theme.of(context).textTheme.headline1?.copyWith(
+                        ? Theme.of(context).textTheme.titleLarge
+                        : Theme.of(context).textTheme.titleLarge?.copyWith(
                               color: Theme.of(context).colorScheme.primary,
                             ),
                   ),

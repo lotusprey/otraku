@@ -66,7 +66,7 @@ class CollectionGrid extends StatelessWidget {
                         items[i].titles[0],
                         overflow: TextOverflow.fade,
                         maxLines: 2,
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                   ),
@@ -104,7 +104,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           child: Center(
             child: Text(
               item.progress.toString(),
-              style: Theme.of(context).textTheme.subtitle2,
+              style: Theme.of(context).textTheme.labelSmall,
             ),
           ),
         ),

@@ -416,7 +416,7 @@ class TagSheetBodyState extends ConsumerState<TagSheetBody> {
             filter: Consts.filter,
             child: Container(
               height: 95,
-              color: Theme.of(context).bottomAppBarColor,
+              color: Theme.of(context).bottomAppBarTheme.color,
               padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Column(
                 children: [

@@ -61,7 +61,7 @@ class ReplyCard extends StatelessWidget {
                   children: [
                     Text(
                       reply.createdAt,
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const Spacer(),
                     if (reply.user.id == Options().id) ...[
@@ -173,10 +173,10 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               Text(
                 widget.reply.likeCount.toString(),
                 style: !widget.reply.isLiked
-                    ? Theme.of(context).textTheme.subtitle2
+                    ? Theme.of(context).textTheme.labelSmall
                     : Theme.of(context)
                         .textTheme
-                        .subtitle2!
+                        .labelSmall!
                         .copyWith(color: Theme.of(context).colorScheme.error),
               ),
               const SizedBox(width: 5),

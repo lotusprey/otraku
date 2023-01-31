@@ -227,7 +227,7 @@ class _Button extends StatelessWidget {
           Expanded(child: Icon(icon)),
           Expanded(
             flex: 2,
-            child: Text(title, style: Theme.of(context).textTheme.headline2),
+            child: Text(title, style: Theme.of(context).textTheme.titleMedium),
           ),
         ],
       ),

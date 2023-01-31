@@ -252,7 +252,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       opacity: opacity,
                       child: Text(
                         title,
-                        style: Theme.of(context).textTheme.headline2,
+                        style: Theme.of(context).textTheme.titleMedium,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

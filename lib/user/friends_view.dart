@@ -53,7 +53,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
               padding: const EdgeInsets.only(right: 10),
               child: Text(
                 count.toString(),
-                style: Theme.of(context).textTheme.headline3,
+                style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
         ],

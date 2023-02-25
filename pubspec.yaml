@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.1.3
+  flutter_riverpod: ^2.2.0
 
   # Data fetching.
   http: ^0.13.5
@@ -22,19 +22,19 @@ dependencies:
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.0.11
+  path_provider: ^2.0.13
 
   # Secure storage for the access tokens.
-  flutter_secure_storage: ^7.0.1
+  flutter_secure_storage: ^8.0.0
 
   # Opening links in the browser.
-  url_launcher: ^6.1.7
+  url_launcher: ^6.1.10
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
-  app_links: ^3.3.0
+  app_links: ^3.4.2
 
   # Access to platform theme and easy theme interpolation.
-  dynamic_color: ^1.5.4
+  dynamic_color: ^1.6.2
 
   # Background tasks for notification fetching.
   workmanager: ^0.5.1
@@ -43,7 +43,7 @@ dependencies:
   flutter_local_notifications: ^13.0.0
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.9.1
+  flutter_widget_from_html_core: ^0.10.0
 
   # An addition to the material icons.
   ionicons: ^0.2.1
@@ -52,7 +52,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: ^0.12.0
   flutter_lints: ^2.0.1
 
 flutter_icons:

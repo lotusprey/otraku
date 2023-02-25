@@ -806,6 +806,7 @@ abstract class _GqlFragment {
         status
         episodes
         chapters
+        averageScore
         genres
         tags {id}
         nextAiringEpisode {episode airingAt}

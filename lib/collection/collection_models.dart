@@ -280,6 +280,40 @@ int Function(Entry, Entry) entryComparator(EntrySort s) {
         if (comparison != 0) return comparison;
         return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
       };
+    case EntrySort.AVG_SCORE:
+      return (a, b) {
+        if (a.avgScore == null) {
+          if (b.avgScore == null) {
+            return a.titles[0]
+                .toUpperCase()
+                .compareTo(b.titles[0].toUpperCase());
+          }
+          return 1;
+        }
+
+        if (b.avgScore == null) return -1;
+
+        final comparison = a.avgScore!.compareTo(b.avgScore!);
+        if (comparison != 0) return comparison;
+        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
+      };
+    case EntrySort.AVG_SCORE_DESC:
+      return (a, b) {
+        if (b.avgScore == null) {
+          if (a.avgScore == null) {
+            return a.titles[0]
+                .toUpperCase()
+                .compareTo(b.titles[0].toUpperCase());
+          }
+          return -1;
+        }
+
+        if (a.avgScore == null) return 1;
+
+        final comparison = b.avgScore!.compareTo(a.avgScore!);
+        if (comparison != 0) return comparison;
+        return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
+      };
   }
 }
 
@@ -303,6 +337,7 @@ class Entry {
     required this.repeat,
     required this.score,
     required this.notes,
+    required this.avgScore,
     required this.releaseStart,
     required this.watchStart,
     required this.watchEnd,
@@ -344,6 +379,7 @@ class Entry {
       repeat: map['repeat'] ?? 0,
       score: map['score'].toDouble() ?? 0.0,
       notes: map['notes'],
+      avgScore: map['media']['averageScore'],
       releaseStart: Convert.mapToMillis(map['media']['startDate']),
       watchStart: Convert.mapToMillis(map['startedAt']),
       watchEnd: Convert.mapToMillis(map['completedAt']),
@@ -368,6 +404,7 @@ class Entry {
   int repeat;
   double score;
   String? notes;
+  int? avgScore;
   int? releaseStart;
   int? watchStart;
   int? watchEnd;

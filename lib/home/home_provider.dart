@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/activity/activities_providers.dart';
 import 'package:otraku/discover/discover_providers.dart';
 import 'package:otraku/utils/options.dart';
 

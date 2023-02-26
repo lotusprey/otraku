@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_models.dart';
-import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/activity/activity_provider.dart';
 import 'package:otraku/activity/activity_card.dart';
 import 'package:otraku/activity/reply_card.dart';
 import 'package:otraku/composition/composition_model.dart';

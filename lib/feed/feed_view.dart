@@ -13,7 +13,6 @@ import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
-// TODO repeating activities?
 class FeedView extends StatelessWidget {
   const FeedView(this.scrollCtrl);
 

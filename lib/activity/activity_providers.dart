@@ -245,26 +245,37 @@ class ActivitiesNotifier
   final int viewerId;
   final ActivityFilter filter;
 
+  /// [_lastCreatedAt] is used to track pages, instead of the next page value
+  /// of the state. This prevents duplicates when more pages are loaded,
+  /// as new activities are created often.
+  int? _lastCreatedAt;
+
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
       final value = state.valueOrNull ?? Pagination();
 
       final data = await Api.get(GqlQuery.activities, {
-        'page': value.next,
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
         if (userId != null) ...{
           'userId': userId,
         } else ...{
-          if ((filter.onFollowing ?? false)) 'userIdNot': Options().id,
           'isFollowing': filter.onFollowing,
-          'hasRepliesOrTypeText': (filter.onFollowing ?? true) ? null : true,
+          if ((filter.onFollowing ?? false))
+            'userIdNot': viewerId
+          else
+            'hasRepliesOrText': true,
         },
+        if (_lastCreatedAt != null) 'createdBefore': _lastCreatedAt!
       });
 
       final items = <Activity>[];
       for (final a in data['Page']['activities']) {
         final item = Activity.maybe(a, viewerId);
         if (item != null) items.add(item);
+      }
+
+      if (data['Page']['activities']?.isNotEmpty ?? false) {
+        _lastCreatedAt = data['Page']['activities'].last['createdAt'];
       }
 
       return value.append(

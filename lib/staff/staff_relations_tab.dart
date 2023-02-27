@@ -8,20 +8,23 @@ import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class StaffCharactersTab extends StatelessWidget {
-  const StaffCharactersTab(this.id, this.scrollCtrl);
+  const StaffCharactersTab(this.id, this.scrollCtrl, this.topBar);
 
   final int id;
   final ScrollController scrollCtrl;
+  final TopBar topBar;
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
+    return TabScaffold(
+      topBar: topBar,
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id, false)],
@@ -92,14 +95,16 @@ class StaffCharactersTab extends StatelessWidget {
 }
 
 class StaffRolesTab extends StatelessWidget {
-  const StaffRolesTab(this.id, this.scrollCtrl);
+  const StaffRolesTab(this.id, this.scrollCtrl, this.topBar);
 
   final int id;
   final ScrollController scrollCtrl;
+  final TopBar topBar;
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
+    return TabScaffold(
+      topBar: topBar,
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id, true)],

@@ -15,7 +15,7 @@ import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -46,94 +46,97 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
     final activity = ref.watch(
         activityProvider(widget.id).select((s) => s.valueOrNull?.activity));
 
-    return PageLayout(
-      topBar: TopBar(
-        trailing: [if (activity != null) _TopBarContent(activity)],
-      ),
-      floatingBar: FloatingBar(
-        scrollCtrl: _ctrl,
-        children: [
-          ActionButton(
-            tooltip: 'New Reply',
-            icon: Icons.edit_outlined,
-            onTap: () => showSheet(
-              context,
-              CompositionView(
-                composition: Composition.reply(null, '', widget.id),
-                onDone: (map) => ref
-                    .read(activityProvider(widget.id).notifier)
-                    .appendReply(map),
-              ),
-            ),
-          ),
-        ],
-      ),
-      child: Consumer(
-        child: SliverRefreshControl(
-          onRefresh: () => ref.invalidate(activityProvider(widget.id)),
+    return PageScaffold(
+      child: TabScaffold(
+        topBar: TopBar(
+          trailing: [if (activity != null) _TopBarContent(activity)],
         ),
-        builder: (context, ref, refreshControl) {
-          ref.listen<AsyncValue>(
-            activityProvider(widget.id),
-            (_, s) => s.whenOrNull(
-              error: (error, _) => showPopUp(
+        floatingBar: FloatingBar(
+          scrollCtrl: _ctrl,
+          children: [
+            ActionButton(
+              tooltip: 'New Reply',
+              icon: Icons.edit_outlined,
+              onTap: () => showSheet(
                 context,
-                ConfirmationDialog(
-                  title: 'Failed to load activity',
-                  content: error.toString(),
+                CompositionView(
+                  composition: Composition.reply(null, '', widget.id),
+                  onDone: (map) => ref
+                      .read(activityProvider(widget.id).notifier)
+                      .appendReply(map),
                 ),
               ),
             ),
-          );
+          ],
+        ),
+        child: Consumer(
+          child: SliverRefreshControl(
+            onRefresh: () => ref.invalidate(activityProvider(widget.id)),
+          ),
+          builder: (context, ref, refreshControl) {
+            ref.listen<AsyncValue>(
+              activityProvider(widget.id),
+              (_, s) => s.whenOrNull(
+                error: (error, _) => showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Failed to load activity',
+                    content: error.toString(),
+                  ),
+                ),
+              ),
+            );
 
-          return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
-                loading: () => const Center(child: Loader()),
-                error: (_, __) =>
-                    const Center(child: Text('Failed to load activity')),
-                data: (data) {
-                  return Padding(
-                    padding: Consts.padding,
-                    child: CustomScrollView(
-                      physics: Consts.physics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl!,
-                        SliverToBoxAdapter(
-                          child: ActivityCard(
-                            withHeader: false,
-                            activity: data.activity,
-                            footer: ActivityFooter(
+            return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) =>
+                      const Center(child: Text('Failed to load activity')),
+                  data: (data) {
+                    return Padding(
+                      padding: Consts.padding,
+                      child: CustomScrollView(
+                        physics: Consts.physics,
+                        controller: _ctrl,
+                        slivers: [
+                          refreshControl!,
+                          SliverToBoxAdapter(
+                            child: ActivityCard(
+                              withHeader: false,
                               activity: data.activity,
-                              onChanged: () =>
-                                  widget.onChanged?.call(data.activity),
-                              onDeleted: () {
-                                widget.onChanged?.call(null);
-                                Navigator.pop(context);
-                              },
-                              onPinned: () => setState(() {}),
-                              onOpenReplies: null,
-                              onEdited: (map) {
-                                ref
-                                    .read(activityProvider(widget.id).notifier)
-                                    .replaceActivity(map, Options().id!);
-                              },
+                              footer: ActivityFooter(
+                                activity: data.activity,
+                                onChanged: () =>
+                                    widget.onChanged?.call(data.activity),
+                                onDeleted: () {
+                                  widget.onChanged?.call(null);
+                                  Navigator.pop(context);
+                                },
+                                onPinned: () => setState(() {}),
+                                onOpenReplies: null,
+                                onEdited: (map) {
+                                  ref
+                                      .read(
+                                          activityProvider(widget.id).notifier)
+                                      .replaceActivity(map, Options().id!);
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            childCount: data.replies.items.length,
-                            (context, i) =>
-                                ReplyCard(widget.id, data.replies.items[i]),
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              childCount: data.replies.items.length,
+                              (context, i) =>
+                                  ReplyCard(widget.id, data.replies.items[i]),
+                            ),
                           ),
-                        ),
-                        SliverFooter(loading: data.replies.hasNext),
-                      ],
-                    ),
-                  );
-                },
-              );
-        },
+                          SliverFooter(loading: data.replies.hasNext),
+                        ],
+                      ),
+                    );
+                  },
+                );
+          },
+        ),
       ),
     );
   }

@@ -19,7 +19,7 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/filter/filter_search_field.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -60,7 +60,7 @@ class DiscoverView extends ConsumerWidget {
       return Future.value();
     };
 
-    return PageLayout(
+    return TabScaffold(
       topBar: const TopBar(canPop: false, trailing: [_TopBarContent()]),
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,

@@ -4,7 +4,7 @@ import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/options.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
@@ -14,6 +14,8 @@ class SettingsAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final offsets = scaffoldOffsets(context);
+
     return Align(
       alignment: Alignment.center,
       child: SizedBox(
@@ -23,8 +25,8 @@ class SettingsAboutTab extends StatelessWidget {
           padding: EdgeInsets.only(
             left: 10,
             right: 10,
-            top: PageLayout.topPadding(context) + 10,
-            bottom: PageLayout.bottomPadding(context) + 10,
+            top: offsets.top + 10,
+            bottom: offsets.bottom + 10,
           ),
           children: [
             ClipRRect(

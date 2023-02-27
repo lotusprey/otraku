@@ -7,17 +7,19 @@ import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class StaffInfoTab extends StatelessWidget {
-  const StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+  const StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl, this.topBar);
 
   final int id;
   final String? imageUrl;
   final ScrollController scrollCtrl;
+  final TopBar topBar;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class StaffInfoTab extends StatelessWidget {
                 imageUrl: imageUrl,
                 scrollCtrl: scrollCtrl,
                 refreshControl: refreshControl,
+                topBar: topBar,
                 loading: true,
               ),
               error: (_, __) => _TabContent(
@@ -42,6 +45,7 @@ class StaffInfoTab extends StatelessWidget {
                 imageUrl: imageUrl,
                 scrollCtrl: scrollCtrl,
                 refreshControl: refreshControl,
+                topBar: topBar,
                 loading: false,
               ),
               data: (data) => _TabContent(
@@ -50,6 +54,7 @@ class StaffInfoTab extends StatelessWidget {
                 imageUrl: imageUrl,
                 scrollCtrl: scrollCtrl,
                 refreshControl: refreshControl,
+                topBar: topBar,
                 loading: false,
               ),
             );
@@ -65,6 +70,7 @@ class _TabContent extends StatelessWidget {
     required this.imageUrl,
     required this.scrollCtrl,
     required this.refreshControl,
+    required this.topBar,
     required this.loading,
   });
 
@@ -73,6 +79,7 @@ class _TabContent extends StatelessWidget {
   final String? imageUrl;
   final ScrollController scrollCtrl;
   final Widget refreshControl;
+  final TopBar topBar;
   final bool loading;
 
   @override
@@ -130,7 +137,8 @@ class _TabContent extends StatelessWidget {
 
     const space = SliverToBoxAdapter(child: SizedBox(height: 10));
 
-    return PageLayout(
+    return TabScaffold(
+      topBar: topBar,
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: [if (data != null) _FavoriteButton(data!)],

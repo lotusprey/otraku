@@ -6,8 +6,8 @@ import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -24,7 +24,7 @@ class MediaPeopleView extends StatelessWidget {
         .findAncestorStateOfType<NestedScrollViewState>()!
         .innerController;
 
-    return PageLayout(
+    return TabScaffold(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         centered: true,

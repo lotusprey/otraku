@@ -14,7 +14,7 @@ import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -75,7 +75,7 @@ class MediaInfoView extends StatelessWidget {
         .innerController;
 
     return Consumer(
-      builder: (context, ref, _) => PageLayout(
+      builder: (context, ref, _) => TabScaffold(
         floatingBar: FloatingBar(
           scrollCtrl: scrollCtrl,
           children: [_EditButton(media), _FavoriteButton(info)],

@@ -8,7 +8,7 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -90,7 +90,7 @@ class _StatisticsViewState extends State<StatisticsView> {
       },
     );
 
-    return PageLayout(
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _onAnime ? 0 : 1,
         onChanged: (page) =>
@@ -101,10 +101,12 @@ class _StatisticsViewState extends State<StatisticsView> {
           'Manga': Ionicons.bookmark_outline,
         },
       ),
-      topBar: TopBar(
-        title: _onAnime ? 'Anime Statistics' : 'Manga Statistics',
+      child: TabScaffold(
+        topBar: TopBar(
+          title: _onAnime ? 'Anime Statistics' : 'Manga Statistics',
+        ),
+        child: content,
       ),
-      child: content,
     );
   }
 }
@@ -130,11 +132,13 @@ class _StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final offsets = scaffoldOffsets(context);
+
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: PageLayout.topPadding(context) + 10,
-        bottom: PageLayout.bottomPadding(context),
+        top: offsets.top + 10,
+        bottom: offsets.bottom,
       ),
       children: [
         _Details(statistics, ofAnime),

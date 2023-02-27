@@ -13,7 +13,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -93,34 +93,36 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
-      topBar: const TopBar(title: 'Activities'),
-      floatingBar: FloatingBar(
-        scrollCtrl: _ctrl,
-        children: [
-          ActionButton(
-            tooltip: widget.id == Options().id ? 'New Post' : 'New Message',
-            icon: Icons.edit_outlined,
-            onTap: () => showSheet(
-              context,
-              CompositionView(
-                composition: widget.id == Options().id
-                    ? Composition.status(null, '')
-                    : Composition.message(null, '', widget.id),
-                onDone: (map) => ref
-                    .read(activitiesProvider(widget.id).notifier)
-                    .insertActivity(map, Options().id!),
+    return PageScaffold(
+      child: TabScaffold(
+        topBar: const TopBar(title: 'Activities'),
+        floatingBar: FloatingBar(
+          scrollCtrl: _ctrl,
+          children: [
+            ActionButton(
+              tooltip: widget.id == Options().id ? 'New Post' : 'New Message',
+              icon: Icons.edit_outlined,
+              onTap: () => showSheet(
+                context,
+                CompositionView(
+                  composition: widget.id == Options().id
+                      ? Composition.status(null, '')
+                      : Composition.message(null, '', widget.id),
+                  onDone: (map) => ref
+                      .read(activitiesProvider(widget.id).notifier)
+                      .insertActivity(map, Options().id!),
+                ),
               ),
             ),
-          ),
-          ActionButton(
-            tooltip: 'Filter',
-            icon: Ionicons.funnel_outline,
-            onTap: () => showActivityFilterSheet(context, ref, widget.id),
-          ),
-        ],
+            ActionButton(
+              tooltip: 'Filter',
+              icon: Ionicons.funnel_outline,
+              onTap: () => showActivityFilterSheet(context, ref, widget.id),
+            ),
+          ],
+        ),
+        child: ActivitiesSubView(widget.id, _ctrl),
       ),
-      child: ActivitiesSubView(widget.id, _ctrl),
     );
   }
 }

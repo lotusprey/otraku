@@ -13,7 +13,7 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/collection/collection_list.dart';
@@ -44,16 +44,18 @@ class _CollectionViewState extends State<CollectionView> {
   Widget build(BuildContext context) {
     final tag = CollectionTag(widget.userId, widget.ofAnime);
 
-    return Consumer(
-      child: CollectionSubView(scrollCtrl: _ctrl, tag: tag),
-      builder: (context, ref, child) => WillPopScope(
-        child: child!,
-        onWillPop: () {
-          final notifier = ref.read(searchProvider(tag).notifier);
-          if (notifier.state == null) return Future.value(true);
-          notifier.state = null;
-          return Future.value(false);
-        },
+    return PageScaffold(
+      child: Consumer(
+        child: CollectionSubView(scrollCtrl: _ctrl, tag: tag),
+        builder: (context, ref, child) => WillPopScope(
+          child: child!,
+          onWillPop: () {
+            final notifier = ref.read(searchProvider(tag).notifier);
+            if (notifier.state == null) return Future.value(true);
+            notifier.state = null;
+            return Future.value(false);
+          },
+        ),
       ),
     );
   }
@@ -71,18 +73,18 @@ class CollectionSubView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        return PageLayout(
-          topBar: TopBar(
-            canPop: tag.userId != Options().id,
-            trailing: [_TopBarContent(tag)],
-          ),
-          floatingBar: FloatingBar(
-            scrollCtrl: scrollCtrl,
-            children: [_ActionButton(tag)],
-          ),
-          child: ConstrainedView(
+    return TabScaffold(
+      topBar: TopBar(
+        canPop: tag.userId != Options().id,
+        trailing: [_TopBarContent(tag)],
+      ),
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [_ActionButton(tag)],
+      ),
+      child: Consumer(
+        builder: (context, ref, _) {
+          return ConstrainedView(
             child: CustomScrollView(
               physics: Consts.physics,
               controller: scrollCtrl,
@@ -94,9 +96,9 @@ class CollectionSubView extends StatelessWidget {
                 const SliverFooter(),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

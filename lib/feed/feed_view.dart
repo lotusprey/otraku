@@ -9,7 +9,7 @@ import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -87,7 +87,7 @@ class FeedView extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) {
-        return PageLayout(
+        return TabScaffold(
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
             children: [

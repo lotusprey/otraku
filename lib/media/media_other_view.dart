@@ -7,7 +7,7 @@ import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/fade_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/text_rail.dart';
@@ -26,7 +26,7 @@ class MediaOtherView extends StatelessWidget {
         .findAncestorStateOfType<NestedScrollViewState>()!
         .innerController;
 
-    return PageLayout(
+    return TabScaffold(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         centered: true,

@@ -21,7 +21,7 @@ import 'package:otraku/feed/feed_view.dart';
 import 'package:otraku/user/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -137,7 +137,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
-      child: PageLayout(
+      child: PageScaffold(
         bottomBar: BottomBarIconTabs(
           current: notifier.homeTab,
           onChanged: (i) => ref.read(homeProvider).homeTab = i,

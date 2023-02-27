@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/drag_detector.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
 class FloatingBar extends StatefulWidget {
@@ -80,7 +80,7 @@ class FloatingBarState extends State<FloatingBar>
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
-        bottom: PageLayout.bottomPadding(context) + 16,
+        bottom: scaffoldOffsets(context).bottom + 16,
       ),
       child: SlideTransition(
         position: _slideAnimation,

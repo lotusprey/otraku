@@ -9,7 +9,7 @@ import 'package:otraku/home/home_view.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/settings/theme_preview.dart';
@@ -26,7 +26,7 @@ class SettingsAppTab extends StatelessWidget {
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: PageLayout.topPadding(context)),
+          child: SizedBox(height: scaffoldOffsets(context).top),
         ),
         SliverPadding(
           padding: const EdgeInsets.only(left: 10, top: 10),

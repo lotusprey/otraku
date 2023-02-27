@@ -9,20 +9,23 @@ import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class CharacterAnimeTab extends StatelessWidget {
-  const CharacterAnimeTab(this.id, this.scrollCtrl);
+  const CharacterAnimeTab(this.id, this.scrollCtrl, this.topBar);
 
   final int id;
   final ScrollController scrollCtrl;
+  final TopBar topBar;
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
+    return TabScaffold(
+      topBar: topBar,
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id), _LanguageButton(id)],
@@ -99,14 +102,16 @@ class CharacterAnimeTab extends StatelessWidget {
 }
 
 class CharacterMangaTab extends StatelessWidget {
-  const CharacterMangaTab(this.id, this.scrollCtrl);
+  const CharacterMangaTab(this.id, this.scrollCtrl, this.topBar);
 
   final int id;
   final ScrollController scrollCtrl;
+  final TopBar topBar;
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
+    return TabScaffold(
+      topBar: topBar,
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: [_FilterButton(id)],

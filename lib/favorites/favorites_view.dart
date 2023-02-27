@@ -8,7 +8,7 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -39,20 +39,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
       onRefresh: () => ref.invalidate(favoritesProvider(widget.id)),
     );
 
-    return PageLayout(
-      topBar: TopBar(
-        title: _tab.text,
-        trailing: [
-          if (count > 0)
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Text(
-                count.toString(),
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ),
-        ],
-      ),
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _tab.index,
         onChanged: (page) {
@@ -68,17 +55,32 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
           'Studios': Ionicons.business_outline,
         },
       ),
-      child: DirectPageView(
-        current: _tab.index,
-        onChanged: (page) =>
-            setState(() => _tab = FavoriteType.values.elementAt(page)),
-        children: [
-          _AnimeTab(widget.id, _ctrl, refreshControl),
-          _MangaTab(widget.id, _ctrl, refreshControl),
-          _CharactersTab(widget.id, _ctrl, refreshControl),
-          _StaffTab(widget.id, _ctrl, refreshControl),
-          _StudiosTab(widget.id, _ctrl, refreshControl),
-        ],
+      child: TabScaffold(
+        topBar: TopBar(
+          title: _tab.text,
+          trailing: [
+            if (count > 0)
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Text(
+                  count.toString(),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+          ],
+        ),
+        child: DirectPageView(
+          current: _tab.index,
+          onChanged: (page) =>
+              setState(() => _tab = FavoriteType.values.elementAt(page)),
+          children: [
+            _AnimeTab(widget.id, _ctrl, refreshControl),
+            _MangaTab(widget.id, _ctrl, refreshControl),
+            _CharactersTab(widget.id, _ctrl, refreshControl),
+            _StaffTab(widget.id, _ctrl, refreshControl),
+            _StudiosTab(widget.id, _ctrl, refreshControl),
+          ],
+        ),
       ),
     );
   }

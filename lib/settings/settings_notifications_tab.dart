@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsNotificationsTab extends StatelessWidget {
@@ -24,7 +24,7 @@ class SettingsNotificationsTab extends StatelessWidget {
         controller: scrollCtrl,
         slivers: [
           SliverToBoxAdapter(
-            child: SizedBox(height: PageLayout.topPadding(context)),
+            child: SizedBox(height: scaffoldOffsets(context).top),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(

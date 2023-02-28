@@ -33,55 +33,21 @@ class FeedView extends StatelessWidget {
           Navigator.pushNamed(context, RouteArg.notifications);
         };
 
-        if (count < 1) {
-          return TopBarIcon(
-            tooltip: 'Notifications',
-            icon: Ionicons.notifications_outline,
-            onTap: openNotifications,
+        Widget result = TopBarIcon(
+          tooltip: 'Notifications',
+          icon: Ionicons.notifications_outline,
+          onTap: openNotifications,
+        );
+
+        if (count > 0) {
+          result = Badge.count(
+            count: count,
+            alignment: AlignmentDirectional.bottomStart,
+            child: result,
           );
         }
 
-        return Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Tooltip(
-            message: 'Notifications',
-            child: GestureDetector(
-              onTap: openNotifications,
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    child: Icon(
-                      Ionicons.notifications_outline,
-                      color: Theme.of(context).colorScheme.onBackground,
-                    ),
-                  ),
-                  Container(
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                      maxHeight: 20,
-                    ),
-                    margin: const EdgeInsets.only(right: 15, bottom: 5),
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        count.toString(),
-                        style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.background,
-                            ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+        return result;
       },
     );
 

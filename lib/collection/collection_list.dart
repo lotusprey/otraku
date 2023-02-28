@@ -32,16 +32,13 @@ class CollectionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverFixedExtentList(
-        delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(items[i], scoreFormat, onProgressUpdate),
-          childCount: items.length,
-        ),
-        // The added pixels are for the bottom margin.
-        itemExtent: _TILE_HEIGHT + 10,
+    return SliverFixedExtentList(
+      delegate: SliverChildBuilderDelegate(
+        (_, i) => _Tile(items[i], scoreFormat, onProgressUpdate),
+        childCount: items.length,
       ),
+      // The added pixels are for the bottom margin.
+      itemExtent: _TILE_HEIGHT + 10,
     );
   }
 }

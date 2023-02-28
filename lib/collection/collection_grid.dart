@@ -29,50 +29,47 @@ class CollectionGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
-          minWidth: 100,
-          extraHeight: 70,
-          rawHWRatio: Consts.coverHtoWRatio,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          childCount: items.length,
-          (context, i) => Card(
-            child: LinkTile(
-              id: items[i].mediaId,
-              discoverType: DiscoverType.anime,
-              info: items[i].imageUrl,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Hero(
-                      tag: items[i].mediaId,
-                      child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
-                        child: Container(
-                          color: Theme.of(context).colorScheme.surfaceVariant,
-                          child: FadeImage(items[i].imageUrl),
-                        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
+        minWidth: 100,
+        extraHeight: 70,
+        rawHWRatio: Consts.coverHtoWRatio,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, i) => Card(
+          child: LinkTile(
+            id: items[i].mediaId,
+            discoverType: DiscoverType.anime,
+            info: items[i].imageUrl,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: items[i].mediaId,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: Container(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        child: FadeImage(items[i].imageUrl),
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
-                    child: SizedBox(
-                      height: 35,
-                      child: Text(
-                        items[i].titles[0],
-                        overflow: TextOverflow.fade,
-                        maxLines: 2,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
+                  child: SizedBox(
+                    height: 35,
+                    child: Text(
+                      items[i].titles[0],
+                      overflow: TextOverflow.fade,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
-                  _IncrementButton(items[i], onProgressUpdate),
-                ],
-              ),
+                ),
+                _IncrementButton(items[i], onProgressUpdate),
+              ],
             ),
           ),
         ),

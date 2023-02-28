@@ -13,17 +13,14 @@ class UserGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
-          minWidth: 100,
-          extraHeight: 40,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(items[i]),
-          childCount: items.length,
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
+        minWidth: 100,
+        extraHeight: 40,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (_, i) => _Tile(items[i]),
+        childCount: items.length,
       ),
     );
   }

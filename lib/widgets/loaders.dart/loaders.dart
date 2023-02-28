@@ -28,7 +28,7 @@ class SliverRefreshControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: EdgeInsets.only(top: scaffoldOffsets(context).top),
+      padding: EdgeInsets.only(top: scaffoldOffsets(context).top + 10),
       sliver: CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
         refreshTriggerPullDistance: 160,

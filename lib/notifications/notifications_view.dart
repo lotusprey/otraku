@@ -141,16 +141,13 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     controller: _ctrl,
                     slivers: [
                       refreshControl!,
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, i) => _NotificationItem(
-                              data.items[i],
-                              i < notifier.unreadCount,
-                            ),
-                            childCount: data.items.length,
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, i) => _NotificationItem(
+                            data.items[i],
+                            i < notifier.unreadCount,
                           ),
+                          childCount: data.items.length,
                         ),
                       ),
                       SliverFooter(loading: data.hasNext),

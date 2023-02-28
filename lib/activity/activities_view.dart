@@ -148,51 +148,48 @@ class ActivitiesSubView extends StatelessWidget {
             }
             return Future.value();
           },
-          onData: (data) => SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount: data.items.length,
-                (context, i) => ActivityCard(
-                  withHeader: true,
+          onData: (data) => SliverList(
+            delegate: SliverChildBuilderDelegate(
+              childCount: data.items.length,
+              (context, i) => ActivityCard(
+                withHeader: true,
+                activity: data.items[i],
+                footer: ActivityFooter(
                   activity: data.items[i],
-                  footer: ActivityFooter(
-                    activity: data.items[i],
-                    onDeleted: () => ref
-                        .read(activitiesProvider(id).notifier)
-                        .remove(data.items[i].id),
-                    onChanged: null,
-                    onPinned: id == Options().id
-                        ? () => ref
-                            .read(activitiesProvider(id).notifier)
-                            .togglePin(data.items[i].id)
-                        : null,
-                    onOpenReplies: () => Navigator.pushNamed(
-                      context,
-                      RouteArg.activity,
-                      arguments: RouteArg(
-                        id: data.items[i].id,
-                        callback: (arg) {
-                          final updatedActivity = arg as Activity?;
-                          if (updatedActivity == null) {
-                            ref
-                                .read(activitiesProvider(id).notifier)
-                                .remove(data.items[i].id);
-                            return;
-                          }
-
+                  onDeleted: () => ref
+                      .read(activitiesProvider(id).notifier)
+                      .remove(data.items[i].id),
+                  onChanged: null,
+                  onPinned: id == Options().id
+                      ? () => ref
+                          .read(activitiesProvider(id).notifier)
+                          .togglePin(data.items[i].id)
+                      : null,
+                  onOpenReplies: () => Navigator.pushNamed(
+                    context,
+                    RouteArg.activity,
+                    arguments: RouteArg(
+                      id: data.items[i].id,
+                      callback: (arg) {
+                        final updatedActivity = arg as Activity?;
+                        if (updatedActivity == null) {
                           ref
                               .read(activitiesProvider(id).notifier)
-                              .updateActivity(updatedActivity);
-                        },
-                      ),
+                              .remove(data.items[i].id);
+                          return;
+                        }
+
+                        ref
+                            .read(activitiesProvider(id).notifier)
+                            .updateActivity(updatedActivity);
+                      },
                     ),
-                    onEdited: (map) {
-                      ref
-                          .read(activitiesProvider(id).notifier)
-                          .replaceActivity(map);
-                    },
                   ),
+                  onEdited: (map) {
+                    ref
+                        .read(activitiesProvider(id).notifier)
+                        .replaceActivity(map);
+                  },
                 ),
               ),
             ),

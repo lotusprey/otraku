@@ -17,17 +17,14 @@ class DiscoverMediaGrid extends StatelessWidget {
       return const SliverFillRemaining(child: Center(child: Text('No Media')));
     }
 
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 290,
-          height: 110,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          childCount: items.length,
-          (context, index) => _Tile(items[index]),
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 290,
+        height: 110,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, index) => _Tile(items[index]),
       ),
     );
   }

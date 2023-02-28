@@ -13,17 +13,14 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 270,
-          height: 200,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(items[i]),
-          childCount: items.length,
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 270,
+        height: 200,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (_, i) => _Tile(items[i]),
+        childCount: items.length,
       ),
     );
   }

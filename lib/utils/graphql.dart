@@ -505,7 +505,7 @@ abstract class GqlQuery {
     query Settings($withData: Boolean = true) {
       Viewer {
         unreadNotificationCount
-        @include(if: $withData) ...userSettings
+        ...userSettings @include(if: $withData)
     }
   }
   '''

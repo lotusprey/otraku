@@ -105,6 +105,8 @@ class FloatingBarState extends State<FloatingBar>
   }
 }
 
+const floatingBarItemHeight = 56.0;
+
 class ActionTabSwitcher extends StatefulWidget {
   const ActionTabSwitcher({
     required this.items,
@@ -176,7 +178,10 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
               boxShadow: [
                 BoxShadow(
                   blurRadius: 5,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceVariant
+                      .withAlpha(50),
                 ),
               ],
             ),
@@ -193,10 +198,6 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: Consts.borderRadiusMax,
-                      border: Border.all(
-                        width: 5,
-                        color: Theme.of(context).colorScheme.background,
-                      ),
                     ),
                   ),
                 ),
@@ -209,8 +210,6 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
     );
   }
 }
-
-const actionButtonSize = 56.0;
 
 /// A [FloatingActionButton] implementation.
 class ActionButton extends StatelessWidget {
@@ -234,29 +233,29 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: actionButtonSize,
-      height: actionButtonSize,
+      width: floatingBarItemHeight,
+      height: floatingBarItemHeight,
       child: Tooltip(
         message: tooltip,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
+            borderRadius: Consts.borderRadiusMax,
             boxShadow: [
               BoxShadow(
                 blurRadius: 5,
-                color: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withAlpha(100),
+                color:
+                    Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
               ),
             ],
           ),
           child: Material(
             color: Theme.of(context).colorScheme.primary,
-            shape: const CircleBorder(),
+            shape: const RoundedRectangleBorder(
+              borderRadius: Consts.borderRadiusMax,
+            ),
             child: InkWell(
               onTap: onTap,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: Consts.borderRadiusMax,
               splashColor:
                   Theme.of(context).colorScheme.onPrimary.withAlpha(50),
               child: onSwipe == null

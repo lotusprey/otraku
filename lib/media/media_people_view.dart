@@ -35,7 +35,8 @@ class MediaPeopleView extends StatelessWidget {
             onChanged: (i) => toggleTab(i == 1),
           ),
           if (tabToggled)
-            const SizedBox(width: actionButtonSize, height: actionButtonSize)
+            const SizedBox(
+                width: floatingBarItemHeight, height: floatingBarItemHeight)
           else
             _LanguageButton(id, scrollCtrl),
         ],

@@ -107,8 +107,8 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
           floatingBar: FloatingBar(
             scrollCtrl: widget.scrollCtrl,
             children: [
-              ExpandedActionButton(
-                title: 'Expand',
+              ActionButton(
+                tooltip: 'Load Entire Connection',
                 icon: Ionicons.enter_outline,
                 onTap: () =>
                     ref.read(homeProvider).expandCollection(widget.tag.ofAnime),

@@ -270,66 +270,6 @@ class ActionButton extends StatelessWidget {
   }
 }
 
-/// A [FloatingActionButton.extended] implementation.
-class ExpandedActionButton extends StatelessWidget {
-  const ExpandedActionButton({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String title;
-  final IconData icon;
-  final void Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: actionButtonSize,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 5,
-              color:
-                  Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Theme.of(context).colorScheme.primary,
-          shape: const RoundedRectangleBorder(
-            borderRadius: Consts.borderRadiusMax,
-          ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: Consts.borderRadiusMax,
-            splashColor: Theme.of(context).colorScheme.onPrimary.withAlpha(50),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Icon(icon, color: Theme.of(context).colorScheme.onPrimary),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 // Detects swiping and animates the icon switching.
 class _DraggableIcon extends StatefulWidget {
   const _DraggableIcon({

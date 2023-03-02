@@ -147,9 +147,15 @@ class _StudioViewState extends ConsumerState<StudioView> {
                               ? data.categories.values.elementAt(i + 1)
                               : data.media.items.length;
 
+                          items.add(const SliverToBoxAdapter(
+                            child: SizedBox(height: 10),
+                          ));
                           items.add(
                             TileItemGrid(data.media.items.sublist(beg, end)),
                           );
+                          items.add(const SliverToBoxAdapter(
+                            child: SizedBox(height: 10),
+                          ));
                         }
                       } else {
                         items.add(TileItemGrid(data.media.items));

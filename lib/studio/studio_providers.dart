@@ -88,9 +88,10 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
 
       for (final m in data['nodes']) {
         var category = m[key]?['year']?.toString();
-        category ??= 'Unfinished';
+        category ??=
+            m['status'] == 'CANCELLED' ? 'Cancelled' : 'To Be Announced';
 
-        if (s.categories.isEmpty || !s.categories.containsKey(category)) {
+        if (!s.categories.containsKey(category)) {
           s.categories[category] = index;
         }
 

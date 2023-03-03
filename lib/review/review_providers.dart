@@ -47,7 +47,11 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
                 ? 'UP_VOTE'
                 : 'DOWN_VOTE',
       });
-      if (data['RateReview'] == null) throw StateError('Review data is empty.');
+
+      if (data['RateReview'] == null) {
+        throw StateError('Failed to rate review.');
+      }
+
       return value.copyWith(data['RateReview']);
     });
   }

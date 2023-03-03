@@ -104,7 +104,11 @@ class Review {
         score: score,
         rating: map['rating'] ?? rating,
         totalRating: map['ratingAmount'] ?? totalRating,
-        viewerRating: map['userRating'],
+        viewerRating: map['userRating'] == 'UP_VOTE'
+            ? true
+            : map['userRating'] == 'DOWN_VOTE'
+                ? false
+                : null,
       );
 }
 

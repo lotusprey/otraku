@@ -13,12 +13,12 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.2.0
+  flutter_riverpod: ^2.3.0
 
   # Data fetching.
   http: ^0.13.5
 
-  # Cache and settings storage.
+  # Settings storage.
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.

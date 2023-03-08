@@ -8,7 +8,7 @@ import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
@@ -126,7 +126,7 @@ class _ReviewGrid extends StatelessWidget {
                       tag: items[i].userId,
                       child: ClipRRect(
                         borderRadius: Consts.borderRadiusMin,
-                        child: FadeImage(
+                        child: CachedImage(
                           items[i].avatar,
                           height: 50,
                           width: 50,

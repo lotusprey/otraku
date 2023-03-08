@@ -5,7 +5,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/user_providers.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -112,7 +112,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                   Expanded(
                     child: user?.bannerUrl != null
                         ? GestureDetector(
-                            child: FadeImage(user!.bannerUrl!),
+                            child: CachedImage(user!.bannerUrl!),
                             onTap: () => showPopUp(
                               context,
                               ImageDialog(user!.bannerUrl!),
@@ -166,11 +166,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                                   context,
                                   ImageDialog(image),
                                 ),
-                                child: FadeImage(
-                                  image,
-                                  fit: BoxFit.contain,
-                                  alignment: Alignment.bottomCenter,
-                                ),
+                                child: CachedImage(image, fit: BoxFit.contain),
                               )
                             : null,
                       ),

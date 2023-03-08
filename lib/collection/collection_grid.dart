@@ -6,7 +6,7 @@ import 'package:otraku/edit/edit_providers.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -51,7 +51,7 @@ class CollectionGrid extends StatelessWidget {
                       borderRadius: Consts.borderRadiusMin,
                       child: Container(
                         color: Theme.of(context).colorScheme.surfaceVariant,
-                        child: FadeImage(items[i].imageUrl),
+                        child: CachedImage(items[i].imageUrl),
                       ),
                     ),
                   ),

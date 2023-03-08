@@ -7,7 +7,7 @@ import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/review/review_providers.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -171,7 +171,8 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            child: Hero(tag: id, child: FadeImage(bannerUrl!)),
+                            child:
+                                Hero(tag: id, child: CachedImage(bannerUrl!)),
                             onTap: () =>
                                 showPopUp(context, ImageDialog(bannerUrl!)),
                           ),

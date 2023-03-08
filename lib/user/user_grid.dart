@@ -3,7 +3,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class UserGrid extends StatelessWidget {
@@ -44,7 +44,7 @@ class _Tile extends StatelessWidget {
               tag: item.id,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(item.imageUrl, fit: BoxFit.contain),
+                child: CachedImage(item.imageUrl, fit: BoxFit.contain),
               ),
             ),
           ),

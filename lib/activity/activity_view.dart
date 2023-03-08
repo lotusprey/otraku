@@ -13,7 +13,7 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
@@ -164,7 +164,7 @@ class _TopBarContent extends StatelessWidget {
                     tag: activity.agent.id,
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
-                      child: FadeImage(
+                      child: CachedImage(
                         activity.agent.imageUrl,
                         height: 40,
                         width: 40,
@@ -199,7 +199,7 @@ class _TopBarContent extends StatelessWidget {
               discoverType: DiscoverType.user,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(
+                child: CachedImage(
                   activity.reciever!.imageUrl,
                   height: 40,
                   width: 40,

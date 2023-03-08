@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/staff/staff_providers.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -106,7 +106,7 @@ class _TabContent extends StatelessWidget {
                   height: imageHeight,
                   color: Theme.of(context).colorScheme.surfaceVariant,
                   child: GestureDetector(
-                    child: FadeImage(imageUrl),
+                    child: CachedImage(imageUrl),
                     onTap: () => showPopUp(context, ImageDialog(imageUrl)),
                   ),
                 ),

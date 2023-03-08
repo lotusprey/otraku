@@ -4,6 +4,7 @@ import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/options.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
@@ -78,18 +79,27 @@ class SettingsAboutTab extends StatelessWidget {
               ),
             ),
             ElevatedButton.icon(
-              icon: const Icon(Ionicons.trash_bin_outline),
-              label: const Text('Reset Options'),
-              onPressed: Options.resetOptions,
+              icon: const Icon(Ionicons.log_out_outline),
+              label: const Text('Accounts'),
+              onPressed: Api.logOut,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Theme.of(context).colorScheme.onError,
               ),
             ),
             ElevatedButton.icon(
-              icon: const Icon(Ionicons.log_out_outline),
-              label: const Text('Accounts'),
-              onPressed: Api.logOut,
+              icon: const Icon(Ionicons.trash_bin_outline),
+              label: const Text('Clear Image Cache'),
+              onPressed: clearImageCache,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Ionicons.refresh_outline),
+              label: const Text('Reset Options'),
+              onPressed: Options.resetOptions,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Theme.of(context).colorScheme.onError,

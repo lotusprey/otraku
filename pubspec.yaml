@@ -27,6 +27,12 @@ dependencies:
   # Secure storage for the access tokens.
   flutter_secure_storage: ^8.0.0
 
+  # Used for configuring [cached_network_image], which already imports it.
+  flutter_cache_manager: ^3.3.0
+
+  # Image caching.
+  cached_network_image: ^3.2.3
+
   # Opening links in the browser.
   url_launcher: ^6.1.10
 

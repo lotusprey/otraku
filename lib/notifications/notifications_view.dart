@@ -13,7 +13,7 @@ import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
@@ -198,7 +198,7 @@ class _NotificationItem extends StatelessWidget {
                       borderRadius: const BorderRadius.horizontal(
                         left: Consts.radiusMin,
                       ),
-                      child: FadeImage(item.imageUrl!, width: 70),
+                      child: CachedImage(item.imageUrl!, width: 70),
                     ),
                   ),
                 Flexible(
@@ -366,7 +366,7 @@ class _NotificationDialog extends StatelessWidget {
             if (item.imageUrl != null) ...[
               ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(
+                child: CachedImage(
                   item.imageUrl!,
                   width: imageWidth,
                   height: imageWidth * Consts.coverHtoWRatio,

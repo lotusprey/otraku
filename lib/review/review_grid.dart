@@ -3,7 +3,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
@@ -49,7 +49,7 @@ class _Tile extends StatelessWidget {
                       const BorderRadius.vertical(top: Consts.radiusMin),
                   child: Hero(
                     tag: item.id,
-                    child: FadeImage(item.bannerUrl!),
+                    child: CachedImage(item.bannerUrl!),
                   ),
                 ),
               ),

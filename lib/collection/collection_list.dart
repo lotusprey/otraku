@@ -7,7 +7,7 @@ import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/edit/edit_view.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -69,7 +69,7 @@ class _Tile extends StatelessWidget {
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: FadeImage(entry.imageUrl),
+                  child: CachedImage(entry.imageUrl),
                 ),
               ),
             ),

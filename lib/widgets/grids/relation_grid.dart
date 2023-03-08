@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/common/relation.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class RelationGrid extends StatelessWidget {
@@ -138,7 +138,7 @@ class _RelationTile extends StatelessWidget {
             info: item.imageUrl,
             child: ClipRRect(
               borderRadius: Consts.borderRadiusMin,
-              child: FadeImage(item.imageUrl, width: 80),
+              child: CachedImage(item.imageUrl, width: 80),
             ),
           ),
           Expanded(
@@ -152,7 +152,7 @@ class _RelationTile extends StatelessWidget {
               info: connection!.imageUrl,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(connection!.imageUrl, width: 80),
+                child: CachedImage(connection!.imageUrl, width: 80),
               ),
             ),
         ],

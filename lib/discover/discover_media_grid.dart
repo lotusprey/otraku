@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/text_rail.dart';
@@ -62,7 +62,7 @@ class _Tile extends StatelessWidget {
                 child: Container(
                   width: 120 / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: FadeImage(item.imageUrl),
+                  child: CachedImage(item.imageUrl),
                 ),
               ),
             ),

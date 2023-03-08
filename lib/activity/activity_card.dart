@@ -9,7 +9,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -76,7 +76,7 @@ class ActivityCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
-                      child: FadeImage(
+                      child: CachedImage(
                         activity.agent.imageUrl,
                         height: 50,
                         width: 50,
@@ -110,7 +110,7 @@ class ActivityCard extends StatelessWidget {
                 discoverType: DiscoverType.user,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
-                  child: FadeImage(
+                  child: CachedImage(
                     activity.reciever!.imageUrl,
                     height: 50,
                     width: 50,
@@ -150,7 +150,7 @@ class _ActivityMediaBox extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: Consts.borderRadiusMin,
-              child: FadeImage(activityMedia.imageUrl, width: 70),
+              child: CachedImage(activityMedia.imageUrl, width: 70),
             ),
             Expanded(
               child: Padding(

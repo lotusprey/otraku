@@ -9,7 +9,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -34,7 +34,7 @@ class ReplyCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(
+                child: CachedImage(
                   reply.user.imageUrl,
                   height: 50,
                   width: 50,

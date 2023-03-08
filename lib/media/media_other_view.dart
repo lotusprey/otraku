@@ -4,7 +4,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/media/media_models.dart';
 import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
@@ -125,7 +125,7 @@ class _RelatedGrid extends StatelessWidget {
                         borderRadius: Consts.borderRadiusMin,
                         child: Container(
                           color: Theme.of(context).colorScheme.surfaceVariant,
-                          child: FadeImage(
+                          child: CachedImage(
                             items[i].imageUrl,
                             width: 100 / Consts.coverHtoWRatio,
                           ),
@@ -202,7 +202,7 @@ class _RecommendationsGrid extends StatelessWidget {
                         borderRadius: Consts.borderRadiusMin,
                         child: Container(
                           color: Theme.of(context).colorScheme.surfaceVariant,
-                          child: FadeImage(items[i].imageUrl!),
+                          child: CachedImage(items[i].imageUrl!),
                         ),
                       ),
                     ),

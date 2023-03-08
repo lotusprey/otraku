@@ -18,8 +18,7 @@ class HtmlContent extends StatelessWidget {
       onTapUrl: (url) => Toast.launch(context, url),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
-        icon: const Icon(Icons.close),
-        color: Theme.of(context).colorScheme.error,
+        icon: const Icon(Icons.close_outlined),
         onPressed: () => showPopUp(
           context,
           ConfirmationDialog(

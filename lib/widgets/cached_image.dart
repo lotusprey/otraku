@@ -7,7 +7,7 @@ import 'package:otraku/widgets/overlays/toast.dart';
 final _cacheManager = CacheManager(
   Config(
     'imageCache',
-    maxNrOfCacheObjects: 600,
+    maxNrOfCacheObjects: 1000,
     stalePeriod: const Duration(days: 10),
   ),
 );

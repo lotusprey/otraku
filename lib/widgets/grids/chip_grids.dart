@@ -115,8 +115,9 @@ class _ChipGrid extends StatelessWidget {
               SizedBox(
                 height: 35,
                 child: IconButton(
+                  key: const ValueKey('Clear'),
                   icon: const Icon(Ionicons.close_outline),
-                  tooltip: 'Close',
+                  tooltip: 'Clear',
                   onPressed: onClear!,
                   color: Theme.of(context).colorScheme.onBackground,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -330,6 +331,8 @@ class ChipTagGridState extends State<ChipTagGrid> {
         widget.exclusiveGenres.clear();
         widget.inclusiveTags.clear();
         widget.exclusiveTags.clear();
+        widget.tagIdIn?.clear();
+        widget.tagIdNotIn?.clear();
       }),
     );
   }

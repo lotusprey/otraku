@@ -147,18 +147,15 @@ class _TopBarContent extends StatelessWidget {
               TopBarIcon(
                 tooltip: 'Filter',
                 icon: Ionicons.funnel_outline,
-                onTap: () {
-                  final notifier =
-                      ref.read(collectionFilterProvider(tag).notifier);
-
-                  showSheet(
-                    context,
-                    CollectionFilterView(
-                      filter: notifier.state,
-                      onChanged: (filter) => notifier.state = filter,
-                    ),
-                  );
-                },
+                onTap: () => showSheet(
+                  context,
+                  CollectionFilterView(
+                    filter: ref.read(collectionFilterProvider(tag)),
+                    onChanged: (filter) => ref
+                        .read(collectionFilterProvider(tag).notifier)
+                        .update((_) => filter),
+                  ),
+                ),
               ),
             ],
           ),

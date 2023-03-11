@@ -9,8 +9,9 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
       context: context,
       builder: (context) => sheet,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
     );
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.

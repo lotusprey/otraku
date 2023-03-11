@@ -5,7 +5,7 @@ import 'package:otraku/widgets/layouts/top_bar.dart';
 
 /// Simple wrapper around [Scaffold], only supporting a bottom bar.
 /// For top bars and floating bars, use [TabScaffold].
-class PageScaffold extends StatelessWidget {
+class PageScaffold extends StatefulWidget {
   const PageScaffold({
     required this.child,
     this.bottomBar,
@@ -15,11 +15,31 @@ class PageScaffold extends StatelessWidget {
   final Widget? bottomBar;
 
   @override
+  State<PageScaffold> createState() => _PageScaffoldState();
+}
+
+class _PageScaffoldState extends State<PageScaffold> {
+  double _topOffset = 0;
+  double _bottomOffset = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final padding = MediaQuery.of(context).padding;
+    _topOffset = padding.top;
+    _bottomOffset = padding.bottom;
+    if (widget.bottomBar != null) {
+      _bottomOffset += Consts.tapTargetSize;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      bottomNavigationBar: bottomBar,
-      body: child,
+      bottomNavigationBar: widget.bottomBar,
+      resizeToAvoidBottomInset: false,
+      body: widget.child,
     );
   }
 }
@@ -64,15 +84,17 @@ class TabScaffold extends StatelessWidget {
 /// - includes the bottom offset of a potential [PageScaffold]
 ///   with a bottom bar.
 VerticalOffsets scaffoldOffsets(BuildContext context) {
+  var top = 0.0;
+  var bottom = 0.0;
+
   final inner = context.findAncestorWidgetOfExactType<TabScaffold>();
-  final outer = context.findAncestorWidgetOfExactType<PageScaffold>();
-  final viewPadding = MediaQuery.of(context).viewPadding;
-
-  var top = viewPadding.top;
-  var bottom = viewPadding.bottom;
-
   if (inner?.topBar != null) top += inner!.topBar!.preferredSize.height;
-  if (outer?.bottomBar != null) bottom += Consts.tapTargetSize;
+
+  final outer = context.findAncestorStateOfType<_PageScaffoldState>();
+  if (outer != null) {
+    top += outer._topOffset;
+    bottom += outer._bottomOffset;
+  }
 
   return VerticalOffsets(top, bottom);
 }

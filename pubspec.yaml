@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.2.2+54
+version: 1.2.3+55
 
 environment:
   sdk: '>=2.17.0 <3.0.0'
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.3.0
+  flutter_riverpod: ^2.3.1
 
   # Data fetching.
   http: ^0.13.5

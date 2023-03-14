@@ -10,10 +10,11 @@ import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/home/home_view.dart';
 import 'package:otraku/media/media_models.dart';
 import 'package:otraku/media/media_providers.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -74,7 +75,7 @@ class MediaInfoView extends StatelessWidget {
         .innerController;
 
     return Consumer(
-      builder: (context, ref, _) => PageLayout(
+      builder: (context, ref, _) => TabScaffold(
         floatingBar: FloatingBar(
           scrollCtrl: scrollCtrl,
           children: [_EditButton(media), _FavoriteButton(info)],
@@ -131,7 +132,7 @@ class MediaInfoView extends StatelessWidget {
                           Text(
                             infoTitles[i],
                             maxLines: 1,
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                           Text(infoData[i].toString(), maxLines: 1),
                         ],
@@ -283,7 +284,7 @@ class _ScrollCards extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   title,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
               const Spacer(),
@@ -372,7 +373,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
 
     final spoilerTextStyle = Theme.of(context)
         .textTheme
-        .bodyText1
+        .bodyLarge
         ?.copyWith(color: Theme.of(context).colorScheme.error);
 
     return _ScrollCards(
@@ -414,7 +415,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
           const SizedBox(width: 5),
           Text(
             '${tags[i].rank}%',
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.labelMedium,
           ),
         ],
       ),
@@ -439,7 +440,8 @@ class _Title extends StatelessWidget {
           children: [
             SizedBox(
               width: 90,
-              child: Text(label, style: Theme.of(context).textTheme.subtitle1),
+              child:
+                  Text(label, style: Theme.of(context).textTheme.labelMedium),
             ),
             Flexible(
               child: GestureDetector(
@@ -449,7 +451,7 @@ class _Title extends StatelessWidget {
                   title,
                   maxLines: null,
                   textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.bodyText2?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                 ),

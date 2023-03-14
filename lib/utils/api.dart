@@ -108,7 +108,7 @@ abstract class Api {
           'Content-type': 'application/json',
           'Authorization': 'Bearer $_accessToken',
         },
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(const Duration(seconds: 20));
 
       final Map<String, dynamic> body = json.decode(response.body);
 

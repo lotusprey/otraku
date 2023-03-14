@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/text_rail.dart';
@@ -17,17 +17,14 @@ class DiscoverMediaGrid extends StatelessWidget {
       return const SliverFillRemaining(child: Center(child: Text('No Media')));
     }
 
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 290,
-          height: 110,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          childCount: items.length,
-          (context, index) => _Tile(items[index]),
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 290,
+        height: 110,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, index) => _Tile(items[index]),
       ),
     );
   }
@@ -49,7 +46,7 @@ class _Tile extends StatelessWidget {
     if (item.listStatus != null) textRailItems[item.listStatus!] = true;
     if (item.isAdult) textRailItems['Adult'] = true;
 
-    final detailTextStyle = Theme.of(context).textTheme.subtitle2;
+    final detailTextStyle = Theme.of(context).textTheme.labelSmall;
 
     return Card(
       child: LinkTile(
@@ -65,7 +62,7 @@ class _Tile extends StatelessWidget {
                 child: Container(
                   width: 120 / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: FadeImage(item.imageUrl),
+                  child: CachedImage(item.imageUrl),
                 ),
               ),
             ),
@@ -90,7 +87,7 @@ class _Tile extends StatelessWidget {
                           const SizedBox(height: 5),
                           TextRail(
                             textRailItems,
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ),

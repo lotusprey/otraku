@@ -6,7 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/widgets/fields/search_field.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 
 /// After [_delay] time has passed, since the last [run] call, call [callback].
 /// E.g. do a search query after the user stops typing.
@@ -62,7 +62,7 @@ class _SearchFilterFieldState extends State<SearchFilterField> {
           widget.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.headline1,
+          style: Theme.of(context).textTheme.titleLarge,
         ),
       );
     }
@@ -88,7 +88,7 @@ class _SearchFilterFieldState extends State<SearchFilterField> {
                     widget.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.headline1,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
                 TopBarIcon(

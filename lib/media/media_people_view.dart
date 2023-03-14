@@ -6,8 +6,8 @@ import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
@@ -24,7 +24,7 @@ class MediaPeopleView extends StatelessWidget {
         .findAncestorStateOfType<NestedScrollViewState>()!
         .innerController;
 
-    return PageLayout(
+    return TabScaffold(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         centered: true,
@@ -35,7 +35,8 @@ class MediaPeopleView extends StatelessWidget {
             onChanged: (i) => toggleTab(i == 1),
           ),
           if (tabToggled)
-            const SizedBox(width: actionButtonSize, height: actionButtonSize)
+            const SizedBox(
+                width: floatingBarItemHeight, height: floatingBarItemHeight)
           else
             _LanguageButton(id, scrollCtrl),
         ],
@@ -141,8 +142,8 @@ class _LanguageButton extends StatelessWidget {
                   Text(
                     notifier.languages[i],
                     style: i != notifier.languageIndex
-                        ? Theme.of(context).textTheme.headline1
-                        : Theme.of(context).textTheme.headline1?.copyWith(
+                        ? Theme.of(context).textTheme.titleLarge
+                        : Theme.of(context).textTheme.titleLarge?.copyWith(
                               color: Theme.of(context).colorScheme.primary,
                             ),
                   ),

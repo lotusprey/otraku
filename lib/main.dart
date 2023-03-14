@@ -95,7 +95,7 @@ class AppState extends State<App> {
             }
 
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: scheme.background,
+              statusBarColor: Colors.transparent,
               statusBarBrightness: scheme.brightness,
               statusBarIconBrightness: overlayBrightness,
               systemNavigationBarColor: scheme.background,

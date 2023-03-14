@@ -13,7 +13,7 @@ class LabeledField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: Theme.of(context).textTheme.subtitle1),
+        Text(label, style: Theme.of(context).textTheme.labelMedium),
         child,
       ],
     );

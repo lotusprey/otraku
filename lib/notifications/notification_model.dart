@@ -3,36 +3,32 @@ import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/options.dart';
 
 enum NotificationFilterType {
-  all,
-  airing,
-  activity,
-  forum,
-  follows,
-  media;
+  all('All'),
+  replies('Replies'),
+  activity('Activity'),
+  forum('Forum'),
+  airing('Airing'),
+  follows('Follows'),
+  media('Media');
 
-  String get text {
-    switch (this) {
-      case NotificationFilterType.all:
-        return 'All';
-      case NotificationFilterType.airing:
-        return 'Airing';
-      case NotificationFilterType.activity:
-        return 'Activity';
-      case NotificationFilterType.forum:
-        return 'Forum';
-      case NotificationFilterType.follows:
-        return 'Follows';
-      case NotificationFilterType.media:
-        return 'Media';
-    }
-  }
+  const NotificationFilterType(this.text);
+
+  final String text;
 
   List<String>? get vars {
     switch (this) {
       case NotificationFilterType.all:
         return null;
-      case NotificationFilterType.airing:
-        return const ['AIRING'];
+      case NotificationFilterType.replies:
+        return const [
+          'ACTIVITY_MESSAGE',
+          'ACTIVITY_REPLY',
+          'ACTIVITY_REPLY_SUBSCRIBED',
+          'ACTIVITY_MENTION',
+          'THREAD_COMMENT_REPLY',
+          'THREAD_COMMENT_MENTION',
+          'THREAD_SUBSCRIBED',
+        ];
       case NotificationFilterType.activity:
         return const [
           'ACTIVITY_MESSAGE',
@@ -50,6 +46,8 @@ enum NotificationFilterType {
           'THREAD_LIKE',
           'THREAD_COMMENT_LIKE',
         ];
+      case NotificationFilterType.airing:
+        return const ['AIRING'];
       case NotificationFilterType.follows:
         return const ['FOLLOWING'];
       case NotificationFilterType.media:

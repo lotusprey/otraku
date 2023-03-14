@@ -6,8 +6,9 @@ import 'package:otraku/user/friends_provider.dart';
 import 'package:otraku/user/user_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -43,20 +44,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
       onRefresh: () => ref.invalidate(friendsProvider(widget.id)),
     );
 
-    return PageLayout(
-      topBar: TopBar(
-        title: _onFollowing ? 'Following' : 'Followers',
-        items: [
-          if (count > 0)
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Text(
-                count.toString(),
-                style: Theme.of(context).textTheme.headline3,
-              ),
-            ),
-        ],
-      ),
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _onFollowing ? 0 : 1,
         onChanged: (page) {
@@ -68,25 +56,40 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
           'Followers': Ionicons.person_circle,
         },
       ),
-      child: DirectPageView(
-        current: _onFollowing ? 0 : 1,
-        onChanged: (page) {
-          setState(() => _onFollowing = page == 0 ? true : false);
-        },
-        children: [
-          _FriendTab(
-            id: widget.id,
-            onFollowing: true,
-            refreshControl: refreshControl,
-            paginationController: _ctrl,
-          ),
-          _FriendTab(
-            id: widget.id,
-            onFollowing: false,
-            refreshControl: refreshControl,
-            paginationController: _ctrl,
-          ),
-        ],
+      child: TabScaffold(
+        topBar: TopBar(
+          title: _onFollowing ? 'Following' : 'Followers',
+          trailing: [
+            if (count > 0)
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Text(
+                  count.toString(),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+          ],
+        ),
+        child: DirectPageView(
+          current: _onFollowing ? 0 : 1,
+          onChanged: (page) {
+            setState(() => _onFollowing = page == 0 ? true : false);
+          },
+          children: [
+            _FriendTab(
+              id: widget.id,
+              onFollowing: true,
+              refreshControl: refreshControl,
+              paginationController: _ctrl,
+            ),
+            _FriendTab(
+              id: widget.id,
+              onFollowing: false,
+              refreshControl: refreshControl,
+              paginationController: _ctrl,
+            ),
+          ],
+        ),
       ),
     );
   }

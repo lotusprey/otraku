@@ -4,10 +4,10 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/media/media_models.dart';
 import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/text_rail.dart';
@@ -26,7 +26,7 @@ class MediaOtherView extends StatelessWidget {
         .findAncestorStateOfType<NestedScrollViewState>()!
         .innerController;
 
-    return PageLayout(
+    return TabScaffold(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         centered: true,
@@ -125,7 +125,7 @@ class _RelatedGrid extends StatelessWidget {
                         borderRadius: Consts.borderRadiusMin,
                         child: Container(
                           color: Theme.of(context).colorScheme.surfaceVariant,
-                          child: FadeImage(
+                          child: CachedImage(
                             items[i].imageUrl,
                             width: 100 / Consts.coverHtoWRatio,
                           ),
@@ -147,7 +147,7 @@ class _RelatedGrid extends StatelessWidget {
                             const SizedBox(height: 5),
                             TextRail(
                               details,
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],
                         ),
@@ -202,7 +202,7 @@ class _RecommendationsGrid extends StatelessWidget {
                         borderRadius: Consts.borderRadiusMin,
                         child: Container(
                           color: Theme.of(context).colorScheme.surfaceVariant,
-                          child: FadeImage(items[i].imageUrl!),
+                          child: CachedImage(items[i].imageUrl!),
                         ),
                       ),
                     ),
@@ -215,7 +215,7 @@ class _RecommendationsGrid extends StatelessWidget {
                         items[i].title,
                         overflow: TextOverflow.fade,
                         maxLines: 2,
-                        style: Theme.of(context).textTheme.bodyText2,
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                   ),

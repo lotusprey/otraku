@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_models.dart';
-import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/activity/activity_provider.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -34,7 +34,7 @@ class ReplyCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(
+                child: CachedImage(
                   reply.user.imageUrl,
                   height: 50,
                   width: 50,
@@ -61,7 +61,7 @@ class ReplyCard extends StatelessWidget {
                   children: [
                     Text(
                       reply.createdAt,
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const Spacer(),
                     if (reply.user.id == Options().id) ...[
@@ -173,10 +173,10 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               Text(
                 widget.reply.likeCount.toString(),
                 style: !widget.reply.isLiked
-                    ? Theme.of(context).textTheme.subtitle2
+                    ? Theme.of(context).textTheme.labelSmall
                     : Theme.of(context)
                         .textTheme
-                        .subtitle2!
+                        .labelSmall!
                         .copyWith(color: Theme.of(context).colorScheme.error),
               ),
               const SizedBox(width: 5),

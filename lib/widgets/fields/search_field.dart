@@ -47,7 +47,7 @@ class _SearchFieldState extends State<SearchField> {
     return TextField(
       controller: _ctrl,
       autofocus: widget.onHide != null,
-      style: Theme.of(context).textTheme.bodyText2,
+      style: Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
         isDense: false,
         hintText: widget.hint,

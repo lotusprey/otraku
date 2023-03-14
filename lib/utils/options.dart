@@ -7,7 +7,7 @@ import 'package:otraku/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.2.2+1';
+const versionCode = '1.2.3';
 
 /// General options keys.
 enum _OptionKey {
@@ -26,8 +26,10 @@ enum _OptionKey {
   confirmExit,
   leftHanded,
   analogueClock,
-  compactDiscoverGrid,
   feedOnFollowing,
+  discoverItemView,
+  collectionItemView,
+  collectionPreviewItemView,
   feedActivityFilters,
   lastNotificationId,
   lastVersionCode,
@@ -75,7 +77,9 @@ class Options extends ChangeNotifier {
     this._leftHanded,
     this._analogueClock,
     this._feedOnFollowing,
-    this._compactDiscoverGrid,
+    this._discoverItemView,
+    this._collectionItemView,
+    this._collectionPreviewItemView,
     this._feedActivityFilters,
     this._lastNotificationId,
     this._lastVersionCode,
@@ -117,6 +121,24 @@ class Options extends ChangeNotifier {
       imageQualityIndex = 1;
     }
 
+    int discoverItemView =
+        _optionBox.get(_OptionKey.discoverItemView.name) ?? 0;
+    if (discoverItemView < 0 || discoverItemView > 1) {
+      discoverItemView = 0;
+    }
+
+    int collectionItemView =
+        _optionBox.get(_OptionKey.collectionItemView.name) ?? 0;
+    if (collectionItemView < 0 || collectionItemView > 1) {
+      collectionItemView = 0;
+    }
+
+    int collectionPreviewItemView =
+        _optionBox.get(_OptionKey.collectionPreviewItemView.name) ?? 0;
+    if (collectionPreviewItemView < 0 || collectionPreviewItemView > 1) {
+      collectionPreviewItemView = 0;
+    }
+
     return Options._(
       ThemeMode.values[themeMode],
       _optionBox.get(_OptionKey.themeIndex.name),
@@ -134,7 +156,9 @@ class Options extends ChangeNotifier {
       _optionBox.get(_OptionKey.leftHanded.name) ?? false,
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
       _optionBox.get(_OptionKey.feedOnFollowing.name) ?? false,
-      _optionBox.get(_OptionKey.compactDiscoverGrid.name) ?? false,
+      discoverItemView,
+      collectionItemView,
+      collectionPreviewItemView,
       _optionBox.get(_OptionKey.feedActivityFilters.name) ?? [0, 1, 2],
       _optionBox.get(_OptionKey.lastNotificationId.name) ?? -1,
       _optionBox.get(_OptionKey.lastVersionCode.name) ?? '',
@@ -202,8 +226,10 @@ class Options extends ChangeNotifier {
   bool _confirmExit;
   bool _leftHanded;
   bool _analogueClock;
-  bool _compactDiscoverGrid;
   bool _feedOnFollowing;
+  int _discoverItemView;
+  int _collectionItemView;
+  int _collectionPreviewItemView;
   List<int> _feedActivityFilters;
   int _lastNotificationId;
   String _lastVersionCode;
@@ -226,8 +252,10 @@ class Options extends ChangeNotifier {
   bool get confirmExit => _confirmExit;
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
-  bool get compactDiscoverGrid => _compactDiscoverGrid;
   bool get feedOnFollowing => _feedOnFollowing;
+  int get discoverItemView => _discoverItemView;
+  int get collectionItemView => _collectionItemView;
+  int get collectionPreviewItemView => _collectionPreviewItemView;
   List<int> get feedActivityFilters => _feedActivityFilters;
   int get lastNotificationId => _lastNotificationId;
   String get lastVersionCode => _lastVersionCode;
@@ -364,14 +392,24 @@ class Options extends ChangeNotifier {
     _optionBox.put(_OptionKey.analogueClock.name, v);
   }
 
-  set compactDiscoverGrid(bool v) {
-    _compactDiscoverGrid = v;
-    _optionBox.put(_OptionKey.compactDiscoverGrid.name, v);
-  }
-
   set feedOnFollowing(bool v) {
     _feedOnFollowing = v;
     _optionBox.put(_OptionKey.feedOnFollowing.name, v);
+  }
+
+  set discoverItemView(int v) {
+    _discoverItemView = v;
+    _optionBox.put(_OptionKey.discoverItemView.name, v);
+  }
+
+  set collectionItemView(int v) {
+    _collectionItemView = v;
+    _optionBox.put(_OptionKey.collectionItemView.name, v);
+  }
+
+  set collectionPreviewItemView(int v) {
+    _collectionPreviewItemView = v;
+    _optionBox.put(_OptionKey.collectionPreviewItemView.name, v);
   }
 
   set feedActivityFilters(List<int> v) {

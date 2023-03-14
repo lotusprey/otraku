@@ -11,11 +11,12 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -48,99 +49,99 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
-      topBar: TopBar(
-        items: [
-          Expanded(
-            child: Consumer(
-              builder: (context, ref, _) => Text(
-                '${ref.watch(notificationFilterProvider).text} Notifications',
-                style: Theme.of(context).textTheme.headline1,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+    return PageScaffold(
+      child: TabScaffold(
+        topBar: TopBar(
+          trailing: [
+            Expanded(
+              child: Consumer(
+                builder: (context, ref, _) => Text(
+                  '${ref.watch(notificationFilterProvider).text} Notifications',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      floatingBar: FloatingBar(
-        scrollCtrl: _ctrl,
-        children: [
-          ActionButton(
-            tooltip: 'Filter',
-            icon: Ionicons.funnel_outline,
-            onTap: () {
-              showSheet(
-                context,
-                Consumer(
-                  builder: (context, ref, _) {
-                    final notifier = ref.read(
-                      notificationFilterProvider.notifier,
-                    );
-
-                    final tiles = <Widget>[];
-                    for (int i = 0;
-                        i < NotificationFilterType.values.length;
-                        i++) {
-                      tiles.add(Text(
-                        NotificationFilterType.values.elementAt(i).text,
-                        style: i != notifier.state.index
-                            ? Theme.of(context).textTheme.headline1
-                            : Theme.of(context).textTheme.headline1?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                      ));
-                    }
-
-                    return DynamicGradientDragSheet(
-                      children: tiles,
-                      onTap: (i) => notifier.state =
-                          NotificationFilterType.values.elementAt(i),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      child: Consumer(
-        child: SliverRefreshControl(
-          onRefresh: () => ref.invalidate(notificationsProvider),
+          ],
         ),
-        builder: (context, ref, refreshControl) {
-          ref.listen<NotificationsNotifier>(
-            notificationsProvider,
-            (_, s) => s.notifications.whenOrNull(
-              error: (error, _) => showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Failed to load notifications',
-                  content: error.toString(),
+        floatingBar: FloatingBar(
+          scrollCtrl: _ctrl,
+          children: [
+            ActionButton(
+              tooltip: 'Filter',
+              icon: Ionicons.funnel_outline,
+              onTap: () {
+                showSheet(
+                  context,
+                  Consumer(
+                    builder: (context, ref, _) {
+                      final theme = Theme.of(context);
+                      final notifier = ref.read(
+                        notificationFilterProvider.notifier,
+                      );
+
+                      final tiles = <Widget>[];
+                      for (int i = 0;
+                          i < NotificationFilterType.values.length;
+                          i++) {
+                        tiles.add(Text(
+                          NotificationFilterType.values.elementAt(i).text,
+                          style: i != notifier.state.index
+                              ? theme.textTheme.titleLarge
+                              : theme.textTheme.titleLarge?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                ),
+                        ));
+                      }
+
+                      return DynamicGradientDragSheet(
+                        children: tiles,
+                        onTap: (i) => notifier.state =
+                            NotificationFilterType.values.elementAt(i),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        child: Consumer(
+          child: SliverRefreshControl(
+            onRefresh: () => ref.invalidate(notificationsProvider),
+          ),
+          builder: (context, ref, refreshControl) {
+            ref.listen<NotificationsNotifier>(
+              notificationsProvider,
+              (_, s) => s.notifications.whenOrNull(
+                error: (error, _) => showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Failed to load notifications',
+                    content: error.toString(),
+                  ),
                 ),
               ),
-            ),
-          );
+            );
 
-          final notifier = ref.watch(notificationsProvider);
-          return notifier.notifications.when(
-            loading: () => const Center(child: Loader()),
-            error: (_, __) =>
-                const Center(child: Text('Failed to load notifications')),
-            data: (data) {
-              if (data.items.isEmpty) {
-                return const Center(child: Text('No notifications'));
-              }
+            final notifier = ref.watch(notificationsProvider);
+            return notifier.notifications.when(
+              loading: () => const Center(child: Loader()),
+              error: (_, __) =>
+                  const Center(child: Text('Failed to load notifications')),
+              data: (data) {
+                if (data.items.isEmpty) {
+                  return const Center(child: Text('No notifications'));
+                }
 
-              return ConstrainedView(
-                child: CustomScrollView(
-                  physics: Consts.physics,
-                  controller: _ctrl,
-                  slivers: [
-                    refreshControl!,
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      sliver: SliverList(
+                return ConstrainedView(
+                  child: CustomScrollView(
+                    physics: Consts.physics,
+                    controller: _ctrl,
+                    slivers: [
+                      refreshControl!,
+                      SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, i) => _NotificationItem(
                             data.items[i],
@@ -149,14 +150,14 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                           childCount: data.items.length,
                         ),
                       ),
-                    ),
-                    SliverFooter(loading: data.hasNext),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+                      SliverFooter(loading: data.hasNext),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -197,7 +198,7 @@ class _NotificationItem extends StatelessWidget {
                       borderRadius: const BorderRadius.horizontal(
                         left: Consts.radiusMin,
                       ),
-                      child: FadeImage(item.imageUrl!, width: 70),
+                      child: CachedImage(item.imageUrl!, width: 70),
                     ),
                   ),
                 Flexible(
@@ -294,15 +295,17 @@ class _NotificationItem extends StatelessWidget {
                                     text: item.texts[i],
                                     style: (i % 2 == 0) ==
                                             item.markTextOnEvenIndex
-                                        ? Theme.of(context).textTheme.bodyText1
-                                        : Theme.of(context).textTheme.bodyText2,
+                                        ? Theme.of(context).textTheme.bodyLarge
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                   ),
                               ],
                             ),
                           ),
                           Text(
                             item.timestamp,
-                            style: Theme.of(context).textTheme.subtitle2,
+                            style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],
                       ),
@@ -344,8 +347,8 @@ class _NotificationDialog extends StatelessWidget {
             TextSpan(
               text: item.texts[i],
               style: (i % 2 == 0) == item.markTextOnEvenIndex
-                  ? Theme.of(context).textTheme.bodyText1
-                  : Theme.of(context).textTheme.bodyText2,
+                  ? Theme.of(context).textTheme.bodyLarge
+                  : Theme.of(context).textTheme.bodyMedium,
             ),
         ],
       ),
@@ -363,7 +366,7 @@ class _NotificationDialog extends StatelessWidget {
             if (item.imageUrl != null) ...[
               ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: FadeImage(
+                child: CachedImage(
                   item.imageUrl!,
                   width: imageWidth,
                   height: imageWidth * Consts.coverHtoWRatio,

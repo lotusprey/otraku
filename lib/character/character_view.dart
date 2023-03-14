@@ -6,8 +6,9 @@ import 'package:otraku/character/character_info_tab.dart';
 import 'package:otraku/character/character_media_tab.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class CharacterView extends ConsumerStatefulWidget {
@@ -54,9 +55,9 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
 
     ref.watch(characterMediaProvider(widget.id).select((_) => null));
     final name = ref.watch(characterProvider(widget.id)).valueOrNull?.name;
+    final topBar = TopBar(title: name);
 
-    return PageLayout(
-      topBar: TopBar(title: name),
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
@@ -71,9 +72,9 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
         children: [
-          CharacterInfoTab(widget.id, widget.imageUrl, _ctrl),
-          CharacterAnimeTab(widget.id, _ctrl),
-          CharacterMangaTab(widget.id, _ctrl),
+          CharacterInfoTab(widget.id, widget.imageUrl, _ctrl, topBar),
+          CharacterAnimeTab(widget.id, _ctrl, topBar),
+          CharacterMangaTab(widget.id, _ctrl, topBar),
         ],
       ),
     );

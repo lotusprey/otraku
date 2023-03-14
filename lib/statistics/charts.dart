@@ -33,7 +33,7 @@ class BarChart extends StatelessWidget {
       children: [
         Padding(
           padding: Consts.padding,
-          child: Text(title, style: Theme.of(context).textTheme.headline3),
+          child: Text(title, style: Theme.of(context).textTheme.titleSmall),
         ),
         if (action != null) action!,
         SizedBox(
@@ -48,7 +48,7 @@ class BarChart extends StatelessWidget {
               children: [
                 Text(
                   values[i].toString(),
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
@@ -67,7 +67,7 @@ class BarChart extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(names[i], style: Theme.of(context).textTheme.subtitle1),
+                Text(names[i], style: Theme.of(context).textTheme.labelMedium),
               ],
             ),
           ),
@@ -92,7 +92,7 @@ class PieChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.headline3),
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
         const SizedBox(height: 5),
         Container(
           height: 225,
@@ -153,7 +153,7 @@ class PieChart extends StatelessWidget {
                           const SizedBox(width: 5),
                           Text(
                             values[i].toString(),
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ),

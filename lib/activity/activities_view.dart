@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/activity/activities_providers.dart';
 import 'package:otraku/activity/activity_card.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
@@ -13,8 +13,9 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/pagination_view.dart';
 
@@ -92,34 +93,36 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
-      topBar: const TopBar(title: 'Activities'),
-      floatingBar: FloatingBar(
-        scrollCtrl: _ctrl,
-        children: [
-          ActionButton(
-            tooltip: widget.id == Options().id ? 'New Post' : 'New Message',
-            icon: Icons.edit_outlined,
-            onTap: () => showSheet(
-              context,
-              CompositionView(
-                composition: widget.id == Options().id
-                    ? Composition.status(null, '')
-                    : Composition.message(null, '', widget.id),
-                onDone: (map) => ref
-                    .read(activitiesProvider(widget.id).notifier)
-                    .insertActivity(map, Options().id!),
+    return PageScaffold(
+      child: TabScaffold(
+        topBar: const TopBar(title: 'Activities'),
+        floatingBar: FloatingBar(
+          scrollCtrl: _ctrl,
+          children: [
+            ActionButton(
+              tooltip: widget.id == Options().id ? 'New Post' : 'New Message',
+              icon: Icons.edit_outlined,
+              onTap: () => showSheet(
+                context,
+                CompositionView(
+                  composition: widget.id == Options().id
+                      ? Composition.status(null, '')
+                      : Composition.message(null, '', widget.id),
+                  onDone: (map) => ref
+                      .read(activitiesProvider(widget.id).notifier)
+                      .insertActivity(map, Options().id!),
+                ),
               ),
             ),
-          ),
-          ActionButton(
-            tooltip: 'Filter',
-            icon: Ionicons.funnel_outline,
-            onTap: () => showActivityFilterSheet(context, ref, widget.id),
-          ),
-        ],
+            ActionButton(
+              tooltip: 'Filter',
+              icon: Ionicons.funnel_outline,
+              onTap: () => showActivityFilterSheet(context, ref, widget.id),
+            ),
+          ],
+        ),
+        child: ActivitiesSubView(widget.id, _ctrl),
       ),
-      child: ActivitiesSubView(widget.id, _ctrl),
     );
   }
 }
@@ -145,51 +148,48 @@ class ActivitiesSubView extends StatelessWidget {
             }
             return Future.value();
           },
-          onData: (data) => SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount: data.items.length,
-                (context, i) => ActivityCard(
-                  withHeader: true,
+          onData: (data) => SliverList(
+            delegate: SliverChildBuilderDelegate(
+              childCount: data.items.length,
+              (context, i) => ActivityCard(
+                withHeader: true,
+                activity: data.items[i],
+                footer: ActivityFooter(
                   activity: data.items[i],
-                  footer: ActivityFooter(
-                    activity: data.items[i],
-                    onDeleted: () => ref
-                        .read(activitiesProvider(id).notifier)
-                        .remove(data.items[i].id),
-                    onChanged: null,
-                    onPinned: id == Options().id
-                        ? () => ref
-                            .read(activitiesProvider(id).notifier)
-                            .togglePin(data.items[i].id)
-                        : null,
-                    onOpenReplies: () => Navigator.pushNamed(
-                      context,
-                      RouteArg.activity,
-                      arguments: RouteArg(
-                        id: data.items[i].id,
-                        callback: (arg) {
-                          final updatedActivity = arg as Activity?;
-                          if (updatedActivity == null) {
-                            ref
-                                .read(activitiesProvider(id).notifier)
-                                .remove(data.items[i].id);
-                            return;
-                          }
-
+                  onDeleted: () => ref
+                      .read(activitiesProvider(id).notifier)
+                      .remove(data.items[i].id),
+                  onChanged: null,
+                  onPinned: id == Options().id
+                      ? () => ref
+                          .read(activitiesProvider(id).notifier)
+                          .togglePin(data.items[i].id)
+                      : null,
+                  onOpenReplies: () => Navigator.pushNamed(
+                    context,
+                    RouteArg.activity,
+                    arguments: RouteArg(
+                      id: data.items[i].id,
+                      callback: (arg) {
+                        final updatedActivity = arg as Activity?;
+                        if (updatedActivity == null) {
                           ref
                               .read(activitiesProvider(id).notifier)
-                              .updateActivity(updatedActivity);
-                        },
-                      ),
+                              .remove(data.items[i].id);
+                          return;
+                        }
+
+                        ref
+                            .read(activitiesProvider(id).notifier)
+                            .updateActivity(updatedActivity);
+                      },
                     ),
-                    onEdited: (map) {
-                      ref
-                          .read(activitiesProvider(id).notifier)
-                          .replaceActivity(map);
-                    },
                   ),
+                  onEdited: (map) {
+                    ref
+                        .read(activitiesProvider(id).notifier)
+                        .replaceActivity(map);
+                  },
                 ),
               ),
             ),

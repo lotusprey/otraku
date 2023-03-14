@@ -7,7 +7,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
@@ -124,7 +124,7 @@ class AuthViewState extends State<AuthView> {
             children: [
               Text(
                 'Otraku for AniList',
-                style: Theme.of(context).textTheme.headline1,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 20),
               Container(
@@ -141,13 +141,13 @@ class AuthViewState extends State<AuthView> {
                       children: [
                         Text(
                           'Primary Account',
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                         if (available0) ...[
                           const SizedBox(height: 5),
                           Text(
                             Options().idOf(0)?.toString() ?? '',
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ],
@@ -192,13 +192,13 @@ class AuthViewState extends State<AuthView> {
                       children: [
                         Text(
                           'Secondary Account',
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                         if (available1) ...[
                           const SizedBox(height: 5),
                           Text(
                             Options().idOf(1)?.toString() ?? '',
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
                       ],
@@ -233,7 +233,7 @@ class AuthViewState extends State<AuthView> {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                 child: Text(
                   'Before connecting another account, you should log out from the first one in the browser.',
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
             ],

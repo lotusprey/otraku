@@ -8,8 +8,9 @@ import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -89,7 +90,7 @@ class _StatisticsViewState extends State<StatisticsView> {
       },
     );
 
-    return PageLayout(
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _onAnime ? 0 : 1,
         onChanged: (page) =>
@@ -100,10 +101,12 @@ class _StatisticsViewState extends State<StatisticsView> {
           'Manga': Ionicons.bookmark_outline,
         },
       ),
-      topBar: TopBar(
-        title: _onAnime ? 'Anime Statistics' : 'Manga Statistics',
+      child: TabScaffold(
+        topBar: TopBar(
+          title: _onAnime ? 'Anime Statistics' : 'Manga Statistics',
+        ),
+        child: content,
       ),
-      child: content,
     );
   }
 }
@@ -129,13 +132,13 @@ class _StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pageLayout = PageLayout.of(context);
+    final offsets = scaffoldOffsets(context);
 
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: pageLayout.topOffset + 10,
-        bottom: pageLayout.bottomOffset,
+        top: offsets.top + 10,
+        bottom: offsets.bottom,
       ),
       children: [
         _Details(statistics, ofAnime),
@@ -235,7 +238,8 @@ class _Details extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(titles[i], style: Theme.of(context).textTheme.subtitle1),
+                  Text(titles[i],
+                      style: Theme.of(context).textTheme.labelMedium),
                   Text(subtitles[i].toString()),
                 ],
               ),

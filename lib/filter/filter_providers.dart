@@ -46,7 +46,7 @@ class DiscoverFilterNotifier extends ChangeNotifier {
   }
 
   set birthday(bool val) {
-    if (_birthday = val) return;
+    if (_birthday == val) return;
     _birthday = val;
     notifyListeners();
   }

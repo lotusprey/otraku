@@ -129,7 +129,7 @@ class RouteArg {
   static final _unknown = MaterialPageRoute(
     builder: (context) => Scaffold(
       body: Center(
-        child: Text('404', style: Theme.of(context).textTheme.headline1),
+        child: Text('404', style: Theme.of(context).textTheme.titleLarge),
       ),
     ),
   );

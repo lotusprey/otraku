@@ -3,21 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/character/character_models.dart';
 import 'package:otraku/character/character_providers.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class CharacterInfoTab extends StatelessWidget {
-  const CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+  const CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl, this.topBar);
 
   final int id;
   final String? imageUrl;
   final ScrollController scrollCtrl;
+  final TopBar topBar;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class CharacterInfoTab extends StatelessWidget {
                 imageUrl: imageUrl,
                 scrollCtrl: scrollCtrl,
                 refreshControl: refreshControl,
+                topBar: topBar,
                 loading: true,
               ),
               error: (_, __) => _TabContent(
@@ -42,6 +45,7 @@ class CharacterInfoTab extends StatelessWidget {
                 imageUrl: imageUrl,
                 scrollCtrl: scrollCtrl,
                 refreshControl: refreshControl,
+                topBar: topBar,
                 loading: false,
               ),
               data: (data) => _TabContent(
@@ -50,6 +54,7 @@ class CharacterInfoTab extends StatelessWidget {
                 imageUrl: imageUrl,
                 scrollCtrl: scrollCtrl,
                 refreshControl: refreshControl,
+                topBar: topBar,
                 loading: false,
               ),
             );
@@ -65,6 +70,7 @@ class _TabContent extends StatelessWidget {
     required this.imageUrl,
     required this.scrollCtrl,
     required this.refreshControl,
+    required this.topBar,
     required this.loading,
   });
 
@@ -73,6 +79,7 @@ class _TabContent extends StatelessWidget {
   final String? imageUrl;
   final ScrollController scrollCtrl;
   final Widget refreshControl;
+  final TopBar topBar;
   final bool loading;
 
   @override
@@ -99,7 +106,7 @@ class _TabContent extends StatelessWidget {
                   height: imageHeight,
                   color: Theme.of(context).colorScheme.surfaceVariant,
                   child: GestureDetector(
-                    child: FadeImage(imageUrl),
+                    child: CachedImage(imageUrl),
                     onTap: () => showPopUp(context, ImageDialog(imageUrl)),
                   ),
                 ),
@@ -116,7 +123,7 @@ class _TabContent extends StatelessWidget {
                     onTap: () => Toast.copy(context, data!.name),
                     child: Text(
                       data!.name,
-                      style: Theme.of(context).textTheme.headline1,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
                   if (data!.altNames.isNotEmpty)
@@ -126,7 +133,7 @@ class _TabContent extends StatelessWidget {
                       behavior: HitTestBehavior.opaque,
                       child: Text(
                         'Spoiler names',
-                        style: Theme.of(context).textTheme.bodyText1,
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       onTap: () => showPopUp(
                         context,
@@ -145,7 +152,8 @@ class _TabContent extends StatelessWidget {
 
     const space = SliverToBoxAdapter(child: SizedBox(height: 10));
 
-    return PageLayout(
+    return TabScaffold(
+      topBar: topBar,
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: [if (data != null) _FavoriteButton(data!)],
@@ -259,7 +267,7 @@ class _InfoTile extends StatelessWidget {
             Text(
               title,
               maxLines: 1,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.labelMedium,
             ),
             Text(subtitle, maxLines: 1),
           ],

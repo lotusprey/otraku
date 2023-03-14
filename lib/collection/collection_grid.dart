@@ -3,18 +3,14 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_providers.dart';
-import 'package:otraku/media/media_constants.dart';
-import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/consts.dart';
 import 'package:otraku/edit/edit_view.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/media/media_constants.dart';
+import 'package:otraku/utils/consts.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
-import 'package:otraku/widgets/text_rail.dart';
-
-const _TILE_HEIGHT = 140.0;
 
 class CollectionGrid extends StatelessWidget {
   const CollectionGrid({
@@ -33,269 +29,94 @@ class CollectionGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(items[i], scoreFormat, onProgressUpdate),
-          childCount: items.length,
-        ),
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 350,
-          height: _TILE_HEIGHT,
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
+        minWidth: 100,
+        extraHeight: 70,
+        rawHWRatio: Consts.coverHtoWRatio,
       ),
-    );
-  }
-}
-
-class _Tile extends StatelessWidget {
-  const _Tile(this.entry, this.scoreFormat, this.onProgressUpdate);
-
-  final Entry entry;
-  final ScoreFormat scoreFormat;
-  final void Function(Entry, List<String>)? onProgressUpdate;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: LinkTile(
-        key: ValueKey(entry.mediaId),
-        id: entry.mediaId,
-        discoverType: DiscoverType.anime,
-        info: entry.imageUrl,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Hero(
-              tag: entry.mediaId,
-              child: ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
-                child: Container(
-                  width: _TILE_HEIGHT / Consts.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: FadeImage(entry.imageUrl),
-                ),
-              ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: _TileContent(entry, scoreFormat, onProgressUpdate),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// The content is a [StatefulWidget], as it
-/// needs to update when the progress increments.
-class _TileContent extends StatefulWidget {
-  const _TileContent(this.item, this.scoreFormat, this.onProgressUpdate);
-
-  final Entry item;
-  final ScoreFormat scoreFormat;
-  final void Function(Entry, List<String>)? onProgressUpdate;
-
-  @override
-  State<_TileContent> createState() => __TileContentState();
-}
-
-class __TileContentState extends State<_TileContent> {
-  @override
-  Widget build(BuildContext context) {
-    final item = widget.item;
-
-    double progressPercent = 0;
-    if (item.progressMax != null) {
-      progressPercent = item.progress / item.progressMax!;
-    } else if (item.nextEpisode != null) {
-      progressPercent = item.progress / (item.nextEpisode! - 1);
-    } else if (item.progress > 0) {
-      progressPercent = 1;
-    }
-
-    final textRailItems = <String, bool>{};
-    if (widget.item.format != null) {
-      textRailItems[Convert.clarifyEnum(widget.item.format)!] = false;
-    }
-    if (widget.item.airingAt != null) {
-      textRailItems['Ep ${widget.item.nextEpisode} in '
-          '${Convert.timeUntilTimestamp(widget.item.airingAt)}'] = false;
-    }
-    if (widget.item.nextEpisode != null &&
-        widget.item.nextEpisode! - 1 > widget.item.progress) {
-      textRailItems['${widget.item.nextEpisode! - 1 - widget.item.progress}'
-          ' ep behind'] = true;
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Flexible(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Flexible(
-                child: Text(
-                  widget.item.titles[0],
-                  overflow: TextOverflow.fade,
-                ),
-              ),
-              const SizedBox(height: 5),
-              TextRail(textRailItems),
-            ],
-          ),
-        ),
-        Container(
-          height: 5,
-          margin: const EdgeInsets.symmetric(vertical: 3),
-          decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMin,
-            gradient: LinearGradient(
-              colors: [
-                Theme.of(context).colorScheme.onSurfaceVariant,
-                Theme.of(context).colorScheme.onSurfaceVariant,
-                Theme.of(context).colorScheme.background,
-                Theme.of(context).colorScheme.background,
-              ],
-              stops: [0.0, progressPercent, progressPercent, 1.0],
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Tooltip(message: 'Score', child: _buildScore(context)),
-            if (widget.item.repeat > 0)
-              Tooltip(
-                message: 'Repeats',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Ionicons.repeat, size: Consts.iconSmall),
-                    const SizedBox(width: 3),
-                    Text(
-                      widget.item.repeat.toString(),
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ],
-                ),
-              )
-            else
-              const SizedBox(),
-            if (widget.item.notes != null)
-              SizedBox(
-                height: 40,
-                child: Tooltip(
-                  message: 'Comment',
-                  child: InkResponse(
-                    radius: 10,
-                    child: const Icon(Ionicons.chatbox, size: Consts.iconSmall),
-                    onTap: () => showPopUp(
-                      context,
-                      TextDialog(
-                        title: 'Comment',
-                        text: widget.item.notes!,
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, i) => Card(
+          child: LinkTile(
+            id: items[i].mediaId,
+            discoverType: DiscoverType.anime,
+            info: items[i].imageUrl,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Hero(
+                    tag: items[i].mediaId,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: Container(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        child: CachedImage(items[i].imageUrl),
                       ),
                     ),
                   ),
                 ),
-              )
-            else
-              const SizedBox(),
-            _buildProgressButton(),
-          ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
+                  child: SizedBox(
+                    height: 35,
+                    child: Text(
+                      items[i].titles[0],
+                      overflow: TextOverflow.fade,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+                _IncrementButton(items[i], onProgressUpdate),
+              ],
+            ),
+          ),
         ),
-      ],
+      ),
     );
   }
+}
 
-  Widget _buildScore(BuildContext context) {
-    if (widget.item.score == 0) return const SizedBox();
+class _IncrementButton extends StatefulWidget {
+  const _IncrementButton(this.item, this.onProgressUpdate);
 
-    switch (widget.scoreFormat) {
-      case ScoreFormat.POINT_3:
-        if (widget.item.score == 3) {
-          return const Icon(
-            Icons.sentiment_very_satisfied,
-            size: Consts.iconSmall,
-          );
-        }
+  final Entry item;
+  final void Function(Entry, List<String>)? onProgressUpdate;
 
-        if (widget.item.score == 2) {
-          return const Icon(Icons.sentiment_neutral, size: Consts.iconSmall);
-        }
+  @override
+  State<_IncrementButton> createState() => _IncrementButtonState();
+}
 
-        return const Icon(
-          Icons.sentiment_very_dissatisfied,
-          size: Consts.iconSmall,
-        );
-      case ScoreFormat.POINT_5:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              widget.item.score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-          ],
-        );
-      case ScoreFormat.POINT_10_DECIMAL:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              widget.item.score.toStringAsFixed(
-                widget.item.score.truncate() == widget.item.score ? 0 : 1,
-              ),
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-          ],
-        );
-      default:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              widget.item.score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-          ],
-        );
-    }
-  }
-
-  Widget _buildProgressButton() {
+class _IncrementButtonState extends State<_IncrementButton> {
+  @override
+  Widget build(BuildContext context) {
     final item = widget.item;
-    final text = Text(
-      item.progress == item.progressMax
-          ? item.progress.toString()
-          : '${item.progress}/${item.progressMax ?? "?"}',
-      style: Theme.of(context).textTheme.subtitle2,
-    );
 
-    if (widget.onProgressUpdate == null || item.progress == item.progressMax) {
-      return Tooltip(message: 'Progress', child: text);
+    if (item.progress == item.progressMax) {
+      return Tooltip(
+        message: 'Progress',
+        child: SizedBox(
+          height: 30,
+          child: Center(
+            child: Text(
+              item.progress.toString(),
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ),
+        ),
+      );
     }
+
+    final warning =
+        item.nextEpisode != null && item.progress + 1 < item.nextEpisode!;
 
     return TextButton(
       style: TextButton.styleFrom(
-        minimumSize: const Size(0, 40),
-        padding: const EdgeInsets.only(left: 5),
+        minimumSize: const Size(0, 30),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        foregroundColor: warning ? Theme.of(context).colorScheme.error : null,
       ),
       onPressed: () async {
         if (item.progressMax != null &&
@@ -325,8 +146,12 @@ class __TileContentState extends State<_TileContent> {
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            text,
+            Text(
+              '${item.progress}/${item.progressMax ?? "?"}',
+              style: const TextStyle(fontSize: Consts.fontSmall),
+            ),
             const SizedBox(width: 3),
             const Icon(Ionicons.add_outline, size: Consts.iconSmall),
           ],

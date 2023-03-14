@@ -34,12 +34,12 @@ class Toast {
               ),
             ],
           ),
-          child: Text(text, style: Theme.of(context).textTheme.bodyText1),
+          child: Text(text, style: Theme.of(context).textTheme.bodyLarge),
         ),
       ),
     );
 
-    Overlay.of(context)!.insert(_entry!);
+    Overlay.of(context).insert(_entry!);
 
     Future.delayed(const Duration(seconds: 2)).then((_) {
       if (!_busy) {

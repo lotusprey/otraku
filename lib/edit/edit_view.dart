@@ -422,7 +422,7 @@ class _Label extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Text(label, style: Theme.of(context).textTheme.subtitle1),
+      child: Text(label, style: Theme.of(context).textTheme.labelMedium),
     );
   }
 }

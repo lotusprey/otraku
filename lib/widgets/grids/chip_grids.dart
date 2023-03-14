@@ -25,8 +25,11 @@ class ChipOptionField extends StatelessWidget {
       child: Chip(
         label: Text(name),
         labelStyle: selected
-            ? Theme.of(context).textTheme.button
-            : Theme.of(context).textTheme.bodyText2,
+            ? Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: Theme.of(context).colorScheme.background)
+            : Theme.of(context).textTheme.bodyMedium,
         backgroundColor: selected
             ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.onSecondary,
@@ -65,8 +68,13 @@ class __InputChipState extends State<_InputChip> {
     return InputChip(
       label: Text(widget.text),
       labelStyle: TextStyle(
-        color: Theme.of(context).colorScheme.onSecondaryContainer,
+        color: _positive
+            ? Theme.of(context).colorScheme.onPrimaryContainer
+            : Theme.of(context).colorScheme.onErrorContainer,
       ),
+      deleteIconColor: _positive
+          ? Theme.of(context).colorScheme.onPrimaryContainer
+          : Theme.of(context).colorScheme.onErrorContainer,
       backgroundColor: _positive
           ? Theme.of(context).colorScheme.primaryContainer
           : Theme.of(context).colorScheme.errorContainer,
@@ -101,14 +109,15 @@ class _ChipGrid extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(title, style: Theme.of(context).textTheme.subtitle1),
+            Text(title, style: Theme.of(context).textTheme.labelMedium),
             const Spacer(),
             if (onClear != null && children.isNotEmpty)
               SizedBox(
                 height: 35,
                 child: IconButton(
+                  key: const ValueKey('Clear'),
                   icon: const Icon(Ionicons.close_outline),
-                  tooltip: 'Close',
+                  tooltip: 'Clear',
                   onPressed: onClear!,
                   color: Theme.of(context).colorScheme.onBackground,
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -133,7 +142,7 @@ class _ChipGrid extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'No $placeholder',
-                    style: Theme.of(context).textTheme.subtitle1,
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
                 ),
               ),
@@ -322,6 +331,8 @@ class ChipTagGridState extends State<ChipTagGrid> {
         widget.exclusiveGenres.clear();
         widget.inclusiveTags.clear();
         widget.exclusiveTags.clear();
+        widget.tagIdIn?.clear();
+        widget.tagIdNotIn?.clear();
       }),
     );
   }

@@ -66,8 +66,8 @@ class _ThemePreviewState extends State<ThemePreview> {
 class _ThemeCard extends StatelessWidget {
   const _ThemeCard({
     required this.name,
-    required this.scheme,
     required this.active,
+    required this.scheme,
     required this.onTap,
   });
 
@@ -82,7 +82,7 @@ class _ThemeCard extends StatelessWidget {
     final borderColor = active ? scheme.primary : scheme.surfaceVariant;
 
     return GestureDetector(
-      onTap: () => onTap(),
+      onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Column(

@@ -40,10 +40,6 @@ class _ChipSelectorState extends State<ChipSelector> {
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 10),
         child: FilterChip(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          labelStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
           label: Text(widget.options[index]),
           selected: index == _current,
           onSelected: (selected) {
@@ -96,10 +92,6 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
       itemBuilder: (context, index) => Padding(
         padding: const EdgeInsets.only(right: 10),
         child: FilterChip(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          labelStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
           label: Text(_options[index]),
           selected: widget.selected.contains(_values[index]),
           onSelected: (selected) {
@@ -135,7 +127,7 @@ class ChipSelectorLayout extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.subtitle1),
+          child: Text(title, style: Theme.of(context).textTheme.labelMedium),
         ),
         SizedBox(
           height: 40,

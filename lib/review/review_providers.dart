@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/utils/api.dart';
@@ -14,8 +13,8 @@ final reviewSortProvider = StateProvider.autoDispose.family<ReviewSort, int?>(
   (ref, _) => ReviewSort.CREATED_AT_DESC,
 );
 
-final reviewsProvider =
-    ChangeNotifierProvider.autoDispose.family<ReviewsNotifier, int>(
+final reviewsProvider = StateNotifierProvider.autoDispose
+    .family<ReviewsNotifier, AsyncValue<Pagination<ReviewItem>>, int>(
   (ref, userId) =>
       ReviewsNotifier(userId, ref.watch(reviewSortProvider(userId))),
 );
@@ -48,29 +47,31 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
                 ? 'UP_VOTE'
                 : 'DOWN_VOTE',
       });
-      if (data['RateReview'] == null) throw StateError('Review data is empty.');
+
+      if (data['RateReview'] == null) {
+        throw StateError('Failed to rate review.');
+      }
+
       return value.copyWith(data['RateReview']);
     });
   }
 }
 
-class ReviewsNotifier extends ChangeNotifier {
-  ReviewsNotifier(this.userId, this.sort) {
+class ReviewsNotifier
+    extends StateNotifier<AsyncValue<Pagination<ReviewItem>>> {
+  ReviewsNotifier(this.userId, this.sort) : super(const AsyncValue.loading()) {
     fetch();
   }
 
   final int userId;
   final ReviewSort sort;
 
-  int _count = 0;
-  var _reviews = const AsyncValue<Pagination<ReviewItem>>.loading();
-
-  int get reviewCount => _count;
-  AsyncValue<Pagination<ReviewItem>> get reviews => _reviews;
+  int _reviewCount = 0;
+  int get reviewCount => _reviewCount;
 
   Future<void> fetch() async {
-    _reviews = await AsyncValue.guard(() async {
-      final value = _reviews.valueOrNull ?? Pagination();
+    state = await AsyncValue.guard(() async {
+      final value = state.valueOrNull ?? Pagination();
 
       final data = await Api.get(GqlQuery.reviews, {
         'userId': userId,
@@ -78,18 +79,17 @@ class ReviewsNotifier extends ChangeNotifier {
         'sort': sort.name,
       });
 
-      _count = data['Page']['pageInfo']?['total'] ?? 0;
-
       final items = <ReviewItem>[];
       for (final r in data['Page']['reviews']) {
         items.add(ReviewItem(r));
       }
+
+      _reviewCount = data['Page']['pageInfo']?['total'] ?? 0;
 
       return value.append(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
     });
-    notifyListeners();
   }
 }

@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        kotlin_version = '1.6.21'
+        kotlin_version = '1.7.10'
     }
 
     repositories {
@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:7.3.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }

@@ -6,11 +6,11 @@ import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/statistics/charts.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
@@ -29,7 +29,7 @@ class MediaSocialView extends StatelessWidget {
         .innerController;
     final stats = media.stats;
 
-    return PageLayout(
+    return TabScaffold(
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         centered: true,
@@ -126,7 +126,7 @@ class _ReviewGrid extends StatelessWidget {
                       tag: items[i].userId,
                       child: ClipRRect(
                         borderRadius: Consts.borderRadiusMin,
-                        child: FadeImage(
+                        child: CachedImage(
                           items[i].avatar,
                           height: 50,
                           width: 50,
@@ -135,6 +135,13 @@ class _ReviewGrid extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     Text(items[i].username),
+                    const Spacer(),
+                    const Icon(Icons.thumb_up_outlined, size: Consts.iconSmall),
+                    const SizedBox(width: 10),
+                    Text(
+                      items[i].rating,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
                   ],
                 ),
               ),
@@ -151,7 +158,7 @@ class _ReviewGrid extends StatelessWidget {
                         padding: Consts.padding,
                         child: Text(
                           items[i].summary,
-                          style: Theme.of(context).textTheme.subtitle1,
+                          style: Theme.of(context).textTheme.labelMedium,
                           overflow: TextOverflow.fade,
                         ),
                       ),

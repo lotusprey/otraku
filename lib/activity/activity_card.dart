@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/activity/activity_models.dart';
-import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/activity/activity_provider.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -48,7 +48,7 @@ class ActivityCard extends StatelessWidget {
                   child: Text(
                     activity.createdAt,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.labelSmall,
                   ),
                 ),
                 footer,
@@ -76,7 +76,7 @@ class ActivityCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
-                      child: FadeImage(
+                      child: CachedImage(
                         activity.agent.imageUrl,
                         height: 50,
                         width: 50,
@@ -110,7 +110,7 @@ class ActivityCard extends StatelessWidget {
                 discoverType: DiscoverType.user,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
-                  child: FadeImage(
+                  child: CachedImage(
                     activity.reciever!.imageUrl,
                     height: 50,
                     width: 50,
@@ -150,7 +150,7 @@ class _ActivityMediaBox extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: Consts.borderRadiusMin,
-              child: FadeImage(activityMedia.imageUrl, width: 70),
+              child: CachedImage(activityMedia.imageUrl, width: 70),
             ),
             Expanded(
               child: Padding(
@@ -166,11 +166,11 @@ class _ActivityMediaBox extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: text,
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                             TextSpan(
                               text: activityMedia.title,
-                              style: Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
                         ),
@@ -180,7 +180,7 @@ class _ActivityMediaBox extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(
                         activityMedia.format!,
-                        style: Theme.of(context).textTheme.subtitle1,
+                        style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],
                   ],
@@ -248,7 +248,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 children: [
                   Text(
                     activity.replyCount.toString(),
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 5),
                   const Icon(Ionicons.chatbox, size: Consts.iconSmall),
@@ -270,8 +270,8 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   Text(
                     activity.likeCount.toString(),
                     style: !activity.isLiked
-                        ? Theme.of(context).textTheme.subtitle2
-                        : Theme.of(context).textTheme.subtitle2!.copyWith(
+                        ? Theme.of(context).textTheme.labelSmall
+                        : Theme.of(context).textTheme.labelSmall!.copyWith(
                             color: Theme.of(context).colorScheme.error),
                   ),
                   const SizedBox(width: 5),

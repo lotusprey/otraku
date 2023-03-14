@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/shimmer.dart';
 
 class Loader extends StatelessWidget {
@@ -28,7 +28,7 @@ class SliverRefreshControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: EdgeInsets.only(top: PageLayout.of(context).topOffset),
+      padding: EdgeInsets.only(top: scaffoldOffsets(context).top + 10),
       sliver: CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
         refreshTriggerPullDistance: 160,
@@ -80,7 +80,7 @@ class SliverFooter extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(
               top: 10,
-              bottom: PageLayout.of(context).bottomOffset + 10,
+              bottom: scaffoldOffsets(context).bottom + 10,
             ),
             child: loading ? const Loader() : null,
           ),

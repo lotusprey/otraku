@@ -11,8 +11,9 @@ import 'package:otraku/settings/settings_content_tab.dart';
 import 'package:otraku/settings/settings_notifications_tab.dart';
 import 'package:otraku/settings/settings_about_tab.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
@@ -87,8 +88,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         }
         return Future.value(true);
       },
-      child: PageLayout(
-        topBar: TopBar(title: pageNames[_tabIndex]),
+      child: PageScaffold(
         bottomBar: BottomBarIconTabs(
           current: _tabIndex,
           onSame: (_) => _ctrl.scrollToTop(),
@@ -100,10 +100,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             'About': Ionicons.information_outline,
           },
         ),
-        child: DirectPageView(
-          current: _tabIndex,
-          onChanged: (i) => setState(() => _tabIndex = i),
-          children: tabs,
+        child: TabScaffold(
+          topBar: TopBar(title: pageNames[_tabIndex]),
+          child: DirectPageView(
+            current: _tabIndex,
+            onChanged: (i) => setState(() => _tabIndex = i),
+            children: tabs,
+          ),
         ),
       ),
     );

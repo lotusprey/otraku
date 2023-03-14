@@ -3,7 +3,7 @@ import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/widgets/link_tile.dart';
-import 'package:otraku/widgets/fade_image.dart';
+import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
@@ -13,17 +13,14 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 270,
-          height: 200,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (_, i) => _Tile(items[i]),
-          childCount: items.length,
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 270,
+        height: 200,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (_, i) => _Tile(items[i]),
+        childCount: items.length,
       ),
     );
   }
@@ -52,7 +49,7 @@ class _Tile extends StatelessWidget {
                       const BorderRadius.vertical(top: Consts.radiusMin),
                   child: Hero(
                     tag: item.id,
-                    child: FadeImage(item.bannerUrl!),
+                    child: CachedImage(item.bannerUrl!),
                   ),
                 ),
               ),
@@ -69,7 +66,7 @@ class _Tile extends StatelessWidget {
                         alignment: Alignment.bottomLeft,
                         child: Text(
                           'Review of ${item.mediaTitle} by ${item.userName}',
-                          style: Theme.of(context).textTheme.headline2,
+                          style: Theme.of(context).textTheme.titleMedium,
                           overflow: TextOverflow.fade,
                         ),
                       ),
@@ -82,7 +79,7 @@ class _Tile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               item.summary,
-                              style: Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.labelMedium,
                               overflow: TextOverflow.fade,
                             ),
                           ),
@@ -94,13 +91,14 @@ class _Tile extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Icon(
-                                  Icons.thumbs_up_down_outlined,
+                                  Icons.thumb_up_outlined,
                                   size: Consts.iconSmall,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
                                   item.rating,
-                                  style: Theme.of(context).textTheme.subtitle1,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
                                 ),
                               ],
                             ),

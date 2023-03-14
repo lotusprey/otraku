@@ -6,8 +6,9 @@ import 'package:otraku/staff/staff_relations_tab.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class StaffView extends ConsumerStatefulWidget {
@@ -54,9 +55,9 @@ class _StaffViewState extends ConsumerState<StaffView> {
 
     ref.watch(staffRelationProvider(widget.id).select((_) => null));
     final name = ref.watch(staffProvider(widget.id)).valueOrNull?.name;
+    final topBar = TopBar(title: name);
 
-    return PageLayout(
-      topBar: TopBar(title: name),
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
@@ -71,9 +72,9 @@ class _StaffViewState extends ConsumerState<StaffView> {
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
         children: [
-          StaffInfoTab(widget.id, widget.imageUrl, _ctrl),
-          StaffCharactersTab(widget.id, _ctrl),
-          StaffRolesTab(widget.id, _ctrl),
+          StaffInfoTab(widget.id, widget.imageUrl, _ctrl, topBar),
+          StaffCharactersTab(widget.id, _ctrl, topBar),
+          StaffRolesTab(widget.id, _ctrl, topBar),
         ],
       ),
     );

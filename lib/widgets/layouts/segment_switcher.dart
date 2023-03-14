@@ -43,8 +43,8 @@ class _SegmentSwitcherState extends State<SegmentSwitcher> {
                   widget.items[i],
                   overflow: TextOverflow.ellipsis,
                   style: _index != i
-                      ? Theme.of(context).textTheme.headline2
-                      : Theme.of(context).textTheme.headline2?.copyWith(
+                      ? Theme.of(context).textTheme.titleMedium
+                      : Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
                 ),

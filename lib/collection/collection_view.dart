@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/collection/collection_grid.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_providers.dart';
 import 'package:otraku/utils/consts.dart';
@@ -12,9 +13,10 @@ import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/collection/collection_grid.dart';
+import 'package:otraku/collection/collection_list.dart';
 import 'package:otraku/filter/filter_search_field.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
@@ -42,16 +44,18 @@ class _CollectionViewState extends State<CollectionView> {
   Widget build(BuildContext context) {
     final tag = CollectionTag(widget.userId, widget.ofAnime);
 
-    return Consumer(
-      child: CollectionSubView(scrollCtrl: _ctrl, tag: tag),
-      builder: (context, ref, child) => WillPopScope(
-        child: child!,
-        onWillPop: () {
-          final notifier = ref.read(searchProvider(tag).notifier);
-          if (notifier.state == null) return Future.value(true);
-          notifier.state = null;
-          return Future.value(false);
-        },
+    return PageScaffold(
+      child: Consumer(
+        child: CollectionSubView(scrollCtrl: _ctrl, tag: tag),
+        builder: (context, ref, child) => WillPopScope(
+          child: child!,
+          onWillPop: () {
+            final notifier = ref.read(searchProvider(tag).notifier);
+            if (notifier.state == null) return Future.value(true);
+            notifier.state = null;
+            return Future.value(false);
+          },
+        ),
       ),
     );
   }
@@ -69,18 +73,18 @@ class CollectionSubView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        return PageLayout(
-          topBar: PreferredSize(
-            preferredSize: const Size.fromHeight(Consts.tapTargetSize),
-            child: _TopBar(tag, tag.userId != Options().id),
-          ),
-          floatingBar: FloatingBar(
-            scrollCtrl: scrollCtrl,
-            children: [_ActionButton(tag)],
-          ),
-          child: ConstrainedView(
+    return TabScaffold(
+      topBar: TopBar(
+        canPop: tag.userId != Options().id,
+        trailing: [_TopBarContent(tag)],
+      ),
+      floatingBar: FloatingBar(
+        scrollCtrl: scrollCtrl,
+        children: [_ActionButton(tag)],
+      ),
+      child: Consumer(
+        builder: (context, ref, _) {
+          return ConstrainedView(
             child: CustomScrollView(
               physics: Consts.physics,
               controller: scrollCtrl,
@@ -92,72 +96,69 @@ class CollectionSubView extends StatelessWidget {
                 const SliverFooter(),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
 
-class _TopBar extends StatelessWidget {
-  const _TopBar(this.tag, this.canPop);
+class _TopBarContent extends StatelessWidget {
+  const _TopBarContent(this.tag);
 
   final CollectionTag tag;
-  final bool canPop;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         final notifier = ref.watch(collectionProvider(tag));
-        if (notifier.lists.isEmpty) return TopBar(canPop: canPop);
+        if (notifier.lists.isEmpty) return const SizedBox();
 
         /// If [entriesProvider] returns an empty list,
         /// the random entry button shouldn't appear.
         final noResults =
             ref.watch(entriesProvider(tag).select((s) => s.isEmpty));
 
-        return TopBar(
-          canPop: canPop,
-          items: [
-            SearchFilterField(
-              title: notifier.lists[notifier.index].name,
-              tag: tag,
-            ),
-            if (noResults)
-              const SizedBox(width: 45)
-            else
-              TopBarIcon(
-                tooltip: 'Random',
-                icon: Ionicons.shuffle_outline,
-                onTap: () {
-                  final entries = ref.read(entriesProvider(tag));
-                  final e = entries[Random().nextInt(entries.length)];
-
-                  Navigator.pushNamed(
-                    context,
-                    RouteArg.media,
-                    arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
-                  );
-                },
+        return Expanded(
+          child: Row(
+            children: [
+              SearchFilterField(
+                title: notifier.lists[notifier.index].name,
+                tag: tag,
               ),
-            TopBarIcon(
-              tooltip: 'Filter',
-              icon: Ionicons.funnel_outline,
-              onTap: () {
-                final notifier =
-                    ref.read(collectionFilterProvider(tag).notifier);
+              if (noResults)
+                const SizedBox(width: 45)
+              else
+                TopBarIcon(
+                  tooltip: 'Random',
+                  icon: Ionicons.shuffle_outline,
+                  onTap: () {
+                    final entries = ref.read(entriesProvider(tag));
+                    final e = entries[Random().nextInt(entries.length)];
 
-                showSheet(
+                    Navigator.pushNamed(
+                      context,
+                      RouteArg.media,
+                      arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
+                    );
+                  },
+                ),
+              TopBarIcon(
+                tooltip: 'Filter',
+                icon: Ionicons.funnel_outline,
+                onTap: () => showSheet(
                   context,
                   CollectionFilterView(
-                    filter: notifier.state,
-                    onChanged: (filter) => notifier.state = filter,
+                    filter: ref.read(collectionFilterProvider(tag)),
+                    onChanged: (filter) => ref
+                        .read(collectionFilterProvider(tag).notifier)
+                        .update((_) => filter),
                   ),
-                );
-              },
-            ),
-          ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -200,15 +201,15 @@ class _ActionButton extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: i != notifier.index
-                                ? theme.textTheme.headline1
-                                : theme.textTheme.headline1?.copyWith(
+                                ? theme.textTheme.titleLarge
+                                : theme.textTheme.titleLarge?.copyWith(
                                     color: theme.colorScheme.primary,
                                   ),
                           ),
                         ),
                         Text(
                           ' ${notifier.lists[i].entries.length}',
-                          style: theme.textTheme.headline3,
+                          style: theme.textTheme.titleSmall,
                         ),
                       ],
                     ),
@@ -294,11 +295,17 @@ class _ContentState extends State<_Content> {
           };
         }
 
-        return CollectionGrid(
-          items: entries,
-          scoreFormat: notifier.scoreFormat,
-          onProgressUpdate: update,
-        );
+        return Options().collectionItemView == 0
+            ? CollectionList(
+                items: entries,
+                scoreFormat: notifier.scoreFormat,
+                onProgressUpdate: update,
+              )
+            : CollectionGrid(
+                items: entries,
+                scoreFormat: notifier.scoreFormat,
+                onProgressUpdate: update,
+              );
       },
     );
   }

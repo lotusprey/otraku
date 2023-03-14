@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/collection/collection_grid.dart';
+import 'package:otraku/collection/collection_list.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_preview_provider.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/consts.dart';
+import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -61,19 +64,25 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
             );
           } else {
             notEmpty = true;
-            content = CollectionGrid(
-              items: entries,
-              scoreFormat: notifier.scoreFormat,
-              onProgressUpdate: (_, __) {},
-            );
+            content = Options().collectionPreviewItemView == 0
+                ? CollectionList(
+                    items: entries,
+                    scoreFormat: notifier.scoreFormat,
+                    onProgressUpdate: (_, __) {},
+                  )
+                : CollectionGrid(
+                    items: entries,
+                    scoreFormat: notifier.scoreFormat,
+                    onProgressUpdate: (_, __) {},
+                  );
           }
         }
 
-        return PageLayout(
+        return TabScaffold(
           topBar: TopBar(
             title: 'Current',
             canPop: false,
-            items: [
+            trailing: [
               if (notEmpty)
                 TopBarIcon(
                   tooltip: 'Random',
@@ -98,8 +107,8 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
           floatingBar: FloatingBar(
             scrollCtrl: widget.scrollCtrl,
             children: [
-              ExpandedActionButton(
-                title: 'Expand',
+              ActionButton(
+                tooltip: 'Load Entire Connection',
                 icon: Ionicons.enter_outline,
                 onTap: () =>
                     ref.read(homeProvider).expandCollection(widget.tag.ofAnime),

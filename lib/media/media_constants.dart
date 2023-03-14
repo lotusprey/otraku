@@ -104,6 +104,8 @@ enum EntrySort {
   RELEASED_ON_DESC('Last Release'),
   PROGRESS('Least Progress'),
   PROGRESS_DESC('Most Progress'),
+  AVG_SCORE('Lowest Rated'),
+  AVG_SCORE_DESC('Highest Rated'),
   REPEATED('Least Repeated'),
   REPEATED_DESC('Most Repeated');
 

@@ -9,7 +9,7 @@ import 'package:otraku/media/media_other_view.dart';
 import 'package:otraku/media/media_people_view.dart';
 import 'package:otraku/media/media_social_view.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/media/media_header.dart';
@@ -37,7 +37,7 @@ class _MediaViewState extends State<MediaView> {
 
   @override
   Widget build(BuildContext context) {
-    return PageLayout(
+    return PageScaffold(
       bottomBar: BottomBarIconTabs(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
@@ -80,10 +80,10 @@ class _MediaViewState extends State<MediaView> {
                     loading: () => const Center(child: Loader()),
                     error: (_, __) =>
                         const Center(child: Text('Failed to load media')),
-                    data: (data) => _MediaView(
+                    data: (media) => _MediaView(
                       widget.id,
                       _tab,
-                      data,
+                      media,
                       (i) => setState(() => _tab = i),
                     ),
                   );
@@ -157,7 +157,7 @@ class __MediaSubViewState extends ConsumerState<_MediaView> {
             : ref.read(mediaContentProvider(widget.id)).fetchCharacters();
         return;
       case 3:
-        if (_socialTabToggled) {
+        if (!_socialTabToggled) {
           ref.read(mediaContentProvider(widget.id)).fetchReviews();
         }
         return;

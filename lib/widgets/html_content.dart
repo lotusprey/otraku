@@ -14,12 +14,11 @@ class HtmlContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return HtmlWidget(
       text,
-      textStyle: Theme.of(context).textTheme.bodyText2,
+      textStyle: Theme.of(context).textTheme.bodyMedium,
       onTapUrl: (url) => Toast.launch(context, url),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => IconButton(
-        icon: const Icon(Icons.close),
-        color: Theme.of(context).colorScheme.error,
+        icon: const Icon(Icons.close_outlined),
         onPressed: () => showPopUp(
           context,
           ConfirmationDialog(

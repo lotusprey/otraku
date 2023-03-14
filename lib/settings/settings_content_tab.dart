@@ -7,7 +7,7 @@ import 'package:otraku/widgets/fields/checkbox_field.dart';
 import 'package:otraku/widgets/fields/drop_down_field.dart';
 import 'package:otraku/widgets/grids/chip_grids.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 
 class SettingsContentTab extends StatelessWidget {
@@ -40,7 +40,7 @@ class SettingsContentTab extends StatelessWidget {
         controller: scrollCtrl,
         slivers: [
           SliverPadding(
-            padding: EdgeInsets.only(top: PageLayout.of(context).topOffset),
+            padding: EdgeInsets.only(top: scaffoldOffsets(context).top),
             sliver: SliverToBoxAdapter(
               child: CheckBoxField(
                 title: 'Restrict Messages to Following',

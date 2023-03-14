@@ -4,7 +4,8 @@ import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/options.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/cached_image.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
@@ -14,7 +15,7 @@ class SettingsAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pageLayout = PageLayout.of(context);
+    final offsets = scaffoldOffsets(context);
 
     return Align(
       alignment: Alignment.center,
@@ -25,8 +26,8 @@ class SettingsAboutTab extends StatelessWidget {
           padding: EdgeInsets.only(
             left: 10,
             right: 10,
-            top: pageLayout.topOffset + 10,
-            bottom: pageLayout.bottomOffset + 10,
+            top: offsets.top + 10,
+            bottom: offsets.bottom + 10,
           ),
           children: [
             ClipRRect(
@@ -43,7 +44,7 @@ class SettingsAboutTab extends StatelessWidget {
               child: Text(
                 'Otraku - v.$versionCode',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
             const Text(
@@ -78,18 +79,27 @@ class SettingsAboutTab extends StatelessWidget {
               ),
             ),
             ElevatedButton.icon(
-              icon: const Icon(Ionicons.trash_bin_outline),
-              label: const Text('Reset Options'),
-              onPressed: Options.resetOptions,
+              icon: const Icon(Ionicons.log_out_outline),
+              label: const Text('Accounts'),
+              onPressed: Api.logOut,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Theme.of(context).colorScheme.onError,
               ),
             ),
             ElevatedButton.icon(
-              icon: const Icon(Ionicons.log_out_outline),
-              label: const Text('Accounts'),
-              onPressed: Api.logOut,
+              icon: const Icon(Ionicons.trash_bin_outline),
+              label: const Text('Clear Image Cache'),
+              onPressed: clearImageCache,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.error,
+                foregroundColor: Theme.of(context).colorScheme.onError,
+              ),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Ionicons.refresh_outline),
+              label: const Text('Reset Options'),
+              onPressed: Options.resetOptions,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.error,
                 foregroundColor: Theme.of(context).colorScheme.onError,
@@ -109,7 +119,7 @@ class SettingsAboutTab extends StatelessWidget {
     return Text(
       'Performed a notification check around ${Convert.millisToStr((time / 1000).truncate())}.',
       textAlign: TextAlign.center,
-      style: Theme.of(context).textTheme.subtitle1,
+      style: Theme.of(context).textTheme.labelMedium,
     );
   }
 }

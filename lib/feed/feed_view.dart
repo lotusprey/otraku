@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/activity/activities_providers.dart';
 import 'package:otraku/activity/activities_view.dart';
-import 'package:otraku/activity/activity_providers.dart';
 import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
+import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 
 class FeedView extends StatelessWidget {
@@ -32,61 +33,27 @@ class FeedView extends StatelessWidget {
           Navigator.pushNamed(context, RouteArg.notifications);
         };
 
-        if (count < 1) {
-          return TopBarIcon(
-            tooltip: 'Notifications',
-            icon: Ionicons.notifications_outline,
-            onTap: openNotifications,
+        Widget result = TopBarIcon(
+          tooltip: 'Notifications',
+          icon: Ionicons.notifications_outline,
+          onTap: openNotifications,
+        );
+
+        if (count > 0) {
+          result = Badge.count(
+            count: count,
+            alignment: AlignmentDirectional.bottomStart,
+            child: result,
           );
         }
 
-        return Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Tooltip(
-            message: 'Notifications',
-            child: GestureDetector(
-              onTap: openNotifications,
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    child: Icon(
-                      Ionicons.notifications_outline,
-                      color: Theme.of(context).colorScheme.onBackground,
-                    ),
-                  ),
-                  Container(
-                    constraints: const BoxConstraints(
-                      minWidth: 20,
-                      minHeight: 20,
-                      maxHeight: 20,
-                    ),
-                    margin: const EdgeInsets.only(right: 15, bottom: 5),
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        count.toString(),
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                              color: Theme.of(context).colorScheme.background,
-                            ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+        return result;
       },
     );
 
     return Consumer(
       builder: (context, ref, _) {
-        return PageLayout(
+        return TabScaffold(
           floatingBar: FloatingBar(
             scrollCtrl: scrollCtrl,
             children: [
@@ -108,7 +75,7 @@ class FeedView extends StatelessWidget {
           topBar: TopBar(
             canPop: false,
             title: 'Feed',
-            items: [
+            trailing: [
               TopBarIcon(
                 tooltip: 'Filter',
                 icon: Ionicons.funnel_outline,

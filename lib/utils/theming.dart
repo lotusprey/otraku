@@ -27,8 +27,6 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
       scaffoldBackgroundColor: scheme.background,
       disabledColor: scheme.surface,
       unselectedWidgetColor: scheme.surface,
-      toggleableActiveColor: scheme.primary,
-      bottomAppBarColor: scheme.background.withAlpha(190),
       splashColor: scheme.onBackground.withAlpha(20),
       highlightColor: Colors.transparent,
       pageTransitionsTheme: const PageTransitionsTheme(
@@ -42,6 +40,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         color: scheme.onSurfaceVariant,
         size: Consts.iconBig,
       ),
+      bottomAppBarTheme: BottomAppBarTheme(
+        color: scheme.background.withAlpha(190),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: scheme.primary,
@@ -49,51 +50,47 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
           textStyle: const TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
+      chipTheme: ChipThemeData(
+        labelStyle: TextStyle(
+          color: scheme.onSecondaryContainer,
+          fontWeight: FontWeight.normal,
+        ),
+      ),
       typography: Typography.material2014(),
       textTheme: TextTheme(
-        headline1: TextStyle(
+        titleLarge: TextStyle(
           fontSize: Consts.fontBig,
           color: scheme.onBackground,
           fontWeight: FontWeight.w500,
         ),
-        headline2: TextStyle(
+        titleMedium: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.onBackground,
           fontWeight: FontWeight.w500,
         ),
-        headline3: TextStyle(
+        titleSmall: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
-        headline4: TextStyle(
-          fontSize: Consts.fontMedium,
-          color: scheme.onSurfaceVariant,
-          fontWeight: FontWeight.normal,
-        ),
-        bodyText1: TextStyle(
+        bodyLarge: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.primary,
           fontWeight: FontWeight.normal,
         ),
-        bodyText2: TextStyle(
+        bodyMedium: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.onBackground,
           fontWeight: FontWeight.normal,
         ),
-        subtitle1: TextStyle(
+        labelMedium: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.onSurfaceVariant,
           fontWeight: FontWeight.normal,
         ),
-        subtitle2: TextStyle(
+        labelSmall: TextStyle(
           fontSize: Consts.fontSmall,
           color: scheme.onSurfaceVariant,
-          fontWeight: FontWeight.normal,
-        ),
-        button: TextStyle(
-          fontSize: Consts.fontMedium,
-          color: scheme.background,
           fontWeight: FontWeight.normal,
         ),
       ),

@@ -11,15 +11,15 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paddingBottom = MediaQuery.of(context).viewPadding.bottom;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
 
     return ClipRect(
       child: BackdropFilter(
         filter: Consts.filter,
         child: Container(
-          height: paddingBottom + Consts.tapTargetSize,
-          padding: EdgeInsets.only(bottom: paddingBottom),
-          color: Theme.of(context).bottomAppBarColor,
+          height: Consts.tapTargetSize + bottomPadding,
+          padding: EdgeInsets.only(bottom: bottomPadding),
+          color: Theme.of(context).bottomAppBarTheme.color,
           child: Material(color: Colors.transparent, child: child),
         ),
       ),
@@ -77,8 +77,8 @@ class BottomBarIconTabs extends StatelessWidget {
                       Text(
                         items.keys.elementAt(i),
                         style: i != current
-                            ? Theme.of(context).textTheme.subtitle1
-                            : Theme.of(context).textTheme.bodyText1,
+                            ? Theme.of(context).textTheme.labelMedium
+                            : Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
                   ],

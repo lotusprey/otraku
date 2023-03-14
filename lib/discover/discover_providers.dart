@@ -128,8 +128,11 @@ class DiscoverMediaNotifier
       final data = await Api.get(GqlQuery.medias, {
         'page': value.next,
         'type': filter.ofAnime ? 'ANIME' : 'MANGA',
-        if (search != null && search!.isNotEmpty) 'search': search,
-        ...filter.toMap(),
+        if (search != null && search!.isNotEmpty) ...{
+          'search': search,
+          ...filter.toMap()..['sort'] = 'SEARCH_MATCH',
+        } else
+          ...filter.toMap(),
       });
 
       final items = <DiscoverMediaItem>[];

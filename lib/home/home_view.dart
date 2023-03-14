@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/activity/activity_providers.dart';
+import 'package:otraku/activity/activities_providers.dart';
 import 'package:otraku/collection/collection_models.dart';
 import 'package:otraku/collection/collection_preview_provider.dart';
 import 'package:otraku/collection/collection_preview_view.dart';
@@ -21,7 +21,7 @@ import 'package:otraku/feed/feed_view.dart';
 import 'package:otraku/user/user_view.dart';
 import 'package:otraku/utils/background_handler.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
@@ -137,7 +137,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
-      child: PageLayout(
+      child: PageScaffold(
         bottomBar: BottomBarIconTabs(
           current: notifier.homeTab,
           onChanged: (i) => ref.read(homeProvider).homeTab = i,

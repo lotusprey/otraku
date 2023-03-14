@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/drag_detector.dart';
-import 'package:otraku/widgets/layouts/page_layout.dart';
+import 'package:otraku/widgets/layouts/scaffolds.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
 class FloatingBar extends StatefulWidget {
@@ -78,9 +78,9 @@ class FloatingBarState extends State<FloatingBar>
 
     return Padding(
       padding: EdgeInsets.only(
-        left: 15,
-        right: 15,
-        bottom: PageLayout.of(context).bottomOffset + 20,
+        left: 16,
+        right: 16,
+        bottom: scaffoldOffsets(context).bottom + 16,
       ),
       child: SlideTransition(
         position: _slideAnimation,
@@ -104,6 +104,8 @@ class FloatingBarState extends State<FloatingBar>
     );
   }
 }
+
+const floatingBarItemHeight = 56.0;
 
 class ActionTabSwitcher extends StatefulWidget {
   const ActionTabSwitcher({
@@ -149,8 +151,8 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
                     widget.items[i],
                     overflow: TextOverflow.ellipsis,
                     style: i != _index
-                        ? Theme.of(context).textTheme.headline2
-                        : Theme.of(context).textTheme.headline2?.copyWith(
+                        ? Theme.of(context).textTheme.titleMedium
+                        : Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
                   ),
@@ -176,7 +178,10 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
               boxShadow: [
                 BoxShadow(
                   blurRadius: 5,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceVariant
+                      .withAlpha(50),
                 ),
               ],
             ),
@@ -193,10 +198,6 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: Consts.borderRadiusMax,
-                      border: Border.all(
-                        width: 5,
-                        color: Theme.of(context).colorScheme.background,
-                      ),
                     ),
                   ),
                 ),
@@ -209,8 +210,6 @@ class _ActionTabSwitcherState extends State<ActionTabSwitcher> {
     );
   }
 }
-
-const actionButtonSize = 56.0;
 
 /// A [FloatingActionButton] implementation.
 class ActionButton extends StatelessWidget {
@@ -234,94 +233,34 @@ class ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: actionButtonSize,
-      height: actionButtonSize,
+      width: floatingBarItemHeight,
+      height: floatingBarItemHeight,
       child: Tooltip(
         message: tooltip,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
+            borderRadius: Consts.borderRadiusMax,
             boxShadow: [
               BoxShadow(
                 blurRadius: 5,
-                color: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withAlpha(100),
+                color:
+                    Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
               ),
             ],
           ),
           child: Material(
             color: Theme.of(context).colorScheme.primary,
-            shape: const CircleBorder(),
+            shape: const RoundedRectangleBorder(
+              borderRadius: Consts.borderRadiusMax,
+            ),
             child: InkWell(
               onTap: onTap,
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: Consts.borderRadiusMax,
               splashColor:
                   Theme.of(context).colorScheme.onPrimary.withAlpha(50),
               child: onSwipe == null
                   ? Icon(icon, color: Theme.of(context).colorScheme.onPrimary)
                   : _DraggableIcon(icon: icon, onSwipe: onSwipe!),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A [FloatingActionButton.extended] implementation.
-class ExpandedActionButton extends StatelessWidget {
-  const ExpandedActionButton({
-    required this.title,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String title;
-  final IconData icon;
-  final void Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: actionButtonSize,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 5,
-              color:
-                  Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Theme.of(context).colorScheme.primary,
-          shape: const RoundedRectangleBorder(
-            borderRadius: Consts.borderRadiusMax,
-          ),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: Consts.borderRadiusMax,
-            splashColor: Theme.of(context).colorScheme.onPrimary.withAlpha(50),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Icon(icon, color: Theme.of(context).colorScheme.onPrimary),
-                ],
-              ),
             ),
           ),
         ),

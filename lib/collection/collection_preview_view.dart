@@ -108,7 +108,7 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
             scrollCtrl: widget.scrollCtrl,
             children: [
               ActionButton(
-                tooltip: 'Load Entire Connection',
+                tooltip: 'Load Entire Collection',
                 icon: Ionicons.enter_outline,
                 onTap: () =>
                     ref.read(homeProvider).expandCollection(widget.tag.ofAnime),

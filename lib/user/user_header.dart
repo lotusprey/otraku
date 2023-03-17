@@ -225,6 +225,24 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               left: 0,
               right: 0,
               height: minExtent,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Theme.of(context).colorScheme.background,
+                      Theme.of(context).colorScheme.background.withAlpha(0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: minExtent,
               child: Opacity(
                 opacity: opacity,
                 child: DecoratedBox(
@@ -250,7 +268,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                 children: [
                   isMe
                       ? const SizedBox(width: 10)
-                      : TopBarShadowIcon(
+                      : TopBarIcon(
                           tooltip: 'Close',
                           icon: Ionicons.chevron_back_outline,
                           onTap: Navigator.of(context).pop,
@@ -269,7 +287,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                   ),
                   if (!isMe && user != null) _FollowButton(user!),
                   if (user?.siteUrl != null)
-                    TopBarShadowIcon(
+                    TopBarIcon(
                       tooltip: 'More',
                       icon: Ionicons.ellipsis_horizontal,
                       onTap: () => showSheet(
@@ -278,7 +296,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                       ),
                     ),
                   if (isMe)
-                    TopBarShadowIcon(
+                    TopBarIcon(
                       tooltip: 'Settings',
                       icon: Ionicons.cog_outline,
                       onTap: () => Navigator.pushNamed(

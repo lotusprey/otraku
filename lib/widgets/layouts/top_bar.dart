@@ -96,31 +96,3 @@ class TopBarIcon extends StatelessWidget {
     );
   }
 }
-
-/// A [TopBarIcon] casting a shadow. Used when the background is a banner.
-class TopBarShadowIcon extends StatelessWidget {
-  const TopBarShadowIcon({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String tooltip;
-  final void Function() onTap;
-
-  @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.background,
-              blurRadius: 10,
-              spreadRadius: -10,
-            ),
-          ],
-        ),
-        child: TopBarIcon(icon: icon, tooltip: tooltip, onTap: onTap),
-      );
-}

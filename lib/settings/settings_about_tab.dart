@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/utils/api.dart';
-import 'package:otraku/utils/consts.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/cached_image.dart';
@@ -30,14 +29,11 @@ class SettingsAboutTab extends StatelessWidget {
             bottom: offsets.bottom + 10,
           ),
           children: [
-            ClipRRect(
-              borderRadius: Consts.borderRadiusMin,
-              child: Image.asset(
-                'assets/icons/about_icon.png',
-                fit: BoxFit.contain,
-                width: 200,
-                height: 200,
-              ),
+            Image.asset(
+              'assets/icons/about.png',
+              color: Theme.of(context).colorScheme.primary,
+              width: 180,
+              height: 180,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),

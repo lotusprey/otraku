@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.3.1
+  flutter_riverpod: ^2.3.2
 
   # Data fetching.
   http: ^0.13.5
@@ -72,7 +72,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/about_icon.png
+    - assets/icons/about.png
 
   fonts:
     - family: Rubik

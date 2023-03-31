@@ -239,7 +239,7 @@ class TextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      _DialogColumn(title: title, expand: false, child: Text(text));
+      _DialogColumn(title: title, expand: false, child: SelectableText(text));
 }
 
 class HtmlDialog extends StatelessWidget {

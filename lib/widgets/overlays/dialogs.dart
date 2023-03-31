@@ -4,6 +4,7 @@ import 'package:otraku/widgets/html_content.dart';
 Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
       context: context,
       builder: (context) => PopUpAnimation(child),
+      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
     );
 
 class PopUpAnimation extends StatefulWidget {
@@ -200,6 +201,7 @@ class _ImageDialogState extends State<ImageDialog>
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       insetPadding: const EdgeInsets.only(),
       child: GestureDetector(
         onDoubleTapDown: (details) => _lastOffset = details.localPosition,

@@ -6,6 +6,7 @@ import 'package:otraku/user/friends_provider.dart';
 import 'package:otraku/user/user_grid.dart';
 import 'package:otraku/utils/pagination_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
@@ -13,17 +14,16 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class FriendsView extends ConsumerStatefulWidget {
-  const FriendsView(this.id, this.onFollowing);
+  const FriendsView(this.id);
 
   final int id;
-  final bool onFollowing;
 
   @override
   ConsumerState<FriendsView> createState() => _FriendsViewState();
 }
 
 class _FriendsViewState extends ConsumerState<FriendsView> {
-  late bool _onFollowing = widget.onFollowing;
+  late bool _onFollowing = true;
   late final _ctrl = PaginationController(
     loadMore: () => ref.read(friendsProvider(widget.id).notifier).fetch(),
   );
@@ -138,18 +138,15 @@ class _FriendTab extends StatelessWidget {
                 return const Center(child: Text('No Users'));
               }
 
-              return Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: paginationController,
-                    slivers: [
-                      refreshControl,
-                      UserGrid(data.items),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
+              return ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: paginationController,
+                  slivers: [
+                    refreshControl,
+                    UserGrid(data.items),
+                    SliverFooter(loading: data.hasNext),
+                  ],
                 ),
               );
             });

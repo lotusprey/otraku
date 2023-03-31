@@ -85,10 +85,8 @@ class RouteArg {
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => FavoritesView(arg!.id!));
       case friends:
-        if (arg?.id == null || arg?.variant == null) return _unknown;
-        return MaterialPageRoute(
-          builder: (_) => FriendsView(arg!.id!, arg.variant!),
-        );
+        if (arg?.id == null) return _unknown;
+        return MaterialPageRoute(builder: (_) => FriendsView(arg!.id!));
       case statistics:
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => StatisticsView(arg!.id!));

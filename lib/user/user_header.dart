@@ -15,13 +15,13 @@ import 'package:otraku/widgets/text_rail.dart';
 class UserHeader extends StatelessWidget {
   const UserHeader({
     required this.id,
-    required this.isMe,
+    required this.isViewer,
     required this.user,
     required this.imageUrl,
   });
 
   final int id;
-  final bool isMe;
+  final bool isViewer;
   final User? user;
   final String? imageUrl;
 
@@ -37,7 +37,7 @@ class UserHeader extends StatelessWidget {
       pinned: true,
       delegate: _Delegate(
         id: id,
-        isMe: isMe,
+        isViewer: isViewer,
         user: user,
         imageUrl: imageUrl,
         textRailItems: textRailItems,
@@ -52,7 +52,7 @@ class UserHeader extends StatelessWidget {
 class _Delegate implements SliverPersistentHeaderDelegate {
   _Delegate({
     required this.id,
-    required this.isMe,
+    required this.isViewer,
     required this.user,
     required this.imageUrl,
     required this.imageWidth,
@@ -60,7 +60,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   });
 
   final int id;
-  final bool isMe;
+  final bool isViewer;
   final User? user;
   final String? imageUrl;
   final double imageWidth;
@@ -266,7 +266,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
               height: minExtent,
               child: Row(
                 children: [
-                  isMe
+                  isViewer
                       ? const SizedBox(width: 10)
                       : TopBarIcon(
                           tooltip: 'Close',
@@ -285,7 +285,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                             ),
                           ),
                   ),
-                  if (!isMe && user != null) _FollowButton(user!),
+                  if (!isViewer && user != null) _FollowButton(user!),
                   if (user?.siteUrl != null)
                     TopBarIcon(
                       tooltip: 'More',
@@ -295,7 +295,7 @@ class _Delegate implements SliverPersistentHeaderDelegate {
                         FixedGradientDragSheet.link(context, user!.siteUrl!),
                       ),
                     ),
-                  if (isMe)
+                  if (isViewer)
                     TopBarIcon(
                       tooltip: 'Settings',
                       icon: Ionicons.cog_outline,

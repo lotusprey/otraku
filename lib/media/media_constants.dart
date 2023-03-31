@@ -71,11 +71,11 @@ enum MediaSort {
   POPULARITY_DESC('Popularity'),
   SCORE_DESC('Score'),
   SCORE('Worst Score'),
-  ID_DESC('Newest'),
-  ID('Oldest'),
   FAVOURITES_DESC('Favourites'),
   START_DATE_DESC('Released Latest'),
   START_DATE('Released Earliest'),
+  ID_DESC('Last Added'),
+  ID('First Added'),
   TITLE_ROMAJI('Title Romaji'),
   TITLE_ENGLISH('Title English'),
   TITLE_NATIVE('Title Native');

@@ -22,7 +22,7 @@ dependencies:
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.0.13
+  path_provider: ^2.0.14
 
   # Secure storage for the access tokens.
   flutter_secure_storage: ^8.0.0

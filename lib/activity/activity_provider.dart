@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/activity/activity_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/utils/options.dart';
 
 /// Toggles an activity like and returns an error if unsuccessful.
@@ -93,7 +93,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final replies = state.value?.replies ?? Pagination();
+      final replies = state.value?.replies ?? const Paged();
 
       final data = await Api.get(GqlQuery.activity, {
         'id': userId,
@@ -113,7 +113,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
 
       return ActivityState(
         activity,
-        replies.append(
+        replies.withNext(
           items,
           data['Page']['pageInfo']['hasNextPage'] ?? false,
         ),
@@ -143,7 +143,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     value.activity.replyCount++;
     state = AsyncData(ActivityState(
       value.activity,
-      Pagination.from(
+      Paged(
         items: [...value.replies.items, reply],
         hasNext: value.replies.hasNext,
         next: value.replies.next,
@@ -164,7 +164,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
         value.replies.items[i] = reply;
         state = AsyncData(ActivityState(
           value.activity,
-          Pagination.from(
+          Paged(
             items: value.replies.items,
             hasNext: value.replies.hasNext,
             next: value.replies.next,
@@ -187,7 +187,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
 
         state = AsyncData(ActivityState(
           value.activity,
-          Pagination.from(
+          Paged(
             items: value.replies.items,
             hasNext: value.replies.hasNext,
             next: value.replies.next,

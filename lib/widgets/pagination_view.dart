@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/utils/consts.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -21,11 +21,11 @@ class PaginationView<T> extends StatelessWidget {
     required this.onData,
   });
 
-  final ProviderListenable<AsyncValue<Pagination<T>>> provider;
+  final ProviderListenable<AsyncValue<Paged<T>>> provider;
   final ScrollController scrollCtrl;
   final Future<void> Function() onRefresh;
   final String dataType;
-  final Widget Function(Pagination<T>) onData;
+  final Widget Function(Paged<T>) onData;
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +45,26 @@ class PaginationView<T> extends StatelessWidget {
         );
 
         var hasNext = false;
-        final child = ref
-            .watch<AsyncValue<Pagination<T>>>(provider)
-            .unwrapPrevious()
-            .when(
-              loading: () => const SliverFillRemaining(
-                child: Center(child: Loader()),
-              ),
-              error: (_, __) => SliverFillRemaining(
-                child: Center(child: Text('Failed to load $dataType')),
-              ),
-              data: (data) {
-                hasNext = data.hasNext;
+        final child =
+            ref.watch<AsyncValue<Paged<T>>>(provider).unwrapPrevious().when(
+                  loading: () => const SliverFillRemaining(
+                    child: Center(child: Loader()),
+                  ),
+                  error: (_, __) => SliverFillRemaining(
+                    child: Center(child: Text('Failed to load $dataType')),
+                  ),
+                  data: (data) {
+                    hasNext = data.hasNext;
 
-                if (data.items.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Center(child: Text('No $dataType')),
-                  );
-                }
+                    if (data.items.isEmpty) {
+                      return SliverFillRemaining(
+                        child: Center(child: Text('No $dataType')),
+                      );
+                    }
 
-                return onData(data);
-              },
-            );
+                    return onData(data);
+                  },
+                );
 
         return ConstrainedView(
           child: CustomScrollView(

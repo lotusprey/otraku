@@ -8,7 +8,7 @@ import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 
 Future<bool> toggleFavoriteMedia(int id, bool isAnime) async {
   try {
@@ -69,10 +69,10 @@ class MediaContentNotifier extends ChangeNotifier {
 
   final int mediaId;
 
-  var _recommended = const AsyncValue<Pagination<Recommendation>>.loading();
-  var _characters = const AsyncValue<Pagination<Relation>>.loading();
-  var _staff = const AsyncValue<Pagination<Relation>>.loading();
-  var _reviews = const AsyncValue<Pagination<RelatedReview>>.loading();
+  var _recommended = const AsyncValue<Paged<Recommendation>>.loading();
+  var _characters = const AsyncValue<Paged<Relation>>.loading();
+  var _staff = const AsyncValue<Paged<Relation>>.loading();
+  var _reviews = const AsyncValue<Paged<RelatedReview>>.loading();
 
   int _languageIndex = 0;
   final languages = <String>[];
@@ -85,10 +85,10 @@ class MediaContentNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  AsyncValue<Pagination<Recommendation>> get recommended => _recommended;
-  AsyncValue<Pagination<Relation>> get characters => _characters;
-  AsyncValue<Pagination<Relation>> get staff => _staff;
-  AsyncValue<Pagination<RelatedReview>> get reviews => _reviews;
+  AsyncValue<Paged<Recommendation>> get recommended => _recommended;
+  AsyncValue<Paged<Relation>> get characters => _characters;
+  AsyncValue<Paged<Relation>> get staff => _staff;
+  AsyncValue<Paged<RelatedReview>> get reviews => _reviews;
 
   void selectCharactersAndVoiceActors(
     List<Relation> characterList,
@@ -138,10 +138,10 @@ class MediaContentNotifier extends ChangeNotifier {
       return;
     }
 
-    _recommended = AsyncValue.data(Pagination());
-    _characters = AsyncValue.data(Pagination());
-    _staff = AsyncValue.data(Pagination());
-    _reviews = AsyncValue.data(Pagination());
+    _recommended = const AsyncValue.data(Paged());
+    _characters = const AsyncValue.data(Paged());
+    _staff = const AsyncValue.data(Paged());
+    _reviews = const AsyncValue.data(Paged());
 
     _initRecommended(data.value!['recommendations']);
     _initCharacters(data.value!['characters']);
@@ -247,7 +247,7 @@ class MediaContentNotifier extends ChangeNotifier {
       if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
     }
 
-    value = value.append(
+    value = value.withNext(
       items,
       map['pageInfo']['hasNextPage'],
     );
@@ -296,7 +296,7 @@ class MediaContentNotifier extends ChangeNotifier {
       }
     }
 
-    value = value.append(
+    value = value.withNext(
       items,
       map['pageInfo']['hasNextPage'],
     );
@@ -318,7 +318,7 @@ class MediaContentNotifier extends ChangeNotifier {
       ));
     }
 
-    value = value.append(
+    value = value.withNext(
       items,
       map['pageInfo']['hasNextPage'],
     );
@@ -335,7 +335,7 @@ class MediaContentNotifier extends ChangeNotifier {
       if (item != null) items.add(item);
     }
 
-    value = value.append(
+    value = value.withNext(
       items,
       map['pageInfo']['hasNextPage'],
     );

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 
 final reviewProvider = StateNotifierProvider.autoDispose
     .family<ReviewNotifier, AsyncValue<Review>, int>(
@@ -14,7 +14,7 @@ final reviewSortProvider = StateProvider.autoDispose.family<ReviewSort, int?>(
 );
 
 final reviewsProvider = StateNotifierProvider.autoDispose
-    .family<ReviewsNotifier, AsyncValue<Pagination<ReviewItem>>, int>(
+    .family<ReviewsNotifier, AsyncValue<PagedWithTotal<ReviewItem>>, int>(
   (ref, userId) =>
       ReviewsNotifier(userId, ref.watch(reviewSortProvider(userId))),
 );
@@ -58,7 +58,7 @@ class ReviewNotifier extends StateNotifier<AsyncValue<Review>> {
 }
 
 class ReviewsNotifier
-    extends StateNotifier<AsyncValue<Pagination<ReviewItem>>> {
+    extends StateNotifier<AsyncValue<PagedWithTotal<ReviewItem>>> {
   ReviewsNotifier(this.userId, this.sort) : super(const AsyncValue.loading()) {
     fetch();
   }
@@ -66,12 +66,9 @@ class ReviewsNotifier
   final int userId;
   final ReviewSort sort;
 
-  int _reviewCount = 0;
-  int get reviewCount => _reviewCount;
-
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const PagedWithTotal();
 
       final data = await Api.get(GqlQuery.reviews, {
         'userId': userId,
@@ -84,11 +81,10 @@ class ReviewsNotifier
         items.add(ReviewItem(r));
       }
 
-      _reviewCount = data['Page']['pageInfo']?['total'] ?? 0;
-
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
+        data['Page']['pageInfo']['total'] ?? value.total,
       );
     });
   }

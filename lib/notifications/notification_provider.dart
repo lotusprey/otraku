@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/notifications/notification_model.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 
@@ -21,14 +21,14 @@ class NotificationsNotifier extends ChangeNotifier {
   final NotificationFilterType filter;
 
   int _unreadCount = 0;
-  var _notifications = const AsyncValue<Pagination<SiteNotification>>.loading();
+  var _notifications = const AsyncValue<Paged<SiteNotification>>.loading();
 
   int get unreadCount => _unreadCount;
-  AsyncValue<Pagination<SiteNotification>> get notifications => _notifications;
+  AsyncValue<Paged<SiteNotification>> get notifications => _notifications;
 
   Future<void> fetch() async {
     _notifications = await AsyncValue.guard(() async {
-      final value = _notifications.valueOrNull ?? Pagination();
+      final value = _notifications.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.notifications, {
         'page': value.next,
@@ -50,7 +50,7 @@ class NotificationsNotifier extends ChangeNotifier {
         if (item != null) items.add(item);
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );

@@ -6,7 +6,7 @@ import 'package:otraku/common/relation.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/utils/options.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
@@ -44,8 +44,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
 
   final int id;
   final CharacterFilter filter;
-  var _anime = const AsyncValue<Pagination<Relation>>.loading();
-  var _manga = const AsyncValue<Pagination<Relation>>.loading();
+  var _anime = const AsyncValue<Paged<Relation>>.loading();
+  var _manga = const AsyncValue<Paged<Relation>>.loading();
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -54,8 +54,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
   /// The currently selected language.
   var _language = '';
 
-  AsyncValue<Pagination<Relation>> get anime => _anime;
-  AsyncValue<Pagination<Relation>> get manga => _manga;
+  AsyncValue<Paged<Relation>> get anime => _anime;
+  AsyncValue<Paged<Relation>> get manga => _manga;
   Iterable<String> get languages => _languages.keys;
   String get language => _language;
   set language(String l) {
@@ -115,8 +115,8 @@ class CharacterMediaNotifier extends ChangeNotifier {
       return;
     }
 
-    _anime = AsyncValue.data(Pagination());
-    _manga = AsyncValue.data(Pagination());
+    _anime = const AsyncValue.data(Paged());
+    _manga = const AsyncValue.data(Paged());
 
     _initAnime(data.value!['anime']);
     _initManga(data.value!['manga']);
@@ -194,7 +194,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
       }
     }
 
-    value = value.append(items, data['pageInfo']['hasNextPage']);
+    value = value.withNext(items, data['pageInfo']['hasNextPage']);
     _anime = AsyncValue.data(value);
   }
 
@@ -213,7 +213,7 @@ class CharacterMediaNotifier extends ChangeNotifier {
       ));
     }
 
-    value = value.append(items, data['pageInfo']['hasNextPage']);
+    value = value.withNext(items, data['pageInfo']['hasNextPage']);
     _manga = AsyncValue.data(value);
   }
 }

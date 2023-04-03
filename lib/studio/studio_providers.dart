@@ -5,7 +5,7 @@ import 'package:otraku/media/media_models.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 
 /// Favorite/Unfavorite studio. Returns `true` if successful.
 Future<bool> toggleFavoriteStudio(int studioId) async {
@@ -46,7 +46,7 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
       data = data['Studio'];
 
       return _initMedia(
-        StudioState(Studio(data), Pagination(), {}),
+        StudioState(Studio(data), const Paged(), {}),
         data['media'],
       );
     });
@@ -103,7 +103,7 @@ class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
 
     return StudioState(
       s.studio,
-      s.media.append(items, data['pageInfo']['hasNextPage']),
+      s.media.withNext(items, data['pageInfo']['hasNextPage']),
       s.categories,
     );
   }

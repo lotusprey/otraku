@@ -1,12 +1,12 @@
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/utils/options.dart';
 
 class ActivityState {
   ActivityState(this.activity, this.replies);
 
   final Activity activity;
-  final Pagination<ActivityReply> replies;
+  final Paged<ActivityReply> replies;
 }
 
 class ActivityReply {

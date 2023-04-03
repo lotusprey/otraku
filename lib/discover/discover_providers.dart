@@ -12,7 +12,7 @@ import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 
 /// Fetches another page on the discover tab, depending on the selected type.
 void discoverLoadMore(WidgetRef ref) {
@@ -44,7 +44,7 @@ void discoverLoadMore(WidgetRef ref) {
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
 
 final discoverAnimeProvider = StateNotifierProvider.autoDispose<
-    DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
+    DiscoverMediaNotifier, AsyncValue<Paged<DiscoverMediaItem>>>(
   (ref) {
     final discoverFilter = ref.watch(discoverFilterProvider);
     return DiscoverMediaNotifier(
@@ -57,7 +57,7 @@ final discoverAnimeProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverMangaProvider = StateNotifierProvider.autoDispose<
-    DiscoverMediaNotifier, AsyncValue<Pagination<DiscoverMediaItem>>>(
+    DiscoverMediaNotifier, AsyncValue<Paged<DiscoverMediaItem>>>(
   (ref) {
     final discoverFilter = ref.watch(discoverFilterProvider);
     return DiscoverMediaNotifier(
@@ -70,7 +70,7 @@ final discoverMangaProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverCharacterProvider = StateNotifierProvider.autoDispose<
-    DiscoverCharacterNotifier, AsyncValue<Pagination<TileItem>>>(
+    DiscoverCharacterNotifier, AsyncValue<Paged<TileItem>>>(
   (ref) => DiscoverCharacterNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(discoverFilterProvider.select((s) => s.birthday)),
@@ -79,7 +79,7 @@ final discoverCharacterProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverStaffProvider = StateNotifierProvider.autoDispose<
-    DiscoverStaffNotifier, AsyncValue<Pagination<TileItem>>>(
+    DiscoverStaffNotifier, AsyncValue<Paged<TileItem>>>(
   (ref) => DiscoverStaffNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(discoverFilterProvider.select((s) => s.birthday)),
@@ -88,7 +88,7 @@ final discoverStaffProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverStudioProvider = StateNotifierProvider.autoDispose<
-    DiscoverStudioNotifier, AsyncValue<Pagination<StudioItem>>>(
+    DiscoverStudioNotifier, AsyncValue<Paged<StudioItem>>>(
   (ref) => DiscoverStudioNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
@@ -96,7 +96,7 @@ final discoverStudioProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverUserProvider = StateNotifierProvider.autoDispose<
-    DiscoverUserNotifier, AsyncValue<Pagination<UserItem>>>(
+    DiscoverUserNotifier, AsyncValue<Paged<UserItem>>>(
   (ref) => DiscoverUserNotifier(
     ref.watch(searchProvider(null).select(_searchSelector)),
     ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
@@ -104,7 +104,7 @@ final discoverUserProvider = StateNotifierProvider.autoDispose<
 );
 
 final discoverReviewProvider = StateNotifierProvider.autoDispose<
-    DiscoverReviewNotifier, AsyncValue<Pagination<ReviewItem>>>(
+    DiscoverReviewNotifier, AsyncValue<Paged<ReviewItem>>>(
   (ref) => DiscoverReviewNotifier(
     ref.watch(reviewSortProvider(null)),
     ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
@@ -112,7 +112,7 @@ final discoverReviewProvider = StateNotifierProvider.autoDispose<
 );
 
 class DiscoverMediaNotifier
-    extends StateNotifier<AsyncValue<Pagination<DiscoverMediaItem>>> {
+    extends StateNotifier<AsyncValue<Paged<DiscoverMediaItem>>> {
   DiscoverMediaNotifier(this.filter, this.search, bool shouldLoad)
       : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
@@ -123,7 +123,7 @@ class DiscoverMediaNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.medias, {
         'page': value.next,
@@ -140,7 +140,7 @@ class DiscoverMediaNotifier
         items.add(DiscoverMediaItem(m));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
@@ -149,7 +149,7 @@ class DiscoverMediaNotifier
 }
 
 class DiscoverCharacterNotifier
-    extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
+    extends StateNotifier<AsyncValue<Paged<TileItem>>> {
   DiscoverCharacterNotifier(this.search, this.isBirthday, bool shouldLoad)
       : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
@@ -160,7 +160,7 @@ class DiscoverCharacterNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.characters, {
         'page': value.next,
@@ -173,7 +173,7 @@ class DiscoverCharacterNotifier
         items.add(characterItem(c));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
@@ -181,8 +181,7 @@ class DiscoverCharacterNotifier
   }
 }
 
-class DiscoverStaffNotifier
-    extends StateNotifier<AsyncValue<Pagination<TileItem>>> {
+class DiscoverStaffNotifier extends StateNotifier<AsyncValue<Paged<TileItem>>> {
   DiscoverStaffNotifier(this.search, this.isBirthday, bool shouldLoad)
       : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
@@ -193,7 +192,7 @@ class DiscoverStaffNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.staffs, {
         'page': value.next,
@@ -206,7 +205,7 @@ class DiscoverStaffNotifier
         items.add(staffItem(s));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
@@ -215,7 +214,7 @@ class DiscoverStaffNotifier
 }
 
 class DiscoverStudioNotifier
-    extends StateNotifier<AsyncValue<Pagination<StudioItem>>> {
+    extends StateNotifier<AsyncValue<Paged<StudioItem>>> {
   DiscoverStudioNotifier(this.search, bool shouldLoad)
       : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
@@ -225,7 +224,7 @@ class DiscoverStudioNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.studios, {
         'page': value.next,
@@ -237,7 +236,7 @@ class DiscoverStudioNotifier
         items.add(StudioItem(s));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
@@ -245,8 +244,7 @@ class DiscoverStudioNotifier
   }
 }
 
-class DiscoverUserNotifier
-    extends StateNotifier<AsyncValue<Pagination<UserItem>>> {
+class DiscoverUserNotifier extends StateNotifier<AsyncValue<Paged<UserItem>>> {
   DiscoverUserNotifier(this.search, bool shouldLoad)
       : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
@@ -256,7 +254,7 @@ class DiscoverUserNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.users, {
         'page': value.next,
@@ -268,7 +266,7 @@ class DiscoverUserNotifier
         items.add(UserItem(u));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
@@ -277,7 +275,7 @@ class DiscoverUserNotifier
 }
 
 class DiscoverReviewNotifier
-    extends StateNotifier<AsyncValue<Pagination<ReviewItem>>> {
+    extends StateNotifier<AsyncValue<Paged<ReviewItem>>> {
   DiscoverReviewNotifier(this.sort, bool shouldLoad)
       : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
@@ -287,7 +285,7 @@ class DiscoverReviewNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.reviews, {
         'page': value.next,
@@ -299,7 +297,7 @@ class DiscoverReviewNotifier
         items.add(ReviewItem(r));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );

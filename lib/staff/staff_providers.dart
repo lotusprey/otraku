@@ -6,7 +6,7 @@ import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/utils/options.dart';
 
 /// Favorite/Unfavorite staff. Returns `true` if successful.
@@ -45,12 +45,12 @@ class StaffRelationNotifier extends ChangeNotifier {
   final int id;
   final StaffFilter filter;
   final _characterMedia = <Relation>[];
-  var _characters = const AsyncValue<Pagination<Relation>>.loading();
-  var _roles = const AsyncValue<Pagination<Relation>>.loading();
+  var _characters = const AsyncValue<Paged<Relation>>.loading();
+  var _roles = const AsyncValue<Paged<Relation>>.loading();
 
   List<Relation> get characterMedia => _characterMedia;
-  AsyncValue<Pagination<Relation>> get characters => _characters;
-  AsyncValue<Pagination<Relation>> get roles => _roles;
+  AsyncValue<Paged<Relation>> get characters => _characters;
+  AsyncValue<Paged<Relation>> get roles => _roles;
 
   Future<void> _fetch() async {
     final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
@@ -71,8 +71,8 @@ class StaffRelationNotifier extends ChangeNotifier {
       return;
     }
 
-    _characters = AsyncValue.data(Pagination());
-    _roles = AsyncValue.data(Pagination());
+    _characters = const AsyncValue.data(Paged());
+    _roles = const AsyncValue.data(Paged());
 
     _initCharacters(data.value!['characterMedia']);
     _initRoles(data.value!['staffMedia']);
@@ -140,7 +140,7 @@ class StaffRelationNotifier extends ChangeNotifier {
       }
     }
 
-    value = value.append(items, data['pageInfo']['hasNextPage']);
+    value = value.withNext(items, data['pageInfo']['hasNextPage']);
     _characters = AsyncValue.data(value);
   }
 
@@ -161,7 +161,7 @@ class StaffRelationNotifier extends ChangeNotifier {
       ));
     }
 
-    value = value.append(items, data['pageInfo']['hasNextPage']);
+    value = value.withNext(items, data['pageInfo']['hasNextPage']);
     _roles = AsyncValue.data(value);
   }
 }

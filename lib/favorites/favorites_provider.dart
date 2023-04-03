@@ -8,7 +8,7 @@ import 'package:otraku/staff/staff_models.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 
 final favoritesProvider =
     ChangeNotifierProvider.autoDispose.family<FavoritesNotifier, int>(
@@ -28,11 +28,11 @@ class FavoritesNotifier extends ChangeNotifier {
   int _characterCount = 0;
   int _staffCount = 0;
   int _studioCount = 0;
-  var _anime = const AsyncValue<Pagination<TileItem>>.loading();
-  var _manga = const AsyncValue<Pagination<TileItem>>.loading();
-  var _characters = const AsyncValue<Pagination<TileItem>>.loading();
-  var _staff = const AsyncValue<Pagination<TileItem>>.loading();
-  var _studios = const AsyncValue<Pagination<StudioItem>>.loading();
+  var _anime = const AsyncValue<Paged<TileItem>>.loading();
+  var _manga = const AsyncValue<Paged<TileItem>>.loading();
+  var _characters = const AsyncValue<Paged<TileItem>>.loading();
+  var _staff = const AsyncValue<Paged<TileItem>>.loading();
+  var _studios = const AsyncValue<Paged<StudioItem>>.loading();
 
   int getCount(FavoriteType type) {
     _type = type;
@@ -50,11 +50,11 @@ class FavoritesNotifier extends ChangeNotifier {
     }
   }
 
-  AsyncValue<Pagination<TileItem>> get anime => _anime;
-  AsyncValue<Pagination<TileItem>> get manga => _manga;
-  AsyncValue<Pagination<TileItem>> get characters => _characters;
-  AsyncValue<Pagination<TileItem>> get staff => _staff;
-  AsyncValue<Pagination<StudioItem>> get studios => _studios;
+  AsyncValue<Paged<TileItem>> get anime => _anime;
+  AsyncValue<Paged<TileItem>> get manga => _manga;
+  AsyncValue<Paged<TileItem>> get characters => _characters;
+  AsyncValue<Paged<TileItem>> get staff => _staff;
+  AsyncValue<Paged<StudioItem>> get studios => _studios;
 
   Future<void> fetch() async {
     final type = _type;
@@ -97,7 +97,7 @@ class FavoritesNotifier extends ChangeNotifier {
       _anime = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['anime'];
-        final value = _anime.valueOrNull ?? Pagination();
+        final value = _anime.valueOrNull ?? const Paged();
 
         if (_animeCount == 0) _animeCount = map['pageInfo']['total'] ?? 0;
 
@@ -106,7 +106,7 @@ class FavoritesNotifier extends ChangeNotifier {
           items.add(mediaItem(a));
         }
 
-        return Future.value(value.append(
+        return Future.value(value.withNext(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
@@ -117,7 +117,7 @@ class FavoritesNotifier extends ChangeNotifier {
       _manga = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['manga'];
-        final value = _manga.valueOrNull ?? Pagination();
+        final value = _manga.valueOrNull ?? const Paged();
 
         if (_mangaCount == 0) _mangaCount = map['pageInfo']['total'] ?? 0;
 
@@ -126,7 +126,7 @@ class FavoritesNotifier extends ChangeNotifier {
           items.add(mediaItem(m));
         }
 
-        return Future.value(value.append(
+        return Future.value(value.withNext(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
@@ -137,7 +137,7 @@ class FavoritesNotifier extends ChangeNotifier {
       _characters = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['characters'];
-        final value = _characters.valueOrNull ?? Pagination();
+        final value = _characters.valueOrNull ?? const Paged();
 
         if (_characterCount == 0) {
           _characterCount = map['pageInfo']['total'] ?? 0;
@@ -148,7 +148,7 @@ class FavoritesNotifier extends ChangeNotifier {
           items.add(characterItem(c));
         }
 
-        return Future.value(value.append(
+        return Future.value(value.withNext(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
@@ -159,7 +159,7 @@ class FavoritesNotifier extends ChangeNotifier {
       _staff = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['staff'];
-        final value = _staff.valueOrNull ?? Pagination();
+        final value = _staff.valueOrNull ?? const Paged();
 
         if (_staffCount == 0) _staffCount = map['pageInfo']['total'] ?? 0;
 
@@ -168,7 +168,7 @@ class FavoritesNotifier extends ChangeNotifier {
           items.add(staffItem(s));
         }
 
-        return Future.value(value.append(
+        return Future.value(value.withNext(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));
@@ -179,7 +179,7 @@ class FavoritesNotifier extends ChangeNotifier {
       _studios = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['studios'];
-        final value = _studios.valueOrNull ?? Pagination();
+        final value = _studios.valueOrNull ?? const Paged();
 
         if (_studioCount == 0) _studioCount = map['pageInfo']['total'] ?? 0;
 
@@ -188,7 +188,7 @@ class FavoritesNotifier extends ChangeNotifier {
           items.add(StudioItem(s));
         }
 
-        return Future.value(value.append(
+        return Future.value(value.withNext(
           items,
           map['pageInfo']['hasNextPage'] ?? false,
         ));

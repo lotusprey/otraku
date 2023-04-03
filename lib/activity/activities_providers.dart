@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/activity/activity_models.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/options.dart';
 
 final activitiesProvider = StateNotifierProvider.autoDispose
-    .family<ActivitiesNotifier, AsyncValue<Pagination<Activity>>, int?>(
+    .family<ActivitiesNotifier, AsyncValue<Paged<Activity>>, int?>(
   (ref, userId) => ActivitiesNotifier(
     userId: userId,
     viewerId: Options().id!,
@@ -35,8 +35,7 @@ final activityFilterProvider = StateNotifierProvider.autoDispose
   },
 );
 
-class ActivitiesNotifier
-    extends StateNotifier<AsyncValue<Pagination<Activity>>> {
+class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
   ActivitiesNotifier({
     required this.userId,
     required this.viewerId,
@@ -58,7 +57,7 @@ class ActivitiesNotifier
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? Pagination();
+      final value = state.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.activities, {
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
@@ -84,7 +83,7 @@ class ActivitiesNotifier
         _lastCreatedAt = data['Page']['activities'].last['createdAt'];
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
       );
@@ -99,7 +98,7 @@ class ActivitiesNotifier
     final activity = Activity.maybe(map, viewerId);
     if (activity == null) return;
 
-    state = AsyncData(Pagination.from(
+    state = AsyncData(Paged(
       items: [activity, ...value.items],
       hasNext: value.hasNext,
       next: value.next,
@@ -117,7 +116,7 @@ class ActivitiesNotifier
     for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
-        state = AsyncData(Pagination.from(
+        state = AsyncData(Paged(
           items: value.items,
           hasNext: value.hasNext,
           next: value.next,
@@ -135,7 +134,7 @@ class ActivitiesNotifier
     for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
-        state = AsyncData(Pagination.from(
+        state = AsyncData(Paged(
           items: value.items,
           hasNext: value.hasNext,
           next: value.next,
@@ -153,7 +152,7 @@ class ActivitiesNotifier
     for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activityId) {
         value.items.removeAt(i);
-        state = AsyncData(Pagination.from(
+        state = AsyncData(Paged(
           items: value.items,
           hasNext: value.hasNext,
           next: value.next,
@@ -176,7 +175,7 @@ class ActivitiesNotifier
           value.items[0].isPinned = false;
         }
 
-        state = AsyncData(Pagination.from(
+        state = AsyncData(Paged(
           items: value.items,
           hasNext: value.hasNext,
           next: value.next,

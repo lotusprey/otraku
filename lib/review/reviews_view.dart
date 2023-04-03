@@ -33,11 +33,9 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
 
   @override
   Widget build(BuildContext context) {
-    // The [reviewCount] is not part of the state of [ReviewsNotifier] and
-    // changes cannot be tracket through selecting it. it would be good to
-    // make it part of the state later.
-    ref.watch(reviewsProvider(widget.id));
-    final count = ref.watch(reviewsProvider(widget.id).notifier).reviewCount;
+    final count = ref.watch(
+      reviewsProvider(widget.id).select((s) => s.valueOrNull?.total ?? 0),
+    );
 
     return PageScaffold(
       child: TabScaffold(
@@ -89,18 +87,16 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           ],
         ),
         child: Consumer(
-          builder: (context, ref, refreshControl) {
-            return PaginationView<ReviewItem>(
-              provider: reviewsProvider(widget.id),
-              scrollCtrl: _ctrl,
-              dataType: 'reviews',
-              onRefresh: () {
-                ref.invalidate(reviewsProvider(widget.id));
-                return Future.value();
-              },
-              onData: (data) => ReviewGrid(data.items),
-            );
-          },
+          builder: (context, ref, refreshControl) => PaginationView<ReviewItem>(
+            provider: reviewsProvider(widget.id),
+            scrollCtrl: _ctrl,
+            dataType: 'reviews',
+            onRefresh: () {
+              ref.invalidate(reviewsProvider(widget.id));
+              return Future.value();
+            },
+            onData: (data) => ReviewGrid(data.items),
+          ),
         ),
       ),
     );

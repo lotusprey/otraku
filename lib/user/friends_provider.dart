@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
-import 'package:otraku/common/pagination.dart';
+import 'package:otraku/common/paged.dart';
 
 final friendsProvider =
     ChangeNotifierProvider.autoDispose.family<FriendsNotifier, int>(
@@ -18,8 +18,8 @@ class FriendsNotifier extends ChangeNotifier {
   bool _onFollowing = false;
   int _followingCount = 0;
   int _followersCount = 0;
-  var _following = AsyncValue.data(Pagination<UserItem>());
-  var _followers = AsyncValue.data(Pagination<UserItem>());
+  var _following = const AsyncValue.data(Paged<UserItem>());
+  var _followers = const AsyncValue.data(Paged<UserItem>());
 
   int getCount(bool onFollowing) {
     _onFollowing = onFollowing;
@@ -43,8 +43,8 @@ class FriendsNotifier extends ChangeNotifier {
     return _followersCount;
   }
 
-  AsyncValue<Pagination<UserItem>> get following => _following;
-  AsyncValue<Pagination<UserItem>> get followers => _followers;
+  AsyncValue<Paged<UserItem>> get following => _following;
+  AsyncValue<Paged<UserItem>> get followers => _followers;
 
   Future<void> fetch() async {
     final onFollowing = _onFollowing;
@@ -54,7 +54,7 @@ class FriendsNotifier extends ChangeNotifier {
     var users = onFollowing ? _following : _followers;
 
     users = await AsyncValue.guard(() async {
-      final value = users.valueOrNull ?? Pagination();
+      final value = users.valueOrNull ?? const Paged();
 
       final data = await Api.get(GqlQuery.friends, {
         'userId': userId,
@@ -76,7 +76,7 @@ class FriendsNotifier extends ChangeNotifier {
         items.add(UserItem(u));
       }
 
-      return value.append(
+      return value.withNext(
         items,
         data[key]['pageInfo']['hasNextPage'] ?? false,
       );

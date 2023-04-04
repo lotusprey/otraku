@@ -39,10 +39,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
       friendsProvider(widget.id).select((s) => s.getCount(_onFollowing)),
     );
 
-    final onRefresh = () {
-      ref.invalidate(friendsProvider(widget.id));
-      return Future.value();
-    };
+    final onRefresh = () => ref.invalidate(friendsProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomBarIconTabs(

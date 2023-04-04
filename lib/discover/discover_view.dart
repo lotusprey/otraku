@@ -37,27 +37,26 @@ class DiscoverView extends ConsumerWidget {
       switch (type) {
         case DiscoverType.anime:
           ref.invalidate(discoverAnimeProvider);
-          break;
+          return;
         case DiscoverType.manga:
           ref.invalidate(discoverMangaProvider);
-          break;
+          return;
         case DiscoverType.character:
           ref.invalidate(discoverCharacterProvider);
-          break;
+          return;
         case DiscoverType.staff:
           ref.invalidate(discoverStaffProvider);
-          break;
+          return;
         case DiscoverType.studio:
           ref.invalidate(discoverStudioProvider);
-          break;
+          return;
         case DiscoverType.user:
           ref.invalidate(discoverUserProvider);
-          break;
+          return;
         case DiscoverType.review:
           ref.invalidate(discoverReviewProvider);
-          break;
+          return;
       }
-      return Future.value();
     };
 
     return TabScaffold(
@@ -240,7 +239,7 @@ class _Grid extends StatelessWidget {
   const _Grid(this.scrollCtrl, this.onRefresh);
 
   final ScrollController scrollCtrl;
-  final Future<void> Function() onRefresh;
+  final void Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {

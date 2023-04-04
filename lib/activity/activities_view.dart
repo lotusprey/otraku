@@ -146,7 +146,6 @@ class ActivitiesSubView extends StatelessWidget {
             if (id == null) {
               ref.read(settingsProvider.notifier).refetchUnread();
             }
-            return Future.value();
           },
           onData: (data) => SliverList(
             delegate: SliverChildBuilderDelegate(

@@ -89,13 +89,10 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
         child: Consumer(
           builder: (context, ref, refreshControl) => PagedView<ReviewItem>(
             provider: reviewsProvider(widget.id),
+            onData: (data) => ReviewGrid(data.items),
+            onRefresh: () => ref.invalidate(reviewsProvider(widget.id)),
             scrollCtrl: _ctrl,
             dataType: 'reviews',
-            onRefresh: () {
-              ref.invalidate(reviewsProvider(widget.id));
-              return Future.value();
-            },
-            onData: (data) => ReviewGrid(data.items),
           ),
         ),
       ),

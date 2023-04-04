@@ -41,10 +41,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
       favoritesProvider(widget.id).select((s) => s.getCount(_tab)),
     );
 
-    final onRefresh = () {
-      ref.invalidate(favoritesProvider(widget.id));
-      return Future.value();
-    };
+    final onRefresh = () => ref.invalidate(favoritesProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomBarIconTabs(

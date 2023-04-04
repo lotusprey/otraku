@@ -23,7 +23,7 @@ class PagedView<T> extends StatelessWidget {
 
   final ProviderListenable<AsyncValue<Paged<T>>> provider;
   final ScrollController scrollCtrl;
-  final Future<void> Function() onRefresh;
+  final void Function() onRefresh;
   final String dataType;
   final Widget Function(Paged<T>) onData;
 

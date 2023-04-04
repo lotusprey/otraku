@@ -121,8 +121,9 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
               controller: widget.scrollCtrl,
               slivers: [
                 SliverRefreshControl(
-                  onRefresh: () =>
-                      ref.invalidate(collectionPreviewProvider(widget.tag)),
+                  onRefresh: () => ref.invalidate(
+                    collectionPreviewProvider(widget.tag),
+                  ),
                 ),
                 content,
                 const SliverFooter(),

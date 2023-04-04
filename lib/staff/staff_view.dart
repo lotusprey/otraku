@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/staff/staff_info_tab.dart';
 import 'package:otraku/staff/staff_relations_tab.dart';
 import 'package:otraku/staff/staff_providers.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
@@ -23,7 +23,7 @@ class StaffView extends ConsumerStatefulWidget {
 
 class _StaffViewState extends ConsumerState<StaffView> {
   int _tab = 0;
-  late final _ctrl = PaginationController(loadMore: () {
+  late final _ctrl = PagedController(loadMore: () {
     if (_tab == 0) return;
     _tab == 1
         ? ref.read(staffRelationProvider(widget.id)).fetchPage(true)

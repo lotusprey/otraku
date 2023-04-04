@@ -4,12 +4,12 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/user/friends_provider.dart';
 import 'package:otraku/user/user_grid.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
-import 'package:otraku/widgets/pagination_view.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class FriendsView extends ConsumerStatefulWidget {
   const FriendsView(this.id);
@@ -22,7 +22,7 @@ class FriendsView extends ConsumerStatefulWidget {
 
 class _FriendsViewState extends ConsumerState<FriendsView> {
   late bool _onFollowing = true;
-  late final _ctrl = PaginationController(
+  late final _ctrl = PagedController(
     loadMore: () =>
         ref.read(friendsProvider(widget.id).notifier).fetch(_onFollowing),
   );
@@ -76,14 +76,14 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
             setState(() => _onFollowing = page == 0 ? true : false);
           },
           children: [
-            PaginationView<UserItem>(
+            PagedView<UserItem>(
               provider: friendsProvider(widget.id).select((s) => s.following),
               onData: (data) => UserGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
               dataType: 'following',
             ),
-            PaginationView<UserItem>(
+            PagedView<UserItem>(
               provider: friendsProvider(widget.id).select((s) => s.followers),
               onData: (data) => UserGrid(data.items),
               scrollCtrl: _ctrl,

@@ -6,13 +6,13 @@ import 'package:otraku/favorites/favorites_model.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/favorites/favorites_provider.dart';
 import 'package:otraku/studio/studio_grid.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
-import 'package:otraku/widgets/pagination_view.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class FavoritesView extends ConsumerStatefulWidget {
   const FavoritesView(this.id);
@@ -25,7 +25,7 @@ class FavoritesView extends ConsumerStatefulWidget {
 
 class _FavoritesViewState extends ConsumerState<FavoritesView> {
   FavoritesTab _tab = FavoritesTab.anime;
-  late final _ctrl = PaginationController(
+  late final _ctrl = PagedController(
     loadMore: () => ref.read(favoritesProvider(widget.id).notifier).fetch(_tab),
   );
 
@@ -82,21 +82,21 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
             () => _tab = FavoritesTab.values.elementAt(page),
           ),
           children: [
-            PaginationView<TileItem>(
+            PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.anime),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
               dataType: 'favourite anime',
             ),
-            PaginationView<TileItem>(
+            PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.manga),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
               dataType: 'favourite manga',
             ),
-            PaginationView<TileItem>(
+            PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select(
                 (s) => s.characters,
               ),
@@ -105,14 +105,14 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
               onRefresh: onRefresh,
               dataType: 'favourite characters',
             ),
-            PaginationView<TileItem>(
+            PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.staff),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
               dataType: 'favourite staff',
             ),
-            PaginationView<StudioItem>(
+            PagedView<StudioItem>(
               provider: favoritesProvider(widget.id).select((s) => s.studios),
               onData: (data) => StudioGrid(data.items),
               scrollCtrl: _ctrl,

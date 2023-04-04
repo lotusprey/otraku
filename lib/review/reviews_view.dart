@@ -3,13 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/review/review_models.dart';
 import 'package:otraku/review/review_providers.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/review/review_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
-import 'package:otraku/widgets/pagination_view.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class ReviewsView extends ConsumerStatefulWidget {
   const ReviewsView(this.id);
@@ -21,7 +21,7 @@ class ReviewsView extends ConsumerStatefulWidget {
 }
 
 class _ReviewsViewState extends ConsumerState<ReviewsView> {
-  late final _ctrl = PaginationController(
+  late final _ctrl = PagedController(
     loadMore: () => ref.read(reviewsProvider(widget.id).notifier).fetch(),
   );
 
@@ -87,7 +87,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           ],
         ),
         child: Consumer(
-          builder: (context, ref, refreshControl) => PaginationView<ReviewItem>(
+          builder: (context, ref, refreshControl) => PagedView<ReviewItem>(
             provider: reviewsProvider(widget.id),
             scrollCtrl: _ctrl,
             dataType: 'reviews',

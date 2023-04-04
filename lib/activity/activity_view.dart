@@ -9,7 +9,7 @@ import 'package:otraku/composition/composition_model.dart';
 import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/discover/discover_models.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/link_tile.dart';
@@ -31,7 +31,7 @@ class ActivityView extends ConsumerStatefulWidget {
 }
 
 class _ActivityViewState extends ConsumerState<ActivityView> {
-  late final _ctrl = PaginationController(
+  late final _ctrl = PagedController(
     loadMore: () => ref.read(activityProvider(widget.id).notifier).fetch(),
   );
 

@@ -15,7 +15,7 @@ import 'package:otraku/user/user_grid.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/convert.dart';
 import 'package:otraku/review/review_grid.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -23,12 +23,12 @@ import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/filter/filter_search_field.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
-import 'package:otraku/widgets/pagination_view.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class DiscoverView extends ConsumerWidget {
   const DiscoverView(this.scrollCtrl);
 
-  final PaginationController scrollCtrl;
+  final PagedController scrollCtrl;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -250,7 +250,7 @@ class _Grid extends StatelessWidget {
 
         switch (type) {
           case DiscoverType.anime:
-            return PaginationView<DiscoverMediaItem>(
+            return PagedView<DiscoverMediaItem>(
               provider: discoverAnimeProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -260,7 +260,7 @@ class _Grid extends StatelessWidget {
                   : TileItemGrid(data.items),
             );
           case DiscoverType.manga:
-            return PaginationView<DiscoverMediaItem>(
+            return PagedView<DiscoverMediaItem>(
               provider: discoverMangaProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -270,7 +270,7 @@ class _Grid extends StatelessWidget {
                   : TileItemGrid(data.items),
             );
           case DiscoverType.character:
-            return PaginationView<TileItem>(
+            return PagedView<TileItem>(
               provider: discoverCharacterProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -278,7 +278,7 @@ class _Grid extends StatelessWidget {
               onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.staff:
-            return PaginationView<TileItem>(
+            return PagedView<TileItem>(
               provider: discoverStaffProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -286,7 +286,7 @@ class _Grid extends StatelessWidget {
               onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.studio:
-            return PaginationView<StudioItem>(
+            return PagedView<StudioItem>(
               provider: discoverStudioProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -294,7 +294,7 @@ class _Grid extends StatelessWidget {
               onData: (data) => StudioGrid(data.items),
             );
           case DiscoverType.user:
-            return PaginationView<UserItem>(
+            return PagedView<UserItem>(
               provider: discoverUserProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -302,7 +302,7 @@ class _Grid extends StatelessWidget {
               onData: (data) => UserGrid(data.items),
             );
           case DiscoverType.review:
-            return PaginationView<ReviewItem>(
+            return PagedView<ReviewItem>(
               provider: discoverReviewProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/media/media_models.dart';
 import 'package:otraku/media/media_providers.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/media/media_info_view.dart';
 import 'package:otraku/media/media_other_view.dart';
 import 'package:otraku/media/media_people_view.dart';
@@ -95,7 +95,7 @@ class _MediaViewState extends State<MediaView> {
   }
 }
 
-/// Due to [NestedScrollView] limitations, the custom [PaginationController]
+/// Due to [NestedScrollView] limitations, the custom [PagedController]
 /// can't be used here and has to be reimplemented temporarely on the inner
 /// scroll controller of the [NestedScrollView].
 /// For more context: https://github.com/flutter/flutter/pull/104166.

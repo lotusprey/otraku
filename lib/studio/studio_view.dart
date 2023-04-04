@@ -8,7 +8,7 @@ import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/studio/studio_models.dart';
 import 'package:otraku/studio/studio_providers.dart';
 import 'package:otraku/utils/convert.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
@@ -30,7 +30,7 @@ class StudioView extends ConsumerStatefulWidget {
 }
 
 class _StudioViewState extends ConsumerState<StudioView> {
-  late final _ctrl = PaginationController(loadMore: () {
+  late final _ctrl = PagedController(loadMore: () {
     ref.read(studioProvider(widget.id).notifier).fetchPage();
   });
 

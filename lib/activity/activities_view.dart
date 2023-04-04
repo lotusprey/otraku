@@ -8,7 +8,7 @@ import 'package:otraku/composition/composition_view.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/utils/consts.dart';
 import 'package:otraku/activity/activity_models.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/fields/checkbox_field.dart';
@@ -17,7 +17,7 @@ import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
-import 'package:otraku/widgets/pagination_view.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
   final filter = ref.read(activityFilterProvider(id));
@@ -81,7 +81,7 @@ class ActivitiesView extends ConsumerStatefulWidget {
 }
 
 class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
-  late final _ctrl = PaginationController(
+  late final _ctrl = PagedController(
     loadMore: () => ref.read(activitiesProvider(widget.id).notifier).fetch(),
   );
 
@@ -137,7 +137,7 @@ class ActivitiesSubView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        return PaginationView<Activity>(
+        return PagedView<Activity>(
           provider: activitiesProvider(id),
           scrollCtrl: scrollCtrl,
           dataType: 'activities',

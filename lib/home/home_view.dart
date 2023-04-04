@@ -13,7 +13,7 @@ import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/settings/settings_provider.dart';
 import 'package:otraku/tag/tag_provider.dart';
 import 'package:otraku/user/user_providers.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/discover/discover_view.dart';
 import 'package:otraku/collection/collection_view.dart';
@@ -41,7 +41,7 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  late final _ctrl = PaginationController(loadMore: _scrollListener);
+  late final _ctrl = PagedController(loadMore: _scrollListener);
   late final animeCollectionTag = CollectionTag(widget.id, true);
   late final mangaCollectionTag = CollectionTag(widget.id, false);
 

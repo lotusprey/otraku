@@ -7,7 +7,7 @@ import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/notifications/notification_provider.dart';
 import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/utils/pagination_controller.dart';
+import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/edit/edit_view.dart';
 import 'package:otraku/widgets/layouts/constrained_view.dart';
@@ -30,13 +30,13 @@ class NotificationsView extends ConsumerStatefulWidget {
 }
 
 class _NotificationsViewState extends ConsumerState<NotificationsView> {
-  late final PaginationController _ctrl;
+  late final PagedController _ctrl;
 
   @override
   void initState() {
     super.initState();
     BackgroundHandler.clearNotifications();
-    _ctrl = PaginationController(
+    _ctrl = PagedController(
       loadMore: () => ref.read(notificationsProvider).fetch(),
     );
   }

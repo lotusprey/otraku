@@ -12,8 +12,8 @@ import 'package:otraku/widgets/overlays/dialogs.dart';
 /// [PaginationController], pagination will automatically work.
 /// [dateType] is a lowercase word for the data being handled (e.g. "reviews").
 /// [onData] should return a sliver widget.
-class PaginationView<T> extends StatelessWidget {
-  const PaginationView({
+class PagedView<T> extends StatelessWidget {
+  const PagedView({
     required this.provider,
     required this.scrollCtrl,
     required this.onRefresh,

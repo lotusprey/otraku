@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 
 /// A [ScrollController] that can perform and action when
 /// the bottom of the page is reached. Used for pagination.
-class PaginationController extends ScrollController {
-  PaginationController({required this.loadMore}) {
+class PagedController extends ScrollController {
+  PagedController({required this.loadMore}) {
     addListener(_listener);
   }
 

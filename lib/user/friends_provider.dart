@@ -1,88 +1,85 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/user/friends_model.dart';
 import 'package:otraku/user/user_models.dart';
 import 'package:otraku/utils/api.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/common/paged.dart';
 
 final friendsProvider =
-    ChangeNotifierProvider.autoDispose.family<FriendsNotifier, int>(
+    StateNotifierProvider.autoDispose.family<FriendsNotifier, Friends, int>(
   (ref, userId) => FriendsNotifier(userId),
 );
 
-class FriendsNotifier extends ChangeNotifier {
-  FriendsNotifier(this.userId);
+class FriendsNotifier extends StateNotifier<Friends> {
+  FriendsNotifier(this.userId) : super(const Friends()) {
+    _fetch(null);
+  }
 
   final int userId;
 
-  bool _onFollowing = false;
-  int _followingCount = 0;
-  int _followersCount = 0;
-  var _following = const AsyncValue.data(Paged<UserItem>());
-  var _followers = const AsyncValue.data(Paged<UserItem>());
+  Future<void> fetch(bool onFollowing) => _fetch(onFollowing);
 
-  int getCount(bool onFollowing) {
-    _onFollowing = onFollowing;
-    if (onFollowing) {
-      if (_following is AsyncData &&
-          _following.value!.items.isEmpty &&
-          _following.value!.hasNext) {
-        _following = const AsyncValue.loading();
-        fetch();
-      }
+  Future<void> _fetch(bool? onFollowing) async {
+    final variables = <String, dynamic>{'userId': userId};
 
-      return _followingCount;
+    if (onFollowing == null) {
+      variables['withFollowing'] = true;
+      variables['withFollowers'] = true;
+    } else if (onFollowing) {
+      if (!(state.following.valueOrNull?.hasNext ?? true)) return;
+      variables['withFollowing'] = true;
+      variables['page'] = state.following.valueOrNull?.next ?? 1;
+    } else {
+      if (!(state.followers.valueOrNull?.hasNext ?? true)) return;
+      variables['withFollowers'] = true;
+      variables['page'] = state.followers.valueOrNull?.next ?? 1;
     }
 
-    if (_followers is AsyncData &&
-        _followers.value!.items.isEmpty &&
-        _followers.value!.hasNext) {
-      _followers = const AsyncValue.loading();
-      fetch();
-    }
-    return _followersCount;
-  }
+    final data = await AsyncValue.guard(
+      () => Api.get(GqlQuery.friends, variables),
+    );
 
-  AsyncValue<Paged<UserItem>> get following => _following;
-  AsyncValue<Paged<UserItem>> get followers => _followers;
+    var following = state.following;
+    var followers = state.followers;
 
-  Future<void> fetch() async {
-    final onFollowing = _onFollowing;
-    if (onFollowing && !(_following.valueOrNull?.hasNext ?? true) ||
-        !onFollowing && !(_followers.valueOrNull?.hasNext ?? true)) return;
+    if (onFollowing == null || onFollowing) {
+      following = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['following'];
+        final value = following.valueOrNull ?? const PagedWithTotal();
 
-    var users = onFollowing ? _following : _followers;
+        final items = <UserItem>[];
+        for (final u in map['following']) {
+          items.add(UserItem(u));
+        }
 
-    users = await AsyncValue.guard(() async {
-      final value = users.valueOrNull ?? const Paged();
-
-      final data = await Api.get(GqlQuery.friends, {
-        'userId': userId,
-        'page': value.next,
-        'withFollowing': onFollowing,
-        'withFollowers': !onFollowing,
+        return Future.value(value.withNext(
+          items,
+          map['pageInfo']['hasNextPage'] ?? false,
+          map['pageInfo']['total'],
+        ));
       });
+    }
 
-      final key = onFollowing ? 'following' : 'followers';
-      final count = data[key]['pageInfo']['total'] ?? 0;
-      if (onFollowing) {
-        if (_followingCount == 0) _followingCount = count;
-      } else {
-        if (_followersCount == 0) _followersCount = count;
-      }
+    if (onFollowing == null || !onFollowing) {
+      followers = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['followers'];
+        final value = followers.valueOrNull ?? const PagedWithTotal();
 
-      final items = <UserItem>[];
-      for (final u in data[key][key]) {
-        items.add(UserItem(u));
-      }
+        final items = <UserItem>[];
+        for (final u in map['followers']) {
+          items.add(UserItem(u));
+        }
 
-      return value.withNext(
-        items,
-        data[key]['pageInfo']['hasNextPage'] ?? false,
-      );
-    });
+        return Future.value(value.withNext(
+          items,
+          map['pageInfo']['hasNextPage'] ?? false,
+          map['pageInfo']['total'],
+        ));
+      });
+    }
 
-    onFollowing ? _following = users : _followers = users;
-    notifyListeners();
+    state = Friends(following: following, followers: followers);
   }
 }

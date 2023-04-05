@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/social/social_model.dart';
 import 'package:otraku/user/user_models.dart';
-import 'package:otraku/user/friends_provider.dart';
+import 'package:otraku/social/social_provider.dart';
 import 'package:otraku/user/user_grid.dart';
 import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
@@ -11,20 +12,19 @@ import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/paged_view.dart';
 
-class FriendsView extends ConsumerStatefulWidget {
-  const FriendsView(this.id);
+class SocialView extends ConsumerStatefulWidget {
+  const SocialView(this.id);
 
   final int id;
 
   @override
-  ConsumerState<FriendsView> createState() => _FriendsViewState();
+  ConsumerState<SocialView> createState() => _SocialViewState();
 }
 
-class _FriendsViewState extends ConsumerState<FriendsView> {
-  late bool _onFollowing = true;
+class _SocialViewState extends ConsumerState<SocialView> {
+  late SocialTab _tab = SocialTab.following;
   late final _ctrl = PagedController(
-    loadMore: () =>
-        ref.read(friendsProvider(widget.id).notifier).fetch(_onFollowing),
+    loadMore: () => ref.read(socialProvider(widget.id).notifier).fetch(_tab),
   );
 
   @override
@@ -36,16 +36,17 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
   @override
   Widget build(BuildContext context) {
     final count = ref.watch(
-      friendsProvider(widget.id).select((s) => s.getCount(_onFollowing)),
+      socialProvider(widget.id).select((s) => s.getCount(_tab)),
     );
 
-    final onRefresh = () => ref.invalidate(friendsProvider(widget.id));
+    final onRefresh = () => ref.invalidate(socialProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomBarIconTabs(
-        current: _onFollowing ? 0 : 1,
+        current: _tab.index,
         onChanged: (page) {
-          setState(() => _onFollowing = page == 0 ? true : false);
+          setState(() => _tab = SocialTab.values.elementAt(page));
+          _ctrl.scrollToTop();
         },
         onSame: (_) => _ctrl.scrollToTop(),
         items: const {
@@ -55,7 +56,7 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
       ),
       child: TabScaffold(
         topBar: TopBar(
-          title: _onFollowing ? 'Following' : 'Followers',
+          title: _tab.title,
           trailing: [
             if (count > 0)
               Padding(
@@ -68,20 +69,21 @@ class _FriendsViewState extends ConsumerState<FriendsView> {
           ],
         ),
         child: DirectPageView(
-          current: _onFollowing ? 0 : 1,
+          current: _tab.index,
           onChanged: (page) {
-            setState(() => _onFollowing = page == 0 ? true : false);
+            setState(() => _tab = SocialTab.values.elementAt(page));
+            _ctrl.scrollToTop();
           },
           children: [
             PagedView<UserItem>(
-              provider: friendsProvider(widget.id).select((s) => s.following),
+              provider: socialProvider(widget.id).select((s) => s.following),
               onData: (data) => UserGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
               dataType: 'following',
             ),
             PagedView<UserItem>(
-              provider: friendsProvider(widget.id).select((s) => s.followers),
+              provider: socialProvider(widget.id).select((s) => s.followers),
               onData: (data) => UserGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,

@@ -40,7 +40,7 @@ dependencies:
   app_links: ^3.4.2
 
   # Access to platform theme and easy theme interpolation.
-  dynamic_color: ^1.6.2
+  dynamic_color: ^1.6.3
 
   # Background tasks for notification fetching.
   workmanager: ^0.5.1

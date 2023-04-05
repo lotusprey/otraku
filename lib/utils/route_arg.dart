@@ -6,7 +6,7 @@ import 'package:otraku/favorites/favorites_view.dart';
 import 'package:otraku/studio/studio_view.dart';
 import 'package:otraku/auth/auth_view.dart';
 import 'package:otraku/character/character_view.dart';
-import 'package:otraku/user/friends_view.dart';
+import 'package:otraku/social/social_view.dart';
 import 'package:otraku/home/home_view.dart';
 import 'package:otraku/media/media_view.dart';
 import 'package:otraku/notifications/notifications_view.dart';
@@ -86,7 +86,7 @@ class RouteArg {
         return MaterialPageRoute(builder: (_) => FavoritesView(arg!.id!));
       case friends:
         if (arg?.id == null) return _unknown;
-        return MaterialPageRoute(builder: (_) => FriendsView(arg!.id!));
+        return MaterialPageRoute(builder: (_) => SocialView(arg!.id!));
       case statistics:
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(builder: (_) => StatisticsView(arg!.id!));

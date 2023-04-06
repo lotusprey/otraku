@@ -104,6 +104,7 @@ class _SearchFilterFieldState extends State<SearchFilterField> {
                     hint: widget.title,
                     onChange: (val) {
                       if (val.isEmpty) {
+                        _debounce.cancel();
                         ref.read(searchProvider(widget.tag).notifier).state =
                             '';
                         return;

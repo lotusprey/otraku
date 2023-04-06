@@ -164,26 +164,8 @@ class ActivitiesSubView extends StatelessWidget {
                           .read(activitiesProvider(id).notifier)
                           .togglePin(data.items[i].id)
                       : null,
-                  onOpenReplies: () => Navigator.pushNamed(
-                    context,
-                    RouteArg.activity,
-                    arguments: RouteArg(
-                      id: data.items[i].id,
-                      callback: (arg) {
-                        final updatedActivity = arg as Activity?;
-                        if (updatedActivity == null) {
-                          ref
-                              .read(activitiesProvider(id).notifier)
-                              .remove(data.items[i].id);
-                          return;
-                        }
-
-                        ref
-                            .read(activitiesProvider(id).notifier)
-                            .updateActivity(updatedActivity);
-                      },
-                    ),
-                  ),
+                  onOpenReplies: () =>
+                      _onOpenReplies(context, ref, data.items[i]),
                   onEdited: (map) {
                     ref
                         .read(activitiesProvider(id).notifier)
@@ -195,6 +177,27 @@ class ActivitiesSubView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  void _onOpenReplies(BuildContext context, WidgetRef ref, Activity activity) {
+    Navigator.pushNamed(
+      context,
+      RouteArg.activity,
+      arguments: RouteArg(
+        id: activity.id,
+        callback: (arg) {
+          final updatedActivity = arg as Activity?;
+          if (updatedActivity == null) {
+            ref.read(activitiesProvider(id).notifier).remove(activity.id);
+            return;
+          }
+
+          ref
+              .read(activitiesProvider(id).notifier)
+              .updateActivity(updatedActivity);
+        },
+      ),
     );
   }
 }

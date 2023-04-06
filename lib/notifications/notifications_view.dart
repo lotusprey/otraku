@@ -21,6 +21,7 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
 import 'package:otraku/widgets/overlays/toast.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {
   const NotificationsView();
@@ -30,15 +31,14 @@ class NotificationsView extends ConsumerStatefulWidget {
 }
 
 class _NotificationsViewState extends ConsumerState<NotificationsView> {
-  late final PagedController _ctrl;
+  late final _ctrl = PagedController(
+    loadMore: () => ref.read(notificationsProvider.notifier).fetch(),
+  );
 
   @override
   void initState() {
     super.initState();
     BackgroundHandler.clearNotifications();
-    _ctrl = PagedController(
-      loadMore: () => ref.read(notificationsProvider).fetch(),
-    );
   }
 
   @override
@@ -49,18 +49,20 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
+    final unreadCount = ref.watch(
+      notificationsProvider.select((s) => s.valueOrNull?.total ?? 0),
+    );
+
     return PageScaffold(
       child: TabScaffold(
         topBar: TopBar(
           trailing: [
             Expanded(
-              child: Consumer(
-                builder: (context, ref, _) => Text(
-                  '${ref.watch(notificationFilterProvider).text} Notifications',
-                  style: Theme.of(context).textTheme.titleLarge,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
+              child: Text(
+                '${ref.watch(notificationFilterProvider).text} Notifications',
+                style: Theme.of(context).textTheme.titleLarge,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ),
           ],
@@ -71,93 +73,55 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             ActionButton(
               tooltip: 'Filter',
               icon: Ionicons.funnel_outline,
-              onTap: () {
-                showSheet(
-                  context,
-                  Consumer(
-                    builder: (context, ref, _) {
-                      final theme = Theme.of(context);
-                      final notifier = ref.read(
-                        notificationFilterProvider.notifier,
-                      );
-
-                      final tiles = <Widget>[];
-                      for (int i = 0;
-                          i < NotificationFilterType.values.length;
-                          i++) {
-                        tiles.add(Text(
-                          NotificationFilterType.values.elementAt(i).text,
-                          style: i != notifier.state.index
-                              ? theme.textTheme.titleLarge
-                              : theme.textTheme.titleLarge?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                        ));
-                      }
-
-                      return DynamicGradientDragSheet(
-                        children: tiles,
-                        onTap: (i) => notifier.state =
-                            NotificationFilterType.values.elementAt(i),
-                      );
-                    },
-                  ),
-                );
-              },
+              onTap: _showFilterSheet,
             ),
           ],
         ),
-        child: Consumer(
-          child: SliverRefreshControl(
-            onRefresh: () => ref.invalidate(notificationsProvider),
+        child: PagedView<SiteNotification>(
+          provider: notificationsProvider,
+          onData: (data) => SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, i) => _NotificationItem(data.items[i], i < unreadCount),
+              childCount: data.items.length,
+            ),
           ),
-          builder: (context, ref, refreshControl) {
-            ref.listen<NotificationsNotifier>(
-              notificationsProvider,
-              (_, s) => s.notifications.whenOrNull(
-                error: (error, _) => showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Failed to load notifications',
-                    content: error.toString(),
-                  ),
-                ),
-              ),
-            );
-
-            final notifier = ref.watch(notificationsProvider);
-            return notifier.notifications.when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) =>
-                  const Center(child: Text('Failed to load notifications')),
-              data: (data) {
-                if (data.items.isEmpty) {
-                  return const Center(child: Text('No notifications'));
-                }
-
-                return ConstrainedView(
-                  child: CustomScrollView(
-                    physics: Consts.physics,
-                    controller: _ctrl,
-                    slivers: [
-                      refreshControl!,
-                      SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, i) => _NotificationItem(
-                            data.items[i],
-                            i < notifier.unreadCount,
-                          ),
-                          childCount: data.items.length,
-                        ),
-                      ),
-                      SliverFooter(loading: data.hasNext),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
+          onRefresh: () => ref.invalidate(notificationsProvider),
+          scrollCtrl: _ctrl,
+          dataType: 'notifications',
         ),
+      ),
+    );
+  }
+
+  void _showFilterSheet() {
+    showSheet(
+      context,
+      Consumer(
+        builder: (context, ref, _) {
+          final theme = Theme.of(context);
+          final index =
+              ref.read(notificationFilterProvider.notifier).state.index;
+
+          final tiles = <Widget>[];
+          for (int i = 0; i < NotificationFilterType.values.length; i++) {
+            tiles.add(Text(
+              NotificationFilterType.values.elementAt(i).text,
+              style: i != index
+                  ? theme.textTheme.titleLarge
+                  : theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
+            ));
+          }
+
+          return DynamicGradientDragSheet(
+            children: tiles,
+            onTap: (i) {
+              final notifier = ref.read(notificationFilterProvider.notifier);
+              notifier.state = NotificationFilterType.values.elementAt(i);
+            },
+          );
+        },
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/common/paged.dart';
@@ -9,26 +8,22 @@ final notificationFilterProvider = StateProvider.autoDispose(
   (ref) => NotificationFilterType.all,
 );
 
-final notificationsProvider = ChangeNotifierProvider.autoDispose(
+final notificationsProvider = StateNotifierProvider.autoDispose<
+    NotificationsNotifier, AsyncValue<PagedWithTotal<SiteNotification>>>(
   (ref) => NotificationsNotifier(ref.watch(notificationFilterProvider)),
 );
 
-class NotificationsNotifier extends ChangeNotifier {
-  NotificationsNotifier(this.filter) {
+class NotificationsNotifier
+    extends StateNotifier<AsyncValue<PagedWithTotal<SiteNotification>>> {
+  NotificationsNotifier(this.filter) : super(const AsyncValue.loading()) {
     fetch();
   }
 
   final NotificationFilterType filter;
 
-  int _unreadCount = 0;
-  var _notifications = const AsyncValue<Paged<SiteNotification>>.loading();
-
-  int get unreadCount => _unreadCount;
-  AsyncValue<Paged<SiteNotification>> get notifications => _notifications;
-
   Future<void> fetch() async {
-    _notifications = await AsyncValue.guard(() async {
-      final value = _notifications.valueOrNull ?? const Paged();
+    state = await AsyncValue.guard(() async {
+      final value = state.valueOrNull ?? const PagedWithTotal();
 
       final data = await Api.get(GqlQuery.notifications, {
         'page': value.next,
@@ -39,9 +34,9 @@ class NotificationsNotifier extends ChangeNotifier {
           'filter': filter.vars,
       });
 
-      _unreadCount = 0;
+      int? unreadCount;
       if (filter.index < 1) {
-        _unreadCount = data['Viewer']?['unreadNotificationCount'] ?? 0;
+        unreadCount = data['Viewer']['unreadNotificationCount'] ?? 0;
       }
 
       final items = <SiteNotification>[];
@@ -53,8 +48,8 @@ class NotificationsNotifier extends ChangeNotifier {
       return value.withNext(
         items,
         data['Page']['pageInfo']['hasNextPage'] ?? false,
+        unreadCount,
       );
     });
-    notifyListeners();
   }
 }

@@ -88,13 +88,14 @@ VerticalOffsets scaffoldOffsets(BuildContext context) {
   var bottom = 0.0;
 
   final inner = context.findAncestorWidgetOfExactType<TabScaffold>();
-  if (inner?.topBar != null) top += inner!.topBar!.preferredSize.height;
-
   final outer = context.findAncestorStateOfType<_PageScaffoldState>();
-  if (outer != null) {
-    top += outer._topOffset;
-    bottom += outer._bottomOffset;
+
+  if (inner?.topBar != null) {
+    top += inner!.topBar!.preferredSize.height;
+    top += outer?._topOffset ?? 0;
   }
+
+  bottom += outer?._bottomOffset ?? 0;
 
   return VerticalOffsets(top, bottom);
 }

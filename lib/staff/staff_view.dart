@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/relation.dart';
+import 'package:otraku/staff/staff_action_buttons.dart';
 import 'package:otraku/staff/staff_info_tab.dart';
-import 'package:otraku/staff/staff_relations_tab.dart';
 import 'package:otraku/staff/staff_providers.dart';
 import 'package:otraku/utils/paged_controller.dart';
+import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class StaffView extends ConsumerStatefulWidget {
   const StaffView(this.id, this.imageUrl);
@@ -26,8 +30,8 @@ class _StaffViewState extends ConsumerState<StaffView> {
   late final _ctrl = PagedController(loadMore: () {
     if (_tab == 0) return;
     _tab == 1
-        ? ref.read(staffRelationProvider(widget.id)).fetchPage(true)
-        : ref.read(staffRelationProvider(widget.id)).fetchPage(false);
+        ? ref.read(staffRelationsProvider(widget.id).notifier).fetch(true)
+        : ref.read(staffRelationsProvider(widget.id).notifier).fetch(false);
   });
 
   @override
@@ -53,9 +57,11 @@ class _StaffViewState extends ConsumerState<StaffView> {
       },
     );
 
-    ref.watch(staffRelationProvider(widget.id).select((_) => null));
-    final name = ref.watch(staffProvider(widget.id)).valueOrNull?.name;
-    final topBar = TopBar(title: name);
+    final staff = ref.watch(staffProvider(widget.id));
+
+    ref.watch(staffRelationsProvider(widget.id).select((_) => null));
+
+    final onRefresh = () => ref.invalidate(staffRelationsProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomBarIconTabs(
@@ -68,14 +74,43 @@ class _StaffViewState extends ConsumerState<StaffView> {
           'Roles': Ionicons.briefcase_outline,
         },
       ),
-      child: DirectPageView(
-        current: _tab,
-        onChanged: (i) => setState(() => _tab = i),
-        children: [
-          StaffInfoTab(widget.id, widget.imageUrl, _ctrl, topBar),
-          StaffCharactersTab(widget.id, _ctrl, topBar),
-          StaffRolesTab(widget.id, _ctrl, topBar),
-        ],
+      child: TabScaffold(
+        topBar: TopBar(
+          title: staff.valueOrNull?.name,
+        ),
+        floatingBar: FloatingBar(
+          scrollCtrl: _ctrl,
+          children: [
+            if (_tab == 0 && staff.hasValue)
+              StaffFavoriteButton(staff.valueOrNull!),
+            if (_tab > 0) StaffFilterButton(widget.id, true),
+          ],
+        ),
+        child: DirectPageView(
+          current: _tab,
+          onChanged: (i) => setState(() => _tab = i),
+          children: [
+            StaffInfoTab(widget.id, widget.imageUrl, _ctrl),
+            PagedView<Relation>(
+              provider:
+                  staffRelationsProvider(widget.id).select((s) => s.characters),
+              onData: (data) => RelationGrid(
+                items: data.items,
+                connections:
+                    ref.read(staffRelationsProvider(widget.id)).characterMedia,
+              ),
+              scrollCtrl: _ctrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<Relation>(
+              provider:
+                  staffRelationsProvider(widget.id).select((s) => s.roles),
+              onData: (data) => RelationGrid(items: data.items),
+              scrollCtrl: _ctrl,
+              onRefresh: onRefresh,
+            ),
+          ],
+        ),
       ),
     );
   }

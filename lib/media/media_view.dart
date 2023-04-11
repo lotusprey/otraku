@@ -54,10 +54,7 @@ class _MediaViewState extends State<MediaView> {
         child: NestedScrollView(
           controller: _scrollCtrl,
           headerSliverBuilder: (context, _) => [
-            SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: MediaHeader(widget.id, widget.coverUrl),
-            ),
+            MediaHeader(widget.id, widget.coverUrl),
           ],
           body: Consumer(
             builder: (context, ref, _) {
@@ -78,9 +75,10 @@ class _MediaViewState extends State<MediaView> {
 
               return ref.watch(mediaProvider(widget.id)).when(
                     loading: () => const Center(child: Loader()),
-                    error: (_, __) =>
-                        const Center(child: Text('Failed to load media')),
-                    data: (media) => _MediaView(
+                    error: (_, __) => const Center(
+                      child: Text('Failed to load media'),
+                    ),
+                    data: (media) => _MediaSubView(
                       widget.id,
                       _tab,
                       media,
@@ -99,8 +97,8 @@ class _MediaViewState extends State<MediaView> {
 /// can't be used here and has to be reimplemented temporarely on the inner
 /// scroll controller of the [NestedScrollView].
 /// For more context: https://github.com/flutter/flutter/pull/104166.
-class _MediaView extends ConsumerStatefulWidget {
-  const _MediaView(this.id, this.tab, this.media, this.onChanged);
+class _MediaSubView extends ConsumerStatefulWidget {
+  const _MediaSubView(this.id, this.tab, this.media, this.onChanged);
 
   final int id;
   final int tab;
@@ -108,10 +106,10 @@ class _MediaView extends ConsumerStatefulWidget {
   final void Function(int) onChanged;
 
   @override
-  ConsumerState<_MediaView> createState() => __MediaSubViewState();
+  ConsumerState<_MediaSubView> createState() => __MediaSubViewState();
 }
 
-class __MediaSubViewState extends ConsumerState<_MediaView> {
+class __MediaSubViewState extends ConsumerState<_MediaSubView> {
   late final ScrollController _scrollCtrl;
   double _lastMaxExtent = 0;
   bool _otherTabToggled = false;
@@ -128,7 +126,7 @@ class __MediaSubViewState extends ConsumerState<_MediaView> {
   }
 
   @override
-  void didUpdateWidget(covariant _MediaView oldWidget) {
+  void didUpdateWidget(covariant _MediaSubView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.tab != oldWidget.tab) _lastMaxExtent = 0;
   }
@@ -148,17 +146,25 @@ class __MediaSubViewState extends ConsumerState<_MediaView> {
     switch (widget.tab) {
       case 1:
         if (_otherTabToggled) {
-          ref.read(mediaContentProvider(widget.id)).fetchRecommended();
+          ref
+              .read(mediaRelationsProvider(widget.id).notifier)
+              .fetch(MediaTab.recommended);
         }
         return;
       case 2:
         _peopleTabToggled
-            ? ref.read(mediaContentProvider(widget.id)).fetchStaff()
-            : ref.read(mediaContentProvider(widget.id)).fetchCharacters();
+            ? ref
+                .read(mediaRelationsProvider(widget.id).notifier)
+                .fetch(MediaTab.staff)
+            : ref
+                .read(mediaRelationsProvider(widget.id).notifier)
+                .fetch(MediaTab.characters);
         return;
       case 3:
         if (!_socialTabToggled) {
-          ref.read(mediaContentProvider(widget.id)).fetchReviews();
+          ref
+              .read(mediaRelationsProvider(widget.id).notifier)
+              .fetch(MediaTab.reviews);
         }
         return;
     }
@@ -166,7 +172,7 @@ class __MediaSubViewState extends ConsumerState<_MediaView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(mediaContentProvider(widget.id).select((_) => null));
+    ref.watch(mediaRelationsProvider(widget.id).select((_) => null));
 
     return DirectPageView(
       current: widget.tab,

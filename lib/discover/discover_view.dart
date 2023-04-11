@@ -253,7 +253,6 @@ class _Grid extends StatelessWidget {
               provider: discoverAnimeProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'anime',
               onData: (data) => Options().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
@@ -263,7 +262,6 @@ class _Grid extends StatelessWidget {
               provider: discoverMangaProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'manga',
               onData: (data) => Options().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
@@ -273,7 +271,6 @@ class _Grid extends StatelessWidget {
               provider: discoverCharacterProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'characters',
               onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.staff:
@@ -281,7 +278,6 @@ class _Grid extends StatelessWidget {
               provider: discoverStaffProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'staff',
               onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.studio:
@@ -289,7 +285,6 @@ class _Grid extends StatelessWidget {
               provider: discoverStudioProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'studios',
               onData: (data) => StudioGrid(data.items),
             );
           case DiscoverType.user:
@@ -297,7 +292,6 @@ class _Grid extends StatelessWidget {
               provider: discoverUserProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'users',
               onData: (data) => UserGrid(data.items),
             );
           case DiscoverType.review:
@@ -305,7 +299,6 @@ class _Grid extends StatelessWidget {
               provider: discoverReviewProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              dataType: 'reviews',
               onData: (data) => ReviewGrid(data.items),
             );
         }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/discover/discover_models.dart';
@@ -74,7 +73,7 @@ class MediaHeader extends StatelessWidget {
   }
 }
 
-class _Delegate implements SliverPersistentHeaderDelegate {
+class _Delegate extends SliverPersistentHeaderDelegate {
   _Delegate({
     required this.id,
     required this.info,
@@ -96,7 +95,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final height = maxExtent;
-    final extent = height - shrinkOffset;
     final opacity = shrinkOffset < (_bannerHeight - minExtent)
         ? shrinkOffset / (_bannerHeight - minExtent)
         : 1.0;
@@ -115,197 +113,192 @@ class _Delegate implements SliverPersistentHeaderDelegate {
           ),
         ],
       ),
-      child: FlexibleSpaceBar.createSettings(
-        minExtent: minExtent,
-        maxExtent: height,
-        currentExtent: extent > minExtent ? extent : minExtent,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              stretchModes: const [StretchMode.zoomBackground],
-              background: Column(
-                children: [
-                  Expanded(
-                    child: info?.banner != null
-                        ? GestureDetector(
-                            child: CachedImage(info!.banner!),
-                            onTap: () => showPopUp(
-                              context,
-                              ImageDialog(info!.banner!),
-                            ),
-                          )
-                        : const SizedBox(),
-                  ),
-                  SizedBox(height: height - _bannerHeight),
-                ],
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Column(
+            children: [
+              Flexible(
+                flex: _bannerHeight.ceil(),
+                child: info?.banner != null
+                    ? GestureDetector(
+                        child: CachedImage(info!.banner!),
+                        onTap: () => showPopUp(
+                          context,
+                          ImageDialog(info!.banner!),
+                        ),
+                      )
+                    : const SizedBox(),
               ),
-            ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
+              Flexible(
+                flex: (height - _bannerHeight).floor(),
+                child: const SizedBox(),
+              ),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              height: height - _bannerHeight,
+              alignment: Alignment.topCenter,
+              color: theme.colorScheme.background,
               child: Container(
-                height: height - _bannerHeight,
-                alignment: Alignment.topCenter,
-                color: theme.colorScheme.background,
-                child: Container(
-                  height: 0,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 15,
-                        spreadRadius: 25,
-                        color: theme.colorScheme.background,
-                      ),
-                    ],
-                  ),
+                height: 0,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 15,
+                      spreadRadius: 25,
+                      color: theme.colorScheme.background,
+                    ),
+                  ],
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 10,
-              right: 10,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Hero(
-                    tag: id,
-                    child: ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
-                      child: Container(
-                        height: imageHeight,
-                        width: imageWidth,
-                        color: theme.colorScheme.surfaceVariant,
-                        child: cover != null
-                            ? GestureDetector(
-                                onTap: () => showPopUp(
-                                  context,
-                                  ImageDialog(
-                                    info?.extraLargeCover ?? cover,
-                                  ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 10,
+            right: 10,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Hero(
+                  tag: id,
+                  child: ClipRRect(
+                    borderRadius: Consts.borderRadiusMin,
+                    child: Container(
+                      height: imageHeight,
+                      width: imageWidth,
+                      color: theme.colorScheme.surfaceVariant,
+                      child: cover != null
+                          ? GestureDetector(
+                              onTap: () => showPopUp(
+                                context,
+                                ImageDialog(
+                                  info?.extraLargeCover ?? cover,
                                 ),
-                                child: CachedImage(cover),
-                              )
-                            : null,
-                      ),
+                              ),
+                              child: CachedImage(cover),
+                            )
+                          : null,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        if (info?.preferredTitle != null)
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () =>
-                                Toast.copy(context, info!.preferredTitle!),
-                            child: Text(
-                              info!.preferredTitle!,
-                              maxLines: 8,
-                              overflow: TextOverflow.fade,
-                              style: theme.textTheme.titleLarge!.copyWith(
-                                shadows: [
-                                  Shadow(
-                                    blurRadius: 10,
-                                    color: theme.colorScheme.background,
-                                  ),
-                                ],
-                              ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (info?.preferredTitle != null)
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () =>
+                              Toast.copy(context, info!.preferredTitle!),
+                          child: Text(
+                            info!.preferredTitle!,
+                            maxLines: 8,
+                            overflow: TextOverflow.fade,
+                            style: theme.textTheme.titleLarge!.copyWith(
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 10,
+                                  color: theme.colorScheme.background,
+                                ),
+                              ],
                             ),
                           ),
-                        if (textRailItems.isNotEmpty)
-                          TextRail(
-                            textRailItems,
-                            style: theme.textTheme.labelMedium,
-                          ),
-                      ],
-                    ),
+                        ),
+                      if (textRailItems.isNotEmpty)
+                        TextRail(
+                          textRailItems,
+                          style: theme.textTheme.labelMedium,
+                        ),
+                    ],
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: minExtent,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.background,
+                    Theme.of(context).colorScheme.background.withAlpha(0),
+                  ],
+                ),
               ),
             ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: minExtent,
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: minExtent,
+            child: Opacity(
+              opacity: opacity,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Theme.of(context).colorScheme.background,
-                      Theme.of(context).colorScheme.background.withAlpha(0),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: minExtent,
-              child: Opacity(
-                opacity: opacity,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.background,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        spreadRadius: 10,
-                        color: theme.colorScheme.background,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: minExtent,
-              child: Row(
-                children: [
-                  TopBarIcon(
-                    tooltip: 'Close',
-                    icon: Ionicons.chevron_back_outline,
-                    onTap: Navigator.of(context).pop,
-                  ),
-                  Expanded(
-                    child: info?.preferredTitle == null
-                        ? const SizedBox()
-                        : Opacity(
-                            opacity: opacity,
-                            child: Text(
-                              info!.preferredTitle!,
-                              style: theme.textTheme.titleMedium,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                  ),
-                  if (info?.siteUrl != null)
-                    TopBarIcon(
-                      tooltip: 'More',
-                      icon: Ionicons.ellipsis_horizontal,
-                      onTap: () => showSheet(
-                        context,
-                        FixedGradientDragSheet.link(context, info!.siteUrl!),
-                      ),
+                  color: theme.colorScheme.background,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 10,
+                      spreadRadius: 10,
+                      color: theme.colorScheme.background,
                     ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: minExtent,
+            child: Row(
+              children: [
+                TopBarIcon(
+                  tooltip: 'Close',
+                  icon: Ionicons.chevron_back_outline,
+                  onTap: Navigator.of(context).pop,
+                ),
+                Expanded(
+                  child: info?.preferredTitle == null
+                      ? const SizedBox()
+                      : Opacity(
+                          opacity: opacity,
+                          child: Text(
+                            info!.preferredTitle!,
+                            style: theme.textTheme.titleMedium,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                ),
+                if (info?.siteUrl != null)
+                  TopBarIcon(
+                    tooltip: 'More',
+                    icon: Ionicons.ellipsis_horizontal,
+                    onTap: () => showSheet(
+                      context,
+                      FixedGradientDragSheet.link(context, info!.siteUrl!),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -321,20 +314,6 @@ class _Delegate implements SliverPersistentHeaderDelegate {
   double get minExtent => Consts.tapTargetSize;
 
   @override
-  OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
-      OverScrollHeaderStretchConfiguration(stretchTriggerOffset: 100);
-
-  @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
       true;
-
-  @override
-  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
-      null;
-
-  @override
-  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
-
-  @override
-  TickerProvider? get vsync => null;
 }

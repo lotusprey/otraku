@@ -91,7 +91,6 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           onData: (data) => ReviewGrid(data.items),
           onRefresh: () => ref.invalidate(reviewsProvider(widget.id)),
           scrollCtrl: _ctrl,
-          dataType: 'reviews',
         ),
       ),
     );

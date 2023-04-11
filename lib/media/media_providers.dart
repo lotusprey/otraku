@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_model.dart';
@@ -58,287 +57,192 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
   },
 );
 
-final mediaContentProvider = ChangeNotifierProvider.autoDispose.family(
-  (ref, int mediaId) => MediaContentNotifier(mediaId),
+final mediaRelationsProvider = StateNotifierProvider.autoDispose
+    .family<MediaRelationsNotifier, MediaRelations, int>(
+  (ref, int mediaId) => MediaRelationsNotifier(mediaId),
 );
 
-class MediaContentNotifier extends ChangeNotifier {
-  MediaContentNotifier(this.mediaId) {
-    _fetch();
+class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
+  MediaRelationsNotifier(this.mediaId) : super(const MediaRelations()) {
+    _fetch(null);
   }
 
   final int mediaId;
 
-  var _recommended = const AsyncValue<Paged<Recommendation>>.loading();
-  var _characters = const AsyncValue<Paged<Relation>>.loading();
-  var _staff = const AsyncValue<Paged<Relation>>.loading();
-  var _reviews = const AsyncValue<Paged<RelatedReview>>.loading();
+  Future<void> fetch(MediaTab tab) => _fetch(tab);
 
-  int _languageIndex = 0;
-  final languages = <String>[];
-  final _voiceActors = <String, Map<int, List<Relation>>>{};
-
-  int get languageIndex => _languageIndex;
-  set languageIndex(int val) {
-    if (_languageIndex == val) return;
-    _languageIndex = val;
-    notifyListeners();
-  }
-
-  AsyncValue<Paged<Recommendation>> get recommended => _recommended;
-  AsyncValue<Paged<Relation>> get characters => _characters;
-  AsyncValue<Paged<Relation>> get staff => _staff;
-  AsyncValue<Paged<RelatedReview>> get reviews => _reviews;
-
-  void selectCharactersAndVoiceActors(
-    List<Relation> characterList,
-    List<Relation?> voiceActorList,
-  ) {
-    final chars = _characters.valueOrNull?.items;
-    if (chars == null) return;
-
-    final byLanguage = _voiceActors[languages[_languageIndex]];
-    if (byLanguage == null) {
-      characterList.addAll(chars);
+  Future<void> _fetch(MediaTab? tab) async {
+    if (tab == MediaTab.info ||
+        tab == MediaTab.relations ||
+        tab == MediaTab.statistics) {
       return;
     }
 
-    for (final c in chars) {
-      final vas = byLanguage[c.id];
-      if (vas == null || vas.isEmpty) {
-        characterList.add(c);
-        voiceActorList.add(null);
-        continue;
-      }
-
-      for (final va in vas) {
-        characterList.add(c);
-        voiceActorList.add(va);
-      }
+    final variables = <String, dynamic>{'id': mediaId};
+    if (tab == null) {
+      variables['withRecommendations'] = true;
+      variables['withCharacters'] = true;
+      variables['withStaff'] = true;
+      variables['withReviews'] = true;
+    } else if (tab == MediaTab.recommended) {
+      if (!(state.recommended.valueOrNull?.hasNext ?? true)) return;
+      variables['withRecommendations'] = true;
+      variables['page'] = state.recommended.valueOrNull?.next ?? 1;
+    } else if (tab == MediaTab.characters) {
+      if (!(state.characters.valueOrNull?.hasNext ?? true)) return;
+      variables['withCharacters'] = true;
+      variables['page'] = state.characters.valueOrNull?.next ?? 1;
+    } else if (tab == MediaTab.staff) {
+      if (!(state.staff.valueOrNull?.hasNext ?? true)) return;
+      variables['withStaff'] = true;
+      variables['page'] = state.staff.valueOrNull?.next ?? 1;
+    } else if (tab == MediaTab.reviews) {
+      if (!(state.reviews.valueOrNull?.hasNext ?? true)) return;
+      variables['withReviews'] = true;
+      variables['page'] = state.reviews.valueOrNull?.next ?? 1;
     }
-  }
 
-  Future<void> _fetch() async {
     final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.media, {
-        'id': mediaId,
-        'withRecommendations': true,
-        'withCharacters': true,
-        'withStaff': true,
-        'withReviews': true,
-      });
+      final data = await Api.get(GqlQuery.media, variables);
       return data['Media'];
     });
 
-    if (data.hasError) {
-      _recommended = AsyncValue.error(data.error!, data.stackTrace!);
-      _characters = AsyncValue.error(data.error!, data.stackTrace!);
-      _staff = AsyncValue.error(data.error!, data.stackTrace!);
-      _reviews = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
+    var recommended = state.recommended;
+    var characters = state.characters;
+    var staff = state.staff;
+    var reviews = state.reviews;
+    var languageToVoiceActors = state.languageToVoiceActors;
+    var language = state.language;
 
-    _recommended = const AsyncValue.data(Paged());
-    _characters = const AsyncValue.data(Paged());
-    _staff = const AsyncValue.data(Paged());
-    _reviews = const AsyncValue.data(Paged());
+    if (tab == null || tab == MediaTab.recommended) {
+      recommended = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['recommendations'];
+        final value = recommended.valueOrNull ?? const Paged();
 
-    _initRecommended(data.value!['recommendations']);
-    _initCharacters(data.value!['characters']);
-    _initStaff(data.value!['staff']);
-    _initReviews(data.value!['reviews']);
-    notifyListeners();
-  }
+        final items = <Recommendation>[];
+        for (final r in map['nodes']) {
+          if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
+        }
 
-  Future<void> fetchRecommended() async {
-    final value = _recommended.valueOrNull;
-    if (value == null || !value.hasNext) return;
-
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.media, {
-        'id': mediaId,
-        'page': value.next,
-        'withRecommendations': true,
-      });
-      return data['Media'];
-    });
-
-    if (data.hasError) {
-      _recommended = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
-
-    _initRecommended(data.value!['recommendations']);
-    notifyListeners();
-  }
-
-  Future<void> fetchCharacters() async {
-    final value = _characters.valueOrNull;
-    if (value == null || !value.hasNext) return;
-
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.media, {
-        'id': mediaId,
-        'page': value.next,
-        'withCharacters': true,
-      });
-      return data['Media'];
-    });
-
-    if (data.hasError) {
-      _characters = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
-
-    _initCharacters(data.value!['characters']);
-    notifyListeners();
-  }
-
-  Future<void> fetchStaff() async {
-    final value = _staff.valueOrNull;
-    if (value == null || !value.hasNext) return;
-
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.media, {
-        'id': mediaId,
-        'page': value.next,
-        'withStaff': true,
-      });
-      return data['Media'];
-    });
-
-    if (data.hasError) {
-      _staff = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
-
-    _initStaff(data.value!['staff']);
-    notifyListeners();
-  }
-
-  Future<void> fetchReviews() async {
-    final value = _reviews.valueOrNull;
-    if (value == null || !value.hasNext) return;
-
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.media, {
-        'id': mediaId,
-        'page': value.next,
-        'withReviews': true,
-      });
-      return data['Media'];
-    });
-
-    if (data.hasError) {
-      _reviews = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
-
-    _initReviews(data.value!['reviews']);
-    notifyListeners();
-  }
-
-  void _initRecommended(Map<String, dynamic> map) {
-    var value = _recommended.valueOrNull;
-    if (value == null) return;
-
-    final items = <Recommendation>[];
-    for (final r in map['nodes']) {
-      if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
-    }
-
-    value = value.withNext(
-      items,
-      map['pageInfo']['hasNextPage'],
-    );
-    _recommended = AsyncValue.data(value);
-  }
-
-  void _initCharacters(Map<String, dynamic> map) {
-    var value = _characters.valueOrNull;
-    if (value == null) return;
-
-    final items = <Relation>[];
-    for (final c in map['edges']) {
-      items.add(Relation(
-        id: c['node']['id'],
-        title: c['node']['name']['userPreferred'],
-        imageUrl: c['node']['image']['large'],
-        subtitle: Convert.clarifyEnum(c['role']),
-        type: DiscoverType.character,
-      ));
-
-      if (c['voiceActors'] == null) continue;
-
-      for (final va in c['voiceActors']) {
-        final l = Convert.clarifyEnum(va['languageV2']);
-        if (l == null) continue;
-
-        if (!languages.contains(l)) languages.add(l);
-
-        final currentLanguage = _voiceActors.putIfAbsent(
-          l,
-          () => <int, List<Relation>>{},
+        return Future.value(
+          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
         );
+      });
+    }
 
-        final currentCharacter = currentLanguage.putIfAbsent(
-          items.last.id,
-          () => [],
+    if (tab == null || tab == MediaTab.characters) {
+      characters = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['characters'];
+        final value = characters.valueOrNull ?? const Paged();
+
+        /// The map could be immutable, so a copy is made.
+        languageToVoiceActors = {...state.languageToVoiceActors};
+
+        final items = <Relation>[];
+        for (final c in map['edges']) {
+          items.add(Relation(
+            id: c['node']['id'],
+            title: c['node']['name']['userPreferred'],
+            imageUrl: c['node']['image']['large'],
+            subtitle: Convert.clarifyEnum(c['role']),
+            type: DiscoverType.character,
+          ));
+
+          if (c['voiceActors'] == null) continue;
+
+          for (final va in c['voiceActors']) {
+            final l = Convert.clarifyEnum(va['languageV2']);
+            if (l == null) continue;
+
+            final currentLanguage = languageToVoiceActors.putIfAbsent(
+              l,
+              () => <int, List<Relation>>{},
+            );
+
+            final currentCharacter = currentLanguage.putIfAbsent(
+              items.last.id,
+              () => [],
+            );
+
+            currentCharacter.add(Relation(
+              id: va['id'],
+              title: va['name']['userPreferred'],
+              imageUrl: va['image']['large'],
+              subtitle: l,
+              type: DiscoverType.staff,
+            ));
+          }
+        }
+
+        if (language.isEmpty && languageToVoiceActors.isNotEmpty) {
+          language = languageToVoiceActors.keys.first;
+        }
+
+        return Future.value(
+          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
         );
-
-        currentCharacter.add(Relation(
-          id: va['id'],
-          title: va['name']['userPreferred'],
-          imageUrl: va['image']['large'],
-          subtitle: l,
-          type: DiscoverType.staff,
-        ));
-      }
+      });
     }
 
-    value = value.withNext(
-      items,
-      map['pageInfo']['hasNextPage'],
-    );
-    _characters = AsyncValue.data(value);
-  }
+    if (tab == null || tab == MediaTab.staff) {
+      staff = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['staff'];
+        final value = staff.valueOrNull ?? const Paged();
 
-  void _initStaff(Map<String, dynamic> map) {
-    var value = _staff.valueOrNull;
-    if (value == null) return;
+        final items = <Relation>[];
+        for (final s in map['edges']) {
+          items.add(Relation(
+            id: s['node']['id'],
+            title: s['node']['name']['userPreferred'],
+            imageUrl: s['node']['image']['large'],
+            subtitle: s['role'],
+            type: DiscoverType.staff,
+          ));
+        }
 
-    final items = <Relation>[];
-    for (final s in map['edges']) {
-      items.add(Relation(
-        id: s['node']['id'],
-        title: s['node']['name']['userPreferred'],
-        imageUrl: s['node']['image']['large'],
-        subtitle: s['role'],
-        type: DiscoverType.staff,
-      ));
+        return Future.value(
+          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
+        );
+      });
     }
 
-    value = value.withNext(
-      items,
-      map['pageInfo']['hasNextPage'],
-    );
-    _staff = AsyncValue.data(value);
-  }
+    if (tab == null || tab == MediaTab.reviews) {
+      reviews = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['reviews'];
+        final value = reviews.valueOrNull ?? const Paged();
 
-  void _initReviews(Map<String, dynamic> map) {
-    var value = _reviews.valueOrNull;
-    if (value == null) return;
+        final items = <RelatedReview>[];
+        for (final r in map['nodes']) {
+          final item = RelatedReview.maybe(r);
+          if (item != null) items.add(item);
+        }
 
-    final items = <RelatedReview>[];
-    for (final r in map['nodes']) {
-      final item = RelatedReview.maybe(r);
-      if (item != null) items.add(item);
+        return Future.value(
+          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
+        );
+      });
     }
 
-    value = value.withNext(
-      items,
-      map['pageInfo']['hasNextPage'],
+    state = MediaRelations(
+      recommended: recommended,
+      characters: characters,
+      staff: staff,
+      reviews: reviews,
+      languageToVoiceActors: languageToVoiceActors,
+      language: language,
     );
-    _reviews = AsyncValue.data(value);
   }
+
+  void changeLanguage(String language) => state = MediaRelations(
+        recommended: state.recommended,
+        characters: state.characters,
+        staff: state.staff,
+        reviews: state.reviews,
+        languageToVoiceActors: state.languageToVoiceActors,
+        language: language,
+      );
 }

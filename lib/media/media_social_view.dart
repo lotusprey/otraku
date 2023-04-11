@@ -13,6 +13,7 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class MediaSocialView extends StatelessWidget {
   const MediaSocialView(this.id, this.media, this.tabToggled, this.toggleTab);
@@ -46,35 +47,16 @@ class MediaSocialView extends StatelessWidget {
         current: tabToggled ? 1 : 0,
         children: [
           Consumer(
-            child: SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            builder: (context, ref, _) => PagedView<RelatedReview>(
+              provider: mediaRelationsProvider(id).select((s) => s.reviews),
+              onData: (data) => _ReviewGrid(data.items, media.info.banner),
+              scrollCtrl: scrollCtrl,
+              onRefresh: () => ref.invalidate(mediaRelationsProvider(id)),
             ),
-            builder: (context, ref, overlapInjector) {
-              return ref
-                  .watch(mediaContentProvider(id).select((s) => s.reviews))
-                  .when(
-                    loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(
-                      child: Text('Failed to load reviews'),
-                    ),
-                    data: (data) => CustomScrollView(
-                      controller: scrollCtrl,
-                      slivers: [
-                        overlapInjector!,
-                        _ReviewGrid(data.items, media.info.banner),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  );
-            },
           ),
           CustomScrollView(
             controller: scrollCtrl,
             slivers: [
-              SliverOverlapInjector(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              ),
               if (stats.rankTexts.isNotEmpty)
                 _Ranks(stats.rankTexts, stats.rankTypes),
               if (stats.scoreNames.isNotEmpty)
@@ -104,70 +86,67 @@ class _ReviewGrid extends StatelessWidget {
       );
     }
 
-    return SliverPadding(
-      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 300,
-          height: 140,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          childCount: items.length,
-          (context, i) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LinkTile(
-                id: items[i].userId,
-                info: items[i].avatar,
-                discoverType: DiscoverType.user,
-                child: Row(
-                  children: [
-                    Hero(
-                      tag: items[i].userId,
-                      child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
-                        child: CachedImage(
-                          items[i].avatar,
-                          height: 50,
-                          width: 50,
-                        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 300,
+        height: 140,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, i) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LinkTile(
+              id: items[i].userId,
+              info: items[i].avatar,
+              discoverType: DiscoverType.user,
+              child: Row(
+                children: [
+                  Hero(
+                    tag: items[i].userId,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: CachedImage(
+                        items[i].avatar,
+                        height: 50,
+                        width: 50,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Text(items[i].username),
-                    const Spacer(),
-                    const Icon(Icons.thumb_up_outlined, size: Consts.iconSmall),
-                    const SizedBox(width: 10),
-                    Text(
-                      items[i].rating,
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(items[i].username),
+                  const Spacer(),
+                  const Icon(Icons.thumb_up_outlined, size: Consts.iconSmall),
+                  const SizedBox(width: 10),
+                  Text(
+                    items[i].rating,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
               ),
-              const SizedBox(height: 5),
-              Expanded(
-                child: LinkTile(
-                  id: items[i].reviewId,
-                  info: bannerUrl,
-                  discoverType: DiscoverType.review,
-                  child: Card(
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Padding(
-                        padding: Consts.padding,
-                        child: Text(
-                          items[i].summary,
-                          style: Theme.of(context).textTheme.labelMedium,
-                          overflow: TextOverflow.fade,
-                        ),
+            ),
+            const SizedBox(height: 5),
+            Expanded(
+              child: LinkTile(
+                id: items[i].reviewId,
+                info: bannerUrl,
+                discoverType: DiscoverType.review,
+                child: Card(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: Consts.padding,
+                      child: Text(
+                        items[i].summary,
+                        style: Theme.of(context).textTheme.labelMedium,
+                        overflow: TextOverflow.fade,
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -20,91 +20,80 @@ Future<bool> toggleFavoriteStudio(int studioId) async {
 final studioFilterProvider =
     StateProvider.autoDispose.family((ref, _) => StudioFilter());
 
-final studioProvider = StateNotifierProvider.autoDispose
-    .family<StudioNotifier, AsyncValue<StudioState>, int>(
+final studioProvider =
+    StateNotifierProvider.autoDispose.family<StudioNotifier, Studio, int>(
   (ref, int id) => StudioNotifier(id, ref.watch(studioFilterProvider(id))),
 );
 
-class StudioNotifier extends StateNotifier<AsyncValue<StudioState>> {
-  StudioNotifier(this.id, this.filter)
-      : super(const AsyncValue<StudioState>.loading()) {
-    _fetch();
+class StudioNotifier extends StateNotifier<Studio> {
+  StudioNotifier(this.id, this.filter) : super(const Studio()) {
+    fetch();
   }
 
   final int id;
   final StudioFilter filter;
 
-  Future<void> _fetch() async {
-    state = await AsyncValue.guard(() async {
-      var data = await Api.get(GqlQuery.studio, {
+  Future<void> fetch() async {
+    var info = state.info;
+    var media = state.media;
+    var categories = {...state.categories};
+
+    final data = await AsyncValue.guard(
+      () => Api.get(GqlQuery.studio, {
         'id': id,
-        'withInfo': true,
+        'withInfo': info.valueOrNull == null,
         'sort': filter.sort.name,
         'onList': filter.onList,
+        'page': media.valueOrNull?.next ?? 1,
         if (filter.isMain != null) 'isMain': filter.isMain,
+      }),
+    );
+
+    if (info.valueOrNull == null) {
+      info = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        return Future.value(StudioInfo(data.value!['Studio']));
       });
-      data = data['Studio'];
-
-      return _initMedia(
-        StudioState(Studio(data), const Paged(), {}),
-        data['media'],
-      );
-    });
-  }
-
-  Future<void> fetchPage() async {
-    final value = state.valueOrNull;
-    if (value == null || !value.media.hasNext) return;
-
-    state = await AsyncValue.guard(() async {
-      var data = await Api.get(GqlQuery.studio, {
-        'id': id,
-        'sort': filter.sort.name,
-        'onList': filter.onList,
-        'page': value.media.next,
-        if (filter.isMain != null) 'isMain': filter.isMain,
-      });
-      data = data['Studio'];
-
-      return _initMedia(value, data['media']);
-    });
-  }
-
-  StudioState _initMedia(StudioState s, Map<String, dynamic> data) {
-    final items = <TileItem>[];
-
-    if (filter.sort != MediaSort.START_DATE &&
-        filter.sort != MediaSort.START_DATE_DESC) {
-      for (final m in data['nodes']) {
-        items.add(mediaItem(m));
-      }
-    } else {
-      final key = filter.sort == MediaSort.START_DATE ||
-              filter.sort == MediaSort.START_DATE_DESC
-          ? 'startDate'
-          : 'endDate';
-
-      var index = s.media.items.length;
-
-      for (final m in data['nodes']) {
-        var category = m[key]?['year']?.toString();
-        category ??=
-            m['status'] == 'CANCELLED' ? 'Cancelled' : 'To Be Announced';
-
-        if (!s.categories.containsKey(category)) {
-          s.categories[category] = index;
-        }
-
-        items.add(mediaItem(m));
-
-        index++;
-      }
     }
 
-    return StudioState(
-      s.studio,
-      s.media.withNext(items, data['pageInfo']['hasNextPage']),
-      s.categories,
-    );
+    media = await AsyncValue.guard(() {
+      if (data.hasError) throw data.error!;
+      final map = data.value!['Studio']['media'];
+      final value = media.valueOrNull ?? const Paged();
+
+      final items = <TileItem>[];
+      if (filter.sort != MediaSort.START_DATE &&
+          filter.sort != MediaSort.START_DATE_DESC) {
+        for (final m in map['nodes']) {
+          items.add(mediaItem(m));
+        }
+      } else {
+        final key = filter.sort == MediaSort.START_DATE ||
+                filter.sort == MediaSort.START_DATE_DESC
+            ? 'startDate'
+            : 'endDate';
+
+        var index = value.items.length;
+        for (final m in map['nodes']) {
+          var category = m[key]?['year']?.toString();
+          category ??=
+              m['status'] == 'CANCELLED' ? 'Cancelled' : 'To Be Announced';
+
+          if (!categories.containsKey(category)) {
+            categories[category] = index;
+          }
+
+          items.add(mediaItem(m));
+
+          index++;
+        }
+      }
+
+      return Future.value(
+        value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
+      );
+    });
+
+    state = Studio(info: info, media: media, categories: categories);
   }
 }

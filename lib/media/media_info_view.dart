@@ -83,9 +83,6 @@ class MediaInfoView extends StatelessWidget {
         child: CustomScrollView(
           controller: scrollCtrl,
           slivers: [
-            SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-            ),
             if (info.description.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(

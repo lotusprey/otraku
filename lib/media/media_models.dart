@@ -1,4 +1,7 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/collection/collection_models.dart';
+import 'package:otraku/common/paged.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/edit/edit_model.dart';
@@ -20,6 +23,69 @@ class Media {
   final MediaInfo info;
   final MediaStats stats;
   final List<RelatedMedia> relations;
+}
+
+class MediaRelations {
+  const MediaRelations({
+    this.recommended = const AsyncValue.loading(),
+    this.characters = const AsyncValue.loading(),
+    this.staff = const AsyncValue.loading(),
+    this.reviews = const AsyncValue.loading(),
+    this.languageToVoiceActors = const {},
+    this.language = '',
+  });
+
+  final AsyncValue<Paged<Recommendation>> recommended;
+  final AsyncValue<Paged<Relation>> characters;
+  final AsyncValue<Paged<Relation>> staff;
+  final AsyncValue<Paged<RelatedReview>> reviews;
+
+  /// For each language, a list of voice actors
+  /// is mapped to the corresponding media's id.
+  final Map<String, Map<int, List<Relation>>> languageToVoiceActors;
+
+  /// The currently selected language.
+  final String language;
+
+  Iterable<String> get languages => languageToVoiceActors.keys;
+
+  void getCharactersAndVoiceActors(
+    List<Relation> resultingCharacters,
+    List<Relation?> resultingVoiceActors,
+  ) {
+    final chars = characters.valueOrNull?.items;
+    if (chars == null) return;
+
+    final actorsPerMedia = languageToVoiceActors[language];
+    if (actorsPerMedia == null) {
+      resultingCharacters.addAll(chars);
+      return;
+    }
+
+    for (final c in chars) {
+      final actors = actorsPerMedia[c.id];
+      if (actors == null || actors.isEmpty) {
+        resultingCharacters.add(c);
+        resultingVoiceActors.add(null);
+        continue;
+      }
+
+      for (final va in actors) {
+        resultingCharacters.add(c);
+        resultingVoiceActors.add(va);
+      }
+    }
+  }
+}
+
+enum MediaTab {
+  info,
+  relations,
+  recommended,
+  characters,
+  staff,
+  reviews,
+  statistics,
 }
 
 class RelatedMedia {

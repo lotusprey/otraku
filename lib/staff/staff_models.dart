@@ -1,3 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/paged.dart';
+import 'package:otraku/common/relation.dart';
 import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/media/media_constants.dart';
@@ -98,4 +101,16 @@ class StaffFilter {
         ofAnime: ofAnime == null ? this.ofAnime : ofAnime(),
         onList: onList == null ? this.onList : onList(),
       );
+}
+
+class StaffRelations {
+  const StaffRelations({
+    this.characters = const AsyncValue.loading(),
+    this.roles = const AsyncValue.loading(),
+    this.characterMedia = const [],
+  });
+
+  final AsyncValue<Paged<Relation>> characters;
+  final AsyncValue<Paged<Relation>> roles;
+  final List<Relation> characterMedia;
 }

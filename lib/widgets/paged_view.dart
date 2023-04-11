@@ -7,24 +7,20 @@ import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 /// Subscribes to a paginated, asynchronous provider.
-/// Listens for errors and shows a pop up, if there is one.
-/// [onRefresh] allows for refreshing. If [scrollCtrl] is
-/// [PaginationController], pagination will automatically work.
-/// [dateType] is a lowercase word for the data being handled (e.g. "reviews").
-/// [onData] should return a sliver widget.
+/// Shows a pop up, if there is an error.
+/// [onData] should return a sliver widget!
+/// If [scrollCtrl] is [PagedController], pagination will automatically work.
 class PagedView<T> extends StatelessWidget {
   const PagedView({
     required this.provider,
     required this.scrollCtrl,
     required this.onRefresh,
-    required this.dataType,
     required this.onData,
   });
 
   final ProviderListenable<AsyncValue<Paged<T>>> provider;
   final ScrollController scrollCtrl;
   final void Function() onRefresh;
-  final String dataType;
   final Widget Function(Paged<T>) onData;
 
   @override
@@ -37,43 +33,42 @@ class PagedView<T> extends StatelessWidget {
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Failed to load $dataType',
+                title: 'Failed to load',
                 content: error.toString(),
               ),
             ),
           ),
         );
 
-        var hasNext = false;
-        final child =
-            ref.watch<AsyncValue<Paged<T>>>(provider).unwrapPrevious().when(
-                  loading: () => const SliverFillRemaining(
-                    child: Center(child: Loader()),
-                  ),
-                  error: (_, __) => SliverFillRemaining(
-                    child: Center(child: Text('Failed to load $dataType')),
-                  ),
-                  data: (data) {
-                    hasNext = data.hasNext;
+        bool? hasNext;
+        final child = ref.watch(provider).unwrapPrevious().when(
+              loading: () => const SliverFillRemaining(
+                child: Center(child: Loader()),
+              ),
+              error: (_, __) => const SliverFillRemaining(
+                child: Center(child: Text('Failed to load')),
+              ),
+              data: (data) {
+                hasNext = data.hasNext;
 
-                    if (data.items.isEmpty) {
-                      return SliverFillRemaining(
-                        child: Center(child: Text('No $dataType')),
-                      );
-                    }
+                if (data.items.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: Text('No results')),
+                  );
+                }
 
-                    return onData(data);
-                  },
-                );
+                return onData(data);
+              },
+            );
 
         return ConstrainedView(
           child: CustomScrollView(
             physics: Consts.physics,
-            controller: scrollCtrl,
+            controller: hasNext != null ? scrollCtrl : null,
             slivers: [
               SliverRefreshControl(onRefresh: onRefresh),
               child,
-              SliverFooter(loading: hasNext),
+              SliverFooter(loading: hasNext ?? false),
             ],
           ),
         );

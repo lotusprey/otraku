@@ -111,7 +111,10 @@ class DynamicGradientDragSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = children.length * Consts.tapTargetSize + 50;
+    final requiredHeight = children.length * Consts.tapTargetSize +
+        MediaQuery.of(context).padding.bottom +
+        50;
+
     double height = requiredHeight / MediaQuery.of(context).size.height;
     if (height > 0.6) height = 0.6;
 
@@ -139,10 +142,11 @@ class DynamicGradientDragSheet extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
           child: ListView.builder(
             controller: scrollCtrl,
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               top: 50,
               left: 10,
               right: 10,
+              bottom: MediaQuery.of(context).padding.bottom,
             ),
             itemCount: children.length,
             itemExtent: Consts.tapTargetSize,

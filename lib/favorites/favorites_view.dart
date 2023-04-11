@@ -84,14 +84,12 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
-              dataType: 'favourite anime',
             ),
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.manga),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
-              dataType: 'favourite manga',
             ),
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select(
@@ -100,21 +98,18 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
-              dataType: 'favourite characters',
             ),
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.staff),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
-              dataType: 'favourite staff',
             ),
             PagedView<StudioItem>(
               provider: favoritesProvider(widget.id).select((s) => s.studios),
               onData: (data) => StudioGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
-              dataType: 'favourite studios',
             ),
           ],
         ),

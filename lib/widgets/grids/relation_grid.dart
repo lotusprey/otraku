@@ -8,19 +8,15 @@ import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 class RelationGrid extends StatelessWidget {
   RelationGrid({
     required this.items,
-    required this.placeholder,
     this.connections = const [],
   }) : assert(connections.isEmpty || items.length == connections.length);
 
-  final String placeholder;
   final List<Relation> items;
   final List<Relation?> connections;
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return SliverFillRemaining(child: Center(child: Text(placeholder)));
-    }
+    if (items.isEmpty) return const SliverToBoxAdapter();
 
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(

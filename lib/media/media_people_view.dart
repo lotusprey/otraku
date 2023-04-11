@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/media/media_providers.dart';
 import 'package:otraku/common/relation.dart';
-import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/widgets/grids/relation_grid.dart';
 import 'package:otraku/widgets/layouts/floating_bar.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
-import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/sheets.dart';
+import 'package:otraku/widgets/paged_view.dart';
 
 class MediaPeopleView extends StatelessWidget {
   const MediaPeopleView(this.id, this.tabToggled, this.toggleTab);
@@ -46,67 +45,20 @@ class MediaPeopleView extends StatelessWidget {
         current: tabToggled ? 1 : 0,
         children: [
           Consumer(
-            child: SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            builder: (context, ref, _) => PagedView<Relation>(
+              provider: mediaRelationsProvider(id).select((s) => s.characters),
+              onData: (data) => _CharacterGrid(id, ref, data.items),
+              scrollCtrl: scrollCtrl,
+              onRefresh: () => ref.invalidate(mediaRelationsProvider(id)),
             ),
-            builder: (context, ref, overlapInjector) {
-              return ref
-                  .watch(mediaContentProvider(id).select((s) => s.characters))
-                  .when(
-                    loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(
-                      child: Text('Failed to load characters'),
-                    ),
-                    data: (data) => CustomScrollView(
-                      controller: scrollCtrl,
-                      slivers: [
-                        overlapInjector!,
-                        SliverPadding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            left: 10,
-                            right: 10,
-                          ),
-                          sliver: _CharacterGrid(id, ref, data.items),
-                        ),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  );
-            },
           ),
           Consumer(
-            child: SliverOverlapInjector(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+            builder: (context, ref, _) => PagedView<Relation>(
+              provider: mediaRelationsProvider(id).select((s) => s.staff),
+              onData: (data) => RelationGrid(items: data.items),
+              scrollCtrl: scrollCtrl,
+              onRefresh: () => ref.invalidate(mediaRelationsProvider(id)),
             ),
-            builder: (context, ref, overlapInjector) {
-              return ref
-                  .watch(mediaContentProvider(id).select((s) => s.staff))
-                  .when(
-                    loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(
-                      child: Text('Failed to load staff'),
-                    ),
-                    data: (data) => CustomScrollView(
-                      controller: scrollCtrl,
-                      slivers: [
-                        overlapInjector!,
-                        SliverPadding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            left: 10,
-                            right: 10,
-                          ),
-                          sliver: RelationGrid(
-                            placeholder: 'No Staff',
-                            items: data.items,
-                          ),
-                        ),
-                        SliverFooter(loading: data.hasNext),
-                      ],
-                    ),
-                  );
-            },
           ),
         ],
       ),
@@ -124,32 +76,38 @@ class _LanguageButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final notifier = ref.watch(mediaContentProvider(id));
-        if (notifier.languages.length < 2) return const SizedBox();
+        if (ref.watch(mediaRelationsProvider(id).select(
+          (s) => s.languages.length < 2,
+        ))) return const SizedBox();
 
         return ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
-          onTap: () => showSheet(
-            context,
-            DynamicGradientDragSheet(
-              onTap: (i) {
-                scrollCtrl.scrollToTop();
-                ref.read(mediaContentProvider(id)).languageIndex = i;
-              },
-              children: [
-                for (int i = 0; i < notifier.languages.length; i++)
-                  Text(
-                    notifier.languages[i],
-                    style: i != notifier.languageIndex
-                        ? Theme.of(context).textTheme.titleLarge
-                        : Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                  ),
-              ],
-            ),
-          ),
+          onTap: () {
+            final mediaRelations = ref.read(mediaRelationsProvider(id));
+            final languages = mediaRelations.languages;
+            final language = mediaRelations.language;
+
+            showSheet(
+              context,
+              DynamicGradientDragSheet(
+                onTap: (i) => ref
+                    .read(mediaRelationsProvider(id).notifier)
+                    .changeLanguage(languages.elementAt(i)),
+                children: [
+                  for (int i = 0; i < languages.length; i++)
+                    Text(
+                      languages.elementAt(i),
+                      style: languages.elementAt(i) != language
+                          ? Theme.of(context).textTheme.titleLarge
+                          : Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                    ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -165,20 +123,16 @@ class _CharacterGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifier = ref.watch(mediaContentProvider(id));
+    final mediaRelations = ref.watch(mediaRelationsProvider(id));
 
-    if (notifier.languages.isEmpty) {
-      return RelationGrid(placeholder: 'No Characters', items: items);
+    if (mediaRelations.languages.isEmpty) {
+      return RelationGrid(items: items);
     }
 
     final characters = <Relation>[];
     final voiceActors = <Relation?>[];
-    notifier.selectCharactersAndVoiceActors(characters, voiceActors);
+    mediaRelations.getCharactersAndVoiceActors(characters, voiceActors);
 
-    return RelationGrid(
-      placeholder: 'No Characters',
-      items: characters,
-      connections: voiceActors,
-    );
+    return RelationGrid(items: characters, connections: voiceActors);
   }
 }

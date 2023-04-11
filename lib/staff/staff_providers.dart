@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/common/relation.dart';
@@ -32,136 +31,122 @@ final staffProvider = FutureProvider.autoDispose.family(
 final staffFilterProvider =
     StateProvider.autoDispose.family((ref, _) => StaffFilter());
 
-final staffRelationProvider = ChangeNotifierProvider.autoDispose.family(
+final staffRelationsProvider = StateNotifierProvider.autoDispose
+    .family<StaffRelationNotifier, StaffRelations, int>(
   (ref, int id) =>
       StaffRelationNotifier(id, ref.watch(staffFilterProvider(id))),
 );
 
-class StaffRelationNotifier extends ChangeNotifier {
-  StaffRelationNotifier(this.id, this.filter) {
-    _fetch();
+class StaffRelationNotifier extends StateNotifier<StaffRelations> {
+  StaffRelationNotifier(this.id, this.filter) : super(const StaffRelations()) {
+    _fetch(null);
   }
 
   final int id;
   final StaffFilter filter;
-  final _characterMedia = <Relation>[];
-  var _characters = const AsyncValue<Paged<Relation>>.loading();
-  var _roles = const AsyncValue<Paged<Relation>>.loading();
 
-  List<Relation> get characterMedia => _characterMedia;
-  AsyncValue<Paged<Relation>> get characters => _characters;
-  AsyncValue<Paged<Relation>> get roles => _roles;
+  Future<void> fetch(bool onCharacters) => _fetch(onCharacters);
 
-  Future<void> _fetch() async {
+  Future<void> _fetch(bool? onCharacters) async {
+    final variables = <String, dynamic>{
+      'id': id,
+      'onList': filter.onList,
+      'sort': filter.sort.name,
+      if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
+    };
+
+    if (onCharacters == null) {
+      variables['withCharacters'] = true;
+      variables['withRoles'] = true;
+    } else if (onCharacters) {
+      if (!(state.characters.valueOrNull?.hasNext ?? true)) return;
+      variables['withCharacters'] = true;
+      variables['page'] = state.characters.valueOrNull?.next ?? 1;
+    } else {
+      if (!(state.roles.valueOrNull?.hasNext ?? true)) return;
+      variables['withRoles'] = true;
+      variables['page'] = state.roles.valueOrNull?.next ?? 1;
+    }
+
     final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.staff, {
-        'id': id,
-        'withCharacters': true,
-        'withRoles': true,
-        'sort': filter.sort.name,
-        'onList': filter.onList,
-        if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
-      });
+      final data = await Api.get(GqlQuery.staff, variables);
       return data['Staff'];
     });
 
-    if (data.hasError) {
-      _characters = AsyncValue.error(data.error!, data.stackTrace!);
-      _roles = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
+    var characters = state.characters;
+    var roles = state.roles;
+    var characterMedia = [...state.characterMedia];
 
-    _characters = const AsyncValue.data(Paged());
-    _roles = const AsyncValue.data(Paged());
+    if (onCharacters == null || onCharacters) {
+      characters = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['characterMedia'];
+        final value = characters.valueOrNull ?? const Paged();
 
-    _initCharacters(data.value!['characterMedia']);
-    _initRoles(data.value!['staffMedia']);
-    notifyListeners();
-  }
+        final items = <Relation>[];
+        for (final m in map['edges']) {
+          final media = Relation(
+            id: m['node']['id'],
+            title: m['node']['title']['userPreferred'],
+            imageUrl: m['node']['coverImage'][Options().imageQuality.value],
+            subtitle: Convert.clarifyEnum(m['node']['format']),
+            type: m['node']['type'] == 'ANIME'
+                ? DiscoverType.anime
+                : DiscoverType.manga,
+          );
 
-  Future<void> fetchPage(bool ofCharacters) async {
-    final value = ofCharacters ? _characters.valueOrNull : _roles.valueOrNull;
-    if (value == null || !value.hasNext) return;
+          for (final c in m['characters']) {
+            if (c == null) continue;
 
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.staff, {
-        'id': id,
-        'page': value.next,
-        'withCharacters': ofCharacters,
-        'withRoles': !ofCharacters,
-        'sort': filter.sort.name,
-        'onList': filter.onList,
-        if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
-      });
-      return data['Staff'];
-    });
+            characterMedia.add(media);
 
-    if (data.hasError) {
-      ofCharacters
-          ? _characters = AsyncValue.error(data.error!, data.stackTrace!)
-          : _roles = AsyncValue.error(data.error!, data.stackTrace!);
-      return;
-    }
+            items.add(Relation(
+              id: c['id'],
+              title: c['name']['userPreferred'],
+              imageUrl: c['image']['large'],
+              type: DiscoverType.character,
+              subtitle: Convert.clarifyEnum(m['characterRole']),
+            ));
+          }
+        }
 
-    ofCharacters
-        ? _initCharacters(data.value!['characterMedia'])
-        : _initRoles(data.value!['staffMedia']);
-    notifyListeners();
-  }
-
-  void _initCharacters(Map<String, dynamic> data) {
-    var value = _characters.valueOrNull;
-    if (value == null) return;
-
-    final items = <Relation>[];
-    for (final m in data['edges']) {
-      final media = Relation(
-        id: m['node']['id'],
-        title: m['node']['title']['userPreferred'],
-        imageUrl: m['node']['coverImage'][Options().imageQuality.value],
-        subtitle: Convert.clarifyEnum(m['node']['format']),
-        type: m['node']['type'] == 'ANIME'
-            ? DiscoverType.anime
-            : DiscoverType.manga,
-      );
-
-      for (final c in m['characters']) {
-        if (c == null) continue;
-
-        _characterMedia.add(media);
-
-        items.add(Relation(
-          id: c['id'],
-          title: c['name']['userPreferred'],
-          imageUrl: c['image']['large'],
-          type: DiscoverType.character,
-          subtitle: Convert.clarifyEnum(m['characterRole']),
+        return Future.value(value.withNext(
+          items,
+          map['pageInfo']['hasNextPage'] ?? false,
         ));
-      }
+      });
     }
 
-    value = value.withNext(items, data['pageInfo']['hasNextPage']);
-    _characters = AsyncValue.data(value);
-  }
+    if (onCharacters == null || !onCharacters) {
+      roles = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['staffMedia'];
+        final value = roles.valueOrNull ?? const Paged();
 
-  void _initRoles(Map<String, dynamic> data) {
-    var value = _roles.valueOrNull;
-    if (value == null) return;
+        final items = <Relation>[];
+        for (final s in map['edges']) {
+          items.add(Relation(
+            id: s['node']['id'],
+            title: s['node']['title']['userPreferred'],
+            imageUrl: s['node']['coverImage'][Options().imageQuality.value],
+            subtitle: s['staffRole'],
+            type: s['node']['type'] == 'ANIME'
+                ? DiscoverType.anime
+                : DiscoverType.manga,
+          ));
+        }
 
-    final items = <Relation>[];
-    for (final s in data['edges']) {
-      items.add(Relation(
-        id: s['node']['id'],
-        title: s['node']['title']['userPreferred'],
-        imageUrl: s['node']['coverImage'][Options().imageQuality.value],
-        subtitle: s['staffRole'],
-        type: s['node']['type'] == 'ANIME'
-            ? DiscoverType.anime
-            : DiscoverType.manga,
-      ));
+        return Future.value(value.withNext(
+          items,
+          map['pageInfo']['hasNextPage'] ?? false,
+        ));
+      });
     }
 
-    value = value.withNext(items, data['pageInfo']['hasNextPage']);
-    _roles = AsyncValue.data(value);
+    state = StaffRelations(
+      characters: characters,
+      roles: roles,
+      characterMedia: characterMedia,
+    );
   }
 }

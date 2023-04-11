@@ -140,7 +140,6 @@ class ActivitiesSubView extends StatelessWidget {
         return PagedView<Activity>(
           provider: activitiesProvider(id),
           scrollCtrl: scrollCtrl,
-          dataType: 'activities',
           onRefresh: () {
             ref.invalidate(activitiesProvider(id));
             if (id == null) {

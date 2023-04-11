@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/tile_item.dart';
 import 'package:otraku/media/media_constants.dart';
 import 'package:otraku/common/paged.dart';
@@ -12,15 +13,15 @@ class StudioItem {
   final String name;
 }
 
-class Studio {
-  Studio._({
+class StudioInfo {
+  StudioInfo._({
     required this.id,
     required this.name,
     required this.favorites,
     required this.isFavorite,
   });
 
-  factory Studio(Map<String, dynamic> map) => Studio._(
+  factory StudioInfo(Map<String, dynamic> map) => StudioInfo._(
         id: map['id'],
         name: map['name'],
         favorites: map['favourites'] ?? 0,
@@ -33,11 +34,15 @@ class Studio {
   bool isFavorite;
 }
 
-class StudioState {
-  StudioState(this.studio, this.media, this.categories);
+class Studio {
+  const Studio({
+    this.info = const AsyncValue.loading(),
+    this.media = const AsyncValue.loading(),
+    this.categories = const {},
+  });
 
-  final Studio studio;
-  final Paged<TileItem> media;
+  final AsyncValue<StudioInfo> info;
+  final AsyncValue<Paged<TileItem>> media;
 
   /// If the items in [media] are sorted by date, [categories] will represent
   /// each time category (e.g. "2022") and the index of the first item in
@@ -45,9 +50,6 @@ class StudioState {
   /// determined by the starting index of the next category (if there is one).
   /// If the items in [media] aren't sorted by date, [categories] must be empty.
   final Map<String, int> categories;
-
-  StudioState copyWith(Paged<TileItem> media) =>
-      StudioState(studio, media, categories);
 }
 
 class StudioFilter {

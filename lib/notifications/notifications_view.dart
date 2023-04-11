@@ -83,9 +83,8 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               childCount: data.items.length,
             ),
           ),
-          onRefresh: () => ref.invalidate(notificationsProvider),
           scrollCtrl: _ctrl,
-          dataType: 'notifications',
+          onRefresh: () => ref.invalidate(notificationsProvider),
         ),
       ),
     );

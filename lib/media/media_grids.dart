@@ -1,76 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/utils/consts.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:otraku/discover/discover_models.dart';
 import 'package:otraku/media/media_models.dart';
 import 'package:otraku/media/media_providers.dart';
-import 'package:otraku/widgets/layouts/constrained_view.dart';
-import 'package:otraku/widgets/link_tile.dart';
+import 'package:otraku/utils/consts.dart';
 import 'package:otraku/widgets/cached_image.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widgets/layouts/floating_bar.dart';
-import 'package:otraku/widgets/layouts/scaffolds.dart';
-import 'package:otraku/widgets/layouts/direct_page_view.dart';
-import 'package:otraku/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/widgets/paged_view.dart';
+import 'package:otraku/widgets/link_tile.dart';
 import 'package:otraku/widgets/text_rail.dart';
 
-class MediaOtherView extends StatelessWidget {
-  const MediaOtherView(this.id, this.related, this.tabToggled, this.toggleTab);
-
-  final int id;
-  final List<RelatedMedia> related;
-  final bool tabToggled;
-  final void Function(bool) toggleTab;
-
-  @override
-  Widget build(BuildContext context) {
-    final scrollCtrl = context
-        .findAncestorStateOfType<NestedScrollViewState>()!
-        .innerController;
-
-    return TabScaffold(
-      floatingBar: FloatingBar(
-        scrollCtrl: scrollCtrl,
-        centered: true,
-        children: [
-          ActionTabSwitcher(
-            items: const ['Related', 'Recommended'],
-            current: tabToggled ? 1 : 0,
-            onChanged: (i) => toggleTab(i == 1),
-          ),
-        ],
-      ),
-      child: DirectPageView(
-        onChanged: null,
-        current: tabToggled ? 1 : 0,
-        children: [
-          ConstrainedView(
-            child: CustomScrollView(
-              physics: Consts.physics,
-              controller: scrollCtrl,
-              slivers: [
-                const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                _RelatedGrid(related),
-                const SliverFooter(),
-              ],
-            ),
-          ),
-          Consumer(
-            builder: (context, ref, _) => PagedView<Recommendation>(
-              provider: mediaRelationsProvider(id).select((s) => s.recommended),
-              onData: (data) => _RecommendationsGrid(id, data.items),
-              onRefresh: () => ref.invalidate(mediaRelationsProvider(id)),
-              scrollCtrl: scrollCtrl,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RelatedGrid extends StatelessWidget {
-  const _RelatedGrid(this.items);
+class MediaRelatedGrid extends StatelessWidget {
+  const MediaRelatedGrid(this.items);
 
   final List<RelatedMedia> items;
 
@@ -148,8 +88,8 @@ class _RelatedGrid extends StatelessWidget {
   }
 }
 
-class _RecommendationsGrid extends StatelessWidget {
-  const _RecommendationsGrid(this.mediaId, this.items);
+class MediaRecommendationGrid extends StatelessWidget {
+  const MediaRecommendationGrid(this.mediaId, this.items);
 
   final int mediaId;
   final List<Recommendation> items;
@@ -203,7 +143,7 @@ class _RecommendationsGrid extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: _Rating(mediaId, items[i]),
+                  child: _RecommendationRating(mediaId, items[i]),
                 ),
               ],
             ),
@@ -214,17 +154,17 @@ class _RecommendationsGrid extends StatelessWidget {
   }
 }
 
-class _Rating extends StatefulWidget {
-  const _Rating(this.mediaId, this.item);
+class _RecommendationRating extends StatefulWidget {
+  const _RecommendationRating(this.mediaId, this.item);
 
   final int mediaId;
   final Recommendation item;
 
   @override
-  State<_Rating> createState() => __RatingState();
+  State<_RecommendationRating> createState() => _RecommendationRatingState();
 }
 
-class __RatingState extends State<_Rating> {
+class _RecommendationRatingState extends State<_RecommendationRating> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -336,6 +276,131 @@ class __RatingState extends State<_Rating> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class MediaReviewGrid extends StatelessWidget {
+  const MediaReviewGrid(this.items, this.bannerUrl);
+
+  final List<RelatedReview> items;
+  final String? bannerUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) {
+      return const SliverFillRemaining(
+        child: Center(child: Text('No reviews')),
+      );
+    }
+
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 300,
+        height: 140,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, i) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LinkTile(
+              id: items[i].userId,
+              info: items[i].avatar,
+              discoverType: DiscoverType.user,
+              child: Row(
+                children: [
+                  Hero(
+                    tag: items[i].userId,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: CachedImage(
+                        items[i].avatar,
+                        height: 50,
+                        width: 50,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(items[i].username),
+                  const Spacer(),
+                  const Icon(Icons.thumb_up_outlined, size: Consts.iconSmall),
+                  const SizedBox(width: 10),
+                  Text(
+                    items[i].rating,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 5),
+            Expanded(
+              child: LinkTile(
+                id: items[i].reviewId,
+                info: bannerUrl,
+                discoverType: DiscoverType.review,
+                child: Card(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: Padding(
+                      padding: Consts.padding,
+                      child: Text(
+                        items[i].summary,
+                        style: Theme.of(context).textTheme.labelMedium,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MediaRankGrid extends StatelessWidget {
+  const MediaRankGrid(this.rankTexts, this.rankTypes);
+
+  final List<String> rankTexts;
+  final List<bool> rankTypes;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+          height: Consts.tapTargetSize,
+          minWidth: 185,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (_, i) => Card(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Row(
+                children: [
+                  Icon(
+                    rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      rankTexts[i],
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          childCount: rankTexts.length,
+        ),
       ),
     );
   }

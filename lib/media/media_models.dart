@@ -25,20 +25,30 @@ class Media {
   final List<RelatedMedia> relations;
 }
 
+enum MediaTab {
+  info,
+  relations,
+  characters,
+  staff,
+  reviews,
+  recommendations,
+  statistics,
+}
+
 class MediaRelations {
   const MediaRelations({
-    this.recommended = const AsyncValue.loading(),
     this.characters = const AsyncValue.loading(),
     this.staff = const AsyncValue.loading(),
     this.reviews = const AsyncValue.loading(),
+    this.recommendations = const AsyncValue.loading(),
     this.languageToVoiceActors = const {},
     this.language = '',
   });
 
-  final AsyncValue<Paged<Recommendation>> recommended;
   final AsyncValue<Paged<Relation>> characters;
   final AsyncValue<Paged<Relation>> staff;
   final AsyncValue<Paged<RelatedReview>> reviews;
+  final AsyncValue<Paged<Recommendation>> recommendations;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -76,16 +86,6 @@ class MediaRelations {
       }
     }
   }
-}
-
-enum MediaTab {
-  info,
-  relations,
-  recommended,
-  characters,
-  staff,
-  reviews,
-  statistics,
 }
 
 class RelatedMedia {

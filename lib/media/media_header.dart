@@ -14,10 +14,11 @@ import 'package:otraku/widgets/overlays/toast.dart';
 import 'package:otraku/widgets/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {
-  const MediaHeader(this.id, this.coverUrl);
+  const MediaHeader(this.id, this.coverUrl, this.tabCtrl);
 
   final int id;
   final String? coverUrl;
+  final TabController tabCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +61,7 @@ class MediaHeader extends StatelessWidget {
           pinned: true,
           delegate: _Delegate(
             id: id,
+            tabCtrl: tabCtrl,
             info: data?.info,
             coverUrl: coverUrl,
             textRailItems: textRailItems,
@@ -80,6 +82,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.imageWidth,
     required this.coverUrl,
     required this.textRailItems,
+    required this.tabCtrl,
   });
 
   final int id;
@@ -87,6 +90,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final double imageWidth;
   final String? coverUrl;
   final Map<String, bool> textRailItems;
+  final TabController tabCtrl;
 
   @override
   Widget build(
@@ -95,206 +99,216 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final height = maxExtent;
-    final opacity = shrinkOffset < (_bannerHeight - minExtent)
-        ? shrinkOffset / (_bannerHeight - minExtent)
-        : 1.0;
+    var opacity = shrinkOffset > _bannerHeight
+        ? (shrinkOffset - _bannerHeight) / (imageHeight / 4)
+        : 0.0;
+    if (opacity > 1) opacity = 1;
 
     final cover = info?.cover ?? coverUrl;
     final theme = Theme.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant,
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 5,
-            spreadRadius: 5,
-            color: theme.colorScheme.background,
-          ),
-        ],
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Column(
-            children: [
-              Flexible(
-                flex: _bannerHeight.ceil(),
-                child: info?.banner != null
-                    ? GestureDetector(
-                        child: CachedImage(info!.banner!),
-                        onTap: () => showPopUp(
-                          context,
-                          ImageDialog(info!.banner!),
+    final infoContent = Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Hero(
+          tag: id,
+          child: ClipRRect(
+            borderRadius: Consts.borderRadiusMin,
+            child: Container(
+              height: imageHeight,
+              width: imageWidth,
+              color: theme.colorScheme.surfaceVariant,
+              child: cover != null
+                  ? GestureDetector(
+                      onTap: () => showPopUp(
+                        context,
+                        ImageDialog(
+                          info?.extraLargeCover ?? cover,
                         ),
-                      )
-                    : const SizedBox(),
-              ),
-              Flexible(
-                flex: (height - _bannerHeight).floor(),
-                child: const SizedBox(),
+                      ),
+                      child: CachedImage(cover),
+                    )
+                  : null,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (info?.preferredTitle != null) ...[
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Toast.copy(context, info!.preferredTitle!),
+                  child: Text(
+                    info!.preferredTitle!,
+                    maxLines: 8,
+                    overflow: TextOverflow.fade,
+                    style: theme.textTheme.titleLarge!.copyWith(
+                      shadows: [
+                        Shadow(
+                          blurRadius: 10,
+                          color: theme.colorScheme.background,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+              ],
+              TextRail(
+                textRailItems,
+                style: theme.textTheme.labelMedium,
               ),
             ],
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              height: height - _bannerHeight,
-              alignment: Alignment.topCenter,
-              color: theme.colorScheme.background,
-              child: Container(
-                height: 0,
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 15,
-                      spreadRadius: 25,
-                      color: theme.colorScheme.background,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 10,
-            right: 10,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Hero(
-                  tag: id,
-                  child: ClipRRect(
-                    borderRadius: Consts.borderRadiusMin,
-                    child: Container(
-                      height: imageHeight,
-                      width: imageWidth,
-                      color: theme.colorScheme.surfaceVariant,
-                      child: cover != null
-                          ? GestureDetector(
-                              onTap: () => showPopUp(
-                                context,
-                                ImageDialog(
-                                  info?.extraLargeCover ?? cover,
-                                ),
-                              ),
-                              child: CachedImage(cover),
-                            )
-                          : null,
-                    ),
+        ),
+      ],
+    );
+
+    final topRow = Row(
+      children: [
+        TopBarIcon(
+          tooltip: 'Close',
+          icon: Ionicons.chevron_back_outline,
+          onTap: Navigator.of(context).pop,
+        ),
+        Expanded(
+          child: info?.preferredTitle == null
+              ? const SizedBox()
+              : Opacity(
+                  opacity: opacity,
+                  child: Text(
+                    info!.preferredTitle!,
+                    style: theme.textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (info?.preferredTitle != null)
-                        GestureDetector(
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () =>
-                              Toast.copy(context, info!.preferredTitle!),
-                          child: Text(
-                            info!.preferredTitle!,
-                            maxLines: 8,
-                            overflow: TextOverflow.fade,
-                            style: theme.textTheme.titleLarge!.copyWith(
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 10,
-                                  color: theme.colorScheme.background,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      if (textRailItems.isNotEmpty)
-                        TextRail(
-                          textRailItems,
-                          style: theme.textTheme.labelMedium,
-                        ),
-                    ],
-                  ),
-                ),
-              ],
+        ),
+        if (info?.siteUrl != null)
+          TopBarIcon(
+            tooltip: 'More',
+            icon: Ionicons.ellipsis_horizontal,
+            onTap: () => showSheet(
+              context,
+              FixedGradientDragSheet.link(context, info!.siteUrl!),
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: minExtent,
+      ],
+    );
+
+    return SizedBox(
+      height: height,
+      child: Column(
+        children: [
+          Flexible(
+            flex: (height - Consts.tapTargetSize).floor(),
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Theme.of(context).colorScheme.background,
-                    Theme.of(context).colorScheme.background.withAlpha(0),
-                  ],
-                ),
+                color: theme.colorScheme.surfaceVariant,
               ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: minExtent,
-            child: Opacity(
-              opacity: opacity,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.background,
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 10,
-                      spreadRadius: 10,
-                      color: theme.colorScheme.background,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (info?.banner != null)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: height - _bannerHeight,
+                      child: GestureDetector(
+                        child: CachedImage(info!.banner!),
+                        onTap: () =>
+                            showPopUp(context, ImageDialog(info!.banner!)),
+                      ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: minExtent,
-            child: Row(
-              children: [
-                TopBarIcon(
-                  tooltip: 'Close',
-                  icon: Ionicons.chevron_back_outline,
-                  onTap: Navigator.of(context).pop,
-                ),
-                Expanded(
-                  child: info?.preferredTitle == null
-                      ? const SizedBox()
-                      : Opacity(
-                          opacity: opacity,
-                          child: Text(
-                            info!.preferredTitle!,
-                            style: theme.textTheme.titleMedium,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: height - _bannerHeight,
+                    child: Container(
+                      alignment: Alignment.topCenter,
+                      color: theme.colorScheme.background,
+                      child: Container(
+                        height: 0,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 15,
+                              spreadRadius: 25,
+                              color: theme.colorScheme.background,
+                            ),
+                          ],
                         ),
-                ),
-                if (info?.siteUrl != null)
-                  TopBarIcon(
-                    tooltip: 'More',
-                    icon: Ionicons.ellipsis_horizontal,
-                    onTap: () => showSheet(
-                      context,
-                      FixedGradientDragSheet.link(context, info!.siteUrl!),
+                      ),
                     ),
                   ),
+                  Positioned(
+                    bottom: 0,
+                    left: 10,
+                    right: 10,
+                    child: infoContent,
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: Consts.tapTargetSize,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            theme.colorScheme.background,
+                            theme.colorScheme.background.withAlpha(0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: Consts.tapTargetSize,
+                    child: Opacity(
+                      opacity: opacity,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.background,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: Consts.tapTargetSize,
+                    child: topRow,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Material(
+            color: Theme.of(context).colorScheme.background,
+            child: TabBar(
+              splashBorderRadius: Consts.borderRadiusMin,
+              controller: tabCtrl,
+              isScrollable: true,
+              tabs: const [
+                Tab(text: 'Overview'),
+                Tab(text: 'Related'),
+                Tab(text: 'Characters'),
+                Tab(text: 'Staff'),
+                Tab(text: 'Reviews'),
+                Tab(text: 'Recommendations'),
+                Tab(text: 'Statistics'),
               ],
             ),
           ),
@@ -308,12 +322,13 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   double get imageHeight => imageWidth * Consts.coverHtoWRatio;
 
   @override
-  double get maxExtent => _bannerHeight + imageHeight / 2;
+  double get maxExtent =>
+      _bannerHeight + imageHeight / 2 + Consts.tapTargetSize;
 
   @override
-  double get minExtent => Consts.tapTargetSize;
+  double get minExtent => Consts.tapTargetSize * 2;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
+  bool shouldRebuild(covariant _Delegate oldDelegate) =>
+      info != oldDelegate.info;
 }

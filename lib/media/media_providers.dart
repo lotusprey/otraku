@@ -84,10 +84,10 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
       variables['withCharacters'] = true;
       variables['withStaff'] = true;
       variables['withReviews'] = true;
-    } else if (tab == MediaTab.recommended) {
-      if (!(state.recommended.valueOrNull?.hasNext ?? true)) return;
+    } else if (tab == MediaTab.recommendations) {
+      if (!(state.recommendations.valueOrNull?.hasNext ?? true)) return;
       variables['withRecommendations'] = true;
-      variables['page'] = state.recommended.valueOrNull?.next ?? 1;
+      variables['page'] = state.recommendations.valueOrNull?.next ?? 1;
     } else if (tab == MediaTab.characters) {
       if (!(state.characters.valueOrNull?.hasNext ?? true)) return;
       variables['withCharacters'] = true;
@@ -107,14 +107,14 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
       return data['Media'];
     });
 
-    var recommended = state.recommended;
+    var recommended = state.recommendations;
     var characters = state.characters;
     var staff = state.staff;
     var reviews = state.reviews;
     var languageToVoiceActors = state.languageToVoiceActors;
     var language = state.language;
 
-    if (tab == null || tab == MediaTab.recommended) {
+    if (tab == null || tab == MediaTab.recommendations) {
       recommended = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['recommendations'];
@@ -228,7 +228,7 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
     }
 
     state = MediaRelations(
-      recommended: recommended,
+      recommendations: recommended,
       characters: characters,
       staff: staff,
       reviews: reviews,
@@ -238,7 +238,7 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
   }
 
   void changeLanguage(String language) => state = MediaRelations(
-        recommended: state.recommended,
+        recommendations: state.recommendations,
         characters: state.characters,
         staff: state.staff,
         reviews: state.reviews,

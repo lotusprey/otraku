@@ -99,10 +99,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final height = maxExtent;
-    var opacity = shrinkOffset > _bannerHeight
+    var transition = shrinkOffset > _bannerHeight
         ? (shrinkOffset - _bannerHeight) / (imageHeight / 4)
         : 0.0;
-    if (opacity > 1) opacity = 1;
+    if (transition > 1) transition = 1;
 
     final cover = info?.cover ?? coverUrl;
     final theme = Theme.of(context);
@@ -122,9 +122,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   ? GestureDetector(
                       onTap: () => showPopUp(
                         context,
-                        ImageDialog(
-                          info?.extraLargeCover ?? cover,
-                        ),
+                        ImageDialog(info?.extraLargeCover ?? cover),
                       ),
                       child: CachedImage(cover),
                     )
@@ -135,8 +133,8 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         const SizedBox(width: 10),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (info?.preferredTitle != null) ...[
                 GestureDetector(
@@ -179,7 +177,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           child: info?.preferredTitle == null
               ? const SizedBox()
               : Opacity(
-                  opacity: opacity,
+                  opacity: transition,
                   child: Text(
                     info!.preferredTitle!,
                     style: theme.textTheme.titleMedium,
@@ -199,31 +197,35 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       ],
     );
 
-    return SizedBox(
+    final body = SizedBox(
       height: height,
       child: Column(
         children: [
           Flexible(
             flex: (height - Consts.tapTargetSize).floor(),
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant,
-              ),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  if (info?.banner != null)
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: height - _bannerHeight,
-                      child: GestureDetector(
-                        child: CachedImage(info!.banner!),
-                        onTap: () =>
-                            showPopUp(context, ImageDialog(info!.banner!)),
-                      ),
-                    ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (transition < 1) ...[
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: height - _bannerHeight,
+                    child: info?.banner != null
+                        ? GestureDetector(
+                            child: CachedImage(info!.banner!),
+                            onTap: () => showPopUp(
+                              context,
+                              ImageDialog(info!.banner!),
+                            ),
+                          )
+                        : DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceVariant,
+                            ),
+                          ),
+                  ),
                   Positioned(
                     left: 0,
                     right: 0,
@@ -247,7 +249,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                   Positioned(
-                    bottom: 0,
+                    bottom: 5,
                     left: 10,
                     right: 10,
                     child: infoContent,
@@ -276,7 +278,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     right: 0,
                     height: Consts.tapTargetSize,
                     child: Opacity(
-                      opacity: opacity,
+                      opacity: transition,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: theme.colorScheme.background,
@@ -284,19 +286,19 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: Consts.tapTargetSize,
-                    child: topRow,
-                  ),
                 ],
-              ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: Consts.tapTargetSize,
+                  child: topRow,
+                ),
+              ],
             ),
           ),
           Material(
-            color: Theme.of(context).colorScheme.background,
+            color: Colors.transparent,
             child: TabBar(
               splashBorderRadius: Consts.borderRadiusMin,
               controller: tabCtrl,
@@ -315,6 +317,18 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         ],
       ),
     );
+
+    return transition < 1
+        ? body
+        : ClipRect(
+            child: BackdropFilter(
+              filter: Consts.filter,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: theme.bottomAppBarTheme.color),
+                child: body,
+              ),
+            ),
+          );
   }
 
   static const _bannerHeight = 200.0;
@@ -322,11 +336,11 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   double get imageHeight => imageWidth * Consts.coverHtoWRatio;
 
   @override
-  double get maxExtent =>
-      _bannerHeight + imageHeight / 2 + Consts.tapTargetSize;
+  double get minExtent => Consts.tapTargetSize * 2;
 
   @override
-  double get minExtent => Consts.tapTargetSize * 2;
+  double get maxExtent =>
+      _bannerHeight + imageHeight / 2 + Consts.tapTargetSize;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>

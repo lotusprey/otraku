@@ -8,6 +8,7 @@ import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
 import 'package:otraku/widgets/html_content.dart';
 import 'package:otraku/utils/consts.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
@@ -32,75 +33,63 @@ class UserSubView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidePadding = MediaQuery.of(context).size.width > Consts.layoutBig
-        ? (MediaQuery.of(context).size.width - Consts.layoutBig) / 2
-        : 10.0;
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.listen<AsyncValue<User>>(
+          userProvider(id),
+          (_, s) => s.whenOrNull(
+            error: (error, _) => showPopUp(
+              context,
+              ConfirmationDialog(
+                title: 'Failed to load user',
+                content: error.toString(),
+              ),
+            ),
+          ),
+        );
 
-    return SafeArea(
-      child: TabScaffold(
-        child: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue<User>>(
-              userProvider(id),
-              (_, s) => s.whenOrNull(
-                error: (error, _) => showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Failed to load user',
-                    content: error.toString(),
+        final user = ref.watch(userProvider(id));
+
+        final header = UserHeader(
+          id: id,
+          isViewer: id == Options().id,
+          user: user.valueOrNull,
+          imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
+        );
+
+        return user.when(
+          error: (_, __) => CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              header,
+              const SliverFillRemaining(
+                child: Center(child: Text('Failed to load user')),
+              )
+            ],
+          ),
+          loading: () => CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              header,
+              const SliverFillRemaining(child: Center(child: Loader()))
+            ],
+          ),
+          data: (data) => CustomScrollView(
+            controller: scrollCtrl,
+            slivers: [
+              header,
+              _ButtonRow(id),
+              if (data.description.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: ConstrainedView(
+                    child: Card(child: HtmlContent(data.description)),
                   ),
                 ),
-              ),
-            );
-
-            final user = ref.watch(userProvider(id));
-
-            final header = UserHeader(
-              id: id,
-              isViewer: id == Options().id,
-              user: user.valueOrNull,
-              imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
-            );
-
-            return user.when(
-              error: (_, __) => CustomScrollView(
-                controller: scrollCtrl,
-                slivers: [
-                  header,
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load user')),
-                  )
-                ],
-              ),
-              loading: () => CustomScrollView(
-                controller: scrollCtrl,
-                slivers: [
-                  header,
-                  const SliverFillRemaining(child: Center(child: Loader()))
-                ],
-              ),
-              data: (data) => CustomScrollView(
-                controller: scrollCtrl,
-                slivers: [
-                  header,
-                  _ButtonRow(id),
-                  if (data.description.isNotEmpty)
-                    SliverToBoxAdapter(
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: sidePadding),
-                        child: Padding(
-                          padding: Consts.padding,
-                          child: HtmlContent(data.description),
-                        ),
-                      ),
-                    ),
-                  const SliverFooter(),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+              const SliverFooter(),
+            ],
+          ),
+        );
+      },
     );
   }
 }

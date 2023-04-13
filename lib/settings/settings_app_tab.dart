@@ -31,8 +31,10 @@ class SettingsAppTab extends StatelessWidget {
         SliverPadding(
           padding: const EdgeInsets.only(left: 10, top: 10),
           sliver: SliverToBoxAdapter(
-            child:
-                Text('Theme', style: Theme.of(context).textTheme.labelMedium),
+            child: Text(
+              'Theme',
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
           ),
         ),
         SliverPadding(

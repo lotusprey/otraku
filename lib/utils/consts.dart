@@ -22,7 +22,6 @@ abstract class Consts {
   // Layout sizes.
   static const layoutBig = 1000.0;
   static const layoutMedium = 600.0;
-  static const layoutSmall = 400.0;
 
   // Font sizes.
   static const fontBig = 20.0;

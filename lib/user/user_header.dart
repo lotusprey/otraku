@@ -26,6 +26,7 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topOffset = MediaQuery.of(context).padding.top;
     final textRailItems = <String, bool>{};
     if (user != null) {
       if (user!.modRoles.isNotEmpty) textRailItems[user!.modRoles[0]] = false;
@@ -39,6 +40,7 @@ class UserHeader extends StatelessWidget {
         isViewer: isViewer,
         user: user,
         imageUrl: imageUrl,
+        topOffset: topOffset,
         textRailItems: textRailItems,
         imageWidth: MediaQuery.of(context).size.width < 430.0
             ? MediaQuery.of(context).size.width * 0.30
@@ -54,6 +56,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.isViewer,
     required this.user,
     required this.imageUrl,
+    required this.topOffset,
     required this.imageWidth,
     required this.textRailItems,
   });
@@ -62,6 +65,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final bool isViewer;
   final User? user;
   final String? imageUrl;
+  final double topOffset;
   final double imageWidth;
   final Map<String, bool> textRailItems;
 
@@ -72,8 +76,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final height = maxExtent;
-    var transition = shrinkOffset > _bannerHeight
-        ? (shrinkOffset - _bannerHeight) / (imageWidth / 4)
+    final bannerOffset = height - _bannerBaseHeight - topOffset;
+
+    var transition = shrinkOffset > _bannerBaseHeight
+        ? (shrinkOffset - _bannerBaseHeight) / (imageWidth / 4)
         : 0.0;
     if (transition > 1) transition = 1;
 
@@ -108,7 +114,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (user != null)
+              if (user != null) ...[
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () => Toast.copy(context, user!.name),
@@ -125,6 +131,8 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
+                const SizedBox(height: 5),
+              ],
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
@@ -200,7 +208,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            bottom: height - _bannerHeight,
+            bottom: bannerOffset,
             child: user?.bannerUrl != null
                 ? GestureDetector(
                     child: CachedImage(user!.bannerUrl!),
@@ -219,8 +227,8 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             left: 0,
             right: 0,
             bottom: 0,
+            height: bannerOffset,
             child: Container(
-              height: height - _bannerHeight,
               alignment: Alignment.topCenter,
               color: theme.colorScheme.background,
               child: Container(
@@ -247,7 +255,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: Consts.tapTargetSize,
+            height: topOffset + Consts.tapTargetSize,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -255,6 +263,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   end: Alignment.bottomCenter,
                   colors: [
                     theme.colorScheme.background,
+                    theme.colorScheme.background.withAlpha(200),
                     theme.colorScheme.background.withAlpha(0),
                   ],
                 ),
@@ -265,7 +274,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: Consts.tapTargetSize,
+            height: topOffset + Consts.tapTargetSize,
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
@@ -277,9 +286,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           ),
         ],
         Positioned(
-          top: 0,
           left: 0,
           right: 0,
+          top: topOffset,
           height: Consts.tapTargetSize,
           child: topRow,
         ),
@@ -299,13 +308,13 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           );
   }
 
-  static const _bannerHeight = 200.0;
+  static const _bannerBaseHeight = 200.0;
 
   @override
-  double get minExtent => Consts.tapTargetSize;
+  double get minExtent => topOffset + Consts.tapTargetSize;
 
   @override
-  double get maxExtent => _bannerHeight + imageWidth / 2;
+  double get maxExtent => topOffset + _bannerBaseHeight + imageWidth / 2;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>

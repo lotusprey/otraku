@@ -45,53 +45,50 @@ class _MediaViewState extends State<MediaView>
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      child: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
-        child: NestedScrollView(
-          controller: _scrollCtrl,
-          headerSliverBuilder: (context, _) => [
-            MediaHeader(widget.id, widget.coverUrl, _tabCtrl),
-          ],
-          body: Consumer(
-            builder: (context, ref, _) {
-              ref.listen<AsyncValue>(
-                mediaProvider(widget.id),
-                (_, s) {
-                  if (s.hasError) {
-                    showPopUp(
-                      context,
-                      ConfirmationDialog(
-                        title: 'Failed to load media',
-                        content: s.error.toString(),
-                      ),
-                    );
-                  }
-                },
-              );
-
-              final innerScrollCtrl = context
-                  .findAncestorStateOfType<NestedScrollViewState>()!
-                  .innerController;
-
-              return ref.watch(mediaProvider(widget.id)).when(
-                    loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(
-                      child: Text('Failed to load media'),
-                    ),
-                    data: (media) => TabScaffold(
-                      floatingBar: FloatingBar(
-                        scrollCtrl: innerScrollCtrl,
-                        children: [
-                          MediaEditButton(media),
-                          MediaFavoriteButton(media.info),
-                          MediaLanguageButton(widget.id, _tabCtrl),
-                        ],
-                      ),
-                      child: _MediaViewContent(widget.id, media, _tabCtrl),
+      child: NestedScrollView(
+        controller: _scrollCtrl,
+        headerSliverBuilder: (context, _) => [
+          MediaHeader(widget.id, widget.coverUrl, _tabCtrl),
+        ],
+        body: Consumer(
+          builder: (context, ref, _) {
+            ref.listen<AsyncValue>(
+              mediaProvider(widget.id),
+              (_, s) {
+                if (s.hasError) {
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Failed to load media',
+                      content: s.error.toString(),
                     ),
                   );
-            },
-          ),
+                }
+              },
+            );
+
+            final innerScrollCtrl = context
+                .findAncestorStateOfType<NestedScrollViewState>()!
+                .innerController;
+
+            return ref.watch(mediaProvider(widget.id)).when(
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load media'),
+                  ),
+                  data: (media) => TabScaffold(
+                    floatingBar: FloatingBar(
+                      scrollCtrl: innerScrollCtrl,
+                      children: [
+                        MediaEditButton(media),
+                        MediaFavoriteButton(media.info),
+                        MediaLanguageButton(widget.id, _tabCtrl),
+                      ],
+                    ),
+                    child: _MediaViewContent(widget.id, media, _tabCtrl),
+                  ),
+                );
+          },
         ),
       ),
     );
@@ -134,7 +131,19 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     super.dispose();
   }
 
-  void _tabListener() => _lastMaxExtent = 0;
+  void _tabListener() {
+    _lastMaxExtent = 0;
+
+    // This is a workaround for an issue with [NestedScrollView].
+    // If you switch to a tab with pagination, where the content
+    // doesn't fill the view, the scroll controller has it's maximum
+    // extent set to 0 and the loading of a next page of items is not triggered.
+    // This is why we need to manually load the second page.
+    if (!widget.tabCtrl.indexIsChanging) {
+      final pos = _scrollCtrl.positions.last;
+      if (pos.minScrollExtent == pos.maxScrollExtent) _loadNextPage();
+    }
+  }
 
   void _scrollListener() {
     final pos = _scrollCtrl.positions.last;
@@ -142,10 +151,12 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     if (_lastMaxExtent == pos.maxScrollExtent) return;
 
     _lastMaxExtent = pos.maxScrollExtent;
-    ref
-        .read(mediaRelationsProvider(widget.id).notifier)
-        .fetch(MediaTab.values.elementAt(widget.tabCtrl.index));
+    _loadNextPage();
   }
+
+  void _loadNextPage() => ref
+      .read(mediaRelationsProvider(widget.id).notifier)
+      .fetch(MediaTab.values.elementAt(widget.tabCtrl.index));
 
   void _refresh(WidgetRef ref) {
     ref.invalidate(mediaRelationsProvider(widget.id));
@@ -161,7 +172,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
-        MediaInfoView(widget.media, _scrollCtrl),
+        ConstrainedView(child: MediaInfoView(widget.media, _scrollCtrl)),
         ConstrainedView(
           child: CustomScrollView(
             controller: _scrollCtrl,
@@ -230,32 +241,34 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
             scrollCtrl: _scrollCtrl,
           ),
         ),
-        CustomScrollView(
-          controller: _scrollCtrl,
-          slivers: [
-            if (stats.rankTexts.isNotEmpty)
-              MediaRankGrid(stats.rankTexts, stats.rankTypes),
-            if (stats.scoreNames.isNotEmpty)
-              SliverToBoxAdapter(
-                child: BarChart(
-                  title: 'Score Distribution',
-                  names: stats.scoreNames.map((n) => n.toString()).toList(),
-                  values: stats.scoreValues,
-                ),
-              ),
-            if (stats.statusNames.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: PieChart(
-                    title: 'Status Distribution',
-                    names: stats.statusNames,
-                    values: stats.statusValues,
+        ConstrainedView(
+          child: CustomScrollView(
+            controller: _scrollCtrl,
+            slivers: [
+              if (stats.rankTexts.isNotEmpty)
+                MediaRankGrid(stats.rankTexts, stats.rankTypes),
+              if (stats.scoreNames.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: BarChart(
+                    title: 'Score Distribution',
+                    names: stats.scoreNames.map((n) => n.toString()).toList(),
+                    values: stats.scoreValues,
                   ),
                 ),
-              ),
-            const SliverFooter(),
-          ],
+              if (stats.statusNames.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: PieChart(
+                      title: 'Status Distribution',
+                      names: stats.statusNames,
+                      values: stats.statusValues,
+                    ),
+                  ),
+                ),
+              const SliverFooter(),
+            ],
+          ),
         ),
       ],
     );

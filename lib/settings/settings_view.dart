@@ -11,6 +11,7 @@ import 'package:otraku/settings/settings_content_tab.dart';
 import 'package:otraku/settings/settings_notifications_tab.dart';
 import 'package:otraku/settings/settings_about_tab.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
@@ -63,22 +64,30 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     const errorWidget = Center(child: Text('Failed to load settings'));
 
     final tabs = [
-      SettingsAppTab(_ctrl),
+      ConstrainedView(child: SettingsAppTab(_ctrl)),
       if (_settings.hasError) ...[
         errorWidget,
         errorWidget,
       ] else if (_settings.hasValue) ...[
-        SettingsContentTab(_ctrl, _settings.value!, () => _shouldUpdate = true),
-        SettingsNotificationsTab(
-          _ctrl,
-          _settings.value!,
-          () => _shouldUpdate = true,
+        ConstrainedView(
+          child: SettingsContentTab(
+            _ctrl,
+            _settings.value!,
+            () => _shouldUpdate = true,
+          ),
+        ),
+        ConstrainedView(
+          child: SettingsNotificationsTab(
+            _ctrl,
+            _settings.value!,
+            () => _shouldUpdate = true,
+          ),
         ),
       ] else ...[
         loadWidget,
         loadWidget,
       ],
-      SettingsAboutTab(_ctrl),
+      ConstrainedView(child: SettingsAboutTab(_ctrl)),
     ];
 
     return WillPopScope(

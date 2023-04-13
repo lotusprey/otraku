@@ -31,30 +31,27 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
               top: MediaQuery.of(context).viewPadding.top,
             ),
             child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Row(
-                    children: [
-                      if (canPop)
-                        TopBarIcon(
-                          tooltip: 'Close',
-                          icon: Ionicons.chevron_back_outline,
-                          onTap: () => Navigator.maybePop(context),
-                        )
-                      else
-                        const SizedBox(width: 10),
-                      if (title != null)
-                        Expanded(
-                          child: Text(
-                            title!,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
+              child: Material(
+                color: Colors.transparent,
+                child: Row(
+                  children: [
+                    if (canPop)
+                      TopBarIcon(
+                        tooltip: 'Close',
+                        icon: Ionicons.chevron_back_outline,
+                        onTap: () => Navigator.maybePop(context),
+                      )
+                    else
+                      const SizedBox(width: 10),
+                    if (title != null)
+                      Expanded(
+                        child: Text(
+                          title!,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
-                      ...trailing,
-                    ],
-                  ),
+                      ),
+                    ...trailing,
+                  ],
                 ),
               ),
             ),

@@ -40,7 +40,7 @@ class OpaqueSheet extends StatelessWidget {
         builder: (context, scrollCtrl) {
           sheet ??= Center(
             child: Container(
-              constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
+              constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.background,
                 borderRadius:
@@ -139,7 +139,7 @@ class DynamicGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           child: ListView.builder(
             controller: scrollCtrl,
             padding: EdgeInsets.only(
@@ -220,7 +220,7 @@ class FixedGradientDragSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutSmall),
+          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           child: ListView(
             controller: scrollCtrl,
             padding: const EdgeInsets.only(

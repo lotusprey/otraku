@@ -8,6 +8,7 @@ import 'package:otraku/utils/paged_controller.dart';
 import 'package:otraku/statistics/charts.dart';
 import 'package:otraku/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/layouts/constrained_view.dart';
 import 'package:otraku/widgets/layouts/scaffolds.dart';
 import 'package:otraku/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/widgets/layouts/top_bar.dart';
@@ -105,7 +106,7 @@ class _StatisticsViewState extends State<StatisticsView> {
         topBar: TopBar(
           title: _onAnime ? 'Anime Statistics' : 'Manga Statistics',
         ),
-        child: content,
+        child: ConstrainedView(child: content),
       ),
     );
   }

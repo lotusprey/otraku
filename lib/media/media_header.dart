@@ -22,13 +22,15 @@ class MediaHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topOffset = MediaQuery.of(context).padding.top;
+
     return Consumer(
       builder: (context, ref, _) {
-        final data = ref.watch(mediaProvider(id).select((s) => s.valueOrNull));
+        final media = ref.watch(mediaProvider(id).select((s) => s.valueOrNull));
         final textRailItems = <String, bool>{};
 
-        if (data != null) {
-          final info = data.info;
+        if (media != null) {
+          final info = media.info;
 
           if (info.isAdult) textRailItems['Adult'] = true;
 
@@ -36,9 +38,9 @@ class MediaHeader extends StatelessWidget {
             textRailItems[Convert.clarifyEnum(info.format)!] = false;
           }
 
-          if (data.edit.status != null) {
+          if (media.edit.status != null) {
             textRailItems[Convert.adaptListStatus(
-              data.edit.status!,
+              media.edit.status!,
               info.type == DiscoverType.anime,
             )] = false;
           }
@@ -48,8 +50,8 @@ class MediaHeader extends StatelessWidget {
                 '${Convert.timeUntilTimestamp(info.airingAt)}'] = true;
           }
 
-          if (data.edit.status != null) {
-            final progress = data.edit.progress;
+          if (media.edit.status != null) {
+            final progress = media.edit.progress;
             if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
               textRailItems['${info.nextEpisode! - 1 - progress}'
                   ' ep behind'] = true;
@@ -62,8 +64,9 @@ class MediaHeader extends StatelessWidget {
           delegate: _Delegate(
             id: id,
             tabCtrl: tabCtrl,
-            info: data?.info,
+            info: media?.info,
             coverUrl: coverUrl,
+            topOffset: topOffset,
             textRailItems: textRailItems,
             imageWidth: MediaQuery.of(context).size.width < 430.0
                 ? MediaQuery.of(context).size.width * 0.30
@@ -81,6 +84,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.info,
     required this.imageWidth,
     required this.coverUrl,
+    required this.topOffset,
     required this.textRailItems,
     required this.tabCtrl,
   });
@@ -89,6 +93,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final MediaInfo? info;
   final double imageWidth;
   final String? coverUrl;
+  final double topOffset;
   final Map<String, bool> textRailItems;
   final TabController tabCtrl;
 
@@ -99,8 +104,11 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final height = maxExtent;
-    var transition = shrinkOffset > _bannerHeight
-        ? (shrinkOffset - _bannerHeight) / (imageHeight / 4)
+    final bannerOffset =
+        height - _bannerBaseHeight - topOffset - imageHeight / 4;
+
+    var transition = shrinkOffset > _bannerBaseHeight
+        ? (shrinkOffset - _bannerBaseHeight) / (imageHeight / 4)
         : 0.0;
     if (transition > 1) transition = 1;
 
@@ -211,7 +219,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     top: 0,
                     left: 0,
                     right: 0,
-                    bottom: height - _bannerHeight,
+                    bottom: bannerOffset,
                     child: info?.banner != null
                         ? GestureDetector(
                             child: CachedImage(info!.banner!),
@@ -230,7 +238,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    height: height - _bannerHeight,
+                    height: bannerOffset,
                     child: Container(
                       alignment: Alignment.topCenter,
                       color: theme.colorScheme.background,
@@ -258,7 +266,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: Consts.tapTargetSize,
+                    height: topOffset + Consts.tapTargetSize,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -266,6 +274,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                           end: Alignment.bottomCenter,
                           colors: [
                             theme.colorScheme.background,
+                            theme.colorScheme.background.withAlpha(200),
                             theme.colorScheme.background.withAlpha(0),
                           ],
                         ),
@@ -276,7 +285,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: Consts.tapTargetSize,
+                    height: topOffset + Consts.tapTargetSize,
                     child: Opacity(
                       opacity: transition,
                       child: DecoratedBox(
@@ -288,9 +297,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   ),
                 ],
                 Positioned(
-                  top: 0,
                   left: 0,
                   right: 0,
+                  top: topOffset,
                   height: Consts.tapTargetSize,
                   child: topRow,
                 ),
@@ -331,16 +340,16 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           );
   }
 
-  static const _bannerHeight = 200.0;
+  static const _bannerBaseHeight = 200.0;
 
   double get imageHeight => imageWidth * Consts.coverHtoWRatio;
 
   @override
-  double get minExtent => Consts.tapTargetSize * 2;
+  double get minExtent => topOffset + Consts.tapTargetSize * 2;
 
   @override
   double get maxExtent =>
-      _bannerHeight + imageHeight / 2 + Consts.tapTargetSize;
+      topOffset + Consts.tapTargetSize + _bannerBaseHeight + imageHeight / 2;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>
